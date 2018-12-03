@@ -13,6 +13,16 @@
 		0A0380DF21B3CC8200A3FA0E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0A0380DE21B3CC8200A3FA0E /* Assets.xcassets */; };
 		0A0380E221B3CC8200A3FA0E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0A0380E021B3CC8200A3FA0E /* LaunchScreen.storyboard */; };
 		0AC1081121B3D6F8007C6B80 /* RFC3339Format.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC1081021B3D6F8007C6B80 /* RFC3339Format.swift */; };
+		0AC702BC21B4AD7A00B63339 /* Acs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC702BB21B4AD7A00B63339 /* Acs.swift */; };
+		0AC702BE21B4AD9000B63339 /* AcsHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC702BD21B4AD9000B63339 /* AcsHelper.swift */; };
+		0AC702C021B4ADFA00B63339 /* ClientMessages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC702BF21B4ADFA00B63339 /* ClientMessages.swift */; };
+		0AC702C221B4AE0900B63339 /* Defacs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC702C121B4AE0900B63339 /* Defacs.swift */; };
+		0AC702C421B4AE1900B63339 /* Description.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC702C321B4AE1900B63339 /* Description.swift */; };
+		0AC702C621B4AE2700B63339 /* Drafty.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC702C521B4AE2700B63339 /* Drafty.swift */; };
+		0AC702C821B4AE3100B63339 /* ServerMessages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC702C721B4AE3100B63339 /* ServerMessages.swift */; };
+		0AC702CA21B4AE3F00B63339 /* Subscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC702C921B4AE3F00B63339 /* Subscription.swift */; };
+		0AC702CC21B4AE4700B63339 /* VCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC702CB21B4AE4700B63339 /* VCard.swift */; };
+		0AC702CE21B4AF2A00B63339 /* Tinode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC702CD21B4AF2A00B63339 /* Tinode.swift */; };
 		0AEDFBBF21B3D97C002F6AF4 /* JSONValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AEDFBBE21B3D97C002F6AF4 /* JSONValue.swift */; };
 		B452836F6C63636B033BDDEC /* Pods_ios.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2379D23DBDAE3571DE1C059D /* Pods_ios.framework */; };
 /* End PBXBuildFile section */
@@ -26,6 +36,16 @@
 		0A0380E121B3CC8200A3FA0E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		0A0380E321B3CC8200A3FA0E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0AC1081021B3D6F8007C6B80 /* RFC3339Format.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RFC3339Format.swift; sourceTree = "<group>"; };
+		0AC702BB21B4AD7A00B63339 /* Acs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Acs.swift; sourceTree = "<group>"; };
+		0AC702BD21B4AD9000B63339 /* AcsHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AcsHelper.swift; sourceTree = "<group>"; };
+		0AC702BF21B4ADFA00B63339 /* ClientMessages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientMessages.swift; sourceTree = "<group>"; };
+		0AC702C121B4AE0900B63339 /* Defacs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Defacs.swift; sourceTree = "<group>"; };
+		0AC702C321B4AE1900B63339 /* Description.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Description.swift; sourceTree = "<group>"; };
+		0AC702C521B4AE2700B63339 /* Drafty.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Drafty.swift; sourceTree = "<group>"; };
+		0AC702C721B4AE3100B63339 /* ServerMessages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerMessages.swift; sourceTree = "<group>"; };
+		0AC702C921B4AE3F00B63339 /* Subscription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Subscription.swift; sourceTree = "<group>"; };
+		0AC702CB21B4AE4700B63339 /* VCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VCard.swift; sourceTree = "<group>"; };
+		0AC702CD21B4AF2A00B63339 /* Tinode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tinode.swift; sourceTree = "<group>"; };
 		0AEDFBBE21B3D97C002F6AF4 /* JSONValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONValue.swift; sourceTree = "<group>"; };
 		1A5E7891F060E8CAAAC2D5A3 /* Pods-ios.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ios.release.xcconfig"; path = "Pods/Target Support Files/Pods-ios/Pods-ios.release.xcconfig"; sourceTree = "<group>"; };
 		2379D23DBDAE3571DE1C059D /* Pods_ios.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ios.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -89,6 +109,7 @@
 			children = (
 				0AEDFBBD21B3D95D002F6AF4 /* model */,
 				0AC1081021B3D6F8007C6B80 /* RFC3339Format.swift */,
+				0AC702CD21B4AF2A00B63339 /* Tinode.swift */,
 			);
 			path = tinodesdk;
 			sourceTree = "<group>";
@@ -97,6 +118,15 @@
 			isa = PBXGroup;
 			children = (
 				0AEDFBBE21B3D97C002F6AF4 /* JSONValue.swift */,
+				0AC702BB21B4AD7A00B63339 /* Acs.swift */,
+				0AC702BD21B4AD9000B63339 /* AcsHelper.swift */,
+				0AC702BF21B4ADFA00B63339 /* ClientMessages.swift */,
+				0AC702C121B4AE0900B63339 /* Defacs.swift */,
+				0AC702C321B4AE1900B63339 /* Description.swift */,
+				0AC702C521B4AE2700B63339 /* Drafty.swift */,
+				0AC702C721B4AE3100B63339 /* ServerMessages.swift */,
+				0AC702C921B4AE3F00B63339 /* Subscription.swift */,
+				0AC702CB21B4AE4700B63339 /* VCard.swift */,
 			);
 			path = model;
 			sourceTree = "<group>";
@@ -247,9 +277,19 @@
 			buildActionMask = 2147483647;
 			files = (
 				0A0380DA21B3CC8100A3FA0E /* ViewController.swift in Sources */,
+				0AC702BE21B4AD9000B63339 /* AcsHelper.swift in Sources */,
+				0AC702CE21B4AF2A00B63339 /* Tinode.swift in Sources */,
 				0AEDFBBF21B3D97C002F6AF4 /* JSONValue.swift in Sources */,
+				0AC702C621B4AE2700B63339 /* Drafty.swift in Sources */,
 				0AC1081121B3D6F8007C6B80 /* RFC3339Format.swift in Sources */,
+				0AC702BC21B4AD7A00B63339 /* Acs.swift in Sources */,
+				0AC702CA21B4AE3F00B63339 /* Subscription.swift in Sources */,
+				0AC702C221B4AE0900B63339 /* Defacs.swift in Sources */,
+				0AC702CC21B4AE4700B63339 /* VCard.swift in Sources */,
+				0AC702C421B4AE1900B63339 /* Description.swift in Sources */,
+				0AC702C821B4AE3100B63339 /* ServerMessages.swift in Sources */,
 				0A0380D821B3CC8100A3FA0E /* AppDelegate.swift in Sources */,
+				0AC702C021B4ADFA00B63339 /* ClientMessages.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
