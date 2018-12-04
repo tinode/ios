@@ -12,6 +12,39 @@ enum PromisedReplyError: Error {
     //case decode
 }
 
+// Inspired by https://github.com/uber/swift-concurrency/blob/master/Sources/Concurrency/CountDownLatch.swift
+private class CountDownLatch {
+    private let condition = NSCondition()
+    private var conditionCount: Int
+
+    public init(count: Int) {
+        assert(count > 0, "CountDownLatch must have an initial count that is greater than 0.")
+        conditionCount = count
+    }
+    public func countDown() {
+        guard conditionCount > 0 else {
+            return
+        }
+        condition.lock()
+        conditionCount -= 1
+        condition.broadcast()
+        condition.unlock()
+    }
+    public func await() {
+        guard conditionCount > 0 else {
+            return
+        }
+        condition.lock()
+        defer {
+            condition.unlock()
+        }
+        while conditionCount > 0 {
+            // We may be woken up by a broadcast in countDown.
+            condition.wait()
+        }
+    }
+}
+
 // todo(!!!!): make it thread-safe.
 class PromisedReply<Value> {
     typealias SuccessHandler = ((Value) throws -> PromisedReply<Value>?)?
@@ -32,14 +65,12 @@ class PromisedReply<Value> {
             }
         }
     }
-    
-    //var result: Result<Value>? // didSet { result.map(callbacks) ?}
+
     private var state: State = .waiting
     private var successHandler: SuccessHandler
     private var failureHandler: FailureHandler
     private var nextPromise: PromisedReply<Value>?
-    // todo: this is a hack. Make it robust.
-    private var sem: DispatchSemaphore?
+    private var countDownLatch: CountDownLatch?
     var isResolved: Bool {
         get {
             if case .resolved = state { return true }
@@ -59,22 +90,22 @@ class PromisedReply<Value> {
     }
             
     public init() {
-        sem = DispatchSemaphore(value: 0)
+        countDownLatch = CountDownLatch(count: 1)
     }
     public init(value: Value) {
         //result = .success(value)
         state = .resolved(value)
-        sem = DispatchSemaphore(value: 1)
+        countDownLatch = CountDownLatch(count: 1)
     }
     public init(error: Error) {
         state = .rejected(error)
-        sem = DispatchSemaphore(value: 1)
+        countDownLatch = CountDownLatch(count: 1)
     }
 
     func resolve(result: Value) throws {
         // critical section
         defer {
-            sem?.signal()
+            countDownLatch?.countDown()
             // down the semaphore
             print("downing the semaphore")
         }
@@ -90,7 +121,7 @@ class PromisedReply<Value> {
         // critical section
         defer {
             // down the semaphore
-            sem?.signal()
+            countDownLatch?.countDown()
             print("down the semaphore")
         }
         guard case .waiting = state else {
@@ -198,9 +229,7 @@ class PromisedReply<Value> {
     }
 
     func getResult() throws -> Value {
-        // TODO(): can only be called once.
-        // wait until done
-        //sem?.wait()
+        countDownLatch?.await()
         switch state {
         case .resolved(let value):
             return value
@@ -212,8 +241,7 @@ class PromisedReply<Value> {
     }
     @discardableResult
     func waitResult() throws -> Bool {
-        // TODO(): can only be called once.
-        sem?.wait()
+        countDownLatch?.await()
         return isResolved
     }
 }
