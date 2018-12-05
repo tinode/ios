@@ -45,7 +45,6 @@ private class CountDownLatch {
     }
 }
 
-// todo(!!!!): make it thread-safe.
 class PromisedReply<Value> {
     typealias SuccessHandler = ((Value) throws -> PromisedReply<Value>?)?
     typealias FailureHandler = ((Error) throws -> PromisedReply<Value>?)?
@@ -71,6 +70,7 @@ class PromisedReply<Value> {
     private var failureHandler: FailureHandler
     private var nextPromise: PromisedReply<Value>?
     private var countDownLatch: CountDownLatch?
+    private var queue = DispatchQueue(label: "co.tinode.promise")
     var isResolved: Bool {
         get {
             if case .resolved = state { return true }
@@ -103,58 +103,65 @@ class PromisedReply<Value> {
     }
 
     func resolve(result: Value) throws {
-        // critical section
         defer {
             countDownLatch?.countDown()
             // down the semaphore
             print("downing the semaphore")
         }
-        guard case .waiting = state else {
-            throw PromisedReplyError.illegalStateError("Resolve: Promise already resolved.")
+        try queue.sync {
+            // critical section
+            guard case .waiting = state else {
+                throw PromisedReplyError.illegalStateError("Resolve: Promise already resolved.")
+            }
+            state = .resolved(result)
+            try callOnSuccess(result: result)
         }
-        state = .resolved(result)
-        try callOnSuccess(result: result)
     }
     
     func reject(error: Error) throws {
-        print("rejecting promise \(error)")
-        // critical section
         defer {
             // down the semaphore
             countDownLatch?.countDown()
             print("down the semaphore")
         }
-        guard case .waiting = state else {
-            // down the semaphore
-            throw PromisedReplyError.illegalStateError("Promise already resolved/rejected")
+        try queue.sync {
+            print("rejecting promise \(error)")
+            // critical section
+
+            guard case .waiting = state else {
+                // down the semaphore
+                throw PromisedReplyError.illegalStateError("Promise already resolved/rejected")
+            }
+            state = .rejected(error)
+            try callOnFailure(err: error)
         }
-        state = .rejected(error)
-        try callOnFailure(err: error)
     }
     @discardableResult
     func then(onSuccess successHandler: SuccessHandler,
               onFailure failureHandler: FailureHandler) throws -> PromisedReply<Value>? {
-        // start critical section
-        guard nextPromise == nil else {
-            throw PromisedReplyError.illegalStateError("Multiple calls to then are not supported")
-        }
-        self.successHandler = successHandler
-        self.failureHandler = failureHandler
-        self.nextPromise = PromisedReply<Value>()
-        do {
-            switch state {
-            case .resolved(let result):
-                try callOnSuccess(result: result)
-                break
-            case .rejected(let error):
-                try callOnFailure(err: error)
-                break
-            case .waiting: break
+        return try queue.sync {
+            // start critical section
+            guard nextPromise == nil else {
+                throw PromisedReplyError.illegalStateError("Multiple calls to then are not supported")
             }
-        } catch {
-            nextPromise = PromisedReply<Value>(error: error)
+            self.successHandler = successHandler
+            self.failureHandler = failureHandler
+            self.nextPromise = PromisedReply<Value>()
+            do {
+                switch state {
+                case .resolved(let result):
+                    try callOnSuccess(result: result)
+                    break
+                case .rejected(let error):
+                    try callOnFailure(err: error)
+                    break
+                case .waiting: break
+                }
+            } catch {
+                nextPromise = PromisedReply<Value>(error: error)
+            }
+            return nextPromise
         }
-        return nextPromise
     }
     
     private func callOnSuccess(result: Value) throws {
