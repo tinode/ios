@@ -7,7 +7,7 @@
 
 import UIKit
 
-class ContactsViewController: UIViewController {
+class ContactsViewController: UITableViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -17,3 +17,6 @@ class ContactsViewController: UIViewController {
 
 }
 
+extension ContactsViewController {
+    
+}

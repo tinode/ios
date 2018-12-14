@@ -390,7 +390,7 @@ class Tinode {
     }
     class TinodeConnectionListener : ConnectionListener {
         var tinode: Tinode
-        init(_ tinode: Tinode) {
+        init(tinode: Tinode) {
             self.tinode = tinode
         }
         func onConnect() -> Void {
@@ -438,10 +438,10 @@ class Tinode {
             }
         }
     }
-    public func connect(to hostName: String, useTLS: Bool) -> Bool {
+    public func connect(to hostName: String, useTLS: Bool) throws -> PromisedReply<ServerMessage>? {
         if isConnected {
             print("tinode is already connected: \(isConnected)")
-            return true
+            return nil
         }
         //let useTLS = false
         let scheme = "ws" // useTLS ? "wss" : "ws"
@@ -449,10 +449,10 @@ class Tinode {
         let endpointURL: URL = URL(string: urlString)!
         connection = Connection(open: endpointURL,
                                 with: apiKey,
-                                notify: TinodeConnectionListener(self))
+                                notify: TinodeConnectionListener(tinode: self))
         connectedPromise = PromisedReply<ServerMessage>()
-        let r = try? connection?.connect()
-        return r != nil
+        try connection?.connect()
+        return connectedPromise
     }
     
     public func subscribe<Pu, Pr>(to topicName: String,

@@ -13,6 +13,7 @@
 		0A0380DF21B3CC8200A3FA0E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0A0380DE21B3CC8200A3FA0E /* Assets.xcassets */; };
 		0A0380E221B3CC8200A3FA0E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0A0380E021B3CC8200A3FA0E /* LaunchScreen.storyboard */; };
 		0A6F260A21BE51D800B9726E /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A6F260921BE51D800B9726E /* LoginViewController.swift */; };
+		0A8A8BDA21C380E80090BCBA /* Cache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8A8BD921C380E80090BCBA /* Cache.swift */; };
 		0A8F419221B4B26700E7E60D /* AuthScheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8F419121B4B26700E7E60D /* AuthScheme.swift */; };
 		0A8F419421B4B27700E7E60D /* Connection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8F419321B4B27700E7E60D /* Connection.swift */; };
 		0A8F419621B4B28500E7E60D /* PromisedReply.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8F419521B4B28500E7E60D /* PromisedReply.swift */; };
@@ -42,6 +43,7 @@
 		0A0380E121B3CC8200A3FA0E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		0A0380E321B3CC8200A3FA0E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0A6F260921BE51D800B9726E /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
+		0A8A8BD921C380E80090BCBA /* Cache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cache.swift; sourceTree = "<group>"; };
 		0A8F419121B4B26700E7E60D /* AuthScheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthScheme.swift; sourceTree = "<group>"; };
 		0A8F419321B4B27700E7E60D /* Connection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Connection.swift; sourceTree = "<group>"; };
 		0A8F419521B4B28500E7E60D /* PromisedReply.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromisedReply.swift; sourceTree = "<group>"; };
@@ -98,6 +100,7 @@
 			isa = PBXGroup;
 			children = (
 				0AC1080F21B3D63D007C6B80 /* tinodesdk */,
+				0A8A8BD921C380E80090BCBA /* Cache.swift */,
 				0A0380D921B3CC8100A3FA0E /* ContactsViewController.swift */,
 				0A0380DB21B3CC8100A3FA0E /* Main.storyboard */,
 				0A6F260921BE51D800B9726E /* LoginViewController.swift */,
@@ -298,6 +301,7 @@
 				0A8F419821B4B29600E7E60D /* Topic.swift in Sources */,
 				0AC702BE21B4AD9000B63339 /* AcsHelper.swift in Sources */,
 				0AC702CE21B4AF2A00B63339 /* Tinode.swift in Sources */,
+				0A8A8BDA21C380E80090BCBA /* Cache.swift in Sources */,
 				0AEDFBBF21B3D97C002F6AF4 /* JSONValue.swift in Sources */,
 				0AC702C621B4AE2700B63339 /* Drafty.swift in Sources */,
 				0AC1081121B3D6F8007C6B80 /* RFC3339Format.swift in Sources */,
