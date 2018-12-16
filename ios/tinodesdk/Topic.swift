@@ -41,6 +41,37 @@ class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto {
         case kRecv
     }
     
+    public class Listener {
+        
+        func onSubscribe(code: Int, text: String) {}
+        func onLeave(unsub: Bool?, code: Int?, text: String?) {}
+        
+
+        // Process {data} message.
+        func onData(data: MsgServerData?) {}
+        // All requested data messages received.
+        func onAllMessagesReceived(count: Int) {}
+        
+        // {info} message received.
+        func onInfo(info: MsgServerInfo) {}
+        // {meta} message received.
+        func onMeta(meta: MsgServerMeta) {}
+        // {meta what="sub"} message received, and this is one of the subs.
+        func onMetaSub(sub: Subscription<SP, SR>) {}
+        // {meta what="desc"} message received.
+        func onMetaDesc(desc: Description<DP, DR>) {}
+        // {meta what="tags"} message received.
+        func onMetaTags(tags: [String]) {}
+        // {meta what="sub"} message received and all subs were processed.
+        func onSubsUpdated() {}
+        // {pres} received.
+        func onPres(pres: MsgServerPres) {}
+        // {pres what="on|off"} is received.
+        func onOnline(online: Bool) {}
+        // Called by MeTopic when topic descriptor as contact is updated.
+        func onContUpdate(sub: Subscription<SP, SR>) {}
+    }
+    
     class MetaGetBuilder {
         let topic: TopicProto
         var meta: MsgGetMeta
@@ -126,13 +157,20 @@ class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto {
     // The bulk of topic data
     private var description: Description<DP, DR>? = nil
     var attached = false
+    weak var listener: Listener? = nil
     // Cache of topic subscribers indexed by userID
     private var subs: [String:Subscription<SP,SR>]? = nil
     private var tags: [String]? = nil
     // todo: implement
     // var listener: Listener? = nil
     private var lastKeyPress: Int64 = 0
-    private var online: Bool = false
+    private var online: Bool = false {
+        didSet {
+            if oldValue != online {
+                listener?.onOnline(online: online)
+            }
+        }
+    }
     private var lastSeen: LastSeen? = nil
     var maxDel: Int = 0
     
@@ -169,7 +207,7 @@ class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto {
         }
         return r
     }
-    init(tinode: Tinode?, name: String) throws {
+    init(tinode: Tinode?, name: String, l: Listener? = nil) throws {
         guard tinode != nil else {
             throw TinodeError.invalidState("Tinode cannot be nil")
         }
@@ -262,8 +300,7 @@ class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto {
                             }
                             // update store
                         }
-                        //if
-                        // bool: update listener.
+                        self?.listener?.onSubscribe(code: ctrl.code, text: ctrl.text)
                     }
                 }
                 return nil
@@ -283,7 +320,7 @@ class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto {
 
     func allMessagesReceived(count: Int?) {
         print("allMessagesReceived --> \(String(describing: count))")
-        // if listener --> update listener
+        listener?.onAllMessagesReceived(count: count ?? 0)
     }
 
     private func loadSubs() -> Int {
@@ -309,6 +346,7 @@ class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto {
             //mTinode.updateUser(getName(), meta.desc);
         }
         // update listener
+        listener?.onMetaDesc(desc: (meta.desc as! Description<DP, DR>))
     }
     private func removeSubFromCache(sub: Subscription<SP, SR>) {
         if var allsubs = subs {
@@ -354,7 +392,7 @@ class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto {
             }
             tinode!.updateUser(sub: sub!)
         }
-        // listener?.onMetaSub(sub)
+        listener?.onMetaSub(sub: sub!)
     }
     private func setMaxDel(maxDel: Int) {
         if maxDel > self.maxDel {
@@ -370,7 +408,7 @@ class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto {
         }
         */
         setMaxDel(maxDel: clear)
-        // listener?.onData(nil)
+        listener?.onData(data: nil)
     }
     
     fileprivate func routeMetaSub(meta: MsgServerMeta) {
@@ -381,10 +419,11 @@ class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto {
             }
         }
         // update listener
+        listener?.onSubsUpdated()
     }
     private func routeMetaTags(tags: [String]) {
         self.update(tags: tags)
-        // listener?.onMetaTage(tags)
+        listener?.onMetaTags(tags: tags)
     }
     func routeMeta(meta: MsgServerMeta) {
         if meta.desc != nil {
@@ -412,6 +451,7 @@ class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto {
             print("handle tags")
         }
         // update listener
+        listener?.onMeta(meta: meta)
     }
     private func noteReadRecv(what: NoteType) -> Int {
         var result = 0
@@ -458,7 +498,7 @@ class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto {
     func routeData(data: MsgServerData) {
         _ = noteRecv()
         setSeq(seq: data.getSeq)
-        // listener?.onData(data)
+        listener?.onData(data: data)
     }
     @discardableResult
     func getMeta(query: MsgGetMeta) -> PromisedReply<ServerMessage>? {
@@ -487,7 +527,7 @@ class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto {
                 }
             }
         }
-        // listener?.onInfo(info)
+        listener?.onInfo(info: info)
     }
     func routePres(pres: MsgServerPres) {
         let what = MsgServerPres.parseWhat(what: pres.what)
@@ -532,13 +572,13 @@ class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto {
             print("unknown presence type \(String(describing: pres.what))")
             break
         }
-        //listener?.onPres(pres)
+        listener?.onPres(pres: pres)
     }
     private func topicLeft(unsub: Bool?, code: Int?, reason: String?) {
         if attached {
             attached = false
             print("leaving \(name): \(String(describing: unsub)) \(String(describing: code)) \(String(describing: reason))")
-            // listener?.onLeave(unsub, code, reason)
+            listener?.onLeave(unsub: unsub, code: code, text: reason)
         }
     }
     @discardableResult
@@ -604,9 +644,8 @@ typealias DefaultMeTopic = MeTopic<VCard>
 typealias DefaultFndTopic = FndTopic<VCard>
 
 class MeTopic<DP: Codable>: Topic<DP, PrivateType, DP, PrivateType> {
-    override init(tinode: Tinode?, name: String = Tinode.kTopicMe) throws {
-        assert(name == Tinode.kTopicMe)
-        try super.init(tinode: tinode, name: Tinode.kTopicMe)
+    init(tinode: Tinode?, l: Listener?) throws {
+        try super.init(tinode: tinode, name: Tinode.kTopicMe, l: l)
     }
     init(tinode: Tinode?, desc: Description<DP, PrivateType>) throws {
         try super.init(tinode: tinode, name: Tinode.kTopicMe, desc: desc)
@@ -651,8 +690,8 @@ class FndTopic<SP: Codable>: Topic<String, String, SP, Array<String>> {
 }
 
 class ComTopic<DP: Codable>: Topic<DP, PrivateType, DP, PrivateType> {
-    override init(tinode: Tinode?, name: String) throws {
-        try super.init(tinode: tinode, name: name)
+    override init(tinode: Tinode?, name: String, l: Listener?) throws {
+        try super.init(tinode: tinode, name: name, l: l)
     }
     override init(tinode: Tinode?, sub: Subscription<DP, PrivateType>) throws {
         try super.init(tinode: tinode, sub: sub)

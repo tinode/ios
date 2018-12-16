@@ -269,7 +269,7 @@ class Tinode {
     }
     func newTopic<SP: Codable, SR: Codable>(sub: Subscription<SP, SR>) -> TopicProto {
         if sub.topic == Tinode.kTopicMe {
-            let t = try! MeTopic<SP>(tinode: self)
+            let t = try! MeTopic<SP>(tinode: self, l: nil)
             return t
         } else if sub.topic == Tinode.kTopicFnd {
             let r = try! FndTopic<SP>(tinode: self)
@@ -298,7 +298,9 @@ class Tinode {
         registerTopic(topic: topic)
         return result
     }
-
+    func getMeTopic() -> DefaultMeTopic? {
+        return getTopic(topicName: Tinode.kTopicMe) as? DefaultMeTopic
+    }
     func getTopic(topicName: String) -> TopicProto? {
         if topicName.isEmpty {
             return nil
@@ -373,6 +375,14 @@ class Tinode {
             isConnectionAuthenticated = true
             // todo: listener
         }
+    }
+    private func disconnect() {
+        // setAutologin(false)
+        connection?.disconnect()
+    }
+    func logout() {
+        disconnect()
+        // store?.disconnect()
     }
     /*
     private func loadTopics() {

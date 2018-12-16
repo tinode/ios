@@ -72,6 +72,10 @@ class Connection {
         let request = try! createUrlRequest()
         openConnection(with: request)
     }
+    func disconnect() {
+        webSocketConnection?.close()
+        // TODO: handle autoreconnect.
+    }
     
     func send(payload data: Data) -> Void {
         webSocketConnection?.send(data: data)
