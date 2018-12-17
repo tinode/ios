@@ -156,6 +156,9 @@ class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto {
     
     // The bulk of topic data
     private var description: Description<DP, DR>? = nil
+    var pub: DP? {
+        get { return description?.pub }
+    }
     var attached = false
     weak var listener: Listener? = nil
     // Cache of topic subscribers indexed by userID
@@ -214,6 +217,7 @@ class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto {
         self.tinode = tinode
         self.name = name
         self.description = Description()
+        self.listener = l
     }
     convenience init(tinode: Tinode?) throws {
         guard tinode != nil else {

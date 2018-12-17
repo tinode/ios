@@ -9,6 +9,10 @@ import UIKit
 
 class ContactsViewController: UITableViewController {
     private class MeListener: DefaultMeTopic.Listener {
+        private weak var adapter: ChatListAdaper?
+        init(adapter: ChatListAdaper?) {
+            self.adapter = adapter
+        }
         override func onInfo(info: MsgServerInfo) {
             print("Contacts got onInfo update \(String(describing: info.what))")
         }
@@ -17,20 +21,24 @@ class ContactsViewController: UITableViewController {
             if pres.what == "msg" || pres.what == "off" || pres.what == "on" {
                 //datasetChanged()
                 print("dataset changed")
+                adapter?.update()
             }
         }
         
         
         override func onMetaSub(sub: Subscription<VCard, PrivateType>) {
             // TODO: sub.pub?.constructBitmap()
+            print("on meta sub")
         }
         
         override func onMetaDesc(desc: Description<VCard, PrivateType>) {
             // TODO: desc.pub?.constructBitmap()
+            print("on meta desc")
         }
         
         override func onSubsUpdated() {
             // datasetChanged()
+            print("on subs updated")
         }
         
         override func onContUpdate(sub: Subscription<VCard, PrivateType>) {
@@ -43,8 +51,8 @@ class ContactsViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
-        adapter = ChatListAdaper()
-        meListener = MeListener()
+        adapter = ChatListAdaper(for: self.tableView)
+        meListener = MeListener(adapter: adapter)
         // Attach to ME topic.
         attachToMeTopic(l: meListener)
         adapter!.resetTopics()
@@ -55,19 +63,6 @@ class ContactsViewController: UITableViewController {
                 return
             }
             a.resetTopics()
-            self?.tableView.reloadData()
-            /*guard let users = self.interactor?.currentUser?.users else { return }
-            
-            for contact in self.displayedContacts {
-                guard let user = users.first(where: {$0.id == contact.id}) else { return }
-                let index = self.displayedContacts.index(of: contact)
-                
-                switch user.presenceState {
-                case .online: self.displayedContacts[index!].isOnline = true
-                case .offline, .unknown: self.displayedContacts[index!].isOnline = false
-                }
-            }
-            */
             self?.tableView.reloadData()
         }
     }
@@ -127,7 +122,7 @@ extension ContactsViewController {
             cell?.detailTextLabel?.textColor = UIColor.lightGray
         }
         */
-        cell?.textLabel?.text = topic.name
+        cell?.textLabel?.text = topic.pub?.fn ?? "Unknown or unnamed"
         cell?.detailTextLabel?.text = "todo"//topic.online
         
         return cell!

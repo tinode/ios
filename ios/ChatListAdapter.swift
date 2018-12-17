@@ -6,12 +6,20 @@
 //
 
 import Foundation
+import UIKit
 
 class ChatListAdaper {
     var topics: [DefaultComTopic]?
+    weak var tableView: UITableView?
     
-    init() {
+    init(for tableView: UITableView?) {
+        self.tableView = tableView
         resetTopics()
+    }
+    
+    public func update() {
+        resetTopics()
+        tableView?.reloadData()
     }
     
     public func resetTopics() {
