@@ -10,10 +10,10 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--Navigation Controller-->
+        <!--StratNavigationController-->
         <scene sceneID="s7J-Lt-152">
             <objects>
-                <navigationController storyboardIdentifier="StartNavigator" id="oPa-Qr-HlP" sceneMemberID="viewController">
+                <navigationController storyboardIdentifier="StartNavigator" title="StratNavigationController" id="oPa-Qr-HlP" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="M6z-X7-c6A">
                         <rect key="frame" x="0.0" y="20" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -88,10 +88,10 @@
             </objects>
             <point key="canvasLocation" x="-1450" y="126"/>
         </scene>
-        <!--Navigation Controller-->
+        <!--MainNavigationController-->
         <scene sceneID="rwg-D6-8cu">
             <objects>
-                <navigationController storyboardIdentifier="MainNavigator" id="oDj-ht-EO8" sceneMemberID="viewController">
+                <navigationController storyboardIdentifier="MainNavigator" title="MainNavigationController" id="oDj-ht-EO8" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="lOW-W0-XAF">
                         <rect key="frame" x="0.0" y="20" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
