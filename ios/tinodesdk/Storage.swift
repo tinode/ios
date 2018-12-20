@@ -9,9 +9,9 @@ import Foundation
 
 protocol Message {
     // Get current message payload.
-    var content: Any? { get }
+    var content: Drafty? { get }
     // Get current message unique ID (database ID).
-    var id: Int64 { get }
+    var msgId: Int64 { get }
 
     // Get Tinode seq Id of the message (different from database ID).
     var seqId: Int { get }
