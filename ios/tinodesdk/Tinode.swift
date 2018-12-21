@@ -21,6 +21,68 @@ enum TinodeError: Error {
     case notSubscribed(String)
 }
 
+// Callback interface called by Connection
+// when it receives events from the websocket.
+protocol TinodeEventListener: class {
+    // Connection established successfully, handshakes exchanged.
+    // The connection is ready for login.
+    // Params:
+    //   code   should be always 201.
+    //   reason should be always "Created".
+    //   params server parameters, such as protocol version.
+    func onConnect(code: Int, reason: String, params: [String:JSONValue]?)
+    
+    // Connection was dropped.
+    // Params:
+    //   byServer: true if connection was closed by server.
+    //   code: numeric code of the error which caused connection to drop.
+    //   reason: error message.
+    func onDisconnect(byServer: Bool, code: Int, reason: String)
+    
+    // Result of successful or unsuccessful {@link #login} attempt.
+    // Params:
+    //   code: a numeric value between 200 and 299 on success, 400 or higher on failure.
+    //   text: "OK" on success or error message.
+    func onLogin(code: Int, text: String)
+    
+    // Handle generic server message.
+    // Params:
+    //   msg: message to be processed.
+    func onMessage(msg: ServerMessage?)
+    
+    // Handle unparsed message. Default handler calls {@code #dispatchPacket(...)} on a
+    // websocket thread.
+    // A subclassed listener may wish to call {@code dispatchPacket()} on a UI thread
+    // Params:
+    //   msg: message to be processed.
+    func onRawMessage(msg: String)
+    
+    // Handle control message
+    // Params:
+    //   ctrl: control message to process.
+    func onCtrlMessage(ctrl: MsgServerCtrl?)
+    
+    // Handle data message
+    // Params:
+    //   data: control message to process.
+    func onDataMessage(data: MsgServerData?)
+    
+    // Handle info message
+    // Params:
+    //   info: info message to process.
+    func onInfoMessage(info: MsgServerInfo?)
+    
+    // Handle meta message
+    // Params:
+    //   meta: meta message to process.
+    func onMetaMessage(meta: MsgServerMeta?)
+    
+    // Handle presence message
+    // Params:
+    //   pres: control message to process.
+    func onPresMessage(pres: MsgServerPres?)
+}
+
 class Tinode {
     public static let kTopicNew = "new"
     public static let kTopicMe = "me"
@@ -52,6 +114,7 @@ class Tinode {
     var authToken: String?
     var nameCounter = 0
     var store: Storage? = nil
+    var listener: TinodeEventListener? = nil
     var topicsLoaded = false
 
     var isConnected: Bool {
@@ -74,10 +137,12 @@ class Tinode {
     }()
 
     init(for appname: String, authenticateWith apiKey: String,
-         persistDataIn store: Storage? = nil) {
+         persistDataIn store: Storage? = nil,
+         fowardEventsTo l: TinodeEventListener? = nil) {
         self.appName = appname
         self.apiKey = apiKey
         self.store = store
+        self.listener = l
         self.myUid = self.store?.myUid
         self.deviceToken = self.store?.deviceToken
         //self.osVersoin
@@ -163,6 +228,8 @@ class Tinode {
             return
         }
 
+        listener?.onRawMessage(msg: msg)
+        // TODO: make it a class member.
         let jsonDecoder = JSONDecoder()
         guard let data = msg.data(using: .utf8) else {
             throw TinodeJsonError.decode
@@ -171,8 +238,10 @@ class Tinode {
         let serverMsg = try jsonDecoder.decode(ServerMessage.self, from: data)
         print("serverMsg = \(serverMsg)")
         
+        listener?.onMessage(msg: serverMsg)
+        
         if let ctrl = serverMsg.ctrl {
-            // Listener.onCtrlMessage
+            listener?.onCtrlMessage(ctrl: ctrl)
             if let id = ctrl.id {
                 if let r = futures.removeValue(forKey: id) {
                     if ctrl.code >= 200 && ctrl.code < 400 {
@@ -198,14 +267,14 @@ class Tinode {
                 _ = maybeCreateTopic(meta: meta)
                 print("maybe create \(String(describing: meta.topic))")
             }
-            // update listener
+            listener?.onMetaMessage(meta: meta)
             try resolveWithPacket(id: meta.id, pkt: serverMsg)
             //if t != nil
         } else if let data = serverMsg.data {
             if let t = getTopic(topicName: data.topic!) {
                 t.routeData(data: data)
             }
-            // listener?.onDataMessage(data)
+            listener?.onDataMessage(data: data)
             try resolveWithPacket(id: data.id, pkt: serverMsg)
         } else if let pres = serverMsg.pres {
             if let topicName = pres.topic {
@@ -218,13 +287,13 @@ class Tinode {
                     }
                 }
             }
-            //listener?.onPresMessage(pres)
+            listener?.onPresMessage(pres: pres)
         } else if let info = serverMsg.info {
             if let topicName = info.topic {
                 if let t = getTopic(topicName: topicName) {
                     t.routeInfo(info: info)
                 }
-                // listener?.onInfoMessage(info)
+                listener?.onInfoMessage(info: info)
             }
         }
     }
@@ -365,15 +434,14 @@ class Tinode {
             return nil
         }, onFailure: { [weak self] err in
             if let e = err as? TinodeError {
-                if case TinodeError.serverResponseError(let code, _, _) = e {
+                if case TinodeError.serverResponseError(let code, let text, _) = e {
                     if code >= 400 && code < 500 {
                         // todo:
                         // clear auth data.
                     }
                     self?.isConnectionAuthenticated = false
+                    self?.listener?.onLogin(code: code, text: text)
                 }
-                // todo: update listener
-                
             }
             return PromisedReply<ServerMessage>(error: err)
         })!
@@ -387,9 +455,8 @@ class Tinode {
         }
         let newUid = ctrl.getStringParam(for: "user")
         if let curUid = myUid, curUid != newUid {
-            // todo:
-            // logout
-            // uid mismatch
+            logout()
+            listener?.onLogin(code: 400, text: "UID mismatch")
             return
         }
         myUid = newUid
@@ -401,6 +468,7 @@ class Tinode {
         if ctrl.code < 300 {
             isConnectionAuthenticated = true
             // todo: listener
+            listener?.onLogin(code: ctrl.code, text: ctrl.text)
         }
     }
     private func disconnect() {
@@ -425,6 +493,7 @@ class Tinode {
         // todo:
         // iterate over topics: topicLeft
         // listener on disconnect
+        listener?.onDisconnect(byServer: isServerOriginated, code: code, reason: reason)
     }
     class TinodeConnectionListener : ConnectionListener {
         var tinode: Tinode
@@ -442,10 +511,13 @@ class Tinode {
                     if let connected = tinode.connectedPromise, !connected.isDone {
                         try connected.resolve(result: pkt)
                     }
-                    tinode.timeAdjustment = Date().timeIntervalSince(pkt.ctrl!.ts)
+                    let ctrl = pkt.ctrl!
+                    tinode.timeAdjustment = Date().timeIntervalSince(ctrl.ts)
                     // tinode store
                     tinode.store?.setTimeAdjustment(adjustment: tinode.timeAdjustment)
                     // listener
+                    tinode.listener?.onConnect(
+                        code: ctrl.code, reason: ctrl.text, params: ctrl.params)
                     return nil
                 }, onFailure: nil)
                 // todo: auto login & credentials
