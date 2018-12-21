@@ -23,7 +23,7 @@ class Cache {
     private func getTinode() -> Tinode {
         if tinode == nil {
             let appName = "Tinode-iOS/" + UIDevice.current.systemVersion
-            tinode = Tinode(for: appName, authenticateWith: Cache.kApiKey)
+            tinode = Tinode(for: appName, authenticateWith: Cache.kApiKey, persistDataIn: nil)
             tinode!.deviceId = UIDevice.current.identifierForVendor!.uuidString
         }
         return tinode!

@@ -48,9 +48,12 @@ class Tinode {
     var timeAdjustment: TimeInterval = 0
     var isConnectionAuthenticated = false
     var myUid: String?
+    var deviceToken: String?
     var authToken: String?
     var nameCounter = 0
-    
+    var store: Storage? = nil
+    var topicsLoaded = false
+
     var isConnected: Bool {
         get {
             if let c = connection, c.isConnected {
@@ -59,7 +62,7 @@ class Tinode {
             return false
         }
     }
-    
+
     // String -> Topic
     var topics: [String: TopicProto] = [:]
     var users: [String: UserProto] = [:]
@@ -70,9 +73,13 @@ class Tinode {
         return encoder
     }()
 
-    init(for appname: String, authenticateWith apiKey: String) {
+    init(for appname: String, authenticateWith apiKey: String,
+         persistDataIn store: Storage?) {
         self.appName = appname
         self.apiKey = apiKey
+        self.store = store
+        self.myUid = self.store?.myUid
+        self.deviceToken = self.store?.deviceToken
         //self.osVersoin
         
         // osVersion
@@ -82,7 +89,19 @@ class Tinode {
         // store
         // myUID
         // deviceToken
-        // loadTopics()
+        loadTopics()
+    }
+    @discardableResult
+    private func loadTopics() -> Bool {
+        guard !topicsLoaded else { return true }
+        if let s = store, s.isReady, let allTopics = s.topicGetAll(from: self) {
+            for t in allTopics {
+                t.store = s
+                topics[t.name] = t
+            }
+            topicsLoaded = true
+        }
+        return topicsLoaded
     }
     func updateUser<DP: Decodable, DR: Decodable>(uid: String, desc: Description<DP, DR>) {
         if let user = users[uid] {
@@ -258,6 +277,10 @@ class Tinode {
         }
     }
     func registerTopic(topic: TopicProto) {
+        if !topic.isPersisted {
+            store?.topicAdd(topic: topic)
+        }
+        topic.store = store
         topics[topic.name] = topic
     }
     func unregisterTopic(topicName: String) {
@@ -265,6 +288,8 @@ class Tinode {
         if let t = topics.removeValue(forKey: topicName) {
             // todo: clean up storate
             print("unregistering \(t)")
+            t.store = nil
+            store?.topicDelete(topic: t)
         }
     }
     func newTopic<SP: Codable, SR: Codable>(sub: Subscription<SP, SR>) -> TopicProto {
@@ -368,7 +393,9 @@ class Tinode {
             return
         }
         myUid = newUid
-        // todo: load topics
+        store?.myUid = newUid
+        // Load topics if not yet loaded.
+        loadTopics()
         authToken = ctrl.getStringParam(for: "token")
         // auth expires
         if ctrl.code < 300 {
@@ -382,7 +409,8 @@ class Tinode {
     }
     func logout() {
         disconnect()
-        // store?.disconnect()
+        myUid = nil
+        store?.logout()
     }
     /*
     private func loadTopics() {
@@ -416,6 +444,7 @@ class Tinode {
                     }
                     tinode.timeAdjustment = Date().timeIntervalSince(pkt.ctrl!.ts)
                     // tinode store
+                    tinode.store?.setTimeAdjustment(adjustment: tinode.timeAdjustment)
                     // listener
                     return nil
                 }, onFailure: nil)

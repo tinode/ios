@@ -115,7 +115,7 @@ class MsgServerData : Decodable {
         get { return seq ?? 0 }
     }
     // todo: make it drafty
-    var content: String?//Drafty?
+    var content: Drafty?
 }
 
 class AccessChange : Decodable {

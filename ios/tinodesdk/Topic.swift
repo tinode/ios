@@ -7,17 +7,23 @@
 
 import Foundation
 
-protocol TopicProto {
+protocol Payload {}
+
+protocol TopicProto: class {
     var name: String { get }
     var updated: Date? { get }
     var subsUpdated: Date? { get }
     var topicType: TopicType { get }
     var maxDel: Int { get }
+    var store: Storage? { get set }
+    var isPersisted: Bool { get }
+    var payload: Payload? { get set }
     func allMessagesReceived(count: Int?)
     func routeMeta(meta: MsgServerMeta)
     func routeData(data: MsgServerData)
     func routePres(pres: MsgServerPres)
     func routeInfo(info: MsgServerInfo)
+    //func setStorage(store: Storage?)
 }
 
 enum TopicType: Int {
@@ -187,6 +193,10 @@ class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto {
             return topicType == TopicType.p2p
         }
     }
+    // Storage is owned by Tinode.
+    var store: Storage? = nil
+    var payload: Payload? = nil
+    var isPersisted: Bool { get { return payload != nil } }
     
     init() {}
 

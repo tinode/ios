@@ -32,25 +32,27 @@ protocol Storage {
     // Min and max values.
     typealias Range = (min: Int, max: Int)
 
-    var myUid: String { get set }
+    var myUid: String? { get set }
 
-    var deviceToken: String { get set }
+    var deviceToken: String? { get set }
 
     func logout()
 
     // Server time minus local time.
-    func setTimeAdjustment(adjustment: Int64)
+    func setTimeAdjustment(adjustment: TimeInterval)
 
     var isReady: Bool { get }
 
     // Fetch all topics.
-    func topicGetAll(from tinode: Tinode?) -> [String]?
+    func topicGetAll(from tinode: Tinode?) -> [TopicProto]?
     // Add new topic.
+    @discardableResult
     func topicAdd(topic: TopicProto) -> Int64
     // Incoming change to topic description:
     // the already mutated topic in memory is synchronized to DB.
     func topicUpdate(topic: TopicProto) -> Bool
     // Delete topic.
+    @discardableResult
     func topicDelete(topic: TopicProto) -> Bool
 
     // Get seq IDs of the stored messages as a Range.
@@ -145,7 +147,7 @@ protocol Storage {
     func msgReadByRemote(sub: SubscriptionProto, read: Int) -> Bool
 
     // Retrieves a single message by database id.
-    func getMessageById(topic: TopicProto, dbMessageId: Int64) -> Message
+    func getMessageById(topic: TopicProto, dbMessageId: Int64) -> Message?
 
     // Gets a list of unsent messages.
     func getQueuedMessages(topic: TopicProto) -> MessageIterator?
