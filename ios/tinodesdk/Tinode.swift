@@ -74,7 +74,7 @@ class Tinode {
     }()
 
     init(for appname: String, authenticateWith apiKey: String,
-         persistDataIn store: Storage?) {
+         persistDataIn store: Storage? = nil) {
         self.appName = appname
         self.apiKey = apiKey
         self.store = store

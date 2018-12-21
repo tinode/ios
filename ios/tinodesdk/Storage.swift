@@ -28,7 +28,7 @@ protocol MessageIterator {
 }
 
 // Base protocol for implementing persistance.
-protocol Storage {
+protocol Storage: class {
     // Min and max values.
     typealias Range = (min: Int, max: Int)
 
@@ -50,6 +50,7 @@ protocol Storage {
     func topicAdd(topic: TopicProto) -> Int64
     // Incoming change to topic description:
     // the already mutated topic in memory is synchronized to DB.
+    @discardableResult
     func topicUpdate(topic: TopicProto) -> Bool
     // Delete topic.
     @discardableResult
@@ -58,19 +59,24 @@ protocol Storage {
     // Get seq IDs of the stored messages as a Range.
     func getCachedMessagesRange(topic: TopicProto) -> Range
     // Local user reported messages as read.
+    @discardableResult
     func setRead(topic: TopicProto, read: Int) -> Bool
     // Local user reported messages as received.
+    @discardableResult
     func setRecv(topic: TopicProto, recv: Int) -> Bool
 
     // Add subscription in a generic topic.
     // The subscription is received from the server.
+    @discardableResult
     func subAdd(topic: TopicProto, sub: SubscriptionProto) -> Int64
     // Update subscription in a generic topic.
+    @discardableResult
     func subUpdate(topic: TopicProto, sub: SubscriptionProto) -> Bool
     // Add a new subscriber to topic.
     // The new subscriber is being added locally.
     func subNew(topic: TopicProto, sub: SubscriptionProto) -> Int64
     // Delete existing subscription.
+    @discardableResult
     func subDelete(topic: TopicProto, sub: SubscriptionProto) -> Bool
 
     // Get a list o topic subscriptions from DB.
@@ -84,7 +90,7 @@ protocol Storage {
     func userUpdate(user: UserProto) -> Bool
 
     // Message received from the server.
-    func msgReceived(topic: TopicProto, sub: SubscriptionProto, msg: MsgServerData) -> Int64
+    func msgReceived(topic: TopicProto, sub: SubscriptionProto?, msg: MsgServerData?) -> Int64
 
     // Save message to DB as queued or synced.
     // Params:
@@ -137,14 +143,17 @@ protocol Storage {
     // Mark messages for deletion by seq ID list.
     func msgMarkToDelete(topic: TopicProto, list: [Int], markAsHard: Bool) -> Bool
     // Delete messages.
+    @discardableResult
     func msgDelete(topic: TopicProto, delete id: Int,
                    deleteFrom idLo: Int, deleteTo idHi: Int) -> Bool
     // Delete messages.
     func msgDelete(topic: TopicProto, delete id: Int, deleteAll list: [Int]?) -> Bool
     // Set recv value for a given subscriber.
-    func msgRecvByRemote(sub: SubscriptionProto, recv: Int) -> Bool
+    @discardableResult
+    func msgRecvByRemote(sub: SubscriptionProto, recv: Int?) -> Bool
     // Set read value for a given subscriber.
-    func msgReadByRemote(sub: SubscriptionProto, read: Int) -> Bool
+    @discardableResult
+    func msgReadByRemote(sub: SubscriptionProto, read: Int?) -> Bool
 
     // Retrieves a single message by database id.
     func getMessageById(topic: TopicProto, dbMessageId: Int64) -> Message?

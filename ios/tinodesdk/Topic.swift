@@ -7,8 +7,9 @@
 
 import Foundation
 
-protocol Payload {}
-
+protocol Payload {
+    
+}
 protocol TopicProto: class {
     var name: String { get }
     var updated: Date? { get }
@@ -313,6 +314,7 @@ class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto {
                                 // tinode change topic name
                             }
                             // update store
+                            self?.store?.topicUpdate(topic: self!)
                         }
                         self?.listener?.onSubscribe(code: ctrl.code, text: ctrl.text)
                     }
@@ -353,7 +355,7 @@ class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto {
     }
     private func routeMetaDesc(meta: MsgServerMeta) {
         print("routing desc")
-        //update(meta.desc!)
+        update(desc: meta.desc as! Description<DP, DR>)
         if case .p2p = topicType {
             print("updating user")
             tinode?.updateUser(uid: name, desc: meta.desc as! DefaultDescription)
@@ -369,16 +371,29 @@ class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto {
     }
 
     fileprivate func update(sub: Subscription<SP, SR>) {
-        _ = description?.merge(sub: sub)
-        /* todo:
-        if desc.merge(desc) {
-            store?.topicUpdate(self)
+        if description?.merge(sub: sub) ?? false {
+            store?.topicUpdate(topic: self)
+        }
+        if sub.online != nil {
+            self.online = sub.online!
+        }
+    }
+    fileprivate func update(desc: Description<DP, DR>) {
+        if description?.merge(desc: desc) ?? false {
+            store?.topicUpdate(topic: self)
+        }
+        /*
+        if description?.merge(sub: sub) ?? false {
+            store?.topicUpdate(topic: self)
+        }
+        if sub.online != nil {
+            self.online = sub.online!
         }
         */
     }
     fileprivate func update(tags: [String]) {
         self.tags = tags
-        // store?.topicUpdate(self)
+        store?.topicUpdate(topic: self)
     }
     private func addSubToCache(sub: Subscription<SP, SR>) {
         if subs == nil {
@@ -390,7 +405,7 @@ class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto {
     private func processSub(newsub: Subscription<SP, SR>) {
         var sub: Subscription<SP, SR>?
         if (newsub.deleted != nil) {
-            // store?.subDelete(self, newsub)
+            store?.subDelete(topic: self, sub: newsub)
             removeSubFromCache(sub: newsub);
             
             sub = newsub;
@@ -398,11 +413,11 @@ class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto {
             sub = getSubscription(for: newsub.user)
             if sub != nil {
                 _ = sub!.merge(sub: newsub)
-                // update store: store?.subUpdate(self, sub)
+                store?.subUpdate(topic: self, sub: sub!)
             } else {
                 sub = newsub
                 addSubToCache(sub: sub!)
-                // update store: store?.subAdd(self, sub)
+                store?.subAdd(topic: self, sub: sub!)
             }
             tinode!.updateUser(sub: sub!)
         }
@@ -414,13 +429,11 @@ class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto {
         }
     }
     private func routeMetaDel(clear: Int, delseq: [MsgDelRange]) {
-        /*
         if let s = store {
-            for (MsgDelRange range : delseq) {
-                s.msgDelete(self, clear, range.low, range.hi == nil ? range.low + 1 : range.hi)
+            for range in delseq {
+                s.msgDelete(topic: self, delete: clear, deleteFrom: range.low!, deleteTo: range.hi ?? (range.low! + 1))
             }
         }
-        */
         setMaxDel(maxDel: clear)
         listener?.onData(data: nil)
     }
@@ -489,10 +502,11 @@ class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto {
         }
         return result
     }
+    @discardableResult
     func noteRecv() -> Int {
         let result = noteReadRecv(what: NoteType.kRecv)
-        //store?.setRecv(self, result)
-        return result;
+        store?.setRecv(topic: self, recv: result)
+        return result
     }
     private func setSeq(seq: Int) {
         if description!.getSeq < seq {
@@ -510,7 +524,13 @@ class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto {
         }
     }
     func routeData(data: MsgServerData) {
-        _ = noteRecv()
+        if let s = store {
+            if s.msgReceived(topic: self, sub: getSubscription(for: data.from), msg: data) > 0 {
+                noteRecv()
+            }
+        } else {
+            noteRecv()
+        }
         setSeq(seq: data.getSeq)
         listener?.onData(data: data)
     }
@@ -530,11 +550,11 @@ class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto {
                 switch info.what {
                 case Tinode.kNoteRecv:
                     sub.recv = info.seq
-                    // store?.msgRecvByRemove(sub, info.seq)
+                    store?.msgRecvByRemote(sub: sub, recv: info.seq)
                     break
                 case Tinode.kNoteRead:
                     sub.read = info.seq
-                    // store?.msgReadByRemote(sub, info.seq)
+                    store?.msgReadByRemote(sub: sub, read: info.seq)
                     break
                 default:
                     break
@@ -561,7 +581,7 @@ class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto {
                 if sub.user == tinode?.myUid {
                     if self.updateAccessMode(ac: pres.dacs) {
                         print("updating store access mode")
-                        // store?.topicUpdate(self)
+                        store?.topicUpdate(topic: self)
                     }
                 }
                 print("sub acs =\(String(describing: sub.acs))")
@@ -624,10 +644,16 @@ class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto {
         }
         let seq = ctrl.getIntParam(for: "seq")!
         setSeq(seq: seq)
-        //if id > 0
-        setRecv(recv: seq)
+        if id > 0, let s = store {
+            if s.msgDelivered(topic: self, dbMessageId: Int64(id),
+                              timestamp: ctrl.ts, seq: seq) {
+                setRecv(recv: seq)
+            }
+        } else {
+            setRecv(recv: seq)
+        }
         setRead(read: seq)
-        // store?.setRead(self, seq)
+        store?.setRead(topic: self, read: seq)
     }
     func publish(content: String?, msgId: Int) throws -> PromisedReply<ServerMessage>? {
         return try tinode!.publish(topic: name, data: content)?.then(
@@ -639,7 +665,11 @@ class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto {
             })
     }
     func publish(content: String?) throws -> PromisedReply<ServerMessage>? {
-        let id = -1
+        var id: Int = -1
+        if let s = store, let c = content {
+            // TODO: id should be Int64. Fix this!!!
+            id = Int(s.msgSend(topic: self, data: c))
+        }
         if attached {
             return try publish(content: content, msgId: id)
         } else {
