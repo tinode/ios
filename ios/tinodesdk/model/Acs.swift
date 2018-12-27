@@ -27,6 +27,9 @@ class Acs: Codable, Equatable {
         self.want = AcsHelper(str: want)
         self.mode = AcsHelper(str: mode)
     }
+    init(given: String?, want: String?, mode: String?) {
+        self.assign(given: given, want: want, mode: mode)
+    }
     init(from am: Acs?) {
         if (am != nil) {
             given = AcsHelper(ah: am!.given)
@@ -98,6 +101,17 @@ class Acs: Codable, Equatable {
             
         }
         return changed > 0
+    }
+    func serialize() -> String {
+        return [self.mode?.description ?? "",
+                self.want?.description ?? "",
+                self.given?.description ?? ""].joined(separator: ",")
+    }
+    static func deserialize(from data: String?) -> Acs? {
+        guard let parts = data?.components(separatedBy: ","), parts.count == 3 else {
+            return nil
+        }
+        return Acs(given: parts[2], want: parts[1], mode: parts[0])
     }
     static func == (lhs: Acs, rhs: Acs) -> Bool {
         return lhs.mode == rhs.mode && lhs.want == rhs.want && lhs.given == rhs.mode

@@ -7,4 +7,5 @@ target 'ios' do
 
   # Pods for ios
   pod 'SwiftWebSocket', '~> 2.7.0'
+  pod 'SQLite.swift', '~> 0.11.5'
 end

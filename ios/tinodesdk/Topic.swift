@@ -12,13 +12,21 @@ protocol Payload {
 }
 protocol TopicProto: class {
     var name: String { get }
-    var updated: Date? { get }
+    var updated: Date? { get set }
     var subsUpdated: Date? { get }
     var topicType: TopicType { get }
-    var maxDel: Int { get }
+    var maxDel: Int { get set }
     var store: Storage? { get set }
     var isPersisted: Bool { get }
+    var read: Int? { get set }
+    var recv: Int? { get set }
+    var seq: Int? { get set }
+    var clear: Int? { get set }
     var payload: Payload? { get set }
+    var tags: [String]? { get set }
+    var isNew: Bool { get }
+    var accessMode: Acs? { get set }
+    var defacs: Defacs? { get set }
     func allMessagesReceived(count: Int?)
     func routeMeta(meta: MsgServerMeta)
     func routeData(data: MsgServerData)
@@ -151,11 +159,61 @@ class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto {
         get {
             return description?.updated
         }
+        set {
+            description?.updated = newValue
+        }
     }
-    
+    var read: Int? {
+        get {
+            return description?.read
+        }
+        set {
+            if (newValue ?? -1) > (description?.read ?? -1) {
+                description?.read = newValue
+            }
+        }
+    }
+    var recv: Int? {
+        get {
+            return description?.recv
+        }
+        set {
+            if (newValue ?? -1) > (description?.recv ?? -1) {
+                description?.recv = newValue
+            }
+        }
+    }
+    var seq: Int? {
+        get {
+            return description?.seq
+        }
+        set {
+            if (newValue ?? -1) > (description?.seq ?? -1) {
+                description?.seq = newValue
+            }
+        }
+    }
+    var clear: Int? {
+        get {
+            return description?.clear
+        }
+        set {
+            if (newValue ?? -1) > (description?.clear ?? -1) {
+                description?.clear = newValue
+            }
+        }
+    }
     var subsLastUpdated: Date? = nil
     var subsUpdated: Date? {
         get { return subsLastUpdated }
+    }
+    var accessMode: Acs? {
+        get { return description?.acs }
+        set { description?.acs = newValue }
+    }
+    var defacs: Defacs? {
+        get { return description?.defacs }
+        set { description?.defacs = defacs }
     }
 
     // todo: implement
@@ -170,7 +228,7 @@ class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto {
     weak var listener: Listener? = nil
     // Cache of topic subscribers indexed by userID
     private var subs: [String:Subscription<SP,SR>]? = nil
-    private var tags: [String]? = nil
+    var tags: [String]? = nil
     // todo: implement
     // var listener: Listener? = nil
     private var lastKeyPress: Int64 = 0
@@ -182,7 +240,20 @@ class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto {
         }
     }
     private var lastSeen: LastSeen? = nil
-    var maxDel: Int = 0
+    var maxDel: Int = 0 {
+        /*
+        set {
+            if newValue > maxDel {
+                maxDel = newValue
+            }
+        }
+        */
+        didSet {
+            if maxDel < oldValue {
+                maxDel = oldValue
+            }
+        }
+    }
     
     var topicType: TopicType {
         get {
@@ -423,18 +494,21 @@ class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto {
         }
         listener?.onMetaSub(sub: sub!)
     }
+    /*
     private func setMaxDel(maxDel: Int) {
         if maxDel > self.maxDel {
             self.maxDel = maxDel
         }
     }
+    */
     private func routeMetaDel(clear: Int, delseq: [MsgDelRange]) {
         if let s = store {
             for range in delseq {
                 s.msgDelete(topic: self, delete: clear, deleteFrom: range.low!, deleteTo: range.hi ?? (range.low! + 1))
             }
         }
-        setMaxDel(maxDel: clear)
+        self.maxDel = clear
+        //setMaxDel(maxDel: clear)
         listener?.onData(data: nil)
     }
     

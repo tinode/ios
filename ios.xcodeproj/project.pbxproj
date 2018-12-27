@@ -15,6 +15,9 @@
 		0A09810C21CCB80400600013 /* StoredMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A09810B21CCB80400600013 /* StoredMessage.swift */; };
 		0A0D007821CB639000ABCCB0 /* Storage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A0D007721CB639000ABCCB0 /* Storage.swift */; };
 		0A6F260A21BE51D800B9726E /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A6F260921BE51D800B9726E /* LoginViewController.swift */; };
+		0A8A108121D4C78000B90D73 /* BaseDb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8A108021D4C78000B90D73 /* BaseDb.swift */; };
+		0A8A108321D4C78C00B90D73 /* TopicDb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8A108221D4C78C00B90D73 /* TopicDb.swift */; };
+		0A8A108521D4C79700B90D73 /* SqlStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8A108421D4C79700B90D73 /* SqlStore.swift */; };
 		0A8A8BDA21C380E80090BCBA /* Cache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8A8BD921C380E80090BCBA /* Cache.swift */; };
 		0A8F419221B4B26700E7E60D /* AuthScheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8F419121B4B26700E7E60D /* AuthScheme.swift */; };
 		0A8F419421B4B27700E7E60D /* Connection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8F419321B4B27700E7E60D /* Connection.swift */; };
@@ -48,6 +51,9 @@
 		0A09810B21CCB80400600013 /* StoredMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoredMessage.swift; sourceTree = "<group>"; };
 		0A0D007721CB639000ABCCB0 /* Storage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Storage.swift; sourceTree = "<group>"; };
 		0A6F260921BE51D800B9726E /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
+		0A8A108021D4C78000B90D73 /* BaseDb.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseDb.swift; sourceTree = "<group>"; };
+		0A8A108221D4C78C00B90D73 /* TopicDb.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopicDb.swift; sourceTree = "<group>"; };
+		0A8A108421D4C79700B90D73 /* SqlStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SqlStore.swift; sourceTree = "<group>"; };
 		0A8A8BD921C380E80090BCBA /* Cache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cache.swift; sourceTree = "<group>"; };
 		0A8F419121B4B26700E7E60D /* AuthScheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthScheme.swift; sourceTree = "<group>"; };
 		0A8F419321B4B27700E7E60D /* Connection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Connection.swift; sourceTree = "<group>"; };
@@ -105,6 +111,7 @@
 		0A0380D621B3CC8100A3FA0E /* ios */ = {
 			isa = PBXGroup;
 			children = (
+				0A8A107F21D4C77000B90D73 /* db */,
 				0AC1080F21B3D63D007C6B80 /* tinodesdk */,
 				0A09810B21CCB80400600013 /* StoredMessage.swift */,
 				0A8A8BD921C380E80090BCBA /* Cache.swift */,
@@ -126,6 +133,16 @@
 				0A0380E021B3CC8200A3FA0E /* LaunchScreen.storyboard */,
 			);
 			path = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		0A8A107F21D4C77000B90D73 /* db */ = {
+			isa = PBXGroup;
+			children = (
+				0A8A108021D4C78000B90D73 /* BaseDb.swift */,
+				0A8A108221D4C78C00B90D73 /* TopicDb.swift */,
+				0A8A108421D4C79700B90D73 /* SqlStore.swift */,
+			);
+			path = db;
 			sourceTree = "<group>";
 		};
 		0AC1080F21B3D63D007C6B80 /* tinodesdk */ = {
@@ -273,10 +290,12 @@
 			);
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-ios/Pods-ios-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/SQLite.swift/SQLite.framework",
 				"${BUILT_PRODUCTS_DIR}/SwiftWebSocket/SwiftWebSocket.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SQLite.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftWebSocket.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -320,6 +339,7 @@
 				0AC702BC21B4AD7A00B63339 /* Acs.swift in Sources */,
 				0A09810C21CCB80400600013 /* StoredMessage.swift in Sources */,
 				0AC702CA21B4AE3F00B63339 /* Subscription.swift in Sources */,
+				0A8A108121D4C78000B90D73 /* BaseDb.swift in Sources */,
 				0AC702C221B4AE0900B63339 /* Defacs.swift in Sources */,
 				0AC702CC21B4AE4700B63339 /* VCard.swift in Sources */,
 				0A0D007821CB639000ABCCB0 /* Storage.swift in Sources */,
@@ -328,8 +348,10 @@
 				0AC702C421B4AE1900B63339 /* Description.swift in Sources */,
 				0AC702C821B4AE3100B63339 /* ServerMessages.swift in Sources */,
 				0A0380D821B3CC8100A3FA0E /* AppDelegate.swift in Sources */,
+				0A8A108321D4C78C00B90D73 /* TopicDb.swift in Sources */,
 				0AC702C021B4ADFA00B63339 /* ClientMessages.swift in Sources */,
 				0A8F419A21B4B29F00E7E60D /* User.swift in Sources */,
+				0A8A108521D4C79700B90D73 /* SqlStore.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -479,10 +501,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = ios/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = co.tinode.ios;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.2;
@@ -498,10 +517,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = ios/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = co.tinode.ios;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.2;

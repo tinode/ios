@@ -61,4 +61,14 @@ class Defacs: Codable {
         }
         return changed > 0
     }
+    func serialize() -> String {
+        return [self.auth?.description ?? "",
+                self.anon?.description ?? ""].joined(separator: ",")
+    }
+    static func deserialize(from data: String?) -> Defacs? {
+        guard let parts = data?.components(separatedBy: ","), parts.count == 2 else {
+            return nil
+        }
+        return Defacs(auth: parts[0], anon: parts[1])
+    }
 }

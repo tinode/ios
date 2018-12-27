@@ -371,6 +371,15 @@ class Tinode {
         }
         return try! ComTopic<SP>(tinode: self, sub: sub as! Subscription<SP, PrivateType>)
     }
+    func newTopic(for name: String, with listener: DefaultTopic.Listener?) -> TopicProto {
+        if name == Tinode.kTopicMe {
+            return try! DefaultMeTopic(tinode: self, l: listener)
+        }
+        if name == Tinode.kTopicFnd {
+            return try! DefaultFndTopic(tinode: self)
+        }
+        return try! DefaultComTopic(tinode: self, name: name, l: listener)
+    }
     func maybeCreateTopic(meta: MsgServerMeta) -> TopicProto? {
         if meta.desc == nil {
             return nil

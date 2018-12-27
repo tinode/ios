@@ -1,12 +1,17 @@
 PODS:
+  - SQLite.swift (0.11.5):
+    - SQLite.swift/standard (= 0.11.5)
+  - SQLite.swift/standard (0.11.5)
   - SwiftWebSocket (2.7.0)
 
 DEPENDENCIES:
+  - SQLite.swift (~> 0.11.5)
   - SwiftWebSocket (~> 2.7.0)
 
 SPEC CHECKSUMS:
+  SQLite.swift: 6e5356850bb1791459f8c16d6ee9195b28714a2e
   SwiftWebSocket: 612c9729fd503cb6b0b8b45390c788686dac306f
 
-PODFILE CHECKSUM: 8ea4aa7db69e9f8d73dcb33f515d72aefabc751a
+PODFILE CHECKSUM: 5087fed3533c956f0544d990ddc2ee3501fae515
 
 COCOAPODS: 1.4.0
