@@ -27,33 +27,84 @@ class MsgClientHi : Encodable {
 
 class Credential: Encodable {
     // Confirmation method: email, phone, captcha.
-    let meth: String? = nil
+    var meth: String? = nil
     // Credential to be confirmed, e.g. email or a phone number.
-    let val: String? = nil
+    var val: String? = nil
     // Confirmation response, such as '123456'.
-    let resp: String? = nil
+    var resp: String? = nil
     // Confirmation parameters.
-    let params: [String:String]? = nil
+    var params: [String:String]? = nil
+    
+    init(meth: String, val: String) {
+        self.meth = meth
+        self.val = val
+    }
+    
+    init(meth: String?, val: String?, resp: String?, params: [String:String]?) {
+        self.meth = meth
+        self.val = val
+        self.resp = resp
+        self.params = params
+    }
+}
+
+class MsgClientAcc<Pu: Encodable,Pr: Encodable>: Encodable {
+    var id: String?
+    var user: String?
+    var scheme: String?
+    var secret: String?
+    var login: Bool?
+    var tags: [String]?
+    var cred: [Credential]?
+    var desc: MetaSetDesc<Pu,Pr>
+    
+    init(id: String?,
+         uid: String?,
+         scheme: String?,
+         secret: String?,
+         doLogin: Bool,
+         desc: MetaSetDesc<Pu,Pr>) {
+        self.id = id
+        self.user = uid == nil ? "new" : uid
+        self.scheme = scheme
+        self.login = doLogin
+        self.desc = desc
+        self.secret = secret
+    }
+    
+    func addTag(tag: String) {
+        if self.tags == nil {
+            self.tags = [String]()
+        }
+        self.tags?.append(tag)
+    }
+    
+    func addCred(cred: Credential) {
+        if self.cred == nil {
+            self.cred = [Credential]()
+        }
+        self.cred?.append(cred)
+    }
 }
 
 class MsgClientLogin: Encodable {
     let id: String?
     let scheme: String?
     let secret: String?
-    var credentials: [Credential]?
+    var cred: [Credential]?
     
     init(id: String?, scheme: String?, secret: String?, credentials: [Credential]?) {
         self.id = id
         self.scheme = scheme
         self.secret = secret
-        self.credentials = credentials
+        self.cred = credentials
     }
     
     func addCred(c: Credential) {
-        if credentials == nil {
-            credentials = []
+        if cred == nil {
+            cred = []
         }
-        credentials!.append(c)
+        cred!.append(c)
     }
 }
 
@@ -313,14 +364,19 @@ class MsgClientPub: Encodable {
 
 class ClientMessage<Pu: Encodable, Pr: Encodable> : Encodable {
     var hi: MsgClientHi?
+    var acc: MsgClientAcc<Pu,Pr>?
     var login: MsgClientLogin?
     var sub: MsgClientSub<Pu, Pr>?
     var get: MsgClientGet?
     var leave: MsgClientLeave?
     var note: MsgClientNote?
     var pub: MsgClientPub?
+    
     init(hi: MsgClientHi) {
         self.hi = hi
+    }
+    init(acc: MsgClientAcc<Pu,Pr>) {
+        self.acc = acc
     }
     init(login: MsgClientLogin) {
         self.login = login

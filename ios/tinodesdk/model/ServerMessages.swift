@@ -22,6 +22,18 @@ class MsgServerCtrl : Decodable {
         return nil
     }
     
+    func getStringArray(for key: String) -> [String]? {
+        if case .array(let  v)? = params?[key] {
+            return v.compactMap { element -> String? in
+                if case .string(let s) = element {
+                    return s
+                }
+                return nil
+            }
+        }
+        return nil
+    }
+    
     func getIntParam(for key: String) -> Int? {
         if case let .int(v)? = params?[key] {
             return v

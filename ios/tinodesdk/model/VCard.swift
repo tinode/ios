@@ -27,15 +27,20 @@ class Name: Codable {
 }
 
 class VCard: Codable {
-    let fn: String?
-    let n: Name?
-    let org: String?
-    let title: String?
+    var fn: String?
+    var n: Name?
+    var org: String?
+    var title: String?
     // List of phone numbers associated with the contact.
-    let tel: [Contact]?
+    var tel: [Contact]?
     // List of contact's email addresses.
-    let email: [Contact]?
-    let impp: [Contact]?
+    var email: [Contact]?
+    var impp: [Contact]?
     // Avatar photo.
-    let photo: Photo?
+    var photo: Photo?
+    
+    init(fn: String?, avatar: Photo?) {
+        self.fn = fn
+        self.photo = avatar
+    }
 }

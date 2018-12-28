@@ -37,6 +37,9 @@
 		0AC702CE21B4AF2A00B63339 /* Tinode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC702CD21B4AF2A00B63339 /* Tinode.swift */; };
 		0AD5552A21C625BB0027FD16 /* ChatListAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AD5552921C625BB0027FD16 /* ChatListAdapter.swift */; };
 		0AEDFBBF21B3D97C002F6AF4 /* JSONValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AEDFBBE21B3D97C002F6AF4 /* JSONValue.swift */; };
+		7DDADC5021D5C156009733B5 /* RegisterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DDADC4F21D5C156009733B5 /* RegisterViewController.swift */; };
+		7DDADC5221D5C219009733B5 /* Validate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DDADC5121D5C219009733B5 /* Validate.swift */; };
+		7DDADC5421D5C2E6009733B5 /* CredentialsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DDADC5321D5C2E6009733B5 /* CredentialsViewController.swift */; };
 		B452836F6C63636B033BDDEC /* Pods_ios.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2379D23DBDAE3571DE1C059D /* Pods_ios.framework */; };
 /* End PBXBuildFile section */
 
@@ -76,6 +79,9 @@
 		1A5E7891F060E8CAAAC2D5A3 /* Pods-ios.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ios.release.xcconfig"; path = "Pods/Target Support Files/Pods-ios/Pods-ios.release.xcconfig"; sourceTree = "<group>"; };
 		2379D23DBDAE3571DE1C059D /* Pods_ios.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ios.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6DFC67397DB12B2236DA54EC /* Pods-ios.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ios.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ios/Pods-ios.debug.xcconfig"; sourceTree = "<group>"; };
+		7DDADC4F21D5C156009733B5 /* RegisterViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegisterViewController.swift; sourceTree = "<group>"; };
+		7DDADC5121D5C219009733B5 /* Validate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Validate.swift; sourceTree = "<group>"; };
+		7DDADC5321D5C2E6009733B5 /* CredentialsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CredentialsViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -118,6 +124,9 @@
 				0AD5552921C625BB0027FD16 /* ChatListAdapter.swift */,
 				0A0380D921B3CC8100A3FA0E /* ContactsViewController.swift */,
 				0A6F260921BE51D800B9726E /* LoginViewController.swift */,
+				7DDADC4F21D5C156009733B5 /* RegisterViewController.swift */,
+				7DDADC5321D5C2E6009733B5 /* CredentialsViewController.swift */,
+				7DDADC5121D5C219009733B5 /* Validate.swift */,
 				0A0380DB21B3CC8100A3FA0E /* Main.storyboard */,
 				0A0380E921B3CCB000A3FA0E /* Supporting Files */,
 				0A0380E321B3CC8200A3FA0E /* Info.plist */,
@@ -207,7 +216,6 @@
 				0A0380D121B3CC8100A3FA0E /* Frameworks */,
 				0A0380D221B3CC8100A3FA0E /* Resources */,
 				7B25517EFC53E564F70DA1DB /* [CP] Embed Pods Frameworks */,
-				839FCB51EA6B7E81A9CDF0F7 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -303,21 +311,6 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-ios/Pods-ios-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		839FCB51EA6B7E81A9CDF0F7 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-ios/Pods-ios-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -348,6 +341,9 @@
 				0AC702C421B4AE1900B63339 /* Description.swift in Sources */,
 				0AC702C821B4AE3100B63339 /* ServerMessages.swift in Sources */,
 				0A0380D821B3CC8100A3FA0E /* AppDelegate.swift in Sources */,
+				7DDADC5021D5C156009733B5 /* RegisterViewController.swift in Sources */,
+				7DDADC5221D5C219009733B5 /* Validate.swift in Sources */,
+				7DDADC5421D5C2E6009733B5 /* CredentialsViewController.swift in Sources */,
 				0A8A108321D4C78C00B90D73 /* TopicDb.swift in Sources */,
 				0AC702C021B4ADFA00B63339 /* ClientMessages.swift in Sources */,
 				0A8F419A21B4B29F00E7E60D /* User.swift in Sources */,
@@ -501,7 +497,10 @@
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = ios/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = co.tinode.ios;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.2;
@@ -517,7 +516,10 @@
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = ios/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = co.tinode.ios;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.2;
