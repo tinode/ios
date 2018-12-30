@@ -127,7 +127,8 @@ public class TopicDb {
         
         topic.accessMode = Acs.deserialize(from: row[self.accessMode])
         topic.defacs = Defacs.deserialize(from: row[self.defacs])
-        // TODO: topic.pub, topic.priv
+        topic.deserializePub(from: row[self.pub])
+        topic.deserializePriv(from: row[self.priv])
         topic.payload = st
         /*
         
@@ -164,6 +165,7 @@ public class TopicDb {
         do {
             let tp = topic.topicType
             let tpv = tp.rawValue
+            //let pub = topic.
             let rowid = try db.run(
                 self.table!.insert(
                     //email <- "alice@mac.com"
@@ -189,8 +191,8 @@ public class TopicDb {
                     nextUnsentSeq <- TopicDb.kUnsentIdStart,
                     
                     tags <- topic.tags?.joined(separator: ","),
-                    pub <- nil,  // todo
-                    priv <- nil  // todo
+                    pub <- topic.serializePub(),  // todo
+                    priv <- topic.serializePriv()  // todo
                 ))
             print("inserted id: \(rowid)")
             return rowid
