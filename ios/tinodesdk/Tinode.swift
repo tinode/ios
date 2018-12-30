@@ -135,6 +135,11 @@ class Tinode {
         encoder.dateEncodingStrategy = .customRFC3339
         return encoder
     }()
+    static let jsonDecoder: JSONDecoder = {
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .customRFC3339
+        return decoder
+    }()
 
     init(for appname: String, authenticateWith apiKey: String,
          persistDataIn store: Storage? = nil,
@@ -229,13 +234,10 @@ class Tinode {
         }
 
         listener?.onRawMessage(msg: msg)
-        // TODO: make it a class member.
-        let jsonDecoder = JSONDecoder()
         guard let data = msg.data(using: .utf8) else {
             throw TinodeJsonError.decode
         }
-        jsonDecoder.dateDecodingStrategy = .customRFC3339
-        let serverMsg = try jsonDecoder.decode(ServerMessage.self, from: data)
+        let serverMsg = try Tinode.jsonDecoder.decode(ServerMessage.self, from: data)
         print("serverMsg = \(serverMsg)")
         
         listener?.onMessage(msg: serverMsg)
