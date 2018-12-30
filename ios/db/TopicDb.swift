@@ -194,6 +194,10 @@ public class TopicDb {
                     pub <- topic.serializePub(),  // todo
                     priv <- topic.serializePriv()  // todo
                 ))
+            if rowid > 0 {
+                let st = StoredTopic(id: rowid, lastUsed: lastUsed, minLocalSeq: nil, maxLocalSeq: nil, status: nil, nextUnsentId: TopicDb.kUnsentIdStart)
+                topic.payload = st
+            }
             print("inserted id: \(rowid)")
             return rowid
         } catch {
