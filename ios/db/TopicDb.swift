@@ -13,7 +13,7 @@ public struct StoredTopic: Payload {
     var lastUsed: Date? = nil
     var minLocalSeq: Int? = nil
     var maxLocalSeq: Int? = nil
-    var status: Int? = nil
+    var status: Int = BaseDb.kStatusUndefined
     var nextUnsentId: Int? = nil
 }
 
@@ -113,7 +113,7 @@ public class TopicDb {
         //
         var st = StoredTopic()
         st.id = row[self.id]
-        st.status = row[self.status]
+        st.status = row[self.status] ?? BaseDb.kStatusUndefined
         st.lastUsed = row[self.lastUsed]
         st.minLocalSeq = row[self.minLocalSeq]
         st.maxLocalSeq = row[self.maxLocalSeq]
@@ -197,7 +197,11 @@ public class TopicDb {
                     priv <- topic.serializePriv()
                 ))
             if rowid > 0 {
-                let st = StoredTopic(id: rowid, lastUsed: lastUsed, minLocalSeq: nil, maxLocalSeq: nil, status: nil, nextUnsentId: TopicDb.kUnsentIdStart)
+                let st = StoredTopic(
+                    id: rowid, lastUsed: lastUsed,
+                    minLocalSeq: nil, maxLocalSeq: nil,
+                    status: BaseDb.kStatusUndefined,
+                    nextUnsentId: TopicDb.kUnsentIdStart)
                 topic.payload = st
             }
             print("inserted id: \(rowid)")
@@ -216,7 +220,7 @@ public class TopicDb {
             return false
         }
         var setters = [Setter]()
-        var status = st.status!
+        var status = st.status
         if status == BaseDb.kStatusQueued && !topic.isNew {
             status = BaseDb.kStatusSynced
             setters.append(self.status <- status)
