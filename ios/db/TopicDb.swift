@@ -73,6 +73,7 @@ public class TopicDb {
         self.priv = Expression<String?>("priv")
     }
     func destroyTable() {
+        try! self.db.run(self.table!.dropIndex(accountId))
         try! self.db.run(self.table!.drop(ifExists: true))
     }
 
@@ -106,6 +107,7 @@ public class TopicDb {
             t.column(pub)
             t.column(priv)
         })
+        try! db.run(self.table!.createIndex(accountId, unique: true, ifNotExists: true))
     }
     func deserializeTopic(topic: TopicProto, row: Row) {
         //
@@ -244,5 +246,103 @@ public class TopicDb {
             print("update failed: \(error)")
         }
         return false
+    }
+    func msgReceived(topic: TopicProto, ts: Date, seq: Int) -> Bool {
+        guard var st = topic.payload as? StoredTopic, let recordId = st.id else {
+            return false
+        }
+        var setters = [Setter]()
+        var updateMaxLocalSeq = false
+        if seq > (st.maxLocalSeq ?? -1) {
+            setters.append(self.maxLocalSeq <- seq)
+            setters.append(self.recv <- seq)
+            updateMaxLocalSeq = true
+        }
+        var updateMinLocalSeq = false
+        if seq > 0 && (st.minLocalSeq == 0 || seq < (st.minLocalSeq ?? Int.max)) {
+            setters.append(self.minLocalSeq <- seq)
+            updateMinLocalSeq = true
+        }
+        if seq > (topic.seq ?? -1) {
+            setters.append(self.seq <- seq)
+        }
+        var updateLastUsed = false
+        if let lastUsed = st.lastUsed, lastUsed < ts {
+            setters.append(self.lastUsed <- ts)
+            updateLastUsed = true
+        }
+        if setters.count > 0 {
+            guard let record = self.table?.filter(self.id == recordId) else {
+                return false
+            }
+            do {
+                if try self.db.run(record.update(setters)) > 0 {
+                    if updateLastUsed { st.lastUsed = ts }
+                    if updateMinLocalSeq { st.minLocalSeq = seq }
+                    if updateMaxLocalSeq { st.maxLocalSeq = seq }
+                }
+            } catch {
+                print("msg received failed: \(error)")
+                return false
+            }
+        }
+        return true
+    }
+    func msgDeleted(topic: TopicProto, delId: Int) -> Bool {
+        guard let st = topic.payload as? StoredTopic, let recordId = st.id else {
+            return false
+        }
+        if delId > topic.maxDel {
+            guard let record = self.table?.filter(self.id == recordId) else {
+                return false
+            }
+            do {
+                return try self.db.run(record.update(self.maxDel <- delId)) > 0
+            } catch {
+                print("msgDeleted failed: \(error)")
+                return false
+            }
+        }
+        return true
+    }
+    @discardableResult
+    func delete(recordId: Int64) -> Bool {
+        guard let record = self.table?.filter(self.id == recordId) else {
+            return false
+        }
+        do {
+            return try self.db.run(record.delete()) > 0
+        } catch {
+            print("delete failed: \(error)")
+            return false
+        }
+    }
+    private func updateCounter(for topicId: Int64, in column: Expression<Int?>, with value: Int) -> Bool{
+        guard let record = self.table?.filter(self.id == topicId && column < value) else {
+            return false
+        }
+        do {
+            return try self.db.run(record.update(column <- value)) > 0
+        } catch {
+            print("updateCounter failed: \(error)")
+            return false
+        }
+    }
+    func updateRead(for topicId: Int64, with value: Int) -> Bool {
+        /*
+        guard let record = self.table?.filter(self.id == topicId && self.read < value) else {
+            return false
+        }
+        do {
+            return try self.db.run(record.update(self.read <- value)) > 0
+        } catch {
+            print("updateRead failed: \(error)")
+            return false
+        }
+        */
+        return self.updateCounter(for: topicId, in: self.read, with: value)
+    }
+    func updateRecv(for topicId: Int64, with value: Int) -> Bool {
+        return self.updateCounter(for: topicId, in: self.recv, with: value)
     }
 }

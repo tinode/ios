@@ -29,10 +29,13 @@ public class BaseDb {
     
     public static var `default` = BaseDb()
     private let kDatabaseName = "basedb.sqlite3"
-    private var db: SQLite.Connection?
+    var db: SQLite.Connection?
     private let pathToDatabase: String
     var sqlStore: SqlStore?
     var topicDb: TopicDb? = nil
+    var accountDb: AccountDb? = nil
+    var account: StoredAccount? = nil
+    var isReady: Bool { get { return self.account != nil } }
     init() {
         var documentsDirectory = (NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] as NSString) as String
         if documentsDirectory.last! != "/" {
@@ -46,21 +49,52 @@ public class BaseDb {
             print(error.localizedDescription)
         }
         assert(self.db != nil)
-        sqlStore = SqlStore(dbh: self)
+        
+        self.sqlStore = SqlStore(dbh: self)
     }
     deinit{
         self.onDestroy()
     }
     private func onCreate() {
         self.topicDb = TopicDb(self.db!)
-        self.topicDb?.createTable()
+        self.topicDb!.createTable()
+        self.accountDb = AccountDb(self.db!)
+        self.accountDb!.createTable()
+        self.account = self.accountDb!.getActiveAccount()
     }
     private func onDestroy() {
         self.topicDb?.destroyTable()
+        self.accountDb?.destroyTable()
     }
     static func getInstance() -> BaseDb {
         let instance = BaseDb.default
         instance.onCreate()
         return instance
+    }
+    func isMe(uid: String?) -> Bool {
+        guard let uid = uid, let acctUid = BaseDb.getInstance().uid else { return false }
+        return uid == acctUid
+    }
+    var uid: String? {
+        get { return self.account?.uid }
+    }
+    func setUid(uid: String?) {
+        guard let uid = uid else {
+            self.account = nil
+            return
+        }
+        do {
+            if self.account != nil {
+                try self.accountDb?.deactivateAll()
+            }
+            self.account = self.accountDb?.addOrActivateAccount(for: uid)
+        } catch {
+            print("setUid failed \(error)")
+            self.account = nil
+        }
+    }
+    func logout() {
+        _ = try? self.accountDb?.deactivateAll()
+        self.setUid(uid: nil)
     }
 }

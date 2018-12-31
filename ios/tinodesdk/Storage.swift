@@ -57,7 +57,7 @@ protocol Storage: class {
     func topicDelete(topic: TopicProto) -> Bool
 
     // Get seq IDs of the stored messages as a Range.
-    func getCachedMessagesRange(topic: TopicProto) -> Range
+    func getCachedMessagesRange(topic: TopicProto) -> Range?
     // Local user reported messages as read.
     @discardableResult
     func setRead(topic: TopicProto, read: Int) -> Bool
