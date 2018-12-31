@@ -191,8 +191,8 @@ public class TopicDb {
                     nextUnsentSeq <- TopicDb.kUnsentIdStart,
                     
                     tags <- topic.tags?.joined(separator: ","),
-                    pub <- topic.serializePub(),  // todo
-                    priv <- topic.serializePriv()  // todo
+                    pub <- topic.serializePub(),
+                    priv <- topic.serializePriv()
                 ))
             if rowid > 0 {
                 let st = StoredTopic(id: rowid, lastUsed: lastUsed, minLocalSeq: nil, maxLocalSeq: nil, status: nil, nextUnsentId: TopicDb.kUnsentIdStart)
@@ -205,5 +205,44 @@ public class TopicDb {
             return -1
         }
         
+    }
+    func update(topic: TopicProto) -> Bool {
+        guard var st = topic.payload as? StoredTopic, let recordId = st.id else {
+            return false
+        }
+        guard let record = self.table?.filter(self.id == recordId) else {
+            return false
+        }
+        var setters = [Setter]()
+        var status = st.status!
+        if status == BaseDb.kStatusQueued && !topic.isNew {
+            status = BaseDb.kStatusSynced
+            setters.append(self.status <- status)
+            setters.append(self.topic <- topic.name)
+        }
+        if let updated = topic.updated {
+            setters.append(self.updated <- updated)
+        }
+        setters.append(self.read <- topic.read)
+        setters.append(self.recv <- topic.recv)
+        setters.append(self.seq <- topic.seq)
+        setters.append(self.clear <- topic.clear)
+        setters.append(self.accessMode <- topic.accessMode?.serialize())
+        setters.append(self.defacs <- topic.defacs?.serialize())
+        setters.append(self.tags <- topic.tags?.joined(separator: ","))
+        setters.append(self.pub <- topic.serializePub())
+        setters.append(self.priv <- topic.serializePriv())
+        let lastUsed = Date()
+        setters.append(self.lastUsed <- lastUsed)
+        do {
+            if try self.db.run(record.update(setters)) > 0 {
+                st.lastUsed = lastUsed
+                st.status = status
+                return true
+            }
+        } catch {
+            print("update failed: \(error)")
+        }
+        return false
     }
 }
