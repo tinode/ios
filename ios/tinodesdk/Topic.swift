@@ -350,6 +350,7 @@ class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto {
     private func setName(name: String) {
         self.name = name
     }
+    /*
     private func serializeObject<T: Codable>(t: T) -> String? {
         guard let jsonData = try? Tinode.jsonEncoder.encode(t) else {
             return nil
@@ -358,15 +359,16 @@ class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto {
         let json = String(decoding: jsonData, as: UTF8.self)
         return [typeName, json].joined(separator: ";")
     }
+    */
     public func serializePub() -> String? {
         guard let p = pub else { return nil }
-        return serializeObject(t: p)
+        return Tinode.serializeObject(t: p)
     }
     public func serializePriv() -> String? {
         guard let p = priv else { return nil }
-        return serializeObject(t: p)
+        return Tinode.serializeObject(t: p)
     }
-
+    /*
     private func deserializeObject<T: Codable>(from data: String?) -> T? {
         guard let parts = data?.split(separator: ";", maxSplits: 1, omittingEmptySubsequences: true), parts.count == 2 else {
             return nil
@@ -376,16 +378,16 @@ class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto {
         }
         return try? Tinode.jsonDecoder.decode(T.self, from: d)
     }
-
+    */
     public func deserializePub(from data: String?) -> Bool {
-        if let p: DP = deserializeObject(from: data) {
+        if let p: DP = Tinode.deserializeObject(from: data) {
             description?.pub = p
             return true
         }
         return false
     }
     public func deserializePriv(from data: String?) -> Bool {
-        if let p: DR = deserializeObject(from: data) {
+        if let p: DR = Tinode.deserializeObject(from: data) {
             description?.priv = p
             return true
         }

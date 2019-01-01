@@ -1,8 +1,8 @@
 //
 //  SqlStore.swift
-//  msgr
+//  ios
 //
-//  Copyright © 2018 msgr. All rights reserved.
+//  Copyright © 2018 Tinode. All rights reserved.
 //
 
 import Foundation

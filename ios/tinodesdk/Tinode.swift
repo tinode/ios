@@ -683,4 +683,21 @@ class Tinode {
         }
         return r
     }
+    static func serializeObject<T: Encodable>(t: T) -> String? {
+        guard let jsonData = try? Tinode.jsonEncoder.encode(t) else {
+            return nil
+        }
+        let typeName = String(describing: T.self)
+        let json = String(decoding: jsonData, as: UTF8.self)
+        return [typeName, json].joined(separator: ";")
+    }
+    static func deserializeObject<T: Decodable>(from data: String?) -> T? {
+        guard let parts = data?.split(separator: ";", maxSplits: 1, omittingEmptySubsequences: true), parts.count == 2 else {
+            return nil
+        }
+        guard parts[0] == String(describing: T.self), let d = String(parts[1]).data(using: .utf8) else {
+            return nil
+        }
+        return try? Tinode.jsonDecoder.decode(T.self, from: d)
+    }
 }
