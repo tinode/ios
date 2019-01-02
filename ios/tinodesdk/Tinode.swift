@@ -135,6 +135,11 @@ class Tinode {
         encoder.dateEncodingStrategy = .customRFC3339
         return encoder
     }()
+    static let jsonDecoder: JSONDecoder = {
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .customRFC3339
+        return decoder
+    }()
 
     init(for appname: String, authenticateWith apiKey: String,
          persistDataIn store: Storage? = nil,
@@ -229,13 +234,10 @@ class Tinode {
         }
 
         listener?.onRawMessage(msg: msg)
-        // TODO: make it a class member.
-        let jsonDecoder = JSONDecoder()
         guard let data = msg.data(using: .utf8) else {
             throw TinodeJsonError.decode
         }
-        jsonDecoder.dateDecodingStrategy = .customRFC3339
-        let serverMsg = try jsonDecoder.decode(ServerMessage.self, from: data)
+        let serverMsg = try Tinode.jsonDecoder.decode(ServerMessage.self, from: data)
         print("serverMsg = \(serverMsg)")
         
         listener?.onMessage(msg: serverMsg)
@@ -759,5 +761,22 @@ class Tinode {
             return false
         }
         return r
+    }
+    static func serializeObject<T: Encodable>(t: T) -> String? {
+        guard let jsonData = try? Tinode.jsonEncoder.encode(t) else {
+            return nil
+        }
+        let typeName = String(describing: T.self)
+        let json = String(decoding: jsonData, as: UTF8.self)
+        return [typeName, json].joined(separator: ";")
+    }
+    static func deserializeObject<T: Decodable>(from data: String?) -> T? {
+        guard let parts = data?.split(separator: ";", maxSplits: 1, omittingEmptySubsequences: true), parts.count == 2 else {
+            return nil
+        }
+        guard parts[0] == String(describing: T.self), let d = String(parts[1]).data(using: .utf8) else {
+            return nil
+        }
+        return try? Tinode.jsonDecoder.decode(T.self, from: d)
     }
 }

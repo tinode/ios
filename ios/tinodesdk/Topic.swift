@@ -27,6 +27,14 @@ protocol TopicProto: class {
     var isNew: Bool { get }
     var accessMode: Acs? { get set }
     var defacs: Defacs? { get set }
+
+    func serializePub() -> String?
+    func serializePriv() -> String?
+    @discardableResult
+    func deserializePub(from data: String?) -> Bool
+    @discardableResult
+    func deserializePriv(from data: String?) -> Bool
+
     func allMessagesReceived(count: Int?)
     func routeMeta(meta: MsgServerMeta)
     func routeData(data: MsgServerData)
@@ -224,6 +232,9 @@ class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto {
     var pub: DP? {
         get { return description?.pub }
     }
+    var priv: DR? {
+        get { return description?.priv }
+    }
     var attached = false
     weak var listener: Listener? = nil
     // Cache of topic subscribers indexed by userID
@@ -339,7 +350,50 @@ class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto {
     private func setName(name: String) {
         self.name = name
     }
-    
+    /*
+    private func serializeObject<T: Codable>(t: T) -> String? {
+        guard let jsonData = try? Tinode.jsonEncoder.encode(t) else {
+            return nil
+        }
+        let typeName = String(describing: T.self)
+        let json = String(decoding: jsonData, as: UTF8.self)
+        return [typeName, json].joined(separator: ";")
+    }
+    */
+    public func serializePub() -> String? {
+        guard let p = pub else { return nil }
+        return Tinode.serializeObject(t: p)
+    }
+    public func serializePriv() -> String? {
+        guard let p = priv else { return nil }
+        return Tinode.serializeObject(t: p)
+    }
+    /*
+    private func deserializeObject<T: Codable>(from data: String?) -> T? {
+        guard let parts = data?.split(separator: ";", maxSplits: 1, omittingEmptySubsequences: true), parts.count == 2 else {
+            return nil
+        }
+        guard parts[0] == String(describing: T.self), let d = String(parts[1]).data(using: .utf8) else {
+            return nil
+        }
+        return try? Tinode.jsonDecoder.decode(T.self, from: d)
+    }
+    */
+    public func deserializePub(from data: String?) -> Bool {
+        if let p: DP = Tinode.deserializeObject(from: data) {
+            description?.pub = p
+            return true
+        }
+        return false
+    }
+    public func deserializePriv(from data: String?) -> Bool {
+        if let p: DR = Tinode.deserializeObject(from: data) {
+            description?.priv = p
+            return true
+        }
+        return false
+    }
+
     func getMetaGetBuilder() -> MetaGetBuilder {
         return MetaGetBuilder(parent: self)
     }

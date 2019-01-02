@@ -1,8 +1,8 @@
 //
 //  TopicDb.swift
-//  msgr
+//  ios
 //
-//  Copyright © 2018 msgr. All rights reserved.
+//  Copyright © 2018 Tinode. All rights reserved.
 //
 
 import Foundation
@@ -13,7 +13,7 @@ public struct StoredTopic: Payload {
     var lastUsed: Date? = nil
     var minLocalSeq: Int? = nil
     var maxLocalSeq: Int? = nil
-    var status: Int? = nil
+    var status: Int = BaseDb.kStatusUndefined
     var nextUnsentId: Int? = nil
 }
 
@@ -73,6 +73,7 @@ public class TopicDb {
         self.priv = Expression<String?>("priv")
     }
     func destroyTable() {
+        try! self.db.run(self.table!.dropIndex(accountId))
         try! self.db.run(self.table!.drop(ifExists: true))
     }
 
@@ -106,12 +107,13 @@ public class TopicDb {
             t.column(pub)
             t.column(priv)
         })
+        try! db.run(self.table!.createIndex(accountId, unique: true, ifNotExists: true))
     }
     func deserializeTopic(topic: TopicProto, row: Row) {
         //
         var st = StoredTopic()
         st.id = row[self.id]
-        st.status = row[self.status]
+        st.status = row[self.status] ?? BaseDb.kStatusUndefined
         st.lastUsed = row[self.lastUsed]
         st.minLocalSeq = row[self.minLocalSeq]
         st.maxLocalSeq = row[self.maxLocalSeq]
@@ -127,7 +129,8 @@ public class TopicDb {
         
         topic.accessMode = Acs.deserialize(from: row[self.accessMode])
         topic.defacs = Defacs.deserialize(from: row[self.defacs])
-        // TODO: topic.pub, topic.priv
+        topic.deserializePub(from: row[self.pub])
+        topic.deserializePriv(from: row[self.priv])
         topic.payload = st
         /*
         
@@ -164,6 +167,7 @@ public class TopicDb {
         do {
             let tp = topic.topicType
             let tpv = tp.rawValue
+            //let pub = topic.
             let rowid = try db.run(
                 self.table!.insert(
                     //email <- "alice@mac.com"
@@ -189,9 +193,17 @@ public class TopicDb {
                     nextUnsentSeq <- TopicDb.kUnsentIdStart,
                     
                     tags <- topic.tags?.joined(separator: ","),
-                    pub <- nil,  // todo
-                    priv <- nil  // todo
+                    pub <- topic.serializePub(),
+                    priv <- topic.serializePriv()
                 ))
+            if rowid > 0 {
+                let st = StoredTopic(
+                    id: rowid, lastUsed: lastUsed,
+                    minLocalSeq: nil, maxLocalSeq: nil,
+                    status: BaseDb.kStatusUndefined,
+                    nextUnsentId: TopicDb.kUnsentIdStart)
+                topic.payload = st
+            }
             print("inserted id: \(rowid)")
             return rowid
         } catch {
@@ -199,5 +211,142 @@ public class TopicDb {
             return -1
         }
         
+    }
+    func update(topic: TopicProto) -> Bool {
+        guard var st = topic.payload as? StoredTopic, let recordId = st.id else {
+            return false
+        }
+        guard let record = self.table?.filter(self.id == recordId) else {
+            return false
+        }
+        var setters = [Setter]()
+        var status = st.status
+        if status == BaseDb.kStatusQueued && !topic.isNew {
+            status = BaseDb.kStatusSynced
+            setters.append(self.status <- status)
+            setters.append(self.topic <- topic.name)
+        }
+        if let updated = topic.updated {
+            setters.append(self.updated <- updated)
+        }
+        setters.append(self.read <- topic.read)
+        setters.append(self.recv <- topic.recv)
+        setters.append(self.seq <- topic.seq)
+        setters.append(self.clear <- topic.clear)
+        setters.append(self.accessMode <- topic.accessMode?.serialize())
+        setters.append(self.defacs <- topic.defacs?.serialize())
+        setters.append(self.tags <- topic.tags?.joined(separator: ","))
+        setters.append(self.pub <- topic.serializePub())
+        setters.append(self.priv <- topic.serializePriv())
+        let lastUsed = Date()
+        setters.append(self.lastUsed <- lastUsed)
+        do {
+            if try self.db.run(record.update(setters)) > 0 {
+                st.lastUsed = lastUsed
+                st.status = status
+                return true
+            }
+        } catch {
+            print("update failed: \(error)")
+        }
+        return false
+    }
+    func msgReceived(topic: TopicProto, ts: Date, seq: Int) -> Bool {
+        guard var st = topic.payload as? StoredTopic, let recordId = st.id else {
+            return false
+        }
+        var setters = [Setter]()
+        var updateMaxLocalSeq = false
+        if seq > (st.maxLocalSeq ?? -1) {
+            setters.append(self.maxLocalSeq <- seq)
+            setters.append(self.recv <- seq)
+            updateMaxLocalSeq = true
+        }
+        var updateMinLocalSeq = false
+        if seq > 0 && (st.minLocalSeq == 0 || seq < (st.minLocalSeq ?? Int.max)) {
+            setters.append(self.minLocalSeq <- seq)
+            updateMinLocalSeq = true
+        }
+        if seq > (topic.seq ?? -1) {
+            setters.append(self.seq <- seq)
+        }
+        var updateLastUsed = false
+        if let lastUsed = st.lastUsed, lastUsed < ts {
+            setters.append(self.lastUsed <- ts)
+            updateLastUsed = true
+        }
+        if setters.count > 0 {
+            guard let record = self.table?.filter(self.id == recordId) else {
+                return false
+            }
+            do {
+                if try self.db.run(record.update(setters)) > 0 {
+                    if updateLastUsed { st.lastUsed = ts }
+                    if updateMinLocalSeq { st.minLocalSeq = seq }
+                    if updateMaxLocalSeq { st.maxLocalSeq = seq }
+                }
+            } catch {
+                print("msg received failed: \(error)")
+                return false
+            }
+        }
+        return true
+    }
+    func msgDeleted(topic: TopicProto, delId: Int) -> Bool {
+        guard let st = topic.payload as? StoredTopic, let recordId = st.id else {
+            return false
+        }
+        if delId > topic.maxDel {
+            guard let record = self.table?.filter(self.id == recordId) else {
+                return false
+            }
+            do {
+                return try self.db.run(record.update(self.maxDel <- delId)) > 0
+            } catch {
+                print("msgDeleted failed: \(error)")
+                return false
+            }
+        }
+        return true
+    }
+    @discardableResult
+    func delete(recordId: Int64) -> Bool {
+        guard let record = self.table?.filter(self.id == recordId) else {
+            return false
+        }
+        do {
+            return try self.db.run(record.delete()) > 0
+        } catch {
+            print("delete failed: \(error)")
+            return false
+        }
+    }
+    private func updateCounter(for topicId: Int64, in column: Expression<Int?>, with value: Int) -> Bool{
+        guard let record = self.table?.filter(self.id == topicId && column < value) else {
+            return false
+        }
+        do {
+            return try self.db.run(record.update(column <- value)) > 0
+        } catch {
+            print("updateCounter failed: \(error)")
+            return false
+        }
+    }
+    func updateRead(for topicId: Int64, with value: Int) -> Bool {
+        /*
+        guard let record = self.table?.filter(self.id == topicId && self.read < value) else {
+            return false
+        }
+        do {
+            return try self.db.run(record.update(self.read <- value)) > 0
+        } catch {
+            print("updateRead failed: \(error)")
+            return false
+        }
+        */
+        return self.updateCounter(for: topicId, in: self.read, with: value)
+    }
+    func updateRecv(for topicId: Int64, with value: Int) -> Bool {
+        return self.updateCounter(for: topicId, in: self.recv, with: value)
     }
 }

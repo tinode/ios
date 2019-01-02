@@ -12,13 +12,19 @@ struct LastSeen: Decodable {
     var ua: String?
 }
 
-// Dummy protocol.
 // Messages may send subscriptions with different
 // public and private types. We need to have a common type
 // to handle subscriptions with all these types.
-protocol SubscriptionProto: Decodable {}
+protocol SubscriptionProto: Decodable {
+    var user: String? { get set }
+    var updated: Date? { get set }
+    var payload: Payload? { get set }
+    func serializePub() -> String?
+    @discardableResult
+    func deserializePub(from data: String?) -> Bool
+}
 
-class Subscription<SP: Decodable, SR: Decodable>: SubscriptionProto {
+class Subscription<SP: Codable, SR: Codable>: SubscriptionProto {
     var user: String?
     var updated: Date?
     var deleted: Date?
@@ -39,6 +45,7 @@ class Subscription<SP: Decodable, SR: Decodable>: SubscriptionProto {
     var getClear: Int { get { return clear ?? 0 } }
     var pub: SP?
     var seen: LastSeen?
+    var payload: Payload? = nil
     
     private enum CodingKeys : String, CodingKey {
         case user, updated, deleted, touched,
@@ -81,5 +88,17 @@ class Subscription<SP: Decodable, SR: Decodable>: SubscriptionProto {
         }
         
         return changed > 0
+    }
+    func serializePub() -> String? {
+        guard let p = pub else { return nil }
+        return Tinode.serializeObject(t: p)
+    }
+    @discardableResult
+    func deserializePub(from data: String?) -> Bool {
+        if let p: SP = Tinode.deserializeObject(from: data) {
+            self.pub = p
+            return true
+        }
+        return false
     }
 }

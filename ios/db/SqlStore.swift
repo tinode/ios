@@ -1,14 +1,21 @@
 //
 //  SqlStore.swift
-//  msgr
+//  ios
 //
-//  Copyright © 2018 msgr. All rights reserved.
+//  Copyright © 2018 Tinode. All rights reserved.
 //
 
 import Foundation
 
 class SqlStore : Storage {
-    var myUid: String?
+    var myUid: String? {
+        get {
+            return self.dbh?.uid
+        }
+        set {
+            self.dbh?.setUid(uid: newValue)
+        }
+    }
     
     var deviceToken: String?
     var dbh: BaseDb?
@@ -18,14 +25,14 @@ class SqlStore : Storage {
     }
     
     func logout() {
-        // todo
+        self.dbh?.logout()
     }
     
     func setTimeAdjustment(adjustment: TimeInterval) {
         // todo
     }
     
-    var isReady: Bool = false
+    var isReady: Bool { get { return self.dbh?.isReady ?? false }}
     
     func topicGetAll(from tinode: Tinode?) -> [TopicProto]? {
         guard let tdb = self.dbh?.topicDb, let rows = tdb.query() else {
@@ -41,7 +48,6 @@ class SqlStore : Storage {
     }
     
     func topicAdd(topic: TopicProto) -> Int64 {
-        //StoredTopic st = (StoredTopic) topic.getLocal();
         if let st = topic.payload as? StoredTopic {
             return st.id ?? 0
         }
@@ -49,23 +55,40 @@ class SqlStore : Storage {
     }
     
     func topicUpdate(topic: TopicProto) -> Bool {
-        return false
+        return self.dbh?.topicDb?.update(topic: topic) ?? false
     }
     
     func topicDelete(topic: TopicProto) -> Bool {
-        return false
+        guard let st = topic.payload as? StoredTopic, let topicId = st.id else { return false }
+        do {
+            try dbh?.db?.transaction {
+                // TODO:
+                // self.dbh?.messageDb?.delete(st.id, from: 0, told: -1)
+                // self.dbh?.subscriberDb?.deleteForTopic(st.id)
+                self.dbh?.topicDb?.delete(recordId: topicId)
+            }
+            return true
+        } catch {
+            print("topicDelete failed: \(error)")
+            return false
+        }
     }
     
-    func getCachedMessagesRange(topic: TopicProto) -> Storage.Range {
-        return (0, 1)
+    func getCachedMessagesRange(topic: TopicProto) -> Storage.Range? {
+        guard let st = topic.payload as? StoredTopic else { return nil }
+        return (st.minLocalSeq!, st.maxLocalSeq!)
     }
     
     func setRead(topic: TopicProto, read: Int) -> Bool {
-        return false
+        guard let st = topic.payload as? StoredTopic,
+            let topicId = st.id, topicId > 0 else { return false }
+        return self.dbh?.topicDb?.updateRead(for: topicId, with: read) ?? false
     }
     
     func setRecv(topic: TopicProto, recv: Int) -> Bool {
-        return false
+        guard let st = topic.payload as? StoredTopic,
+            let topicId = st.id, topicId > 0 else { return false }
+        return self.dbh?.topicDb?.updateRecv(for: topicId, with: recv) ?? false
     }
     
     func subAdd(topic: TopicProto, sub: SubscriptionProto) -> Int64 {
