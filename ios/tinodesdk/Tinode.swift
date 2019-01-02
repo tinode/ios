@@ -412,12 +412,91 @@ class Tinode {
         }
         return topics[topicName]
     }
+    
+    /// Create account using a single basic authentication scheme. A connection must be established
+    /// prior to calling this method.
+    ///
+    /// - Parameters:
+    ///   - uname: user name
+    ///   - pwd: password
+    ///   - login: use the new account for authentication
+    ///   - tags: discovery tags
+    ///   - desc: account parameters, such as full name etc.
+    ///   - creds:  account credential, such as email or phone
+    /// - Returns: PromisedReply of the reply ctrl message
+    func createAccountBasic<Pu: Encodable,Pr: Encodable>(uname: String, pwd: String, login: Bool, tags: [String]?, desc: MetaSetDesc<Pu,Pr>, creds: [Credential]?) throws -> PromisedReply<ServerMessage> {
+        return try account(uid: nil, scheme: AuthScheme.kLoginBasic, secret: AuthScheme.encodeBasicToken(uname: uname, password: pwd), loginNow: login, tags: tags, desc: desc, creds: creds)
+    }
+    
+    /// Create new account. Connection must be established prior to calling this method.
+    ///
+    /// - Parameters:
+    ///   - uid: uid of the user to affect
+    ///   - scheme: authentication scheme to use
+    ///   - secret: authentication secret for the chosen scheme
+    ///   - loginNow: use new account to loin immediately
+    ///   - tags: tags
+    ///   - desc: default access parameters for this account
+    ///   - creds: creds
+    /// - Returns: PromisedReply of the reply ctrl message
+    func account<Pu: Encodable,Pr: Encodable>(uid: String?, scheme: String, secret: String, loginNow: Bool, tags: [String]?, desc: MetaSetDesc<Pu,Pr>, creds: [Credential]?) throws -> PromisedReply<ServerMessage> {
+        let msgId = getNextMsgId()
+        let msga = MsgClientAcc(id: msgId, uid: uid, scheme: scheme, secret: secret, doLogin: loginNow, desc: desc)
+        
+        if let creds = creds, creds.count > 0 {
+            for c in creds {
+                msga.addCred(cred: c)
+            }
+        }
+        
+        if let tags = tags, tags.count > 0 {
+            for t in tags {
+                msga.addTag(tag: t)
+            }
+        }
+        
+        let msg = ClientMessage<Pu,Pr>(acc: msga)
+        let jsonData = try! Tinode.jsonEncoder.encode(msg)
+        let jd = String(decoding: jsonData, as: UTF8.self)
+        print("account to send \(jd)")
+        connection!.send(payload: jsonData)
+        var future = PromisedReply<ServerMessage>()
+        futures[msgId] = future
+        
+        if !loginNow {
+            return future
+        }
+        
+        future = try future.then(onSuccess: { [weak self] pkt in
+            try self?.loginSuccessful(ctrl: pkt.ctrl)
+            return nil
+        }, onFailure: { [weak self] err in
+            if let e = err as? TinodeError {
+                if case TinodeError.serverResponseError(let code, let text, _) = e {
+                    if code >= 400 && code < 500 {
+                        // todo:
+                        // clear auth data.
+                    }
+                    self?.isConnectionAuthenticated = false
+                    self?.listener?.onLogin(code: code, text: text)
+                }
+            }
+            return PromisedReply<ServerMessage>(error: err)
+        })!
+        return future
+    }
+    
     func loginBasic(uname: String, password: String) throws -> PromisedReply<ServerMessage> {
         return try login(scheme: AuthScheme.kLoginBasic,
                          secret: AuthScheme.encodeBasicToken(
                             uname: uname, password: password),
                          creds: nil)
     }
+    
+    func loginToken(token: String, creds: [Credential]?) throws -> PromisedReply<ServerMessage> {
+        return try login(scheme: AuthScheme.kLoginToken, secret: token, creds: creds)
+    }
+    
     func login(scheme: String, secret: String, creds: [Credential]?) throws -> PromisedReply<ServerMessage> {
         // handle auto login
         if isConnectionAuthenticated {
