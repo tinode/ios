@@ -460,25 +460,27 @@ class Tinode {
         connection!.send(payload: jsonData)
         var future = PromisedReply<ServerMessage>()
         futures[msgId] = future
-        if loginNow {
-            future = try future.then(onSuccess: { [weak self] pkt in
-                try self?.loginSuccessful(ctrl: pkt.ctrl)
-                return nil
-                }, onFailure: { [weak self] err in
-                    if let e = err as? TinodeError {
-                        if case TinodeError.serverResponseError(let code, let text, _) = e {
-                            if code >= 400 && code < 500 {
-                                // todo:
-                                // clear auth data.
-                            }
-                            self?.isConnectionAuthenticated = false
-                            self?.listener?.onLogin(code: code, text: text)
-                        }
-                    }
-                    return PromisedReply<ServerMessage>(error: err)
-            })!
+        
+        if !loginNow {
             return future
         }
+        
+        future = try future.then(onSuccess: { [weak self] pkt in
+            try self?.loginSuccessful(ctrl: pkt.ctrl)
+            return nil
+        }, onFailure: { [weak self] err in
+            if let e = err as? TinodeError {
+                if case TinodeError.serverResponseError(let code, let text, _) = e {
+                    if code >= 400 && code < 500 {
+                        // todo:
+                        // clear auth data.
+                    }
+                    self?.isConnectionAuthenticated = false
+                    self?.listener?.onLogin(code: code, text: text)
+                }
+            }
+            return PromisedReply<ServerMessage>(error: err)
+        })!
         return future
     }
     
