@@ -104,10 +104,11 @@ extension ContactsViewController {
     override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
+    
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        let c = adapter!.topicCount()
-        return c
+        return adapter!.topicCount()
     }
+    
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         var cell = tableView.dequeueReusableCell(withIdentifier: "ChatsTableViewCell")
         
@@ -126,5 +127,21 @@ extension ContactsViewController {
         cell?.detailTextLabel?.text = "todo"//topic.online
         
         return cell!
+    }
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        // hide buttom bar , because new controller don't need show
+        hidesBottomBarWhenPushed = true
+        self.performSegue(withIdentifier: "Chat2Message", sender: indexPath)
+        hidesBottomBarWhenPushed = false
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "Chat2Message" {
+            let messageController = segue.destination as! MessageViewController
+            let indexPath = sender as! IndexPath
+            messageController.topic = adapter!.topics![indexPath.row].name
+        }
     }
 }

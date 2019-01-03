@@ -40,6 +40,7 @@
 		0AC702CE21B4AF2A00B63339 /* Tinode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC702CD21B4AF2A00B63339 /* Tinode.swift */; };
 		0AD5552A21C625BB0027FD16 /* ChatListAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AD5552921C625BB0027FD16 /* ChatListAdapter.swift */; };
 		0AEDFBBF21B3D97C002F6AF4 /* JSONValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AEDFBBE21B3D97C002F6AF4 /* JSONValue.swift */; };
+		7D32618421DDF51F00DD7AA9 /* MessageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D32618321DDF51F00DD7AA9 /* MessageViewController.swift */; };
 		7DDADC5021D5C156009733B5 /* RegisterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DDADC4F21D5C156009733B5 /* RegisterViewController.swift */; };
 		7DDADC5221D5C219009733B5 /* Validate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DDADC5121D5C219009733B5 /* Validate.swift */; };
 		7DDADC5421D5C2E6009733B5 /* CredentialsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DDADC5321D5C2E6009733B5 /* CredentialsViewController.swift */; };
@@ -85,6 +86,7 @@
 		1A5E7891F060E8CAAAC2D5A3 /* Pods-ios.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ios.release.xcconfig"; path = "Pods/Target Support Files/Pods-ios/Pods-ios.release.xcconfig"; sourceTree = "<group>"; };
 		2379D23DBDAE3571DE1C059D /* Pods_ios.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ios.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6DFC67397DB12B2236DA54EC /* Pods-ios.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ios.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ios/Pods-ios.debug.xcconfig"; sourceTree = "<group>"; };
+		7D32618321DDF51F00DD7AA9 /* MessageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageViewController.swift; sourceTree = "<group>"; };
 		7DDADC4F21D5C156009733B5 /* RegisterViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegisterViewController.swift; sourceTree = "<group>"; };
 		7DDADC5121D5C219009733B5 /* Validate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Validate.swift; sourceTree = "<group>"; };
 		7DDADC5321D5C2E6009733B5 /* CredentialsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CredentialsViewController.swift; sourceTree = "<group>"; };
@@ -129,6 +131,7 @@
 				0A8A8BD921C380E80090BCBA /* Cache.swift */,
 				0AD5552921C625BB0027FD16 /* ChatListAdapter.swift */,
 				0A0380D921B3CC8100A3FA0E /* ContactsViewController.swift */,
+				7D32618321DDF51F00DD7AA9 /* MessageViewController.swift */,
 				0A6F260921BE51D800B9726E /* LoginViewController.swift */,
 				7DDADC4F21D5C156009733B5 /* RegisterViewController.swift */,
 				7DDADC5321D5C2E6009733B5 /* CredentialsViewController.swift */,
@@ -357,6 +360,7 @@
 				7DDADC5421D5C2E6009733B5 /* CredentialsViewController.swift in Sources */,
 				0A8A108321D4C78C00B90D73 /* TopicDb.swift in Sources */,
 				0AC702C021B4ADFA00B63339 /* ClientMessages.swift in Sources */,
+				7D32618421DDF51F00DD7AA9 /* MessageViewController.swift in Sources */,
 				0A8F419A21B4B29F00E7E60D /* User.swift in Sources */,
 				0A15739421DB53130070C31F /* SubscriberDb.swift in Sources */,
 				0A8A108521D4C79700B90D73 /* SqlStore.swift in Sources */,
@@ -507,6 +511,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = B96NPPF5ST;
 				INFOPLIST_FILE = ios/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -526,6 +531,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = B96NPPF5ST;
 				INFOPLIST_FILE = ios/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = (

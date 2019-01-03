@@ -21,9 +21,8 @@ class LoginViewController: UIViewController {
     
     private func routeToChats() {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        let destinationVC = storyboard.instantiateViewController(withIdentifier: "MainNavigator") as! UINavigationController
-        
-        self.show(destinationVC, sender: nil)
+        let destinationVC = storyboard.instantiateViewController(withIdentifier: "MainTabBar") as! UITabBarController
+        self.present(destinationVC, animated: true, completion: nil)
     }
     
     @IBAction func loginClicked(_ sender: Any) {

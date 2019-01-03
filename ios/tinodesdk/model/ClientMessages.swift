@@ -275,6 +275,11 @@ class MetaSetDesc<P: Encodable, R: Encodable>: Encodable {
     init(auth: String, anon: String) {
         self.defacs = Defacs(auth: auth, anon: anon)
     }
+    
+    enum CodingKeys : String, CodingKey {
+        case pub = "public"
+        case priv = "private"
+    }
 }
 
 class MetaSetSub: Encodable {
