@@ -34,6 +34,8 @@ public class BaseDb {
     var sqlStore: SqlStore?
     var topicDb: TopicDb? = nil
     var accountDb: AccountDb? = nil
+    var subscriberDb: SubscriberDb? = nil
+    var userDb: UserDb? = nil
     var account: StoredAccount? = nil
     var isReady: Bool { get { return self.account != nil } }
     init() {
@@ -60,9 +62,15 @@ public class BaseDb {
         self.topicDb!.createTable()
         self.accountDb = AccountDb(self.db!)
         self.accountDb!.createTable()
+        self.subscriberDb = SubscriberDb(self.db!)
+        self.subscriberDb!.createTable()
+        self.userDb = UserDb(self.db!)
+        self.userDb!.createTable()
         self.account = self.accountDb!.getActiveAccount()
     }
     private func onDestroy() {
+        self.userDb?.destroyTable()
+        self.subscriberDb?.destroyTable()
         self.topicDb?.destroyTable()
         self.accountDb?.destroyTable()
     }

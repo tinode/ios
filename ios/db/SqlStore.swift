@@ -1,6 +1,6 @@
 //
 //  SqlStore.swift
-//  ios
+//  msgr
 //
 //  Copyright © 2018 Tinode. All rights reserved.
 //
@@ -92,35 +92,50 @@ class SqlStore : Storage {
     }
     
     func subAdd(topic: TopicProto, sub: SubscriptionProto) -> Int64 {
-        return 0
+        guard let st = topic.payload as? StoredTopic, let topicId = st.id else {
+            return 0
+        }
+        return self.dbh?.subscriberDb?.insert(for: topicId, with: BaseDb.kStatusSynced, using: sub) ?? 0
     }
     
     func subUpdate(topic: TopicProto, sub: SubscriptionProto) -> Bool {
-        return false
+        guard let ss = sub.payload as? StoredSubscription, let subId = ss.id, subId > 0 else {
+            return false
+        }
+        return self.dbh?.subscriberDb?.update(using: sub) ?? false
     }
     
     func subNew(topic: TopicProto, sub: SubscriptionProto) -> Int64 {
-        return 0
+        guard let st = topic.payload as? StoredTopic, let topicId = st.id else {
+            return 0
+        }
+        return self.dbh?.subscriberDb?.insert(for: topicId, with: BaseDb.kStatusQueued, using: sub) ?? 0
     }
     
     func subDelete(topic: TopicProto, sub: SubscriptionProto) -> Bool {
-        return false
+        guard let ss = sub.payload as? StoredSubscription, let subId = ss.id, subId > 0 else {
+            return false
+        }
+        return self.dbh?.subscriberDb?.delete(recordId: subId) ?? false
     }
     
     func getSubscriptions(topic: TopicProto) -> [SubscriptionProto]? {
-        return nil
+        guard let st = topic.payload as? StoredTopic, let topicId = st.id else {
+            return nil
+        }
+        return self.dbh?.subscriberDb?.readAll(topicId: topicId)
     }
     
     func userGet(uid: String) -> UserProto? {
-        return nil
+        return self.dbh?.userDb?.readOne(uid: uid)
     }
     
     func userAdd(user: UserProto) -> Int64 {
-        return 0
+        return self.dbh?.userDb?.insert(user: user) ?? 0
     }
     
     func userUpdate(user: UserProto) -> Bool {
-        return false
+        return self.dbh?.userDb?.update(user: user) ?? false
     }
     
     func msgReceived(topic: TopicProto, sub: SubscriptionProto?, msg: MsgServerData?) -> Int64 {

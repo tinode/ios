@@ -173,7 +173,7 @@ class Tinode {
         }
         return topicsLoaded
     }
-    func updateUser<DP: Decodable, DR: Decodable>(uid: String, desc: Description<DP, DR>) {
+    func updateUser<DP: Codable, DR: Codable>(uid: String, desc: Description<DP, DR>) {
         if let user = users[uid] {
             
             print("found user \(user)")
@@ -185,7 +185,7 @@ class Tinode {
         }
         // store?.userUpdate(user)
     }
-    func updateUser<DP: Decodable, DR: Decodable>(sub: Subscription<DP, DR>) {
+    func updateUser<DP: Codable, DR: Codable>(sub: Subscription<DP, DR>) {
         let uid = sub.user!
         if let user = users[uid] {
             _ = (user as? User<DP>)?.merge(from: sub)

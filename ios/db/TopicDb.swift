@@ -22,30 +22,30 @@ public class TopicDb {
     private static let kUnsentIdStart = 2000000000
     private let db: SQLite.Connection
     
-    private var table: Table? = nil
+    public var table: Table? = nil
 
-    private let id: Expression<Int64>
-    private let accountId: Expression<Int64?>
-    private let status: Expression<Int?>
-    private let topic: Expression<String?>
-    private let type: Expression<Int?>
-    private let visible: Expression<Int64?>
-    private let created: Expression<Date?>
-    private let updated: Expression<Date?>
-    private let read: Expression<Int?>
-    private let recv: Expression<Int?>
-    private let seq: Expression<Int?>
-    private let clear: Expression<Int?>
-    private let maxDel: Expression<Int?>
-    private let accessMode: Expression<String?>
-    private let defacs: Expression<String?>
-    private let lastUsed: Expression<Date?>
-    private let minLocalSeq: Expression<Int?>
-    private let maxLocalSeq: Expression<Int?>
-    private let nextUnsentSeq: Expression<Int?>
-    private let tags: Expression<String?>
-    private let pub: Expression<String?>
-    private let priv: Expression<String?>
+    public let id: Expression<Int64>
+    public let accountId: Expression<Int64?>
+    public let status: Expression<Int?>
+    public let topic: Expression<String?>
+    public let type: Expression<Int?>
+    public let visible: Expression<Int64?>
+    public let created: Expression<Date?>
+    public let updated: Expression<Date?>
+    public let read: Expression<Int?>
+    public let recv: Expression<Int?>
+    public let seq: Expression<Int?>
+    public let clear: Expression<Int?>
+    public let maxDel: Expression<Int?>
+    public let accessMode: Expression<String?>
+    public let defacs: Expression<String?>
+    public let lastUsed: Expression<Date?>
+    public let minLocalSeq: Expression<Int?>
+    public let maxLocalSeq: Expression<Int?>
+    public let nextUnsentSeq: Expression<Int?>
+    public let tags: Expression<String?>
+    public let pub: Expression<String?>
+    public let priv: Expression<String?>
     
     init(_ database: SQLite.Connection) {
         self.db = database

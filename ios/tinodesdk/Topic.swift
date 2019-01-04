@@ -68,7 +68,6 @@ class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto {
         
         func onSubscribe(code: Int, text: String) {}
         func onLeave(unsub: Bool?, code: Int?, text: String?) {}
-        
 
         // Process {data} message.
         func onData(data: MsgServerData?) {}
