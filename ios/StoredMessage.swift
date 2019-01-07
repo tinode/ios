@@ -12,9 +12,9 @@ class StoredMessage : MsgServerData, Message {
     
     var seqId: Int { return seq ?? 0 }
 
-    //public long id;
-    //public long topicId;
-    //public long userId;
+    //var id: Int64? = nil
+    var topicId: Int64? = nil
+    var userId: Int64? = nil
     public var status: Int? = nil
 
     // Get current message payload.

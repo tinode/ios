@@ -7,6 +7,10 @@
 
 import Foundation
 
+enum SqlStoreError: Error {
+    case dbError(String)
+}
+
 class SqlStore : Storage {
     var myUid: String? {
         get {
@@ -19,6 +23,7 @@ class SqlStore : Storage {
     
     var deviceToken: String?
     var dbh: BaseDb?
+    var myId: Int64 = -1
     
     init(dbh: BaseDb) {
         self.dbh = dbh
@@ -29,9 +34,9 @@ class SqlStore : Storage {
     }
     
     func setTimeAdjustment(adjustment: TimeInterval) {
-        // todo
+        self.timeAdjustment = adjustment
     }
-    
+    var timeAdjustment: TimeInterval = TimeInterval(0)
     var isReady: Bool { get { return self.dbh?.isReady ?? false }}
     
     func topicGetAll(from tinode: Tinode?) -> [TopicProto]? {
@@ -64,7 +69,7 @@ class SqlStore : Storage {
             try dbh?.db?.transaction {
                 // TODO:
                 // self.dbh?.messageDb?.delete(st.id, from: 0, told: -1)
-                // self.dbh?.subscriberDb?.deleteForTopic(st.id)
+                self.dbh?.subscriberDb?.deleteForTopic(topicId: topicId)
                 self.dbh?.topicDb?.delete(recordId: topicId)
             }
             return true
@@ -139,31 +144,94 @@ class SqlStore : Storage {
     }
     
     func msgReceived(topic: TopicProto, sub: SubscriptionProto?, msg: MsgServerData?) -> Int64 {
-        return 0
+        guard let msg = msg else { return -1 }
+        var topicId: Int64 = -1
+        var userId: Int64 = -1
+        if let ss = sub?.payload as? StoredSubscription {
+            topicId = ss.topicId ?? -1
+            userId = ss.userId ?? -1
+        } else {
+            print("message from unknown subscriber \(String(describing: msg.from))")
+            let st = topic.payload as! StoredTopic
+            topicId = st.id ?? -1
+            userId = self.dbh?.userDb?.getId(for: msg.from) ?? -1
+        }
+        guard topicId >= 0 && userId >= 0 else {
+            print("Failed to save message, topicId=\(topicId), userId=\(userId)")
+            return -1
+        }
+        let sm = StoredMessage(from: msg)
+        sm.topicId = topicId
+        sm.userId = userId
+        do {
+            try dbh?.db?.transaction {
+                sm.msgId = self.dbh?.messageDb?.insert(topic: topic, msg: sm) ?? -1
+                if sm.msgId <= 0 || !(self.dbh?.topicDb?.msgReceived(topic: topic, ts: sm.ts ?? Date(), seq: sm.seqId) ?? false) {
+                    throw SqlStoreError.dbError("Could not handle received message: msgId = \(sm.msgId), topicId = \(topicId), userId = \(userId)")
+                }
+            }
+            return sm.msgId
+        } catch {
+            print("Failed to save message: \(error)")
+            return -1
+        }
+    }
+    private func insertMessage(topic: TopicProto, data: Drafty, initialStatus: Int) -> Int64 {
+        let msg = StoredMessage()
+        msg.topic = topic.name
+        msg.from = myUid
+        msg.ts = Date() + timeAdjustment
+        msg.seq = 0
+        msg.status = initialStatus
+        msg.content = data
+        msg.topicId = (topic.payload as? StoredTopic)?.id ?? -1
+        if myId < 0 {
+            myId = self.dbh?.userDb?.getId(for: msg.from) ?? -1
+        }
+        msg.userId = myId
+        return self.dbh?.messageDb?.insert(topic: topic, msg: msg) ?? -1
     }
     
     func msgSend(topic: TopicProto, data: Drafty) -> Int64 {
-        return 0
+        return self.insertMessage(topic: topic, data: data, initialStatus: BaseDb.kStatusUndefined)
     }
     
     func msgDraft(topic: TopicProto, data: Drafty) -> Int64 {
-        return 0
+        return self.insertMessage(topic: topic, data: data, initialStatus: BaseDb.kStatusDraft)
     }
     
     func msgDraftUpdate(topic: TopicProto, dbMessageId: Int64, data: Drafty) -> Bool {
-        return false
+        return self.dbh?.messageDb?.updateStatusAndContent(
+            msgId: dbMessageId,
+            status: BaseDb.kStatusUndefined,
+            content: data) ?? false
     }
     
     func msgReady(topic: TopicProto, dbMessageId: Int64, data: Drafty) -> Bool {
-        return false
+        return self.dbh?.messageDb?.updateStatusAndContent(
+            msgId: dbMessageId,
+            status: BaseDb.kStatusQueued,
+            content: data) ?? false
     }
     
     func msgDiscard(topic: TopicProto, dbMessageId: Int64) -> Bool {
-        return false
+        return self.dbh?.messageDb?.delete(msgId: dbMessageId) ?? false
     }
     
     func msgDelivered(topic: TopicProto, dbMessageId: Int64, timestamp: Date, seq: Int) -> Bool {
-        return false
+        do {
+            try dbh?.db?.transaction {
+                let messageDbSuccessful = self.dbh?.messageDb?.delivered(msgId: dbMessageId, ts: timestamp, seq: seq) ?? false
+                let topicDbSuccessful = self.dbh?.topicDb?.msgReceived(topic: topic, ts: timestamp, seq: seq) ?? false
+                if !(messageDbSuccessful && topicDbSuccessful) {
+                    throw SqlStoreError.dbError("messageDb = \(messageDbSuccessful), topicDb = \(topicDbSuccessful)")
+                }
+            }
+            return true
+        } catch {
+            print("Failed to handle received message: \(error)")
+            return false
+        }
     }
     
     func msgMarkToDelete(topic: TopicProto, from idLo: Int, to idHi: Int, markAsHard: Bool) -> Bool {

@@ -151,6 +151,34 @@ public class TopicDb {
         topic.setLocal(st);
         */
     }
+    func getId(topic: String?) -> Int64 {
+        guard let topic = topic else {
+            return -1
+        }
+        //let t = self.table?.select(self.id)
+        if let row = try? db.pluck(self.table!.select(self.id).filter(self.accountId
+            == BaseDb.getInstance().account?.id && self.topic == topic)), let r = row?[self.id] {
+            return r
+        }
+        return -1
+    }
+    func getNextUnusedSeq(topic: TopicProto) -> Int {
+        guard var st = topic.payload as? StoredTopic, let recordId = st.id else { return -1}
+        guard let record = self.table?.filter(self.id == recordId) else {
+            return -1
+        }
+        st.nextUnsentId = (st.nextUnsentId ?? 0) + 1
+        var setters = [Setter]()
+        setters.append(self.nextUnsentSeq <- st.nextUnsentId)
+        do {
+            if try self.db.run(record.update(setters)) > 0 {
+                return st.nextUnsentId!
+            }
+        } catch {
+            print("getNextUnusedSeq failed: \(error)")
+        }
+        return -1
+    }
     func query() -> AnySequence<Row>? {
         return try? self.db.prepare(self.table!)
     }

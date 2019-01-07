@@ -17,6 +17,7 @@
 		0A15739421DB53130070C31F /* SubscriberDb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A15739321DB53130070C31F /* SubscriberDb.swift */; };
 		0A15739621DB531E0070C31F /* UserDb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A15739521DB531E0070C31F /* UserDb.swift */; };
 		0A37D6F521DA075100A124CA /* AccountDb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A37D6F421DA075100A124CA /* AccountDb.swift */; };
+		0A484E5121E359A800FE9AFE /* MessageDb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A484E5021E359A800FE9AFE /* MessageDb.swift */; };
 		0A6F260A21BE51D800B9726E /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A6F260921BE51D800B9726E /* LoginViewController.swift */; };
 		0A8A108121D4C78000B90D73 /* BaseDb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8A108021D4C78000B90D73 /* BaseDb.swift */; };
 		0A8A108321D4C78C00B90D73 /* TopicDb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8A108221D4C78C00B90D73 /* TopicDb.swift */; };
@@ -59,6 +60,7 @@
 		0A15739321DB53130070C31F /* SubscriberDb.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriberDb.swift; sourceTree = "<group>"; };
 		0A15739521DB531E0070C31F /* UserDb.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDb.swift; sourceTree = "<group>"; };
 		0A37D6F421DA075100A124CA /* AccountDb.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountDb.swift; sourceTree = "<group>"; };
+		0A484E5021E359A800FE9AFE /* MessageDb.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageDb.swift; sourceTree = "<group>"; };
 		0A6F260921BE51D800B9726E /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		0A8A108021D4C78000B90D73 /* BaseDb.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseDb.swift; sourceTree = "<group>"; };
 		0A8A108221D4C78C00B90D73 /* TopicDb.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopicDb.swift; sourceTree = "<group>"; };
@@ -157,6 +159,7 @@
 				0A8A108221D4C78C00B90D73 /* TopicDb.swift */,
 				0A8A108421D4C79700B90D73 /* SqlStore.swift */,
 				0A37D6F421DA075100A124CA /* AccountDb.swift */,
+				0A484E5021E359A800FE9AFE /* MessageDb.swift */,
 				0A15739321DB53130070C31F /* SubscriberDb.swift */,
 				0A15739521DB531E0070C31F /* UserDb.swift */,
 			);
@@ -352,6 +355,7 @@
 				0A37D6F521DA075100A124CA /* AccountDb.swift in Sources */,
 				0AC702C821B4AE3100B63339 /* ServerMessages.swift in Sources */,
 				0A0380D821B3CC8100A3FA0E /* AppDelegate.swift in Sources */,
+				0A484E5121E359A800FE9AFE /* MessageDb.swift in Sources */,
 				7DDADC5021D5C156009733B5 /* RegisterViewController.swift in Sources */,
 				7DDADC5221D5C219009733B5 /* Validate.swift in Sources */,
 				7DDADC5421D5C2E6009733B5 /* CredentialsViewController.swift in Sources */,

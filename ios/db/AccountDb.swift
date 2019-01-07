@@ -21,12 +21,12 @@ public class AccountDb {
     private static let kTableName = "accounts"
     private let db: SQLite.Connection
     
-    private var table: Table? = nil
+    public var table: Table? = nil
     
-    private let id: Expression<Int64>
-    private let uid: Expression<String?>
-    private let active: Expression<Int?>
-    private let deviceId: Expression<String?>
+    public let id: Expression<Int64>
+    public let uid: Expression<String?>
+    public let active: Expression<Int?>
+    public let deviceId: Expression<String?>
     
     init(_ database: SQLite.Connection) {
         self.db = database

@@ -36,6 +36,7 @@ public class BaseDb {
     var accountDb: AccountDb? = nil
     var subscriberDb: SubscriberDb? = nil
     var userDb: UserDb? = nil
+    var messageDb: MessageDb? = nil
     var account: StoredAccount? = nil
     var isReady: Bool { get { return self.account != nil } }
     init() {
@@ -66,9 +67,12 @@ public class BaseDb {
         self.subscriberDb!.createTable()
         self.userDb = UserDb(self.db!)
         self.userDb!.createTable()
+        self.messageDb = MessageDb(self.db!)
+        self.messageDb!.createTable()
         self.account = self.accountDb!.getActiveAccount()
     }
     private func onDestroy() {
+        self.messageDb?.destroyTable()
         self.userDb?.destroyTable()
         self.subscriberDb?.destroyTable()
         self.topicDb?.destroyTable()
