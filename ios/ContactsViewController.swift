@@ -101,6 +101,12 @@ class ContactsViewController: UITableViewController {
 }
 
 extension ContactsViewController {
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "Chats2Messages", let indexPath = tableView.indexPathForSelectedRow {
+            let messageController = segue.destination as! MessageViewController
+            messageController.topicName = adapter!.topics![indexPath.row].name
+        }
+    }
     override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
