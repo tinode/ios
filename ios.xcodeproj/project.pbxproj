@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0A0016E721E7236900088188 /* MessageInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A0016E621E7236900088188 /* MessageInteractor.swift */; };
+		0A0016E921E736CD00088188 /* MessagePresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A0016E821E736CD00088188 /* MessagePresenter.swift */; };
 		0A0380D821B3CC8100A3FA0E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A0380D721B3CC8100A3FA0E /* AppDelegate.swift */; };
 		0A0380DA21B3CC8100A3FA0E /* ContactsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A0380D921B3CC8100A3FA0E /* ContactsViewController.swift */; };
 		0A0380DD21B3CC8100A3FA0E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0A0380DB21B3CC8100A3FA0E /* Main.storyboard */; };
@@ -49,6 +51,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0A0016E621E7236900088188 /* MessageInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageInteractor.swift; sourceTree = "<group>"; };
+		0A0016E821E736CD00088188 /* MessagePresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagePresenter.swift; sourceTree = "<group>"; };
 		0A0380D421B3CC8100A3FA0E /* ios.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ios.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0A0380D721B3CC8100A3FA0E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		0A0380D921B3CC8100A3FA0E /* ContactsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsViewController.swift; sourceTree = "<group>"; };
@@ -137,6 +141,8 @@
 				7DDADC4F21D5C156009733B5 /* RegisterViewController.swift */,
 				7DDADC5321D5C2E6009733B5 /* CredentialsViewController.swift */,
 				0A8C8A4521E5E72D00D8751E /* MessageViewController.swift */,
+				0A0016E621E7236900088188 /* MessageInteractor.swift */,
+				0A0016E821E736CD00088188 /* MessagePresenter.swift */,
 				7DDADC5121D5C219009733B5 /* Validate.swift */,
 				0A0380DB21B3CC8100A3FA0E /* Main.storyboard */,
 				0A0380E921B3CCB000A3FA0E /* Supporting Files */,
@@ -343,6 +349,7 @@
 				0AEDFBBF21B3D97C002F6AF4 /* JSONValue.swift in Sources */,
 				0AC702C621B4AE2700B63339 /* Drafty.swift in Sources */,
 				0AC1081121B3D6F8007C6B80 /* RFC3339Format.swift in Sources */,
+				0A0016E721E7236900088188 /* MessageInteractor.swift in Sources */,
 				0A8F419221B4B26700E7E60D /* AuthScheme.swift in Sources */,
 				0A6F260A21BE51D800B9726E /* LoginViewController.swift in Sources */,
 				0AC702BC21B4AD7A00B63339 /* Acs.swift in Sources */,
@@ -363,6 +370,7 @@
 				7DDADC5221D5C219009733B5 /* Validate.swift in Sources */,
 				7DDADC5421D5C2E6009733B5 /* CredentialsViewController.swift in Sources */,
 				0A8A108321D4C78C00B90D73 /* TopicDb.swift in Sources */,
+				0A0016E921E736CD00088188 /* MessagePresenter.swift in Sources */,
 				0AC702C021B4ADFA00B63339 /* ClientMessages.swift in Sources */,
 				0A8F419A21B4B29F00E7E60D /* User.swift in Sources */,
 				0A15739421DB53130070C31F /* SubscriberDb.swift in Sources */,
