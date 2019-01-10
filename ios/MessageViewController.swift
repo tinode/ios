@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 
 protocol MessageDisplayLogic: class {
-    func displayChatMessages()
+    func displayChatMessages(messages: [StoredMessage])
 }
 
 class MessageViewController: UIViewController, MessageDisplayLogic {
@@ -51,7 +51,8 @@ class MessageViewController: UIViewController, MessageDisplayLogic {
 }
 
 extension MessageViewController {
-    func displayChatMessages() {
+    func displayChatMessages(messages: [StoredMessage]) {
         // todo
+        print("messages count = \(messages.count)")
     }
 }

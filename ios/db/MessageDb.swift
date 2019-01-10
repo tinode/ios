@@ -150,4 +150,31 @@ class MessageDb {
             return false
         }
     }
+    private func readOne(r: Row) -> StoredMessage {
+        let sm = StoredMessage()
+        sm.msgId = r[self.id]
+        sm.topicId = r[self.topicId]
+        sm.userId = r[self.userId]
+        sm.status = r[self.status]
+        sm.from = r[self.sender]
+        sm.ts = r[self.ts]
+        sm.seq = r[self.seq]
+        sm.content = r[self.content]
+        return sm
+    }
+    func query(topicId: Int64?, pageCount: Int, pageSize: Int) -> [StoredMessage]? {
+        let queryTable = self.table!.filter(self.topicId
+            == topicId && self.status < BaseDb.kStatusVisible).order(self.ts.desc).limit(pageCount * pageSize)
+        do {
+            var messages = [StoredMessage]()
+            for row in try db.prepare(queryTable) {
+                let sm = self.readOne(r: row)
+                messages.append(sm)
+            }
+            return messages
+        } catch {
+            print("failed to read messages \(error)")
+            return nil
+        }
+    }
 }

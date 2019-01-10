@@ -30,9 +30,10 @@ protocol MessageDataStore {
     var topicName: String? { get set }
     var topic: DefaultComTopic? { get set }
     func setup(topicName: String?) -> Bool
+    func loadMessages()
 }
 
-class MessageInteractor: MessageBusinessLogic, MessageDataStore {
+class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, MessageDataStore {
     /*
     
     var contact: Contact?
@@ -40,15 +41,21 @@ class MessageInteractor: MessageBusinessLogic, MessageDataStore {
     var currentUser: PCCurrentUser?
     var presenter: ChatroomPresentationLogic?
     */
+    static let kMessagesToLoad = 20
+    var pagesToLoad: Int = 0
+    var topicId: Int64?
     var topicName: String?
     var topic: DefaultComTopic?
     var presenter: MessagePresentationLogic?
+    var messages: [StoredMessage] = []
     
     func setup(topicName: String?) -> Bool {
         guard let topicName = topicName else { return false }
         self.topicName = topicName
+        self.topicId = BaseDb.getInstance().topicDb?.getId(topic: topicName)
         let tinode = Cache.getTinode()
         self.topic = tinode.getTopic(topicName: topicName) as? DefaultComTopic
+        self.pagesToLoad = 1
         return self.topic != nil
     }
     func attachToTopic() -> Bool {
@@ -90,5 +97,21 @@ class MessageInteractor: MessageBusinessLogic, MessageDataStore {
                 print("Error leaving topic \(error)")
             }
         }
+    }
+    func loadMessages() {
+        DispatchQueue.global(qos: .userInteractive).async {
+            if let messages = BaseDb.getInstance().messageDb?.query(
+                topicId: self.topicId,
+                pageCount: self.pagesToLoad,
+                pageSize: MessageInteractor.kMessagesToLoad) {
+                DispatchQueue.main.async {
+                    self.messages = messages
+                    self.presenter?.presentMessages(messages: messages)
+                }
+            }
+        }
+    }
+    override func onData(data: MsgServerData?) {
+        self.loadMessages()
     }
 }

@@ -8,12 +8,12 @@
 import Foundation
 
 protocol MessagePresentationLogic {
-    func presentMessages()
+    func presentMessages(messages: [StoredMessage])
 }
 
 class MessagePresenter: MessagePresentationLogic {
     weak var viewController: MessageDisplayLogic?
-    func presentMessages() {
-        self.viewController?.displayChatMessages()
+    func presentMessages(messages: [StoredMessage]) {
+        self.viewController?.displayChatMessages(messages: messages)
     }
 }
