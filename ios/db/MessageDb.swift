@@ -66,7 +66,7 @@ class MessageDb {
         }
         
         do {
-            try db.transaction {
+            try db.savepoint("MessageDb.insert") {
                 guard let tdb = BaseDb.getInstance().topicDb else {
                     throw MessageDbError.dbError("no topicDb in messageDb insert")
                 }

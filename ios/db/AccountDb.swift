@@ -65,7 +65,7 @@ public class AccountDb {
     func addOrActivateAccount(for uid: String) -> StoredAccount? {
         var result: StoredAccount? = nil
         do {
-            try db.transaction {
+            try db.savepoint("AccountDb.addOrActivateAccount") {
                 try self.deactivateAll()
                 result = StoredAccount(id: self.getByUid(uid: uid), uid: uid)
                 if result!.id >= 0 {

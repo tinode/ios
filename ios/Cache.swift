@@ -23,12 +23,10 @@ class Cache {
     private func getTinode() -> Tinode {
         if tinode == nil {
             let appName = "Tinode-iOS/" + UIDevice.current.systemVersion
-            // TODO: uncomment when the transaction issue is resolved.
-            // let dbh = BaseDb.getInstance()
+            let dbh = BaseDb.getInstance()
             tinode = Tinode(for: appName,
                             authenticateWith: Cache.kApiKey,
-                            persistDataIn: nil)
-                            //persistDataIn: dbh.sqlStore)
+                            persistDataIn: dbh.sqlStore)
             tinode!.deviceId = UIDevice.current.identifierForVendor!.uuidString
         }
         return tinode!

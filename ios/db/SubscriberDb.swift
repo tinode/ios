@@ -82,7 +82,7 @@ class SubscriberDb {
     func insert(for topicId: Int64, with status: Int, using sub: SubscriptionProto) -> Int64 {
         var rowId: Int64 = -1
         do {
-            try self.db.transaction {
+            try self.db.savepoint("SubscriberDb.insert") {
                 let ss = StoredSubscription()
                 ss.userId = BaseDb.getInstance().userDb?.getId(for: sub.user)
                 if (ss.userId ?? -1) <= 0 {
@@ -127,7 +127,7 @@ class SubscriberDb {
         }
         var updated = 0
         do {
-            try self.db.transaction {
+            try self.db.savepoint("SubscriberDb.update") {
                 var status = ss.status!
                 _ = BaseDb.getInstance().userDb?.update(sub: sub)
                 var setters = [Setter]()

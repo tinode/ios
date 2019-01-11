@@ -66,7 +66,7 @@ class SqlStore : Storage {
     func topicDelete(topic: TopicProto) -> Bool {
         guard let st = topic.payload as? StoredTopic, let topicId = st.id else { return false }
         do {
-            try dbh?.db?.transaction {
+            try dbh?.db?.savepoint("SqlStore.topicDelete") {
                 // TODO:
                 // self.dbh?.messageDb?.delete(st.id, from: 0, told: -1)
                 self.dbh?.subscriberDb?.deleteForTopic(topicId: topicId)
@@ -164,7 +164,7 @@ class SqlStore : Storage {
         sm.topicId = topicId
         sm.userId = userId
         do {
-            try dbh?.db?.transaction {
+            try dbh?.db?.savepoint("SqlStore.msgReceived") {
                 sm.msgId = self.dbh?.messageDb?.insert(topic: topic, msg: sm) ?? -1
                 if sm.msgId <= 0 || !(self.dbh?.topicDb?.msgReceived(topic: topic, ts: sm.ts ?? Date(), seq: sm.seqId) ?? false) {
                     throw SqlStoreError.dbError("Could not handle received message: msgId = \(sm.msgId), topicId = \(topicId), userId = \(userId)")
@@ -220,7 +220,7 @@ class SqlStore : Storage {
     
     func msgDelivered(topic: TopicProto, dbMessageId: Int64, timestamp: Date, seq: Int) -> Bool {
         do {
-            try dbh?.db?.transaction {
+            try dbh?.db?.savepoint("SqlStore.msgDelivered") {
                 let messageDbSuccessful = self.dbh?.messageDb?.delivered(msgId: dbMessageId, ts: timestamp, seq: seq) ?? false
                 let topicDbSuccessful = self.dbh?.topicDb?.msgReceived(topic: topic, ts: timestamp, seq: seq) ?? false
                 if !(messageDbSuccessful && topicDbSuccessful) {
