@@ -59,6 +59,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         return self.topic != nil
     }
     func attachToTopic() -> Bool {
+        self.topic?.listener = self
         do {
             try self.topic?.subscribe(
                 set: nil,

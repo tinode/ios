@@ -27,7 +27,7 @@ public class BaseDb {
     public static let kStatusRejected = 6
 
     
-    public static var `default` = BaseDb()
+    public static var `default`: BaseDb? = nil
     private let kDatabaseName = "basedb.sqlite3"
     var db: SQLite.Connection?
     private let pathToDatabase: String
@@ -79,7 +79,11 @@ public class BaseDb {
         self.accountDb?.destroyTable()
     }
     static func getInstance() -> BaseDb {
-        let instance = BaseDb.default
+        if let instance = BaseDb.default {
+            return instance
+        }
+        let instance = BaseDb()
+        BaseDb.default = instance
         instance.onCreate()
         return instance
     }

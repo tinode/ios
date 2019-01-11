@@ -163,8 +163,12 @@ class MessageDb {
         return sm
     }
     func query(topicId: Int64?, pageCount: Int, pageSize: Int) -> [StoredMessage]? {
-        let queryTable = self.table!.filter(self.topicId
-            == topicId && self.status < BaseDb.kStatusVisible).order(self.ts.desc).limit(pageCount * pageSize)
+        let queryTable = self.table!
+            .filter(
+                self.topicId == topicId &&
+                self.status <= BaseDb.kStatusVisible)
+            .order(self.ts.desc)
+            .limit(pageCount * pageSize)
         do {
             var messages = [StoredMessage]()
             for row in try db.prepare(queryTable) {

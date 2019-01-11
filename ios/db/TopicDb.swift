@@ -73,7 +73,7 @@ public class TopicDb {
         self.priv = Expression<String?>("priv")
     }
     func destroyTable() {
-        try! self.db.run(self.table!.dropIndex(accountId))
+        try! self.db.run(self.table!.dropIndex(accountId, topic))
         try! self.db.run(self.table!.drop(ifExists: true))
     }
 
@@ -107,7 +107,7 @@ public class TopicDb {
             t.column(pub)
             t.column(priv)
         })
-        try! db.run(self.table!.createIndex(accountId, unique: true, ifNotExists: true))
+        try! db.run(self.table!.createIndex(accountId, topic, unique: true, ifNotExists: true))
     }
     func deserializeTopic(topic: TopicProto, row: Row) {
         //
@@ -195,11 +195,12 @@ public class TopicDb {
         do {
             let tp = topic.topicType
             let tpv = tp.rawValue
+            let accountId = BaseDb.getInstance().account!.id
             //let pub = topic.
             let rowid = try db.run(
                 self.table!.insert(
                     //email <- "alice@mac.com"
-                    //accountId <- ,
+                    self.accountId <- accountId,
                     status <- topic.isNew ? BaseDb.kStatusQueued : BaseDb.kStatusSynced,
                     self.topic <- topic.name,
                     type <- tpv,
