@@ -59,23 +59,23 @@ public class BaseDb {
         self.onDestroy()
     }
     private func onCreate() {
-        self.topicDb = TopicDb(self.db!)
-        self.topicDb!.createTable()
         self.accountDb = AccountDb(self.db!)
         self.accountDb!.createTable()
-        self.subscriberDb = SubscriberDb(self.db!)
-        self.subscriberDb!.createTable()
         self.userDb = UserDb(self.db!)
         self.userDb!.createTable()
+        self.topicDb = TopicDb(self.db!)
+        self.topicDb!.createTable()
+        self.subscriberDb = SubscriberDb(self.db!)
+        self.subscriberDb!.createTable()
         self.messageDb = MessageDb(self.db!)
         self.messageDb!.createTable()
         self.account = self.accountDb!.getActiveAccount()
     }
     private func onDestroy() {
         self.messageDb?.destroyTable()
-        self.userDb?.destroyTable()
         self.subscriberDb?.destroyTable()
         self.topicDb?.destroyTable()
+        self.userDb?.destroyTable()
         self.accountDb?.destroyTable()
     }
     static func getInstance() -> BaseDb {

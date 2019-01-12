@@ -40,21 +40,25 @@ class MessageDb {
         self.content = Expression<String?>("content")
     }
     func destroyTable() {
+        try! self.db.run(self.table!.dropIndex(topicId, ts))
         try! self.db.run(self.table!.drop(ifExists: true))
     }
     func createTable() {
+        let userDb = BaseDb.getInstance().userDb!
+        let topicDb = BaseDb.getInstance().topicDb!
         self.table = Table(MessageDb.kTableName)
         // Must succeed.
         try! self.db.run(self.table!.create(ifNotExists: true) { t in
             t.column(id, primaryKey: .autoincrement)
-            t.column(topicId)
-            t.column(userId)
+            t.column(topicId, references: topicDb.table!, topicDb.id)
+            t.column(userId, references: userDb.table!, userDb.id)
             t.column(status)
             t.column(sender)
             t.column(ts)
             t.column(seq)
             t.column(content)
         })
+        try! self.db.run(self.table!.createIndex(topicId, ts, ifNotExists: true))
     }
     func insert(topic: TopicProto?, msg: StoredMessage?) -> Int64 {
         guard let topic = topic, let msg = msg else {

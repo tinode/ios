@@ -35,20 +35,21 @@ class UserDb {
         self.pub = Expression<String?>("pub")
     }
     func destroyTable() {
-        //try! self.db.run(self.table!.dropIndex(topicId))
+        try! self.db.run(self.table!.dropIndex(accountId, uid))
         try! self.db.run(self.table!.drop(ifExists: true))
     }
     func createTable() {
+        let accountDb = BaseDb.getInstance().accountDb!
         self.table = Table(UserDb.kTableName)
         // Must succeed.
         try! self.db.run(self.table!.create(ifNotExists: true) { t in
             t.column(id, primaryKey: .autoincrement)
-            t.column(accountId)
+            t.column(accountId, references: accountDb.table!, accountDb.id)
             t.column(uid)
             t.column(updated)
             t.column(pub)
         })
-        //try! self.db.run(self.table!.createIndex(topicId, ifNotExists: true))
+        try! self.db.run(self.table!.createIndex(accountId, uid, ifNotExists: true))
     }
     func insert(user: UserProto?) -> Int64 {
         guard let user = user else { return 0 }

@@ -81,7 +81,7 @@ class SqlStore : Storage {
     
     func getCachedMessagesRange(topic: TopicProto) -> Storage.Range? {
         guard let st = topic.payload as? StoredTopic else { return nil }
-        return (st.minLocalSeq!, st.maxLocalSeq!)
+        return (st.minLocalSeq ?? 0, st.maxLocalSeq ?? 0)
     }
     
     func setRead(topic: TopicProto, read: Int) -> Bool {

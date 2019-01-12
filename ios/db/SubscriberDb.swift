@@ -60,12 +60,14 @@ class SubscriberDb {
         try! self.db.run(self.table!.drop(ifExists: true))
     }
     func createTable() {
+        let userDb = BaseDb.getInstance().userDb!
+        let topicDb = BaseDb.getInstance().topicDb!
         self.table = Table(SubscriberDb.kTableName)
         // Must succeed.
         try! self.db.run(self.table!.create(ifNotExists: true) { t in
             t.column(id, primaryKey: .autoincrement)
-            t.column(topicId)
-            t.column(userId)
+            t.column(topicId, references: topicDb.table!, topicDb.id)
+            t.column(userId, references: userDb.table!, userDb.id)
             t.column(status)
             t.column(mode)
             t.column(updated)

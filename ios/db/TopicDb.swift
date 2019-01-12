@@ -8,7 +8,7 @@
 import Foundation
 import SQLite
 
-public struct StoredTopic: Payload {
+public class StoredTopic: Payload {
     var id: Int64? = nil
     var lastUsed: Date? = nil
     var minLocalSeq: Int? = nil
@@ -78,11 +78,12 @@ public class TopicDb {
     }
 
     func createTable() {
+        let accountDb = BaseDb.getInstance().accountDb!
         self.table = Table(TopicDb.kTableName)
         // Must succeed.
         try! self.db.run(self.table!.create(ifNotExists: true) { t in
             t.column(id, primaryKey: .autoincrement)
-            t.column(accountId)
+            t.column(accountId, references: accountDb.table!, accountDb.id)
             t.column(status)
             t.column(topic)
             t.column(type)
@@ -226,11 +227,19 @@ public class TopicDb {
                     priv <- topic.serializePriv()
                 ))
             if rowid > 0 {
-                let st = StoredTopic(
+                let st = StoredTopic()
+                st.id = rowid
+                st.lastUsed = lastUsed
+                st.minLocalSeq = nil
+                st.maxLocalSeq = nil
+                st.status = BaseDb.kStatusUndefined
+                st.nextUnsentId = TopicDb.kUnsentIdStart
+                /*
                     id: rowid, lastUsed: lastUsed,
                     minLocalSeq: nil, maxLocalSeq: nil,
                     status: BaseDb.kStatusUndefined,
                     nextUnsentId: TopicDb.kUnsentIdStart)
+                */
                 topic.payload = st
             }
             print("inserted id: \(rowid)")
@@ -281,7 +290,7 @@ public class TopicDb {
         return false
     }
     func msgReceived(topic: TopicProto, ts: Date, seq: Int) -> Bool {
-        guard var st = topic.payload as? StoredTopic, let recordId = st.id else {
+        guard let st = topic.payload as? StoredTopic, let recordId = st.id else {
             return false
         }
         var setters = [Setter]()

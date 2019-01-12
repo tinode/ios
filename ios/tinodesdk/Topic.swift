@@ -7,7 +7,7 @@
 
 import Foundation
 
-protocol Payload {
+protocol Payload: class {
     
 }
 protocol TopicProto: class {
@@ -27,6 +27,7 @@ protocol TopicProto: class {
     var isNew: Bool { get }
     var accessMode: Acs? { get set }
     var defacs: Defacs? { get set }
+    var cachedMessageRange: Storage.Range? { get }
 
     func serializePub() -> String?
     func serializePriv() -> String?
@@ -108,8 +109,10 @@ class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto {
             return self
         }
         func withGetLaterData(limit: Int?) -> MetaGetBuilder {
-            // todo: get cached messages
-            return withGetData(since: nil, before: nil, limit: limit);
+            if let r = topic.cachedMessageRange {
+                return withGetData(since: r.max > 0 ? r.max + 1 : nil, before: nil, limit: limit)
+            }
+            return withGetData(since: nil, before: nil, limit: limit)
         }
         func withGetData() -> MetaGetBuilder {
             return withGetLaterData(limit: nil)
@@ -222,9 +225,6 @@ class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto {
         get { return description?.defacs }
         set { description?.defacs = defacs }
     }
-
-    // todo: implement
-    // var store: Storage? = nil;
     
     // The bulk of topic data
     private var description: Description<DP, DR>? = nil
@@ -239,8 +239,6 @@ class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto {
     // Cache of topic subscribers indexed by userID
     private var subs: [String:Subscription<SP,SR>]? = nil
     var tags: [String]? = nil
-    // todo: implement
-    // var listener: Listener? = nil
     private var lastKeyPress: Int64 = 0
     private var online: Bool = false {
         didSet {
@@ -251,13 +249,6 @@ class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto {
     }
     private var lastSeen: LastSeen? = nil
     var maxDel: Int = 0 {
-        /*
-        set {
-            if newValue > maxDel {
-                maxDel = newValue
-            }
-        }
-        */
         didSet {
             if maxDel < oldValue {
                 maxDel = oldValue
@@ -276,9 +267,14 @@ class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto {
         }
     }
     // Storage is owned by Tinode.
-    var store: Storage? = nil
+    weak var store: Storage? = nil
     var payload: Payload? = nil
     var isPersisted: Bool { get { return payload != nil } }
+    var cachedMessageRange: Storage.Range? {
+        get {
+            return store?.getCachedMessagesRange(topic: self)
+        }
+    }
     
     init() {}
 
