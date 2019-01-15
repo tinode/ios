@@ -8,4 +8,6 @@ target 'ios' do
   # Pods for ios
   pod 'SwiftWebSocket', '~> 2.7.0'
   pod 'SQLite.swift', '~> 0.11.5'
+  pod 'MessageKit', '~> 2.0.0'
+  pod 'MessageInputBar', '~> 0.4.1'
 end

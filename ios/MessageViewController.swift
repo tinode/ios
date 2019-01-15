@@ -7,13 +7,16 @@
 
 import Foundation
 import UIKit
+import MessageKit
+import MessageInputBar
 
 protocol MessageDisplayLogic: class {
     func displayChatMessages(messages: [StoredMessage])
 }
 
-class MessageViewController: UIViewController, MessageDisplayLogic {
+class MessageViewController: MessageKit.MessagesViewController, MessageDisplayLogic {
     public var topicName: String?
+    var messages: [MessageType] = []
     private var interactor: MessageBusinessLogic?
 
     init() {
@@ -33,6 +36,10 @@ class MessageViewController: UIViewController, MessageDisplayLogic {
         presenter.viewController = self
 
         self.interactor = interactor
+        
+        messagesCollectionView.messagesDataSource = self
+        messagesCollectionView.messagesLayoutDelegate = self
+        messagesCollectionView.messagesDisplayDelegate = self
     }
     
     override func viewDidLoad() {
@@ -50,9 +57,43 @@ class MessageViewController: UIViewController, MessageDisplayLogic {
     }
 }
 
-extension MessageViewController {
-    func displayChatMessages(messages: [StoredMessage]) {
-        // todo
-        print("messages count = \(messages.count)")
+extension StoredMessage: MessageType {
+    var sender: Sender {
+        get {
+            return Sender(
+                id: self.from ?? "?",
+                displayName: "dn-" + (self.from ?? "?"))
+        }
+    }
+    var messageId: String {
+        get { return self.id ?? "?" }
+    }
+    var sentDate: Date {
+        get { return self.ts ?? Date() }
+    }
+    var kind: MessageKind {
+        get { return .text(self.content ?? "") }
     }
 }
+
+extension MessageViewController {
+    
+    func displayChatMessages(messages: [StoredMessage]) {
+        self.messages = messages
+        self.messagesCollectionView.reloadData()
+    }
+}
+
+extension MessageViewController: MessagesDataSource {
+    func currentSender() -> Sender {
+        return Sender(id: Cache.getTinode().myUid ?? "???", displayName: "??")
+    }
+    func numberOfSections(in messagesCollectionView: MessagesCollectionView) -> Int {
+        return messages.count
+    }
+    func messageForItem(at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> MessageType {
+        return messages[indexPath.section]
+    }
+}
+
+extension MessageViewController: MessagesDisplayDelegate, MessagesLayoutDelegate {}

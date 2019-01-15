@@ -1,22 +1,33 @@
 PODS:
+  - MessageInputBar (0.4.1):
+    - MessageInputBar/Core (= 0.4.1)
+  - MessageInputBar/Core (0.4.1)
+  - MessageKit (2.0.0):
+    - MessageInputBar/Core
   - SQLite.swift (0.11.5):
     - SQLite.swift/standard (= 0.11.5)
   - SQLite.swift/standard (0.11.5)
   - SwiftWebSocket (2.7.0)
 
 DEPENDENCIES:
+  - MessageInputBar (~> 0.4.1)
+  - MessageKit (~> 2.0.0)
   - SQLite.swift (~> 0.11.5)
   - SwiftWebSocket (~> 2.7.0)
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
+    - MessageInputBar
+    - MessageKit
     - SQLite.swift
     - SwiftWebSocket
 
 SPEC CHECKSUMS:
+  MessageInputBar: e81c7535347f1f7b923de7080409a535a004b6e4
+  MessageKit: 29c1c87e5a396d2ca7a3f712e5171dc9aba42a1e
   SQLite.swift: 6e5356850bb1791459f8c16d6ee9195b28714a2e
   SwiftWebSocket: 612c9729fd503cb6b0b8b45390c788686dac306f
 
-PODFILE CHECKSUM: 5087fed3533c956f0544d990ddc2ee3501fae515
+PODFILE CHECKSUM: bd2138ab59d5ca1587e2479d492acde3abe2aa67
 
-COCOAPODS: 1.5.2
+COCOAPODS: 1.5.3
