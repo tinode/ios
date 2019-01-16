@@ -20,6 +20,8 @@ protocol MessageBusinessLogic {
     @discardableResult
     func attachToTopic() -> Bool
     func cleanup()
+
+    func sendMessage(content: Drafty) -> Bool
 }
 
 protocol MessageDataStore {
@@ -86,6 +88,28 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
             print("Error subscribing to topic \(error)")
         }
         return false
+    }
+    func sendMessage(content: Drafty) -> Bool {
+        guard let topic = self.topic else { return false }
+        do {
+            _ = try topic.publish(content: content)?.then(
+                onSuccess: { [weak self] msg in
+                    self?.loadMessages()
+                    return nil
+                }, onFailure: { err in
+                    // todo: display a UI toast.
+                    return nil
+                })
+            loadMessages()
+        } catch TinodeError.notConnected(let errMsg) {
+            print("sendMessage -- not connected \(errMsg)")
+            return false
+        } catch {
+            print("sendMessage failed \(error)")
+            // todo: display a UI toast.
+            return false
+        }
+        return true
     }
     func cleanup() {
         // set listeners to nil

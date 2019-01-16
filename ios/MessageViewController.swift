@@ -17,7 +17,7 @@ protocol MessageDisplayLogic: class {
 class MessageViewController: MessageKit.MessagesViewController, MessageDisplayLogic {
     public var topicName: String?
     var messages: [MessageType] = []
-    private var interactor: MessageBusinessLogic?
+    private var interactor: (MessageBusinessLogic & MessageDataStore)?
 
     init() {
         super.init(nibName: nil, bundle: nil)
@@ -40,6 +40,7 @@ class MessageViewController: MessageKit.MessagesViewController, MessageDisplayLo
         messagesCollectionView.messagesDataSource = self
         messagesCollectionView.messagesLayoutDelegate = self
         messagesCollectionView.messagesDisplayDelegate = self
+        messageInputBar.delegate = self
     }
     
     override func viewDidLoad() {
@@ -51,6 +52,7 @@ class MessageViewController: MessageKit.MessagesViewController, MessageDisplayLo
     }
     override func viewDidAppear(_ animated: Bool) {
         self.interactor?.attachToTopic()
+        self.interactor?.loadMessages()
     }
     override func viewDidDisappear(_ animated: Bool) {
         self.interactor?.cleanup()
@@ -97,3 +99,19 @@ extension MessageViewController: MessagesDataSource {
 }
 
 extension MessageViewController: MessagesDisplayDelegate, MessagesLayoutDelegate {}
+
+extension MessageViewController: MessageInputBarDelegate {
+    func messageInputBar(_ inputBar: MessageInputBar, didPressSendButtonWith text: String) {
+        interactor?.sendMessage(content: text)
+        messageInputBar.inputTextView.text.removeAll()
+        messageInputBar.invalidatePlugins()
+    }
+
+    func messageInputBar(_ inputBar: MessageInputBar, textViewTextDidChangeTo text: String) {
+        // Use to send a typing indicator
+    }
+
+    func messageInputBar(_ inputBar: MessageInputBar, didChangeIntrinsicContentTo size: CGSize) {
+        // Use to change any other subview insets
+    }
+}
