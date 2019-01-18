@@ -762,6 +762,34 @@ class Tinode {
         }
         return r
     }
+    private func sendDeleteMessage(msg: ClientMessage<Int, Int>) -> PromisedReply<ServerMessage>? {
+        guard let msgId = msg.del?.id else { return nil }
+        let reply = PromisedReply<ServerMessage>()
+        futures[msgId] = reply
+        do {
+            let jsonData = try Tinode.jsonEncoder.encode(msg)
+            let jd = String(decoding: jsonData, as: UTF8.self)
+            print("del request request: \(jd)")
+            connection!.send(payload: jsonData)
+        } catch {
+            futures.removeValue(forKey: msgId)
+            return nil
+        }
+        return reply
+    }
+    func delMessage(topicName: String?, fromId: Int, toId: Int, hard: Bool) -> PromisedReply<ServerMessage>? {
+        return sendDeleteMessage(
+            msg: ClientMessage<Int, Int>(
+                del: MsgClientDel(id: getNextMsgId(),
+                                  topic: topicName,
+                                  from: fromId, to: toId, hard: hard)))
+    }
+    func delMessage(topicName: String?, list: [Int]?, hard: Bool) -> PromisedReply<ServerMessage>? {
+        return sendDeleteMessage(
+            msg: ClientMessage<Int, Int>(
+                del: MsgClientDel(id: getNextMsgId(),
+                                  topic: topicName, list: list, hard: hard)))
+    }
     static func serializeObject<T: Encodable>(t: T) -> String? {
         guard let jsonData = try? Tinode.jsonEncoder.encode(t) else {
             return nil

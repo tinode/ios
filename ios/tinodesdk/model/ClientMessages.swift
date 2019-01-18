@@ -362,6 +362,38 @@ class MsgClientPub: Encodable {
     }
 }
 
+class MsgClientDel: Encodable {
+    static let kStrTopic = "topic"
+    static let kStrMsg = "msg"
+    static let kStrSub = "sub"
+    let id: String?
+    let topic: String?
+    let what: String?
+    let delseq: [MsgDelRange]?
+    let user: String?
+    let hard: Bool?
+    init(id: String?, topic: String?, what: String?, ranges: [MsgDelRange]?, user: String?, hard: Bool?) {
+        self.id = id
+        self.topic = topic
+        self.what = what
+        // nil value will cause the field to be skipped
+        // during serialization instead of sending 0/null/[].
+        self.delseq = what == MsgClientDel.kStrMsg ? ranges : nil
+        self.user = what == MsgClientDel.kStrSub ? user : nil
+        self.hard = (hard ?? false) ? true : nil
+    }
+    convenience init(id: String?, topic: String?, list: [Int]?, hard: Bool?) {
+        self.init(id: id, topic: topic, what: MsgClientDel.kStrMsg,
+                  ranges: MsgDelRange.listToRanges(list: list),
+                  user: nil, hard: hard)
+    }
+    convenience init(id: String?, topic: String?, from: Int, to: Int, hard: Bool?) {
+        self.init(id: id, topic: topic, what: MsgClientDel.kStrMsg,
+                  ranges: [MsgDelRange(low: from, hi: to)],
+                  user: nil, hard: hard)
+    }
+}
+
 class ClientMessage<Pu: Encodable, Pr: Encodable> : Encodable {
     var hi: MsgClientHi?
     var acc: MsgClientAcc<Pu,Pr>?
@@ -371,6 +403,7 @@ class ClientMessage<Pu: Encodable, Pr: Encodable> : Encodable {
     var leave: MsgClientLeave?
     var note: MsgClientNote?
     var pub: MsgClientPub?
+    var del: MsgClientDel?
     
     init(hi: MsgClientHi) {
         self.hi = hi
@@ -395,5 +428,8 @@ class ClientMessage<Pu: Encodable, Pr: Encodable> : Encodable {
     }
     init(pub: MsgClientPub) {
         self.pub = pub
+    }
+    init(del: MsgClientDel) {
+        self.del = del
     }
 }

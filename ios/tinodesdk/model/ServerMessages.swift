@@ -69,6 +69,25 @@ class MsgDelRange: Codable {
         self.low = low
         self.hi = hi
     }
+
+    static func listToRanges(list: [Int]?) -> [MsgDelRange]? {
+        guard var list = list else { return nil }
+        list.sort()
+        var res = [MsgDelRange]()
+        var first = list[0]
+        var last = first
+        for i in 1..<list.count {
+            let cur = list[i]
+            if cur == last { continue }
+            if cur > last + 1 {
+                res.append(MsgDelRange(low: first, hi: last + 1))
+                first = cur
+            }
+            last = cur
+        }
+        res.append(MsgDelRange(low: first, hi: last + 1))
+        return res
+    }
 }
 
 class DelValues: Decodable {
