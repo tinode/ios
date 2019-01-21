@@ -265,4 +265,10 @@ class SqlStore : Storage {
     func getQueuedMessages(topic: TopicProto) -> MessageIterator? {
         return nil
     }
+
+    func getQueuedMessageDeletes(topic: TopicProto, hard: Bool) -> [Int]? {
+        guard let st = topic.payload as? StoredTopic else { return nil }
+        guard let id = st.id, id > 0 else { return nil }
+        return BaseDb.getInstance().messageDb?.queryDeleted(topicId: id, hard: hard)
+    }
 }

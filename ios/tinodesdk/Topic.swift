@@ -761,14 +761,14 @@ class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto {
         throw TinodeError.notConnected("Leaving topic when Tinode is not connected.")
     }
     
-    private func processDelivery(ctrl: MsgServerCtrl?, id: Int) {
+    private func processDelivery(ctrl: MsgServerCtrl?, id: Int64) {
         guard let ctrl = ctrl else {
             return
         }
         let seq = ctrl.getIntParam(for: "seq")!
         setSeq(seq: seq)
         if id > 0, let s = store {
-            if s.msgDelivered(topic: self, dbMessageId: Int64(id),
+            if s.msgDelivered(topic: self, dbMessageId: id,
                               timestamp: ctrl.ts, seq: seq) {
                 setRecv(recv: seq)
             }
@@ -778,7 +778,7 @@ class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto {
         setRead(read: seq)
         store?.setRead(topic: self, read: seq)
     }
-    func publish(content: String?, msgId: Int) throws -> PromisedReply<ServerMessage>? {
+    func publish(content: String?, msgId: Int64) throws -> PromisedReply<ServerMessage>? {
         return try tinode!.publish(topic: name, data: content)?.then(
             onSuccess: { [weak self] msg in
                 self?.processDelivery(ctrl: msg.ctrl, id: msgId)
@@ -788,10 +788,9 @@ class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto {
             })
     }
     func publish(content: String?) throws -> PromisedReply<ServerMessage>? {
-        var id: Int = -1
+        var id: Int64 = -1
         if let s = store, let c = content {
-            // TODO: id should be Int64. Fix this!!!
-            id = Int(s.msgSend(topic: self, data: c))
+            id = s.msgSend(topic: self, data: c)
         }
         if attached {
             return try publish(content: content, msgId: id)
@@ -802,6 +801,45 @@ class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto {
                 },
                 onFailure: nil)
         }
+    }
+    private func sendPendingDeletes(hard: Bool) throws -> PromisedReply<ServerMessage>? {
+        if let pendingDeletes = self.store?.getQueuedMessageDeletes(topic: self, hard: hard), !pendingDeletes.isEmpty {
+            return try self.tinode?.delMessage(
+                topicName: self.name, list: pendingDeletes, hard: hard)?.then(
+                    onSuccess: { [weak self] msg in
+                        if let id = msg.ctrl?.getIntParam(for: "del"), let s = self {
+                            _ = s.store?.msgDelete(
+                                topic: s, delete: id, deleteAll: pendingDeletes)
+                        }
+                        return nil
+                    }, onFailure: nil)
+        }
+        return nil
+    }
+    func syncAll() throws -> PromisedReply<ServerMessage>? {
+        // Soft deletes.
+        var result = try self.sendPendingDeletes(hard: false)
+        // Hard deletes.
+        if let r = try self.sendPendingDeletes(hard: true) {
+            result = r
+        }
+        // Pending messages.
+        guard let pendingMsgs = self.store?.getQueuedMessages(topic: self) else {
+            return result
+        }
+        while let msg = pendingMsgs.next() {
+            let msgId = msg.msgId
+            result = try self.tinode?.publish(
+                topic: self.name, data: msg.content)?.then(
+                    onSuccess: { [weak self] msg in
+                        if let ctrl = msg.ctrl {
+                            self?.processDelivery(ctrl: ctrl, id: msgId)
+                        }
+                        return nil
+                    },
+                    onFailure: nil)
+        }
+        return result
     }
 }
 

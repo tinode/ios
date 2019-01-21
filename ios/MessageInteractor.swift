@@ -71,9 +71,9 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                     .withGetData()
                     .withGetDel()
                     .build()).then(
-                    onSuccess: { msg in
+                    onSuccess: { [weak self] msg in
                         print("subscribed to topic")
-                        //topic.syncAll()
+                        _ = try? self?.topic?.syncAll()
                         return nil
                 },
                     onFailure: { err in

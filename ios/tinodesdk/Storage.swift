@@ -158,6 +158,11 @@ protocol Storage: class {
     // Retrieves a single message by database id.
     func getMessageById(topic: TopicProto, dbMessageId: Int64) -> Message?
 
-    // Gets a list of unsent messages.
+    // Returns a list of unsent messages.
     func getQueuedMessages(topic: TopicProto) -> MessageIterator?
+
+    // Returns a list of pending delete message seq ids.
+    // topic: topic where the messages were deleted.
+    // hard: when true, fetch hard-deleted messages, soft-deleted otherwise.
+    func getQueuedMessageDeletes(topic: TopicProto, hard: Bool) -> [Int]?
 }

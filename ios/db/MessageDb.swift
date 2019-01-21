@@ -185,4 +185,26 @@ class MessageDb {
             return nil
         }
     }
+    func queryDeleted(topicId: Int64?, hard: Bool) -> [Int]? {
+        guard let topicId = topicId else { return nil }
+        let status = hard ? BaseDb.kStatusDeletedHard : BaseDb.kStatusDeletedSoft
+        let queryTable = self.table!
+            .filter(
+                self.topicId == topicId &&
+                self.status == status)
+            .select(self.seq)
+            .order(self.ts)
+        do {
+            var seqIds = [Int]()
+            for row in try db.prepare(queryTable) {
+                if let sm = row[self.seq] {
+                    seqIds.append(sm)
+                }
+            }
+            return seqIds
+        } catch {
+            print("Topic: \(topicId) failed to read deleted messages \(error)")
+            return nil
+        }
+    }
 }

@@ -72,6 +72,7 @@ class MsgDelRange: Codable {
 
     static func listToRanges(list: [Int]?) -> [MsgDelRange]? {
         guard var list = list else { return nil }
+        guard list.count > 0 else { return [] }
         list.sort()
         var res = [MsgDelRange]()
         var first = list[0]
