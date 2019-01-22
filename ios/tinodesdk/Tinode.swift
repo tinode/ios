@@ -735,7 +735,7 @@ class Tinode {
         do {
             let jsonData = try Tinode.jsonEncoder.encode(msg)
             let jd = String(decoding: jsonData, as: UTF8.self)
-            print("leave request: \(jd)")
+            print("publish request: \(jd)")
             connection!.send(payload: jsonData)
         } catch {
             futures.removeValue(forKey: msgId)

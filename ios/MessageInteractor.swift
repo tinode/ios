@@ -50,6 +50,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
     var topic: DefaultComTopic?
     var presenter: MessagePresentationLogic?
     var messages: [StoredMessage] = []
+    private var messageSenderQueue = DispatchQueue(label: "co.tinode.messagesender")
     
     func setup(topicName: String?) -> Bool {
         guard let topicName = topicName else { return false }
@@ -73,7 +74,9 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                     .build()).then(
                     onSuccess: { [weak self] msg in
                         print("subscribed to topic")
-                        _ = try? self?.topic?.syncAll()
+                        self?.messageSenderQueue.async {
+                            _ = try? self?.topic?.syncAll()
+                        }
                         return nil
                 },
                     onFailure: { err in
