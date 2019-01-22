@@ -19,6 +19,13 @@ class MessageViewController: MessageKit.MessagesViewController, MessageDisplayLo
     var messages: [MessageType] = []
     private var interactor: (MessageBusinessLogic & MessageDataStore)?
 
+    let formatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        formatter.timeStyle = .medium
+        return formatter
+    }()
+
     init() {
         super.init(nibName: nil, bundle: nil)
         self.setup()
@@ -41,6 +48,10 @@ class MessageViewController: MessageKit.MessagesViewController, MessageDisplayLo
         messagesCollectionView.messagesLayoutDelegate = self
         messagesCollectionView.messagesDisplayDelegate = self
         messageInputBar.delegate = self
+
+        reloadInputViews()
+        scrollsToBottomOnKeyboardBeginsEditing = true
+        maintainPositionOnKeyboardFrameChanged = true
     }
     
     override func viewDidLoad() {
@@ -81,8 +92,9 @@ extension StoredMessage: MessageType {
 extension MessageViewController {
     
     func displayChatMessages(messages: [StoredMessage]) {
-        self.messages = messages
+        self.messages = messages.reversed()
         self.messagesCollectionView.reloadData()
+        self.messagesCollectionView.scrollToBottom()
     }
 }
 
@@ -96,9 +108,38 @@ extension MessageViewController: MessagesDataSource {
     func messageForItem(at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> MessageType {
         return messages[indexPath.section]
     }
+    func isTimeLabelVisible(at indexPath: IndexPath) -> Bool {
+        return true//indexPath.section % 3 == 0 && !isPreviousMessageSameSender(at: indexPath)
+    }
+    func messageTopLabelAttributedText(for message: MessageType, at indexPath: IndexPath) -> NSAttributedString? {
+        let name = message.sender.displayName
+        return NSAttributedString(string: name, attributes: [NSAttributedString.Key.font: UIFont.preferredFont(forTextStyle: .caption1)])
+    }
+    func messageBottomLabelAttributedText(for message: MessageType, at indexPath: IndexPath) -> NSAttributedString? {
+        let dateString = formatter.string(from: message.sentDate)
+        return NSAttributedString(string: dateString, attributes: [NSAttributedString.Key.font: UIFont.preferredFont(forTextStyle: .caption2)])
+    }
 }
 
-extension MessageViewController: MessagesDisplayDelegate, MessagesLayoutDelegate {}
+extension MessageViewController: MessagesDisplayDelegate, MessagesLayoutDelegate {
+    func textColor(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> UIColor {
+        return isFromCurrentSender(message: message) ? .white : .darkText
+    }
+    func backgroundColor(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> UIColor {
+        return isFromCurrentSender(message: message)
+            ? UIColor(red: 69/255, green: 193/255, blue: 89/255, alpha: 1)
+            : UIColor(red: 230/255, green: 230/255, blue: 230/255, alpha: 1)
+    }
+    func cellTopLabelHeight(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGFloat {
+        return 16
+    }
+    func messageTopLabelHeight(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGFloat {
+        return 16
+    }
+    func messageBottomLabelHeight(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGFloat {
+        return 16
+    }
+}
 
 extension MessageViewController: MessageInputBarDelegate {
     func messageInputBar(_ inputBar: MessageInputBar, didPressSendButtonWith text: String) {
