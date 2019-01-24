@@ -33,6 +33,7 @@ protocol MessageDataStore {
     var topic: DefaultComTopic? { get set }
     func setup(topicName: String?) -> Bool
     func loadMessages()
+    func loadNextPage()
 }
 
 class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, MessageDataStore {
@@ -43,7 +44,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
     var currentUser: PCCurrentUser?
     var presenter: ChatroomPresentationLogic?
     */
-    static let kMessagesToLoad = 20
+    static let kMessagesPerPage = 20
     var pagesToLoad: Int = 0
     var topicId: Int64?
     var topicName: String?
@@ -131,12 +132,18 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
             if let messages = BaseDb.getInstance().messageDb?.query(
                 topicId: self.topicId,
                 pageCount: self.pagesToLoad,
-                pageSize: MessageInteractor.kMessagesToLoad) {
+                pageSize: MessageInteractor.kMessagesPerPage) {
                 DispatchQueue.main.async {
                     self.messages = messages
                     self.presenter?.presentMessages(messages: messages)
                 }
             }
+        }
+    }
+    func loadNextPage() {
+        if self.pagesToLoad * MessageInteractor.kMessagesPerPage == self.messages.count {
+            self.pagesToLoad += 1
+            self.loadMessages()
         }
     }
     override func onData(data: MsgServerData?) {

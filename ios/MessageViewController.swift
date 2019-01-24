@@ -18,6 +18,7 @@ class MessageViewController: MessageKit.MessagesViewController, MessageDisplayLo
     public var topicName: String?
     var messages: [MessageType] = []
     private var interactor: (MessageBusinessLogic & MessageDataStore)?
+    private let refreshControl = UIRefreshControl()
 
     let formatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -52,8 +53,10 @@ class MessageViewController: MessageKit.MessagesViewController, MessageDisplayLo
         reloadInputViews()
         scrollsToBottomOnKeyboardBeginsEditing = true
         maintainPositionOnKeyboardFrameChanged = true
+        
+        messagesCollectionView.addSubview(refreshControl)
+        refreshControl.addTarget(self, action: #selector(loadNextPage), for: .valueChanged)
     }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -67,6 +70,9 @@ class MessageViewController: MessageKit.MessagesViewController, MessageDisplayLo
     }
     override func viewDidDisappear(_ animated: Bool) {
         self.interactor?.cleanup()
+    }
+    @objc func loadNextPage() {
+        self.interactor?.loadNextPage()
     }
 }
 
@@ -95,6 +101,7 @@ extension MessageViewController {
         self.messages = messages.reversed()
         self.messagesCollectionView.reloadData()
         self.messagesCollectionView.scrollToBottom()
+        self.refreshControl.endRefreshing()
     }
 }
 
