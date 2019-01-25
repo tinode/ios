@@ -20,6 +20,7 @@ class MessageViewController: MessageKit.MessagesViewController, MessageDisplayLo
     var messages: [MessageType] = []
     private var interactor: (MessageBusinessLogic & MessageDataStore)?
     private let refreshControl = UIRefreshControl()
+    private var noteTimer: Timer? = nil
 
     let formatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -68,9 +69,16 @@ class MessageViewController: MessageKit.MessagesViewController, MessageDisplayLo
     override func viewDidAppear(_ animated: Bool) {
         self.interactor?.attachToTopic()
         self.interactor?.loadMessages()
+        self.noteTimer = Timer.scheduledTimer(
+            withTimeInterval: 1,
+            repeats: true,
+            block: { _ in
+                self.interactor?.sendReadNotification()
+            })
     }
     override func viewDidDisappear(_ animated: Bool) {
         self.interactor?.cleanup()
+        self.noteTimer?.invalidate()
     }
     @objc func loadNextPage() {
         self.interactor?.loadNextPage()

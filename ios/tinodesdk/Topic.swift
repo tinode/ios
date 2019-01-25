@@ -625,6 +625,12 @@ class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto {
         return result
     }
     @discardableResult
+    func noteRead() -> Int {
+        let result = noteReadRecv(what: NoteType.kRead)
+        store?.setRead(topic: self, read: result)
+        return result
+    }
+    @discardableResult
     func noteRecv() -> Int {
         let result = noteReadRecv(what: NoteType.kRecv)
         store?.setRecv(topic: self, recv: result)

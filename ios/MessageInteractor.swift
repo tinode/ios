@@ -15,6 +15,7 @@ protocol MessageBusinessLogic {
     func cleanup()
 
     func sendMessage(content: Drafty) -> Bool
+    func sendReadNotification()
 }
 
 protocol MessageDataStore {
@@ -96,6 +97,9 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
             return false
         }
         return true
+    }
+    func sendReadNotification() {
+        self.topic?.noteRecv()
     }
     func cleanup() {
         // set listeners to nil
