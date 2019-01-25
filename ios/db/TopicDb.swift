@@ -15,6 +15,13 @@ public class StoredTopic: Payload {
     var maxLocalSeq: Int? = nil
     var status: Int = BaseDb.kStatusUndefined
     var nextUnsentId: Int? = nil
+
+    static func isAllDataLoaded(topic: TopicProto?) -> Bool {
+        guard let topic = topic else { return false }
+        if (topic.seq ?? -1) == 0 { return true }
+        guard let st = topic.payload as? StoredTopic else { return false }
+        return (st.minLocalSeq ?? -1) == 1
+    }
 }
 
 public class TopicDb {

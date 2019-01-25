@@ -8,13 +8,6 @@
 import Foundation
 
 protocol MessageBusinessLogic {
-    /*
-    var currentUser: PCCurrentUser? { get set }
-    
-    func subscribeToRoom(room: PCRoom)
-    func addChatMessage(request: Chatroom.Messages.Create.Request, completionHandler: @escaping (Int?, Error?) -> Void)
-    func startedTyping(inRoom room: PCRoom)
-    */
     @discardableResult
     func setup(topicName: String?) -> Bool
     @discardableResult
@@ -25,10 +18,6 @@ protocol MessageBusinessLogic {
 }
 
 protocol MessageDataStore {
-    /*
-    var contact: Contact? { get set }
-    var currentUser: PCCurrentUser? { get set }
-    */
     var topicName: String? { get set }
     var topic: DefaultComTopic? { get set }
     func setup(topicName: String?) -> Bool
@@ -37,13 +26,6 @@ protocol MessageDataStore {
 }
 
 class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, MessageDataStore {
-    /*
-    
-    var contact: Contact?
-    var messages: [PCMessage] = []
-    var currentUser: PCCurrentUser?
-    var presenter: ChatroomPresentationLogic?
-    */
     static let kMessagesPerPage = 20
     var pagesToLoad: Int = 0
     var topicId: Int64?
@@ -140,10 +122,39 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
             }
         }
     }
-    func loadNextPage() {
+    private func loadNextPageInternal() -> Bool {
         if self.pagesToLoad * MessageInteractor.kMessagesPerPage == self.messages.count {
             self.pagesToLoad += 1
             self.loadMessages()
+            return true
+        }
+        return false
+    }
+    func loadNextPage() {
+        guard let t = self.topic else {
+            self.presenter?.endRefresh()
+            return
+        }
+        if !loadNextPageInternal() && !StoredTopic.isAllDataLoaded(topic: t) {
+            do {
+                try t.getMeta(query:
+                    t.getMetaGetBuilder()
+                        .withGetEarlierData(
+                            limit: MessageInteractor.kMessagesPerPage)
+                        .build())?.then(
+                            onSuccess: { [weak self] msg in
+                                self?.presenter?.endRefresh()
+                                return nil
+                            },
+                            onFailure: { [weak self] err in
+                                self?.presenter?.endRefresh()
+                                return nil
+                            })
+            } catch {
+                self.presenter?.endRefresh()
+            }
+        } else {
+            self.presenter?.endRefresh()
         }
     }
     override func onData(data: MsgServerData?) {

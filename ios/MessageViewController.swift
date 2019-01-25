@@ -12,6 +12,7 @@ import MessageInputBar
 
 protocol MessageDisplayLogic: class {
     func displayChatMessages(messages: [StoredMessage])
+    func endRefresh()
 }
 
 class MessageViewController: MessageKit.MessagesViewController, MessageDisplayLogic {
@@ -101,7 +102,11 @@ extension MessageViewController {
         self.messages = messages.reversed()
         self.messagesCollectionView.reloadData()
         self.messagesCollectionView.scrollToBottom()
-        self.refreshControl.endRefreshing()
+    }
+    func endRefresh() {
+        DispatchQueue.main.async {
+            self.refreshControl.endRefreshing()
+        }
     }
 }
 

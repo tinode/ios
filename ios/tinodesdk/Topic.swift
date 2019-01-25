@@ -108,6 +108,12 @@ class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto {
             meta.setData(since: since, before: before, limit: limit)
             return self
         }
+        func withGetEarlierData(limit: Int?) -> MetaGetBuilder {
+            if let r = topic.cachedMessageRange {
+                return withGetData(since: nil, before: r.min > 0 ? r.min : nil, limit: limit)
+            }
+            return withGetData(since: nil, before: nil, limit: limit)
+        }
         func withGetLaterData(limit: Int?) -> MetaGetBuilder {
             if let r = topic.cachedMessageRange {
                 return withGetData(since: r.max > 0 ? r.max + 1 : nil, before: nil, limit: limit)
@@ -543,13 +549,6 @@ class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto {
         }
         listener?.onMetaSub(sub: sub!)
     }
-    /*
-    private func setMaxDel(maxDel: Int) {
-        if maxDel > self.maxDel {
-            self.maxDel = maxDel
-        }
-    }
-    */
     private func routeMetaDel(clear: Int, delseq: [MsgDelRange]) {
         if let s = store {
             for range in delseq {
