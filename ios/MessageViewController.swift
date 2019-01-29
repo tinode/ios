@@ -163,7 +163,7 @@ extension MessageViewController: MessagesDisplayDelegate, MessagesLayoutDelegate
 
 extension MessageViewController: MessageInputBarDelegate {
     func messageInputBar(_ inputBar: MessageInputBar, didPressSendButtonWith text: String) {
-        interactor?.sendMessage(content: text)
+        _ = interactor?.sendMessage(content: text)
         messageInputBar.inputTextView.text.removeAll()
         messageInputBar.invalidatePlugins()
     }
