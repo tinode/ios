@@ -55,16 +55,7 @@ class ContactsViewController: UITableViewController {
         meListener = MeListener(adapter: adapter)
         // Attach to ME topic.
         attachToMeTopic(l: meListener)
-        adapter!.resetTopics()
-        
-        // TODO: delete this
-        Timer.scheduledTimer(withTimeInterval: 2, repeats: true) { [weak self] timer in
-            guard let a = self?.adapter else {
-                return
-            }
-            a.resetTopics()
-            self?.tableView.reloadData()
-        }
+        adapter!.update()
     }
     private func routeToLogin() {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
