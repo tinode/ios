@@ -10,7 +10,7 @@
 		0A0016E721E7236900088188 /* MessageInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A0016E621E7236900088188 /* MessageInteractor.swift */; };
 		0A0016E921E736CD00088188 /* MessagePresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A0016E821E736CD00088188 /* MessagePresenter.swift */; };
 		0A0380D821B3CC8100A3FA0E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A0380D721B3CC8100A3FA0E /* AppDelegate.swift */; };
-		0A0380DA21B3CC8100A3FA0E /* ContactsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A0380D921B3CC8100A3FA0E /* ContactsViewController.swift */; };
+		0A0380DA21B3CC8100A3FA0E /* ChatListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A0380D921B3CC8100A3FA0E /* ChatListViewController.swift */; };
 		0A0380DD21B3CC8100A3FA0E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0A0380DB21B3CC8100A3FA0E /* Main.storyboard */; };
 		0A0380DF21B3CC8200A3FA0E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0A0380DE21B3CC8200A3FA0E /* Assets.xcassets */; };
 		0A0380E221B3CC8200A3FA0E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0A0380E021B3CC8200A3FA0E /* LaunchScreen.storyboard */; };
@@ -42,7 +42,9 @@
 		0AC702CA21B4AE3F00B63339 /* Subscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC702C921B4AE3F00B63339 /* Subscription.swift */; };
 		0AC702CC21B4AE4700B63339 /* VCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC702CB21B4AE4700B63339 /* VCard.swift */; };
 		0AC702CE21B4AF2A00B63339 /* Tinode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC702CD21B4AF2A00B63339 /* Tinode.swift */; };
-		0AD5552A21C625BB0027FD16 /* ChatListAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AD5552921C625BB0027FD16 /* ChatListAdapter.swift */; };
+		0ACB5F0E22097651008FE740 /* ChatListPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACB5F0D22097651008FE740 /* ChatListPresenter.swift */; };
+		0ACB5F1022097665008FE740 /* ChatListRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACB5F0F22097665008FE740 /* ChatListRouter.swift */; };
+		0AD5552A21C625BB0027FD16 /* ChatListInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AD5552921C625BB0027FD16 /* ChatListInteractor.swift */; };
 		0AEDFBBF21B3D97C002F6AF4 /* JSONValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AEDFBBE21B3D97C002F6AF4 /* JSONValue.swift */; };
 		7DDADC5021D5C156009733B5 /* RegisterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DDADC4F21D5C156009733B5 /* RegisterViewController.swift */; };
 		7DDADC5221D5C219009733B5 /* Validate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DDADC5121D5C219009733B5 /* Validate.swift */; };
@@ -55,7 +57,7 @@
 		0A0016E821E736CD00088188 /* MessagePresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagePresenter.swift; sourceTree = "<group>"; };
 		0A0380D421B3CC8100A3FA0E /* ios.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ios.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0A0380D721B3CC8100A3FA0E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		0A0380D921B3CC8100A3FA0E /* ContactsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsViewController.swift; sourceTree = "<group>"; };
+		0A0380D921B3CC8100A3FA0E /* ChatListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatListViewController.swift; sourceTree = "<group>"; };
 		0A0380DC21B3CC8100A3FA0E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		0A0380DE21B3CC8200A3FA0E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		0A0380E121B3CC8200A3FA0E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -88,7 +90,9 @@
 		0AC702C921B4AE3F00B63339 /* Subscription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Subscription.swift; sourceTree = "<group>"; };
 		0AC702CB21B4AE4700B63339 /* VCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VCard.swift; sourceTree = "<group>"; };
 		0AC702CD21B4AF2A00B63339 /* Tinode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tinode.swift; sourceTree = "<group>"; };
-		0AD5552921C625BB0027FD16 /* ChatListAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatListAdapter.swift; sourceTree = "<group>"; };
+		0ACB5F0D22097651008FE740 /* ChatListPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatListPresenter.swift; sourceTree = "<group>"; };
+		0ACB5F0F22097665008FE740 /* ChatListRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatListRouter.swift; sourceTree = "<group>"; };
+		0AD5552921C625BB0027FD16 /* ChatListInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatListInteractor.swift; sourceTree = "<group>"; };
 		0AEDFBBE21B3D97C002F6AF4 /* JSONValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONValue.swift; sourceTree = "<group>"; };
 		1A5E7891F060E8CAAAC2D5A3 /* Pods-ios.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ios.release.xcconfig"; path = "Pods/Target Support Files/Pods-ios/Pods-ios.release.xcconfig"; sourceTree = "<group>"; };
 		2379D23DBDAE3571DE1C059D /* Pods_ios.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ios.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -135,8 +139,10 @@
 				0AC1080F21B3D63D007C6B80 /* tinodesdk */,
 				0A09810B21CCB80400600013 /* StoredMessage.swift */,
 				0A8A8BD921C380E80090BCBA /* Cache.swift */,
-				0AD5552921C625BB0027FD16 /* ChatListAdapter.swift */,
-				0A0380D921B3CC8100A3FA0E /* ContactsViewController.swift */,
+				0AD5552921C625BB0027FD16 /* ChatListInteractor.swift */,
+				0ACB5F0D22097651008FE740 /* ChatListPresenter.swift */,
+				0ACB5F0F22097665008FE740 /* ChatListRouter.swift */,
+				0A0380D921B3CC8100A3FA0E /* ChatListViewController.swift */,
 				0A6F260921BE51D800B9726E /* LoginViewController.swift */,
 				7DDADC4F21D5C156009733B5 /* RegisterViewController.swift */,
 				7DDADC5321D5C2E6009733B5 /* CredentialsViewController.swift */,
@@ -343,8 +349,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0A0380DA21B3CC8100A3FA0E /* ContactsViewController.swift in Sources */,
-				0AD5552A21C625BB0027FD16 /* ChatListAdapter.swift in Sources */,
+				0A0380DA21B3CC8100A3FA0E /* ChatListViewController.swift in Sources */,
+				0AD5552A21C625BB0027FD16 /* ChatListInteractor.swift in Sources */,
 				0A8F419821B4B29600E7E60D /* Topic.swift in Sources */,
 				0AC702BE21B4AD9000B63339 /* AcsHelper.swift in Sources */,
 				0AC702CE21B4AF2A00B63339 /* Tinode.swift in Sources */,
@@ -354,11 +360,13 @@
 				0AC702C621B4AE2700B63339 /* Drafty.swift in Sources */,
 				0AC1081121B3D6F8007C6B80 /* RFC3339Format.swift in Sources */,
 				0A0016E721E7236900088188 /* MessageInteractor.swift in Sources */,
+				0ACB5F1022097665008FE740 /* ChatListRouter.swift in Sources */,
 				0A8F419221B4B26700E7E60D /* AuthScheme.swift in Sources */,
 				0A6F260A21BE51D800B9726E /* LoginViewController.swift in Sources */,
 				0AC702BC21B4AD7A00B63339 /* Acs.swift in Sources */,
 				0A09810C21CCB80400600013 /* StoredMessage.swift in Sources */,
 				0AC702CA21B4AE3F00B63339 /* Subscription.swift in Sources */,
+				0ACB5F0E22097651008FE740 /* ChatListPresenter.swift in Sources */,
 				0A8A108121D4C78000B90D73 /* BaseDb.swift in Sources */,
 				0AC702C221B4AE0900B63339 /* Defacs.swift in Sources */,
 				0AC702CC21B4AE4700B63339 /* VCard.swift in Sources */,
