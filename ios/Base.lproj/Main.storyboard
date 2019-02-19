@@ -353,10 +353,10 @@
             </objects>
             <point key="canvasLocation" x="-668" y="780.35982008995506"/>
         </scene>
-        <!--Tab Bar Controller-->
+        <!--ChatsContacts-->
         <scene sceneID="REJ-Dq-O5O">
             <objects>
-                <tabBarController automaticallyAdjustsScrollViewInsets="NO" id="qBo-ye-avT" sceneMemberID="viewController">
+                <tabBarController automaticallyAdjustsScrollViewInsets="NO" id="qBo-ye-avT" userLabel="ChatsContacts" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationItem key="navigationItem" id="hZA-k4-xku"/>
                     <tabBar key="tabBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="GnU-bH-fWE">
@@ -376,7 +376,7 @@
         <!--Contacts-->
         <scene sceneID="G8F-we-dvp">
             <objects>
-                <tableViewController id="UgX-En-K1m" sceneMemberID="viewController">
+                <tableViewController id="UgX-En-K1m" customClass="ContactListViewController" customModule="ios" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="MEs-MU-LOB">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
