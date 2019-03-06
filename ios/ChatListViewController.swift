@@ -59,9 +59,8 @@ class ChatListViewController: UITableViewController, ChatListDisplayLogic {
 
 extension ChatListViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "Chats2Messages", let indexPath = tableView.indexPathForSelectedRow {
-            let messageController = segue.destination as! MessageViewController
-            messageController.topicName = self.topics[indexPath.row].name
+        if segue.identifier == "Chats2Messages" {
+            router?.routeToChat(segue: segue)
         }
     }
     override func numberOfSections(in tableView: UITableView) -> Int {

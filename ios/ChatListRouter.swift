@@ -16,7 +16,10 @@ class ChatListRouter: ChatListRoutingLogic {
     weak var viewController: ChatListViewController?
 
     func routeToChat(segue: UIStoryboardSegue) {
-        // TODO: implmenent.
+        if let indexPath = viewController?.tableView.indexPathForSelectedRow {
+            let messageController = segue.destination as! MessageViewController
+            messageController.topicName = viewController?.topics[indexPath.row].name
+        }
     }
     func routeToLogin() {
         self.viewController?.displayLoginView()
