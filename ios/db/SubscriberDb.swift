@@ -7,6 +7,7 @@
 
 import Foundation
 import SQLite
+import TinodeSDK
 
 class StoredSubscription: Payload  {
     var id: Int64? = nil

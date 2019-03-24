@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import TinodeSDK
 
 protocol MessageBusinessLogic {
     @discardableResult
@@ -35,7 +36,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
     var presenter: MessagePresentationLogic?
     var messages: [StoredMessage] = []
     private var messageSenderQueue = DispatchQueue(label: "co.tinode.messagesender")
-    
+
     func setup(topicName: String?) -> Bool {
         guard let topicName = topicName else { return false }
         self.topicName = topicName

@@ -7,7 +7,7 @@
 
 import Foundation
 
-class Defacs: Codable {
+public class Defacs: Codable {
     var auth: AcsHelper?
     var anon: AcsHelper?
     
@@ -18,7 +18,7 @@ class Defacs: Codable {
     private enum CodingKeys : String, CodingKey  {
         case auth, anon
     }
-    required init (from decoder: Decoder) throws {
+    required public init (from decoder: Decoder) throws {
         let container =  try decoder.container (keyedBy: CodingKeys.self)
         if let authStr = try? container.decode(String.self, forKey: .auth) {
             setAuth(a: authStr)
@@ -61,11 +61,11 @@ class Defacs: Codable {
         }
         return changed > 0
     }
-    func serialize() -> String {
+    public func serialize() -> String {
         return [self.auth?.description ?? "",
                 self.anon?.description ?? ""].joined(separator: ",")
     }
-    static func deserialize(from data: String?) -> Defacs? {
+    static public func deserialize(from data: String?) -> Defacs? {
         guard let parts = data?.components(separatedBy: ","), parts.count == 2 else {
             return nil
         }

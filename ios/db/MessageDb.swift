@@ -7,6 +7,7 @@
 
 import Foundation
 import SQLite
+import TinodeSDK
 
 enum MessageDbError: Error {
     case dataError(String)

@@ -1,5 +1,5 @@
 framework module SwiftWebSocket {
-  umbrella header "SwiftWebSocket-umbrella.h"
+  umbrella header "SwiftWebSocket-iOS10.0-umbrella.h"
 
   export *
   module * { export * }

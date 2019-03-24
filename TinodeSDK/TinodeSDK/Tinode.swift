@@ -8,12 +8,12 @@
 import Foundation
 
 
-enum TinodeJsonError: Error {
+public enum TinodeJsonError: Error {
     case encode
     case decode
 }
 
-enum TinodeError: Error {
+public enum TinodeError: Error {
     case invalidReply(String)
     case invalidState(String)
     case notConnected(String)
@@ -23,7 +23,7 @@ enum TinodeError: Error {
 
 // Callback interface called by Connection
 // when it receives events from the websocket.
-protocol TinodeEventListener: class {
+public protocol TinodeEventListener: class {
     // Connection established successfully, handshakes exchanged.
     // The connection is ready for login.
     // Params:
@@ -83,7 +83,7 @@ protocol TinodeEventListener: class {
     func onPresMessage(pres: MsgServerPres?)
 }
 
-class Tinode {
+public class Tinode {
     public static let kTopicNew = "new"
     public static let kTopicMe = "me"
     public static let kTopicFnd = "fnd"
@@ -97,25 +97,25 @@ class Tinode {
     let kProtocolVersion = "0"
     let kVersion = "0.15"
     let kLocale = Locale.current.languageCode!
-    var deviceId: String = ""
+    public var deviceId: String = ""
 
-    var appName: String
-    var apiKey: String
-    var connection: Connection?
-    var nextMsgId = 1
-    var futures: [String:PromisedReply<ServerMessage>] = [:]
-    var serverVersion: String?
-    var serverBuild: String?
-    var connectedPromise: PromisedReply<ServerMessage>?
-    var timeAdjustment: TimeInterval = 0
-    var isConnectionAuthenticated = false
-    var myUid: String?
-    var deviceToken: String?
-    var authToken: String?
-    var nameCounter = 0
-    var store: Storage? = nil
-    var listener: TinodeEventListener? = nil
-    var topicsLoaded = false
+    public var appName: String
+    public var apiKey: String
+    public var connection: Connection?
+    public var nextMsgId = 1
+    public var futures: [String:PromisedReply<ServerMessage>] = [:]
+    public var serverVersion: String?
+    public var serverBuild: String?
+    public var connectedPromise: PromisedReply<ServerMessage>?
+    public var timeAdjustment: TimeInterval = 0
+    public var isConnectionAuthenticated = false
+    public var myUid: String?
+    public var deviceToken: String?
+    public var authToken: String?
+    public var nameCounter = 0
+    public var store: Storage? = nil
+    public var listener: TinodeEventListener? = nil
+    public var topicsLoaded = false
 
     var isConnected: Bool {
         get {
@@ -141,7 +141,7 @@ class Tinode {
         return decoder
     }()
 
-    init(for appname: String, authenticateWith apiKey: String,
+    public init(for appname: String, authenticateWith apiKey: String,
          persistDataIn store: Storage? = nil,
          fowardEventsTo l: TinodeEventListener? = nil) {
         self.appName = appname
@@ -173,7 +173,7 @@ class Tinode {
         }
         return topicsLoaded
     }
-    func updateUser<DP: Codable, DR: Codable>(uid: String, desc: Description<DP, DR>) {
+    public func updateUser<DP: Codable, DR: Codable>(uid: String, desc: Description<DP, DR>) {
         if let user = users[uid] {
             
             print("found user \(user)")
@@ -185,7 +185,7 @@ class Tinode {
         }
         // store?.userUpdate(user)
     }
-    func updateUser<DP: Codable, DR: Codable>(sub: Subscription<DP, DR>) {
+    public func updateUser<DP: Codable, DR: Codable>(sub: Subscription<DP, DR>) {
         let uid = sub.user!
         if let user = users[uid] {
             _ = (user as? User<DP>)?.merge(from: sub)
@@ -196,7 +196,7 @@ class Tinode {
         // store?.userUpdate(user)
     }
 
-    func nextUniqueString() -> String {
+    public func nextUniqueString() -> String {
         nameCounter += 1
         let millisecSince1970 = Int64( (Date().timeIntervalSince1970 as Double) * 1000)
         let q = millisecSince1970.advanced(by: -1414213562373) << 16
@@ -310,13 +310,13 @@ class Tinode {
         } catch {
         }
     }
-    func noteRecv(topic: String, seq: Int) {
+    public func noteRecv(topic: String, seq: Int) {
         note(topic: topic, what: Tinode.kNoteRecv, seq: seq)
     }
-    func noteRead(topic: String, seq: Int) {
+    public func noteRead(topic: String, seq: Int) {
         note(topic: topic, what: Tinode.kNoteRead, seq: seq)
     }
-    func noteKeyPress(topic: String) {
+    public func noteKeyPress(topic: String) {
         note(topic: topic, what: Tinode.kNoteKp, seq: 0)
     }
     
@@ -347,14 +347,14 @@ class Tinode {
             return nil
         }
     }
-    func registerTopic(topic: TopicProto) {
+    public func registerTopic(topic: TopicProto) {
         if !topic.isPersisted {
             store?.topicAdd(topic: topic)
         }
         topic.store = store
         topics[topic.name] = topic
     }
-    func unregisterTopic(topicName: String) {
+    public func unregisterTopic(topicName: String) {
         //Topic topic = mTopics.remove(topicName);
         if let t = topics.removeValue(forKey: topicName) {
             // todo: clean up storate
@@ -363,7 +363,7 @@ class Tinode {
             store?.topicDelete(topic: t)
         }
     }
-    func newTopic<SP: Codable, SR: Codable>(sub: Subscription<SP, SR>) -> TopicProto {
+    public func newTopic<SP: Codable, SR: Codable>(sub: Subscription<SP, SR>) -> TopicProto {
         if sub.topic == Tinode.kTopicMe {
             let t = try! MeTopic<SP>(tinode: self, l: nil)
             return t
@@ -373,7 +373,7 @@ class Tinode {
         }
         return try! ComTopic<SP>(tinode: self, sub: sub as! Subscription<SP, PrivateType>)
     }
-    func newTopic(for name: String, with listener: DefaultTopic.Listener?) -> TopicProto {
+    public func newTopic(for name: String, with listener: DefaultTopic.Listener?) -> TopicProto {
         if name == Tinode.kTopicMe {
             return try! DefaultMeTopic(tinode: self, l: listener)
         }
@@ -382,7 +382,7 @@ class Tinode {
         }
         return try! DefaultComTopic(tinode: self, name: name, l: listener)
     }
-    func maybeCreateTopic(meta: MsgServerMeta) -> TopicProto? {
+    public func maybeCreateTopic(meta: MsgServerMeta) -> TopicProto? {
         if meta.desc == nil {
             return nil
         }
@@ -398,15 +398,15 @@ class Tinode {
         registerTopic(topic: topic!)
         return topic
     }
-    func changeTopicName(topic: TopicProto, oldName: String) -> Bool {
+    public func changeTopicName(topic: TopicProto, oldName: String) -> Bool {
         let result = topics.removeValue(forKey: oldName) != nil
         registerTopic(topic: topic)
         return result
     }
-    func getMeTopic() -> DefaultMeTopic? {
+    public func getMeTopic() -> DefaultMeTopic? {
         return getTopic(topicName: Tinode.kTopicMe) as? DefaultMeTopic
     }
-    func getTopic(topicName: String) -> TopicProto? {
+    public func getTopic(topicName: String) -> TopicProto? {
         if topicName.isEmpty {
             return nil
         }
@@ -424,7 +424,7 @@ class Tinode {
     ///   - desc: account parameters, such as full name etc.
     ///   - creds:  account credential, such as email or phone
     /// - Returns: PromisedReply of the reply ctrl message
-    func createAccountBasic<Pu: Encodable,Pr: Encodable>(uname: String, pwd: String, login: Bool, tags: [String]?, desc: MetaSetDesc<Pu,Pr>, creds: [Credential]?) throws -> PromisedReply<ServerMessage> {
+    public func createAccountBasic<Pu: Encodable,Pr: Encodable>(uname: String, pwd: String, login: Bool, tags: [String]?, desc: MetaSetDesc<Pu,Pr>, creds: [Credential]?) throws -> PromisedReply<ServerMessage> {
         return try account(uid: nil, scheme: AuthScheme.kLoginBasic, secret: AuthScheme.encodeBasicToken(uname: uname, password: pwd), loginNow: login, tags: tags, desc: desc, creds: creds)
     }
     
@@ -439,7 +439,7 @@ class Tinode {
     ///   - desc: default access parameters for this account
     ///   - creds: creds
     /// - Returns: PromisedReply of the reply ctrl message
-    func account<Pu: Encodable,Pr: Encodable>(uid: String?, scheme: String, secret: String, loginNow: Bool, tags: [String]?, desc: MetaSetDesc<Pu,Pr>, creds: [Credential]?) throws -> PromisedReply<ServerMessage> {
+    public func account<Pu: Encodable,Pr: Encodable>(uid: String?, scheme: String, secret: String, loginNow: Bool, tags: [String]?, desc: MetaSetDesc<Pu,Pr>, creds: [Credential]?) throws -> PromisedReply<ServerMessage> {
         let msgId = getNextMsgId()
         let msga = MsgClientAcc(id: msgId, uid: uid, scheme: scheme, secret: secret, doLogin: loginNow, desc: desc)
         
@@ -486,18 +486,18 @@ class Tinode {
         return future
     }
     
-    func loginBasic(uname: String, password: String) throws -> PromisedReply<ServerMessage> {
+    public func loginBasic(uname: String, password: String) throws -> PromisedReply<ServerMessage> {
         return try login(scheme: AuthScheme.kLoginBasic,
                          secret: AuthScheme.encodeBasicToken(
                             uname: uname, password: password),
                          creds: nil)
     }
     
-    func loginToken(token: String, creds: [Credential]?) throws -> PromisedReply<ServerMessage> {
+    public func loginToken(token: String, creds: [Credential]?) throws -> PromisedReply<ServerMessage> {
         return try login(scheme: AuthScheme.kLoginToken, secret: token, creds: creds)
     }
     
-    func login(scheme: String, secret: String, creds: [Credential]?) throws -> PromisedReply<ServerMessage> {
+    public func login(scheme: String, secret: String, creds: [Credential]?) throws -> PromisedReply<ServerMessage> {
         // handle auto login
         if isConnectionAuthenticated {
             // Already logged in.
@@ -565,7 +565,7 @@ class Tinode {
         // setAutologin(false)
         connection?.disconnect()
     }
-    func logout() {
+    public func logout() {
         disconnect()
         myUid = nil
         store?.logout()
@@ -585,7 +585,7 @@ class Tinode {
         // listener on disconnect
         listener?.onDisconnect(byServer: isServerOriginated, code: code, reason: reason)
     }
-    class TinodeConnectionListener : ConnectionListener {
+    public class TinodeConnectionListener : ConnectionListener {
         var tinode: Tinode
         init(tinode: Tinode) {
             self.tinode = tinode
@@ -744,7 +744,7 @@ class Tinode {
         return reply
     }
 
-    func getFilteredTopics(type: TopicType, updated: Date?) -> Array<TopicProto>? {
+    public func getFilteredTopics(type: TopicType, updated: Date?) -> Array<TopicProto>? {
         if case .any = type, updated == nil {
             return topics.values.compactMap { $0 }
         }

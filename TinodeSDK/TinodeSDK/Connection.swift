@@ -8,7 +8,7 @@
 import Foundation
 import SwiftWebSocket
 
-class Connection {
+public class Connection {
     fileprivate let kConnectionTimeout = 3000
     
     var isConnected: Bool {

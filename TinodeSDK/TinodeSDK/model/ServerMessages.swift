@@ -7,22 +7,22 @@
 
 import Foundation
 
-class MsgServerCtrl : Decodable {
-    let id: String?
-    let topic: String?
-    let code: Int
-    let text: String
-    let ts: Date
-    let params: [String: JSONValue]?
+public class MsgServerCtrl : Decodable {
+    public let id: String?
+    public let topic: String?
+    public let code: Int
+    public let text: String
+    public let ts: Date
+    public let params: [String: JSONValue]?
 
-    func getStringParam(for key: String) -> String? {
+    public func getStringParam(for key: String) -> String? {
         if case let .string(v)? = params?[key] {
             return v
         }
         return nil
     }
     
-    func getStringArray(for key: String) -> [String]? {
+    public func getStringArray(for key: String) -> [String]? {
         if case .array(let  v)? = params?[key] {
             return v.compactMap { element -> String? in
                 if case .string(let s) = element {
@@ -34,13 +34,13 @@ class MsgServerCtrl : Decodable {
         return nil
     }
     
-    func getIntParam(for key: String) -> Int? {
+    public func getIntParam(for key: String) -> Int? {
         if case let .int(v)? = params?[key] {
             return v
         }
         return nil
     }
-    func getStringDict(for key: String) -> [String:String]? {
+    public func getStringDict(for key: String) -> [String:String]? {
         if case .dict(let  v)? = params?[key] {
             return v.mapValues { (value) -> String? in
                 if case .string(let s) = value {
@@ -53,9 +53,9 @@ class MsgServerCtrl : Decodable {
     }
 }
 
-class MsgDelRange: Codable {
-    var low: Int? = nil
-    var hi: Int? = nil
+public class MsgDelRange: Codable {
+    public var low: Int? = nil
+    public var hi: Int? = nil
     
     init() {
         low = 0
@@ -91,20 +91,20 @@ class MsgDelRange: Codable {
     }
 }
 
-class DelValues: Decodable {
+public class DelValues: Decodable {
     let clear: Int
     let delseq: [MsgDelRange]
 }
 
-typealias PrivateType = Dictionary<String, JSONValue>
+public typealias PrivateType = Dictionary<String, JSONValue>
 
 // VCard
-typealias DefaultDescription = Description<VCard, PrivateType>
-typealias DefaultSubscription = Subscription<VCard, PrivateType>
-typealias FndDescription = Description<String, String>
-typealias FndSubscription = Subscription<VCard, Array<String>>
+public typealias DefaultDescription = Description<VCard, PrivateType>
+public typealias DefaultSubscription = Subscription<VCard, PrivateType>
+public typealias FndDescription = Description<String, String>
+public typealias FndSubscription = Subscription<VCard, Array<String>>
 
-class MsgServerMeta: Decodable {
+public class MsgServerMeta: Decodable {
     let id: String?
     let topic: String?
     let ts: Date?
@@ -116,7 +116,7 @@ class MsgServerMeta: Decodable {
     private enum CodingKeys: String, CodingKey  {
         case id, topic, ts, desc, sub, del, tags
     }
-    required init (from decoder: Decoder) throws {
+    required public init (from decoder: Decoder) throws {
         let container =  try decoder.container (keyedBy: CodingKeys.self)
         id = try? container.decode(String.self, forKey: .id)
         topic = try? container.decode(String.self, forKey: .topic)
@@ -136,39 +136,40 @@ class MsgServerMeta: Decodable {
     }
 }
 
-class MsgServerData : Decodable {
-    var id: String?
-    var topic: String?
-    var head: [String:JSONValue]?
-    var from: String?
-    var ts: Date?
-    var seq: Int?
-    var getSeq: Int {
+open class MsgServerData : Decodable {
+    public var id: String?
+    public var topic: String?
+    public var head: [String:JSONValue]?
+    public var from: String?
+    public var ts: Date?
+    public var seq: Int?
+    public var getSeq: Int {
         get { return seq ?? 0 }
     }
     // todo: make it drafty
-    var content: Drafty?
+    public var content: Drafty?
+    public init() {}
 }
 
-class AccessChange : Decodable {
+public class AccessChange : Decodable {
     let want: String?
     let given: String?
 }
 
-class MsgServerPres : Decodable {
+public class MsgServerPres : Decodable {
     enum What {
         case kOn, kOff, kUpd, kGone, kAcs, kMsg, kUa, kRecv, kRead, kDel, kUnknown
     }
-    var topic: String?
-    var src: String?
-    var what: String?
-    var seq: Int?
-    var clear: Int?
-    var delseq: [MsgDelRange]?
-    var ua: String?
-    var act: String?
-    var tgt: String?
-    var dacs: AccessChange?
+    public var topic: String?
+    public var src: String?
+    public var what: String?
+    public var seq: Int?
+    public var clear: Int?
+    public var delseq: [MsgDelRange]?
+    public var ua: String?
+    public var act: String?
+    public var tgt: String?
+    public var dacs: AccessChange?
     
     static func parseWhat(what: String?) -> What {
         guard let what = what else {
@@ -201,17 +202,17 @@ class MsgServerPres : Decodable {
     }
 }
 
-class MsgServerInfo: Decodable {
-    var topic: String?
-    var from: String?
-    var what: String?
-    var seq: Int?
+public class MsgServerInfo: Decodable {
+    public var topic: String?
+    public var from: String?
+    public var what: String?
+    public var seq: Int?
 }
 
-class ServerMessage : Decodable {
-    var ctrl: MsgServerCtrl?
-    var meta: MsgServerMeta?
-    var data: MsgServerData?
-    var pres: MsgServerPres?
-    var info: MsgServerInfo?
+public class ServerMessage : Decodable {
+    public var ctrl: MsgServerCtrl?
+    public var meta: MsgServerMeta?
+    public var data: MsgServerData?
+    public var pres: MsgServerPres?
+    public var info: MsgServerInfo?
 }

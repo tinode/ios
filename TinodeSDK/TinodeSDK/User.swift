@@ -7,7 +7,7 @@
 
 import Foundation
 
-protocol UserProto: class {
+public protocol UserProto: class {
     var updated: Date? { get set }
     var uid: String? { get set }
     var payload: Payload? { get set }
@@ -17,7 +17,7 @@ protocol UserProto: class {
 }
 
 extension UserProto {
-    static func createFromPublicData(uid: String?, updated: Date?, data: String?) -> UserProto? {
+    public static func createFromPublicData(uid: String?, updated: Date?, data: String?) -> UserProto? {
         guard let data = data else { return nil }
         if let p: VCard = Tinode.deserializeObject(from: data) {
             return User(uid: uid, updated: updated, pub: p)
@@ -29,16 +29,16 @@ extension UserProto {
     }
 }
 
-typealias DefaultUser = User<VCard>
+public typealias DefaultUser = User<VCard>
 
-class User<P: Codable>: UserProto {    
+public class User<P: Codable>: UserProto {
     enum UserError : Error {
         case invalidUser(String)
     }
-    var updated: Date?
-    var uid: String?
-    var pub: P?
-    var payload: Payload? = nil
+    public var updated: Date?
+    public var uid: String?
+    public var pub: P?
+    public var payload: Payload? = nil
 
     init(uid: String?, updated: Date?, pub: P?) {
         self.uid = uid
@@ -59,7 +59,7 @@ class User<P: Codable>: UserProto {
             throw UserError.invalidUser("Invalid subscription param: missing uid")
         }
     }
-    func serializePub() -> String? {
+    public func serializePub() -> String? {
         guard let p = pub else { return nil }
         return Tinode.serializeObject(t: p)
     }

@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import TinodeSDK
 
 class CredentialsViewController : UIViewController {
     

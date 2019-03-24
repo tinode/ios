@@ -7,15 +7,19 @@
 
 import Foundation
 
-struct LastSeen: Decodable {
-    var when: Date?
-    var ua: String?
+public struct LastSeen: Decodable {
+    public var when: Date?
+    public var ua: String?
+    public init(when: Date?, ua: String?) {
+        self.when = when
+        self.ua = ua
+    }
 }
 
 // Messages may send subscriptions with different
 // public and private types. We need to have a common type
 // to handle subscriptions with all these types.
-protocol SubscriptionProto: class, Decodable {
+public protocol SubscriptionProto: class, Decodable {
     var user: String? { get set }
     var updated: Date? { get set }
     var payload: Payload? { get set }
@@ -37,7 +41,7 @@ protocol SubscriptionProto: class, Decodable {
 }
 
 extension SubscriptionProto {
-    static func createByName(name: String?) -> SubscriptionProto? {
+    public static func createByName(name: String?) -> SubscriptionProto? {
         guard let name = name else { return nil }
         switch name {
         case String(describing: DefaultSubscription.self):
@@ -50,28 +54,28 @@ extension SubscriptionProto {
     }
 }
 
-class Subscription<SP: Codable, SR: Codable>: SubscriptionProto {
-    var user: String?
-    var updated: Date?
-    var deleted: Date?
-    var touched: Date?
+public class Subscription<SP: Codable, SR: Codable>: SubscriptionProto {
+    public var user: String?
+    public var updated: Date?
+    public var deleted: Date?
+    public var touched: Date?
 
-    var acs: Acs?
-    var read: Int? = 0
-    var getRead: Int { get { return read ?? 0 } }
-    var recv: Int? = 0
-    var getRecv: Int { get { return recv ?? 0 } }
-    var priv: SR?
-    var online: Bool?
+    public var acs: Acs?
+    public var read: Int? = 0
+    public var getRead: Int { get { return read ?? 0 } }
+    public var recv: Int? = 0
+    public var getRecv: Int { get { return recv ?? 0 } }
+    public var priv: SR?
+    public var online: Bool?
 
-    var topic: String?
-    var seq: Int? = 0
-    var getSeq: Int { get { return seq ?? 0 } }
-    var clear: Int? = 0
-    var getClear: Int { get { return clear ?? 0 } }
-    var pub: SP?
-    var seen: LastSeen?
-    var payload: Payload? = nil
+    public var topic: String?
+    public var seq: Int? = 0
+    public var getSeq: Int { get { return seq ?? 0 } }
+    public var clear: Int? = 0
+    public var getClear: Int { get { return clear ?? 0 } }
+    public var pub: SP?
+    public var seen: LastSeen?
+    public var payload: Payload? = nil
 
     private enum CodingKeys : String, CodingKey {
         case user, updated, deleted, touched,
@@ -115,12 +119,12 @@ class Subscription<SP: Codable, SR: Codable>: SubscriptionProto {
         
         return changed > 0
     }
-    func serializePub() -> String? {
+    public func serializePub() -> String? {
         guard let p = pub else { return nil }
         return Tinode.serializeObject(t: p)
     }
     @discardableResult
-    func deserializePub(from data: String?) -> Bool {
+    public func deserializePub(from data: String?) -> Bool {
         if let p: SP = Tinode.deserializeObject(from: data) {
             self.pub = p
             return true

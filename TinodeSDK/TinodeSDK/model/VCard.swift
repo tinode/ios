@@ -7,18 +7,18 @@
 
 import Foundation
 
-class Photo: Codable {
+public class Photo: Codable {
     let type: String?
     // Byte array.
     let data: String?
 }
 
-class Contact: Codable {
+public class Contact: Codable {
     let type: String?
     let uri: String?
 }
 
-class Name: Codable {
+public class Name: Codable {
     let surname: String?
     let given: String?
     let additional: String?
@@ -26,20 +26,20 @@ class Name: Codable {
     let suffix: String?
 }
 
-class VCard: Codable {
-    var fn: String?
-    var n: Name?
-    var org: String?
-    var title: String?
+public class VCard: Codable {
+    public var fn: String?
+    public var n: Name?
+    public var org: String?
+    public var title: String?
     // List of phone numbers associated with the contact.
-    var tel: [Contact]?
+    public var tel: [Contact]?
     // List of contact's email addresses.
-    var email: [Contact]?
-    var impp: [Contact]?
+    public var email: [Contact]?
+    public var impp: [Contact]?
     // Avatar photo.
-    var photo: Photo?
+    public var photo: Photo?
     
-    init(fn: String?, avatar: Photo?) {
+    public init(fn: String?, avatar: Photo?) {
         self.fn = fn
         self.photo = avatar
     }

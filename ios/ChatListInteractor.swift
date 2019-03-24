@@ -7,6 +7,7 @@
 
 import Foundation
 import UIKit
+import TinodeSDK
 
 protocol ChatListBusinessLogic: class {
     func loadAndPresentTopics()
@@ -20,6 +21,7 @@ protocol ChatListDataStore: class {
 class ChatListInteractor: ChatListBusinessLogic, ChatListDataStore {
     private class MeListener: DefaultMeTopic.Listener {
         weak var interactor: ChatListBusinessLogic?
+        //public init() {}
         override func onInfo(info: MsgServerInfo) {
             print("Contacts got onInfo update \(String(describing: info.what))")
         }
@@ -52,6 +54,7 @@ class ChatListInteractor: ChatListBusinessLogic, ChatListDataStore {
     var router: ChatListRoutingLogic?
     var topics: [DefaultComTopic]?
     private var meListener: MeListener
+    //private var meListener: DefaultMeTopic.Listener
     init() {
         meListener = MeListener()
         self.meListener.interactor = self
@@ -60,7 +63,12 @@ class ChatListInteractor: ChatListBusinessLogic, ChatListDataStore {
         let tinode = Cache.getTinode()
         var me = tinode.getMeTopic()
         if me == nil  {
+            //let t: DefaultMeTopic.Listener = self.meListener
+            //let q = DefaultMeTopic.Listener()
             me = try! DefaultMeTopic(tinode: tinode, l: meListener)
+            //me = try! DefaultMeTopic(tinode: tinode, l: q)
+            //let z = try? DefaultMeTopic(tinode: tinode, l: nil)
+                                     //l: meListener as DefaultMeTopic.Listener)
         } else {
             me!.listener = meListener
         }

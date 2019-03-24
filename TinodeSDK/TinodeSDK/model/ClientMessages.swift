@@ -7,7 +7,7 @@
 
 import Foundation
 
-class MsgClientHi : Encodable {
+public class MsgClientHi : Encodable {
     let id: String?
     let ver: String?
     // User Agent.
@@ -25,7 +25,7 @@ class MsgClientHi : Encodable {
     }
 }
 
-class Credential: Encodable {
+public class Credential: Encodable {
     // Confirmation method: email, phone, captcha.
     var meth: String? = nil
     // Credential to be confirmed, e.g. email or a phone number.
@@ -35,12 +35,12 @@ class Credential: Encodable {
     // Confirmation parameters.
     var params: [String:String]? = nil
     
-    init(meth: String, val: String) {
+    public init(meth: String, val: String) {
         self.meth = meth
         self.val = val
     }
     
-    init(meth: String?, val: String?, resp: String?, params: [String:String]?) {
+    public init(meth: String?, val: String?, resp: String?, params: [String:String]?) {
         self.meth = meth
         self.val = val
         self.resp = resp
@@ -48,7 +48,7 @@ class Credential: Encodable {
     }
 }
 
-class MsgClientAcc<Pu: Encodable,Pr: Encodable>: Encodable {
+public class MsgClientAcc<Pu: Encodable,Pr: Encodable>: Encodable {
     var id: String?
     var user: String?
     var scheme: String?
@@ -87,7 +87,7 @@ class MsgClientAcc<Pu: Encodable,Pr: Encodable>: Encodable {
     }
 }
 
-class MsgClientLogin: Encodable {
+public class MsgClientLogin: Encodable {
     let id: String?
     let scheme: String?
     let secret: String?
@@ -108,7 +108,7 @@ class MsgClientLogin: Encodable {
     }
 }
 
-class MetaGetData: Encodable {
+public class MetaGetData: Encodable {
     let since: Int?
     let before: Int?
     let limit: Int?
@@ -118,14 +118,14 @@ class MetaGetData: Encodable {
         self.limit = limit
     }
 }
-class MetaGetDesc: Encodable {
+public class MetaGetDesc: Encodable {
     // ims = If modified since...
     let ims: Date?
     init(ims: Date?) {
         self.ims = ims
     }
 }
-class MetaGetSub: Encodable {
+public class MetaGetSub: Encodable {
     let user: String?
     let ims: Date?
     let limit: Int?
@@ -135,7 +135,7 @@ class MetaGetSub: Encodable {
         self.limit = limit
     }
 }
-class MsgGetMeta: CustomStringConvertible, Encodable {
+public class MsgGetMeta: CustomStringConvertible, Encodable {
     private static let kDescSet = 0x01
     private static let kSubSet = 0x02
     private static let kDataSet = 0x04
@@ -150,11 +150,11 @@ class MsgGetMeta: CustomStringConvertible, Encodable {
     
     private var set = 0
     
-    var what: String = ""
-    var desc: MetaGetDesc? = nil
-    var sub: MetaGetSub? = nil
-    var data: MetaGetData? = nil
-    var del: MetaGetData? = nil
+    public var what: String = ""
+    public var desc: MetaGetDesc? = nil
+    public var sub: MetaGetSub? = nil
+    public var data: MetaGetData? = nil
+    public var del: MetaGetData? = nil
     
     // Only use these fields in JSON representation.
     private enum CodingKeys: String, CodingKey {
@@ -165,7 +165,7 @@ class MsgGetMeta: CustomStringConvertible, Encodable {
         case del
     }
     
-    var description: String {
+    public var description: String {
         //return
         let desc_str = desc != nil ? String(describing: desc!) : "null"
         let sub_str = sub != nil ? String(describing: sub!) : "null"
@@ -255,33 +255,33 @@ class MsgGetMeta: CustomStringConvertible, Encodable {
     }
 }
 
-class MetaSetDesc<P: Encodable, R: Encodable>: Encodable {
+public class MetaSetDesc<P: Encodable, R: Encodable>: Encodable {
     var defacs: Defacs? = nil
     var pub: P? = nil
     var priv: R? = nil
     
-    init(pub: P, priv: R) {
+    public init(pub: P, priv: R) {
         self.pub = pub
         self.priv = priv
     }
     
-    init(da: Defacs) {
+    public init(da: Defacs) {
         self.defacs = da
     }
-    init(pub: P?, priv: R?) {
+    public init(pub: P?, priv: R?) {
         self.pub = pub
         self.priv = priv
     }
-    init(auth: String, anon: String) {
+    public init(auth: String, anon: String) {
         self.defacs = Defacs(auth: auth, anon: anon)
     }
 }
 
-class MetaSetSub: Encodable {
+public class MetaSetSub: Encodable {
     let user: String? = nil
     let mode: String? = nil
 }
-class MsgSetMeta<Pu: Encodable, Pr: Encodable>: Encodable {
+public class MsgSetMeta<Pu: Encodable, Pr: Encodable>: Encodable {
     let desc: MetaSetDesc<Pu, Pr>?
     let sub: MetaSetSub?
     let tags: [String]?
@@ -293,7 +293,7 @@ class MsgSetMeta<Pu: Encodable, Pr: Encodable>: Encodable {
     }
 }
 
-class MsgClientSub<Pu: Encodable, Pr: Encodable>: Encodable {
+public class MsgClientSub<Pu: Encodable, Pr: Encodable>: Encodable {
     var id: String?
     var topic: String?
     var set: MsgSetMeta<Pu, Pr>?
@@ -306,7 +306,7 @@ class MsgClientSub<Pu: Encodable, Pr: Encodable>: Encodable {
     }
 }
 
-class MsgClientGet: Encodable {
+public class MsgClientGet: Encodable {
     let id: String?
     let topic: String?
     let what: String?
@@ -324,7 +324,7 @@ class MsgClientGet: Encodable {
     }
 }
 
-class MsgClientLeave: Encodable {
+public class MsgClientLeave: Encodable {
     let id: String?
     let topic: String?
     let unsub: Bool?
@@ -335,7 +335,7 @@ class MsgClientLeave: Encodable {
     }
 }
 
-class MsgClientNote: Encodable {
+public class MsgClientNote: Encodable {
     let topic: String?
     let what: String?
     let seq: Int?
@@ -347,7 +347,7 @@ class MsgClientNote: Encodable {
     }
 }
 
-class MsgClientPub: Encodable {
+public class MsgClientPub: Encodable {
     let id: String?
     let topic: String?
     let noecho: Bool?
@@ -362,7 +362,7 @@ class MsgClientPub: Encodable {
     }
 }
 
-class MsgClientDel: Encodable {
+public class MsgClientDel: Encodable {
     static let kStrTopic = "topic"
     static let kStrMsg = "msg"
     static let kStrSub = "sub"
@@ -394,7 +394,7 @@ class MsgClientDel: Encodable {
     }
 }
 
-class ClientMessage<Pu: Encodable, Pr: Encodable> : Encodable {
+public class ClientMessage<Pu: Encodable, Pr: Encodable> : Encodable {
     var hi: MsgClientHi?
     var acc: MsgClientAcc<Pu,Pr>?
     var login: MsgClientLogin?

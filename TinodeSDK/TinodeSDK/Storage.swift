@@ -7,7 +7,7 @@
 
 import Foundation
 
-protocol Message {
+public protocol Message {
     // Get current message payload.
     var content: Drafty? { get }
     // Get current message unique ID (database ID).
@@ -23,12 +23,12 @@ protocol Message {
     var isSynced: Bool { get }
 }
 
-protocol MessageIterator {
+public protocol MessageIterator {
     func next() -> Message?
 }
 
 // Base protocol for implementing persistance.
-protocol Storage: class {
+public protocol Storage: class {
     // Min and max values.
     typealias Range = (min: Int, max: Int)
 

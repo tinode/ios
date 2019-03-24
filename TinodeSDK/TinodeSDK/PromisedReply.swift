@@ -45,9 +45,9 @@ private class CountDownLatch {
     }
 }
 
-class PromisedReply<Value> {
-    typealias SuccessHandler = ((Value) throws -> PromisedReply<Value>?)?
-    typealias FailureHandler = ((Error) throws -> PromisedReply<Value>?)?
+public class PromisedReply<Value> {
+    public typealias SuccessHandler = ((Value) throws -> PromisedReply<Value>?)?
+    public typealias FailureHandler = ((Error) throws -> PromisedReply<Value>?)?
     enum State {
         case waiting
         case resolved(Value)
@@ -137,7 +137,7 @@ class PromisedReply<Value> {
         }
     }
     @discardableResult
-    func then(onSuccess successHandler: SuccessHandler,
+    public func then(onSuccess successHandler: SuccessHandler,
               onFailure failureHandler: FailureHandler) throws -> PromisedReply<Value>? {
         return try queue.sync {
             // start critical section

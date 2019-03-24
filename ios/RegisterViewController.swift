@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import TinodeSDK
 
 class RegisterViewController: UIViewController {
     @IBOutlet weak var loginText: UITextField!

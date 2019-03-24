@@ -1,0 +1,469 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 50;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0A431BE12244A0BE00A837F7 /* TinodeSDK.h in Headers */ = {isa = PBXBuildFile; fileRef = 0A431BDF2244A0BE00A837F7 /* TinodeSDK.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		0A431BFA2244A14D00A837F7 /* PromisedReply.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A431BF22244A14C00A837F7 /* PromisedReply.swift */; };
+		0A431BFB2244A14D00A837F7 /* Connection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A431BF42244A14C00A837F7 /* Connection.swift */; };
+		0A431BFC2244A14D00A837F7 /* AuthScheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A431BF52244A14C00A837F7 /* AuthScheme.swift */; };
+		0A431BFD2244A14D00A837F7 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A431BF92244A14D00A837F7 /* User.swift */; };
+		0A431BFE2244A14D00A837F7 /* Storage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A431BF72244A14D00A837F7 /* Storage.swift */; };
+		0A431BFF2244A14D00A837F7 /* Tinode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A431BF62244A14D00A837F7 /* Tinode.swift */; };
+		0A431C002244A14D00A837F7 /* RFC3339Format.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A431BF32244A14C00A837F7 /* RFC3339Format.swift */; };
+		0A431C012244A14D00A837F7 /* Topic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A431BF82244A14D00A837F7 /* Topic.swift */; };
+		0A44B0052244AAC500A98866 /* ServerMessages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A431BEE2244A14B00A837F7 /* ServerMessages.swift */; };
+		0A44B0062244AAC500A98866 /* Subscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A431BEF2244A14B00A837F7 /* Subscription.swift */; };
+		0A44B0072244AAC500A98866 /* VCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A431BF02244A14B00A837F7 /* VCard.swift */; };
+		0A44B0082244AAC500A98866 /* Defacs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A431BEB2244A14B00A837F7 /* Defacs.swift */; };
+		0A44B0092244AAC500A98866 /* Description.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A431BEC2244A14B00A837F7 /* Description.swift */; };
+		0A44B00A2244AAC500A98866 /* Acs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A431BE82244A14B00A837F7 /* Acs.swift */; };
+		0A44B00B2244AAC500A98866 /* Drafty.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A431BED2244A14B00A837F7 /* Drafty.swift */; };
+		0A44B00C2244AAC500A98866 /* JSONValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A431BE72244A14B00A837F7 /* JSONValue.swift */; };
+		0A44B00D2244AAC500A98866 /* AcsHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A431BE92244A14B00A837F7 /* AcsHelper.swift */; };
+		0A44B00E2244AAC500A98866 /* ClientMessages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A431BEA2244A14B00A837F7 /* ClientMessages.swift */; };
+		9C88C579E43E9FD3687DD093 /* Pods_TinodeSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 679C08F81F0F4B80EE066C70 /* Pods_TinodeSDK.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		0A431BDC2244A0BE00A837F7 /* TinodeSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = TinodeSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		0A431BDF2244A0BE00A837F7 /* TinodeSDK.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TinodeSDK.h; sourceTree = "<group>"; };
+		0A431BE02244A0BE00A837F7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		0A431BE72244A14B00A837F7 /* JSONValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONValue.swift; sourceTree = "<group>"; };
+		0A431BE82244A14B00A837F7 /* Acs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Acs.swift; sourceTree = "<group>"; };
+		0A431BE92244A14B00A837F7 /* AcsHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AcsHelper.swift; sourceTree = "<group>"; };
+		0A431BEA2244A14B00A837F7 /* ClientMessages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientMessages.swift; sourceTree = "<group>"; };
+		0A431BEB2244A14B00A837F7 /* Defacs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Defacs.swift; sourceTree = "<group>"; };
+		0A431BEC2244A14B00A837F7 /* Description.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Description.swift; sourceTree = "<group>"; };
+		0A431BED2244A14B00A837F7 /* Drafty.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Drafty.swift; sourceTree = "<group>"; };
+		0A431BEE2244A14B00A837F7 /* ServerMessages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerMessages.swift; sourceTree = "<group>"; };
+		0A431BEF2244A14B00A837F7 /* Subscription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Subscription.swift; sourceTree = "<group>"; };
+		0A431BF02244A14B00A837F7 /* VCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VCard.swift; sourceTree = "<group>"; };
+		0A431BF22244A14C00A837F7 /* PromisedReply.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromisedReply.swift; sourceTree = "<group>"; };
+		0A431BF32244A14C00A837F7 /* RFC3339Format.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RFC3339Format.swift; sourceTree = "<group>"; };
+		0A431BF42244A14C00A837F7 /* Connection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Connection.swift; sourceTree = "<group>"; };
+		0A431BF52244A14C00A837F7 /* AuthScheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthScheme.swift; sourceTree = "<group>"; };
+		0A431BF62244A14D00A837F7 /* Tinode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tinode.swift; sourceTree = "<group>"; };
+		0A431BF72244A14D00A837F7 /* Storage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Storage.swift; sourceTree = "<group>"; };
+		0A431BF82244A14D00A837F7 /* Topic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Topic.swift; sourceTree = "<group>"; };
+		0A431BF92244A14D00A837F7 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		0A44B0102247573C00A98866 /* SwiftWebSocket.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SwiftWebSocket.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		679C08F81F0F4B80EE066C70 /* Pods_TinodeSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TinodeSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B0CD0F1036565AA6D7FCB418 /* Pods-TinodeSDK.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TinodeSDK.release.xcconfig"; path = "../Pods/Target Support Files/Pods-TinodeSDK/Pods-TinodeSDK.release.xcconfig"; sourceTree = "<group>"; };
+		B4211CF84B51039364CC4DD3 /* Pods-TinodeSDK.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TinodeSDK.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-TinodeSDK/Pods-TinodeSDK.debug.xcconfig"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		0A431BD92244A0BE00A837F7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9C88C579E43E9FD3687DD093 /* Pods_TinodeSDK.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		0A431BD22244A0BE00A837F7 = {
+			isa = PBXGroup;
+			children = (
+				0A431BDE2244A0BE00A837F7 /* TinodeSDK */,
+				0A431BDD2244A0BE00A837F7 /* Products */,
+				8C6B3962D56241D86158FB6E /* Pods */,
+				E5812F8A21FE2118756F29A4 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		0A431BDD2244A0BE00A837F7 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				0A431BDC2244A0BE00A837F7 /* TinodeSDK.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		0A431BDE2244A0BE00A837F7 /* TinodeSDK */ = {
+			isa = PBXGroup;
+			children = (
+				0A44B00F2244AB0F00A98866 /* model */,
+				0A431BF32244A14C00A837F7 /* RFC3339Format.swift */,
+				0A431BF62244A14D00A837F7 /* Tinode.swift */,
+				0A431BF52244A14C00A837F7 /* AuthScheme.swift */,
+				0A431BF42244A14C00A837F7 /* Connection.swift */,
+				0A431BF22244A14C00A837F7 /* PromisedReply.swift */,
+				0A431BF82244A14D00A837F7 /* Topic.swift */,
+				0A431BF92244A14D00A837F7 /* User.swift */,
+				0A431BF72244A14D00A837F7 /* Storage.swift */,
+				0A431BDF2244A0BE00A837F7 /* TinodeSDK.h */,
+				0A431BE02244A0BE00A837F7 /* Info.plist */,
+			);
+			path = TinodeSDK;
+			sourceTree = "<group>";
+		};
+		0A44B00F2244AB0F00A98866 /* model */ = {
+			isa = PBXGroup;
+			children = (
+				0A431BE72244A14B00A837F7 /* JSONValue.swift */,
+				0A431BE82244A14B00A837F7 /* Acs.swift */,
+				0A431BE92244A14B00A837F7 /* AcsHelper.swift */,
+				0A431BEA2244A14B00A837F7 /* ClientMessages.swift */,
+				0A431BEB2244A14B00A837F7 /* Defacs.swift */,
+				0A431BEC2244A14B00A837F7 /* Description.swift */,
+				0A431BED2244A14B00A837F7 /* Drafty.swift */,
+				0A431BEE2244A14B00A837F7 /* ServerMessages.swift */,
+				0A431BEF2244A14B00A837F7 /* Subscription.swift */,
+				0A431BF02244A14B00A837F7 /* VCard.swift */,
+			);
+			path = model;
+			sourceTree = "<group>";
+		};
+		8C6B3962D56241D86158FB6E /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				B4211CF84B51039364CC4DD3 /* Pods-TinodeSDK.debug.xcconfig */,
+				B0CD0F1036565AA6D7FCB418 /* Pods-TinodeSDK.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
+		E5812F8A21FE2118756F29A4 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				0A44B0102247573C00A98866 /* SwiftWebSocket.framework */,
+				679C08F81F0F4B80EE066C70 /* Pods_TinodeSDK.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		0A431BD72244A0BE00A837F7 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0A431BE12244A0BE00A837F7 /* TinodeSDK.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		0A431BDB2244A0BE00A837F7 /* TinodeSDK */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0A431BE42244A0BE00A837F7 /* Build configuration list for PBXNativeTarget "TinodeSDK" */;
+			buildPhases = (
+				10BAED752489B32660F6CF41 /* [CP] Check Pods Manifest.lock */,
+				0A431BD72244A0BE00A837F7 /* Headers */,
+				0A431BD82244A0BE00A837F7 /* Sources */,
+				0A431BD92244A0BE00A837F7 /* Frameworks */,
+				0A431BDA2244A0BE00A837F7 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TinodeSDK;
+			productName = TinodeSDK;
+			productReference = 0A431BDC2244A0BE00A837F7 /* TinodeSDK.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		0A431BD32244A0BE00A837F7 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 1010;
+				ORGANIZATIONNAME = Tinode;
+				TargetAttributes = {
+					0A431BDB2244A0BE00A837F7 = {
+						CreatedOnToolsVersion = 10.1;
+					};
+				};
+			};
+			buildConfigurationList = 0A431BD62244A0BE00A837F7 /* Build configuration list for PBXProject "TinodeSDK" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 0A431BD22244A0BE00A837F7;
+			productRefGroup = 0A431BDD2244A0BE00A837F7 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				0A431BDB2244A0BE00A837F7 /* TinodeSDK */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		0A431BDA2244A0BE00A837F7 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		10BAED752489B32660F6CF41 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-TinodeSDK-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		0A431BD82244A0BE00A837F7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0A431BFD2244A14D00A837F7 /* User.swift in Sources */,
+				0A44B00C2244AAC500A98866 /* JSONValue.swift in Sources */,
+				0A44B0052244AAC500A98866 /* ServerMessages.swift in Sources */,
+				0A431BFC2244A14D00A837F7 /* AuthScheme.swift in Sources */,
+				0A44B00E2244AAC500A98866 /* ClientMessages.swift in Sources */,
+				0A44B00A2244AAC500A98866 /* Acs.swift in Sources */,
+				0A431BFA2244A14D00A837F7 /* PromisedReply.swift in Sources */,
+				0A44B0062244AAC500A98866 /* Subscription.swift in Sources */,
+				0A44B0072244AAC500A98866 /* VCard.swift in Sources */,
+				0A44B0092244AAC500A98866 /* Description.swift in Sources */,
+				0A44B00B2244AAC500A98866 /* Drafty.swift in Sources */,
+				0A431BFB2244A14D00A837F7 /* Connection.swift in Sources */,
+				0A431BFF2244A14D00A837F7 /* Tinode.swift in Sources */,
+				0A431C012244A14D00A837F7 /* Topic.swift in Sources */,
+				0A44B0082244AAC500A98866 /* Defacs.swift in Sources */,
+				0A431C002244A14D00A837F7 /* RFC3339Format.swift in Sources */,
+				0A44B00D2244AAC500A98866 /* AcsHelper.swift in Sources */,
+				0A431BFE2244A14D00A837F7 /* Storage.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		0A431BE22244A0BE00A837F7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		0A431BE32244A0BE00A837F7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		0A431BE52244A0BE00A837F7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = B4211CF84B51039364CC4DD3 /* Pods-TinodeSDK.debug.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Automatic;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = TinodeSDK/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = co.tinode.ios.TinodeSDK;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 4.2;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		0A431BE62244A0BE00A837F7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = B0CD0F1036565AA6D7FCB418 /* Pods-TinodeSDK.release.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_STYLE = Automatic;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = TinodeSDK/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = co.tinode.ios.TinodeSDK;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 4.2;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		0A431BD62244A0BE00A837F7 /* Build configuration list for PBXProject "TinodeSDK" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0A431BE22244A0BE00A837F7 /* Debug */,
+				0A431BE32244A0BE00A837F7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		0A431BE42244A0BE00A837F7 /* Build configuration list for PBXNativeTarget "TinodeSDK" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0A431BE52244A0BE00A837F7 /* Debug */,
+				0A431BE62244A0BE00A837F7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 0A431BD32244A0BE00A837F7 /* Project object */;
+}

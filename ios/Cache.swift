@@ -7,6 +7,7 @@
 
 import Foundation
 import UIKit
+import TinodeSDK
 
 class Cache {
     private static let `default` = Cache()

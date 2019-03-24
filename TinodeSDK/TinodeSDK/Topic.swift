@@ -7,10 +7,10 @@
 
 import Foundation
 
-protocol Payload: class {
+public protocol Payload: class {
     
 }
-protocol TopicProto: class {
+public protocol TopicProto: class {
     var name: String { get }
     var updated: Date? { get set }
     var subsUpdated: Date? { get }
@@ -44,7 +44,7 @@ protocol TopicProto: class {
     //func setStorage(store: Storage?)
 }
 
-enum TopicType: Int {
+public enum TopicType: Int {
     case me = 0x01
     case fnd = 0x02
     case grp = 0x04
@@ -55,7 +55,7 @@ enum TopicType: Int {
     case any = 0x0f // .user | .system
 }
 
-class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto {
+open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto {
     enum TopicError: Error {
         case alreadySubscribed
     }
@@ -65,37 +65,39 @@ class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto {
         case kRecv
     }
     
-    public class Listener {
-        
-        func onSubscribe(code: Int, text: String) {}
-        func onLeave(unsub: Bool?, code: Int?, text: String?) {}
+    //open class Listener2<DP2: Codable, DR2: Codable, SP2: Codable, SR2: Codable> {
+    open class Listener {
+        public init() {}
+        open func onSubscribe(code: Int, text: String) {}
+        open func onLeave(unsub: Bool?, code: Int?, text: String?) {}
 
         // Process {data} message.
-        func onData(data: MsgServerData?) {}
+        open func onData(data: MsgServerData?) {}
         // All requested data messages received.
-        func onAllMessagesReceived(count: Int) {}
+        open func onAllMessagesReceived(count: Int) {}
         
         // {info} message received.
-        func onInfo(info: MsgServerInfo) {}
+        open func onInfo(info: MsgServerInfo) {}
         // {meta} message received.
-        func onMeta(meta: MsgServerMeta) {}
+        open func onMeta(meta: MsgServerMeta) {}
         // {meta what="sub"} message received, and this is one of the subs.
-        func onMetaSub(sub: Subscription<SP, SR>) {}
+        open func onMetaSub(sub: Subscription<SP, SR>) {}
         // {meta what="desc"} message received.
-        func onMetaDesc(desc: Description<DP, DR>) {}
+        open func onMetaDesc(desc: Description<DP, DR>) {}
         // {meta what="tags"} message received.
-        func onMetaTags(tags: [String]) {}
+        open func onMetaTags(tags: [String]) {}
         // {meta what="sub"} message received and all subs were processed.
-        func onSubsUpdated() {}
+        open func onSubsUpdated() {}
         // {pres} received.
-        func onPres(pres: MsgServerPres) {}
+        open func onPres(pres: MsgServerPres) {}
         // {pres what="on|off"} is received.
-        func onOnline(online: Bool) {}
+        open func onOnline(online: Bool) {}
         // Called by MeTopic when topic descriptor as contact is updated.
-        func onContUpdate(sub: Subscription<SP, SR>) {}
+        open func onContUpdate(sub: Subscription<SP, SR>) {}
     }
+    //public typealias Listener = Listener2<DP, DR, SP, SR>
     
-    class MetaGetBuilder {
+    public class MetaGetBuilder {
         let topic: TopicProto
         var meta: MsgGetMeta
         
@@ -104,74 +106,74 @@ class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto {
             self.meta = MsgGetMeta()
         }
         
-        func withGetData(since: Int?, before: Int?, limit: Int?) -> MetaGetBuilder {
+        public func withGetData(since: Int?, before: Int?, limit: Int?) -> MetaGetBuilder {
             meta.setData(since: since, before: before, limit: limit)
             return self
         }
-        func withGetEarlierData(limit: Int?) -> MetaGetBuilder {
+        public func withGetEarlierData(limit: Int?) -> MetaGetBuilder {
             if let r = topic.cachedMessageRange {
                 return withGetData(since: nil, before: r.min > 0 ? r.min : nil, limit: limit)
             }
             return withGetData(since: nil, before: nil, limit: limit)
         }
-        func withGetLaterData(limit: Int?) -> MetaGetBuilder {
+        public func withGetLaterData(limit: Int?) -> MetaGetBuilder {
             if let r = topic.cachedMessageRange {
                 return withGetData(since: r.max > 0 ? r.max + 1 : nil, before: nil, limit: limit)
             }
             return withGetData(since: nil, before: nil, limit: limit)
         }
-        func withGetData() -> MetaGetBuilder {
+        public func withGetData() -> MetaGetBuilder {
             return withGetLaterData(limit: nil)
         }
 
-        func withGetDel(since: Int?, limit: Int?) -> MetaGetBuilder {
+        public func withGetDel(since: Int?, limit: Int?) -> MetaGetBuilder {
             meta.setDel(since: since, limit: limit)
             return self
         }
-        func withGetLaterDel(limit: Int?) -> MetaGetBuilder {
+        public func withGetLaterDel(limit: Int?) -> MetaGetBuilder {
             return withGetDel(since: topic.maxDel + 1, limit: limit);
         }
-        func withGetDel() -> MetaGetBuilder {
+        public func withGetDel() -> MetaGetBuilder {
             return withGetLaterDel(limit: nil)
         }
 
-        func withGetDesc() -> MetaGetBuilder {
+        public func withGetDesc() -> MetaGetBuilder {
             return withGetDesc(ims: topic.updated)
         }
-        func withGetDesc(ims: Date?) -> MetaGetBuilder {
+        public func withGetDesc(ims: Date?) -> MetaGetBuilder {
             meta.setDesc(ims: ims)
             return self
         }
-        func withGetSub(user: String?, ims: Date?, limit: Int?) -> MetaGetBuilder {
+        public func withGetSub(user: String?, ims: Date?, limit: Int?) -> MetaGetBuilder {
             meta.setSub(user: user, ims: ims, limit: limit)
             return self
         }
-        func withGetSub(user: String?) -> MetaGetBuilder {
+        public func withGetSub(user: String?) -> MetaGetBuilder {
             return withGetSub(user: user, ims: topic.subsUpdated, limit: nil)
         }
 
-        func withGetSub(ims: Date?, limit: Int?) -> MetaGetBuilder {
+        public func withGetSub(ims: Date?, limit: Int?) -> MetaGetBuilder {
             return withGetSub(user: nil, ims: ims, limit: limit)
         }
-        func withGetSub() -> MetaGetBuilder {
+        public func withGetSub() -> MetaGetBuilder {
             return withGetSub(user: nil, ims: topic.subsUpdated, limit: nil)
         }
-        func withGetTags() -> MetaGetBuilder {
+        public func withGetTags() -> MetaGetBuilder {
             meta.setTags()
             return self
         }
-        func build() -> MsgGetMeta {
+        public func build() -> MsgGetMeta {
             return meta
         }
     }
     
     fileprivate weak var tinode: Tinode? = nil
-    var name: String = ""
-    var isNew: Bool {
+    public var name: String = ""
+    public var isNew: Bool {
         get { return Topic.isNewByName(name: name)}
     }
     
-    var updated: Date? {
+    public var updated: Date? {
         get {
             return description?.updated
         }
@@ -179,7 +181,7 @@ class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto {
             description?.updated = newValue
         }
     }
-    var read: Int? {
+    public var read: Int? {
         get {
             return description?.read
         }
@@ -189,7 +191,7 @@ class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto {
             }
         }
     }
-    var recv: Int? {
+    public var recv: Int? {
         get {
             return description?.recv
         }
@@ -199,7 +201,7 @@ class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto {
             }
         }
     }
-    var seq: Int? {
+    public var seq: Int? {
         get {
             return description?.seq
         }
@@ -209,7 +211,7 @@ class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto {
             }
         }
     }
-    var clear: Int? {
+    public var clear: Int? {
         get {
             return description?.clear
         }
@@ -219,32 +221,32 @@ class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto {
             }
         }
     }
-    var subsLastUpdated: Date? = nil
-    var subsUpdated: Date? {
+    public var subsLastUpdated: Date? = nil
+    public var subsUpdated: Date? {
         get { return subsLastUpdated }
     }
-    var accessMode: Acs? {
+    public var accessMode: Acs? {
         get { return description?.acs }
         set { description?.acs = newValue }
     }
-    var defacs: Defacs? {
+    public var defacs: Defacs? {
         get { return description?.defacs }
         set { description?.defacs = defacs }
     }
     
     // The bulk of topic data
     private var description: Description<DP, DR>? = nil
-    var pub: DP? {
+    public var pub: DP? {
         get { return description?.pub }
     }
-    var priv: DR? {
+    public var priv: DR? {
         get { return description?.priv }
     }
-    var attached = false
-    weak var listener: Listener? = nil
+    public var attached = false
+    weak public var listener: Listener? = nil
     // Cache of topic subscribers indexed by userID
     private var subs: [String:Subscription<SP,SR>]? = nil
-    var tags: [String]? = nil
+    public var tags: [String]? = nil
     private var lastKeyPress: Int64 = 0
     private var online: Bool = false {
         didSet {
@@ -254,7 +256,7 @@ class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto {
         }
     }
     private var lastSeen: LastSeen? = nil
-    var maxDel: Int = 0 {
+    public var maxDel: Int = 0 {
         didSet {
             if maxDel < oldValue {
                 maxDel = oldValue
@@ -262,21 +264,21 @@ class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto {
         }
     }
     
-    var topicType: TopicType {
+    public var topicType: TopicType {
         get {
             return Topic.topicTypeByName(name: self.name)
         }
     }
-    var isP2PType: Bool {
+    public var isP2PType: Bool {
         get {
             return topicType == TopicType.p2p
         }
     }
     // Storage is owned by Tinode.
-    weak var store: Storage? = nil
-    var payload: Payload? = nil
-    var isPersisted: Bool { get { return payload != nil } }
-    var cachedMessageRange: Storage.Range? {
+    weak public var store: Storage? = nil
+    public var payload: Payload? = nil
+    public var isPersisted: Bool { get { return payload != nil } }
+    public var cachedMessageRange: Storage.Range? {
         get {
             return store?.getCachedMessagesRange(topic: self)
         }
@@ -395,12 +397,12 @@ class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto {
         return false
     }
 
-    func getMetaGetBuilder() -> MetaGetBuilder {
+    public func getMetaGetBuilder() -> MetaGetBuilder {
         return MetaGetBuilder(parent: self)
     }
 
     @discardableResult
-    func subscribe() throws -> PromisedReply<ServerMessage> {
+    public func subscribe() throws -> PromisedReply<ServerMessage> {
         var setMsg: MsgSetMeta<DP, DR>? = nil
         if let d = description, isNew && (d.pub != nil || d.priv != nil) {
             setMsg = MsgSetMeta<DP, DR>(desc: MetaSetDesc(pub: d.pub, priv: d.priv), sub: nil, tags: nil)
@@ -409,7 +411,7 @@ class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto {
         return try subscribe(set: setMsg, get: getMsg)
     }
     @discardableResult
-    func subscribe(set: MsgSetMeta<DP, DR>?, get: MsgGetMeta?) throws -> PromisedReply<ServerMessage> {
+    public func subscribe(set: MsgSetMeta<DP, DR>?, get: MsgGetMeta?) throws -> PromisedReply<ServerMessage> {
         if attached {
             throw TopicError.alreadySubscribed
         }
@@ -460,7 +462,7 @@ class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto {
             })!
     }
 
-    func allMessagesReceived(count: Int?) {
+    public func allMessagesReceived(count: Int?) {
         print("allMessagesReceived --> \(String(describing: count))")
         listener?.onAllMessagesReceived(count: count ?? 0)
     }
@@ -574,7 +576,7 @@ class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto {
         self.update(tags: tags)
         listener?.onMetaTags(tags: tags)
     }
-    func routeMeta(meta: MsgServerMeta) {
+    public func routeMeta(meta: MsgServerMeta) {
         if meta.desc != nil {
             routeMetaDesc(meta: meta)
         }
@@ -625,13 +627,13 @@ class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto {
         return result
     }
     @discardableResult
-    func noteRead() -> Int {
+    public func noteRead() -> Int {
         let result = noteReadRecv(what: NoteType.kRead)
         store?.setRead(topic: self, read: result)
         return result
     }
     @discardableResult
-    func noteRecv() -> Int {
+    public func noteRecv() -> Int {
         let result = noteReadRecv(what: NoteType.kRecv)
         store?.setRecv(topic: self, recv: result)
         return result
@@ -651,7 +653,7 @@ class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto {
             description!.read = read
         }
     }
-    func routeData(data: MsgServerData) {
+    public func routeData(data: MsgServerData) {
         if let s = store {
             if s.msgReceived(topic: self, sub: getSubscription(for: data.from), msg: data) > 0 {
                 noteRecv()
@@ -663,7 +665,7 @@ class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto {
         listener?.onData(data: data)
     }
     @discardableResult
-    func getMeta(query: MsgGetMeta) -> PromisedReply<ServerMessage>? {
+    public func getMeta(query: MsgGetMeta) -> PromisedReply<ServerMessage>? {
         return tinode?.getMeta(topic: name, query: query)
     }
     private func updateAccessMode(ac: AccessChange?) -> Bool {
@@ -672,7 +674,7 @@ class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto {
         }
         return description!.acs!.update(from: ac)
     }
-    func routeInfo(info: MsgServerInfo) {
+    public func routeInfo(info: MsgServerInfo) {
         if info.what == Tinode.kNoteKp {
             if let sub = getSubscription(for: info.from) {
                 switch info.what {
@@ -691,7 +693,7 @@ class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto {
         }
         listener?.onInfo(info: info)
     }
-    func routePres(pres: MsgServerPres) {
+    public func routePres(pres: MsgServerPres) {
         let what = MsgServerPres.parseWhat(what: pres.what)
         //var sub: Subscription<SP, SR>? = nil
         switch what {
@@ -744,7 +746,7 @@ class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto {
         }
     }
     @discardableResult
-    func leave(unsub: Bool? = false) throws -> PromisedReply<ServerMessage>? {
+    public func leave(unsub: Bool? = false) throws -> PromisedReply<ServerMessage>? {
         if attached {
             return try tinode?.leave(topic: name, unsub: unsub)?
                 .then(
@@ -783,7 +785,7 @@ class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto {
         setRead(read: seq)
         store?.setRead(topic: self, read: seq)
     }
-    func publish(content: String?, msgId: Int64) throws -> PromisedReply<ServerMessage>? {
+    public func publish(content: String?, msgId: Int64) throws -> PromisedReply<ServerMessage>? {
         return try tinode!.publish(topic: name, data: content)?.then(
             onSuccess: { [weak self] msg in
                 self?.processDelivery(ctrl: msg.ctrl, id: msgId)
@@ -792,7 +794,7 @@ class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto {
                 return nil
             })
     }
-    func publish(content: String?) throws -> PromisedReply<ServerMessage>? {
+    public func publish(content: String?) throws -> PromisedReply<ServerMessage>? {
         var id: Int64 = -1
         if let s = store, let c = content {
             id = s.msgSend(topic: self, data: c)
@@ -821,7 +823,7 @@ class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto {
         }
         return nil
     }
-    func syncAll() throws -> PromisedReply<ServerMessage>? {
+    public func syncAll() throws -> PromisedReply<ServerMessage>? {
         // Soft deletes.
         var result = try self.sendPendingDeletes(hard: false)
         // Hard deletes.
@@ -848,16 +850,16 @@ class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto {
     }
 }
 
-typealias DefaultTopic = Topic<VCard, PrivateType, VCard, PrivateType>
-typealias DefaultComTopic = ComTopic<VCard>
-typealias DefaultMeTopic = MeTopic<VCard>
-typealias DefaultFndTopic = FndTopic<VCard>
+public typealias DefaultTopic = Topic<VCard, PrivateType, VCard, PrivateType>
+public typealias DefaultComTopic = ComTopic<VCard>
+public typealias DefaultMeTopic = MeTopic<VCard>
+public typealias DefaultFndTopic = FndTopic<VCard>
 
-class MeTopic<DP: Codable>: Topic<DP, PrivateType, DP, PrivateType> {
-    init(tinode: Tinode?, l: Listener?) throws {
+open class MeTopic<DP: Codable>: Topic<DP, PrivateType, DP, PrivateType> {
+    public init(tinode: Tinode?, l: MeTopic<DP>.Listener?) throws {
         try super.init(tinode: tinode, name: Tinode.kTopicMe, l: l)
     }
-    init(tinode: Tinode?, desc: Description<DP, PrivateType>) throws {
+    public init(tinode: Tinode?, desc: Description<DP, PrivateType>) throws {
         try super.init(tinode: tinode, name: Tinode.kTopicMe, desc: desc)
     }
     override fileprivate func routeMetaSub(meta: MsgServerMeta) {
@@ -893,13 +895,13 @@ class MeTopic<DP: Codable>: Topic<DP, PrivateType, DP, PrivateType> {
         // listener?.onSubsUpdated()
     }
 }
-class FndTopic<SP: Codable>: Topic<String, String, SP, Array<String>> {
+public class FndTopic<SP: Codable>: Topic<String, String, SP, Array<String>> {
     init(tinode: Tinode?) throws {
         try super.init(tinode: tinode, name: Tinode.kTopicMe)
     }
 }
 
-class ComTopic<DP: Codable>: Topic<DP, PrivateType, DP, PrivateType> {
+public class ComTopic<DP: Codable>: Topic<DP, PrivateType, DP, PrivateType> {
     override init(tinode: Tinode?, name: String, l: Listener?) throws {
         try super.init(tinode: tinode, name: name, l: l)
     }

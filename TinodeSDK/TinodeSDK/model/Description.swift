@@ -11,12 +11,12 @@ import Foundation
 // Messages may send descriptions with different
 // public and private types. We need to have a common type
 // to handle descriptions with all these types.
-protocol DescriptionProto: Decodable {}
+public protocol DescriptionProto: Decodable {}
 
-typealias DescPublic = Any & Decodable
-typealias DescPrivate = Any & Decodable
+public typealias DescPublic = Any & Decodable
+public typealias DescPrivate = Any & Decodable
 
-class Description<DP: Decodable, DR: Decodable>: DescriptionProto {
+public class Description<DP: Decodable, DR: Decodable>: DescriptionProto {
     var created: Date? = nil
     var updated: Date? = nil
     var touched: Date? = nil

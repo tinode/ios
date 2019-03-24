@@ -26,4 +26,4 @@ class Drafty: Codable {
     var ent: [Entity]?
 }
 */
-typealias Drafty = String
+public typealias Drafty = String

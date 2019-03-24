@@ -7,7 +7,7 @@
 
 import Foundation
 
-class Acs: Codable, Equatable {
+public class Acs: Codable, Equatable {
     var given: AcsHelper?
     var want: AcsHelper?
     var mode: AcsHelper?
@@ -42,7 +42,7 @@ class Acs: Codable, Equatable {
             self.assign(given: d["given"], want: d["want"], mode: d["mode"])
         }
     }
-    required init (from decoder: Decoder) throws {
+    required public init (from decoder: Decoder) throws {
         let container =  try decoder.container (keyedBy: CodingKeys.self)
         if let givenStr = try? container.decode(String.self, forKey: .given) {
             self.given = AcsHelper(str: givenStr)
@@ -102,18 +102,18 @@ class Acs: Codable, Equatable {
         }
         return changed > 0
     }
-    func serialize() -> String {
+    public func serialize() -> String {
         return [self.mode?.description ?? "",
                 self.want?.description ?? "",
                 self.given?.description ?? ""].joined(separator: ",")
     }
-    static func deserialize(from data: String?) -> Acs? {
+    static public func deserialize(from data: String?) -> Acs? {
         guard let parts = data?.components(separatedBy: ","), parts.count == 3 else {
             return nil
         }
         return Acs(given: parts[2], want: parts[1], mode: parts[0])
     }
-    static func == (lhs: Acs, rhs: Acs) -> Bool {
+    public static func == (lhs: Acs, rhs: Acs) -> Bool {
         return lhs.mode == rhs.mode && lhs.want == rhs.want && lhs.given == rhs.mode
     }
 }

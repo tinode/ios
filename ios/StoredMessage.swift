@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import TinodeSDK
 
 class StoredMessage : MsgServerData, Message {
     var msgId: Int64 = 0
@@ -35,6 +36,7 @@ class StoredMessage : MsgServerData, Message {
     }
     var isSynced: Bool { get { return status == 3 } }
     
+    public override init() { super.init() }
     convenience init(from m: MsgServerData) {
         self.init()
         self.topic = m.topic
@@ -47,5 +49,9 @@ class StoredMessage : MsgServerData, Message {
     convenience init(from m: MsgServerData, status: Int) {
         self.init(from: m)
         self.status = status
+    }
+    
+    required init(from decoder: Decoder) throws {
+        fatalError("init(from:) has not been implemented")
     }
 }
