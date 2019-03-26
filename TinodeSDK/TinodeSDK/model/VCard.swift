@@ -8,9 +8,9 @@
 import Foundation
 
 public class Photo: Codable {
-    let type: String?
+    public let type: String?
     // Byte array.
-    let data: String?
+    public let data: String?
 }
 
 public class Contact: Codable {
