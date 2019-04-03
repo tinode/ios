@@ -1,9 +1,9 @@
 ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES
-FRAMEWORK_SEARCH_PATHS = $(inherited) "${PODS_CONFIGURATION_BUILD_DIR}/MessageInputBar" "${PODS_CONFIGURATION_BUILD_DIR}/MessageKit" "${PODS_CONFIGURATION_BUILD_DIR}/SQLite.swift" "${PODS_CONFIGURATION_BUILD_DIR}/SwiftWebSocket-iOS10.0"
+FRAMEWORK_SEARCH_PATHS = $(inherited) "${PODS_CONFIGURATION_BUILD_DIR}/MessageInputBar" "${PODS_CONFIGURATION_BUILD_DIR}/MessageKit" "${PODS_CONFIGURATION_BUILD_DIR}/SQLite.swift" "${PODS_CONFIGURATION_BUILD_DIR}/SwiftKeychainWrapper" "${PODS_CONFIGURATION_BUILD_DIR}/SwiftWebSocket-iOS10.0"
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) COCOAPODS=1
 LD_RUNPATH_SEARCH_PATHS = $(inherited) '@executable_path/Frameworks' '@loader_path/Frameworks'
-OTHER_CFLAGS = $(inherited) -iquote "${PODS_CONFIGURATION_BUILD_DIR}/MessageInputBar/MessageInputBar.framework/Headers" -iquote "${PODS_CONFIGURATION_BUILD_DIR}/MessageKit/MessageKit.framework/Headers" -iquote "${PODS_CONFIGURATION_BUILD_DIR}/SQLite.swift/SQLite.framework/Headers" -iquote "${PODS_CONFIGURATION_BUILD_DIR}/SwiftWebSocket-iOS10.0/SwiftWebSocket.framework/Headers"
-OTHER_LDFLAGS = $(inherited) -framework "MessageInputBar" -framework "MessageKit" -framework "SQLite" -framework "SwiftWebSocket"
+OTHER_CFLAGS = $(inherited) -iquote "${PODS_CONFIGURATION_BUILD_DIR}/MessageInputBar/MessageInputBar.framework/Headers" -iquote "${PODS_CONFIGURATION_BUILD_DIR}/MessageKit/MessageKit.framework/Headers" -iquote "${PODS_CONFIGURATION_BUILD_DIR}/SQLite.swift/SQLite.framework/Headers" -iquote "${PODS_CONFIGURATION_BUILD_DIR}/SwiftKeychainWrapper/SwiftKeychainWrapper.framework/Headers" -iquote "${PODS_CONFIGURATION_BUILD_DIR}/SwiftWebSocket-iOS10.0/SwiftWebSocket.framework/Headers"
+OTHER_LDFLAGS = $(inherited) -framework "MessageInputBar" -framework "MessageKit" -framework "SQLite" -framework "SwiftKeychainWrapper" -framework "SwiftWebSocket"
 OTHER_SWIFT_FLAGS = $(inherited) "-D" "COCOAPODS"
 PODS_BUILD_DIR = ${BUILD_DIR}
 PODS_CONFIGURATION_BUILD_DIR = ${PODS_BUILD_DIR}/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)

@@ -7,16 +7,36 @@
 
 import UIKit
 import os
+import SwiftKeychainWrapper
 
 class LoginViewController: UIViewController {
 
     @IBOutlet weak var userNameTextEdit: UITextField!
     @IBOutlet weak var passwordTextEdit: UITextField!
     
+    static let kTokenKey = "co.tinode.token"
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Do any additional setup after loading the view.
+        // TODO: move this logic to the splash screen.
+        if let token = KeychainWrapper.standard.string(
+            forKey: LoginViewController.kTokenKey), !token.isEmpty {
+            let tinode = Cache.getTinode()
+            DispatchQueue.global(qos: .userInteractive).async {
+                do {
+                    // TODO: implement TLS.
+                    _ = try tinode.connect(to: Cache.kHostName, useTLS: false)?.getResult()
+                    let msg = try tinode.loginToken(token: token, creds: nil).getResult()
+                    if let code = msg.ctrl?.code, code < 300 {
+                        print("login successful for: \(tinode.myUid!)")
+                        self.routeToChats()
+                    }
+                } catch {
+                    print("Failed to automatically login to Tinode: \(error).")
+                }
+            }
+        }
     }
     
     private func routeToChats() {
@@ -39,6 +59,13 @@ class LoginViewController: UIViewController {
                     .then(
                         onSuccess: { [weak self] pkt in
                             print("login successful for: \(tinode.myUid!)")
+                            if let token = tinode.authToken, !token.isEmpty {
+                                let tokenSaveSuccessful = KeychainWrapper.standard.set(
+                                    token, forKey: LoginViewController.kTokenKey)
+                                if !tokenSaveSuccessful {
+                                    print("Could not save auth token...")
+                                }
+                            }
                             self?.routeToChats()
                             return nil
                         }, onFailure: nil)

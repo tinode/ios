@@ -235,7 +235,7 @@ public class PromisedReply<Value> {
         nextPromise = next
     }
 
-    func getResult() throws -> Value {
+    public func getResult() throws -> Value {
         countDownLatch?.await()
         switch state {
         case .resolved(let value):

@@ -6,15 +6,22 @@
 //
 
 import UIKit
+import SwiftKeychainWrapper
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
-
+    static let kTinodeHasRunBefore = "tinodeHasRunBefore"
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        let userDefaults = UserDefaults.standard
+        if !userDefaults.bool(forKey: AppDelegate.kTinodeHasRunBefore) {
+            // Clear the app keychain.
+            KeychainWrapper.standard.removeAllKeys()
+            userDefaults.set(true, forKey: AppDelegate.kTinodeHasRunBefore)
+        }
         return true
     }
 

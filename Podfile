@@ -16,6 +16,7 @@ def ui_pods
     pod 'SQLite.swift', '~> 0.11.5'
     pod 'MessageKit', '~> 2.0.0'
     pod 'MessageInputBar', '~> 0.4.1'
+    pod 'SwiftKeychainWrapper', '~> 3.2'
 end
 
 target 'TinodeSDK' do

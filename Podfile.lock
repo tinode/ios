@@ -7,12 +7,14 @@ PODS:
   - SQLite.swift (0.11.5):
     - SQLite.swift/standard (= 0.11.5)
   - SQLite.swift/standard (0.11.5)
+  - SwiftKeychainWrapper (3.2.0)
   - SwiftWebSocket (2.7.0)
 
 DEPENDENCIES:
   - MessageInputBar (~> 0.4.1)
   - MessageKit (~> 2.0.0)
   - SQLite.swift (~> 0.11.5)
+  - SwiftKeychainWrapper (~> 3.2)
   - SwiftWebSocket (~> 2.7.0)
 
 SPEC REPOS:
@@ -20,14 +22,16 @@ SPEC REPOS:
     - MessageInputBar
     - MessageKit
     - SQLite.swift
+    - SwiftKeychainWrapper
     - SwiftWebSocket
 
 SPEC CHECKSUMS:
   MessageInputBar: e81c7535347f1f7b923de7080409a535a004b6e4
   MessageKit: 29c1c87e5a396d2ca7a3f712e5171dc9aba42a1e
   SQLite.swift: 6e5356850bb1791459f8c16d6ee9195b28714a2e
+  SwiftKeychainWrapper: 82c4c02cdc36f9a24f7edfcaab3e336401caa1a1
   SwiftWebSocket: 612c9729fd503cb6b0b8b45390c788686dac306f
 
-PODFILE CHECKSUM: a2b0c49a8828daf65e91e4feb3c0a50bf182589e
+PODFILE CHECKSUM: 61659f7e9a94e416701d0a95812ce120f2d8ef76
 
 COCOAPODS: 1.5.3
