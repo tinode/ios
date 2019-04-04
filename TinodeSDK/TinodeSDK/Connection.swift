@@ -35,6 +35,9 @@ public class Connection {
             self.useTLS = true
         }
         self.webSocketConnection = WebSocket()
+        // Do not run on the UI thread.
+        // TODO: figure out if we need to set up a separate queue.
+        self.webSocketConnection!.eventQueue = DispatchQueue.global(qos: .userInteractive)
         webSocketConnection!.event.open = {
             print("opened")
             self.connectionListener?.onConnect()
