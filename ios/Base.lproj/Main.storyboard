@@ -29,7 +29,7 @@
         <!--Login View Controller-->
         <scene sceneID="oCl-ty-J3S">
             <objects>
-                <viewController id="Lui-0V-oqF" customClass="LoginViewController" customModule="ios" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="Lui-0V-oqF" customClass="LoginViewController" customModule="Tinodios" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="fvB-2t-S4M">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -124,7 +124,7 @@
         <!--Register View Controller-->
         <scene sceneID="PYl-nr-yi5">
             <objects>
-                <viewController id="Vb8-dv-Vaa" customClass="RegisterViewController" customModule="ios" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="Vb8-dv-Vaa" customClass="RegisterViewController" customModule="Tinodios" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="SwY-eX-y6j">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -248,13 +248,18 @@
         <!--Chats-->
         <scene sceneID="Dyz-uQ-9eq">
             <objects>
-                <tableViewController storyboardIdentifier="ChatListView" id="n9d-hv-55K" customClass="ChatListViewController" customModule="ios" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="60" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="NpC-SO-Ujt">
+                <tableViewController storyboardIdentifier="ChatListView" id="n9d-hv-55K" customClass="ChatListViewController" customModule="Tinodios" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="60" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="1" id="NpC-SO-Ujt">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <view key="tableFooterView" contentMode="scaleToFill" id="5vl-f8-ZTQ">
+                            <rect key="frame" x="0.0" y="88" width="414" height="0.0"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        </view>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="ChatsTableViewCell" id="Eby-my-Xs5" customClass="ChatListTableViewCell" customModule="ios" customModuleProvider="target">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="ChatsTableViewCell" id="Eby-my-Xs5" customClass="ChatListTableViewCell" customModule="Tinodios" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="28" width="414" height="60"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Eby-my-Xs5" id="V99-tq-Yul">
@@ -363,7 +368,7 @@
         <!--Message View Controller-->
         <scene sceneID="ICk-IN-bpa">
             <objects>
-                <viewController id="l6T-LK-IbJ" customClass="MessageViewController" customModule="ios" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="l6T-LK-IbJ" customClass="MessageViewController" customModule="Tinodios" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="fc4-96-1wI">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -378,7 +383,7 @@
         <!--Credentials View Controller-->
         <scene sceneID="Fsr-7A-t2q">
             <objects>
-                <viewController storyboardIdentifier="CredentialsViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="1NU-b8-NVe" customClass="CredentialsViewController" customModule="ios" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="CredentialsViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="1NU-b8-NVe" customClass="CredentialsViewController" customModule="Tinodios" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="k1h-6L-J6F">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -461,7 +466,7 @@
         <!--Contacts-->
         <scene sceneID="G8F-we-dvp">
             <objects>
-                <tableViewController id="UgX-En-K1m" customClass="ContactListViewController" customModule="ios" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController id="UgX-En-K1m" customClass="ContactListViewController" customModule="Tinodios" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="MEs-MU-LOB">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
