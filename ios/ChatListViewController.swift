@@ -91,6 +91,10 @@ extension ChatListViewController {
             cell.unreadCount.isHidden = true
         }
 
+        cell.online.backgroundColor = topic.online ?
+            UIColor.init(red: 0x40/255, green: 0xC0/255, blue: 0x40/255, alpha: 1.0) :
+            UIColor.init(red: 0xE0/255, green: 0xE0/255, blue: 0xE0/255, alpha: 1.0)
+
         if let b64data = topic.pub?.photo?.data,
             let dataDecoded = Data(base64Encoded: b64data, options: .ignoreUnknownCharacters) {
             let decodedImage = UIImage(data: dataDecoded)

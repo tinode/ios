@@ -276,10 +276,19 @@
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Subtitle" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="F2M-3t-pxL">
+                                            <rect key="frame" x="61" y="29" width="52" height="18"/>
+                                            <accessibility key="accessibilityConfiguration" identifier="subtitle"/>
+                                            <fontDescription key="fontDescription" type="system" weight="light" pointSize="15"/>
+                                            <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="9+" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="18" translatesAutoresizingMaskIntoConstraints="NO" id="kmj-2h-Tgk">
                                             <rect key="frame" x="103" y="10" width="18" height="18"/>
                                             <color key="backgroundColor" red="0.59607843137254901" green="0.68627450980392157" blue="0.7803921568627451" alpha="1" colorSpace="calibratedRGB"/>
-                                            <accessibility key="accessibilityConfiguration" identifier="unreadCount"/>
+                                            <accessibility key="accessibilityConfiguration" identifier="unreadCount">
+                                                <accessibilityTraits key="traits" staticText="YES" notEnabled="YES"/>
+                                            </accessibility>
                                             <constraints>
                                                 <constraint firstAttribute="width" constant="18" id="79z-4k-0yo"/>
                                                 <constraint firstAttribute="height" constant="18" id="QzP-nc-ggG"/>
@@ -294,22 +303,34 @@
                                                 </userDefinedRuntimeAttribute>
                                             </userDefinedRuntimeAttributes>
                                         </label>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Subtitle" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="F2M-3t-pxL">
-                                            <rect key="frame" x="61" y="29" width="52" height="18"/>
-                                            <accessibility key="accessibilityConfiguration" identifier="subtitle"/>
-                                            <fontDescription key="fontDescription" type="system" weight="light" pointSize="15"/>
-                                            <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
+                                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="KAE-Qx-Orj" userLabel="Online">
+                                            <rect key="frame" x="41" y="37" width="12" height="12"/>
+                                            <color key="backgroundColor" red="0.25098039215686274" green="0.75294117647058822" blue="0.25098039215686274" alpha="1" colorSpace="calibratedRGB"/>
+                                            <accessibility key="accessibilityConfiguration" identifier="online">
+                                                <accessibilityTraits key="traits" notEnabled="YES"/>
+                                            </accessibility>
+                                            <constraints>
+                                                <constraint firstAttribute="width" constant="12" id="vFy-qJ-cgr"/>
+                                                <constraint firstAttribute="height" constant="12" id="y8h-Qt-N2u"/>
+                                            </constraints>
+                                            <userDefinedRuntimeAttributes>
+                                                <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                    <integer key="value" value="6"/>
+                                                </userDefinedRuntimeAttribute>
+                                                <userDefinedRuntimeAttribute type="boolean" keyPath="layer.masksToBounds" value="YES"/>
+                                            </userDefinedRuntimeAttributes>
+                                        </view>
                                     </subviews>
                                     <constraints>
                                         <constraint firstItem="F2M-3t-pxL" firstAttribute="top" secondItem="1hO-ml-L3W" secondAttribute="bottomMargin" constant="8" id="1vL-wv-B5h"/>
                                         <constraint firstItem="F2M-3t-pxL" firstAttribute="leading" secondItem="q2G-eT-jLv" secondAttribute="trailing" constant="8" id="FLh-I2-yvT"/>
                                         <constraint firstItem="1hO-ml-L3W" firstAttribute="leading" secondItem="q2G-eT-jLv" secondAttribute="trailing" constant="8" id="IEE-gz-1tf"/>
+                                        <constraint firstItem="q2G-eT-jLv" firstAttribute="trailing" secondItem="KAE-Qx-Orj" secondAttribute="trailing" id="SMT-Ry-7sT"/>
                                         <constraint firstItem="q2G-eT-jLv" firstAttribute="leading" secondItem="V99-tq-Yul" secondAttribute="leading" constant="13" id="b9y-6Y-i34"/>
                                         <constraint firstItem="q2G-eT-jLv" firstAttribute="top" secondItem="V99-tq-Yul" secondAttribute="top" constant="9" id="gLT-s8-2L5"/>
                                         <constraint firstItem="1hO-ml-L3W" firstAttribute="top" secondItem="V99-tq-Yul" secondAttribute="top" constant="8" id="pT4-xx-J1W"/>
                                         <constraint firstItem="kmj-2h-Tgk" firstAttribute="top" secondItem="V99-tq-Yul" secondAttribute="top" constant="10" id="tnh-BW-ltF"/>
+                                        <constraint firstItem="KAE-Qx-Orj" firstAttribute="bottom" secondItem="q2G-eT-jLv" secondAttribute="bottomMargin" constant="8" id="ugU-DT-y87"/>
                                         <constraint firstItem="kmj-2h-Tgk" firstAttribute="leading" secondItem="1hO-ml-L3W" secondAttribute="trailing" constant="8" id="ych-jO-cGa"/>
                                     </constraints>
                                     <edgeInsets key="layoutMargins" top="16" left="8" bottom="8" right="8"/>
@@ -317,6 +338,7 @@
                                 <edgeInsets key="layoutMargins" top="16" left="8" bottom="8" right="8"/>
                                 <connections>
                                     <outlet property="icon" destination="q2G-eT-jLv" id="D6k-BX-gnc"/>
+                                    <outlet property="online" destination="KAE-Qx-Orj" id="XUj-lF-B3G"/>
                                     <outlet property="subtitle" destination="F2M-3t-pxL" id="WhW-d7-zQ0"/>
                                     <outlet property="title" destination="1hO-ml-L3W" id="50u-Sh-0ZN"/>
                                     <outlet property="unreadCount" destination="kmj-2h-Tgk" id="oOD-bo-XId"/>

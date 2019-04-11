@@ -260,13 +260,15 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
     private var subs: [String:Subscription<SP,SR>]? = nil
     public var tags: [String]? = nil
     private var lastKeyPress: Int64 = 0
-    private var online: Bool = false {
+
+    public var online: Bool = false {
         didSet {
             if oldValue != online {
                 listener?.onOnline(online: online)
             }
         }
     }
+
     private var lastSeen: LastSeen? = nil
     public var maxDel: Int = 0 {
         didSet {
