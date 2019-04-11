@@ -30,7 +30,9 @@ class LoginViewController: UIViewController {
                     let msg = try tinode.loginToken(token: token, creds: nil).getResult()
                     if let code = msg.ctrl?.code, code < 300 {
                         print("login successful for: \(tinode.myUid!)")
-                        self.routeToChats()
+                        DispatchQueue.main.async {
+                            self.routeToChats()
+                        }
                     }
                 } catch {
                     print("Failed to automatically login to Tinode: \(error).")
