@@ -83,6 +83,13 @@ extension ChatListViewController {
         cell.title.sizeToFit()
         cell.subtitle.text = topic.comment
         cell.subtitle.sizeToFit()
+        let unread = topic.unread
+        if unread > 0 {
+            cell.unreadCount.text = unread > 9 ? "9+" : String(unread)
+            cell.unreadCount.isHidden = false
+        } else {
+            cell.unreadCount.isHidden = true
+        }
 
         if let b64data = topic.pub?.photo?.data,
             let dataDecoded = Data(base64Encoded: b64data, options: .ignoreUnknownCharacters) {
