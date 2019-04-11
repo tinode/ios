@@ -911,4 +911,35 @@ public class ComTopic<DP: Codable>: Topic<DP, PrivateType, DP, PrivateType> {
     override init(tinode: Tinode?, name: String, desc: Description<DP, PrivateType>) throws {
         try super.init(tinode: tinode, name: name, desc: desc)
     }
+
+    public var isArchived: Bool {
+        get {
+            let archived = priv?["arch"]
+            if archived == nil {
+                return false
+            }
+            switch archived! {
+            case .bool(let x):
+                return x
+            default:
+                return false
+            }
+        }
+    }
+
+    public var comment: String? {
+        get {
+            let comment = priv?["comment"]
+            if comment == nil {
+                return nil
+            }
+
+            switch comment! {
+            case .string(let x):
+                return x
+            default:
+                return nil
+            }
+        }
+    }
 }

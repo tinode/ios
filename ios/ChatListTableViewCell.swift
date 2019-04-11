@@ -11,7 +11,8 @@ import MessageKit
 class ChatListTableViewCell: UITableViewCell {
 
     @IBOutlet weak var icon: AvatarView!
-    @IBOutlet weak var name: UILabel!
+    @IBOutlet weak var title: UILabel!
+    @IBOutlet weak var subtitle: UILabel!
 
     override func awakeFromNib() {
         super.awakeFromNib()

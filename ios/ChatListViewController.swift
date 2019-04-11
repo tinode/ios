@@ -16,7 +16,6 @@ protocol ChatListDisplayLogic: class {
 
 class ChatListViewController: UITableViewController, ChatListDisplayLogic {
 
-
     var interactor: ChatListBusinessLogic?
     var topics: [DefaultComTopic] = []
     var router: ChatListRoutingLogic?
@@ -41,9 +40,11 @@ class ChatListViewController: UITableViewController, ChatListDisplayLogic {
         setup()
         self.interactor?.attachToMeTopic()
     }
+
     override func viewDidAppear(_ animated: Bool) {
         self.interactor?.loadAndPresentTopics()
     }
+
     func displayLoginView() {
         DispatchQueue.main.async {
             let storyboard = UIStoryboard(name: "Main", bundle: nil)
@@ -51,6 +52,7 @@ class ChatListViewController: UITableViewController, ChatListDisplayLogic {
             self.show(destinationVC, sender: nil)
         }
     }
+
     func displayChats(_ topics: [DefaultComTopic]) {
         self.topics = topics
         DispatchQueue.main.async {
@@ -65,17 +67,23 @@ extension ChatListViewController {
             router?.routeToChat(segue: segue)
         }
     }
+
     override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
+
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return topics.count
     }
+
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ChatsTableViewCell") as! ChatListTableViewCell
         let topic = self.topics[indexPath.row]
-        cell.name.text = topic.pub?.fn ?? "Unknown or unnamed"
-        cell.name.sizeToFit()
+        cell.title.text = topic.pub?.fn ?? "Unknown or unnamed"
+        cell.title.sizeToFit()
+        cell.subtitle.text = topic.comment
+        cell.subtitle.sizeToFit()
+
         if let b64data = topic.pub?.photo?.data,
             let dataDecoded = Data(base64Encoded: b64data, options: .ignoreUnknownCharacters) {
             let decodedImage = UIImage(data: dataDecoded)
