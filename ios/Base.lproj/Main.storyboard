@@ -233,8 +233,8 @@
         <scene sceneID="rwg-D6-8cu">
             <objects>
                 <navigationController storyboardIdentifier="MainNavigator" title="MainNavigationController" id="oDj-ht-EO8" sceneMemberID="viewController">
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="lOW-W0-XAF">
-                        <rect key="frame" x="0.0" y="44" width="414" height="44"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" largeTitles="YES" id="lOW-W0-XAF">
+                        <rect key="frame" x="0.0" y="44" width="414" height="96"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <connections>
@@ -245,7 +245,7 @@
             </objects>
             <point key="canvasLocation" x="-668" y="126"/>
         </scene>
-        <!--Chats-->
+        <!--Tinodios-->
         <scene sceneID="Dyz-uQ-9eq">
             <objects>
                 <tableViewController storyboardIdentifier="ChatListView" id="n9d-hv-55K" customClass="ChatListViewController" customModule="Tinodios" customModuleProvider="target" sceneMemberID="viewController">
@@ -359,7 +359,7 @@
                         </connections>
                     </tableView>
                     <tabBarItem key="tabBarItem" title="Chats" id="C2u-Vy-VSF"/>
-                    <navigationItem key="navigationItem" id="Rgo-YL-uPZ"/>
+                    <navigationItem key="navigationItem" title="Tinodios" id="Rgo-YL-uPZ"/>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="W26-TM-kGB" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
