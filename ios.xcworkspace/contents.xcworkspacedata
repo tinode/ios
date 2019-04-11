@@ -2,7 +2,7 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:TinodeSDK/TinodeSDK.xcodeproj">
+      location = "group:TinodeSDK.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:ios.xcodeproj">

@@ -6,7 +6,7 @@ use_frameworks!
 workspace 'ios'
 
 project 'ios'
-project 'TinodeSDK/TinodeSDK'
+project 'TinodeSDK'
 
 def sdk_pods
     pod 'SwiftWebSocket', '~> 2.7.0'
@@ -20,7 +20,7 @@ def ui_pods
 end
 
 target 'TinodeSDK' do
-    project 'TinodeSDK/TinodeSDK'
+    project 'TinodeSDK'
     sdk_pods
 end
 

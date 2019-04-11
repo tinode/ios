@@ -53,8 +53,8 @@
 		0A431BF92244A14D00A837F7 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		0A44B0102247573C00A98866 /* SwiftWebSocket.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SwiftWebSocket.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		679C08F81F0F4B80EE066C70 /* Pods_TinodeSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TinodeSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B0CD0F1036565AA6D7FCB418 /* Pods-TinodeSDK.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TinodeSDK.release.xcconfig"; path = "../Pods/Target Support Files/Pods-TinodeSDK/Pods-TinodeSDK.release.xcconfig"; sourceTree = "<group>"; };
-		B4211CF84B51039364CC4DD3 /* Pods-TinodeSDK.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TinodeSDK.debug.xcconfig"; path = "../Pods/Target Support Files/Pods-TinodeSDK/Pods-TinodeSDK.debug.xcconfig"; sourceTree = "<group>"; };
+		B0CD0F1036565AA6D7FCB418 /* Pods-TinodeSDK.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TinodeSDK.release.xcconfig"; path = "./Pods/Target Support Files/Pods-TinodeSDK/Pods-TinodeSDK.release.xcconfig"; sourceTree = "<group>"; };
+		B4211CF84B51039364CC4DD3 /* Pods-TinodeSDK.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TinodeSDK.debug.xcconfig"; path = "./Pods/Target Support Files/Pods-TinodeSDK/Pods-TinodeSDK.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
