@@ -263,7 +263,9 @@
                                     <subviews>
                                         <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="q2G-eT-jLv" customClass="AvatarView" customModule="MessageKit">
                                             <rect key="frame" x="13" y="9" width="40" height="40"/>
-                                            <accessibility key="accessibilityConfiguration" identifier="icon"/>
+                                            <accessibility key="accessibilityConfiguration" identifier="icon">
+                                                <accessibilityTraits key="traits" image="YES"/>
+                                            </accessibility>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="40" id="EQd-1A-XTK"/>
                                                 <constraint firstAttribute="width" constant="40" id="g3P-zG-ZGa"/>

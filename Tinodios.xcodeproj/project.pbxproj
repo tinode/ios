@@ -58,7 +58,7 @@
 /* Begin PBXFileReference section */
 		0A0016E621E7236900088188 /* MessageInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageInteractor.swift; sourceTree = "<group>"; };
 		0A0016E821E736CD00088188 /* MessagePresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagePresenter.swift; sourceTree = "<group>"; };
-		0A0380D421B3CC8100A3FA0E /* ios.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ios.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		0A0380D421B3CC8100A3FA0E /* Tinodios.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tinodios.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0A0380D721B3CC8100A3FA0E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		0A0380D921B3CC8100A3FA0E /* ChatListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatListViewController.swift; sourceTree = "<group>"; };
 		0A0380DC21B3CC8100A3FA0E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -120,7 +120,7 @@
 		0A0380D521B3CC8100A3FA0E /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				0A0380D421B3CC8100A3FA0E /* ios.app */,
+				0A0380D421B3CC8100A3FA0E /* Tinodios.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -198,9 +198,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		0A0380D321B3CC8100A3FA0E /* ios */ = {
+		0A0380D321B3CC8100A3FA0E /* Tinodios */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 0A0380E621B3CC8200A3FA0E /* Build configuration list for PBXNativeTarget "ios" */;
+			buildConfigurationList = 0A0380E621B3CC8200A3FA0E /* Build configuration list for PBXNativeTarget "Tinodios" */;
 			buildPhases = (
 				46966AD24309BE3586965D61 /* [CP] Check Pods Manifest.lock */,
 				0A0380D021B3CC8100A3FA0E /* Sources */,
@@ -213,9 +213,9 @@
 			);
 			dependencies = (
 			);
-			name = ios;
+			name = Tinodios;
 			productName = ios;
-			productReference = 0A0380D421B3CC8100A3FA0E /* ios.app */;
+			productReference = 0A0380D421B3CC8100A3FA0E /* Tinodios.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -233,7 +233,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 0A0380CF21B3CC8100A3FA0E /* Build configuration list for PBXProject "ios" */;
+			buildConfigurationList = 0A0380CF21B3CC8100A3FA0E /* Build configuration list for PBXProject "Tinodios" */;
 			compatibilityVersion = "Xcode 9.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -246,7 +246,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				0A0380D321B3CC8100A3FA0E /* ios */,
+				0A0380D321B3CC8100A3FA0E /* Tinodios */,
 			);
 		};
 /* End PBXProject section */
@@ -499,7 +499,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = co.tinode.ios;
+				PRODUCT_BUNDLE_IDENTIFIER = co.tinode.tinodios;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -518,7 +518,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = co.tinode.ios;
+				PRODUCT_BUNDLE_IDENTIFIER = co.tinode.tinodios;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -528,7 +528,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		0A0380CF21B3CC8100A3FA0E /* Build configuration list for PBXProject "ios" */ = {
+		0A0380CF21B3CC8100A3FA0E /* Build configuration list for PBXProject "Tinodios" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				0A0380E421B3CC8200A3FA0E /* Debug */,
@@ -537,7 +537,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		0A0380E621B3CC8200A3FA0E /* Build configuration list for PBXNativeTarget "ios" */ = {
+		0A0380E621B3CC8200A3FA0E /* Build configuration list for PBXNativeTarget "Tinodios" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				0A0380E721B3CC8200A3FA0E /* Debug */,
