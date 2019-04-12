@@ -11,21 +11,21 @@ public class Acs: Codable, Equatable {
     var given: AcsHelper?
     var want: AcsHelper?
     var mode: AcsHelper?
-    
+
     var isModeDefined: Bool {
         get {
             return mode?.isDefined ?? false
         }
     }
-    
     private enum CodingKeys : String, CodingKey  {
         case given, want, mode
     }
-    
     private func assign(given: String?, want: String?, mode: String?) {
         self.given = AcsHelper(str: given)
         self.want = AcsHelper(str: want)
         self.mode = AcsHelper(str: mode)
+    }
+    init() {
     }
     init(given: String?, want: String?, mode: String?) {
         self.assign(given: given, want: want, mode: mode)
@@ -94,11 +94,12 @@ public class Acs: Codable, Equatable {
                     changed += want!.isDefined ? 1 : 0
                 }
             }
-            if let m2 = AcsHelper.and(a1: want, a2: given) {
-                changed += m2 == mode ? 1 : 0
-                mode = m2
+            if changed > 0 {
+                if let m2 = AcsHelper.and(a1: want, a2: given) {
+                    changed += m2 == mode ? 1 : 0
+                    mode = m2
+                }
             }
-            
         }
         return changed > 0
     }

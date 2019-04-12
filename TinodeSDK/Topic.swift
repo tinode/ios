@@ -8,11 +8,12 @@
 import Foundation
 
 public protocol Payload: class {
-    
 }
+
 public protocol TopicProto: class {
     var name: String { get }
     var updated: Date? { get set }
+    var touched: Date? { get set }
     var subsUpdated: Date? { get }
     var topicType: TopicType { get }
     var maxDel: Int { get set }
@@ -27,6 +28,8 @@ public protocol TopicProto: class {
     var isNew: Bool { get }
     var accessMode: Acs? { get set }
     var defacs: Defacs? { get set }
+    var lastSeen: LastSeen? { get set }
+    var online: Bool { get set }
     var cachedMessageRange: Storage.Range? { get }
 
     func serializePub() -> String?
@@ -35,6 +38,9 @@ public protocol TopicProto: class {
     func deserializePub(from data: String?) -> Bool
     @discardableResult
     func deserializePriv(from data: String?) -> Bool
+
+    func updateAccessMode(ac: AccessChange?) -> Bool
+    func persist(_ on: Bool)
 
     func allMessagesReceived(count: Int?)
     func routeMeta(meta: MsgServerMeta)
@@ -50,7 +56,7 @@ public enum TopicType: Int {
     case grp = 0x04
     case p2p = 0x08
     case user = 0x0c // .grp | .p2p
-    case system = 0x03 // .m2 | .fnd
+    case system = 0x03 // .me | .fnd
     case unknown = 0x00
     case any = 0x0f // .user | .system
 }
@@ -182,6 +188,15 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
         }
     }
 
+    public var touched: Date? {
+        get {
+            return description?.touched
+        }
+        set {
+            description?.touched = newValue
+        }
+    }
+
     public var read: Int? {
         get {
             return description?.read
@@ -269,7 +284,8 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
         }
     }
 
-    private var lastSeen: LastSeen? = nil
+    public var lastSeen: LastSeen? = nil
+
     public var maxDel: Int = 0 {
         didSet {
             if maxDel < oldValue {
@@ -292,6 +308,7 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
     weak public var store: Storage? = nil
     public var payload: Payload? = nil
     public var isPersisted: Bool { get { return payload != nil } }
+
     public var cachedMessageRange: Storage.Range? {
         get {
             return store?.getCachedMessagesRange(topic: self)
@@ -320,41 +337,37 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
         }
         return r
     }
-    init(tinode: Tinode?, name: String, l: Listener? = nil) throws {
-        guard tinode != nil else {
-            throw TinodeError.invalidState("Tinode cannot be nil")
-        }
+
+    /**
+     * Workaround for the  init() - convenience init() madness.
+     */
+    private func superInit(tinode: Tinode?, name: String, l: Listener? = nil) {
         self.tinode = tinode
         self.name = name
         self.description = Description()
         self.listener = l
-    }
-    convenience init(tinode: Tinode?) throws {
-        guard tinode != nil else {
-            throw TinodeError.invalidState("Tinode cannot be nil")
+
+        if tinode != nil {
+            tinode!.startTrackingTopic(topic: self)
         }
-        try self.init(tinode: tinode!, name: Tinode.kTopicNew + tinode!.nextUniqueString())
     }
-    init(tinode: Tinode?, sub: Subscription<SP, SR>) throws {
-        guard tinode != nil else {
-            throw TinodeError.invalidState("Tinode cannot be nil")
-        }
-        self.tinode = tinode
-        self.name = sub.topic!
-        self.description = Description()
+
+    init(tinode: Tinode?, name: String, l: Listener? = nil) {
+        self.superInit(tinode: tinode, name: name, l: l)
+    }
+    convenience init(tinode: Tinode?) {
+        self.init(tinode: tinode!, name: Tinode.kTopicNew + tinode!.nextUniqueString())
+    }
+    init(tinode: Tinode?, sub: Subscription<SP, SR>) {
+        self.superInit(tinode: tinode, name: sub.topic!)
         _ = self.description!.merge(sub: sub)
 
         if sub.online != nil {
             self.online = sub.online!
         }
     }
-    init(tinode: Tinode?, name: String, desc: Description<DP, DR>) throws {
-        guard tinode != nil else {
-            throw TinodeError.invalidState("Tinode cannot be nil")
-        }
-        self.tinode = tinode
-        self.name = name
-        self.description = Description()
+    init(tinode: Tinode?, name: String, desc: Description<DP, DR>) {
+        self.superInit(tinode: tinode, name: name)
         _ = self.description!.merge(desc: desc)
     }
     
@@ -415,6 +428,16 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
         return MetaGetBuilder(parent: self)
     }
 
+    public func persist(_ on: Bool) {
+        if on {
+            if !isPersisted {
+                store?.topicAdd(topic: self)
+            }
+        } else {
+            store?.topicDelete(topic: self)
+        }
+    }
+
     @discardableResult
     public func subscribe() throws -> PromisedReply<ServerMessage> {
         var setMsg: MsgSetMeta<DP, DR>? = nil
@@ -432,9 +455,10 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
         let name = self.name
         var newTopic = false
         if tinode!.getTopic(topicName: name) == nil {
-            tinode!.registerTopic(topic: self)
             newTopic = true
         }
+        persist(true)
+
         if !tinode!.isConnected {
             throw TinodeError.notConnected("Cannot subscribe to topic. No server connection.")
         }
@@ -467,7 +491,8 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
                 if let e = err as? TinodeError, newTopic {
                     if case TinodeError.serverResponseError(let code, _, _) = e {
                         if code >= 400 && code < 500 {
-                            self?.tinode?.unregisterTopic(topicName: name)
+                            self?.tinode?.stopTrackingTopic(topicName: name)
+                            self?.persist(false)
                         }
                     }
                 }
@@ -678,16 +703,19 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
         setSeq(seq: data.getSeq)
         listener?.onData(data: data)
     }
+
     @discardableResult
     public func getMeta(query: MsgGetMeta) -> PromisedReply<ServerMessage>? {
         return tinode?.getMeta(topic: name, query: query)
     }
-    private func updateAccessMode(ac: AccessChange?) -> Bool {
+
+    public func updateAccessMode(ac: AccessChange?) -> Bool {
         if description!.acs == nil {
             description!.acs = Acs(from: nil as Acs?)
         }
         return description!.acs!.update(from: ac)
     }
+
     public func routeInfo(info: MsgServerInfo) {
         if info.what == Tinode.kNoteKp {
             if let sub = getSubscription(for: info.from) {
@@ -707,6 +735,7 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
         }
         listener?.onInfo(info: info)
     }
+
     public func routePres(pres: MsgServerPres) {
         let what = MsgServerPres.parseWhat(what: pres.what)
         //var sub: Subscription<SP, SR>? = nil
@@ -767,7 +796,8 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
                         }
                         self!.topicLeft(unsub: unsub, code: msg.ctrl?.code, reason: msg.ctrl?.text)
                         if unsub ?? false {
-                            self!.tinode?.unregisterTopic(topicName: self!.name)
+                            self!.tinode?.stopTrackingTopic(topicName: self!.name)
+                            self!.persist(false)
                         }
                         return nil
                     }, onFailure: nil)
@@ -866,19 +896,88 @@ public typealias DefaultMeTopic = MeTopic<VCard>
 public typealias DefaultFndTopic = FndTopic<VCard>
 
 open class MeTopic<DP: Codable>: Topic<DP, PrivateType, DP, PrivateType> {
-    public init(tinode: Tinode?, l: MeTopic<DP>.Listener?) throws {
-        try super.init(tinode: tinode, name: Tinode.kTopicMe, l: l)
+    public init(tinode: Tinode?, l: MeTopic<DP>.Listener?) {
+        super.init(tinode: tinode, name: Tinode.kTopicMe, l: l)
     }
-    public init(tinode: Tinode?, desc: Description<DP, PrivateType>) throws {
-        try super.init(tinode: tinode, name: Tinode.kTopicMe, desc: desc)
+    public init(tinode: Tinode?, desc: Description<DP, PrivateType>) {
+        super.init(tinode: tinode, name: Tinode.kTopicMe, desc: desc)
     }
+
+    override public func routePres(pres: MsgServerPres) {
+        let what = MsgServerPres.parseWhat(what: pres.what)
+        if let topic = tinode!.getTopic(topicName: pres.src!) {
+            switch (what) {
+            case .kOn: // topic came online
+                topic.online = true
+            case .kOff: // topic went offline
+                topic.online = false
+                topic.lastSeen = LastSeen(when: Date(), ua: nil)
+            case .kMsg: // new message received
+                topic.seq = pres.seq
+                topic.touched = Date()
+            case .kUpd: // pub/priv updated
+                getMeta(query: getMetaGetBuilder().withGetSub(user: pres.src).build())
+            case .kAcs: // access mode changed
+                if topic.updateAccessMode(ac: pres.dacs) {
+                    self.store?.topicUpdate(topic: topic)
+                }
+            case .kUa: // user agent changed
+                topic.lastSeen = LastSeen(when: Date(), ua: pres.ua)
+            case .kRecv: // user's other session marked some messages as received
+                if (topic.recv ?? -1) < (pres.seq ?? -1) {
+                    topic.recv = pres.seq
+                    self.store?.setRecv(topic: topic, recv: pres.seq!)
+                }
+            case .kRead: // user's other session marked some messages as read
+                if (topic.read ?? -1) < (pres.seq ?? -1) {
+                    topic.read = pres.seq
+                    self.store?.setRead(topic: topic, read: topic.read!);
+                    if (topic.recv ?? -1) < (topic.read ?? -1) {
+                        topic.recv = topic.read
+                        self.store?.setRecv(topic: topic, recv: topic.read!)
+                    }
+                }
+            case .kDel: // messages deleted
+                // TODO(gene): add handling for del
+                print("TODO: handle deleted messages in 'me' topic")
+            case .kGone:
+                // If topic is unknown (==nil), then we don't care to unregister it.
+                topic.persist(false);
+                tinode!.stopTrackingTopic(topicName: pres.src!);
+            default:
+                print("Unrecognized presence update " + (pres.what ?? "nil"))
+            }
+        } else {
+            // New topic
+            switch (what) {
+            case .kAcs:
+                let acs = Acs()
+                acs.update(from: pres.dacs)
+                if acs.isModeDefined {
+                    getMeta(query: getMetaGetBuilder().withGetSub(user: pres.src).build());
+                } else {
+                    print("Unexpected access mode in presence: \(String(describing: pres.dacs))")
+                }
+            default:
+                print("Topic not found in me.routePres: " +
+                    (pres.what ?? "nil") + " in " + (pres.src ?? "nil"));
+            }
+        }
+
+        if (what == MsgServerPres.What.kGone) {
+            listener?.onSubsUpdated()
+        }
+        listener?.onPres(pres: pres)
+    }
+
     override fileprivate func routeMetaSub(meta: MsgServerMeta) {
         print("topic me routemetasub")
         if let metaSubs = meta.sub as? Array<Subscription<DP, PrivateType>> {
             for sub in metaSubs {
                 if let topic = tinode!.getTopic(topicName: sub.topic!) {
                     if sub.deleted != nil {
-                        tinode!.unregisterTopic(topicName: sub.topic!)
+                        topic.persist(false)
+                        tinode!.stopTrackingTopic(topicName: sub.topic!)
                     } else {
                         print("updating \(topic.name)")
                         if let t = topic as? DefaultTopic {
@@ -896,7 +995,8 @@ open class MeTopic<DP: Codable>: Topic<DP, PrivateType, DP, PrivateType> {
                         // topic.listener?.onContUpdate(sub)
                     }
                 } else if sub.deleted == nil {
-                    tinode!.registerTopic(topic: tinode!.newTopic(sub: sub))
+                    let topic = tinode!.newTopic(sub: sub)
+                    topic.persist(true)
                     print("registering new topic")
                 }
             }
@@ -906,20 +1006,20 @@ open class MeTopic<DP: Codable>: Topic<DP, PrivateType, DP, PrivateType> {
     }
 }
 public class FndTopic<SP: Codable>: Topic<String, String, SP, Array<String>> {
-    init(tinode: Tinode?) throws {
-        try super.init(tinode: tinode, name: Tinode.kTopicMe)
+    init(tinode: Tinode?) {
+        super.init(tinode: tinode, name: Tinode.kTopicMe)
     }
 }
 
 public class ComTopic<DP: Codable>: Topic<DP, PrivateType, DP, PrivateType> {
-    override init(tinode: Tinode?, name: String, l: Listener?) throws {
-        try super.init(tinode: tinode, name: name, l: l)
+    override init(tinode: Tinode?, name: String, l: Listener?) {
+        super.init(tinode: tinode, name: name, l: l)
     }
-    override init(tinode: Tinode?, sub: Subscription<DP, PrivateType>) throws {
-        try super.init(tinode: tinode, sub: sub)
+    override init(tinode: Tinode?, sub: Subscription<DP, PrivateType>) {
+        super.init(tinode: tinode, sub: sub)
     }
-    override init(tinode: Tinode?, name: String, desc: Description<DP, PrivateType>) throws {
-        try super.init(tinode: tinode, name: name, desc: desc)
+    override init(tinode: Tinode?, name: String, desc: Description<DP, PrivateType>) {
+        super.init(tinode: tinode, name: name, desc: desc)
     }
 
     public var isArchived: Bool {

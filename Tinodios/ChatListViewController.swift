@@ -70,9 +70,11 @@ class ChatListViewController: UITableViewController, ChatListDisplayLogic {
     }
 
     func updateChat(_ name: String) {
+        print("updateChat "+name)
         guard let position = rowIndex[name] else { return }
+        print("updateChat at "+String(position))
         DispatchQueue.main.async {
-            self.tableView!.reloadRows(at: [IndexPath(item: position, section: 0)], with: .automatic)
+            self.tableView!.reloadRows(at: [IndexPath(item: position, section: 0)], with: .none)
         }
     }
 }

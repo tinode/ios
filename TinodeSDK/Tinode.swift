@@ -347,40 +347,48 @@ public class Tinode {
             return nil
         }
     }
-    public func registerTopic(topic: TopicProto) {
-        if !topic.isPersisted {
-            store?.topicAdd(topic: topic)
-        }
+
+    /**
+     * Start tracking topic: add it to in-memory cache.
+     */
+    public func startTrackingTopic(topic: TopicProto) {
         topic.store = store
         topics[topic.name] = topic
     }
-    public func unregisterTopic(topicName: String) {
+
+    /**
+     * Stop tracking the topic: remove it from in-memory cache.
+     */
+    public func stopTrackingTopic(topicName: String) {
         //Topic topic = mTopics.remove(topicName);
-        if let t = topics.removeValue(forKey: topicName) {
-            // todo: clean up storate
-            print("unregistering \(t)")
-            t.store = nil
-            store?.topicDelete(topic: t)
-        }
+        topics.removeValue(forKey: topicName)
     }
+
+    /**
+     * Check if topic is being tracked.
+     */
+    public func isTopicTracked(topicName: String) -> Bool {
+        return topics[topicName] != nil
+    }
+
     public func newTopic<SP: Codable, SR: Codable>(sub: Subscription<SP, SR>) -> TopicProto {
         if sub.topic == Tinode.kTopicMe {
-            let t = try! MeTopic<SP>(tinode: self, l: nil)
+            let t = MeTopic<SP>(tinode: self, l: nil)
             return t
         } else if sub.topic == Tinode.kTopicFnd {
-            let r = try! FndTopic<SP>(tinode: self)
+            let r = FndTopic<SP>(tinode: self)
             return r
         }
-        return try! ComTopic<SP>(tinode: self, sub: sub as! Subscription<SP, PrivateType>)
+        return ComTopic<SP>(tinode: self, sub: sub as! Subscription<SP, PrivateType>)
     }
     public func newTopic(for name: String, with listener: DefaultTopic.Listener?) -> TopicProto {
         if name == Tinode.kTopicMe {
-            return try! DefaultMeTopic(tinode: self, l: listener)
+            return DefaultMeTopic(tinode: self, l: listener)
         }
         if name == Tinode.kTopicFnd {
-            return try! DefaultFndTopic(tinode: self)
+            return DefaultFndTopic(tinode: self)
         }
-        return try! DefaultComTopic(tinode: self, name: name, l: listener)
+        return DefaultComTopic(tinode: self, name: name, l: listener)
     }
     public func maybeCreateTopic(meta: MsgServerMeta) -> TopicProto? {
         if meta.desc == nil {
@@ -389,18 +397,19 @@ public class Tinode {
         
         var topic: TopicProto?
         if meta.topic == Tinode.kTopicMe {
-            topic = try! DefaultMeTopic(tinode: self, desc: meta.desc! as! DefaultDescription)
+            topic = DefaultMeTopic(tinode: self, desc: meta.desc! as! DefaultDescription)
         } else if meta.topic == Tinode.kTopicFnd {
-            topic = try! DefaultFndTopic(tinode: self)
+            topic = DefaultFndTopic(tinode: self)
         } else {
-            topic = try! DefaultComTopic(tinode: self, name: meta.topic!, desc: meta.desc! as! DefaultDescription)
+            topic = DefaultComTopic(tinode: self, name: meta.topic!, desc: meta.desc! as! DefaultDescription)
         }
-        registerTopic(topic: topic!)
+
         return topic
     }
     public func changeTopicName(topic: TopicProto, oldName: String) -> Bool {
         let result = topics.removeValue(forKey: oldName) != nil
-        registerTopic(topic: topic)
+        topics[topic.name] = topic
+        store!.topicUpdate(topic: topic)
         return result
     }
     public func getMeTopic() -> DefaultMeTopic? {
