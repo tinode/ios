@@ -257,6 +257,9 @@
                             <rect key="frame" x="0.0" y="88" width="414" height="0.0"/>
                             <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
                             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <accessibility key="accessibilityConfiguration" label="Footer">
+                                <accessibilityTraits key="traits" notEnabled="YES"/>
+                            </accessibility>
                         </view>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="ChatsTableViewCell" id="Eby-my-Xs5" customClass="ChatListTableViewCell" customModule="Tinodios" customModuleProvider="target">
@@ -359,7 +362,11 @@
                         </connections>
                     </tableView>
                     <tabBarItem key="tabBarItem" title="Chats" id="C2u-Vy-VSF"/>
-                    <navigationItem key="navigationItem" title="Tinodios" id="Rgo-YL-uPZ"/>
+                    <toolbarItems/>
+                    <navigationItem key="navigationItem" title="Tinodios" id="Rgo-YL-uPZ">
+                        <barButtonItem key="rightBarButtonItem" width="20" systemItem="compose" id="LVG-dB-flA"/>
+                    </navigationItem>
+                    <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="W26-TM-kGB" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -375,6 +382,7 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <viewLayoutGuide key="safeArea" id="p4H-5P-q7k"/>
                     </view>
+                    <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="hJE-4j-6S3" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
