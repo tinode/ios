@@ -12,12 +12,15 @@ import TinodeSDK
 protocol ChatListDisplayLogic: class {
     func displayChats(_ topics: [DefaultComTopic])
     func displayLoginView()
+    func updateChat(_ name: String)
 }
 
 class ChatListViewController: UITableViewController, ChatListDisplayLogic {
 
     var interactor: ChatListBusinessLogic?
     var topics: [DefaultComTopic] = []
+    // Index of contacts: name => position in topics
+    var rowIndex: Dictionary<String, Int> = Dictionary()
     var router: ChatListRoutingLogic?
 
     private func setup() {
@@ -55,8 +58,21 @@ class ChatListViewController: UITableViewController, ChatListDisplayLogic {
 
     func displayChats(_ topics: [DefaultComTopic]) {
         self.topics = topics
+        self.rowIndex.removeAll()
+        var i = 0
+        for topic in topics {
+            rowIndex[topic.name] = i
+            i += 1
+        }
         DispatchQueue.main.async {
             self.tableView!.reloadData()
+        }
+    }
+
+    func updateChat(_ name: String) {
+        guard let position = rowIndex[name] else { return }
+        DispatchQueue.main.async {
+            self.tableView!.reloadRows(at: [IndexPath(item: position, section: 0)], with: .automatic)
         }
     }
 }

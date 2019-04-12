@@ -10,6 +10,7 @@ import TinodeSDK
 
 protocol ChatListPresentationLogic {
     func presentTopics(_ topics: [DefaultComTopic])
+    func updateChat(_ name: String)
 }
 
 class ChatListPresenter: ChatListPresentationLogic {
@@ -17,5 +18,9 @@ class ChatListPresenter: ChatListPresentationLogic {
 
     func presentTopics(_ topics: [DefaultComTopic]) {
         viewController?.displayChats(topics)
+    }
+
+    func updateChat(_ name: String) {
+        viewController?.updateChat(name)
     }
 }

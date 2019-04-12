@@ -715,10 +715,8 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
             if let sub = getSubscription(for: pres.src) {
                 sub.online = (.kOn == what)
             }
-            break
         case .kDel:
             routeMetaDel(clear: pres.clear!, delseq: pres.delseq!)
-            break
         case .kAcs:
             if let sub = getSubscription(for: pres.src) {
                 sub.updateAccessMode(ac: pres.dacs)
@@ -745,10 +743,8 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
                     getMeta(query: getMetaGetBuilder().withGetSub(user: pres.src).build())
                 }
             }
-            break
         default:
             print("unknown presence type \(String(describing: pres.what))")
-            break
         }
         listener?.onPres(pres: pres)
     }
