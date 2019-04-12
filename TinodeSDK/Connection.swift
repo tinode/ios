@@ -44,6 +44,7 @@ public class Connection {
     private var apiKey: String
     private var useTLS = false
     private var connectQueue = DispatchQueue(label: "co.tinode.connection")
+    private var netEventQueue = DispatchQueue(label: "co.tinode.network")
     private var autoreconnect: Bool = false
     private var reconnecting: Bool = false
     private var backoffSteps = ExpBackoffSteps()
@@ -57,9 +58,8 @@ public class Connection {
             self.useTLS = true
         }
         self.webSocketConnection = WebSocket()
-        // Do not run on the UI thread.
-        // TODO: figure out if we need to set up a separate queue.
-        self.webSocketConnection!.eventQueue = DispatchQueue.global(qos: .userInteractive)
+        // Use a separate thread to run network event handlers.
+        self.webSocketConnection!.eventQueue = netEventQueue
         webSocketConnection!.event.open = {
             print("opened")
             self.backoffSteps.reset()
