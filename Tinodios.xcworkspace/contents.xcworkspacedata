@@ -5,7 +5,7 @@
       location = "group:TinodeSDK.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:ios.xcodeproj">
+      location = "group:Tinodios.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:Pods/Pods.xcodeproj">

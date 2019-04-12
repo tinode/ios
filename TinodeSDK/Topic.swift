@@ -64,7 +64,7 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
         case kRead
         case kRecv
     }
-    
+
     //open class Listener2<DP2: Codable, DR2: Codable, SP2: Codable, SR2: Codable> {
     open class Listener {
         public init() {}
@@ -166,13 +166,13 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
             return meta
         }
     }
-    
+
     fileprivate weak var tinode: Tinode? = nil
     public var name: String = ""
     public var isNew: Bool {
         get { return Topic.isNewByName(name: name)}
     }
-    
+
     public var updated: Date? {
         get {
             return description?.updated
@@ -181,6 +181,7 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
             description?.updated = newValue
         }
     }
+
     public var read: Int? {
         get {
             return description?.read
@@ -191,6 +192,7 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
             }
         }
     }
+
     public var recv: Int? {
         get {
             return description?.recv
@@ -201,6 +203,7 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
             }
         }
     }
+
     public var seq: Int? {
         get {
             return description?.seq
@@ -211,6 +214,7 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
             }
         }
     }
+
     public var clear: Int? {
         get {
             return description?.clear
@@ -221,6 +225,14 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
             }
         }
     }
+
+    public var unread: Int {
+        get {
+            let unread = (description?.seq ?? 0) - (description?.read ?? 0)
+            return unread > 0 ? unread : 0
+        }
+    }
+
     public var subsLastUpdated: Date? = nil
     public var subsUpdated: Date? {
         get { return subsLastUpdated }
@@ -248,13 +260,15 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
     private var subs: [String:Subscription<SP,SR>]? = nil
     public var tags: [String]? = nil
     private var lastKeyPress: Int64 = 0
-    private var online: Bool = false {
+
+    public var online: Bool = false {
         didSet {
             if oldValue != online {
                 listener?.onOnline(online: online)
             }
         }
     }
+
     private var lastSeen: LastSeen? = nil
     public var maxDel: Int = 0 {
         didSet {
@@ -910,5 +924,29 @@ public class ComTopic<DP: Codable>: Topic<DP, PrivateType, DP, PrivateType> {
     }
     override init(tinode: Tinode?, name: String, desc: Description<DP, PrivateType>) throws {
         try super.init(tinode: tinode, name: name, desc: desc)
+    }
+
+    public var isArchived: Bool {
+        get {
+            guard let archived = priv?["arch"] else { return false }
+            switch archived {
+            case .bool(let x):
+                return x
+            default:
+                return false
+            }
+        }
+    }
+
+    public var comment: String? {
+        get {
+            guard let comment = priv?["comment"] else { return nil }
+            switch comment {
+            case .string(let x):
+                return x
+            default:
+                return nil
+            }
+        }
     }
 }

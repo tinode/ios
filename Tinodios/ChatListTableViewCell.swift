@@ -11,7 +11,10 @@ import MessageKit
 class ChatListTableViewCell: UITableViewCell {
 
     @IBOutlet weak var icon: AvatarView!
-    @IBOutlet weak var name: UILabel!
+    @IBOutlet weak var title: UILabel!
+    @IBOutlet weak var subtitle: UILabel!
+    @IBOutlet weak var unreadCount: UILabel!
+    @IBOutlet weak var online: UIView!
 
     override func awakeFromNib() {
         super.awakeFromNib()

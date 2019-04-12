@@ -28,6 +28,7 @@ class Cache {
             tinode = Tinode(for: appName,
                             authenticateWith: Cache.kApiKey,
                             persistDataIn: dbh.sqlStore)
+            // FIXME: this should be push ID
             tinode!.deviceId = UIDevice.current.identifierForVendor!.uuidString
         }
         return tinode!
