@@ -928,11 +928,8 @@ public class ComTopic<DP: Codable>: Topic<DP, PrivateType, DP, PrivateType> {
 
     public var isArchived: Bool {
         get {
-            let archived = priv?["arch"]
-            if archived == nil {
-                return false
-            }
-            switch archived! {
+            guard let archived = priv?["arch"] else { return false }
+            switch archived {
             case .bool(let x):
                 return x
             default:
@@ -943,12 +940,8 @@ public class ComTopic<DP: Codable>: Topic<DP, PrivateType, DP, PrivateType> {
 
     public var comment: String? {
         get {
-            let comment = priv?["comment"]
-            if comment == nil {
-                return nil
-            }
-
-            switch comment! {
+            guard let comment = priv?["comment"] else { return nil }
+            switch comment {
             case .string(let x):
                 return x
             default:
