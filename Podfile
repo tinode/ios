@@ -3,9 +3,12 @@
 
 use_frameworks!
 
-workspace 'ios'
+# ignore all warnings from all pods
+inhibit_all_warnings!
 
-project 'ios'
+workspace 'Tinodios'
+
+project 'Tinodios'
 project 'TinodeSDK'
 
 def sdk_pods
@@ -24,8 +27,8 @@ target 'TinodeSDK' do
     sdk_pods
 end
 
-target 'ios' do
-    project 'ios'
+target 'Tinodios' do
+    project 'Tinodios'
     sdk_pods
     ui_pods
 end

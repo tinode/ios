@@ -167,6 +167,7 @@ class SubscriberDb {
             return false
         }
     }
+    @discardableResult
     func deleteForTopic(topicId: Int64) -> Bool {
         guard let record = self.table?.filter(self.topicId == topicId) else {
             return false

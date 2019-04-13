@@ -120,7 +120,7 @@ public class TopicDb {
     }
     func deserializeTopic(topic: TopicProto, row: Row) {
         //
-        var st = StoredTopic()
+        let st = StoredTopic()
         st.id = row[self.id]
         st.status = row[self.status] ?? BaseDb.kStatusUndefined
         st.lastUsed = row[self.lastUsed]
@@ -172,7 +172,7 @@ public class TopicDb {
         return -1
     }
     func getNextUnusedSeq(topic: TopicProto) -> Int {
-        guard var st = topic.payload as? StoredTopic, let recordId = st.id else { return -1}
+        guard let st = topic.payload as? StoredTopic, let recordId = st.id else { return -1}
         guard let record = self.table?.filter(self.id == recordId) else {
             return -1
         }
@@ -259,7 +259,7 @@ public class TopicDb {
         
     }
     func update(topic: TopicProto) -> Bool {
-        guard var st = topic.payload as? StoredTopic, let recordId = st.id else {
+        guard let st = topic.payload as? StoredTopic, let recordId = st.id else {
             return false
         }
         guard let record = self.table?.filter(self.id == recordId) else {

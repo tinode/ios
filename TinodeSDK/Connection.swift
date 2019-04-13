@@ -120,6 +120,7 @@ public class Connection {
                 self.connectWithBackoffAsync()
         })
     }
+    @discardableResult
     func connect(reconnectAutomatically: Bool = true) throws -> Bool {
         self.autoreconnect = reconnectAutomatically
         if self.autoreconnect && self.reconnecting {
