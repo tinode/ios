@@ -203,25 +203,34 @@
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="fmd-4t-Dd6" customClass="AvatarView" customModule="MessageKit">
-                                <rect key="frame" x="265" y="189" width="112" height="112"/>
+                                <rect key="frame" x="255" y="189" width="112" height="112"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="112" id="iT8-Td-uSZ"/>
                                     <constraint firstAttribute="height" constant="112" id="idY-3n-DyW"/>
                                 </constraints>
                             </imageView>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="5Mo-9Q-pvM">
-                                <rect key="frame" x="329" y="253" width="48" height="48"/>
+                            <button opaque="NO" contentMode="center" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="5Mo-9Q-pvM">
+                                <rect key="frame" x="319" y="253" width="48" height="48"/>
+                                <color key="backgroundColor" red="0.59607843140000005" green="0.68627450980000004" blue="0.78039215689999997" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="48" id="alc-LD-osE"/>
                                     <constraint firstAttribute="width" constant="48" id="uXt-5L-bs0"/>
                                 </constraints>
+                                <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <inset key="imageEdgeInsets" minX="8" minY="8" maxX="8" maxY="8"/>
                                 <state key="normal" title="Add Avatar" image="outline_add_a_photo_white_48pt"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="boolean" keyPath="layer.masksToBounds" value="YES"/>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                        <integer key="value" value="24"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
                             </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="5Mo-9Q-pvM" firstAttribute="trailing" secondItem="fmd-4t-Dd6" secondAttribute="trailing" id="2mZ-9Z-9AH"/>
-                            <constraint firstItem="fmd-4t-Dd6" firstAttribute="leading" secondItem="Wd7-GD-As4" secondAttribute="trailing" constant="18" id="7CI-2X-2cX"/>
+                            <constraint firstItem="fmd-4t-Dd6" firstAttribute="leading" secondItem="Wd7-GD-As4" secondAttribute="trailing" constant="8" symbolic="YES" id="7CI-2X-2cX"/>
                             <constraint firstItem="5Mo-9Q-pvM" firstAttribute="bottom" secondItem="fmd-4t-Dd6" secondAttribute="bottom" id="B3T-k3-0CP"/>
                             <constraint firstItem="7Oj-X3-qLM" firstAttribute="leading" secondItem="NyI-Rl-Bp6" secondAttribute="leading" id="DrW-0i-FbE"/>
                             <constraint firstItem="7Oj-X3-qLM" firstAttribute="top" secondItem="Wd7-GD-As4" secondAttribute="bottom" constant="16" id="Fhl-Fp-pbK"/>
