@@ -1,5 +1,5 @@
 //
-//  ContactListPresenter.swift
+//  FindPresenter.swift
 //  ios
 //
 //  Copyright © 2019 Tinode. All rights reserved.
@@ -7,12 +7,12 @@
 
 import Foundation
 
-protocol ContactListPresentationLogic {
+protocol FindPresentationLogic {
     func presentContacts(contacts: [ContactHolder])
 }
 
-class ContactListPresenter: ContactListPresentationLogic {
-    weak var viewController: ContactListDisplayLogic?
+class FindPresenter: FindPresentationLogic {
+    weak var viewController: FindDisplayLogic?
     
     func presentContacts(contacts: [ContactHolder]) {
         viewController?.displayContacts(contacts: contacts)

@@ -1,5 +1,5 @@
 //
-//  ContactListInteractor.swift
+//  FindInteractor.swift
 //  ios
 //
 //  Copyright © 2019 Tinode. All rights reserved.
@@ -8,7 +8,7 @@
 import Foundation
 import Contacts
 
-protocol ContactListBusinessLogic: class {
+protocol FindBusinessLogic: class {
     func loadAndPresentContacts()
 }
 
@@ -20,10 +20,10 @@ class ContactHolder {
     var ims: [String]? = nil
 }
 
-class ContactListInteractor: ContactListBusinessLogic {
+class FindInteractor: FindBusinessLogic {
     static let kTinodeImProtocol = "Tinode"
-    var presenter: ContactListPresentationLogic?
-    var router: ContactListRoutingLogic?
+    var presenter: FindPresentationLogic?
+    var router: FindRoutingLogic?
     let store = CNContactStore()
     var queue = DispatchQueue(label: "co.tinode.contacts")
     private func fetchContacts() -> [ContactHolder]? {
@@ -54,7 +54,7 @@ class ContactListInteractor: ContactListBusinessLogic {
             contactHolder.emails = systemContact.emailAddresses.map { String($0.value) }
             contactHolder.phones = systemContact.phoneNumbers.map { String($0.value.stringValue) }
             contactHolder.ims = systemContact.instantMessageAddresses
-                .filter { $0.value.service == ContactListInteractor.kTinodeImProtocol  }
+                .filter { $0.value.service == FindInteractor.kTinodeImProtocol  }
                 .map { $0.value.username }
             return contactHolder
         }
