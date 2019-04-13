@@ -59,6 +59,10 @@ public enum TopicType: Int {
     case system = 0x03 // .me | .fnd
     case unknown = 0x00
     case any = 0x0f // .user | .system
+
+    public func matches(_ t2: TopicType) -> Bool {
+        return (self.rawValue & t2.rawValue) != 0
+    }
 }
 
 open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto {

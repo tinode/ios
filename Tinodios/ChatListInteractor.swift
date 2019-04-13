@@ -93,7 +93,9 @@ class ChatListInteractor: ChatListBusinessLogic, ChatListDataStore {
     }
     
     func loadAndPresentTopics() {
-        self.topics = Cache.getTinode().getFilteredTopics(type: .user, updated: nil)?.map {
+        self.topics = Cache.getTinode().getFilteredTopics(filter: {(topic: TopicProto) in
+            return topic.topicType.matches(TopicType.user)
+        })?.map {
             // Must succeed.
             $0 as! DefaultComTopic
         }

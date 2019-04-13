@@ -59,10 +59,8 @@ class ChatListViewController: UITableViewController, ChatListDisplayLogic {
     func displayChats(_ topics: [DefaultComTopic]) {
         self.topics = topics
         self.rowIndex.removeAll()
-        var i = 0
         for topic in topics {
-            rowIndex[topic.name] = i
-            i += 1
+            rowIndex[topic.name] = rowIndex.count
         }
         DispatchQueue.main.async {
             self.tableView!.reloadData()
