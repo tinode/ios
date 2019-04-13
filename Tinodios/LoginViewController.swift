@@ -43,7 +43,7 @@ class LoginViewController: UIViewController {
     
     private func routeToChats() {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        let destinationVC = storyboard.instantiateViewController(withIdentifier: "MainNavigator") as! UINavigationController
+        let destinationVC = storyboard.instantiateViewController(withIdentifier: "ChatsNavigator") as! UINavigationController
         
         self.show(destinationVC, sender: nil)
     }

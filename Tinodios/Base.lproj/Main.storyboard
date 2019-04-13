@@ -225,6 +225,9 @@
                                         <integer key="value" value="24"/>
                                     </userDefinedRuntimeAttribute>
                                 </userDefinedRuntimeAttributes>
+                                <connections>
+                                    <action selector="onLoadAvatar:" destination="Vb8-dv-Vaa" eventType="touchUpInside" id="biW-kL-iiD"/>
+                                </connections>
                             </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -255,7 +258,9 @@
                         <viewLayoutGuide key="safeArea" id="Bd8-2d-6Rb"/>
                     </view>
                     <connections>
+                        <outlet property="avatarView" destination="fmd-4t-Dd6" id="jCe-xD-M1A"/>
                         <outlet property="credentialText" destination="1wJ-dE-cfs" id="vPc-LQ-5kH"/>
+                        <outlet property="loadAvatar" destination="5Mo-9Q-pvM" id="cRI-0S-29e"/>
                         <outlet property="loginText" destination="Wd7-GD-As4" id="OWz-aL-Xy5"/>
                         <outlet property="nameText" destination="0i5-Uk-ds3" id="t68-lV-yAS"/>
                         <outlet property="pwdText" destination="NyI-Rl-Bp6" id="fSV-Ht-dfU"/>
@@ -266,19 +271,19 @@
             </objects>
             <point key="canvasLocation" x="-1452" y="781.25937031484261"/>
         </scene>
-        <!--MainNavigationController-->
+        <!--ChatsNavigationController-->
         <scene sceneID="rwg-D6-8cu">
             <objects>
-                <navigationController storyboardIdentifier="MainNavigator" title="MainNavigationController" id="oDj-ht-EO8" sceneMemberID="viewController">
+                <placeholder placeholderIdentifier="IBFirstResponder" id="0WI-WB-rcW" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <navigationController storyboardIdentifier="ChatsNavigator" title="ChatsNavigationController" id="oDj-ht-EO8" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" largeTitles="YES" id="lOW-W0-XAF">
                         <rect key="frame" x="0.0" y="44" width="414" height="96"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <connections>
-                        <segue destination="n9d-hv-55K" kind="show" id="mVt-mj-Gb9"/>
+                        <segue destination="n9d-hv-55K" kind="relationship" relationship="rootViewController" id="VPg-gx-wIb"/>
                     </connections>
                 </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="0WI-WB-rcW" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-668" y="126"/>
         </scene>

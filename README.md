@@ -39,3 +39,6 @@ The end goal would be feature parity with the Tindroid (Tinode Android) App:
 * Transport Level Security - https/wss.
 * Offline mode is mostly functional.
 * Editing of personal details.
+
+## Screenshots
+<img src="ios-chats.png" alt="App screenshot - chat list" width="207" />

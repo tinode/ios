@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import MessageKit
 import UIKit
 import TinodeSDK
 
@@ -16,7 +17,13 @@ class RegisterViewController: UIViewController {
     @IBOutlet weak var nameText: UITextField!
     @IBOutlet weak var credentialText: UITextField!
     @IBOutlet weak var signUpBtn: UIButton!
-    
+    @IBOutlet weak var loadAvatar: UIButton!
+    @IBOutlet weak var avatarView: AvatarView!
+
+    @IBAction func onLoadAvatar(_ sender: UIButton) {
+        // FIXME: upload avatar image
+    }
+
     @IBAction func onSignUp(_ sender: Any) {
         guard let login = loginText.text else {
             return
@@ -75,7 +82,7 @@ class RegisterViewController: UIViewController {
                             }
                         } else {
                             let storyboard = UIStoryboard(name: "Main", bundle: nil)
-                            let destinationVC = storyboard.instantiateViewController(withIdentifier: "MainNavigator") as! UINavigationController
+                            let destinationVC = storyboard.instantiateViewController(withIdentifier: "ChatsNavigator") as! UINavigationController
                             
                             self?.show(destinationVC, sender: nil)
                         }
