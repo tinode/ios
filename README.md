@@ -40,5 +40,13 @@ The end goal would be feature parity with the Tindroid (Tinode Android) App:
 * Offline mode is mostly functional.
 * Editing of personal details.
 
+## Dependencies
+
+* https://github.com/MessageKit
+* https://github.com/MessageKit/MessageInputBar
+* https://github.com/stephencelis/SQLite.swift
+* https://github.com/jrendel/SwiftKeychainWrapper
+* https://github.com/tidwall/SwiftWebSocket
+
 ## Screenshots
 <img src="ios-chats.png" alt="App screenshot - chat list" width="207" />
