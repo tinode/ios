@@ -18,15 +18,23 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="ios-logo-1024" translatesAutoresizingMaskIntoConstraints="NO" id="fnw-Nz-LWI">
-                                <rect key="frame" x="87" y="328" width="240" height="240"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="ios-logo-1024" translatesAutoresizingMaskIntoConstraints="NO" id="fnw-Nz-LWI">
+                                <rect key="frame" x="20" y="261" width="374" height="374"/>
                                 <accessibility key="accessibilityConfiguration">
                                     <accessibilityTraits key="traits" image="YES" notEnabled="YES"/>
                                 </accessibility>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="fnw-Nz-LWI" secondAttribute="height" multiplier="1:1" id="l1K-tG-7OF"/>
+                                </constraints>
                             </imageView>
                         </subviews>
                         <color key="backgroundColor" red="0.76078431372549016" green="0.78823529411764703" blue="0.97647058823529409" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="fnw-Nz-LWI" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="9Pl-JH-3hr"/>
+                            <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="fnw-Nz-LWI" secondAttribute="trailing" constant="20" symbolic="YES" id="9aG-mg-4V1"/>
+                            <constraint firstItem="fnw-Nz-LWI" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="Ze5-6b-2t3" secondAttribute="leading" constant="20" symbolic="YES" id="QBD-dg-dvH"/>
+                            <constraint firstItem="fnw-Nz-LWI" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" id="zl8-5u-3op"/>
+                        </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                 </viewController>
