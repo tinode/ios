@@ -115,11 +115,7 @@
                         <viewLayoutGuide key="safeArea" id="Top-gF-CXl"/>
                     </view>
                     <navigationItem key="navigationItem" title="Sign In" id="R2u-u9-C9h">
-                        <barButtonItem key="rightBarButtonItem" title="Settings" id="Zbi-3i-lLM">
-                            <connections>
-                                <segue destination="LUQ-mc-pzn" kind="show" id="GYc-lZ-DrV"/>
-                            </connections>
-                        </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" title="Settings" id="Zbi-3i-lLM"/>
                     </navigationItem>
                     <connections>
                         <outlet property="passwordTextEdit" destination="gLF-JR-ZfF" id="DUo-EW-et6"/>
@@ -129,44 +125,6 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="W9L-B6-xVx" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-1450.4000000000001" y="125.4872563718141"/>
-        </scene>
-        <!--Settings-->
-        <scene sceneID="ssW-yv-7tB">
-            <objects>
-                <viewController title="Settings" id="LUQ-mc-pzn" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="pGX-OG-x1J">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Host address" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="z2o-AG-Plw">
-                                <rect key="frame" x="55" y="227" width="102" height="21"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Wire transport" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="q9s-5T-Aru">
-                                <rect key="frame" x="51" y="313" width="111" height="21"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Use TLS" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ptg-Yv-cgU">
-                                <rect key="frame" x="55" y="284" width="65" height="21"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                        </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                        <viewLayoutGuide key="safeArea" id="TGu-gD-m5p"/>
-                    </view>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="sSt-AW-v63" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="-671" y="125"/>
         </scene>
         <!--Sign Up-->
         <scene sceneID="PYl-nr-yi5">
