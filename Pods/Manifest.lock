@@ -13,7 +13,7 @@ PODS:
 DEPENDENCIES:
   - MessageInputBar (~> 0.4.1)
   - MessageKit (~> 2.0.0)
-  - SQLite.swift (~> 0.11.5)
+  - SQLite.swift (from `https://github.com/stephencelis/SQLite.swift`, branch `master`)
   - SwiftKeychainWrapper (~> 3.2)
   - SwiftWebSocket (~> 2.7.0)
 
@@ -21,17 +21,26 @@ SPEC REPOS:
   https://github.com/cocoapods/specs.git:
     - MessageInputBar
     - MessageKit
-    - SQLite.swift
     - SwiftKeychainWrapper
     - SwiftWebSocket
+
+EXTERNAL SOURCES:
+  SQLite.swift:
+    :branch: master
+    :git: https://github.com/stephencelis/SQLite.swift
+
+CHECKOUT OPTIONS:
+  SQLite.swift:
+    :commit: 861ff28adec8d175e7f5923340947f0895121416
+    :git: https://github.com/stephencelis/SQLite.swift
 
 SPEC CHECKSUMS:
   MessageInputBar: e81c7535347f1f7b923de7080409a535a004b6e4
   MessageKit: 29c1c87e5a396d2ca7a3f712e5171dc9aba42a1e
-  SQLite.swift: 6e5356850bb1791459f8c16d6ee9195b28714a2e
+  SQLite.swift: 7e42c4b88dc7a5d764fbd431001e6d8dc8c1cfce
   SwiftKeychainWrapper: 82c4c02cdc36f9a24f7edfcaab3e336401caa1a1
   SwiftWebSocket: 612c9729fd503cb6b0b8b45390c788686dac306f
 
-PODFILE CHECKSUM: 99128cc8ff187e262aa7fc67f085937d872d9206
+PODFILE CHECKSUM: a8fe04c3efe42d9cc45ca35bbbb6114fdf492776
 
 COCOAPODS: 1.5.3
