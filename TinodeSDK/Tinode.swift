@@ -31,52 +31,52 @@ public protocol TinodeEventListener: class {
     //   reason should be always "Created".
     //   params server parameters, such as protocol version.
     func onConnect(code: Int, reason: String, params: [String:JSONValue]?)
-    
+
     // Connection was dropped.
     // Params:
     //   byServer: true if connection was closed by server.
     //   code: numeric code of the error which caused connection to drop.
     //   reason: error message.
     func onDisconnect(byServer: Bool, code: Int, reason: String)
-    
+
     // Result of successful or unsuccessful {@link #login} attempt.
     // Params:
     //   code: a numeric value between 200 and 299 on success, 400 or higher on failure.
     //   text: "OK" on success or error message.
     func onLogin(code: Int, text: String)
-    
+
     // Handle generic server message.
     // Params:
     //   msg: message to be processed.
     func onMessage(msg: ServerMessage?)
-    
+
     // Handle unparsed message. Default handler calls {@code #dispatchPacket(...)} on a
     // websocket thread.
     // A subclassed listener may wish to call {@code dispatchPacket()} on a UI thread
     // Params:
     //   msg: message to be processed.
     func onRawMessage(msg: String)
-    
+
     // Handle control message
     // Params:
     //   ctrl: control message to process.
     func onCtrlMessage(ctrl: MsgServerCtrl?)
-    
+
     // Handle data message
     // Params:
     //   data: control message to process.
     func onDataMessage(data: MsgServerData?)
-    
+
     // Handle info message
     // Params:
     //   info: info message to process.
     func onInfoMessage(info: MsgServerInfo?)
-    
+
     // Handle meta message
     // Params:
     //   meta: meta message to process.
     func onMetaMessage(meta: MsgServerMeta?)
-    
+
     // Handle presence message
     // Params:
     //   pres: control message to process.
@@ -93,7 +93,7 @@ public class Tinode {
     public static let kNoteKp = "kp"
     public static let kNoteRead = "read"
     public static let kNoteRecv = "recv"
-    
+
     let kProtocolVersion = "0"
     let kVersion = "0.15"
     let kLocale = Locale.current.languageCode!
@@ -129,7 +129,7 @@ public class Tinode {
     // String -> Topic
     var topics: [String: TopicProto] = [:]
     var users: [String: UserProto] = [:]
-    
+
     static let jsonEncoder: JSONEncoder = {
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .customRFC3339
@@ -151,7 +151,7 @@ public class Tinode {
         self.myUid = self.store?.myUid
         self.deviceToken = self.store?.deviceToken
         //self.osVersoin
-        
+
         // osVersion
         // eventListener
         // typeOfMetaPacket
@@ -175,7 +175,7 @@ public class Tinode {
     }
     public func updateUser<DP: Codable, DR: Codable>(uid: String, desc: Description<DP, DR>) {
         if let user = users[uid] {
-            
+
             print("found user \(user)")
             _ = (user as? User<DP>)?.merge(from: desc)
         } else {
@@ -207,12 +207,12 @@ public class Tinode {
     private func getUserAgent() -> String {
         return "\(appName) (locale \(kLocale)); tinode-iOS/\(kVersion)"
     }
-    
+
     private func getNextMsgId() -> String {
         nextMsgId += 1
         return String(nextMsgId)
     }
-    
+
     private func send(payload data: Data) throws {
         guard connection != nil else {
             throw TinodeError.notConnected("Attempted to send msg to a closed connection.")
@@ -239,9 +239,9 @@ public class Tinode {
         }
         let serverMsg = try Tinode.jsonDecoder.decode(ServerMessage.self, from: data)
         print("serverMsg = \(serverMsg)")
-        
+
         listener?.onMessage(msg: serverMsg)
-        
+
         if let ctrl = serverMsg.ctrl {
             listener?.onCtrlMessage(ctrl: ctrl)
             if let id = ctrl.id {
@@ -319,7 +319,7 @@ public class Tinode {
     public func noteKeyPress(topic: String) {
         note(topic: topic, what: Tinode.kNoteKp, seq: 0)
     }
-    
+
     private func hello() throws -> PromisedReply<ServerMessage>? {
         let msgId = getNextMsgId()
         let msg = ClientMessage<Int, Int>(
@@ -394,7 +394,7 @@ public class Tinode {
         if meta.desc == nil {
             return nil
         }
-        
+
         var topic: TopicProto?
         if meta.topic == Tinode.kTopicMe {
             topic = DefaultMeTopic(tinode: self, desc: meta.desc! as! DefaultDescription)
@@ -421,7 +421,7 @@ public class Tinode {
         }
         return topics[topicName]
     }
-    
+
     /// Create account using a single basic authentication scheme. A connection must be established
     /// prior to calling this method.
     ///
@@ -436,7 +436,7 @@ public class Tinode {
     public func createAccountBasic<Pu: Encodable,Pr: Encodable>(uname: String, pwd: String, login: Bool, tags: [String]?, desc: MetaSetDesc<Pu,Pr>, creds: [Credential]?) throws -> PromisedReply<ServerMessage> {
         return try account(uid: nil, scheme: AuthScheme.kLoginBasic, secret: AuthScheme.encodeBasicToken(uname: uname, password: pwd), loginNow: login, tags: tags, desc: desc, creds: creds)
     }
-    
+
     /// Create new account. Connection must be established prior to calling this method.
     ///
     /// - Parameters:
@@ -451,19 +451,19 @@ public class Tinode {
     public func account<Pu: Encodable,Pr: Encodable>(uid: String?, scheme: String, secret: String, loginNow: Bool, tags: [String]?, desc: MetaSetDesc<Pu,Pr>, creds: [Credential]?) throws -> PromisedReply<ServerMessage> {
         let msgId = getNextMsgId()
         let msga = MsgClientAcc(id: msgId, uid: uid, scheme: scheme, secret: secret, doLogin: loginNow, desc: desc)
-        
+
         if let creds = creds, creds.count > 0 {
             for c in creds {
                 msga.addCred(cred: c)
             }
         }
-        
+
         if let tags = tags, tags.count > 0 {
             for t in tags {
                 msga.addTag(tag: t)
             }
         }
-        
+
         let msg = ClientMessage<Pu,Pr>(acc: msga)
         let jsonData = try! Tinode.jsonEncoder.encode(msg)
         let jd = String(decoding: jsonData, as: UTF8.self)
@@ -471,11 +471,11 @@ public class Tinode {
         connection!.send(payload: jsonData)
         var future = PromisedReply<ServerMessage>()
         futures[msgId] = future
-        
+
         if !loginNow {
             return future
         }
-        
+
         future = try future.then(onSuccess: { [weak self] pkt in
             try self?.loginSuccessful(ctrl: pkt.ctrl)
             return nil
@@ -494,18 +494,18 @@ public class Tinode {
         })!
         return future
     }
-    
+
     public func loginBasic(uname: String, password: String) throws -> PromisedReply<ServerMessage> {
         return try login(scheme: AuthScheme.kLoginBasic,
                          secret: AuthScheme.encodeBasicToken(
                             uname: uname, password: password),
                          creds: nil)
     }
-    
+
     public func loginToken(token: String, creds: [Credential]?) throws -> PromisedReply<ServerMessage> {
         return try login(scheme: AuthScheme.kLoginToken, secret: token, creds: creds)
     }
-    
+
     public func login(scheme: String, secret: String, creds: [Credential]?) throws -> PromisedReply<ServerMessage> {
         // handle auto login
         if isConnectionAuthenticated {
@@ -513,7 +513,7 @@ public class Tinode {
             //return PromisedReply<ServerMessage>(value: nil)
             return PromisedReply<ServerMessage>()
         }
-        
+
         let msgId = getNextMsgId()
         let msgl = MsgClientLogin(id: msgId, scheme: scheme, secret: secret, credentials: nil)
         if let creds = creds, creds.count > 0 {
@@ -547,7 +547,7 @@ public class Tinode {
         return future
         //send(Tinode.getJsonMapper().writeValueAsString(msg));
     }
-    
+
     private func loginSuccessful(ctrl: MsgServerCtrl?) throws {
         guard let ctrl = ctrl else {
             throw TinodeError.invalidReply("Unexpected type of server response")
@@ -579,19 +579,18 @@ public class Tinode {
         myUid = nil
         store?.logout()
     }
-    /*
-    private func loadTopics() {
-        //
-    }
-    */
     private func handleDisconnect(isServerOriginated: Bool, code: Int, reason: String) {
+        let e = TinodeError.notConnected("no longer connected to server")
+        for f in futures.values {
+            try? f.reject(error: e)
+        }
         futures.removeAll()
         serverBuild = nil
         serverVersion = nil
         isConnectionAuthenticated = false
-        // todo:
-        // iterate over topics: topicLeft
-        // listener on disconnect
+        for t in topics.values {
+            t.topicLeft(unsub: false, code: 503, reason: "disconnected")
+        }
         listener?.onDisconnect(byServer: isServerOriginated, code: code, reason: reason)
     }
     public class TinodeConnectionListener : ConnectionListener {
@@ -664,7 +663,7 @@ public class Tinode {
         try connection?.connect()
         return connectedPromise
     }
-    
+
     public func subscribe<Pu, Pr>(to topicName: String,
                                   set: MsgSetMeta<Pu, Pr>?,
                                   get: MsgGetMeta?) -> PromisedReply<ServerMessage> {
@@ -682,17 +681,17 @@ public class Tinode {
             let jd = String(decoding: jsonData, as: UTF8.self)
             print("subscribe request: \(jd)")
             connection!.send(payload: jsonData)
-            
+
         } catch {
             // ???
             futures.removeValue(forKey: msgId)
             // TODO: return nil here
             //return nil
-            
+
         }
         return reply
     }
-    
+
     public func getMeta(topic: String, query: MsgGetMeta) -> PromisedReply<ServerMessage>? {
         let msgId = getNextMsgId()
         let msg = ClientMessage<Int, Int>(  // generic params don't matter
@@ -707,12 +706,12 @@ public class Tinode {
             let jd = String(decoding: jsonData, as: UTF8.self)
             print("get request: \(jd)")
             connection!.send(payload: jsonData)
-            
+
         } catch {
             // ???
             futures.removeValue(forKey: msgId)
             return nil
-            
+
         }
         return reply
     }
