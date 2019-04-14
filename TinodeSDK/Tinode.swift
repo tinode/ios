@@ -96,8 +96,10 @@ public class Tinode {
 
     let kProtocolVersion = "0"
     let kVersion = "0.15"
+    let kLibVersion = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as! String
     let kLocale = Locale.current.languageCode!
     public var deviceId: String = ""
+    public var OsVersion: String = ""
 
     public var appName: String
     public var apiKey: String
@@ -205,7 +207,7 @@ public class Tinode {
     }
 
     private func getUserAgent() -> String {
-        return "\(appName) (locale \(kLocale)); tinode-iOS/\(kVersion)"
+        return "\(appName) (iOS \(OsVersion); \(kLocale)); tinode-swift/\(kLibVersion)"
     }
 
     private func getNextMsgId() -> String {

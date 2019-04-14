@@ -12,7 +12,7 @@ import TinodeSDK
 class Cache {
     private static let `default` = Cache()
 
-    public static let kHostName = "127.0.0.1:6060" // local host
+    public static let kHostName = "127.0.0.1:6060" // localhost
     
     private static let kApiKey = "AQEAAAABAAD_rAp4DJh05a1HAwFT3A6K"
     
@@ -23,12 +23,14 @@ class Cache {
     }
     private func getTinode() -> Tinode {
         if tinode == nil {
-            let appName = "Tinode-iOS/" + UIDevice.current.systemVersion
+            let appVersion: String = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as! String
+            let appName = "Tinodios/" + appVersion
             let dbh = BaseDb.getInstance()
             tinode = Tinode(for: appName,
                             authenticateWith: Cache.kApiKey,
                             persistDataIn: dbh.sqlStore)
-            // FIXME: this should be push ID
+            tinode!.OsVersion = UIDevice.current.systemVersion
+            // FIXME: this should be FCM or APNS push ID
             tinode!.deviceId = UIDevice.current.identifierForVendor!.uuidString
         }
         return tinode!
