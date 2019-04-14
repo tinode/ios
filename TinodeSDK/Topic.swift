@@ -35,6 +35,7 @@ public protocol TopicProto: class {
     func deserializePub(from data: String?) -> Bool
     @discardableResult
     func deserializePriv(from data: String?) -> Bool
+    func topicLeft(unsub: Bool?, code: Int?, reason: String?)
 
     func allMessagesReceived(count: Int?)
     func routeMeta(meta: MsgServerMeta)
@@ -96,7 +97,7 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
         open func onContUpdate(sub: Subscription<SP, SR>) {}
     }
     //public typealias Listener = Listener2<DP, DR, SP, SR>
-    
+
     public class MetaGetBuilder {
         let topic: TopicProto
         var meta: MsgGetMeta
@@ -245,7 +246,7 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
         get { return description?.defacs }
         set { description?.defacs = defacs }
     }
-    
+
     // The bulk of topic data
     private var description: Description<DP, DR>? = nil
     public var pub: DP? {
@@ -277,7 +278,7 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
             }
         }
     }
-    
+
     public var topicType: TopicType {
         get {
             return Topic.topicTypeByName(name: self.name)
@@ -297,7 +298,7 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
             return store?.getCachedMessagesRange(topic: self)
         }
     }
-    
+
     init() {}
 
     static func topicTypeByName(name: String?) -> TopicType {
@@ -357,7 +358,7 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
         self.description = Description()
         _ = self.description!.merge(desc: desc)
     }
-    
+
     public static func isNewByName(name: String) -> Bool {
         return name.starts(with: Tinode.kTopicNew)
     }
@@ -575,7 +576,7 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
         //setMaxDel(maxDel: clear)
         listener?.onData(data: nil)
     }
-    
+
     fileprivate func routeMetaSub(meta: MsgServerMeta) {
         print("routing sub")
         if let metaSubs = meta.sub as? Array<Subscription<SP, SR>> {
@@ -752,7 +753,7 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
         }
         listener?.onPres(pres: pres)
     }
-    private func topicLeft(unsub: Bool?, code: Int?, reason: String?) {
+    public func topicLeft(unsub: Bool?, code: Int?, reason: String?) {
         if attached {
             attached = false
             print("leaving \(name): \(String(describing: unsub)) \(String(describing: code)) \(String(describing: reason))")
