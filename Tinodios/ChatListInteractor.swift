@@ -12,6 +12,7 @@ import TinodeSDK
 protocol ChatListBusinessLogic: class {
     func loadAndPresentTopics()
     func attachToMeTopic()
+    func updateChat(_ name: String)
 }
 
 protocol ChatListDataStore: class {
@@ -27,9 +28,10 @@ class ChatListInteractor: ChatListBusinessLogic, ChatListDataStore {
         }
         override func onPres(pres: MsgServerPres) {
             if pres.what == "msg" || pres.what == "off" || pres.what == "on" {
-                //datasetChanged()
-                print("dataset changed")
-                //adapter?.update()
+                if let name = pres.src {
+                    interactor?.updateChat(name)
+                }
+                print("one chat changed " + (pres.src ?? "nil"))
             }
         }
         override func onMetaSub(sub: Subscription<VCard, PrivateType>) {
@@ -65,7 +67,7 @@ class ChatListInteractor: ChatListBusinessLogic, ChatListDataStore {
         if me == nil  {
             //let t: DefaultMeTopic.Listener = self.meListener
             //let q = DefaultMeTopic.Listener()
-            me = try! DefaultMeTopic(tinode: tinode, l: meListener)
+            me = DefaultMeTopic(tinode: tinode, l: meListener)
             //me = try! DefaultMeTopic(tinode: tinode, l: q)
             //let z = try? DefaultMeTopic(tinode: tinode, l: nil)
                                      //l: meListener as DefaultMeTopic.Listener)
@@ -89,11 +91,18 @@ class ChatListInteractor: ChatListBusinessLogic, ChatListDataStore {
                 return nil
         })
     }
+    
     func loadAndPresentTopics() {
-        self.topics = Cache.getTinode().getFilteredTopics(type: .user, updated: nil)?.map {
+        self.topics = Cache.getTinode().getFilteredTopics(filter: {(topic: TopicProto) in
+            return topic.topicType.matches(TopicType.user)
+        })?.map {
             // Must succeed.
             $0 as! DefaultComTopic
         }
         self.presenter?.presentTopics(self.topics ?? [])
+    }
+
+    func updateChat(_ name: String) {
+        self.presenter?.updateChat(name)
     }
 }

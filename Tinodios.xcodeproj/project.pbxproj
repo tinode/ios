@@ -31,14 +31,16 @@
 		0ACB5F1022097665008FE740 /* ChatListRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACB5F0F22097665008FE740 /* ChatListRouter.swift */; };
 		0AD5552A21C625BB0027FD16 /* ChatListInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AD5552921C625BB0027FD16 /* ChatListInteractor.swift */; };
 		0ADDBC8B2249F617000BD00D /* ChatListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ADDBC8A2249F617000BD00D /* ChatListTableViewCell.swift */; };
-		0AE50D4422156A250021F7B7 /* ContactListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AE50D4322156A250021F7B7 /* ContactListViewController.swift */; };
-		0AE50D4622156A4B0021F7B7 /* ContactListInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AE50D4522156A4B0021F7B7 /* ContactListInteractor.swift */; };
-		0AE50D4822156A5B0021F7B7 /* ContactListPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AE50D4722156A5B0021F7B7 /* ContactListPresenter.swift */; };
-		0AE50D4A22156A6C0021F7B7 /* ContactListRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AE50D4922156A6C0021F7B7 /* ContactListRouter.swift */; };
+		0AE50D4422156A250021F7B7 /* FindViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AE50D4322156A250021F7B7 /* FindViewController.swift */; };
+		0AE50D4622156A4B0021F7B7 /* FindInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AE50D4522156A4B0021F7B7 /* FindInteractor.swift */; };
+		0AE50D4822156A5B0021F7B7 /* FindPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AE50D4722156A5B0021F7B7 /* FindPresenter.swift */; };
+		0AE50D4A22156A6C0021F7B7 /* FindRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AE50D4922156A6C0021F7B7 /* FindRouter.swift */; };
 		58CBE6CE018029121E923407 /* Pods_Tinodios.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B787A84CD010EF920890105 /* Pods_Tinodios.framework */; };
 		7DDADC5021D5C156009733B5 /* RegisterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DDADC4F21D5C156009733B5 /* RegisterViewController.swift */; };
 		7DDADC5221D5C219009733B5 /* Validate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DDADC5121D5C219009733B5 /* Validate.swift */; };
 		7DDADC5421D5C2E6009733B5 /* CredentialsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DDADC5321D5C2E6009733B5 /* CredentialsViewController.swift */; };
+		B031BE552263075E004160AE /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = B031BE542263075E004160AE /* Settings.bundle */; };
+		B031BE5722631304004160AE /* SettingsHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = B031BE5622631304004160AE /* SettingsHelper.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -81,19 +83,18 @@
 		0ACB5F0F22097665008FE740 /* ChatListRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatListRouter.swift; sourceTree = "<group>"; };
 		0AD5552921C625BB0027FD16 /* ChatListInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatListInteractor.swift; sourceTree = "<group>"; };
 		0ADDBC8A2249F617000BD00D /* ChatListTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatListTableViewCell.swift; sourceTree = "<group>"; };
-		0AE50D4322156A250021F7B7 /* ContactListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactListViewController.swift; sourceTree = "<group>"; };
-		0AE50D4522156A4B0021F7B7 /* ContactListInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactListInteractor.swift; sourceTree = "<group>"; };
-		0AE50D4722156A5B0021F7B7 /* ContactListPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactListPresenter.swift; sourceTree = "<group>"; };
-		0AE50D4922156A6C0021F7B7 /* ContactListRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactListRouter.swift; sourceTree = "<group>"; };
-		1A5E7891F060E8CAAAC2D5A3 /* Pods-ios.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ios.release.xcconfig"; path = "Pods/Target Support Files/Pods-ios/Pods-ios.release.xcconfig"; sourceTree = "<group>"; };
-		2379D23DBDAE3571DE1C059D /* Pods_ios.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ios.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		0AE50D4322156A250021F7B7 /* FindViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FindViewController.swift; sourceTree = "<group>"; };
+		0AE50D4522156A4B0021F7B7 /* FindInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FindInteractor.swift; sourceTree = "<group>"; };
+		0AE50D4722156A5B0021F7B7 /* FindPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FindPresenter.swift; sourceTree = "<group>"; };
+		0AE50D4922156A6C0021F7B7 /* FindRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FindRouter.swift; sourceTree = "<group>"; };
 		3B787A84CD010EF920890105 /* Pods_Tinodios.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Tinodios.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5900B7863CDFB018A86DD3AC /* Pods-Tinodios.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Tinodios.release.xcconfig"; path = "Pods/Target Support Files/Pods-Tinodios/Pods-Tinodios.release.xcconfig"; sourceTree = "<group>"; };
-		6DFC67397DB12B2236DA54EC /* Pods-ios.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ios.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ios/Pods-ios.debug.xcconfig"; sourceTree = "<group>"; };
 		75BC852198885F22E865D563 /* Pods-Tinodios.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Tinodios.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Tinodios/Pods-Tinodios.debug.xcconfig"; sourceTree = "<group>"; };
 		7DDADC4F21D5C156009733B5 /* RegisterViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegisterViewController.swift; sourceTree = "<group>"; };
 		7DDADC5121D5C219009733B5 /* Validate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Validate.swift; sourceTree = "<group>"; };
 		7DDADC5321D5C2E6009733B5 /* CredentialsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CredentialsViewController.swift; sourceTree = "<group>"; };
+		B031BE542263075E004160AE /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
+		B031BE5622631304004160AE /* SettingsHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsHelper.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -132,25 +133,27 @@
 			isa = PBXGroup;
 			children = (
 				0A8A107F21D4C77000B90D73 /* db */,
-				0A09810B21CCB80400600013 /* StoredMessage.swift */,
 				0A8A8BD921C380E80090BCBA /* Cache.swift */,
 				0AD5552921C625BB0027FD16 /* ChatListInteractor.swift */,
+				0A09810B21CCB80400600013 /* StoredMessage.swift */,
 				0ACB5F0D22097651008FE740 /* ChatListPresenter.swift */,
 				0ACB5F0F22097665008FE740 /* ChatListRouter.swift */,
 				0ADDBC8A2249F617000BD00D /* ChatListTableViewCell.swift */,
 				0A0380D921B3CC8100A3FA0E /* ChatListViewController.swift */,
-				0AE50D4522156A4B0021F7B7 /* ContactListInteractor.swift */,
-				0AE50D4722156A5B0021F7B7 /* ContactListPresenter.swift */,
-				0AE50D4922156A6C0021F7B7 /* ContactListRouter.swift */,
-				0AE50D4322156A250021F7B7 /* ContactListViewController.swift */,
+				0AE50D4522156A4B0021F7B7 /* FindInteractor.swift */,
+				0AE50D4722156A5B0021F7B7 /* FindPresenter.swift */,
+				0AE50D4922156A6C0021F7B7 /* FindRouter.swift */,
+				0AE50D4322156A250021F7B7 /* FindViewController.swift */,
 				0A6F260921BE51D800B9726E /* LoginViewController.swift */,
 				7DDADC4F21D5C156009733B5 /* RegisterViewController.swift */,
 				7DDADC5321D5C2E6009733B5 /* CredentialsViewController.swift */,
 				0A8C8A4521E5E72D00D8751E /* MessageViewController.swift */,
 				0A0016E621E7236900088188 /* MessageInteractor.swift */,
 				0A0016E821E736CD00088188 /* MessagePresenter.swift */,
+				B031BE5622631304004160AE /* SettingsHelper.swift */,
 				7DDADC5121D5C219009733B5 /* Validate.swift */,
 				0A0380DB21B3CC8100A3FA0E /* Main.storyboard */,
+				B031BE542263075E004160AE /* Settings.bundle */,
 				0A0380E921B3CCB000A3FA0E /* Supporting Files */,
 				0A0380E321B3CC8200A3FA0E /* Info.plist */,
 			);
@@ -184,7 +187,6 @@
 		4805E89223B1ECF4F9F439D5 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				2379D23DBDAE3571DE1C059D /* Pods_ios.framework */,
 				3B787A84CD010EF920890105 /* Pods_Tinodios.framework */,
 			);
 			name = Frameworks;
@@ -193,8 +195,6 @@
 		579A1EAE0D0B7D996BF48345 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				6DFC67397DB12B2236DA54EC /* Pods-ios.debug.xcconfig */,
-				1A5E7891F060E8CAAAC2D5A3 /* Pods-ios.release.xcconfig */,
 				75BC852198885F22E865D563 /* Pods-Tinodios.debug.xcconfig */,
 				5900B7863CDFB018A86DD3AC /* Pods-Tinodios.release.xcconfig */,
 			);
@@ -262,6 +262,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B031BE552263075E004160AE /* Settings.bundle in Resources */,
 				0A0380E221B3CC8200A3FA0E /* LaunchScreen.storyboard in Resources */,
 				0A0380DF21B3CC8200A3FA0E /* Assets.xcassets in Resources */,
 				0A0380DD21B3CC8100A3FA0E /* Main.storyboard in Resources */,
@@ -327,11 +328,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				0A0380DA21B3CC8100A3FA0E /* ChatListViewController.swift in Sources */,
-				0AE50D4422156A250021F7B7 /* ContactListViewController.swift in Sources */,
+				0AE50D4422156A250021F7B7 /* FindViewController.swift in Sources */,
 				0AD5552A21C625BB0027FD16 /* ChatListInteractor.swift in Sources */,
 				0A8A8BDA21C380E80090BCBA /* Cache.swift in Sources */,
 				0A15739621DB531E0070C31F /* UserDb.swift in Sources */,
-				0AE50D4822156A5B0021F7B7 /* ContactListPresenter.swift in Sources */,
+				0AE50D4822156A5B0021F7B7 /* FindPresenter.swift in Sources */,
 				0A0016E721E7236900088188 /* MessageInteractor.swift in Sources */,
 				0ACB5F1022097665008FE740 /* ChatListRouter.swift in Sources */,
 				0A6F260A21BE51D800B9726E /* LoginViewController.swift in Sources */,
@@ -342,15 +343,16 @@
 				0A0380D821B3CC8100A3FA0E /* AppDelegate.swift in Sources */,
 				0A484E5121E359A800FE9AFE /* MessageDb.swift in Sources */,
 				7DDADC5021D5C156009733B5 /* RegisterViewController.swift in Sources */,
-				0AE50D4A22156A6C0021F7B7 /* ContactListRouter.swift in Sources */,
+				0AE50D4A22156A6C0021F7B7 /* FindRouter.swift in Sources */,
 				7DDADC5221D5C219009733B5 /* Validate.swift in Sources */,
 				7DDADC5421D5C2E6009733B5 /* CredentialsViewController.swift in Sources */,
+				B031BE5722631304004160AE /* SettingsHelper.swift in Sources */,
 				0ADDBC8B2249F617000BD00D /* ChatListTableViewCell.swift in Sources */,
 				0A8A108321D4C78C00B90D73 /* TopicDb.swift in Sources */,
 				0A0016E921E736CD00088188 /* MessagePresenter.swift in Sources */,
 				0A15739421DB53130070C31F /* SubscriberDb.swift in Sources */,
 				0A8A108521D4C79700B90D73 /* SqlStore.swift in Sources */,
-				0AE50D4622156A4B0021F7B7 /* ContactListInteractor.swift in Sources */,
+				0AE50D4622156A4B0021F7B7 /* FindInteractor.swift in Sources */,
 				0A8C8A4621E5E72D00D8751E /* MessageViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

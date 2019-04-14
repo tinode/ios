@@ -1,5 +1,5 @@
 //
-//  ContactListViewController.swift
+//  FindViewController.swift
 //  ios
 //
 //  Copyright © 2019 Tinode. All rights reserved.
@@ -7,20 +7,20 @@
 
 import UIKit
 
-protocol ContactListDisplayLogic: class {
+protocol FindDisplayLogic: class {
     func displayContacts(contacts: [ContactHolder])
 }
 
-class ContactListViewController: UITableViewController, ContactListDisplayLogic {
-    var interactor: ContactListBusinessLogic?
+class FindViewController: UITableViewController, FindDisplayLogic {
+    var interactor: FindBusinessLogic?
     var contacts: [ContactHolder] = []
-    var router: ContactListRoutingLogic?
+    var router: FindRoutingLogic?
 
     private func setup() {
         let viewController = self
-        let interactor = ContactListInteractor()
-        let presenter = ContactListPresenter()
-        let router = ContactListRouter()
+        let interactor = FindInteractor()
+        let presenter = FindPresenter()
+        let router = FindRouter()
         
         viewController.interactor = interactor
         viewController.router = router
@@ -56,7 +56,7 @@ class ContactListViewController: UITableViewController, ContactListDisplayLogic 
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "ContactsTableViewCell", for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: "FindTableViewCell", for: indexPath)
 
         // Configure the cell...
         let contact = contacts[indexPath.row]

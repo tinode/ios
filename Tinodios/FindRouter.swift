@@ -1,5 +1,5 @@
 //
-//  ContactListRouter.swift
+//  FindRouter.swift
 //  ios
 //
 //  Copyright © 2019 Tinode. All rights reserved.
@@ -8,12 +8,12 @@
 import Foundation
 import UIKit
 
-protocol ContactListRoutingLogic {
+protocol FindRoutingLogic {
     func routeToContact(segue: UIStoryboardSegue)
 }
 
-class ContactListRouter: ContactListRoutingLogic {
-    weak var viewController: ContactListViewController?
+class FindRouter: FindRoutingLogic {
+    weak var viewController: FindViewController?
     
     func routeToContact(segue: UIStoryboardSegue) {
         // TODO: implmenent.
