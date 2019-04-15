@@ -27,6 +27,10 @@ public class Connection {
             attempt = 0
         }
     }
+    // This is useless. SwiftWebSocket doesn't allow the user
+    // to specify the timeout (which is hardcoded and defaults to 30 seconds).
+    // TODO: figure out a solution here (e.g. switch to another library or
+    //       implement connection primitives by hand).
     fileprivate let kConnectionTimeout = 3000
     
     var isConnected: Bool {

@@ -18,28 +18,6 @@ class LoginViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // TODO: move this logic to the splash screen.
-        if let token = KeychainWrapper.standard.string(
-            forKey: LoginViewController.kTokenKey), !token.isEmpty {
-            let tinode = Cache.getTinode()
-            DispatchQueue.global(qos: .userInteractive).async {
-                do {
-                    let (hostName, useTLS, _) = SettingsHelper.getConnectionSettings()
-                    // TODO: implement TLS.
-                    _ = try tinode.connect(to: (hostName ?? Cache.kHostName), useTLS: (useTLS ?? false))?.getResult()
-                    let msg = try tinode.loginToken(token: token, creds: nil).getResult()
-                    if let code = msg.ctrl?.code, code < 300 {
-                        print("login successful for: \(tinode.myUid!)")
-                        DispatchQueue.main.async {
-                            self.routeToChats()
-                        }
-                    }
-                } catch {
-                    print("Failed to automatically login to Tinode: \(error).")
-                }
-            }
-        }
     }
     
     private func routeToChats() {
