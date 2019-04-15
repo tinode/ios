@@ -8,7 +8,7 @@
 import Foundation
 import TinodeSDK
 
-protocol MessageBusinessLogic {
+protocol MessageBusinessLogic: class {
     @discardableResult
     func setup(topicName: String?) -> Bool
     @discardableResult
@@ -25,9 +25,21 @@ protocol MessageDataStore {
     func setup(topicName: String?) -> Bool
     func loadMessages()
     func loadNextPage()
-}
+} 
 
 class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, MessageDataStore {
+    class MessageEventListener: UiTinodeEventListener {
+        private weak var interactor: MessageBusinessLogic?
+        init(interactor: MessageBusinessLogic?, connected: Bool) {
+            super.init(connected: connected)
+            self.interactor = interactor
+        }
+        override func onLogin(code: Int, text: String) {
+            super.onLogin(code: code, text: text)
+            // TODO: attach to me topic as well.
+            _ = interactor?.attachToTopic()
+        }
+    }
     static let kMessagesPerPage = 20
     var pagesToLoad: Int = 0
     var topicId: Int64?
@@ -36,15 +48,33 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
     var presenter: MessagePresentationLogic?
     var messages: [StoredMessage] = []
     private var messageSenderQueue = DispatchQueue(label: "co.tinode.messagesender")
+    private var tinodeEventListener: MessageEventListener? = nil
 
     func setup(topicName: String?) -> Bool {
         guard let topicName = topicName else { return false }
         self.topicName = topicName
         self.topicId = BaseDb.getInstance().topicDb?.getId(topic: topicName)
         let tinode = Cache.getTinode()
+        self.tinodeEventListener = MessageEventListener(
+            interactor: self, connected: tinode.isConnected)
+        tinode.listener = self.tinodeEventListener
         self.topic = tinode.getTopic(topicName: topicName) as? DefaultComTopic
         self.pagesToLoad = 1
+        
         return self.topic != nil
+    }
+    func cleanup() {
+        // set listeners to nil
+        print("cleaning up the topic \(String(describing: self.topicName))")
+        self.topic?.listener = nil
+        if self.topic?.attached ?? false {
+            do {
+                try self.topic?.leave()
+            } catch {
+                print("Error leaving topic \(error)")
+            }
+        }
+        Cache.getTinode().listener = nil
     }
     func attachToTopic() -> Bool {
         self.topic?.listener = self
@@ -101,18 +131,6 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
     }
     func sendReadNotification() {
         self.topic?.noteRecv()
-    }
-    func cleanup() {
-        // set listeners to nil
-        print("cleaning up the topic \(String(describing: self.topicName))")
-        self.topic?.listener = nil
-        if self.topic?.attached ?? false {
-            do {
-                try self.topic?.leave()
-            } catch {
-                print("Error leaving topic \(error)")
-            }
-        }
     }
     func loadMessages() {
         DispatchQueue.global(qos: .userInteractive).async {
