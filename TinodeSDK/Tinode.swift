@@ -131,7 +131,7 @@ public class Tinode {
     private var autoLogin: Bool = false
     private var loginInProgress: Bool = false
 
-    var isConnected: Bool {
+    public var isConnected: Bool {
         get {
             if let c = connection, c.isConnected {
                 return true
@@ -601,7 +601,9 @@ public class Tinode {
         // auth expires
         if ctrl.code < 300 {
             isConnectionAuthenticated = true
-            // todo: listener
+            if let t = authToken, !autoLogin {
+                setAutoLoginWithToken(token: t)
+            }
             listener?.onLogin(code: ctrl.code, text: ctrl.text)
         }
     }
