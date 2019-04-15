@@ -28,6 +28,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 do {
                     let (hostName, useTLS, _) = SettingsHelper.getConnectionSettings()
                     // TODO: implement TLS.
+                    tinode.setAutoLoginWithToken(token: token)
                     _ = try tinode.connect(to: (hostName ?? Cache.kHostName), useTLS: (useTLS ?? false))?.getResult()
                     let msg = try tinode.loginToken(token: token, creds: nil).getResult()
                     if let code = msg.ctrl?.code, code < 300 {

@@ -67,8 +67,9 @@ public class Connection {
         webSocketConnection!.event.open = {
             print("opened")
             self.backoffSteps.reset()
+            let r = self.reconnecting
             self.reconnecting = false
-            self.connectionListener?.onConnect()
+            self.connectionListener?.onConnect(reconnecting: r)
         }
         webSocketConnection!.event.error = { error in
             print("error \(error)")
@@ -106,6 +107,7 @@ public class Connection {
         self.webSocketConnection?.open(request: urlRequest)
     }
     private func connectSocket() {
+        guard !isConnected else { return }
         let request = try! createUrlRequest()
         self.openConnection(with: request)
     }
@@ -117,7 +119,7 @@ public class Connection {
             execute: {
                 print("reconnecting now")
                 self.connectSocket()
-                if !self.isConnected {
+                if self.isConnected {
                     self.reconnecting = false
                     return
                 }
@@ -151,7 +153,7 @@ public class Connection {
 }
 
 protocol ConnectionListener {
-    func onConnect() -> Void
+    func onConnect(reconnecting: Bool) -> Void
     func onMessage(with message: String) -> Void
     func onDisconnect(isServerOriginated: Bool, code: Int, reason: String) -> Void
     func onError(error: Error) -> Void

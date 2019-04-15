@@ -119,6 +119,18 @@ public class Tinode {
     public var listener: TinodeEventListener? = nil
     public var topicsLoaded = false
 
+    struct LoginCredentials {
+        let scheme: String
+        let secret: String
+        init(using scheme: String, authenticateWith secret: String) {
+            self.scheme = scheme
+            self.secret = secret
+        }
+    }
+    private var loginCredentials: LoginCredentials? = nil
+    private var autoLogin: Bool = false
+    private var loginInProgress: Bool = false
+
     var isConnected: Bool {
         get {
             if let c = connection, c.isConnected {
@@ -496,7 +508,19 @@ public class Tinode {
         })!
         return future
     }
-
+    private func setAutoLogin(using scheme: String?,
+                              authenticateWith secret: String?) {
+        guard let scheme = scheme, let secret = secret else {
+            autoLogin = false
+            loginCredentials = nil
+            return
+        }
+        autoLogin = true
+        loginCredentials = LoginCredentials(using: scheme, authenticateWith: secret)
+    }
+    public func setAutoLoginWithToken(token: String) {
+        setAutoLogin(using: AuthScheme.kLoginToken, authenticateWith: token)
+    }
     public func loginBasic(uname: String, password: String) throws -> PromisedReply<ServerMessage> {
         return try login(scheme: AuthScheme.kLoginBasic,
                          secret: AuthScheme.encodeBasicToken(
@@ -509,13 +533,17 @@ public class Tinode {
     }
 
     public func login(scheme: String, secret: String, creds: [Credential]?) throws -> PromisedReply<ServerMessage> {
-        // handle auto login
-        if isConnectionAuthenticated {
+        if autoLogin {
+            loginCredentials = LoginCredentials(using: scheme, authenticateWith: secret)
+        }
+        guard !isConnectionAuthenticated else {
             // Already logged in.
-            //return PromisedReply<ServerMessage>(value: nil)
             return PromisedReply<ServerMessage>()
         }
-
+        guard !loginInProgress else {
+            return PromisedReply<ServerMessage>(error: TinodeError.invalidState("Login in progress"))
+        }
+        loginInProgress = true
         let msgId = getNextMsgId()
         let msgl = MsgClientLogin(id: msgId, scheme: scheme, secret: secret, credentials: nil)
         if let creds = creds, creds.count > 0 {
@@ -530,22 +558,27 @@ public class Tinode {
         connection!.send(payload: jsonData)
         var future = PromisedReply<ServerMessage>()
         futures[msgId] = future
-        future = try future.then(onSuccess: { [weak self] pkt in
-            try self?.loginSuccessful(ctrl: pkt.ctrl)
-            return nil
-        }, onFailure: { [weak self] err in
-            if let e = err as? TinodeError {
-                if case TinodeError.serverResponseError(let code, let text, _) = e {
-                    if code >= 400 && code < 500 {
-                        // todo:
-                        // clear auth data.
+        future = try future.then(
+            onSuccess: { [weak self] pkt in
+                self?.loginInProgress = false
+                try self?.loginSuccessful(ctrl: pkt.ctrl)
+                return nil
+            }, onFailure: { [weak self] err in
+                self?.loginInProgress = false
+                if let e = err as? TinodeError {
+                    if case TinodeError.serverResponseError(let code, let text, _) = e {
+                        if code >= 400 && code < 500 {
+                            // todo:
+                            // clear auth data.
+                            self?.loginCredentials = nil
+                            self?.authToken = nil
+                        }
+                        self?.isConnectionAuthenticated = false
+                        self?.listener?.onLogin(code: code, text: text)
                     }
-                    self?.isConnectionAuthenticated = false
-                    self?.listener?.onLogin(code: code, text: text)
                 }
-            }
-            return PromisedReply<ServerMessage>(error: err)
-        })!
+                return PromisedReply<ServerMessage>(error: err)
+            })!
         return future
         //send(Tinode.getJsonMapper().writeValueAsString(msg));
     }
@@ -573,7 +606,8 @@ public class Tinode {
         }
     }
     private func disconnect() {
-        // setAutologin(false)
+        // Remove auto-login data.
+        setAutoLogin(using: nil, authenticateWith: nil)
         connection?.disconnect()
     }
     public func logout() {
@@ -600,10 +634,10 @@ public class Tinode {
         init(tinode: Tinode) {
             self.tinode = tinode
         }
-        func onConnect() -> Void {
+        func onConnect(reconnecting: Bool) -> Void {
             print("tinode connected")
             do {
-                var _ = try tinode.hello()?.then(onSuccess: { [weak self] pkt in
+                let future = try tinode.hello()?.then(onSuccess: { [weak self] pkt in
                     guard self != nil else {
                         throw TinodeError.invalidState("Missing Tinode instance in connection handler")
                     }
@@ -620,7 +654,17 @@ public class Tinode {
                         code: ctrl.code, reason: ctrl.text, params: ctrl.params)
                     return nil
                 }, onFailure: nil)
-                // todo: auto login & credentials
+                if tinode.autoLogin && reconnecting {
+                    try future?.then(
+                        onSuccess: { [weak self] msg in
+                            if let t = self?.tinode, let cred = t.loginCredentials, !t.loginInProgress {
+                                _ = try self?.tinode.login(
+                                    scheme: cred.scheme, secret: cred.secret, creds: nil)
+                            }
+                            return nil
+                        },
+                        onFailure: nil)
+                }
             } catch {
                 print("onConnect error \(error)")
             }
