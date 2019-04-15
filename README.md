@@ -1,4 +1,5 @@
-# ios
+# Tinodios
+
 Experimental iOS client.
 
 Status: work in progress.
@@ -47,6 +48,13 @@ The end goal would be feature parity with the Tindroid (Tinode Android) App:
 * https://github.com/stephencelis/SQLite.swift
 * https://github.com/jrendel/SwiftKeychainWrapper
 * https://github.com/tidwall/SwiftWebSocket
+
+## Other
+
+Demo avatars and some other graphics are from https://www.pexels.com/ under [CC0 license](https://www.pexels.com/photo-license/).
+
+Background patterns from http://subtlepatterns.com/, commercial and non-commercial use allowed with attribution.
+
 
 ## Screenshots
 <img src="ios-chats.png" alt="App screenshot - chat list" width="207" />
