@@ -13,6 +13,7 @@ protocol ChatListBusinessLogic: class {
     func loadAndPresentTopics()
     func attachToMeTopic()
     func updateChat(_ name: String)
+    func cleanup()
 }
 
 protocol ChatListDataStore: class {
@@ -56,12 +57,35 @@ class ChatListInteractor: ChatListBusinessLogic, ChatListDataStore {
     var router: ChatListRoutingLogic?
     var topics: [DefaultComTopic]?
     private var meListener: MeListener
+    private var meTopic: DefaultMeTopic? = nil
     //private var meListener: DefaultMeTopic.Listener
     init() {
         meListener = MeListener()
         self.meListener.interactor = self
     }
     func attachToMeTopic() {
+        let tinode = Cache.getTinode()
+        do {
+            try UiUtils.attachToMeTopic(meListener: self.meListener)?.then(
+                onSuccess: { [weak self] msg in
+                    self?.loadAndPresentTopics()
+                    self?.meTopic = tinode.getMeTopic()
+                    return nil
+                }, onFailure: { [weak self] err in
+                    print("err = ")
+                    if let e = err as? TinodeError, case .serverResponseError(let code, _, _) = e {
+                        if code == 404 {
+                            tinode.logout()
+                            self?.router?.routeToLogin()
+                        }
+                    }
+                    return nil
+                })
+        } catch {
+            tinode.logout()
+            self.router?.routeToLogin()
+        }
+        /*
         let tinode = Cache.getTinode()
         var me = tinode.getMeTopic()
         if me == nil  {
@@ -90,8 +114,11 @@ class ChatListInteractor: ChatListBusinessLogic, ChatListDataStore {
                 }
                 return nil
         })
+        */
     }
-    
+    func cleanup() {
+        self.meTopic?.listener = nil
+    }
     func loadAndPresentTopics() {
         self.topics = Cache.getTinode().getFilteredTopics(filter: {(topic: TopicProto) in
             return topic.topicType.matches(TopicType.user)

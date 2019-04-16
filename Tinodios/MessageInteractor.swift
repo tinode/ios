@@ -36,7 +36,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         }
         override func onLogin(code: Int, text: String) {
             super.onLogin(code: code, text: text)
-            // TODO: attach to me topic as well.
+            _ = UiUtils.attachToMeTopic(meListener: nil)
             _ = interactor?.attachToTopic()
         }
     }

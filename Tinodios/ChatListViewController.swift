@@ -47,6 +47,9 @@ class ChatListViewController: UITableViewController, ChatListDisplayLogic {
     override func viewDidAppear(_ animated: Bool) {
         self.interactor?.loadAndPresentTopics()
     }
+    override func viewDidDisappear(_ animated: Bool) {
+        self.interactor?.cleanup()
+    }
 
     func displayLoginView() {
         DispatchQueue.main.async {
