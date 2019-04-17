@@ -23,10 +23,6 @@ public protocol Message {
     var isSynced: Bool { get }
 }
 
-public protocol MessageIterator {
-    func next() -> Message?
-}
-
 // Base protocol for implementing persistance.
 public protocol Storage: class {
     // Min and max values.
@@ -125,6 +121,14 @@ public protocol Storage: class {
     // Returns true on success, false otherwise.
     func msgReady(topic: TopicProto, dbMessageId: Int64, data: Drafty) -> Bool
 
+    // Message is being sent to the server.
+    // Params
+    //   topic: topic which sent the message
+    //   dbMessageId: database ID of the message.
+    //   sync: true when the sync started, false when it's finished unsuccessfully.
+    // Returns true on success, false otherwise.
+    func msgSyncing(topic: TopicProto, dbMessageId: Int64, sync: Bool) -> Bool
+
     // Deletes a message by database id.
     func msgDiscard(topic: TopicProto, dbMessageId: Int64) -> Bool
 
@@ -159,7 +163,7 @@ public protocol Storage: class {
     func getMessageById(topic: TopicProto, dbMessageId: Int64) -> Message?
 
     // Returns a list of unsent messages.
-    func getQueuedMessages(topic: TopicProto) -> MessageIterator?
+    func getQueuedMessages(topic: TopicProto) -> [Message]?
 
     // Returns a list of pending delete message seq ids.
     // topic: topic where the messages were deleted.

@@ -208,4 +208,22 @@ class MessageDb {
             return nil
         }
     }
+    func queryUnsent(topicId: Int64?) -> [Message]? {
+        let queryTable = self.table!
+            .filter(
+                self.topicId == topicId &&
+                self.status == BaseDb.kStatusQueued)
+            .order(self.ts)
+        do {
+            var messages = [StoredMessage]()
+            for row in try db.prepare(queryTable) {
+                let sm = self.readOne(r: row)
+                messages.append(sm)
+            }
+            return messages
+        } catch {
+            print("failed to read messages \(error)")
+            return nil
+        }
+    }
 }

@@ -13,18 +13,20 @@ public class BaseDb {
     public static let kStatusUndefined = 0
     // Object is not ready to be sent to the server.
     public static let kStatusDraft = 1
-    // Object is ready but not yet sent to the server
+    // Object is ready but not yet sent to the server.
     public static let kStatusQueued = 2
-    // Object is received by the server
-    public static let kStatusSynced = 3
-    // Meta-status: object should be visible in the UI
-    public static let kStatusVisible = 3
-    // Object is hard-deleted
-    public static let kStatusDeletedHard = 4
-    // Object is soft-deleted
-    public static let kStatusDeletedSoft = 5
+    // Object is in the process of being sent to the server.
+    public static let kStatusSending = 3
+    // Object is received by the server.
+    public static let kStatusSynced = 4
+    // Meta-status: object should be visible in the UI.
+    public static let kStatusVisible = 4
+    // Object is hard-deleted.
+    public static let kStatusDeletedHard = 5
+    // Object is soft-deleted.
+    public static let kStatusDeletedSoft = 6
     // Object is rejected by the server.
-    public static let kStatusRejected = 6
+    public static let kStatusRejected = 7
 
     
     public static var `default`: BaseDb? = nil

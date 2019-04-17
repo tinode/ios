@@ -214,7 +214,14 @@ class SqlStore : Storage {
             status: BaseDb.kStatusQueued,
             content: data) ?? false
     }
-    
+
+    func msgSyncing(topic: TopicProto, dbMessageId: Int64, sync: Bool) -> Bool {
+        return self.dbh?.messageDb?.updateStatusAndContent(
+            msgId: dbMessageId,
+            status: sync ? BaseDb.kStatusSending : BaseDb.kStatusQueued,
+            content: nil) ?? false
+    }
+
     func msgDiscard(topic: TopicProto, dbMessageId: Int64) -> Bool {
         return self.dbh?.messageDb?.delete(msgId: dbMessageId) ?? false
     }
@@ -263,8 +270,10 @@ class SqlStore : Storage {
         return nil
     }
     
-    func getQueuedMessages(topic: TopicProto) -> MessageIterator? {
-        return nil
+    func getQueuedMessages(topic: TopicProto) -> [Message]? {
+        guard let st = topic.payload as? StoredTopic else { return nil }
+        guard let id = st.id, id > 0 else { return nil }
+        return BaseDb.getInstance().messageDb?.queryUnsent(topicId: id)
     }
 
     func getQueuedMessageDeletes(topic: TopicProto, hard: Bool) -> [Int]? {

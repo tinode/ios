@@ -109,6 +109,9 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
     }
     func sendMessage(content: Drafty) -> Bool {
         guard let topic = self.topic else { return false }
+        defer {
+            loadMessages()
+        }
         do {
             _ = try topic.publish(content: content)?.then(
                 onSuccess: { [weak self] msg in
@@ -118,7 +121,6 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                     // todo: display a UI toast.
                     return nil
                 })
-            loadMessages()
         } catch TinodeError.notConnected(let errMsg) {
             print("sendMessage -- not connected \(errMsg)")
             return false
