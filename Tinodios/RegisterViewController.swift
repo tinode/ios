@@ -26,27 +26,33 @@ class RegisterViewController: UIViewController {
         super.viewDidLoad()
 
         self.imagePicker = ImagePicker(presentationController: self, delegate: self)
+
+        // Listen to text change events to clear the possible error from eralier attempt.
+        loginText.addTarget(self, action: #selector(textFieldDidChange(_:)), for: UIControl.Event.editingChanged)
+        pwdText.addTarget(self, action: #selector(textFieldDidChange(_:)), for: UIControl.Event.editingChanged)
+        nameText.addTarget(self, action: #selector(textFieldDidChange(_:)), for: UIControl.Event.editingChanged)
+        credentialText.addTarget(self, action: #selector(textFieldDidChange(_:)), for: UIControl.Event.editingChanged)
     }
 
+    @objc func textFieldDidChange(_ textField: UITextField) {
+        UiUtils.clearTextFieldError(textField)
+    }
+    
     @IBAction func onLoadAvatar(_ sender: UIButton) {
         // Get avatar image
         self.imagePicker.present(from: sender)
     }
 
     @IBAction func onSignUp(_ sender: Any) {
-        guard let login = loginText.text else {
+        let login = UiUtils.ensureDataInTextField(loginText)
+        let pwd = UiUtils.ensureDataInTextField(pwdText)
+        let name = UiUtils.ensureDataInTextField(nameText)
+        let credential = UiUtils.ensureDataInTextField(credentialText)
+
+        if login == "" || pwd == "" || name == "" || credential == "" {
             return
         }
-        guard let pwd = pwdText.text else {
-            return
-        }
-        guard let name = nameText.text else {
-            return
-        }
-        guard let credential = credentialText.text else {
-            return
-        }
-        
+
         var method: String?
         if Validate.email(credential).isRight {
             method = "email"
@@ -56,19 +62,21 @@ class RegisterViewController: UIViewController {
         }
         
         guard method != nil else {
+            UiUtils.markTextFieldAsError(credentialText)
             return
         }
         
         signUpBtn.isUserInteractionEnabled = false
         let tinode = Cache.getTinode()
-        let vcard = VCard(fn: name, avatar: nil)
+
+        let avatar = avatarView?.image
+        let vcard = VCard(fn: name, avatar: avatar)
         
         let desc = MetaSetDesc<VCard, String>(pub: vcard, priv: nil)
         let cred = Credential(meth: method!, val: credential)
         var creds = [Credential]()
         creds.append(cred)
         do {
-            
             try tinode.connect(to: Cache.kHostName, useTLS: false)?
                 .then(
                     onSuccess: { pkt in

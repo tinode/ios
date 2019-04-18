@@ -56,13 +56,12 @@ class LoginViewController: UIViewController {
     }
 
     @objc func textFieldDidChange(_ textField: UITextField) {
-        // Reset red border to default.
-        textField.layer.borderWidth = 0.0
+        UiUtils.clearTextFieldError(textField)
     }
 
     @IBAction func loginClicked(_ sender: Any) {
-        let userName = isTextFieldValid(userNameTextEdit)
-        let password = isTextFieldValid(passwordTextEdit)
+        let userName = UiUtils.ensureDataInTextField(userNameTextEdit)
+        let password = UiUtils.ensureDataInTextField(passwordTextEdit)
 
         if (userName == "" || password == "") {
             print("form elements are empty")
@@ -94,16 +93,5 @@ class LoginViewController: UIViewController {
             //os_log("Failed to connect/login to Tinode: %s.", log: OSLog.default, type: .error, error as CVarArg)
             print("Failed to connect/login to Tinode: \(error).")
         }
-    }
-
-    private func isTextFieldValid(_ field: UITextField) -> String {
-        let text = (field.text ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
-        if (text.isEmpty) {
-            // Make border red to signify error.
-            field.layer.borderColor = UIColor.red.cgColor
-            field.layer.borderWidth = 1.0
-            return ""
-        }
-        return text
     }
 }
