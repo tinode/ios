@@ -93,7 +93,7 @@
                                                             <action selector="loginClicked:" destination="Lui-0V-oqF" eventType="editingDidEndOnExit" id="8GW-sp-xDu"/>
                                                         </connections>
                                                     </textField>
-                                                    <button opaque="NO" contentMode="right" verticalCompressionResistancePriority="751" contentHorizontalAlignment="trailing" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="q6T-TC-n42">
+                                                    <button opaque="NO" contentMode="right" verticalCompressionResistancePriority="751" contentHorizontalAlignment="right" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="q6T-TC-n42">
                                                         <rect key="frame" x="0.0" y="132.66666666666666" width="351" height="32"/>
                                                         <fontDescription key="fontDescription" type="system" weight="light" pointSize="16"/>
                                                         <state key="normal" title="Forgot password?">
