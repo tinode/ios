@@ -69,9 +69,9 @@ class RegisterViewController: UIViewController {
         signUpBtn.isUserInteractionEnabled = false
         let tinode = Cache.getTinode()
 
-        let avatar = avatarView?.image
+        let avatar = UiUtils.resizeImage(image: avatarView?.image, width: 128, height: 128, clip: true)
         let vcard = VCard(fn: name, avatar: avatar)
-        
+
         let desc = MetaSetDesc<VCard, String>(pub: vcard, priv: nil)
         let cred = Credential(meth: method!, val: credential)
         var creds = [Credential]()

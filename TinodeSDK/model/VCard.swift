@@ -59,15 +59,14 @@ public class VCard: Codable {
 
     public init(fn: String?, avatar: Data?) {
         self.fn = fn
-        if avatar != nil {
-            self.photo = Photo(type: nil, data: avatar)
-        }
+        guard let avatar = avatar else { return }
+        self.photo = Photo(type: nil, data: avatar)
     }
 
     public init(fn: String?, avatar: UIImage?) {
         self.fn = fn
-        if avatar != nil {
-            self.photo = Photo(image: avatar!)
-        }
+
+        guard let avatar = avatar else { return }
+        self.photo = Photo(image: avatar)
     }
 }
