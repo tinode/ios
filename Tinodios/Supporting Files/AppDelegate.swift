@@ -25,6 +25,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             if let token = KeychainWrapper.standard.string(
                 forKey: LoginViewController.kTokenKey), !token.isEmpty {
                 let tinode = Cache.getTinode()
+                var success = false
                 do {
                     let (hostName, useTLS, _) = SettingsHelper.getConnectionSettings()
                     // TODO: implement TLS.
@@ -38,9 +39,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                             storyboard.instantiateViewController(
                                 withIdentifier: "ChatsNavigator") as! UINavigationController
                         self.window!.rootViewController = initialViewController
+                        success = true
                     }
                 } catch {
                     print("Failed to automatically login to Tinode: \(error).")
+                }
+                if !success {
+                    _ = tinode.logout()
                 }
             }
         }
