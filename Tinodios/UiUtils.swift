@@ -30,3 +30,18 @@ class UiTinodeEventListener : TinodeEventListener {
     func onMetaMessage(meta: MsgServerMeta?) {}
     func onPresMessage(pres: MsgServerPres?) {}
 }
+
+class UiUtils {
+    public static func attachToMeTopic(meListener: DefaultMeTopic.Listener?) -> PromisedReply<ServerMessage>? {
+        let tinode = Cache.getTinode()
+        var me = tinode.getMeTopic()
+        if me == nil  {
+            me = DefaultMeTopic(tinode: tinode, l: meListener)
+        } else {
+            me!.listener = meListener
+        }
+        let get = me!.getMetaGetBuilder().withGetDesc().withGetSub().build()
+        // TODO: logout on failure and route to login view.
+        return try? me!.subscribe(set: nil, get: get)
+    }
+}

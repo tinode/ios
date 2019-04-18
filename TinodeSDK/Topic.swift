@@ -879,8 +879,9 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
         guard let pendingMsgs = self.store?.getQueuedMessages(topic: self) else {
             return result
         }
-        while let msg = pendingMsgs.next() {
+        for msg in pendingMsgs {
             let msgId = msg.msgId
+            _ = self.store?.msgSyncing(topic: self, dbMessageId: msgId, sync: true)
             result = try self.tinode?.publish(
                 topic: self.name, data: msg.content)?.then(
                     onSuccess: { [weak self] msg in
