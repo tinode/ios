@@ -20,8 +20,17 @@ class RegisterViewController: UIViewController {
     @IBOutlet weak var loadAvatar: UIButton!
     @IBOutlet weak var avatarView: AvatarView!
 
+    var imagePicker: ImagePicker!
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        self.imagePicker = ImagePicker(presentationController: self, delegate: self)
+    }
+
     @IBAction func onLoadAvatar(_ sender: UIButton) {
-        // FIXME: upload avatar image
+        // Get avatar image
+        self.imagePicker.present(from: sender)
     }
 
     @IBAction func onSignUp(_ sender: Any) {
@@ -93,5 +102,10 @@ class RegisterViewController: UIViewController {
             print("Failed to connect/createAccountBasic to Tinode: \(error).")
         }
     }
+}
 
+extension RegisterViewController: ImagePickerDelegate {
+    func didSelect(image: UIImage?) {
+        self.avatarView.image = image
+    }
 }
