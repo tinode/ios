@@ -88,10 +88,15 @@ class LoginViewController: UIViewController {
                         }
                         self?.routeToChats()
                         return nil
+                    }, onFailure: { err in
+                        print("failed to login \(err)")
+                        _ = tinode.logout()
+                        return nil
                     })
-        } catch {
-            //os_log("Failed to connect/login to Tinode: %s.", log: OSLog.default, type: .error, error as CVarArg)
-            print("Failed to connect/login to Tinode: \(error).")
-        }
+            } catch {
+                //os_log("Failed to connect/login to Tinode: %s.", log: OSLog.default, type: .error, error as CVarArg)
+                print("Failed to connect/login to Tinode: \(error).")
+                _ = tinode.logout()
+            }
     }
 }

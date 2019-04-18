@@ -52,6 +52,7 @@ public class Connection {
     private var autoreconnect: Bool = false
     private var reconnecting: Bool = false
     private var backoffSteps = ExpBackoffSteps()
+    private var reconnectClosure: DispatchWorkItem? = nil
     
     init(open url: URL, with apiKey: String, notify listener: ConnectionListener?) {
         self.apiKey = apiKey
@@ -90,6 +91,15 @@ public class Connection {
                 self.connectWithBackoffAsync()
             }
         }
+        reconnectClosure = DispatchWorkItem() {
+            print("reconnecting now")
+            self.connectSocket()
+            if self.isConnected {
+                self.reconnecting = false
+                return
+            }
+            self.connectWithBackoffAsync()
+        }
     }
 
     private func createUrlRequest() throws -> URLRequest {
@@ -116,22 +126,17 @@ public class Connection {
         print("will reconnect run after \(delay) sec")
         self.connectQueue.asyncAfter(
             deadline: .now() + delay,
-            execute: {
-                print("reconnecting now")
-                self.connectSocket()
-                if self.isConnected {
-                    self.reconnecting = false
-                    return
-                }
-                self.connectWithBackoffAsync()
-        })
+            execute: reconnectClosure!)
     }
     @discardableResult
     func connect(reconnectAutomatically: Bool = true) throws -> Bool {
         self.autoreconnect = reconnectAutomatically
         if self.autoreconnect && self.reconnecting {
-            // If we are trying to reconnect, do it now.
-            // TODO: cancel any tasks in connectQueue and try to connect immediately.
+            // If we are trying to reconnect, do it now
+            // (we simply reset the exp backoff steps).
+            reconnectClosure!.cancel()
+            backoffSteps.reset()
+            connectWithBackoffAsync()
         } else {
             connectSocket()
         }
@@ -139,10 +144,9 @@ public class Connection {
     }
     func disconnect() {
         webSocketConnection?.close()
-        // TODO: handle autoreconnect.
         if autoreconnect {
             autoreconnect = false
-            // TODO: cancel all work in the reconnect queue.
+            reconnectClosure!.cancel()
         }
     }
     
