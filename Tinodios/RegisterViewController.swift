@@ -27,7 +27,7 @@ class RegisterViewController: UIViewController {
 
         self.imagePicker = ImagePicker(presentationController: self, delegate: self)
 
-        // Listen to text change events to clear the possible error from eralier attempt.
+        // Listen to text change events to clear the possible error from earlier attempt.
         loginText.addTarget(self, action: #selector(textFieldDidChange(_:)), for: UIControl.Event.editingChanged)
         pwdText.addTarget(self, action: #selector(textFieldDidChange(_:)), for: UIControl.Event.editingChanged)
         nameText.addTarget(self, action: #selector(textFieldDidChange(_:)), for: UIControl.Event.editingChanged)
@@ -49,9 +49,7 @@ class RegisterViewController: UIViewController {
         let name = UiUtils.ensureDataInTextField(nameText)
         let credential = UiUtils.ensureDataInTextField(credentialText)
 
-        if login == "" || pwd == "" || name == "" || credential == "" {
-            return
-        }
+        guard login == "" || pwd == "" || name == "" || credential == "" else { return }
 
         var method: String?
         if Validate.email(credential).isRight {

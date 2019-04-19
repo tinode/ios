@@ -48,7 +48,7 @@ class UiUtils {
     // Get text from UITextField or mark the field red if the field is blank
     public static func ensureDataInTextField(_ field: UITextField) -> String {
         let text = (field.text ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
-        if (text.isEmpty) {
+        if text.isEmpty {
             markTextFieldAsError(field)
             return ""
         }
@@ -97,9 +97,7 @@ class UiUtils {
     public static func fitImageSize(originalWidth: Float, originalHeight: Float, maxWidth: Float, maxHeight: Float, clip: Bool) -> (dstWidth: Float, dstHeight: Float, xOffset: Int, yOffset: Int, srcWidth: Float, srcHeight: Float)? {
 
         // Sanity check
-        if originalWidth <= 0 || originalHeight <= 0 || maxWidth <= 0 || maxHeight <= 0 {
-            return nil
-        }
+        guard originalWidth <= 0 || originalHeight <= 0 || maxWidth <= 0 || maxHeight <= 0 else { return nil }
 
         let scaleX = min(originalWidth, maxWidth) / originalWidth
         let scaleY = min(originalHeight, maxHeight) / originalHeight
