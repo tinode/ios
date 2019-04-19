@@ -49,7 +49,7 @@ class RegisterViewController: UIViewController {
         let name = UiUtils.ensureDataInTextField(nameText)
         let credential = UiUtils.ensureDataInTextField(credentialText)
 
-        guard login == "" || pwd == "" || name == "" || credential == "" else { return }
+        guard login != "" && pwd != "" && name != "" && credential != "" else { return }
 
         var method: String?
         if Validate.email(credential).isRight {
@@ -67,7 +67,7 @@ class RegisterViewController: UIViewController {
         signUpBtn.isUserInteractionEnabled = false
         let tinode = Cache.getTinode()
 
-        let avatar = UiUtils.resizeImage(image: avatarView?.image, width: 128, height: 128, clip: true)
+        let avatar = avatarView?.image?.resize(width: 128, height: 128, clip: true)
         let vcard = VCard(fn: name, avatar: avatar)
 
         let desc = MetaSetDesc<VCard, String>(pub: vcard, priv: nil)
