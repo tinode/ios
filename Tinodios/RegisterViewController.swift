@@ -40,7 +40,7 @@ class RegisterViewController: UIViewController {
     
     @IBAction func onLoadAvatar(_ sender: UIButton) {
         // Get avatar image
-        self.imagePicker.present(from: sender)
+        self.imagePicker.present(from: self.view)
     }
 
     @IBAction func onSignUp(_ sender: Any) {

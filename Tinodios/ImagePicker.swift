@@ -65,7 +65,12 @@ open class ImagePicker: NSObject {
             alertController.popoverPresentationController?.permittedArrowDirections = [.down, .up]
         }
 
-        self.presentationController?.present(alertController, animated: true)
+        // Unnecessary empty view is added and animation is disabled because of
+        // https://stackoverflow.com/questions/55653187/swift-default-alertviewcontroller-breaking-constraints
+        // https://stackoverflow.com/questions/55372093/uialertcontrollers-actionsheet-gives-constraint-error-on-ios-12-2
+        // FIXME: Remove the following line and make `animation: true` when Apple fixes the bug.
+        alertController.view.addSubview(UIView())
+        self.presentationController?.present(alertController, animated: false)
     }
 
     private func pickerController(_ controller: UIImagePickerController, didSelect image: UIImage?) {
