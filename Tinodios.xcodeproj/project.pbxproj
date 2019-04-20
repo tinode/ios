@@ -40,6 +40,7 @@
 		7DDADC5021D5C156009733B5 /* RegisterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DDADC4F21D5C156009733B5 /* RegisterViewController.swift */; };
 		7DDADC5221D5C219009733B5 /* Validate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DDADC5121D5C219009733B5 /* Validate.swift */; };
 		7DDADC5421D5C2E6009733B5 /* CredentialsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DDADC5321D5C2E6009733B5 /* CredentialsViewController.swift */; };
+		B02F5C8B22679BC80079A97E /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = B02F5C8A22679BC80079A97E /* ImagePicker.swift */; };
 		B031BE552263075E004160AE /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = B031BE542263075E004160AE /* Settings.bundle */; };
 		B031BE5722631304004160AE /* SettingsHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = B031BE5622631304004160AE /* SettingsHelper.swift */; };
 /* End PBXBuildFile section */
@@ -95,6 +96,7 @@
 		7DDADC4F21D5C156009733B5 /* RegisterViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegisterViewController.swift; sourceTree = "<group>"; };
 		7DDADC5121D5C219009733B5 /* Validate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Validate.swift; sourceTree = "<group>"; };
 		7DDADC5321D5C2E6009733B5 /* CredentialsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CredentialsViewController.swift; sourceTree = "<group>"; };
+		B02F5C8A22679BC80079A97E /* ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
 		B031BE542263075E004160AE /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		B031BE5622631304004160AE /* SettingsHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsHelper.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -141,16 +143,17 @@
 				0ACB5F0F22097665008FE740 /* ChatListRouter.swift */,
 				0ADDBC8A2249F617000BD00D /* ChatListTableViewCell.swift */,
 				0A0380D921B3CC8100A3FA0E /* ChatListViewController.swift */,
+				7DDADC5321D5C2E6009733B5 /* CredentialsViewController.swift */,
 				0AE50D4522156A4B0021F7B7 /* FindInteractor.swift */,
 				0AE50D4722156A5B0021F7B7 /* FindPresenter.swift */,
 				0AE50D4922156A6C0021F7B7 /* FindRouter.swift */,
 				0AE50D4322156A250021F7B7 /* FindViewController.swift */,
+				B02F5C8A22679BC80079A97E /* ImagePicker.swift */,
 				0A6F260921BE51D800B9726E /* LoginViewController.swift */,
-				7DDADC4F21D5C156009733B5 /* RegisterViewController.swift */,
-				7DDADC5321D5C2E6009733B5 /* CredentialsViewController.swift */,
 				0A8C8A4521E5E72D00D8751E /* MessageViewController.swift */,
 				0A0016E621E7236900088188 /* MessageInteractor.swift */,
 				0A0016E821E736CD00088188 /* MessagePresenter.swift */,
+				7DDADC4F21D5C156009733B5 /* RegisterViewController.swift */,
 				B031BE5622631304004160AE /* SettingsHelper.swift */,
 				0A09810B21CCB80400600013 /* StoredMessage.swift */,
 				0AEE8BED226456080022EC3F /* UiUtils.swift */,
@@ -347,6 +350,7 @@
 				0A484E5121E359A800FE9AFE /* MessageDb.swift in Sources */,
 				7DDADC5021D5C156009733B5 /* RegisterViewController.swift in Sources */,
 				0AE50D4A22156A6C0021F7B7 /* FindRouter.swift in Sources */,
+				B02F5C8B22679BC80079A97E /* ImagePicker.swift in Sources */,
 				7DDADC5221D5C219009733B5 /* Validate.swift in Sources */,
 				7DDADC5421D5C2E6009733B5 /* CredentialsViewController.swift in Sources */,
 				B031BE5722631304004160AE /* SettingsHelper.swift in Sources */,

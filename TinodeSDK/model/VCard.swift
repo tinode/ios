@@ -11,6 +11,19 @@ public class Photo: Codable {
     public let type: String?
     // Byte array.
     public let data: String?
+
+    public init(type: String?, data: String?) {
+        self.type = type
+        self.data = data
+    }
+
+    convenience public init(type: String?, data: Data?) {
+        self.init(type: type, data: data?.base64EncodedString())
+    }
+
+    convenience public init(image: UIImage) {
+        self.init(type: "image/png", data: image.pngData())
+    }
 }
 
 public class Contact: Codable {
@@ -42,5 +55,18 @@ public class VCard: Codable {
     public init(fn: String?, avatar: Photo?) {
         self.fn = fn
         self.photo = avatar
+    }
+
+    public init(fn: String?, avatar: Data?) {
+        self.fn = fn
+        guard let avatar = avatar else { return }
+        self.photo = Photo(type: nil, data: avatar)
+    }
+
+    public init(fn: String?, avatar: UIImage?) {
+        self.fn = fn
+
+        guard let avatar = avatar else { return }
+        self.photo = Photo(image: avatar)
     }
 }

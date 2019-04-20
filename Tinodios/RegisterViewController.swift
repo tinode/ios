@@ -20,24 +20,37 @@ class RegisterViewController: UIViewController {
     @IBOutlet weak var loadAvatar: UIButton!
     @IBOutlet weak var avatarView: AvatarView!
 
+    var imagePicker: ImagePicker!
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        self.imagePicker = ImagePicker(presentationController: self, delegate: self)
+
+        // Listen to text change events to clear the possible error from earlier attempt.
+        loginText.addTarget(self, action: #selector(textFieldDidChange(_:)), for: UIControl.Event.editingChanged)
+        pwdText.addTarget(self, action: #selector(textFieldDidChange(_:)), for: UIControl.Event.editingChanged)
+        nameText.addTarget(self, action: #selector(textFieldDidChange(_:)), for: UIControl.Event.editingChanged)
+        credentialText.addTarget(self, action: #selector(textFieldDidChange(_:)), for: UIControl.Event.editingChanged)
+    }
+
+    @objc func textFieldDidChange(_ textField: UITextField) {
+        UiUtils.clearTextFieldError(textField)
+    }
+    
     @IBAction func onLoadAvatar(_ sender: UIButton) {
-        // FIXME: upload avatar image
+        // Get avatar image
+        self.imagePicker.present(from: self.view)
     }
 
     @IBAction func onSignUp(_ sender: Any) {
-        guard let login = loginText.text else {
-            return
-        }
-        guard let pwd = pwdText.text else {
-            return
-        }
-        guard let name = nameText.text else {
-            return
-        }
-        guard let credential = credentialText.text else {
-            return
-        }
-        
+        let login = UiUtils.ensureDataInTextField(loginText)
+        let pwd = UiUtils.ensureDataInTextField(pwdText)
+        let name = UiUtils.ensureDataInTextField(nameText)
+        let credential = UiUtils.ensureDataInTextField(credentialText)
+
+        guard !login.isEmpty && !pwd.isEmpty && !name.isEmpty && !credential.isEmpty else { return }
+
         var method: String?
         if Validate.email(credential).isRight {
             method = "email"
@@ -47,19 +60,21 @@ class RegisterViewController: UIViewController {
         }
         
         guard method != nil else {
+            UiUtils.markTextFieldAsError(credentialText)
             return
         }
         
         signUpBtn.isUserInteractionEnabled = false
         let tinode = Cache.getTinode()
-        let vcard = VCard(fn: name, avatar: nil)
-        
+
+        let avatar = avatarView?.image?.resize(width: 128, height: 128, clip: true)
+        let vcard = VCard(fn: name, avatar: avatar)
+
         let desc = MetaSetDesc<VCard, String>(pub: vcard, priv: nil)
         let cred = Credential(meth: method!, val: credential)
         var creds = [Credential]()
         creds.append(cred)
         do {
-            
             try tinode.connect(to: Cache.kHostName, useTLS: false)?
                 .then(
                     onSuccess: { pkt in
@@ -93,5 +108,10 @@ class RegisterViewController: UIViewController {
             print("Failed to connect/createAccountBasic to Tinode: \(error).")
         }
     }
+}
 
+extension RegisterViewController: ImagePickerDelegate {
+    func didSelect(image: UIImage?) {
+        self.avatarView.image = image
+    }
 }
