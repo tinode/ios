@@ -68,7 +68,7 @@ class UiUtils {
 
 extension UIViewController {
     // Displays Android-style toast
-    func showToast(message : String, duration: TimeInterval = 3.0) {
+    func showToast(message: String, duration: TimeInterval = 3.0) {
         let toastLabel = UILabel(frame: CGRect(x: self.view.frame.size.width/2 - 75, y: self.view.frame.size.height-100, width: 150, height: 35))
         toastLabel.backgroundColor = UIColor.black.withAlphaComponent(0.6)
         toastLabel.textColor = UIColor.white
@@ -110,7 +110,7 @@ extension UIImage {
     }
 
     // Calculate linear dimensions for scaling image down to fit under a certain size.
-    // Returns an tuple which contains destination image sizes, source sizes, and offsets
+    // Returns a tuple which contains destination image sizes, source sizes, and offsets
     // into source (when 'clip' is true).
     //
     // The 'clip' parameter forces image to have the new dimensions. Otherwise the
