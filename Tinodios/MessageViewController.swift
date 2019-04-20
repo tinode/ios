@@ -18,9 +18,6 @@ protocol MessageDisplayLogic: class {
 }
 
 class MessageViewController: MessageKit.MessagesViewController, MessageDisplayLogic {
-    private let kTitleIcon = 100
-    private let kTitleText = 101
-
     var topicName: String? {
         didSet {
             topicType = Tinode.topicTypeByName(name: self.topicName)
@@ -34,13 +31,6 @@ class MessageViewController: MessageKit.MessagesViewController, MessageDisplayLo
     private var interactor: (MessageBusinessLogic & MessageDataStore)?
     private let refreshControl = UIRefreshControl()
     private var noteTimer: Timer? = nil
-
-    let formatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateStyle = .medium
-        formatter.timeStyle = .medium
-        return formatter
-    }()
 
     init() {
         super.init(nibName: nil, bundle: nil)
@@ -108,6 +98,10 @@ class MessageViewController: MessageKit.MessagesViewController, MessageDisplayLo
     @objc func loadNextPage() {
         self.interactor?.loadNextPage()
     }
+
+    private func isGroupTopic() -> Bool {
+        return topicType == TopicType.grp
+    }
 }
 
 extension StoredMessage: MessageType {
@@ -140,7 +134,6 @@ extension MessageViewController {
             ])
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: avatarView)
         avatarView.set(icon: icon, title: title, id: topicName)
-        print("AvatarView inital bounds \(avatarView.frame.width)x\(avatarView.frame.height)")
    }
 
     func displayChatMessages(messages: [StoredMessage]) {
@@ -170,14 +163,20 @@ extension MessageViewController: MessagesDataSource {
         return true//indexPath.section % 3 == 0 && !isPreviousMessageSameSender(at: indexPath)
     }
     func messageTopLabelAttributedText(for message: MessageType, at indexPath: IndexPath) -> NSAttributedString? {
-        guard (topicType == TopicType.grp) && (message.sender.id != myUID) else { return nil }
+        guard isGroupTopic() && !isFromCurrentSender(message: message) else { return nil }
 
         let name = message.sender.displayName
-        return NSAttributedString(string: name, attributes: [NSAttributedString.Key.font: UIFont.preferredFont(forTextStyle: .caption1)])
+        return NSAttributedString(string: name, attributes: [
+            NSAttributedString.Key.font: UIFont.preferredFont(forTextStyle: .caption1),
+            NSAttributedString.Key.foregroundColor: UIColor.gray
+            ])
     }
     func messageBottomLabelAttributedText(for message: MessageType, at indexPath: IndexPath) -> NSAttributedString? {
-        let dateString = formatter.string(from: message.sentDate)
-        return NSAttributedString(string: dateString, attributes: [NSAttributedString.Key.font: UIFont.preferredFont(forTextStyle: .caption2)])
+        let dateString = message.sentDate.formatRelative()
+        return NSAttributedString(string: dateString, attributes: [
+            NSAttributedString.Key.font: UIFont.preferredFont(forTextStyle: .caption2),
+            NSAttributedString.Key.foregroundColor: UIColor.gray
+            ])
     }
 }
 
@@ -185,14 +184,14 @@ extension MessageViewController: MessagesDisplayDelegate, MessagesLayoutDelegate
     // Hide current user's avatar as well as peer's avatar in p2p topics.
     // Avatars are useful in group topics only
     func configureAvatarView(_ avatarView: AvatarView, for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) {
-        avatarView.isHidden = (topicType == TopicType.p2p) || (message.sender.id == myUID)
+        avatarView.isHidden = !isGroupTopic() || isFromCurrentSender(message: message)
     }
 
     func textColor(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> UIColor {
-        return isFromCurrentSender(message: message) ? .white : .darkText
+        return !isFromCurrentSender(message: message) ? .white : .darkText
     }
     func backgroundColor(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> UIColor {
-        return isFromCurrentSender(message: message)
+        return !isFromCurrentSender(message: message)
             ? UIColor(red: 69/255, green: 193/255, blue: 89/255, alpha: 1)
             : UIColor(red: 230/255, green: 230/255, blue: 230/255, alpha: 1)
     }
@@ -200,7 +199,7 @@ extension MessageViewController: MessagesDisplayDelegate, MessagesLayoutDelegate
         return 8
     }
     func messageTopLabelHeight(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGFloat {
-        return (topicType == TopicType.p2p) || (message.sender.id == myUID) ? 0 : 16
+        return !isGroupTopic() || isFromCurrentSender(message: message) ? 0 : 16
     }
     func messageBottomLabelHeight(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGFloat {
         return 16
