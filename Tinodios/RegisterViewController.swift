@@ -49,7 +49,7 @@ class RegisterViewController: UIViewController {
         let name = UiUtils.ensureDataInTextField(nameText)
         let credential = UiUtils.ensureDataInTextField(credentialText)
 
-        guard login != "" && pwd != "" && name != "" && credential != "" else { return }
+        guard !login.isEmpty && !pwd.isEmpty && !name.isEmpty && !credential.isEmpty else { return }
 
         var method: String?
         if Validate.email(credential).isRight {

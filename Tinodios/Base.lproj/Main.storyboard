@@ -215,22 +215,22 @@
                                     <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="31b-U8-Sk3" userLabel="Upper-H Stack View">
                                         <rect key="frame" x="0.0" y="0.0" width="335" height="128"/>
                                         <subviews>
-                                            <stackView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="252" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" axis="vertical" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="3bu-6N-mXP" userLabel="Login-Pwd Stack View">
+                                            <stackView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" axis="vertical" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="3bu-6N-mXP" userLabel="Login-Pwd Stack View">
                                                 <rect key="frame" x="0.0" y="0.0" width="163.66666666666666" height="128"/>
                                                 <subviews>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" text="Login" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gbZ-Cq-i25">
-                                                        <rect key="frame" x="0.0" y="0.0" width="163.66666666666666" height="23.666666666666668"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="163.66666666666666" height="20.333333333333332"/>
                                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                         <nil key="textColor"/>
                                                         <nil key="highlightedColor"/>
                                                     </label>
-                                                    <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Wd7-GD-As4" userLabel="Login TextEdit">
-                                                        <rect key="frame" x="0.0" y="31.666666666666671" width="163.66666666666666" height="30"/>
+                                                    <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="247" verticalHuggingPriority="247" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Wd7-GD-As4" userLabel="Login TextEdit">
+                                                        <rect key="frame" x="0.0" y="28.333333333333332" width="163.66666666666666" height="33.333333333333343"/>
                                                         <nil key="textColor"/>
                                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                         <textInputTraits key="textInputTraits"/>
                                                     </textField>
-                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" text="Password" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7Oj-X3-qLM">
+                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="247" text="Password" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7Oj-X3-qLM">
                                                         <rect key="frame" x="0.0" y="69.666666666666657" width="163.66666666666666" height="20.333333333333329"/>
                                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                         <nil key="textColor"/>
@@ -243,12 +243,15 @@
                                                         <textInputTraits key="textInputTraits"/>
                                                     </textField>
                                                 </subviews>
+                                                <constraints>
+                                                    <constraint firstItem="NyI-Rl-Bp6" firstAttribute="width" secondItem="Wd7-GD-As4" secondAttribute="width" identifier="login_w_equals_pwd_w" id="KdG-Hp-7Fn"/>
+                                                </constraints>
                                             </stackView>
-                                            <view contentMode="scaleToFill" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" translatesAutoresizingMaskIntoConstraints="NO" id="8aH-WX-U6V" userLabel="Avatar View">
+                                            <view contentMode="scaleToFill" horizontalHuggingPriority="251" horizontalCompressionResistancePriority="140" verticalCompressionResistancePriority="751" translatesAutoresizingMaskIntoConstraints="NO" id="8aH-WX-U6V" userLabel="Avatar View">
                                                 <rect key="frame" x="171.66666666666663" y="0.0" width="163.33333333333337" height="128"/>
                                                 <subviews>
-                                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="248" verticalHuggingPriority="248" translatesAutoresizingMaskIntoConstraints="NO" id="fmd-4t-Dd6" userLabel="Avatar" customClass="AvatarView" customModule="MessageKit">
-                                                        <rect key="frame" x="35.333333333333343" y="4" width="128" height="128"/>
+                                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="248" verticalHuggingPriority="248" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fmd-4t-Dd6" userLabel="Avatar" customClass="AvatarView" customModule="MessageKit">
+                                                        <rect key="frame" x="0.0" y="4" width="128" height="128"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="128" id="OEi-Av-izu"/>
                                                             <constraint firstAttribute="width" constant="128" id="sDc-gf-cmh"/>
@@ -258,7 +261,7 @@
                                                         <rect key="frame" x="115.33333333333334" y="84" width="48" height="48"/>
                                                         <color key="backgroundColor" red="0.59607843140000005" green="0.68627450980000004" blue="0.78039215689999997" alpha="1" colorSpace="calibratedRGB"/>
                                                         <constraints>
-                                                            <constraint firstAttribute="width" constant="48" id="Ae2-jg-2IU"/>
+                                                            <constraint firstAttribute="width" constant="48" identifier="loadAvatar.width" id="Ae2-jg-2IU"/>
                                                             <constraint firstAttribute="height" constant="48" id="tbo-9J-RmE"/>
                                                         </constraints>
                                                         <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -277,8 +280,8 @@
                                                 </subviews>
                                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <constraints>
-                                                    <constraint firstItem="fmd-4t-Dd6" firstAttribute="trailing" secondItem="5Mo-9Q-pvM" secondAttribute="trailing" id="ECZ-wy-YCp"/>
-                                                    <constraint firstAttribute="trailing" secondItem="fmd-4t-Dd6" secondAttribute="trailing" id="KkG-bn-38G"/>
+                                                    <constraint firstItem="fmd-4t-Dd6" firstAttribute="trailing" secondItem="5Mo-9Q-pvM" secondAttribute="trailing" identifier="avatar.trailing=loadAvatar.leading" id="ECZ-wy-YCp"/>
+                                                    <constraint firstAttribute="trailing" secondItem="fmd-4t-Dd6" secondAttribute="trailing" identifier="avatarView.trailing=avatar.trailing" id="KkG-bn-38G"/>
                                                     <constraint firstItem="fmd-4t-Dd6" firstAttribute="bottom" secondItem="5Mo-9Q-pvM" secondAttribute="bottom" id="eUi-oL-1se"/>
                                                     <constraint firstItem="fmd-4t-Dd6" firstAttribute="top" secondItem="8aH-WX-U6V" secondAttribute="top" constant="4" id="wR5-x1-KMp"/>
                                                 </constraints>
@@ -329,6 +332,10 @@
                                         </subviews>
                                     </stackView>
                                 </subviews>
+                                <constraints>
+                                    <constraint firstItem="31b-U8-Sk3" firstAttribute="width" secondItem="UBE-Fi-VXY" secondAttribute="width" id="EwH-cK-f1S"/>
+                                    <constraint firstItem="SFk-aF-z5Z" firstAttribute="width" secondItem="UBE-Fi-VXY" secondAttribute="width" id="UWr-mE-Oak"/>
+                                </constraints>
                             </stackView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -351,7 +358,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="28Z-17-mf4" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1450.7246376811595" y="914.73214285714278"/>
+            <point key="canvasLocation" x="-1452" y="914.03940886699513"/>
         </scene>
         <!--ChatsNavigationController-->
         <scene sceneID="rwg-D6-8cu">
