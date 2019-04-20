@@ -494,7 +494,8 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
         // todo: implement
         return 0
     }
-    func getSubscription(for key: String?) -> Subscription<SP, SR>? {
+
+    public func getSubscription(for key: String?) -> Subscription<SP, SR>? {
         if subs == nil {
             _ = loadSubs()
         }
@@ -504,6 +505,7 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
             return nil
         }
     }
+
     private func routeMetaDesc(meta: MsgServerMeta) {
         print("routing desc")
         update(desc: meta.desc as! Description<DP, DR>)

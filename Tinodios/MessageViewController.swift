@@ -21,10 +21,13 @@ class MessageViewController: MessageKit.MessagesViewController, MessageDisplayLo
     var topicName: String? {
         didSet {
             topicType = Tinode.topicTypeByName(name: self.topicName)
+            // Needed in order to get sender's avatar and display name
+            topic = Cache.getTinode().getTopic(topicName: topicName!) as? DefaultComTopic
         }
     }
     var topicType: TopicType?
     var myUID: String?
+    var topic: DefaultComTopic?
 
     var messages: [MessageType] = []
 
@@ -181,10 +184,17 @@ extension MessageViewController: MessagesDataSource {
 }
 
 extension MessageViewController: MessagesDisplayDelegate, MessagesLayoutDelegate {
-    // Hide current user's avatar as well as peer's avatar in p2p topics.
-    // Avatars are useful in group topics only
+
     func configureAvatarView(_ avatarView: AvatarView, for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) {
-        avatarView.isHidden = !isGroupTopic() || isFromCurrentSender(message: message)
+        // Hide current user's avatar as well as peer's avatar in p2p topics.
+        // Avatars are useful in group topics only
+        if !isGroupTopic() || isFromCurrentSender(message: message) {
+            avatarView.isHidden = true
+            return
+        }
+
+        let sub = topic?.getSubscription(for: message.sender.id)
+        avatarView.set(icon: sub?.pub?.photo?.image(), title: sub?.pub?.fn, id: message.sender.id)
     }
 
     func textColor(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> UIColor {

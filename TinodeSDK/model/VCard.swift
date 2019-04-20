@@ -9,8 +9,15 @@ import Foundation
 
 public class Photo: Codable {
     public let type: String?
-    // Byte array.
+    // base64-encoded byte array.
     public let data: String?
+    // Cached decoded image (not serialized).
+    private var cachedImage: UIImage?
+
+    private enum CodingKeys: String, CodingKey {
+        case type
+        case data
+    }
 
     public init(type: String?, data: String?) {
         self.type = type
@@ -26,9 +33,12 @@ public class Photo: Codable {
     }
 
     public func image() -> UIImage? {
-        guard let b64data = self.data else { return nil }
-        guard let dataDecoded = Data(base64Encoded: b64data, options: .ignoreUnknownCharacters) else { return nil }
-        return UIImage(data: dataDecoded)
+        if cachedImage == nil {
+            guard let b64data = self.data else { return nil }
+            guard let dataDecoded = Data(base64Encoded: b64data, options: .ignoreUnknownCharacters) else { return nil }
+            cachedImage = UIImage(data: dataDecoded)
+        }
+        return cachedImage
     }
 }
 
