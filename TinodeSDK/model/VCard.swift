@@ -24,6 +24,12 @@ public class Photo: Codable {
     convenience public init(image: UIImage) {
         self.init(type: "image/png", data: image.pngData())
     }
+
+    public func image() -> UIImage? {
+        guard let b64data = self.data else { return nil }
+        guard let dataDecoded = Data(base64Encoded: b64data, options: .ignoreUnknownCharacters) else { return nil }
+        return UIImage(data: dataDecoded)
+    }
 }
 
 public class Contact: Codable {

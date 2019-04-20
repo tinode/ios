@@ -296,7 +296,7 @@ public class Tinode {
             if let topicName = pres.topic {
                 if let t = getTopic(topicName: topicName) {
                     t.routePres(pres: pres)
-                    if topicName == Tinode.kTopicMe, case .p2p = DefaultTopic.topicTypeByName(name: pres.src) {
+                    if topicName == Tinode.kTopicMe, case .p2p = Tinode.topicTypeByName(name: pres.src) {
                         if let forwardTo = getTopic(topicName: pres.src!) {
                             forwardTo.routePres(pres: pres)
                         }
@@ -434,6 +434,27 @@ public class Tinode {
             return nil
         }
         return topics[topicName]
+    }
+
+    public static func topicTypeByName(name: String?) -> TopicType {
+        var r: TopicType = .unknown
+        if let name = name, !name.isEmpty {
+            switch name {
+            case kTopicMe:
+                r = .me
+            case kTopicFnd:
+                r = .fnd
+                break
+            default:
+                if name.starts(with: kTopicGrpPrefix) || name.starts(with: kTopicNew) {
+                    r = .grp
+                } else if name.starts(with: kTopicUsrPrefix) {
+                    r = .p2p
+                }
+                break
+            }
+        }
+        return r
     }
 
     /// Create account using a single basic authentication scheme. A connection must be established

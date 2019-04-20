@@ -301,7 +301,7 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
 
     public var topicType: TopicType {
         get {
-            return Topic.topicTypeByName(name: self.name)
+            return Tinode.topicTypeByName(name: self.name)
         }
     }
     public var isP2PType: Bool {
@@ -321,27 +321,6 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
     }
 
     init() {}
-
-    static func topicTypeByName(name: String?) -> TopicType {
-        var r: TopicType = .unknown
-        if let name = name, !name.isEmpty {
-            switch name {
-            case Tinode.kTopicMe:
-                r = .me
-            case Tinode.kTopicFnd:
-                r = .fnd
-                break
-            default:
-                if name.starts(with: Tinode.kTopicGrpPrefix) || name.starts(with: Tinode.kTopicNew) {
-                    r = .grp
-                } else if name.starts(with: Tinode.kTopicUsrPrefix) {
-                    r = .p2p
-                }
-                break
-            }
-        }
-        return r
-    }
 
     /**
      * Workaround for the  init() - convenience init() madness.
