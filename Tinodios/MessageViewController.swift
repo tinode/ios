@@ -170,6 +170,8 @@ extension MessageViewController: MessagesDataSource {
         return true//indexPath.section % 3 == 0 && !isPreviousMessageSameSender(at: indexPath)
     }
     func messageTopLabelAttributedText(for message: MessageType, at indexPath: IndexPath) -> NSAttributedString? {
+        guard (topicType == TopicType.grp) && (message.sender.id != myUID) else { return nil }
+
         let name = message.sender.displayName
         return NSAttributedString(string: name, attributes: [NSAttributedString.Key.font: UIFont.preferredFont(forTextStyle: .caption1)])
     }
@@ -195,10 +197,10 @@ extension MessageViewController: MessagesDisplayDelegate, MessagesLayoutDelegate
             : UIColor(red: 230/255, green: 230/255, blue: 230/255, alpha: 1)
     }
     func cellTopLabelHeight(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGFloat {
-        return 16
+        return 8
     }
     func messageTopLabelHeight(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGFloat {
-        return 16
+        return (topicType == TopicType.p2p) || (message.sender.id == myUID) ? 0 : 16
     }
     func messageBottomLabelHeight(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGFloat {
         return 16
