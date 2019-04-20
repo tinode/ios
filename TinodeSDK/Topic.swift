@@ -423,7 +423,7 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
     }
 
     @discardableResult
-    public func subscribe() throws -> PromisedReply<ServerMessage> {
+    public func subscribe() throws -> PromisedReply<ServerMessage>? {
         var setMsg: MsgSetMeta<DP, DR>? = nil
         if let d = description, isNew && (d.pub != nil || d.priv != nil) {
             setMsg = MsgSetMeta<DP, DR>(desc: MetaSetDesc(pub: d.pub, priv: d.priv), sub: nil, tags: nil)
@@ -432,7 +432,7 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
         return try subscribe(set: setMsg, get: getMsg)
     }
     @discardableResult
-    public func subscribe(set: MsgSetMeta<DP, DR>?, get: MsgGetMeta?) throws -> PromisedReply<ServerMessage> {
+    public func subscribe(set: MsgSetMeta<DP, DR>?, get: MsgGetMeta?) throws -> PromisedReply<ServerMessage>? {
         if attached {
             throw TopicError.alreadySubscribed
         }
@@ -442,11 +442,11 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
             newTopic = true
         }
         persist(true)
-
-        if !tinode!.isConnected {
+        let tnd = tinode!
+        if !tnd.isConnected {
             throw TinodeError.notConnected("Cannot subscribe to topic. No server connection.")
         }
-        return try tinode!.subscribe(to: name, set: set, get: get).then(
+        return try tnd.subscribe(to: name, set: set, get: get)?.then(
             onSuccess: { [weak self] msg in
                 let isAttached = self?.attached ?? false
                 if !isAttached {
@@ -482,7 +482,7 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
                 }
                 // To next handler.
                 throw err
-            })!
+            })
     }
 
     public func allMessagesReceived(count: Int?) {
@@ -828,7 +828,7 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
         if attached {
             return try publish(content: content, msgId: id)
         } else {
-            return try subscribe().then(
+            return try subscribe()?.then(
                 onSuccess: { [weak self] msg in
                     return try self?.publish(content: content, msgId: id)
                 },

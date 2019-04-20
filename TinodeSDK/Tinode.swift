@@ -226,14 +226,6 @@ public class Tinode {
         nextMsgId += 1
         return String(nextMsgId)
     }
-
-    private func send(payload data: Data) throws {
-        guard connection != nil else {
-            throw TinodeError.notConnected("Attempted to send msg to a closed connection.")
-        }
-        connection!.send(payload: data)
-    }
-
     private func resolveWithPacket(id: String?, pkt: ServerMessage) throws {
         if let idUnwrapped = id {
             let p = futures.removeValue(forKey: idUnwrapped)
@@ -333,18 +325,36 @@ public class Tinode {
     public func noteKeyPress(topic: String) {
         note(topic: topic, what: Tinode.kNoteKp, seq: 0)
     }
-
-    private func hello() throws -> PromisedReply<ServerMessage>? {
+    private func send<DP: Codable, DR: Codable>(payload msg: ClientMessage<DP, DR>) throws {
+        guard let conn = connection else {
+            throw TinodeError.notConnected("Attempted to send msg to a closed connection.")
+        }
+        let jsonData = try Tinode.jsonEncoder.encode(msg)
+        conn.send(payload: jsonData)
+    }
+    private func sendWithPromise<DP: Codable, DR: Codable>(
+        payload msg: ClientMessage<DP, DR>, with id: String) -> PromisedReply<ServerMessage> {
+        let future = PromisedReply<ServerMessage>()
+        do {
+            try send(payload: msg)
+            futures[id] = future
+        } catch {
+            do {
+                try future.reject(error: error)
+            } catch {
+                print("Error rejecting promise \(error)")
+            }
+        }
+        return future
+    }
+    private func hello() -> PromisedReply<ServerMessage>? {
         let msgId = getNextMsgId()
         let msg = ClientMessage<Int, Int>(
             hi: MsgClientHi(id: msgId, ver: kVersion,
                             ua: getUserAgent(), dev: deviceId,
                             lang: kLocale))
-        do {
-            var reply = PromisedReply<ServerMessage>()
-            futures[msgId] = reply
-            //reply =
-            reply = try reply.then(onSuccess: { [weak self] pkt in
+        return try! sendWithPromise(payload: msg, with: msgId).thenApply(
+            onSuccess: { [weak self] pkt in
                 guard let ctrl = pkt.ctrl else {
                     throw TinodeError.invalidReply("Unexpected type of reply packet to hello")
                 }
@@ -353,13 +363,7 @@ public class Tinode {
                     self?.serverBuild = ctrl.getStringParam(for: "build")
                 }
                 return nil
-            }, onFailure: nil)!
-            let jsonData = try Tinode.jsonEncoder.encode(msg)
-            connection!.send(payload: jsonData)
-            return reply
-        } catch {
-            return nil
-        }
+            })
     }
 
     /**
@@ -468,8 +472,24 @@ public class Tinode {
     ///   - desc: account parameters, such as full name etc.
     ///   - creds:  account credential, such as email or phone
     /// - Returns: PromisedReply of the reply ctrl message
-    public func createAccountBasic<Pu: Encodable,Pr: Encodable>(uname: String, pwd: String, login: Bool, tags: [String]?, desc: MetaSetDesc<Pu,Pr>, creds: [Credential]?) throws -> PromisedReply<ServerMessage> {
-        return try account(uid: nil, scheme: AuthScheme.kLoginBasic, secret: AuthScheme.encodeBasicToken(uname: uname, password: pwd), loginNow: login, tags: tags, desc: desc, creds: creds)
+    public func createAccountBasic<Pu: Codable, Pr: Codable>(
+        uname: String,
+        pwd: String,
+        login: Bool,
+        tags: [String]?,
+        desc: MetaSetDesc<Pu, Pr>,
+        creds: [Credential]?) -> PromisedReply<ServerMessage>? {
+        guard let encodedSecret = try? AuthScheme.encodeBasicToken(uname: uname, password: pwd) else {
+            return nil
+        }
+        return account(
+            uid: nil,
+            scheme: AuthScheme.kLoginBasic,
+            secret: encodedSecret,
+            loginNow: login,
+            tags: tags,
+            desc: desc,
+            creds: creds)
     }
 
     /// Create new account. Connection must be established prior to calling this method.
@@ -483,7 +503,14 @@ public class Tinode {
     ///   - desc: default access parameters for this account
     ///   - creds: creds
     /// - Returns: PromisedReply of the reply ctrl message
-    public func account<Pu: Encodable,Pr: Encodable>(uid: String?, scheme: String, secret: String, loginNow: Bool, tags: [String]?, desc: MetaSetDesc<Pu,Pr>, creds: [Credential]?) throws -> PromisedReply<ServerMessage> {
+    public func account<Pu: Codable, Pr: Codable>(
+        uid: String?,
+        scheme: String,
+        secret: String,
+        loginNow: Bool,
+        tags: [String]?,
+        desc: MetaSetDesc<Pu, Pr>,
+        creds: [Credential]?) -> PromisedReply<ServerMessage>? {
         let msgId = getNextMsgId()
         let msga = MsgClientAcc(id: msgId, uid: uid, scheme: scheme, secret: secret, doLogin: loginNow, desc: desc)
 
@@ -500,34 +527,28 @@ public class Tinode {
         }
 
         let msg = ClientMessage<Pu,Pr>(acc: msga)
-        let jsonData = try! Tinode.jsonEncoder.encode(msg)
-        let jd = String(decoding: jsonData, as: UTF8.self)
-        print("account to send \(jd)")
-        connection!.send(payload: jsonData)
-        var future = PromisedReply<ServerMessage>()
-        futures[msgId] = future
+        let future = sendWithPromise(payload: msg, with: msgId)
 
         if !loginNow {
             return future
         }
-
-        future = try future.then(onSuccess: { [weak self] pkt in
-            try self?.loginSuccessful(ctrl: pkt.ctrl)
-            return nil
-        }, onFailure: { [weak self] err in
-            if let e = err as? TinodeError {
-                if case TinodeError.serverResponseError(let code, let text, _) = e {
-                    if code >= 400 && code < 500 {
-                        // todo:
-                        // clear auth data.
+        return try! future.then(
+            onSuccess: { [weak self] pkt in
+                try self?.loginSuccessful(ctrl: pkt.ctrl)
+                return nil
+            }, onFailure: { [weak self] err in
+                if let e = err as? TinodeError {
+                    if case TinodeError.serverResponseError(let code, let text, _) = e {
+                        if code >= 400 && code < 500 {
+                            // todo:
+                            // clear auth data.
+                        }
+                        self?.isConnectionAuthenticated = false
+                        self?.listener?.onLogin(code: code, text: text)
                     }
-                    self?.isConnectionAuthenticated = false
-                    self?.listener?.onLogin(code: code, text: text)
                 }
-            }
-            return PromisedReply<ServerMessage>(error: err)
-        })!
-        return future
+                return PromisedReply<ServerMessage>(error: err)
+            })
     }
     private func setAutoLogin(using scheme: String?,
                               authenticateWith secret: String?) {
@@ -542,18 +563,25 @@ public class Tinode {
     public func setAutoLoginWithToken(token: String) {
         setAutoLogin(using: AuthScheme.kLoginToken, authenticateWith: token)
     }
-    public func loginBasic(uname: String, password: String) throws -> PromisedReply<ServerMessage> {
-        return try login(scheme: AuthScheme.kLoginBasic,
-                         secret: AuthScheme.encodeBasicToken(
-                            uname: uname, password: password),
-                         creds: nil)
+    public func loginBasic(uname: String, password: String) -> PromisedReply<ServerMessage>? {
+        var encodedToken: String
+        do {
+            encodedToken = try AuthScheme.encodeBasicToken(
+                uname: uname, password: password)
+        } catch {
+            print("Won't login - failed encoding token: \(error)")
+            return nil
+        }
+        return login(scheme: AuthScheme.kLoginBasic,
+                     secret: encodedToken,
+                     creds: nil)
     }
 
-    public func loginToken(token: String, creds: [Credential]?) throws -> PromisedReply<ServerMessage> {
-        return try login(scheme: AuthScheme.kLoginToken, secret: token, creds: creds)
+    public func loginToken(token: String, creds: [Credential]?) -> PromisedReply<ServerMessage>? {
+        return login(scheme: AuthScheme.kLoginToken, secret: token, creds: creds)
     }
 
-    public func login(scheme: String, secret: String, creds: [Credential]?) throws -> PromisedReply<ServerMessage> {
+    public func login(scheme: String, secret: String, creds: [Credential]?) -> PromisedReply<ServerMessage>? {
         if autoLogin {
             loginCredentials = LoginCredentials(using: scheme, authenticateWith: secret)
         }
@@ -573,18 +601,13 @@ public class Tinode {
             }
         }
         let msg = ClientMessage<Int, Int>(login: msgl)
-        let jsonData = try! Tinode.jsonEncoder.encode(msg)
-        let jd = String(decoding: jsonData, as: UTF8.self)
-        print("about to send \(jd)")
-        connection!.send(payload: jsonData)
-        var future = PromisedReply<ServerMessage>()
-        futures[msgId] = future
-        future = try future.then(
+        return try! sendWithPromise(payload: msg, with: msgId).then(
             onSuccess: { [weak self] pkt in
                 self?.loginInProgress = false
                 try self?.loginSuccessful(ctrl: pkt.ctrl)
                 return nil
-            }, onFailure: { [weak self] err in
+            },
+            onFailure: { [weak self] err in
                 self?.loginInProgress = false
                 if let e = err as? TinodeError {
                     if case TinodeError.serverResponseError(let code, let text, _) = e {
@@ -599,9 +622,7 @@ public class Tinode {
                     }
                 }
                 return PromisedReply<ServerMessage>(error: err)
-            })!
-        return future
-        //send(Tinode.getJsonMapper().writeValueAsString(msg));
+            })
     }
 
     private func loginSuccessful(ctrl: MsgServerCtrl?) throws {
@@ -681,7 +702,7 @@ public class Tinode {
                     try future?.then(
                         onSuccess: { [weak self] msg in
                             if let t = self?.tinode, let cred = t.loginCredentials, !t.loginInProgress {
-                                _ = try self?.tinode.login(
+                                _ = self?.tinode.login(
                                     scheme: cred.scheme, secret: cred.secret, creds: nil)
                             }
                             return nil
@@ -733,9 +754,10 @@ public class Tinode {
         return connectedPromise
     }
 
-    public func subscribe<Pu, Pr>(to topicName: String,
-                                  set: MsgSetMeta<Pu, Pr>?,
-                                  get: MsgGetMeta?) -> PromisedReply<ServerMessage> {
+    public func subscribe<Pu: Codable, Pr: Codable>(
+        to topicName: String,
+        set: MsgSetMeta<Pu, Pr>?,
+        get: MsgGetMeta?) -> PromisedReply<ServerMessage>? {
         let msgId = getNextMsgId()
         let msg = ClientMessage<Pu, Pr>(
             sub: MsgClientSub(
@@ -743,22 +765,7 @@ public class Tinode {
                 topic: topicName,
                 set: set,
                 get: get))
-        let reply = PromisedReply<ServerMessage>()
-        futures[msgId] = reply
-        do {
-            let jsonData = try Tinode.jsonEncoder.encode(msg)
-            let jd = String(decoding: jsonData, as: UTF8.self)
-            print("subscribe request: \(jd)")
-            connection!.send(payload: jsonData)
-
-        } catch {
-            // ???
-            futures.removeValue(forKey: msgId)
-            // TODO: return nil here
-            //return nil
-
-        }
-        return reply
+        return sendWithPromise(payload: msg, with: msgId)
     }
 
     public func getMeta(topic: String, query: MsgGetMeta) -> PromisedReply<ServerMessage>? {
@@ -768,38 +775,13 @@ public class Tinode {
                 id: msgId,
                 topic: topic,
                 query: query))
-        let reply = PromisedReply<ServerMessage>()
-        futures[msgId] = reply
-        do {
-            let jsonData = try Tinode.jsonEncoder.encode(msg)
-            let jd = String(decoding: jsonData, as: UTF8.self)
-            print("get request: \(jd)")
-            connection!.send(payload: jsonData)
-
-        } catch {
-            // ???
-            futures.removeValue(forKey: msgId)
-            return nil
-
-        }
-        return reply
+        return sendWithPromise(payload: msg, with: msgId)
     }
     public func leave(topic: String, unsub: Bool?) -> PromisedReply<ServerMessage>? {
         let msgId = getNextMsgId()
         let msg = ClientMessage<Int, Int>(
             leave: MsgClientLeave(id: msgId, topic: topic, unsub: unsub))
-        let reply = PromisedReply<ServerMessage>()
-        futures[msgId] = reply
-        do {
-            let jsonData = try Tinode.jsonEncoder.encode(msg)
-            let jd = String(decoding: jsonData, as: UTF8.self)
-            print("leave request: \(jd)")
-            connection!.send(payload: jsonData)
-        } catch {
-            futures.removeValue(forKey: msgId)
-            return nil
-        }
-        return reply
+        return sendWithPromise(payload: msg, with: msgId)
     }
     public func publish(topic: String, data: String?) -> PromisedReply<ServerMessage>? {
         //ClientMessage msg = new ClientMessage(new MsgClientLeave(getNextId(), topicName, unsub)
@@ -807,18 +789,7 @@ public class Tinode {
         let msgId = getNextMsgId()
         let msg = ClientMessage<Int, Int>(
             pub: MsgClientPub(id: msgId, topic: topic, noecho: true, head: nil, content: content))
-        let reply = PromisedReply<ServerMessage>()
-        futures[msgId] = reply
-        do {
-            let jsonData = try Tinode.jsonEncoder.encode(msg)
-            let jd = String(decoding: jsonData, as: UTF8.self)
-            print("publish request: \(jd)")
-            connection!.send(payload: jsonData)
-        } catch {
-            futures.removeValue(forKey: msgId)
-            return nil
-        }
-        return reply
+        return sendWithPromise(payload: msg, with: msgId)
     }
 
     public func getFilteredTopics(filter: ((TopicProto) -> Bool)?) -> Array<TopicProto>? {
@@ -836,18 +807,7 @@ public class Tinode {
 
     private func sendDeleteMessage(msg: ClientMessage<Int, Int>) -> PromisedReply<ServerMessage>? {
         guard let msgId = msg.del?.id else { return nil }
-        let reply = PromisedReply<ServerMessage>()
-        futures[msgId] = reply
-        do {
-            let jsonData = try Tinode.jsonEncoder.encode(msg)
-            let jd = String(decoding: jsonData, as: UTF8.self)
-            print("del request request: \(jd)")
-            connection!.send(payload: jsonData)
-        } catch {
-            futures.removeValue(forKey: msgId)
-            return nil
-        }
-        return reply
+        return sendWithPromise(payload: msg, with: msgId)
     }
     func delMessage(topicName: String?, fromId: Int, toId: Int, hard: Bool) -> PromisedReply<ServerMessage>? {
         return sendDeleteMessage(

@@ -161,7 +161,16 @@ public class PromisedReply<Value> {
             return nextPromise
         }
     }
-    
+    @discardableResult
+    public func thenApply(onSuccess successHandler: SuccessHandler)
+        throws -> PromisedReply<Value>? {
+        return try then(onSuccess: successHandler, onFailure: nil)
+    }
+    @discardableResult
+    public func thenCatch(onFailure failureHandler: FailureHandler)
+        throws -> PromisedReply<Value>? {
+        return try then(onSuccess: nil, onFailure: failureHandler)
+    }
     private func callOnSuccess(result: Value) throws {
         var ret: PromisedReply<Value>? = nil
         do {

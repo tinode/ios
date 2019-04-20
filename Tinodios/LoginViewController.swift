@@ -74,7 +74,7 @@ class LoginViewController: UIViewController {
             try tinode.connect(to: Cache.kHostName, useTLS: false)?
                 .then(
                     onSuccess: { pkt in
-                        return try tinode.loginBasic(uname: userName, password: password)
+                        return tinode.loginBasic(uname: userName, password: password)
                     })?
                 .then(
                     onSuccess: { [weak self] pkt in

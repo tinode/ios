@@ -35,7 +35,7 @@ class CredentialsViewController : UIViewController {
         creds.append(c)
         
         do {
-            try tinode.loginToken(token: token, creds: creds)
+            try tinode.loginToken(token: token, creds: creds)?
                 .then(onSuccess: {[weak self] msg in
                     if let code = msg.ctrl?.code, code >= 300 {
                         print("login error")
