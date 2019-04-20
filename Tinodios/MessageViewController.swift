@@ -131,10 +131,6 @@ extension StoredMessage: MessageType {
 
 extension MessageViewController {
     func updateTitleBar(icon: UIImage?, title: String?) {
-        if self.navigationController == nil {
-            print("Navigation controller is absent")
-        }
-
         self.navigationItem.title = title ?? "Undefined"
         let avatarView = AvatarView(icon: icon, title: title, id: topicName)
         NSLayoutConstraint.activate([
