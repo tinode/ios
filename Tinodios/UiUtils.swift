@@ -137,6 +137,17 @@ extension AvatarView {
         self.set(icon: icon, title: title, id: id)
     }
 
+    override open var bounds: CGRect {
+        didSet {
+            // Repeating the call from super.didSet because design of AvatarView isn't great + swift is bad.
+            setCorner(radius: nil)
+            if let initials = initials {
+                // Force redrawing the placeholder image when size changes
+                self.initials = "" + initials
+            }
+        }
+    }
+
     public func set(icon: UIImage?, title: String?, id: String?) {
         if let icon = icon {
             self.set(avatar: Avatar(image: icon))

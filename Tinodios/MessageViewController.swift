@@ -132,12 +132,15 @@ extension StoredMessage: MessageType {
 extension MessageViewController {
     func updateTitleBar(icon: UIImage?, title: String?) {
         self.navigationItem.title = title ?? "Undefined"
-        let avatarView = AvatarView(icon: icon, title: title, id: topicName)
+
+        let avatarView = AvatarView()
         NSLayoutConstraint.activate([
                 avatarView.heightAnchor.constraint(equalToConstant: 32),
                 avatarView.widthAnchor.constraint(equalTo: avatarView.heightAnchor)
             ])
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: avatarView)
+        avatarView.set(icon: icon, title: title, id: topicName)
+        print("AvatarView inital bounds \(avatarView.frame.width)x\(avatarView.frame.height)")
    }
 
     func displayChatMessages(messages: [StoredMessage]) {
