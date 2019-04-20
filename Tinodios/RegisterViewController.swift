@@ -78,7 +78,7 @@ class RegisterViewController: UIViewController {
             try tinode.connect(to: Cache.kHostName, useTLS: false)?
                 .then(
                     onSuccess: { pkt in
-                        return try tinode.createAccountBasic(uname: login, pwd: pwd, login: true, tags: nil, desc: desc, creds: creds)
+                        return tinode.createAccountBasic(uname: login, pwd: pwd, login: true, tags: nil, desc: desc, creds: creds)
                 }, onFailure: nil)?
                 .then(
                     onSuccess: { [weak self] msg in

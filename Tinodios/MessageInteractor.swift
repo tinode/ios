@@ -86,19 +86,19 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                     .withGetSub()
                     .withGetData()
                     .withGetDel()
-                    .build()).then(
+                    .build())?.then(
                     onSuccess: { [weak self] msg in
                         print("subscribed to topic")
                         self?.messageSenderQueue.async {
                             _ = try? self?.topic?.syncAll()
                         }
                         return nil
-                },
+                    },
                     onFailure: { err in
                         // failed
                         print("failed \(err)")
                         return nil
-                })
+                    })
         } catch TinodeError.notConnected(let errorMsg) {
             // presenter --> show error message
             print("Tinode is not connected \(errorMsg)")

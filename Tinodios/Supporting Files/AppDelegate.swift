@@ -31,8 +31,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     // TODO: implement TLS.
                     tinode.setAutoLoginWithToken(token: token)
                     _ = try tinode.connect(to: (hostName ?? Cache.kHostName), useTLS: (useTLS ?? false))?.getResult()
-                    let msg = try tinode.loginToken(token: token, creds: nil).getResult()
-                    if let code = msg.ctrl?.code, code < 300 {
+                    let msg = try! tinode.loginToken(token: token, creds: nil)?.getResult()
+                    if let code = msg?.ctrl?.code, code < 300 {
                         print("login successful for: \(tinode.myUid!)")
                         let storyboard = UIStoryboard(name: "Main", bundle: nil)
                         let initialViewController =
