@@ -7,7 +7,7 @@
 
 import Foundation
 
-public class MsgServerCtrl : Decodable {
+public class MsgServerCtrl: Decodable {
     public let id: String?
     public let topic: String?
     public let code: Int
@@ -209,7 +209,7 @@ public class MsgServerInfo: Decodable {
     public var seq: Int?
 }
 
-public class ServerMessage : Decodable {
+public class ServerMessage: Decodable {
     public var ctrl: MsgServerCtrl?
     public var meta: MsgServerMeta?
     public var data: MsgServerData?

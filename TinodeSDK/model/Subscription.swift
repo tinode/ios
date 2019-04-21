@@ -21,6 +21,7 @@ public struct LastSeen: Decodable {
 // to handle subscriptions with all these types.
 public protocol SubscriptionProto: class, Decodable {
     var user: String? { get set }
+    var topic: String? { get set }
     var updated: Date? { get set }
     var payload: Payload? { get set }
     var acs: Acs? { get set }
@@ -36,7 +37,10 @@ public protocol SubscriptionProto: class, Decodable {
     func serializePub() -> String?
     @discardableResult
     func deserializePub(from data: String?) -> Bool
-    
+    func serializePriv() -> String?
+    @discardableResult
+    func deserializePriv(from data: String?) -> Bool
+
     static func createByName(name: String?) -> SubscriptionProto?
 }
 
@@ -127,6 +131,18 @@ public class Subscription<SP: Codable, SR: Codable>: SubscriptionProto {
     public func deserializePub(from data: String?) -> Bool {
         if let p: SP = Tinode.deserializeObject(from: data) {
             self.pub = p
+            return true
+        }
+        return false
+    }
+    public func serializePriv() -> String? {
+        guard let p = priv else { return nil }
+        return Tinode.serializeObject(t: p)
+    }
+    @discardableResult
+    public func deserializePriv(from data: String?) -> Bool {
+        if let p: SR = Tinode.deserializeObject(from: data) {
+            self.priv = p
             return true
         }
         return false

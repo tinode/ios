@@ -36,6 +36,7 @@ class SubscriberDb {
     public let read: Expression<Int?>
     public let recv: Expression<Int?>
     public let clear: Expression<Int?>
+    public let priv: Expression<String?>
     public let lastSeen: Expression<Date?>
     public let userAgent: Expression<String?>
     public let subscriptionClass: Expression<String>
@@ -52,6 +53,7 @@ class SubscriberDb {
         self.read = Expression<Int?>("read")
         self.recv = Expression<Int?>("recv")
         self.clear = Expression<Int?>("clear")
+        self.priv = Expression<String?>("priv")
         self.lastSeen = Expression<Date?>("last_seen")
         self.userAgent = Expression<String?>("user_agent")
         self.subscriptionClass = Expression<String>("subscription_class")
@@ -76,6 +78,7 @@ class SubscriberDb {
             t.column(read)
             t.column(recv)
             t.column(clear)
+            t.column(priv)
             t.column(lastSeen)
             t.column(userAgent)
             t.column(subscriptionClass)
@@ -106,11 +109,12 @@ class SubscriberDb {
                 setters.append(self.read <- sub.getRead)
                 setters.append(self.recv <- sub.getRecv)
                 setters.append(self.clear <- sub.getClear)
+                setters.append(self.priv <- sub.serializePriv())
                 if let seen = sub.seen {
                     setters.append(self.lastSeen <- seen.when)
                     setters.append(self.userAgent <- seen.ua)
                 }
-                setters.append(self.subscriptionClass <-                  String(describing: type(of: sub as Any)))
+                setters.append(self.subscriptionClass <- String(describing: type(of: sub as Any)))
                 rowId = try db.run(self.table!.insert(setters))
                 ss.id = rowId
                 sub.payload = ss
@@ -143,6 +147,7 @@ class SubscriberDb {
                 setters.append(self.read <- sub.getRead)
                 setters.append(self.recv <- sub.getRecv)
                 setters.append(self.clear <- sub.getClear)
+                setters.append(self.priv <- sub.serializePriv())
                 if let seen = sub.seen {
                     setters.append(self.lastSeen <- seen.when)
                     setters.append(self.userAgent <- seen.ua)
@@ -182,19 +187,25 @@ class SubscriberDb {
 
     private func readOne(r: Row) -> SubscriptionProto? {
         guard let s = DefaultSubscription.createByName(name: r[self.subscriptionClass]) else { return nil }
+        guard let udb = BaseDb.getInstance().userDb else { return nil }
+        guard let tdb = BaseDb.getInstance().topicDb else { return nil }
         let ss = StoredSubscription()
         ss.id = r[self.id]
         ss.topicId = r[self.topicId]
         ss.userId = r[self.userId]
         ss.status = r[self.status]
+
         s.acs = Acs.deserialize(from: r[self.mode])
         s.updated = r[self.updated]
+        s.seq = r[tdb.seq]
         s.read = r[self.read]
         s.recv = r[self.recv]
         s.clear = r[self.clear]
         s.seen = LastSeen(when: r[self.lastSeen], ua: r[self.userAgent])
-        //s.user = r[]
-        //s.user
+        s.user = r[udb.uid]
+        s.topic = r[tdb.topic]
+        s.deserializePub(from: r[udb.pub])
+        s.deserializePriv(from: r[self.priv])
         s.payload = ss
         return s
     }
@@ -220,8 +231,13 @@ class SubscriberDb {
             subTable[self.read],
             subTable[self.recv],
             subTable[self.clear],
+            self.priv,
             self.lastSeen,
             self.userAgent,
+            udbTable[udb.uid],
+            udbTable[udb.pub],
+            tdbTable[tdb.topic],
+            tdbTable[tdb.seq],
             self.subscriptionClass)
             .join(.leftOuter, udbTable, on: subTable[self.userId] == udbTable[udb.id])
             .join(.leftOuter, tdbTable, on: subTable[self.topicId] == tdbTable[tdb.id])
