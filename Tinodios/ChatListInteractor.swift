@@ -28,12 +28,10 @@ class ChatListInteractor: ChatListBusinessLogic, ChatListDataStore {
             print("Contacts got onInfo update \(String(describing: info.what))")
         }
         override func onPres(pres: MsgServerPres) {
-            print("on pres in me topic")
             if pres.what == "msg" || pres.what == "off" || pres.what == "on" {
                 if let name = pres.src {
                     interactor?.updateChat(name)
                 }
-                print("one chat changed " + (pres.src ?? "nil"))
             }
         }
         override func onMetaSub(sub: Subscription<VCard, PrivateType>) {

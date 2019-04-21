@@ -507,8 +507,10 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
     }
 
     private func loadSubs() -> Int {
-        // todo: implement
-        return 0
+        guard let loaded = store?.getSubscriptions(topic: self) else { return 0 }
+        subs = (Dictionary(uniqueKeysWithValues: loaded.map { ($0.user, $0) }) as! [String : Subscription<SP, SR>])
+        print("loadSubs got \(subs?.count ?? -1) entries")
+        return subs!.count
     }
 
     public func getSubscription(for key: String?) -> Subscription<SP, SR>? {
@@ -582,11 +584,13 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
             sub = getSubscription(for: newsub.user)
             if sub != nil {
                 _ = sub!.merge(sub: newsub)
-                store?.subUpdate(topic: self, sub: sub!)
+                let res = store?.subUpdate(topic: self, sub: sub!)
+                print("sub '\(sub!.user)' updated \(res)")
             } else {
                 sub = newsub
                 addSubToCache(sub: sub!)
-                store?.subAdd(topic: self, sub: sub!)
+                let res = store?.subAdd(topic: self, sub: sub!)
+                print("sub '\(sub!.user)' added \(res)")
             }
             tinode!.updateUser(sub: sub!)
         }

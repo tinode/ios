@@ -210,21 +210,21 @@ class SubscriberDb {
             return nil
         }
         let joinedTable = subTable.select(
-            self.id,
+            subTable[self.id],
             self.topicId,
             self.userId,
-            self.status,
-            self.mode,
-            self.updated,
+            subTable[self.status],
+            subTable[self.mode],
+            subTable[self.updated],
             //self.deleted
-            self.read,
-            self.recv,
-            self.clear,
+            subTable[self.read],
+            subTable[self.recv],
+            subTable[self.clear],
             self.lastSeen,
             self.userAgent,
             self.subscriptionClass)
-            .join(.leftOuter, udbTable, on: self.userId == udb.id)
-            .join(.leftOuter, tdbTable, on: self.topicId == tdb.id)
+            .join(.leftOuter, udbTable, on: subTable[self.userId] == udbTable[udb.id])
+            .join(.leftOuter, tdbTable, on: subTable[self.topicId] == tdbTable[tdb.id])
             .filter(self.topicId == topicId)
 
         do {

@@ -69,9 +69,6 @@ class ChatListViewController: UITableViewController, ChatListDisplayLogic {
 
     func updateChat(_ name: String) {
         guard let position = rowIndex[name] else { return }
-        
-        print("Update chat \(name) in position \(position)")
-
         DispatchQueue.main.async {
             self.tableView!.reloadRows(at: [IndexPath(item: position, section: 0)], with: .none)
         }

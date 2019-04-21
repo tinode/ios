@@ -731,7 +731,7 @@ public class Tinode {
             }
         }
         func onMessage(with message: String) -> Void {
-            print("tinode message \(message)")
+            print("in: \(message)")
             do {
                 try tinode.dispatch(message)
             } catch {

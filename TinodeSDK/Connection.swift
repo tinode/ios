@@ -77,7 +77,6 @@ public class Connection {
             self.connectionListener?.onError(error: error)
         }
         webSocketConnection!.event.message = { message in
-            print("message")
             self.connectionListener?.onMessage(with: message as! String)
         }
         webSocketConnection!.event.close = { code, reason, clean in

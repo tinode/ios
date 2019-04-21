@@ -18,6 +18,8 @@ protocol MessageDisplayLogic: class {
 }
 
 class MessageViewController: MessageKit.MessagesViewController, MessageDisplayLogic {
+    static let kOutgoingAvatarOverlap: CGFloat = 17.5
+
     var topicName: String? {
         didSet {
             topicType = Tinode.topicTypeByName(name: self.topicName)
@@ -54,29 +56,47 @@ class MessageViewController: MessageKit.MessagesViewController, MessageDisplayLo
         presenter.viewController = self
 
         self.interactor = interactor
-
-        messagesCollectionView.messagesDataSource = self
-        messagesCollectionView.messagesLayoutDelegate = self
-        messagesCollectionView.messagesDisplayDelegate = self
-        messageInputBar.delegate = self
-
-        reloadInputViews()
-        scrollsToBottomOnKeyboardBeginsEditing = true
-        maintainPositionOnKeyboardFrameChanged = true
-        
-        messagesCollectionView.addSubview(refreshControl)
-        refreshControl.addTarget(self, action: #selector(loadNextPage), for: .valueChanged)
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        messagesCollectionView.messagesDataSource = self
+        messageInputBar.delegate = self
+
+        reloadInputViews()
+        scrollsToBottomOnKeyboardBeginsEditing = true
+        maintainPositionOnKeyboardFrameChanged = true
+
+        messagesCollectionView.addSubview(refreshControl)
+        refreshControl.addTarget(self, action: #selector(loadNextPage), for: .valueChanged)
+
         if let layout = messagesCollectionView.collectionViewLayout as? MessagesCollectionViewFlowLayout {
+            layout.sectionInset = UIEdgeInsets(top: 1, left: 8, bottom: 1, right: 8)
+
+            // Hide the outgoing avatar and adjust the label alignment to line up with the messages
             layout.setMessageOutgoingAvatarSize(.zero)
+            layout.setMessageOutgoingMessageTopLabelAlignment(LabelAlignment(textAlignment: .right, textInsets: UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 8)))
+            layout.setMessageOutgoingMessageBottomLabelAlignment(LabelAlignment(textAlignment: .right, textInsets: UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 8)))
+
+            // Set incoming avatar to overlap with the message bubble
+            layout.setMessageIncomingMessageTopLabelAlignment(LabelAlignment(textAlignment: .left, textInsets: UIEdgeInsets(top: 0, left: 18, bottom: MessageViewController.kOutgoingAvatarOverlap, right: 0)))
+
             if topic!.isP2PType {
                 layout.setMessageIncomingAvatarSize(.zero)
+            } else {
+                layout.setMessageIncomingAvatarSize(CGSize(width: 30, height: 30))
+                layout.setMessageIncomingMessagePadding(UIEdgeInsets(top: -MessageViewController.kOutgoingAvatarOverlap, left: -18, bottom: MessageViewController.kOutgoingAvatarOverlap, right: 18))
             }
+
+            layout.setMessageIncomingAccessoryViewSize(CGSize(width: 30, height: 30))
+            layout.setMessageIncomingAccessoryViewPadding(HorizontalEdgeInsets(left: 8, right: 0))
+            layout.setMessageOutgoingAccessoryViewSize(CGSize(width: 30, height: 30))
+            layout.setMessageOutgoingAccessoryViewPadding(HorizontalEdgeInsets(left: 0, right: 8))
         }
+
+        messagesCollectionView.messagesLayoutDelegate = self
+        messagesCollectionView.messagesDisplayDelegate = self
 
         if !(self.interactor?.setup(topicName: self.topicName) ?? false) {
             print("error in interactor setup for \(String(describing: self.topicName))")
@@ -100,6 +120,11 @@ class MessageViewController: MessageKit.MessagesViewController, MessageDisplayLo
 
     @objc func loadNextPage() {
         self.interactor?.loadNextPage()
+    }
+
+    func isNextMessageSameSender(at indexPath: IndexPath) -> Bool {
+        guard indexPath.section + 1 < messages.count else { return false }
+        return messages[indexPath.section].sender == messages[indexPath.section + 1].sender
     }
 }
 
@@ -184,13 +209,16 @@ extension MessageViewController: MessagesDisplayDelegate, MessagesLayoutDelegate
     func configureAvatarView(_ avatarView: AvatarView, for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) {
         // Hide current user's avatar as well as peer's avatar in p2p topics.
         // Avatars are useful in group topics only
-        if topic!.isGrpType || isFromCurrentSender(message: message) {
+        if topic!.isP2PType || isNextMessageSameSender(at: indexPath) {
             avatarView.isHidden = true
             return
         }
 
         let sub = topic?.getSubscription(for: message.sender.id)
         avatarView.set(icon: sub?.pub?.photo?.image(), title: sub?.pub?.fn, id: message.sender.id)
+        if sub == nil {
+            print("subscription not found for \(message.sender.id)")
+        }
     }
 
     func textColor(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> UIColor {
