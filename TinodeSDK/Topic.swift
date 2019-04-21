@@ -584,13 +584,11 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
             sub = getSubscription(for: newsub.user)
             if sub != nil {
                 _ = sub!.merge(sub: newsub)
-                let res = store?.subUpdate(topic: self, sub: sub!)
-                print("sub '\(sub!.user)' updated \(res)")
+                store?.subUpdate(topic: self, sub: sub!)
             } else {
                 sub = newsub
                 addSubToCache(sub: sub!)
-                let res = store?.subAdd(topic: self, sub: sub!)
-                print("sub '\(sub!.user)' added \(res)")
+                store?.subAdd(topic: self, sub: sub!)
             }
             tinode!.updateUser(sub: sub!)
         }
