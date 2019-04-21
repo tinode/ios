@@ -306,9 +306,25 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
     }
     public var isP2PType: Bool {
         get {
-            return topicType == TopicType.p2p
+            return topicType == .p2p
         }
     }
+    public var isMeType: Bool {
+        get {
+            return topicType == .me
+        }
+    }
+    public var isFndType: Bool {
+        get {
+            return topicType == .fnd
+        }
+    }
+    public var isGrpType: Bool {
+        get {
+            return topicType == .grp
+        }
+    }
+
     // Storage is owned by Tinode.
     weak public var store: Storage? = nil
     public var payload: Payload? = nil

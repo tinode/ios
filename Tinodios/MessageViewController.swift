@@ -73,7 +73,7 @@ class MessageViewController: MessageKit.MessagesViewController, MessageDisplayLo
 
         if let layout = messagesCollectionView.collectionViewLayout as? MessagesCollectionViewFlowLayout {
             layout.setMessageOutgoingAvatarSize(.zero)
-            if topicType == TopicType.p2p {
+            if topic!.isP2PType {
                 layout.setMessageIncomingAvatarSize(.zero)
             }
         }
@@ -100,10 +100,6 @@ class MessageViewController: MessageKit.MessagesViewController, MessageDisplayLo
 
     @objc func loadNextPage() {
         self.interactor?.loadNextPage()
-    }
-
-    private func isGroupTopic() -> Bool {
-        return topicType == TopicType.grp
     }
 }
 
@@ -166,7 +162,7 @@ extension MessageViewController: MessagesDataSource {
         return true//indexPath.section % 3 == 0 && !isPreviousMessageSameSender(at: indexPath)
     }
     func messageTopLabelAttributedText(for message: MessageType, at indexPath: IndexPath) -> NSAttributedString? {
-        guard isGroupTopic() && !isFromCurrentSender(message: message) else { return nil }
+        guard topic!.isGrpType && !isFromCurrentSender(message: message) else { return nil }
 
         let name = message.sender.displayName
         return NSAttributedString(string: name, attributes: [
@@ -188,7 +184,7 @@ extension MessageViewController: MessagesDisplayDelegate, MessagesLayoutDelegate
     func configureAvatarView(_ avatarView: AvatarView, for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) {
         // Hide current user's avatar as well as peer's avatar in p2p topics.
         // Avatars are useful in group topics only
-        if !isGroupTopic() || isFromCurrentSender(message: message) {
+        if topic!.isGrpType || isFromCurrentSender(message: message) {
             avatarView.isHidden = true
             return
         }
@@ -209,7 +205,7 @@ extension MessageViewController: MessagesDisplayDelegate, MessagesLayoutDelegate
         return 8
     }
     func messageTopLabelHeight(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGFloat {
-        return !isGroupTopic() || isFromCurrentSender(message: message) ? 0 : 16
+        return topic!.isGrpType || isFromCurrentSender(message: message) ? 0 : 16
     }
     func messageBottomLabelHeight(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGFloat {
         return 16

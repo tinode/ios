@@ -93,7 +93,7 @@ class LoginViewController: UIViewController {
                         print("failed to login \(err)")
                         if let err = err as? TinodeError {
                             DispatchQueue.main.async {
-                                self.showToast(message: "Login failed: \(err.description())")
+                                self.showToast(message: "Login failed: \(err.description)")
                             }
                         }
                         _ = tinode.logout()

@@ -20,18 +20,20 @@ public enum TinodeError: Error {
     case serverResponseError(Int, String, String?)
     case notSubscribed(String)
 
-    public func description() -> String {
-        switch self {
-        case .invalidReply(let message):
-            return "Invalid reply: \(message)"
-        case .invalidState(let message):
-            return "Invalid state: \(message)"
-        case .notConnected(let message):
-            return "Not connected: \(message)"
-        case .serverResponseError(let code, let text, _):
-            return "\(text) (\(code))"
-        case .notSubscribed(let message):
-            return "Not subscribed: \(message)"
+    public var description: String {
+        get {
+            switch self {
+            case .invalidReply(let message):
+                return "Invalid reply: \(message)"
+            case .invalidState(let message):
+                return "Invalid state: \(message)"
+            case .notConnected(let message):
+                return "Not connected: \(message)"
+            case .serverResponseError(let code, let text, _):
+                return "\(text) (\(code))"
+            case .notSubscribed(let message):
+                return "Not subscribed: \(message)"
+            }
         }
     }
 }
