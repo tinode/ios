@@ -231,7 +231,7 @@ class SubscriberDb {
             subTable[self.read],
             subTable[self.recv],
             subTable[self.clear],
-            self.priv,
+            subTable[self.priv],
             self.lastSeen,
             self.userAgent,
             udbTable[udb.uid],
