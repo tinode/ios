@@ -60,6 +60,12 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         tinode.listener = self.tinodeEventListener
         self.topic = tinode.getTopic(topicName: topicName) as? DefaultComTopic
         self.pagesToLoad = 1
+
+        if let pub = self.topic?.pub {
+            DispatchQueue.main.async {
+                self.presenter?.updateTitleBar(icon: pub.photo?.image(), title: pub.fn)
+            }
+        }
         
         return self.topic != nil
     }
@@ -147,6 +153,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
             }
         }
     }
+
     private func loadNextPageInternal() -> Bool {
         if self.pagesToLoad * MessageInteractor.kMessagesPerPage == self.messages.count {
             self.pagesToLoad += 1
@@ -155,6 +162,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         }
         return false
     }
+
     func loadNextPage() {
         guard let t = self.topic else {
             self.presenter?.endRefresh()
@@ -182,6 +190,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
             self.presenter?.endRefresh()
         }
     }
+
     override func onData(data: MsgServerData?) {
         self.loadMessages()
     }
