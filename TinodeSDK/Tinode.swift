@@ -628,7 +628,7 @@ public class Tinode {
             listener?.onLogin(code: ctrl.code, text: ctrl.text)
         }
     }
-    private func disconnect() {
+    public func disconnect() {
         // Remove auto-login data.
         setAutoLogin(using: nil, authenticateWith: nil)
         connection?.disconnect()

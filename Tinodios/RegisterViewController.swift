@@ -75,37 +75,55 @@ class RegisterViewController: UIViewController {
         var creds = [Credential]()
         creds.append(cred)
         do {
-            try tinode.connect(to: Cache.kHostName, useTLS: false)?
-                .then(
+            let future = !tinode.isConnected ?
+                try tinode.connect(to: Cache.kHostName, useTLS: false)?.thenApply(
                     onSuccess: { pkt in
-                        return tinode.createAccountBasic(uname: login, pwd: pwd, login: true, tags: nil, desc: desc, creds: creds)
-                }, onFailure: nil)?
-                .then(
-                    onSuccess: { [weak self] msg in
-                        self?.signUpBtn.isUserInteractionEnabled = true
-                        if let code = msg.ctrl?.code, code >= 300 {
-                            let vc = self?.storyboard?.instantiateViewController(withIdentifier: String(describing: type(of: CredentialsViewController())))
-                                as! CredentialsViewController
-                            
-                            if let cArr = msg.ctrl!.getStringArray(for: "cred") {
-                                for c in cArr {
-                                    vc.meth = c
-                                }
+                        return tinode.createAccountBasic(
+                            uname: login, pwd: pwd, login: true,
+                            tags: nil, desc: desc, creds: creds)
+                    }) :
+                tinode.createAccountBasic(
+                    uname: login, pwd: pwd, login: true,
+                    tags: nil, desc: desc, creds: creds)
+
+            try future?.then(
+                onSuccess: { [weak self] msg in
+                    if let code = msg.ctrl?.code, code >= 300 {
+                        let vc = self?.storyboard?.instantiateViewController(withIdentifier: String(describing: type(of: CredentialsViewController())))
+                            as! CredentialsViewController
+                        if let cArr = msg.ctrl!.getStringArray(for: "cred") {
+                            for c in cArr {
+                                vc.meth = c
                             }
-                            DispatchQueue.main.async {
-                                self?.navigationController?.pushViewController(vc, animated: true)
-                            }
-                        } else {
-                            let storyboard = UIStoryboard(name: "Main", bundle: nil)
-                            let destinationVC = storyboard.instantiateViewController(withIdentifier: "ChatsNavigator") as! UINavigationController
-                            
+                        }
+                        DispatchQueue.main.async {
+                            self?.navigationController?.pushViewController(vc, animated: true)
+                        }
+                    } else {
+                        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+                        let destinationVC = storyboard.instantiateViewController(withIdentifier: "ChatsNavigator") as! UINavigationController
+                        DispatchQueue.main.async {
                             self?.show(destinationVC, sender: nil)
                         }
-                        return nil
-                    }, onFailure: nil)
+                    }
+                    return nil
+                }, onFailure: { err in
+                    print("Could not create account: \(err)")
+                    tinode.disconnect()
+                    return nil
+                })?.thenFinally(finally: { [weak self] in
+                    DispatchQueue.main.async {
+                        self?.signUpBtn.isUserInteractionEnabled = true
+                    }
+                    return nil
+                })
             
         } catch {
             print("Failed to connect/createAccountBasic to Tinode: \(error).")
+            tinode.disconnect()
+            DispatchQueue.main.async {
+                self.signUpBtn.isUserInteractionEnabled = true
+            }
         }
     }
 }

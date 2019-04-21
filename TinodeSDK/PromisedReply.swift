@@ -48,6 +48,7 @@ private class CountDownLatch {
 public class PromisedReply<Value> {
     public typealias SuccessHandler = ((Value) throws -> PromisedReply<Value>?)?
     public typealias FailureHandler = ((Error) throws -> PromisedReply<Value>?)?
+    public typealias FinallyHandler = (() throws -> PromisedReply<Value>?)
     enum State {
         case waiting
         case resolved(Value)
@@ -138,7 +139,7 @@ public class PromisedReply<Value> {
     }
     @discardableResult
     public func then(onSuccess successHandler: SuccessHandler,
-              onFailure failureHandler: FailureHandler = nil) throws -> PromisedReply<Value>? {
+                     onFailure failureHandler: FailureHandler = nil) throws -> PromisedReply<Value>? {
         return try queue.sync {
             // start critical section
             guard nextPromise == nil else {
@@ -170,6 +171,13 @@ public class PromisedReply<Value> {
     public func thenCatch(onFailure failureHandler: FailureHandler)
         throws -> PromisedReply<Value>? {
         return try then(onSuccess: nil, onFailure: failureHandler)
+    }
+    @discardableResult
+    public func thenFinally(finally: @escaping FinallyHandler)
+        throws -> PromisedReply<Value>? {
+        return try then(
+            onSuccess: { msg in return try finally() },
+            onFailure: { err in return try finally() })
     }
     private func callOnSuccess(result: Value) throws {
         var ret: PromisedReply<Value>? = nil
