@@ -301,14 +301,30 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
 
     public var topicType: TopicType {
         get {
-            return Topic.topicTypeByName(name: self.name)
+            return Tinode.topicTypeByName(name: self.name)
         }
     }
     public var isP2PType: Bool {
         get {
-            return topicType == TopicType.p2p
+            return topicType == .p2p
         }
     }
+    public var isMeType: Bool {
+        get {
+            return topicType == .me
+        }
+    }
+    public var isFndType: Bool {
+        get {
+            return topicType == .fnd
+        }
+    }
+    public var isGrpType: Bool {
+        get {
+            return topicType == .grp
+        }
+    }
+
     // Storage is owned by Tinode.
     weak public var store: Storage? = nil
     public var payload: Payload? = nil
@@ -321,27 +337,6 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
     }
 
     init() {}
-
-    static func topicTypeByName(name: String?) -> TopicType {
-        var r: TopicType = .unknown
-        if let name = name, !name.isEmpty {
-            switch name {
-            case Tinode.kTopicMe:
-                r = .me
-            case Tinode.kTopicFnd:
-                r = .fnd
-                break
-            default:
-                if name.starts(with: Tinode.kTopicGrpPrefix) || name.starts(with: Tinode.kTopicNew) {
-                    r = .grp
-                } else if name.starts(with: Tinode.kTopicUsrPrefix) {
-                    r = .p2p
-                }
-                break
-            }
-        }
-        return r
-    }
 
     /**
      * Workaround for the  init() - convenience init() madness.
@@ -515,7 +510,8 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
         // todo: implement
         return 0
     }
-    func getSubscription(for key: String?) -> Subscription<SP, SR>? {
+
+    public func getSubscription(for key: String?) -> Subscription<SP, SR>? {
         if subs == nil {
             _ = loadSubs()
         }
@@ -525,6 +521,7 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
             return nil
         }
     }
+
     private func routeMetaDesc(meta: MsgServerMeta) {
         print("routing desc")
         update(desc: meta.desc as! Description<DP, DR>)

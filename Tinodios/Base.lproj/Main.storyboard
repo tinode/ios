@@ -505,21 +505,24 @@
             </objects>
             <point key="canvasLocation" x="1710" y="125"/>
         </scene>
-        <!--Message View Controller-->
+        <!--MessageViewController-->
         <scene sceneID="ICk-IN-bpa">
             <objects>
-                <viewController id="l6T-LK-IbJ" customClass="MessageViewController" customModule="Tinodios" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="l6T-LK-IbJ" userLabel="MessageViewController" customClass="MessageViewController" customModule="Tinodios" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="fc4-96-1wI">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <viewLayoutGuide key="safeArea" id="p4H-5P-q7k"/>
                     </view>
-                    <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
+                    <navigationItem key="navigationItem" title="Chat" id="gE0-cY-Jyn" userLabel="Topic name">
+                        <barButtonItem key="rightBarButtonItem" title="Info" id="1lt-ET-oLA"/>
+                    </navigationItem>
+                    <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="hJE-4j-6S3" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2628" y="125"/>
+            <point key="canvasLocation" x="2561" y="125"/>
         </scene>
         <!--Confirm credentials-->
         <scene sceneID="Fsr-7A-t2q">
