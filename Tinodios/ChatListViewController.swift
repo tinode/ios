@@ -41,10 +41,10 @@ class ChatListViewController: UITableViewController, ChatListDisplayLogic {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         setup()
-        self.interactor?.attachToMeTopic()
     }
 
     override func viewDidAppear(_ animated: Bool) {
+        self.interactor?.attachToMeTopic()
         self.interactor?.loadAndPresentTopics()
     }
     override func viewDidDisappear(_ animated: Bool) {

@@ -86,36 +86,6 @@ class ChatListInteractor: ChatListBusinessLogic, ChatListDataStore {
             tinode.logout()
             self.router?.routeToLogin()
         }
-        /*
-        let tinode = Cache.getTinode()
-        var me = tinode.getMeTopic()
-        if me == nil  {
-            //let t: DefaultMeTopic.Listener = self.meListener
-            //let q = DefaultMeTopic.Listener()
-            me = DefaultMeTopic(tinode: tinode, l: meListener)
-            //me = try! DefaultMeTopic(tinode: tinode, l: q)
-            //let z = try? DefaultMeTopic(tinode: tinode, l: nil)
-                                     //l: meListener as DefaultMeTopic.Listener)
-        } else {
-            me!.listener = meListener
-        }
-        let get = me!.getMetaGetBuilder().withGetDesc().withGetSub().build()
-        let _ = try? me!.subscribe(set: nil, get: get).then(
-            onSuccess: { [weak self] msg in
-                self?.loadAndPresentTopics()
-                return nil
-            },
-            onFailure: { [weak self] err in
-                print("err = ")
-                if let e = err as? TinodeError, case .serverResponseError(let code, _, _) = e {
-                    if code == 404 {
-                        tinode.logout()
-                        self?.router?.routeToLogin()
-                    }
-                }
-                return nil
-        })
-        */
     }
     func cleanup() {
         self.meTopic?.listener = nil
