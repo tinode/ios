@@ -47,6 +47,7 @@ class ChatListInteractor: ChatListBusinessLogic, ChatListDataStore {
         override func onSubsUpdated() {
             // datasetChanged()
             print("on subs updated")
+            interactor?.loadAndPresentTopics()
         }
         override func onContUpdate(sub: Subscription<VCard, PrivateType>) {
             // Method makes no sense in context of MeTopic.

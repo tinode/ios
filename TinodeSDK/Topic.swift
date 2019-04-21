@@ -1002,10 +1002,10 @@ open class MeTopic<DP: Codable>: Topic<DP, PrivateType, DP, PrivateType> {
                     topic.persist(true)
                     print("registering new topic")
                 }
+                listener?.onMetaSub(sub: sub)
             }
-            // listener?.onMetaSub(sub)
         }
-        // listener?.onSubsUpdated()
+        listener?.onSubsUpdated()
     }
 }
 public class FndTopic<SP: Codable>: Topic<String, String, SP, Array<String>> {
