@@ -37,7 +37,7 @@ class UserDb {
         self.pub = Expression<String?>("pub")
     }
     func destroyTable() {
-        try! self.db.run(self.table.dropIndex(accountId, uid))
+        try! self.db.run(self.table.dropIndex(accountId, uid, ifExists: true))
         try! self.db.run(self.table.drop(ifExists: true))
     }
     func createTable() {

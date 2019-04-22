@@ -82,7 +82,7 @@ public class TopicDb {
         self.priv = Expression<String?>("priv")
     }
     func destroyTable() {
-        try! self.db.run(self.table.dropIndex(accountId, topic))
+        try! self.db.run(self.table.dropIndex(accountId, topic, ifExists: true))
         try! self.db.run(self.table.drop(ifExists: true))
     }
 

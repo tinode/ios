@@ -42,7 +42,7 @@ class MessageDb {
         self.content = Expression<String?>("content")
     }
     func destroyTable() {
-        try! self.db.run(self.table.dropIndex(topicId, ts))
+        try! self.db.run(self.table.dropIndex(topicId, ts, ifExists: true))
         try! self.db.run(self.table.drop(ifExists: true))
     }
     func createTable() {

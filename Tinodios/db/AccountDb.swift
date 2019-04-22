@@ -37,8 +37,8 @@ public class AccountDb {
         self.deviceId = Expression<String?>("device_id")
     }
     func destroyTable() {
-        try! self.db.run(self.table.dropIndex(uid))
-        try! self.db.run(self.table.dropIndex(active))
+        try! self.db.run(self.table.dropIndex(uid, ifExists: true))
+        try! self.db.run(self.table.dropIndex(active, ifExists: true))
         try! self.db.run(self.table.drop(ifExists: true))
     }
     func createTable() {

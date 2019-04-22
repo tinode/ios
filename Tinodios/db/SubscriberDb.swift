@@ -60,7 +60,7 @@ class SubscriberDb {
         self.subscriptionClass = Expression<String>("subscription_class")
     }
     func destroyTable() {
-        try! self.db.run(self.table.dropIndex(topicId))
+        try! self.db.run(self.table.dropIndex(topicId, ifExists: true))
         try! self.db.run(self.table.drop(ifExists: true))
     }
     func createTable() {
