@@ -127,7 +127,7 @@ public class BaseDb {
 // Database schema versioning.
 extension Connection {
     public var schemaVersion: Int32 {
-        get { return Int32(try! scalar("PRAGMA schema_version") as! Int64)}
-        set { try! run("PRAGMA schema_version = \(newValue)") }
+        get { return Int32(try! scalar("PRAGMA user_version") as! Int64)}
+        set { try! run("PRAGMA user_version = \(newValue)") }
     }
 }
