@@ -103,9 +103,10 @@ class SubscriberDb {
                 ss.topicId = topicId
                 setters.append(self.topicId <- ss.topicId)
                 setters.append(self.userId <- ss.userId)
-                ss.status = status
                 setters.append(self.mode <- sub.acs?.serialize())
                 setters.append(self.updated <- sub.updated ?? Date())
+                setters.append(self.status <- status)
+                ss.status = status
                 setters.append(self.read <- sub.getRead)
                 setters.append(self.recv <- sub.getRecv)
                 setters.append(self.clear <- sub.getClear)

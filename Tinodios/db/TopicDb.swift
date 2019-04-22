@@ -141,24 +141,6 @@ public class TopicDb {
         topic.deserializePub(from: row[self.pub])
         topic.deserializePriv(from: row[self.priv])
         topic.payload = st
-        /*
-        
-        
-        topic.setRead(c.getInt(TopicDb.COLUMN_IDX_READ));
-        topic.setRecv(c.getInt(TopicDb.COLUMN_IDX_RECV));
-        topic.setSeq(c.getInt(TopicDb.COLUMN_IDX_SEQ));
-        topic.setClear(c.getInt(TopicDb.COLUMN_IDX_CLEAR));
-        topic.setMaxDel(c.getInt(TopicDb.COLUMN_IDX_MAX_DEL));
-        
-        topic.setTags(BaseDb.deserializeTags(c.getString(TopicDb.COLUMN_IDX_TAGS)));
-        topic.setPub(BaseDb.deserialize(c.getString(TopicDb.COLUMN_IDX_PUBLIC)));
-        topic.setPriv(BaseDb.deserialize(c.getString(TopicDb.COLUMN_IDX_PRIVATE)));
-        
-        topic.setAccessMode(BaseDb.deserializeMode(c.getString(TopicDb.COLUMN_IDX_ACCESSMODE)));
-        topic.setDefacs(BaseDb.deserializeDefacs(c.getString(TopicDb.COLUMN_IDX_DEFACS)));
-        
-        topic.setLocal(st);
-        */
     }
     func getId(topic: String?) -> Int64 {
         guard let topic = topic else {
@@ -204,11 +186,12 @@ public class TopicDb {
             let tpv = tp.rawValue
             let accountId = BaseDb.getInstance().account!.id
             //let pub = topic.
+            let status = topic.isNew ? BaseDb.kStatusQueued : BaseDb.kStatusSynced
             let rowid = try db.run(
                 self.table.insert(
                     //email <- "alice@mac.com"
                     self.accountId <- accountId,
-                    status <- topic.isNew ? BaseDb.kStatusQueued : BaseDb.kStatusSynced,
+                    self.status <- status,
                     self.topic <- topic.name,
                     type <- tpv,
                     visible <- TopicType.grp == tp || TopicType.p2p == tp ? 1 : 0,
@@ -238,7 +221,7 @@ public class TopicDb {
                 st.lastUsed = lastUsed
                 st.minLocalSeq = nil
                 st.maxLocalSeq = nil
-                st.status = BaseDb.kStatusUndefined
+                st.status = status
                 st.nextUnsentId = TopicDb.kUnsentIdStart
                 /*
                     id: rowid, lastUsed: lastUsed,
