@@ -1,35 +1,19 @@
-/*
- MIT License
-
- Copyright (c) 2017-2018 MessageKit
-
- Permission is hereby granted, free of charge, to any person obtaining a copy
- of this software and associated documentation files (the "Software"), to deal
- in the Software without restriction, including without limitation the rights
- to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- copies of the Software, and to permit persons to whom the Software is
- furnished to do so, subject to the following conditions:
-
- The above copyright notice and this permission notice shall be included in all
- copies or substantial portions of the Software.
-
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- SOFTWARE.
- */
+//
+//  MessagesFlowLayout.swift
+//  ios
+//
+//  Copyright (c) 2017-2018 MessageKit
+//  Copyright © 2019 Tinode. All rights reserved.
+//
 
 import Foundation
 import MessageKit
 
-open class MessagesFlowLayout: MessagesCollectionViewFlowLayout {
+class MessagesFlowLayout: MessagesCollectionViewFlowLayout {
 
-    open lazy var customMessageSizeCalculator = CustomMessageSizeCalculator(layout: self)
+    fileprivate lazy var customMessageSizeCalculator = CustomMessageSizeCalculator(layout: self)
 
-    open override func cellSizeCalculatorForItem(at indexPath: IndexPath) -> CellSizeCalculator {
+    override func cellSizeCalculatorForItem(at indexPath: IndexPath) -> CellSizeCalculator {
         //        if isSectionReservedForTypingBubble(indexPath.section) {
         //            return typingMessageSizeCalculator
         //        }
@@ -40,7 +24,7 @@ open class MessagesFlowLayout: MessagesCollectionViewFlowLayout {
         return super.cellSizeCalculatorForItem(at: indexPath)
     }
 
-    open override func messageSizeCalculators() -> [MessageSizeCalculator] {
+    override func messageSizeCalculators() -> [MessageSizeCalculator] {
         var superCalculators = super.messageSizeCalculators()
         // Append any of your custom `MessageSizeCalculator` if you wish for the convenience
         // functions to work such as `setMessageIncoming...` or `setMessageOutgoing...`
@@ -49,7 +33,7 @@ open class MessagesFlowLayout: MessagesCollectionViewFlowLayout {
     }
 }
 
-open class CustomMessageSizeCalculator: MessageSizeCalculator {
+fileprivate class CustomMessageSizeCalculator: MessageSizeCalculator {
 
     public override init(layout: MessagesCollectionViewFlowLayout? = nil) {
         super.init()
@@ -63,5 +47,4 @@ open class CustomMessageSizeCalculator: MessageSizeCalculator {
         let inset = layout.sectionInset.left + layout.sectionInset.right + contentInset.left + contentInset.right
         return CGSize(width: collectionViewWidth - inset, height: 44)
     }
-
 }

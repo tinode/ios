@@ -58,6 +58,37 @@ class MessageViewController: MessageKit.MessagesViewController, MessageDisplayLo
         self.interactor = interactor
     }
 
+    private func configureLayout() {
+        guard let layout = messagesCollectionView.collectionViewLayout as?
+            MessagesCollectionViewFlowLayout else { return }
+
+        layout.sectionInset = UIEdgeInsets(top: 1, left: 8, bottom: 1, right: 8)
+
+        // Hide the outgoing avatar and adjust the label alignment to line up with the messages
+        layout.setMessageOutgoingAvatarSize(.zero)
+        layout.setMessageOutgoingMessageTopLabelAlignment(LabelAlignment(textAlignment: .right, textInsets: UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 8)))
+        layout.setMessageOutgoingMessageBottomLabelAlignment(LabelAlignment(textAlignment: .right, textInsets: UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 8)))
+
+        // Set incoming avatar to overlap with the message bubble
+        layout.setMessageIncomingMessageTopLabelAlignment(LabelAlignment(textAlignment: .left, textInsets: UIEdgeInsets(top: 0, left: 18, bottom: MessageViewController.kOutgoingAvatarOverlap, right: 0)))
+
+        if topic!.isP2PType {
+            layout.setMessageIncomingAvatarSize(.zero)
+        } else {
+            layout.setMessageIncomingAvatarSize(CGSize(width: 30, height: 30))
+            layout.setMessageIncomingMessagePadding(UIEdgeInsets(top: -MessageViewController.kOutgoingAvatarOverlap, left: -18, bottom: MessageViewController.kOutgoingAvatarOverlap, right: 18))
+        }
+
+        /*
+         This is the space for the green (i) icons next to message bubbles.
+         Keeping it here for now in case it's needed.
+         layout.setMessageIncomingAccessoryViewSize(CGSize(width: 30, height: 30))
+         layout.setMessageIncomingAccessoryViewPadding(HorizontalEdgeInsets(left: 8, right: 0))
+         layout.setMessageOutgoingAccessoryViewSize(CGSize(width: 30, height: 30))
+         layout.setMessageOutgoingAccessoryViewPadding(HorizontalEdgeInsets(left: 0, right: 8))
+         */
+    }
+
     override func viewDidLoad() {
         messagesCollectionView = MessagesCollectionView(frame: .zero, collectionViewLayout: MessagesFlowLayout())
         super.viewDidLoad()
@@ -73,31 +104,7 @@ class MessageViewController: MessageKit.MessagesViewController, MessageDisplayLo
         messagesCollectionView.addSubview(refreshControl)
         refreshControl.addTarget(self, action: #selector(loadNextPage), for: .valueChanged)
 
-        if let layout = messagesCollectionView.collectionViewLayout as? MessagesCollectionViewFlowLayout {
-            layout.sectionInset = UIEdgeInsets(top: 1, left: 8, bottom: 1, right: 8)
-
-            // Hide the outgoing avatar and adjust the label alignment to line up with the messages
-            layout.setMessageOutgoingAvatarSize(.zero)
-            layout.setMessageOutgoingMessageTopLabelAlignment(LabelAlignment(textAlignment: .right, textInsets: UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 8)))
-            layout.setMessageOutgoingMessageBottomLabelAlignment(LabelAlignment(textAlignment: .right, textInsets: UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 8)))
-
-            // Set incoming avatar to overlap with the message bubble
-            layout.setMessageIncomingMessageTopLabelAlignment(LabelAlignment(textAlignment: .left, textInsets: UIEdgeInsets(top: 0, left: 18, bottom: MessageViewController.kOutgoingAvatarOverlap, right: 0)))
-
-            if topic!.isP2PType {
-                layout.setMessageIncomingAvatarSize(.zero)
-            } else {
-                layout.setMessageIncomingAvatarSize(CGSize(width: 30, height: 30))
-                layout.setMessageIncomingMessagePadding(UIEdgeInsets(top: -MessageViewController.kOutgoingAvatarOverlap, left: -18, bottom: MessageViewController.kOutgoingAvatarOverlap, right: 18))
-            }
-            /*
-             This is the space for green (i) icons next to message bubbles
-            layout.setMessageIncomingAccessoryViewSize(CGSize(width: 30, height: 30))
-            layout.setMessageIncomingAccessoryViewPadding(HorizontalEdgeInsets(left: 8, right: 0))
-            layout.setMessageOutgoingAccessoryViewSize(CGSize(width: 30, height: 30))
-            layout.setMessageOutgoingAccessoryViewPadding(HorizontalEdgeInsets(left: 0, right: 8))
-             */
-        }
+        configureLayout()
 
         messagesCollectionView.messagesLayoutDelegate = self
         messagesCollectionView.messagesDisplayDelegate = self
@@ -222,7 +229,7 @@ extension MessageViewController: MessagesDisplayDelegate, MessagesLayoutDelegate
     // Helper checks.
 
     func isPreviousMessageSameSender(at indexPath: IndexPath) -> Bool {
-        guard indexPath.section - 1 >= 0 else { return false }
+        guard indexPath.section > 0 else { return false }
         return messages[indexPath.section].sender == messages[indexPath.section - 1].sender
     }
 
@@ -235,9 +242,9 @@ extension MessageViewController: MessagesDisplayDelegate, MessagesLayoutDelegate
         // Hide current user's avatar as well as peer's avatar in p2p topics.
         // Avatars are useful in group topics only
         avatarView.isHidden = topic!.isP2PType || isNextMessageSameSender(at: indexPath)
-        let sub = topic?.getSubscription(for: message.sender.id)
-        avatarView.set(icon: sub?.pub?.photo?.image(), title: sub?.pub?.fn, id: message.sender.id)
-        if sub == nil {
+        if let sub = topic?.getSubscription(for: message.sender.id) {
+            avatarView.set(icon: sub.pub?.photo?.image(), title: sub.pub?.fn, id: message.sender.id)
+        } else {
             print("subscription not found for \(message.sender.id)")
         }
     }
