@@ -7,12 +7,23 @@
 
 import Foundation
 
-public struct LastSeen: Decodable {
+public class LastSeen: Decodable {
     public var when: Date?
     public var ua: String?
     public init(when: Date?, ua: String?) {
         self.when = when
         self.ua = ua
+    }
+    public func merge(seen: LastSeen?) -> Bool {
+        var changed = false
+        if let s = seen {
+            if let w = s.when, self.when == nil || self.when! < w {
+                self.when = w
+                ua = s.ua
+                changed = true
+            }
+        }
+        return changed
     }
 }
 

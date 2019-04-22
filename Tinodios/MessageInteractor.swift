@@ -66,7 +66,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                 self.presenter?.updateTitleBar(icon: pub.photo?.image(), title: pub.fn)
             }
         }
-        
+        self.topic?.listener = self
         return self.topic != nil
     }
     func cleanup() {
@@ -74,16 +74,11 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         print("cleaning up the topic \(String(describing: self.topicName))")
         self.topic?.listener = nil
         if self.topic?.attached ?? false {
-            do {
-                try self.topic?.leave()
-            } catch {
-                print("Error leaving topic \(error)")
-            }
+            self.topic?.leave()
         }
         Cache.getTinode().listener = nil
     }
     func attachToTopic() -> Bool {
-        self.topic?.listener = self
         do {
             try self.topic?.subscribe(
                 set: nil,
@@ -96,7 +91,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                     onSuccess: { [weak self] msg in
                         print("subscribed to topic")
                         self?.messageSenderQueue.async {
-                            _ = try? self?.topic?.syncAll()
+                            _ = self?.topic?.syncAll()
                         }
                         return nil
                     },

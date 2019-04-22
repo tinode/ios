@@ -43,12 +43,7 @@ class UiUtils {
         }
         let get = me!.getMetaGetBuilder().withGetDesc().withGetSub().build()
         // TODO: logout on failure and route to login view.
-        do {
-            return try me!.subscribe(set: nil, get: get)
-        } catch {
-            print("failed in ME.subscribe: \(error)")
-            return nil
-        }
+        return me!.subscribe(set: nil, get: get)
     }
 
     // Get text from UITextField or mark the field red if the field is blank

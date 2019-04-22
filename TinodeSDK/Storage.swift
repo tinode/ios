@@ -127,6 +127,7 @@ public protocol Storage: class {
     //   dbMessageId: database ID of the message.
     //   sync: true when the sync started, false when it's finished unsuccessfully.
     // Returns true on success, false otherwise.
+    @discardableResult
     func msgSyncing(topic: TopicProto, dbMessageId: Int64, sync: Bool) -> Bool
 
     // Deletes a message by database id.

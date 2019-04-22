@@ -439,30 +439,38 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
     }
 
     @discardableResult
-    public func subscribe() throws -> PromisedReply<ServerMessage>? {
+    public func subscribe() -> PromisedReply<ServerMessage>? {
         var setMsg: MsgSetMeta<DP, DR>? = nil
-        if let d = description, isNew && (d.pub != nil || d.priv != nil) {
-            setMsg = MsgSetMeta<DP, DR>(desc: MetaSetDesc(pub: d.pub, priv: d.priv), sub: nil, tags: nil)
+        var getMsg: MsgGetMeta? = nil
+        if isNew {
+            setMsg = MsgSetMeta<DP, DR>(
+                desc: MetaSetDesc(pub: self.pub, priv: self.priv),
+                sub: nil,
+                tags: self.tags)
+        } else {
+            getMsg = getMetaGetBuilder()
+                .withGetDesc().withGetData().withGetSub().withGetTags().build()
         }
-        let getMsg = getMetaGetBuilder().withGetDesc().withGetData().withGetSub().withGetTags().build()
-        return try subscribe(set: setMsg, get: getMsg)
+        return subscribe(set: setMsg, get: getMsg)
     }
     @discardableResult
-    public func subscribe(set: MsgSetMeta<DP, DR>?, get: MsgGetMeta?) throws -> PromisedReply<ServerMessage>? {
+    public func subscribe(set: MsgSetMeta<DP, DR>?, get: MsgGetMeta?) -> PromisedReply<ServerMessage>? {
         if attached {
-            throw TopicError.alreadySubscribed
+            // If the topic is already attached and the user
+            // does not attempt to set or get any data,
+            // just return resolved promise.
+            if set == nil && get == nil {
+                return PromisedReply(value: ServerMessage())
+            }
+            return PromisedReply(error: TopicError.alreadySubscribed)
         }
         let name = self.name
-        var newTopic = false
-        if tinode!.getTopic(topicName: name) == nil {
-            newTopic = true
-        }
         persist(true)
         let tnd = tinode!
-        if !tnd.isConnected {
-            throw TinodeError.notConnected("Cannot subscribe to topic. No server connection.")
+        guard tnd.isConnected else {
+            return PromisedReply(error: TinodeError.notConnected("Cannot subscribe to topic. No server connection."))
         }
-        return try tnd.subscribe(to: name, set: set, get: get)?.then(
+        return try! tnd.subscribe(to: name, set: set, get: get)?.then(
             onSuccess: { [weak self] msg in
                 let isAttached = self?.attached ?? false
                 if !isAttached {
@@ -470,14 +478,10 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
                     if let ctrl = msg.ctrl {
                         if !(ctrl.params?.isEmpty ?? false) {
                             self?.description?.acs = Acs(from: ctrl.getStringDict(for: "acs"))
-                            //print("acsStr: \(String(describing: acsStr))")
                             if self?.isNew ?? false {
                                 self?.setUpdated(updated: ctrl.ts)
                                 self?.setName(name: ctrl.topic!)
                                 _ = self?.tinode?.changeTopicName(topic: self!, oldName: name)
-                                // set updated
-                                // set name
-                                // tinode change topic name
                             }
                             // update store
                             self?.store?.topicUpdate(topic: self!)
@@ -488,12 +492,11 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
                 return nil
             },
             onFailure: { [weak self] err in
-                if let e = err as? TinodeError, newTopic {
-                    if case TinodeError.serverResponseError(let code, _, _) = e {
-                        if code >= 400 && code < 500 {
-                            self?.tinode?.stopTrackingTopic(topicName: name)
-                            self?.persist(false)
-                        }
+                if let e = err as? TinodeError, (self?.isNew ?? false),
+                    case TinodeError.serverResponseError(let code, _, _) = e {
+                    if code >= 400 && code < 500 {
+                        self?.tinode?.stopTrackingTopic(topicName: name)
+                        self?.persist(false)
                     }
                 }
                 // To next handler.
@@ -542,11 +545,18 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
     }
 
     fileprivate func update(sub: Subscription<SP, SR>) {
-        if description?.merge(sub: sub) ?? false {
+        var changed = false
+        if self.lastSeen == nil {
+            self.lastSeen = sub.seen
+            changed = true
+        } else {
+            changed = self.lastSeen!.merge(seen: sub.seen)
+        }
+        if description?.merge(sub: sub) ?? false, changed {
             store?.topicUpdate(topic: self)
         }
-        if sub.online != nil {
-            self.online = sub.online!
+        if let o = sub.online {
+            self.online = o
         }
     }
     fileprivate func update(desc: Description<DP, DR>) {
@@ -764,7 +774,7 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
                     print("sub.acs NOT DEFINED")
                     if isP2PType {
                         print("p2p - calling leave()")
-                        _ = try? leave()
+                        leave()
                     }
                     sub.deleted = Date()
                     processSub(newsub: sub)
@@ -789,34 +799,40 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
         }
     }
     @discardableResult
-    public func leave(unsub: Bool? = false) throws -> PromisedReply<ServerMessage>? {
+    public func leave(unsub: Bool? = false) -> PromisedReply<ServerMessage>? {
         if attached {
-            return try tinode?.leave(topic: name, unsub: unsub)?
-                .then(
+            return try! tinode?.leave(topic: name, unsub: unsub)?
+                .thenApply(
                     onSuccess: { [weak self] msg in
-                        //topicLeft()
-                        if self == nil {
+                        guard let s = self else {
                             throw TinodeError.invalidState("Topic.self not available in result handler")
                         }
-                        self!.topicLeft(unsub: unsub, code: msg.ctrl?.code, reason: msg.ctrl?.text)
+                        s.topicLeft(unsub: unsub, code: msg.ctrl?.code, reason: msg.ctrl?.text)
                         if unsub ?? false {
-                            self!.tinode?.stopTrackingTopic(topicName: self!.name)
-                            self!.persist(false)
+                            s.tinode?.stopTrackingTopic(topicName: s.name)
+                            s.persist(false)
                         }
                         return nil
-                    }, onFailure: nil)
+                    })
+        }
+        if !(unsub ?? false) {
+            return PromisedReply(value: ServerMessage())
         }
         if tinode?.isConnected ?? false {
-            throw TinodeError.notSubscribed("Can't leave topic that I'm not subscribed to \(name)")
+            return PromisedReply(error:
+                TinodeError.notSubscribed("Can't leave topic that I'm not subscribed to \(name)"))
         }
-        throw TinodeError.notConnected("Leaving topic when Tinode is not connected.")
+        return PromisedReply(
+            error: TinodeError.notConnected("Leaving topic when Tinode is not connected."))
     }
     
     private func processDelivery(ctrl: MsgServerCtrl?, id: Int64) {
         guard let ctrl = ctrl else {
             return
         }
-        let seq = ctrl.getIntParam(for: "seq")!
+        guard let seq = ctrl.getIntParam(for: "seq"), seq > 0 else {
+            return
+        }
         setSeq(seq: seq)
         if id > 0, let s = store {
             if s.msgDelivered(topic: self, dbMessageId: id,
@@ -829,33 +845,37 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
         setRead(read: seq)
         store?.setRead(topic: self, read: seq)
     }
-    public func publish(content: String?, msgId: Int64) throws -> PromisedReply<ServerMessage>? {
-        return try tinode!.publish(topic: name, data: content)?.then(
+    public func publish(content: String?, msgId: Int64) -> PromisedReply<ServerMessage>? {
+        return try! tinode!.publish(topic: name, data: content)?.then(
             onSuccess: { [weak self] msg in
                 self?.processDelivery(ctrl: msg.ctrl, id: msgId)
                 return nil
-            }, onFailure: { err in
-                return nil
+            }, onFailure: { [weak self] err in
+                self?.store?.msgSyncing(topic: self!, dbMessageId: msgId, sync: false)
+                // Rethrow exception to trigger the next possible failure listener.
+                throw err
             })
     }
-    public func publish(content: String?) throws -> PromisedReply<ServerMessage>? {
+    public func publish(content: String?) -> PromisedReply<ServerMessage>? {
         var id: Int64 = -1
         if let s = store, let c = content {
             id = s.msgSend(topic: self, data: c)
         }
         if attached {
-            return try publish(content: content, msgId: id)
+            return publish(content: content, msgId: id)
         } else {
-            return try subscribe()?.then(
+            return try! subscribe()?.thenApply(
                 onSuccess: { [weak self] msg in
-                    return try self?.publish(content: content, msgId: id)
-                },
-                onFailure: nil)
+                    return self?.publish(content: content, msgId: id)
+                })?.thenCatch(onFailure: { [weak self] err in
+                    self?.store?.msgSyncing(topic: self!, dbMessageId: id, sync: false)
+                    throw err
+                })
         }
     }
-    private func sendPendingDeletes(hard: Bool) throws -> PromisedReply<ServerMessage>? {
+    private func sendPendingDeletes(hard: Bool) -> PromisedReply<ServerMessage>? {
         if let pendingDeletes = self.store?.getQueuedMessageDeletes(topic: self, hard: hard), !pendingDeletes.isEmpty {
-            return try self.tinode?.delMessage(
+            return try! self.tinode?.delMessage(
                 topicName: self.name, list: pendingDeletes, hard: hard)?.then(
                     onSuccess: { [weak self] msg in
                         if let id = msg.ctrl?.getIntParam(for: "del"), let s = self {
@@ -867,11 +887,14 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
         }
         return nil
     }
-    public func syncAll() throws -> PromisedReply<ServerMessage>? {
+    public func syncAll() -> PromisedReply<ServerMessage>? {
+        var result: PromisedReply<ServerMessage>? = PromisedReply<ServerMessage>(value: ServerMessage())
         // Soft deletes.
-        var result = try self.sendPendingDeletes(hard: false)
+        if let r = self.sendPendingDeletes(hard: false) {
+            result = r
+        }
         // Hard deletes.
-        if let r = try self.sendPendingDeletes(hard: true) {
+        if let r = self.sendPendingDeletes(hard: true) {
             result = r
         }
         // Pending messages.
@@ -881,7 +904,9 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
         for msg in pendingMsgs {
             let msgId = msg.msgId
             _ = self.store?.msgSyncing(topic: self, dbMessageId: msgId, sync: true)
-            result = try self.tinode?.publish(
+            result = self.publish(content: msg.content, msgId: msgId)
+            /*
+            result = try! self.tinode?.publish(
                 topic: self.name, data: msg.content)?.then(
                     onSuccess: { [weak self] msg in
                         if let ctrl = msg.ctrl {
@@ -890,6 +915,7 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
                         return nil
                     },
                     onFailure: nil)
+            */
         }
         return result
     }
