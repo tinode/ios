@@ -18,7 +18,7 @@ class MessageDb {
     private static let kTableName = "messages"
     private let db: SQLite.Connection
     
-    public var table: Table? = nil
+    public var table: Table
     
     public let id: Expression<Int64>
     public let topicId: Expression<Int64?>
@@ -31,6 +31,7 @@ class MessageDb {
 
     init(_ database: SQLite.Connection) {
         self.db = database
+        self.table = Table(MessageDb.kTableName)
         self.id = Expression<Int64>("id")
         self.topicId = Expression<Int64?>("topic_id")
         self.userId = Expression<Int64?>("user_id")
@@ -41,25 +42,24 @@ class MessageDb {
         self.content = Expression<String?>("content")
     }
     func destroyTable() {
-        try! self.db.run(self.table!.dropIndex(topicId, ts))
-        try! self.db.run(self.table!.drop(ifExists: true))
+        try! self.db.run(self.table.dropIndex(topicId, ts))
+        try! self.db.run(self.table.drop(ifExists: true))
     }
     func createTable() {
         let userDb = BaseDb.getInstance().userDb!
         let topicDb = BaseDb.getInstance().topicDb!
-        self.table = Table(MessageDb.kTableName)
         // Must succeed.
-        try! self.db.run(self.table!.create(ifNotExists: true) { t in
+        try! self.db.run(self.table.create(ifNotExists: true) { t in
             t.column(id, primaryKey: .autoincrement)
-            t.column(topicId, references: topicDb.table!, topicDb.id)
-            t.column(userId, references: userDb.table!, userDb.id)
+            t.column(topicId, references: topicDb.table, topicDb.id)
+            t.column(userId, references: userDb.table, userDb.id)
             t.column(status)
             t.column(sender)
             t.column(ts)
             t.column(seq)
             t.column(content)
         })
-        try! self.db.run(self.table!.createIndex(topicId, ts, ifNotExists: true))
+        try! self.db.run(self.table.createIndex(topicId, ts, ifNotExists: true))
     }
     func insert(topic: TopicProto?, msg: StoredMessage?) -> Int64 {
         guard let topic = topic, let msg = msg else {
@@ -102,7 +102,7 @@ class MessageDb {
                 setters.append(self.ts <- msg.ts)
                 setters.append(self.seq <- msg.seq)
                 setters.append(self.content <- msg.content)
-                msg.msgId = try db.run(self.table!.insert(setters))
+                msg.msgId = try db.run(self.table.insert(setters))
             }
             return msg.msgId
         } catch {
@@ -111,9 +111,7 @@ class MessageDb {
         }
     }
     func updateStatusAndContent(msgId: Int64, status: Int?, content: Drafty?) -> Bool {
-        guard let record = self.table?.filter(self.id == msgId) else {
-            return false
-        }
+        let record = self.table.filter(self.id == msgId)
         var setters = [Setter]()
         if status != BaseDb.kStatusUndefined {
             setters.append(self.status <- status!)
@@ -131,9 +129,7 @@ class MessageDb {
         return false
     }
     func delivered(msgId: Int64, ts: Date?, seq: Int?) -> Bool {
-        guard let record = self.table?.filter(self.id == msgId) else {
-            return false
-        }
+        let record = self.table.filter(self.id == msgId)
         do {
             return try self.db.run(record.update(
                 self.status <- BaseDb.kStatusSynced,
@@ -145,9 +141,7 @@ class MessageDb {
         }
     }
     func delete(msgId: Int64) -> Bool {
-        guard let record = self.table?.filter(self.id == msgId) else {
-            return false
-        }
+        let record = self.table.filter(self.id == msgId)
         do {
             return try self.db.run(record.delete()) > 0
         } catch {
@@ -168,7 +162,7 @@ class MessageDb {
         return sm
     }
     func query(topicId: Int64?, pageCount: Int, pageSize: Int) -> [StoredMessage]? {
-        let queryTable = self.table!
+        let queryTable = self.table
             .filter(
                 self.topicId == topicId &&
                 self.status <= BaseDb.kStatusVisible)
@@ -189,7 +183,7 @@ class MessageDb {
     func queryDeleted(topicId: Int64?, hard: Bool) -> [Int]? {
         guard let topicId = topicId else { return nil }
         let status = hard ? BaseDb.kStatusDeletedHard : BaseDb.kStatusDeletedSoft
-        let queryTable = self.table!
+        let queryTable = self.table
             .filter(
                 self.topicId == topicId &&
                 self.status == status)
@@ -209,7 +203,7 @@ class MessageDb {
         }
     }
     func queryUnsent(topicId: Int64?) -> [Message]? {
-        let queryTable = self.table!
+        let queryTable = self.table
             .filter(
                 self.topicId == topicId &&
                 self.status == BaseDb.kStatusQueued)

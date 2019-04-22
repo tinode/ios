@@ -90,12 +90,14 @@ class ChatListInteractor: ChatListBusinessLogic, ChatListDataStore {
         self.meTopic?.listener = nil
     }
     func loadAndPresentTopics() {
+        print("loadAndPresentTopics")
         self.topics = Cache.getTinode().getFilteredTopics(filter: {(topic: TopicProto) in
             return topic.topicType.matches(TopicType.user)
         })?.map {
             // Must succeed.
             $0 as! DefaultComTopic
         }
+        print("loadAndPresentTopics loaded \(self.topics?.count ?? -1) topics")
         self.presenter?.presentTopics(self.topics ?? [])
     }
 

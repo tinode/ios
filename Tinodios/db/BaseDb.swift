@@ -9,8 +9,8 @@ import Foundation
 import SQLite
 
 public class BaseDb {
-    // Current database schema version. Increase on schema changes.
-    public static let kSchemaVersion: Int32 = 100
+    // Current database schema version. Increment on schema changes.
+    public static let kSchemaVersion = 100
 
     // Onject statuses.
     // Status undefined/not set.
@@ -54,10 +54,6 @@ public class BaseDb {
         
         do {
             self.db = try SQLite.Connection(self.pathToDatabase)
-            if self.db?.schemaVersion != BaseDb.kSchemaVersion {
-                // Delete database if schema has changed.
-                self.onDestroy()
-            }
         } catch {
             print(error.localizedDescription)
         }
@@ -65,22 +61,30 @@ public class BaseDb {
         
         self.sqlStore = SqlStore(dbh: self)
     }
-    private func onCreate() {
+    private func initDb() {
         self.accountDb = AccountDb(self.db!)
-        self.accountDb!.createTable()
         self.userDb = UserDb(self.db!)
-        self.userDb!.createTable()
         self.topicDb = TopicDb(self.db!)
-        self.topicDb!.createTable()
         self.subscriberDb = SubscriberDb(self.db!)
-        self.subscriberDb!.createTable()
         self.messageDb = MessageDb(self.db!)
-        self.messageDb!.createTable()
-        self.account = self.accountDb!.getActiveAccount()
 
-        self.db?.schemaVersion = BaseDb.kSchemaVersion
+        if self.db?.schemaVersion != Int32(BaseDb.kSchemaVersion) {
+            print("Schema has changed from \(self.db?.schemaVersion ?? -1) to \(BaseDb.kSchemaVersion)")
+            // Delete database if schema has changed.
+            self.dropDb()
+
+            self.db?.schemaVersion = Int32(BaseDb.kSchemaVersion)
+        }
+
+        self.accountDb!.createTable()
+        self.userDb!.createTable()
+        self.topicDb!.createTable()
+        self.subscriberDb!.createTable()
+        self.messageDb!.createTable()
+
+        self.account = self.accountDb!.getActiveAccount()
     }
-    private func onDestroy() {
+    private func dropDb() {
         self.messageDb?.destroyTable()
         self.subscriberDb?.destroyTable()
         self.topicDb?.destroyTable()
@@ -93,7 +97,7 @@ public class BaseDb {
         }
         let instance = BaseDb()
         BaseDb.default = instance
-        instance.onCreate()
+        instance.initDb()
         return instance
     }
     func isMe(uid: String?) -> Bool {
@@ -127,7 +131,7 @@ public class BaseDb {
 // Database schema versioning.
 extension Connection {
     public var schemaVersion: Int32 {
-        get { return Int32(try! scalar("PRAGMA user_version") as! Int64)}
+        get { return Int32((try? scalar("PRAGMA user_version") as! Int64) ?? -1) }
         set { try! run("PRAGMA user_version = \(newValue)") }
     }
 }

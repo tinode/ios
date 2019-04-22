@@ -21,7 +21,7 @@ public class AccountDb {
     private static let kTableName = "accounts"
     private let db: SQLite.Connection
     
-    public var table: Table? = nil
+    public var table: Table
     
     public let id: Expression<Int64>
     public let uid: Expression<String?>
@@ -30,34 +30,34 @@ public class AccountDb {
     
     init(_ database: SQLite.Connection) {
         self.db = database
+        self.table = Table(AccountDb.kTableName)
         self.id = Expression<Int64>("id")
         self.uid = Expression<String?>("uid")
         self.active = Expression<Int?>("last_active")
         self.deviceId = Expression<String?>("device_id")
     }
     func destroyTable() {
-        try! self.db.run(self.table!.dropIndex(uid))
-        try! self.db.run(self.table!.dropIndex(active))
-        try! self.db.run(self.table!.drop(ifExists: true))
+        try! self.db.run(self.table.dropIndex(uid))
+        try! self.db.run(self.table.dropIndex(active))
+        try! self.db.run(self.table.drop(ifExists: true))
     }
     func createTable() {
-        self.table = Table(AccountDb.kTableName)
         // Must succeed.
-        try! self.db.run(self.table!.create(ifNotExists: true) { t in
+        try! self.db.run(self.table.create(ifNotExists: true) { t in
             t.column(id, primaryKey: .autoincrement)
             t.column(uid)
             t.column(active)
             t.column(deviceId)
         })
-        try! self.db.run(self.table!.createIndex(uid, unique: true, ifNotExists: true))
-        try! self.db.run(self.table!.createIndex(active, ifNotExists: true))
+        try! self.db.run(self.table.createIndex(uid, unique: true, ifNotExists: true))
+        try! self.db.run(self.table.createIndex(active, ifNotExists: true))
     }
     @discardableResult
     func deactivateAll() throws -> Int {
-        return try self.db.run(self.table!.update(self.active <- 0))
+        return try self.db.run(self.table.update(self.active <- 0))
     }
     private func getByUid(uid: String) -> Int64 {
-        if let row = try? db.pluck(self.table!.select(self.id).filter(self.uid == uid)), let r = row?[self.id] {
+        if let row = try? db.pluck(self.table.select(self.id).filter(self.uid == uid)), let r = row?[self.id] {
             return r
         }
         return -1
@@ -69,10 +69,10 @@ public class AccountDb {
                 try self.deactivateAll()
                 result = StoredAccount(id: self.getByUid(uid: uid), uid: uid)
                 if result!.id >= 0 {
-                    let record = self.table!.filter(self.id == result!.id)
+                    let record = self.table.filter(self.id == result!.id)
                     try db.run(record.update(self.active <- 1))
                 } else {
-                    result!.id = try db.run(self.table!.insert(
+                    result!.id = try db.run(self.table.insert(
                         self.uid <- uid,
                         self.active <- 1))
                 }
@@ -86,14 +86,14 @@ public class AccountDb {
         return result
     }
     func getActiveAccount() -> StoredAccount? {
-        if let row = try? db.pluck(self.table!.select(self.id, self.uid).filter(self.active == 1)),
+        if let row = try? db.pluck(self.table.select(self.id, self.uid).filter(self.active == 1)),
             let rid = row?[self.id], let ruid = row?[self.uid] {
             return StoredAccount(id: rid, uid: ruid)
         }
         return nil
     }
     func updateDeviceToken(token: String) -> Bool {
-        let record = self.table!.filter(self.active == 1)
+        let record = self.table.filter(self.active == 1)
         do {
             return try self.db.run(record.update(self.deviceId <- token)) > 0
         } catch {
@@ -101,7 +101,7 @@ public class AccountDb {
         }
     }
     func getDeviceToken() -> String? {
-        if let row = try? db.pluck(self.table!.select(self.deviceId).filter(self.active == 1)),
+        if let row = try? db.pluck(self.table.select(self.deviceId).filter(self.active == 1)),
             let d = row?[self.deviceId] {
             return d
         }

@@ -24,7 +24,7 @@ class SubscriberDb {
     private static let kTableName = "subscriptions"
     private let db: SQLite.Connection
     
-    private var table: Table? = nil
+    private var table: Table
     
     public let id: Expression<Int64>
     public var topicId: Expression<Int64?>
@@ -43,6 +43,7 @@ class SubscriberDb {
 
     init(_ database: SQLite.Connection) {
         self.db = database
+        self.table = Table(SubscriberDb.kTableName)
         self.id = Expression<Int64>("id")
         self.topicId = Expression<Int64?>("topic_id")
         self.userId = Expression<Int64?>("user_id")
@@ -59,18 +60,17 @@ class SubscriberDb {
         self.subscriptionClass = Expression<String>("subscription_class")
     }
     func destroyTable() {
-        try! self.db.run(self.table!.dropIndex(topicId))
-        try! self.db.run(self.table!.drop(ifExists: true))
+        try! self.db.run(self.table.dropIndex(topicId))
+        try! self.db.run(self.table.drop(ifExists: true))
     }
     func createTable() {
         let userDb = BaseDb.getInstance().userDb!
         let topicDb = BaseDb.getInstance().topicDb!
-        self.table = Table(SubscriberDb.kTableName)
         // Must succeed.
-        try! self.db.run(self.table!.create(ifNotExists: true) { t in
+        try! self.db.run(self.table.create(ifNotExists: true) { t in
             t.column(id, primaryKey: .autoincrement)
-            t.column(topicId, references: topicDb.table!, topicDb.id)
-            t.column(userId, references: userDb.table!, userDb.id)
+            t.column(topicId, references: topicDb.table, topicDb.id)
+            t.column(userId, references: userDb.table, userDb.id)
             t.column(status)
             t.column(mode)
             t.column(updated)
@@ -83,7 +83,7 @@ class SubscriberDb {
             t.column(userAgent)
             t.column(subscriptionClass)
         })
-        try! self.db.run(self.table!.createIndex(topicId, ifNotExists: true))
+        try! self.db.run(self.table.createIndex(topicId, ifNotExists: true))
     }
     func insert(for topicId: Int64, with status: Int, using sub: SubscriptionProto) -> Int64 {
         var rowId: Int64 = -1
@@ -115,7 +115,7 @@ class SubscriberDb {
                     setters.append(self.userAgent <- seen.ua)
                 }
                 setters.append(self.subscriptionClass <- String(describing: type(of: sub as Any)))
-                rowId = try db.run(self.table!.insert(setters))
+                rowId = try db.run(self.table.insert(setters))
                 ss.id = rowId
                 sub.payload = ss
             }
@@ -129,9 +129,7 @@ class SubscriberDb {
         guard let ss = sub.payload as? StoredSubscription, let recordId = ss.id, recordId >= 0 else {
             return false
         }
-        guard let record = self.table?.filter(self.id == recordId) else {
-            return false
-        }
+        let record = self.table.filter(self.id == recordId)
         var updated = 0
         do {
             try self.db.savepoint("SubscriberDb.update") {
@@ -162,9 +160,7 @@ class SubscriberDb {
         return updated > 0
     }
     func delete(recordId: Int64) -> Bool {
-        guard let record = self.table?.filter(self.id == recordId) else {
-            return false
-        }
+        let record = self.table.filter(self.id == recordId)
         do {
             return try self.db.run(record.delete()) > 0
         } catch {
@@ -174,9 +170,7 @@ class SubscriberDb {
     }
     @discardableResult
     func deleteForTopic(topicId: Int64) -> Bool {
-        guard let record = self.table?.filter(self.topicId == topicId) else {
-            return false
-        }
+        let record = self.table.filter(self.topicId == topicId)
         do {
             return try self.db.run(record.delete()) > 0
         } catch {
@@ -211,36 +205,29 @@ class SubscriberDb {
     }
 
     func readAll(topicId: Int64) -> [SubscriptionProto]? {
-        guard let subTable = self.table else {
-            return nil
-        }
-        guard let udb = BaseDb.getInstance().userDb, let udbTable = udb.table else {
-            return nil
-        }
-        guard let tdb = BaseDb.getInstance().topicDb, let tdbTable = tdb.table else {
-            return nil
-        }
-        let joinedTable = subTable.select(
-            subTable[self.id],
+        guard let udb = BaseDb.getInstance().userDb else { return nil }
+        guard let tdb = BaseDb.getInstance().topicDb else { return nil }
+        let joinedTable = self.table.select(
+            self.table[self.id],
             self.topicId,
             self.userId,
-            subTable[self.status],
-            subTable[self.mode],
-            subTable[self.updated],
+            self.table[self.status],
+            self.table[self.mode],
+            self.table[self.updated],
             //self.deleted
-            subTable[self.read],
-            subTable[self.recv],
-            subTable[self.clear],
-            subTable[self.priv],
+            self.table[self.read],
+            self.table[self.recv],
+            self.table[self.clear],
+            self.table[self.priv],
             self.lastSeen,
             self.userAgent,
-            udbTable[udb.uid],
-            udbTable[udb.pub],
-            tdbTable[tdb.topic],
-            tdbTable[tdb.seq],
+            udb.table[udb.uid],
+            udb.table[udb.pub],
+            tdb.table[tdb.topic],
+            tdb.table[tdb.seq],
             self.subscriptionClass)
-            .join(.leftOuter, udbTable, on: subTable[self.userId] == udbTable[udb.id])
-            .join(.leftOuter, tdbTable, on: subTable[self.topicId] == tdbTable[tdb.id])
+            .join(.leftOuter, udb.table, on: self.table[self.userId] == udb.table[udb.id])
+            .join(.leftOuter, tdb.table, on: self.table[self.topicId] == tdb.table[tdb.id])
             .filter(self.topicId == topicId)
 
         do {
