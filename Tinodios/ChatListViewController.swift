@@ -44,6 +44,7 @@ class ChatListViewController: UITableViewController, ChatListDisplayLogic {
     }
 
     override func viewDidAppear(_ animated: Bool) {
+        self.interactor?.setup()
         self.interactor?.attachToMeTopic()
         self.interactor?.loadAndPresentTopics()
     }

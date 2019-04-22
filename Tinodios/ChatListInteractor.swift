@@ -13,6 +13,7 @@ protocol ChatListBusinessLogic: class {
     func loadAndPresentTopics()
     func attachToMeTopic()
     func updateChat(_ name: String)
+    func setup()
     func cleanup()
 }
 
@@ -54,17 +55,28 @@ class ChatListInteractor: ChatListBusinessLogic, ChatListDataStore {
             // throw new UnsupportedOperationException();
         }
     }
+    private class ChatEventListener: UiTinodeEventListener {
+        private weak var interactor: ChatListBusinessLogic?
+        init(interactor: ChatListBusinessLogic?, connected: Bool) {
+            super.init(connected: connected)
+            self.interactor = interactor
+        }
+        override func onLogin(code: Int, text: String) {
+            super.onLogin(code: code, text: text)
+            self.interactor?.attachToMeTopic()
+        }
+        override func onDisconnect(byServer: Bool, code: Int, reason: String) {
+            // TODO: update presence, etc.
+        }
+    }
 
     var presenter: ChatListPresentationLogic?
     var router: ChatListRoutingLogic?
     var topics: [DefaultComTopic]?
-    private var meListener: MeListener
+    private var meListener: MeListener? = nil
     private var meTopic: DefaultMeTopic? = nil
-    //private var meListener: DefaultMeTopic.Listener
-    init() {
-        meListener = MeListener()
-        self.meListener.interactor = self
-    }
+    private var tinodeEventListener: ChatEventListener? = nil
+
     func attachToMeTopic() {
         let tinode = Cache.getTinode()
         do {
@@ -88,8 +100,17 @@ class ChatListInteractor: ChatListBusinessLogic, ChatListDataStore {
             self.router?.routeToLogin()
         }
     }
+    func setup() {
+        meListener = MeListener()
+        self.meListener?.interactor = self
+        let tinode = Cache.getTinode()
+        self.tinodeEventListener = ChatEventListener(
+            interactor: self, connected: tinode.isConnected)
+        tinode.listener = self.tinodeEventListener
+    }
     func cleanup() {
         self.meTopic?.listener = nil
+        Cache.getTinode().listener = nil
     }
     func loadAndPresentTopics() {
         self.topics = Cache.getTinode().getFilteredTopics(filter: {(topic: TopicProto) in

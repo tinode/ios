@@ -77,13 +77,12 @@ class MessageViewController: MessageKit.MessagesViewController, MessageDisplayLo
                 layout.setMessageIncomingAvatarSize(.zero)
             }
         }
-
-        if !(self.interactor?.setup(topicName: self.topicName) ?? false) {
-            print("error in interactor setup for \(String(describing: self.topicName))")
-        }
     }
 
     override func viewDidAppear(_ animated: Bool) {
+        if !(self.interactor?.setup(topicName: self.topicName) ?? false) {
+            print("error in interactor setup for \(String(describing: self.topicName))")
+        }
         self.interactor?.attachToTopic()
         self.interactor?.loadMessages()
         self.noteTimer = Timer.scheduledTimer(

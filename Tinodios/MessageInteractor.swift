@@ -66,7 +66,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                 self.presenter?.updateTitleBar(icon: pub.photo?.image(), title: pub.fn)
             }
         }
-        
+        self.topic?.listener = self
         return self.topic != nil
     }
     func cleanup() {
@@ -79,7 +79,6 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         Cache.getTinode().listener = nil
     }
     func attachToTopic() -> Bool {
-        self.topic?.listener = self
         do {
             try self.topic?.subscribe(
                 set: nil,
