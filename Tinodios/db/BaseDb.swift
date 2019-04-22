@@ -9,6 +9,10 @@ import Foundation
 import SQLite
 
 public class BaseDb {
+    // Current database schema version. Increase on schema changes.
+    public static let kSchemaVersion: Int32 = 100
+
+    // Onject statuses.
     // Status undefined/not set.
     public static let kStatusUndefined = 0
     // Object is not ready to be sent to the server.
@@ -50,15 +54,16 @@ public class BaseDb {
         
         do {
             self.db = try SQLite.Connection(self.pathToDatabase)
+            if self.db?.schemaVersion != BaseDb.kSchemaVersion {
+                // Delete database if schema has changed.
+                self.onDestroy()
+            }
         } catch {
             print(error.localizedDescription)
         }
         assert(self.db != nil)
         
         self.sqlStore = SqlStore(dbh: self)
-    }
-    deinit{
-        self.onDestroy()
     }
     private func onCreate() {
         self.accountDb = AccountDb(self.db!)
@@ -72,6 +77,8 @@ public class BaseDb {
         self.messageDb = MessageDb(self.db!)
         self.messageDb!.createTable()
         self.account = self.accountDb!.getActiveAccount()
+
+        self.db?.schemaVersion = BaseDb.kSchemaVersion
     }
     private func onDestroy() {
         self.messageDb?.destroyTable()
@@ -114,5 +121,13 @@ public class BaseDb {
     func logout() {
         _ = try? self.accountDb?.deactivateAll()
         self.setUid(uid: nil)
+    }
+}
+
+// Database schema versioning.
+extension Connection {
+    public var schemaVersion: Int32 {
+        get { return Int32(try! scalar("PRAGMA schema_version") as! Int64)}
+        set { try! run("PRAGMA schema_version = \(newValue)") }
     }
 }
