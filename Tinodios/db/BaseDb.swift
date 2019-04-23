@@ -10,7 +10,7 @@ import SQLite
 
 public class BaseDb {
     // Current database schema version. Increment on schema changes.
-    public static let kSchemaVersion = 100
+    public static let kSchemaVersion: Int32 = 100
 
     // Onject statuses.
     // Status undefined/not set.
@@ -68,12 +68,12 @@ public class BaseDb {
         self.subscriberDb = SubscriberDb(self.db!)
         self.messageDb = MessageDb(self.db!)
 
-        if self.db?.schemaVersion != Int32(BaseDb.kSchemaVersion) {
+        if self.db!.schemaVersion != BaseDb.kSchemaVersion {
             print("Schema has changed from \(self.db?.schemaVersion ?? -1) to \(BaseDb.kSchemaVersion)")
             // Delete database if schema has changed.
             self.dropDb()
 
-            self.db?.schemaVersion = Int32(BaseDb.kSchemaVersion)
+            self.db?.schemaVersion = BaseDb.kSchemaVersion
         }
 
         self.accountDb!.createTable()
