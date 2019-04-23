@@ -129,6 +129,7 @@ public class TopicDb {
         st.nextUnsentId = row[self.nextUnsentSeq]
 
         topic.updated = row[self.updated]
+        topic.touched = st.lastUsed
         topic.read = row[self.read]
         topic.recv = row[self.recv]
         topic.seq = row[self.seq]
@@ -180,8 +181,10 @@ public class TopicDb {
         return t
     }
     func insert(topic: TopicProto) -> Int64 {
-        let lastUsed = Date()
         do {
+            // 1414213562 is Oct 25, 2014 05:06:02 UTC, incidentally equal to the first few digits of sqrt(2)
+            let lastUsed = topic.touched ?? Date(timeIntervalSince1970: 1414213562)
+
             let tp = topic.topicType
             let tpv = tp.rawValue
             let accountId = BaseDb.getInstance().account!.id
@@ -263,11 +266,14 @@ public class TopicDb {
         setters.append(self.tags <- topic.tags?.joined(separator: ","))
         setters.append(self.pub <- topic.serializePub())
         setters.append(self.priv <- topic.serializePriv())
-        let lastUsed = Date()
-        setters.append(self.lastUsed <- lastUsed)
+        if let touched = topic.touched {
+            setters.append(self.lastUsed <- touched)
+        }
         do {
             if try self.db.run(record.update(setters)) > 0 {
-                st.lastUsed = lastUsed
+                if topic.touched != nil {
+                    st.lastUsed = topic.touched
+                }
                 st.status = status
                 return true
             }

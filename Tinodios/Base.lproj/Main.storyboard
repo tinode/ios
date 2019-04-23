@@ -385,7 +385,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <view key="tableFooterView" contentMode="scaleToFill" id="5vl-f8-ZTQ">
-                            <rect key="frame" x="0.0" y="228" width="375" height="0.0"/>
+                            <rect key="frame" x="0.0" y="88" width="375" height="0.0"/>
                             <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
                             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             <accessibility key="accessibilityConfiguration" label="Footer">
@@ -515,10 +515,9 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <viewLayoutGuide key="safeArea" id="p4H-5P-q7k"/>
                     </view>
-                    <navigationItem key="navigationItem" title="Chat" id="gE0-cY-Jyn" userLabel="Topic name">
+                    <navigationItem key="navigationItem" id="gE0-cY-Jyn" userLabel="Topic name">
                         <barButtonItem key="rightBarButtonItem" title="Info" id="1lt-ET-oLA"/>
                     </navigationItem>
-                    <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="hJE-4j-6S3" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
