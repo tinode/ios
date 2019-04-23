@@ -511,9 +511,8 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
 
     private func loadSubs() -> Int {
         guard let loaded = store?.getSubscriptions(topic: self) else { return 0 }
-        let earlyDate = Date(timeIntervalSince1970: 0)
         subsLastUpdated = loaded.max(by: {(s1, s2) -> Bool in
-            ((s1.updated ?? earlyDate) < (s2.updated ?? earlyDate))
+            ((s1.updated ?? Date.distantPast) < (s2.updated ?? Date.distantPast))
         })?.updated
         subs = (Dictionary(uniqueKeysWithValues: loaded.map { ($0.user, $0) }) as! [String : Subscription<SP, SR>])
         print("loadSubs got \(subs?.count ?? -1) entries")
@@ -936,6 +935,10 @@ open class MeTopic<DP: Codable>: Topic<DP, PrivateType, DP, PrivateType> {
     }
     public init(tinode: Tinode?, desc: Description<DP, PrivateType>) {
         super.init(tinode: tinode, name: Tinode.kTopicMe, desc: desc)
+    }
+
+    override public var subsUpdated: Date? {
+        get { return tinode?.topicsUpdated }
     }
 
     override public func routePres(pres: MsgServerPres) {

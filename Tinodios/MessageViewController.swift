@@ -133,6 +133,7 @@ class MessageViewController: MessageKit.MessagesViewController, MessageDisplayLo
     }
 
     @objc func loadNextPage() {
+        print("calling loadNextPage")
         self.interactor?.loadNextPage()
     }
 }
