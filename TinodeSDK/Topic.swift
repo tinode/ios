@@ -511,6 +511,10 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
 
     private func loadSubs() -> Int {
         guard let loaded = store?.getSubscriptions(topic: self) else { return 0 }
+        let earlyDate = Date(timeIntervalSince1970: 0)
+        subsLastUpdated = loaded.max(by: {(s1, s2) -> Bool in
+            ((s1.updated ?? earlyDate) < (s2.updated ?? earlyDate))
+        })?.updated
         subs = (Dictionary(uniqueKeysWithValues: loaded.map { ($0.user, $0) }) as! [String : Subscription<SP, SR>])
         print("loadSubs got \(subs?.count ?? -1) entries")
         return subs!.count
