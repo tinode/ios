@@ -184,36 +184,6 @@ extension UIImage {
     }
 }
 
-extension Date {
-
-    // Date formatter for message timestamps. Length of string is dependent on difference from current time.
-    public func formatRelative() -> String {
-        let calendar = Calendar.current
-        let formatter = DateFormatter()
-        let now = Date()
-        if calendar.component(.year, from: self) == calendar.component(.year, from: now) {
-            // Same year, no need to show the year.
-
-            if calendar.component(.month, from: self) == calendar.component(.month, from: now) &&
-                calendar.component(.day, from: self) == calendar.component(.day, from: now) {
-                // The difference is only in time.
-                formatter.dateStyle = .none
-                formatter.timeStyle = .short
-            } else {
-                // Different dates same year
-                formatter.dateStyle = .short
-                formatter.timeStyle = .short
-            }
-        } else {
-            // Different year, show all.
-            formatter.dateStyle = .medium
-            formatter.timeStyle = .short
-        }
-
-        return formatter.string(from: self)
-    }
-}
-
 extension AvatarView {
     private static let kLightColors: [UIColor] = [
         UIColor(red: 0xef/255, green: 0x9a/255, blue: 0x9a/255, alpha: 1.0),

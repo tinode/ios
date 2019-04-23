@@ -142,7 +142,6 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                 pageCount: self.pagesToLoad,
                 pageSize: MessageInteractor.kMessagesPerPage) {
                 DispatchQueue.main.async {
-                    print("loadMessages loaded \(messages.count)")
                     self.messages = messages
                     self.presenter?.presentMessages(messages: messages)
                 }
@@ -154,21 +153,17 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         if self.pagesToLoad * MessageInteractor.kMessagesPerPage == self.messages.count {
             self.pagesToLoad += 1
             self.loadMessages()
-            print("loadNextPageInternal -> TRUE")
             return true
         }
-        print("loadNextPageInternal -> FALSE")
         return false
     }
 
     func loadNextPage() {
-        print("interactor.loadNextPage")
         guard let t = self.topic else {
             self.presenter?.endRefresh()
             return
         }
         if !loadNextPageInternal() && !StoredTopic.isAllDataLoaded(topic: t) {
-            print("interactor.loadNextPage calling the server")
             do {
                 try t.getMeta(query:
                     t.getMetaGetBuilder()
