@@ -57,5 +57,4 @@ Background patterns from http://subtlepatterns.com/, commercial and non-commerci
 
 
 ## Screenshots
-<img src="ios-chats.png" alt="App screenshot - chat list" width="207" />
-<img src="ios-chat.png" alt="App screenshot - conversation" width="207" />
+<img src="ios-chats.png" alt="App screenshot - chat list" width="207" /> <img src="ios-chat.png" alt="App screenshot - conversation" width="207" />
