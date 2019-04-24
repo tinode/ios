@@ -425,6 +425,10 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
     }
 
     public func getMetaGetBuilder() -> MetaGetBuilder {
+        // Ensure the topic is fully initialized before any get requests are issued.
+        if subs == nil {
+            loadSubs()
+        }
         return MetaGetBuilder(parent: self)
     }
 
@@ -509,11 +513,10 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
         listener?.onAllMessagesReceived(count: count ?? 0)
     }
 
-    private func loadSubs() -> Int {
+    @discardableResult internal func loadSubs() -> Int {
         guard let loaded = store?.getSubscriptions(topic: self) else { return 0 }
-        let earlyDate = Date(timeIntervalSince1970: 0)
         subsLastUpdated = loaded.max(by: {(s1, s2) -> Bool in
-            ((s1.updated ?? earlyDate) < (s2.updated ?? earlyDate))
+            ((s1.updated ?? Date.distantPast) < (s2.updated ?? Date.distantPast))
         })?.updated
         subs = (Dictionary(uniqueKeysWithValues: loaded.map { ($0.user, $0) }) as! [String : Subscription<SP, SR>])
         print("loadSubs got \(subs?.count ?? -1) entries")
@@ -522,7 +525,7 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
 
     public func getSubscription(for key: String?) -> Subscription<SP, SR>? {
         if subs == nil {
-            _ = loadSubs()
+            loadSubs()
         }
         if let k = key {
             return subs != nil ? subs![k] : nil
@@ -936,6 +939,15 @@ open class MeTopic<DP: Codable>: Topic<DP, PrivateType, DP, PrivateType> {
     }
     public init(tinode: Tinode?, desc: Description<DP, PrivateType>) {
         super.init(tinode: tinode, name: Tinode.kTopicMe, desc: desc)
+    }
+
+    override public var subsUpdated: Date? {
+        get { return tinode?.topicsUpdated }
+    }
+
+    override func loadSubs() -> Int {
+        // Don't attempt to load subscriptions: 'me' subscriptions are stored as topics.
+        return 0
     }
 
     override public func routePres(pres: MsgServerPres) {

@@ -184,33 +184,33 @@ extension UIImage {
     }
 }
 
-extension Date {
+class RelativeDateFormatter {
+    // DateFormatter is thread safe, OK to keep a copy.
+    static let shared = RelativeDateFormatter()
 
-    // Date formatter for message timestamps. Length of string is dependent on difference from current time.
-    public func formatRelative() -> String {
-        let calendar = Calendar.current
-        let formatter = DateFormatter()
-        let now = Date()
-        if calendar.component(.year, from: self) == calendar.component(.year, from: now) {
-            // Same year, no need to show the year.
+    private let formatter = DateFormatter()
 
-            if calendar.component(.month, from: self) == calendar.component(.month, from: now) &&
-                calendar.component(.day, from: self) == calendar.component(.day, from: now) {
-                // The difference is only in time.
-                formatter.dateStyle = .none
-                formatter.timeStyle = .short
-            } else {
-                // Different dates same year
-                formatter.dateStyle = .short
-                formatter.timeStyle = .short
-            }
-        } else {
-            // Different year, show all.
-            formatter.dateStyle = .medium
-            formatter.timeStyle = .short
+    func dateOnly(from date: Date, style: DateFormatter.Style = .medium) -> String {
+        formatter.timeStyle = .none
+        formatter.dateStyle = style
+        switch true {
+        case Calendar.current.isDateInToday(date) || Calendar.current.isDateInYesterday(date):
+            // "today", "yesterday"
+            formatter.doesRelativeDateFormatting = true
+        case Calendar.current.isDate(date, equalTo: Date(), toGranularity: .weekOfYear):
+            // day of the week "Wednesday", "Friday" etc
+            formatter.dateFormat = "EEEE"
+        default:
+            // All other dates: "Mar 15, 2019"
+            break
         }
+        return formatter.string(from: date)
+    }
 
-        return formatter.string(from: self)
+    func timeOnly(from date: Date, style: DateFormatter.Style = .short) -> String {
+        formatter.timeStyle = style
+        formatter.dateStyle = .none
+        return formatter.string(from: date)
     }
 }
 
