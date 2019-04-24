@@ -97,9 +97,10 @@ public class Drafty: Codable {
     //
     // This is needed in order to clear markup, i.e. 'hello *world*' -> 'hello world' and convert
     // ranges from markup-ed offsets to plain text offsets.
-    private static func chunkify(line: String, start: Int, end: Int, spans: [Span]?) -> [Span]? {
+    private static func chunkify(line: String, start startAt: Int, end: Int, spans: [Span]?) -> [Span]? {
         guard let spans = spans, spans.count > 0 else { return nil }
 
+        var start = startAt
         var chunks: [Span] = []
         for span in spans {
             // Grab the initial unstyled chunk.
@@ -138,7 +139,7 @@ public class Drafty: Codable {
         var last = spans[0]
         tree.append(last)
         for i in 0...spans.count {
-            var curr = spans[i]
+            let curr = spans[i]
             // Keep spans which start after the end of the previous span or those which
             // are complete within the previous span.
             if curr.start > last.end {
@@ -180,11 +181,11 @@ public class Drafty: Codable {
             }
 
             if chunk.type != nil {
-                ranges.add(Style(chunk.type, block.txt.length() + startAt, chunk.text.length()))
+                ranges.append(Style(tp: chunk.type, at: block.txt.count + startAt, len: chunk.text.count))
             }
 
             if chunk.text != nil {
-                block.txt += chunk.text
+                block.txt += chunk.text!
             }
         }
 
@@ -217,47 +218,47 @@ public class Drafty: Codable {
 
     public static func parse(content: String) -> Drafty {
         // Break input into individual lines. Format cannot span multiple lines.
-        var lines = content.split(separator: "\\r?\\n")
+        let lines = content.split { $0 == "\n" || $0 == "\r\n" }.map(String.init)
         var blks: [Block] = []
         var refs: [Entity] = []
 
         var spans: [Span] = []
         var entityMap: [String:JSONValue] = [:]
-        var entities: ExtractedEnt?
+        var entities: [ExtractedEnt]
         for line in lines {
-            spans.clear()
+            spans = []
             // Select styled spans.
             for i in 0...Drafty.kInlineStyleName.count {
-                spans.addAll(spannify(line, Drafty.kInlineStyleRE[i], Drafty.kInlineStyleName[i]))
+                spans.append(contentsOf: spannify(original: line, re: Drafty.kInlineStyleRE[i], type: Drafty.kInlineStyleName[i]))
             }
 
-            let b: Block?
-            if !spans.isEmpty() {
+            let b: Block
+            if !spans.isEmpty {
                 // Sort styled spans in ascending order by .start
-                Collections.sort(spans)
+                Collection.sort(spans)
 
                 // Rearrange linear list of styled spans into a tree, throw away invalid spans.
-                spans = toTree(spans)
+                spans = toTree(spans: spans)
 
                 // Parse the entire string into spans, styled or unstyled.
-                spans = chunkify(line, 0, line.length(), spans)
+                spans = chunkify(line: line, start: 0, end: line.count, spans: spans)
 
                 // Convert line into a block.
-                b = draftify(spans, 0)
+                b = draftify(chunks: spans, startAt: 0)
             } else {
-                b = Block(line)
+                b = Block(txt: line)
             }
 
             // Extract entities from the string already cleared of markup.
-            entities = extractEntities(b.txt)
+            entities = extractEntities(line: b.txt)
             // Normalize entities by splitting them into spans and references.
             for ent in entities {
                 // Check if the entity has been indexed already
                 var index = entityMap[ent.value]
                 if index == nil {
-                    index = refs.size();
+                    index = refs.count;
                     entityMap[ent.value] = index
-                    refs.append(Entity(ent.tp, ent.data))
+                    refs.append(Entity(tp: ent.tp, data: ent.data))
                 }
 
                 b.addStyle(Style(ent.at, ent.len, index))
@@ -296,8 +297,8 @@ public class Drafty: Codable {
         }
 
         return Drafty(text.toString(),
-                          fmt.size() > 0 ? fmt.toArray(new Style[0]) : null,
-                          refs.size() > 0 ? refs.toArray(new Entity[0]) : null);
+                          fmt.size() > 0 ? fmt.toArray(new Style[0]) : nil,
+                          refs.size() > 0 ? refs.toArray(new Entity[0]) : nil)
     }
 
     public func getStyles() -> [Style]? {
@@ -313,21 +314,16 @@ public class Drafty: Codable {
      *
      * @return string array of attachment references or null if no attachments with references found.
      */
-    public String[] getEntReferences() {
-        if (ent == null) {
-            return null;
-        }
+    public func getEntReferences() -> [String]? {
+        guard let ent = ent else { return nil }
 
-        ArrayList<String> result = new ArrayList<>();
-        for (Entity anEnt : ent) {
-            if (anEnt != null && anEnt.data != null) {
-                Object ref = anEnt.data.get("ref");
-                if (ref != null) {
-                    result.add((String) ref);
-                }
+        var result: [String] = []
+        for anEnt in ent {
+            if let ref = anEnt.data?["ref"] {
+                result.append(ref)
             }
         }
-        return result.size() > 0 ? result.toArray(new String[]{}) : null;
+        return result.isEmpty ? nil : result
     }
 
     public func entityFor(style: Style) -> Entity? {
@@ -398,7 +394,7 @@ public class Drafty: Codable {
             data["mime"] = JSONValue.string(mime)
         }
         if let bits = bits {
-            data["val"] = bits
+            data["val"] = JSONValue.bits(bits)
         }
         data["width"] = JSONValue.int(width)
         data["height"] = JSONValue.int(height)
@@ -464,7 +460,7 @@ public class Drafty: Codable {
             data["mime"] = JSONValue.string(mime)
         }
         if let bits = bits {
-            data["val"] = bits
+            data["val"] = JSONValue.bits(bits)
         }
         if let fname = fname, !fname.isEmpty {
             data["name"] = JSONValue.string(fname)
@@ -715,10 +711,10 @@ public class Drafty: Codable {
         var start: Int
         var end: Int
         var key: Int
-        var text: String
+        var text: String?
         var type: String?
         var data: [String:JSONValue]?
-        var children: [Span]
+        var children: [Span]?
 
         init() {
         }
