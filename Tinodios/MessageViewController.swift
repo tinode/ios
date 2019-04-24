@@ -79,7 +79,6 @@ class MessageViewController: MessageKit.MessagesViewController, MessageDisplayLo
     }
 
     override func viewDidLoad() {
-        messagesCollectionView = MessagesCollectionView(frame: .zero, collectionViewLayout: MessagesFlowLayout())
         super.viewDidLoad()
 
         messagesCollectionView.messagesDataSource = self
@@ -189,11 +188,7 @@ extension MessageViewController: MessagesDataSource {
 
     func cellTopLabelAttributedText(for message: MessageType, at indexPath: IndexPath) -> NSAttributedString? {
         if isTimeLabelVisible(at: indexPath) {
-            // FIXME: This is not great. This should be moved to UiUtils.
-            let formatter = DateFormatter()
-            formatter.dateStyle = .medium
-            formatter.timeStyle = .none
-            return NSAttributedString(string: formatter.string(from: message.sentDate), attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 10), NSAttributedString.Key.foregroundColor: UIColor.darkGray])
+            return NSAttributedString(string: RelativeDateFormatter.shared.dateOnly(from: message.sentDate), attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 10), NSAttributedString.Key.foregroundColor: UIColor.darkGray])
         }
         return nil
     }
@@ -205,12 +200,8 @@ extension MessageViewController: MessagesDataSource {
         if let sub = topic?.getSubscription(for: message.sender.id) {
             displayName = sub.pub!.fn!
         }
-        // FIXME: create a static formatter in UiUtils. Don't create a new one every time.
-        // The formatter included in MessageKit is not flexible enough.
-        let formatter = DateFormatter()
-        formatter.timeStyle = .short
-        formatter.dateStyle = .none
-        let timestamp = formatter.string(from: message.sentDate)
+        let timestamp = RelativeDateFormatter.shared.timeOnly(from: message.sentDate)
+        // FIXME: "delivered" is placeholder
         let label = isFromCurrentSender(message: message) ? "delivered" : "\(displayName), \(timestamp)"
 
         return NSAttributedString(string: label, attributes: [

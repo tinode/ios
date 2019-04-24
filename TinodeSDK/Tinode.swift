@@ -292,14 +292,13 @@ public class Tinode {
                 print("what = \(what)")
             }
         } else if let meta = serverMsg.meta {
-            let updated: Date?
+            var updated: Date? = nil
             if let t = getTopic(topicName: meta.topic!) {
                 //t.route
                 t.routeMeta(meta: meta)
                 updated = t.updated
-            } else {
-                let t = maybeCreateTopic(meta: meta)
-                updated = t?.updated
+            } else if let t = maybeCreateTopic(meta: meta) {
+                updated = t.updated
                 print("maybe create \(String(describing: meta.topic))")
             }
 

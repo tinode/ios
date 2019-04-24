@@ -184,6 +184,36 @@ extension UIImage {
     }
 }
 
+class RelativeDateFormatter {
+    // DateFormatter is thread safe, OK to keep a copy.
+    static let shared = RelativeDateFormatter()
+
+    private let formatter = DateFormatter()
+
+    func dateOnly(from date: Date, style: DateFormatter.Style = .medium) -> String {
+        formatter.timeStyle = .none
+        formatter.dateStyle = style
+        switch true {
+        case Calendar.current.isDateInToday(date) || Calendar.current.isDateInYesterday(date):
+            // "today", "yesterday"
+            formatter.doesRelativeDateFormatting = true
+        case Calendar.current.isDate(date, equalTo: Date(), toGranularity: .weekOfYear):
+            // day of the week "Wednesday", "Friday" etc
+            formatter.dateFormat = "EEEE"
+        default:
+            // All other dates: "Mar 15, 2019"
+            break
+        }
+        return formatter.string(from: date)
+    }
+
+    func timeOnly(from date: Date, style: DateFormatter.Style = .short) -> String {
+        formatter.timeStyle = style
+        formatter.dateStyle = .none
+        return formatter.string(from: date)
+    }
+}
+
 extension AvatarView {
     private static let kLightColors: [UIColor] = [
         UIColor(red: 0xef/255, green: 0x9a/255, blue: 0x9a/255, alpha: 1.0),
