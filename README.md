@@ -1,37 +1,28 @@
-# Tinodios
+# Tinodios: Tinode Messaging Client for iOS 
 
-Experimental iOS client.
+iOS client for [Tinode](https://github.com/tinode/chat) in Swift.
 
 Status: work in progress.
 
-Presently, Tinode iOS SDK can:
-* Connect to Tinode server.
-* Log into an account.
-* Register new accounts.
-* Subscribe to p2p topics.
-* Publish/receive messages in p2p topics.
-* Send/receive presence notifications.
-
-The immediate goal is to have a basic end-to-end working application prototype that one will be able to install and use for the mentioned functionality.
-
-This is the skeleton functionality that one should be able to build more features around.
+The immediate goal is to have a basic end-to-end working application prototype that one will be able to install and use.
 
 ## Features
 
 ### Completed
-* View chats
-* Send and receive plain text messages one-on-one or in group chats.
+* Login
 * Register new accounts.
+* View the list of active chats
+* Send and receive plain text messages one-on-one or in group chats.
 * In-app presence notifications.
 * Unread message counters.
-* Local data persistence: the messages in chat as well as other data (topics, subscriptions, etc.) are stored in a SQLite db after they are received from the server. This way the UI can fetch them from the db instead of going to the server.
+* Local data persistence.
 
-### In progress
+### Does not work yet
 * Start new chats.
 * Edit chat parameters.
 * Typing indicators.
-* Indicators for messages received/read (little check marks in messages).
-* Drafty: Markdown-style formatting of text, e.g. *styled* → styled. Implemented as spannable.
+* Delivery and received/read indicators for messages (little check marks in messages).
+* Drafty: Markdown-style formatting of text, e.g. *styled* → styled.
 * Attachments and inline images.
 * Muting/un-muting conversations and other permission management.
 * Integration with iOS's stock Contacts.
