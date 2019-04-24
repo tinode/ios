@@ -73,7 +73,7 @@ public class BaseDb {
             // Delete database if schema has changed.
             self.dropDb()
 
-            self.db?.schemaVersion = BaseDb.kSchemaVersion
+            self.db!.schemaVersion = BaseDb.kSchemaVersion
         }
 
         self.accountDb!.createTable()
