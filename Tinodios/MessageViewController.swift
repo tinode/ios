@@ -19,6 +19,11 @@ protocol MessageDisplayLogic: class {
 
 class MessageViewController: MessageKit.MessagesViewController, MessageDisplayLogic {
     static let kAvatarSize: CGFloat = 30
+    static let kDeliveryMarkerSize: CGFloat = 16
+    static let kDeliveryMarkerTint = UIColor(red: 19/255, green: 144/255, blue:255/255, alpha: 0.8)
+    static let kDeliveryMarkerColor = UIColor.gray.withAlphaComponent(0.7)
+    static let kOutgoingBubbleColor = UIColor(red: 230/255, green: 230/255, blue: 230/255, alpha: 1)
+    static let kIncomingBubbleColor = UIColor(red: 69/255, green: 193/255, blue: 89/255, alpha: 1)
 
     var topicName: String? {
         didSet {
@@ -64,9 +69,10 @@ class MessageViewController: MessageKit.MessagesViewController, MessageDisplayLo
 
         layout.sectionInset = UIEdgeInsets(top: 1, left: 8, bottom: 1, right: 8)
 
-        // Hide the outgoing avatar and adjust the label alignment to line up with the messages
-        layout.setMessageOutgoingAvatarSize(.zero)
-        layout.setMessageOutgoingMessageBottomLabelAlignment(LabelAlignment(textAlignment: .right, textInsets: UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 8)))
+        // Use the outgoing avatar as a container for delivery markers.
+        layout.setMessageOutgoingAvatarSize(CGSize(width: MessageViewController.kDeliveryMarkerSize, height: MessageViewController.kDeliveryMarkerSize))
+        // Move message bubble right and down to make delivery marker appear inside the bubble
+        layout.setMessageOutgoingMessagePadding(UIEdgeInsets(top: 0, left: 0, bottom: 0, right: -MessageViewController.kDeliveryMarkerSize / 2))
 
         // Set incoming avatar to overlap with the message bubble
         if topic!.isP2PType {
@@ -194,17 +200,14 @@ extension MessageViewController: MessagesDataSource {
     }
 
     func messageBottomLabelAttributedText(for message: MessageType, at indexPath: IndexPath) -> NSAttributedString? {
-        guard topic!.isGrpType && (!isNextMessageSameSender(at: indexPath) || !isNextMessageSameDate(at: indexPath))  else { return nil }
+        guard topic!.isGrpType && !isFromCurrentSender(message: message) && (!isNextMessageSameSender(at: indexPath) || !isNextMessageSameDate(at: indexPath)) else { return nil }
 
         var displayName = message.sender.displayName
         if let sub = topic?.getSubscription(for: message.sender.id) {
             displayName = sub.pub!.fn!
         }
         let timestamp = RelativeDateFormatter.shared.timeOnly(from: message.sentDate)
-        // FIXME: "delivered" is placeholder
-        let label = isFromCurrentSender(message: message) ? "delivered" : "\(displayName), \(timestamp)"
-
-        return NSAttributedString(string: label, attributes: [
+        return NSAttributedString(string: "\(displayName), \(timestamp)", attributes: [
             NSAttributedString.Key.font: UIFont.preferredFont(forTextStyle: .caption2),
             NSAttributedString.Key.foregroundColor: UIColor.gray
             ])
@@ -237,13 +240,37 @@ extension MessageViewController: MessagesDisplayDelegate, MessagesLayoutDelegate
     }
 
     func configureAvatarView(_ avatarView: AvatarView, for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) {
-        // Hide current user's avatar as well as peer's avatar in p2p topics.
-        // Avatars are useful in group topics only
-        avatarView.isHidden = topic!.isP2PType || (isNextMessageSameSender(at: indexPath) && isNextMessageSameDate(at: indexPath))
-        if let sub = topic?.getSubscription(for: message.sender.id) {
-            avatarView.set(icon: sub.pub?.photo?.image(), title: sub.pub?.fn, id: message.sender.id)
+        if isFromCurrentSender(message: message) {
+            // Use current user's avatar for showing delivery markers.
+            guard let msg = message as? StoredMessage, let topic = topic else { return }
+
+            var iconName: String?
+            var tint: UIColor? = nil
+            if msg.status == nil || msg.status! <= BaseDb.kStatusSending {
+                iconName = "outline_schedule_white_48pt"
+            } else {
+                if topic.msgReadCount(seq: msg.seq) > 0 {
+                    iconName = "outline_done_all_white_48pt"
+                    tint = MessageViewController.kDeliveryMarkerTint
+                } else if topic.msgRecvCount(seq: msg.seq) > 0 {
+                    iconName = "outline_done_all_white_48pt"
+                } else {
+                    iconName = "outline_done_white_48pt"
+                }
+            }
+            if let iconName = iconName {
+                avatarView.backgroundColor = UIColor.white.withAlphaComponent(0)
+                avatarView.tintColor = tint ?? MessageViewController.kDeliveryMarkerColor
+                avatarView.set(avatar: Avatar(image: UIImage(named: iconName)))
+            }
         } else {
-            print("subscription not found for \(message.sender.id)")
+            // Hide peer's avatar in p2p topics. Avatars are useful in group topics only
+            avatarView.isHidden = topic!.isP2PType || (isNextMessageSameSender(at: indexPath) && isNextMessageSameDate(at: indexPath))
+            if let sub = topic?.getSubscription(for: message.sender.id) {
+                avatarView.set(icon: sub.pub?.photo?.image(), title: sub.pub?.fn, id: message.sender.id)
+            } else {
+                print("subscription not found for \(message.sender.id)")
+            }
         }
     }
 
@@ -251,9 +278,7 @@ extension MessageViewController: MessagesDisplayDelegate, MessagesLayoutDelegate
         return !isFromCurrentSender(message: message) ? .white : .darkText
     }
     func backgroundColor(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> UIColor {
-        return !isFromCurrentSender(message: message)
-            ? UIColor(red: 69/255, green: 193/255, blue: 89/255, alpha: 1)
-            : UIColor(red: 230/255, green: 230/255, blue: 230/255, alpha: 1)
+        return !isFromCurrentSender(message: message) ? MessageViewController.kIncomingBubbleColor : MessageViewController.kOutgoingBubbleColor
     }
 
     func messageStyle(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> MessageStyle {
@@ -299,8 +324,9 @@ extension MessageViewController: MessagesDisplayDelegate, MessagesLayoutDelegate
 
     // This is the hight of the field with the sender's name (left) or delivery status (right).
     func messageBottomLabelHeight(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGFloat {
-        return isNextMessageSameSender(at: indexPath) && isNextMessageSameDate(at: indexPath) ? 0 : 16
+        return isFromCurrentSender(message: message) || (isNextMessageSameSender(at: indexPath) && isNextMessageSameDate(at: indexPath)) ? 0 : 16
     }
+
 }
 
 extension MessageViewController: MessageInputBarDelegate {
