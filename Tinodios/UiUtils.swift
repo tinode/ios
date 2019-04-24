@@ -67,33 +67,54 @@ class UiUtils {
 }
 
 extension UIViewController {
-    // Displays Android-style toast
+    // Displays bottom pannel with an error message.
     func showToast(message: String, duration: TimeInterval = 3.0) {
+        let iconSize: CGFloat = 32
+        let spacing: CGFloat = 8
+        let messageHeight = iconSize + spacing * 2
+        let toastHeight = max(min(self.view.frame.height * 0.1, 100), messageHeight)
+
         // Prevent very short toasts
         guard duration > 0.5 else { return }
+        let label = UILabel()
+        label.textColor = UIColor.white
+        label.textAlignment = .left
+        label.font = UIFont.preferredFont(forTextStyle: .callout)
+        label.text = message
+        label.alpha = 1.0
+        label.sizeToFit()
 
-        let toastLabel = UILabel()
-        toastLabel.backgroundColor = UIColor.black.withAlphaComponent(0.6)
-        toastLabel.textColor = UIColor.white
-        toastLabel.textAlignment = .center
-        toastLabel.font = UIFont.preferredFont(forTextStyle: .footnote)
-        toastLabel.text = message
-        toastLabel.alpha = 1.0
-        toastLabel.layer.cornerRadius = 10
-        toastLabel.clipsToBounds  =  true
-        toastLabel.sizeToFit()
-        toastLabel.frame = CGRect(
-            x: self.view.frame.size.width/2 - toastLabel.frame.width / 2 - 8,
-            y: self.view.frame.size.height - 100, width: toastLabel.frame.width + 16, height: 35
-        )
-        self.view.addSubview(toastLabel)
+        let icon = UIImageView(image: UIImage(named: "outline_error_outline_white_48pt"))
+        icon.tintColor = UIColor.white
+        icon.frame = CGRect(x: spacing, y: spacing, width: iconSize, height: iconSize)
+
+        label.frame = CGRect(
+            x: iconSize + spacing * 2, y: (messageHeight - label.frame.height) / 2,
+            width: label.frame.width + spacing * 2, height: label.frame.height)
+
+        let toastView = UIView()
+        toastView.alpha = 0
+        toastView.backgroundColor = UIColor.red.withAlphaComponent(0.6)
+        toastView.addSubview(icon)
+        toastView.addSubview(label)
+
+        self.view.addSubview(toastView)
+        toastView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            toastView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 0),
+            toastView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: 0),
+            toastView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: toastHeight),
+            toastView.heightAnchor.constraint(equalToConstant: toastHeight)
+            ])
+
         UIView.animate(withDuration: 0.2, delay: 0, options: .curveEaseOut, animations: {
-            toastLabel.alpha = 1
+            toastView.alpha = 1
+            toastView.transform = CGAffineTransform(translationX: 0, y: -toastHeight)
         }, completion: {(isCompleted) in
             UIView.animate(withDuration: 0.2, delay: duration-0.4, options: .curveEaseIn, animations: {
-                toastLabel.alpha = 0
+                toastView.alpha = 0
             }, completion: {(isCompleted) in
-                toastLabel.removeFromSuperview()
+                toastView.removeFromSuperview()
             })
         })
     }

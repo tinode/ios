@@ -515,10 +515,9 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <viewLayoutGuide key="safeArea" id="p4H-5P-q7k"/>
                     </view>
-                    <navigationItem key="navigationItem" title="Chat" id="gE0-cY-Jyn" userLabel="Topic name">
+                    <navigationItem key="navigationItem" id="gE0-cY-Jyn" userLabel="Topic name">
                         <barButtonItem key="rightBarButtonItem" title="Info" id="1lt-ET-oLA"/>
                     </navigationItem>
-                    <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="hJE-4j-6S3" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

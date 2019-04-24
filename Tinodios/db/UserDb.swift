@@ -18,7 +18,7 @@ class UserDb {
     private static let kTableName = "users"
     private let db: SQLite.Connection
     
-    public var table: Table? = nil
+    public let table: Table
     
     public let id: Expression<Int64>
     public let accountId: Expression<Int64?>
@@ -29,6 +29,7 @@ class UserDb {
     
     init(_ database: SQLite.Connection) {
         self.db = database
+        self.table = Table(UserDb.kTableName)
         self.id = Expression<Int64>("id")
         self.accountId = Expression<Int64?>("account_id")
         self.uid = Expression<String?>("uid")
@@ -36,21 +37,20 @@ class UserDb {
         self.pub = Expression<String?>("pub")
     }
     func destroyTable() {
-        try! self.db.run(self.table!.dropIndex(accountId, uid))
-        try! self.db.run(self.table!.drop(ifExists: true))
+        try! self.db.run(self.table.dropIndex(accountId, uid, ifExists: true))
+        try! self.db.run(self.table.drop(ifExists: true))
     }
     func createTable() {
         let accountDb = BaseDb.getInstance().accountDb!
-        self.table = Table(UserDb.kTableName)
         // Must succeed.
-        try! self.db.run(self.table!.create(ifNotExists: true) { t in
+        try! self.db.run(self.table.create(ifNotExists: true) { t in
             t.column(id, primaryKey: .autoincrement)
-            t.column(accountId, references: accountDb.table!, accountDb.id)
+            t.column(accountId, references: accountDb.table, accountDb.id)
             t.column(uid)
             t.column(updated)
             t.column(pub)
         })
-        try! self.db.run(self.table!.createIndex(accountId, uid, ifNotExists: true))
+        try! self.db.run(self.table.createIndex(accountId, uid, ifNotExists: true))
     }
     func insert(user: UserProto?) -> Int64 {
         guard let user = user else { return 0 }
@@ -68,7 +68,7 @@ class UserDb {
     private func insert(uid: String?, updated: Date?, serializedPub: String?) -> Int64 {
         do {
             let rowid = try db.run(
-                self.table!.insert(
+                self.table.insert(
                     //email <- "alice@mac.com"
                     //accountId <- ,
                     self.accountId <- BaseDb.getInstance().account?.id,
@@ -98,9 +98,8 @@ class UserDb {
         if let s = serializedPub {
             setters.append(self.pub <- s)
         }
-        guard setters.count > 0, let record = self.table?.filter(self.id == userId) else {
-            return false
-        }
+        guard setters.count > 0 else { return false }
+        let record = self.table.filter(self.id == userId)
         do {
             return try self.db.run(record.update(setters)) > 0
         } catch {
@@ -112,7 +111,7 @@ class UserDb {
         guard let accountId = BaseDb.getInstance().account?.id else  {
             return -1
         }
-        if let row = try? db.pluck(self.table!.select(self.id).filter(self.uid == uid && self.accountId == accountId)), let r = row?[self.id] {
+        if let row = try? db.pluck(self.table.select(self.id).filter(self.uid == uid && self.accountId == accountId)), let r = row?[self.id] {
             return r
         }
         return -1
@@ -121,7 +120,7 @@ class UserDb {
         guard let uid = uid, let accountId = BaseDb.getInstance().account?.id else {
             return nil
         }
-        guard let row = try? db.pluck(self.table!.filter(self.uid == uid && self.accountId == accountId)), let r = row else {
+        guard let row = try? db.pluck(self.table.filter(self.uid == uid && self.accountId == accountId)), let r = row else {
             return nil
         }
         let id = r[self.id]

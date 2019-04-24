@@ -30,7 +30,7 @@ public class TopicDb {
     private static let kUnsentIdStart = 2000000000
     private let db: SQLite.Connection
     
-    public var table: Table? = nil
+    public var table: Table
 
     public let id: Expression<Int64>
     public let accountId: Expression<Int64?>
@@ -57,6 +57,7 @@ public class TopicDb {
     
     init(_ database: SQLite.Connection) {
         self.db = database
+        self.table = Table(TopicDb.kTableName)
         self.id = Expression<Int64>("id")
         self.accountId = Expression<Int64?>("account_id")
         self.status = Expression<Int?>("status")
@@ -81,17 +82,16 @@ public class TopicDb {
         self.priv = Expression<String?>("priv")
     }
     func destroyTable() {
-        try! self.db.run(self.table!.dropIndex(accountId, topic))
-        try! self.db.run(self.table!.drop(ifExists: true))
+        try! self.db.run(self.table.dropIndex(accountId, topic, ifExists: true))
+        try! self.db.run(self.table.drop(ifExists: true))
     }
 
     func createTable() {
         let accountDb = BaseDb.getInstance().accountDb!
-        self.table = Table(TopicDb.kTableName)
         // Must succeed.
-        try! self.db.run(self.table!.create(ifNotExists: true) { t in
+        try! self.db.run(self.table.create(ifNotExists: true) { t in
             t.column(id, primaryKey: .autoincrement)
-            t.column(accountId, references: accountDb.table!, accountDb.id)
+            t.column(accountId, references: accountDb.table, accountDb.id)
             t.column(status)
             t.column(topic)
             t.column(type)
@@ -116,7 +116,7 @@ public class TopicDb {
             t.column(pub)
             t.column(priv)
         })
-        try! db.run(self.table!.createIndex(accountId, topic, unique: true, ifNotExists: true))
+        try! db.run(self.table.createIndex(accountId, topic, unique: true, ifNotExists: true))
     }
     func deserializeTopic(topic: TopicProto, row: Row) {
         //
@@ -129,6 +129,7 @@ public class TopicDb {
         st.nextUnsentId = row[self.nextUnsentSeq]
 
         topic.updated = row[self.updated]
+        topic.touched = st.lastUsed
         topic.read = row[self.read]
         topic.recv = row[self.recv]
         topic.seq = row[self.seq]
@@ -141,41 +142,21 @@ public class TopicDb {
         topic.deserializePub(from: row[self.pub])
         topic.deserializePriv(from: row[self.priv])
         topic.payload = st
-        /*
-        
-        
-        topic.setRead(c.getInt(TopicDb.COLUMN_IDX_READ));
-        topic.setRecv(c.getInt(TopicDb.COLUMN_IDX_RECV));
-        topic.setSeq(c.getInt(TopicDb.COLUMN_IDX_SEQ));
-        topic.setClear(c.getInt(TopicDb.COLUMN_IDX_CLEAR));
-        topic.setMaxDel(c.getInt(TopicDb.COLUMN_IDX_MAX_DEL));
-        
-        topic.setTags(BaseDb.deserializeTags(c.getString(TopicDb.COLUMN_IDX_TAGS)));
-        topic.setPub(BaseDb.deserialize(c.getString(TopicDb.COLUMN_IDX_PUBLIC)));
-        topic.setPriv(BaseDb.deserialize(c.getString(TopicDb.COLUMN_IDX_PRIVATE)));
-        
-        topic.setAccessMode(BaseDb.deserializeMode(c.getString(TopicDb.COLUMN_IDX_ACCESSMODE)));
-        topic.setDefacs(BaseDb.deserializeDefacs(c.getString(TopicDb.COLUMN_IDX_DEFACS)));
-        
-        topic.setLocal(st);
-        */
     }
     func getId(topic: String?) -> Int64 {
         guard let topic = topic else {
             return -1
         }
         //let t = self.table?.select(self.id)
-        if let row = try? db.pluck(self.table!.select(self.id).filter(self.accountId
+        if let row = try? db.pluck(self.table.select(self.id).filter(self.accountId
             == BaseDb.getInstance().account?.id && self.topic == topic)), let r = row?[self.id] {
             return r
         }
         return -1
     }
     func getNextUnusedSeq(topic: TopicProto) -> Int {
-        guard let st = topic.payload as? StoredTopic, let recordId = st.id else { return -1}
-        guard let record = self.table?.filter(self.id == recordId) else {
-            return -1
-        }
+        guard let st = topic.payload as? StoredTopic, let recordId = st.id else { return -1 }
+        let record = self.table.filter(self.id == recordId)
         st.nextUnsentId = (st.nextUnsentId ?? 0) + 1
         var setters = [Setter]()
         setters.append(self.nextUnsentSeq <- st.nextUnsentId)
@@ -189,7 +170,7 @@ public class TopicDb {
         return -1
     }
     func query() -> AnySequence<Row>? {
-        return try? self.db.prepare(self.table!)
+        return try? self.db.prepare(self.table)
     }
     func readOne(for tinode: Tinode?, row: Row) -> TopicProto? {
         guard let tn = tinode, let topicName = row[self.topic] else {
@@ -200,17 +181,20 @@ public class TopicDb {
         return t
     }
     func insert(topic: TopicProto) -> Int64 {
-        let lastUsed = Date()
         do {
+            // 1414213562 is Oct 25, 2014 05:06:02 UTC, incidentally equal to the first few digits of sqrt(2)
+            let lastUsed = topic.touched ?? Date(timeIntervalSince1970: 1414213562)
+
             let tp = topic.topicType
             let tpv = tp.rawValue
             let accountId = BaseDb.getInstance().account!.id
             //let pub = topic.
+            let status = topic.isNew ? BaseDb.kStatusQueued : BaseDb.kStatusSynced
             let rowid = try db.run(
-                self.table!.insert(
+                self.table.insert(
                     //email <- "alice@mac.com"
                     self.accountId <- accountId,
-                    status <- topic.isNew ? BaseDb.kStatusQueued : BaseDb.kStatusSynced,
+                    self.status <- status,
                     self.topic <- topic.name,
                     type <- tpv,
                     visible <- TopicType.grp == tp || TopicType.p2p == tp ? 1 : 0,
@@ -240,7 +224,7 @@ public class TopicDb {
                 st.lastUsed = lastUsed
                 st.minLocalSeq = nil
                 st.maxLocalSeq = nil
-                st.status = BaseDb.kStatusUndefined
+                st.status = status
                 st.nextUnsentId = TopicDb.kUnsentIdStart
                 /*
                     id: rowid, lastUsed: lastUsed,
@@ -262,9 +246,7 @@ public class TopicDb {
         guard let st = topic.payload as? StoredTopic, let recordId = st.id else {
             return false
         }
-        guard let record = self.table?.filter(self.id == recordId) else {
-            return false
-        }
+        let record = self.table.filter(self.id == recordId)
         var setters = [Setter]()
         var status = st.status
         if status == BaseDb.kStatusQueued && !topic.isNew {
@@ -284,11 +266,14 @@ public class TopicDb {
         setters.append(self.tags <- topic.tags?.joined(separator: ","))
         setters.append(self.pub <- topic.serializePub())
         setters.append(self.priv <- topic.serializePriv())
-        let lastUsed = Date()
-        setters.append(self.lastUsed <- lastUsed)
+        if let touched = topic.touched {
+            setters.append(self.lastUsed <- touched)
+        }
         do {
             if try self.db.run(record.update(setters)) > 0 {
-                st.lastUsed = lastUsed
+                if topic.touched != nil {
+                    st.lastUsed = topic.touched
+                }
                 st.status = status
                 return true
             }
@@ -322,9 +307,7 @@ public class TopicDb {
             updateLastUsed = true
         }
         if setters.count > 0 {
-            guard let record = self.table?.filter(self.id == recordId) else {
-                return false
-            }
+            let record = self.table.filter(self.id == recordId)
             do {
                 if try self.db.run(record.update(setters)) > 0 {
                     if updateLastUsed { st.lastUsed = ts }
@@ -343,9 +326,7 @@ public class TopicDb {
             return false
         }
         if delId > topic.maxDel {
-            guard let record = self.table?.filter(self.id == recordId) else {
-                return false
-            }
+            let record = self.table.filter(self.id == recordId)
             do {
                 return try self.db.run(record.update(self.maxDel <- delId)) > 0
             } catch {
@@ -357,9 +338,7 @@ public class TopicDb {
     }
     @discardableResult
     func delete(recordId: Int64) -> Bool {
-        guard let record = self.table?.filter(self.id == recordId) else {
-            return false
-        }
+        let record = self.table.filter(self.id == recordId)
         do {
             return try self.db.run(record.delete()) > 0
         } catch {
@@ -368,9 +347,7 @@ public class TopicDb {
         }
     }
     private func updateCounter(for topicId: Int64, in column: Expression<Int?>, with value: Int) -> Bool{
-        guard let record = self.table?.filter(self.id == topicId && column < value) else {
-            return false
-        }
+        let record = self.table.filter(self.id == topicId && column < value)
         do {
             return try self.db.run(record.update(column <- value)) > 0
         } catch {
@@ -379,17 +356,6 @@ public class TopicDb {
         }
     }
     func updateRead(for topicId: Int64, with value: Int) -> Bool {
-        /*
-        guard let record = self.table?.filter(self.id == topicId && self.read < value) else {
-            return false
-        }
-        do {
-            return try self.db.run(record.update(self.read <- value)) > 0
-        } catch {
-            print("updateRead failed: \(error)")
-            return false
-        }
-        */
         return self.updateCounter(for: topicId, in: self.read, with: value)
     }
     func updateRecv(for topicId: Int64, with value: Int) -> Bool {

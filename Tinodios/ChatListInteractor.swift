@@ -29,12 +29,10 @@ class ChatListInteractor: ChatListBusinessLogic, ChatListDataStore {
             print("Contacts got onInfo update \(String(describing: info.what))")
         }
         override func onPres(pres: MsgServerPres) {
-            print("on pres in me topic")
             if pres.what == "msg" || pres.what == "off" || pres.what == "on" {
                 if let name = pres.src {
                     interactor?.updateChat(name)
                 }
-                print("one chat changed " + (pres.src ?? "nil"))
             }
         }
         override func onMetaSub(sub: Subscription<VCard, PrivateType>) {
@@ -113,12 +111,14 @@ class ChatListInteractor: ChatListBusinessLogic, ChatListDataStore {
         Cache.getTinode().listener = nil
     }
     func loadAndPresentTopics() {
+        print("loadAndPresentTopics")
         self.topics = Cache.getTinode().getFilteredTopics(filter: {(topic: TopicProto) in
             return topic.topicType.matches(TopicType.user)
         })?.map {
             // Must succeed.
             $0 as! DefaultComTopic
         }
+        print("loadAndPresentTopics loaded \(self.topics?.count ?? -1) topics")
         self.presenter?.presentTopics(self.topics ?? [])
     }
 

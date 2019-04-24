@@ -9,6 +9,10 @@ import Foundation
 import SQLite
 
 public class BaseDb {
+    // Current database schema version. Increment on schema changes.
+    public static let kSchemaVersion: Int32 = 100
+
+    // Onject statuses.
     // Status undefined/not set.
     public static let kStatusUndefined = 0
     // Object is not ready to be sent to the server.
@@ -57,23 +61,30 @@ public class BaseDb {
         
         self.sqlStore = SqlStore(dbh: self)
     }
-    deinit{
-        self.onDestroy()
-    }
-    private func onCreate() {
+    private func initDb() {
         self.accountDb = AccountDb(self.db!)
-        self.accountDb!.createTable()
         self.userDb = UserDb(self.db!)
-        self.userDb!.createTable()
         self.topicDb = TopicDb(self.db!)
-        self.topicDb!.createTable()
         self.subscriberDb = SubscriberDb(self.db!)
-        self.subscriberDb!.createTable()
         self.messageDb = MessageDb(self.db!)
+
+        if self.db!.schemaVersion != BaseDb.kSchemaVersion {
+            print("Schema has changed from \(self.db?.schemaVersion ?? -1) to \(BaseDb.kSchemaVersion)")
+            // Delete database if schema has changed.
+            self.dropDb()
+
+            self.db!.schemaVersion = BaseDb.kSchemaVersion
+        }
+
+        self.accountDb!.createTable()
+        self.userDb!.createTable()
+        self.topicDb!.createTable()
+        self.subscriberDb!.createTable()
         self.messageDb!.createTable()
+
         self.account = self.accountDb!.getActiveAccount()
     }
-    private func onDestroy() {
+    private func dropDb() {
         self.messageDb?.destroyTable()
         self.subscriberDb?.destroyTable()
         self.topicDb?.destroyTable()
@@ -86,7 +97,7 @@ public class BaseDb {
         }
         let instance = BaseDb()
         BaseDb.default = instance
-        instance.onCreate()
+        instance.initDb()
         return instance
     }
     func isMe(uid: String?) -> Bool {
@@ -114,5 +125,13 @@ public class BaseDb {
     func logout() {
         _ = try? self.accountDb?.deactivateAll()
         self.setUid(uid: nil)
+    }
+}
+
+// Database schema versioning.
+extension Connection {
+    public var schemaVersion: Int32 {
+        get { return Int32((try? scalar("PRAGMA user_version") as! Int64) ?? -1) }
+        set { try! run("PRAGMA user_version = \(newValue)") }
     }
 }
