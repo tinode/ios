@@ -1,45 +1,36 @@
-# Tinodios
+# Tinodios: Tinode Messaging Client for iOS 
 
-Experimental iOS client.
+iOS client for [Tinode](https://github.com/tinode/chat) in Swift.
 
 Status: work in progress.
 
-Presently, Tinode iOS SDK can:
-* Connect to Tinode server.
-* Log into an account.
+The immediate goal is to have a basic end-to-end working application prototype that one will be able to install and use.
+
+## Features
+
+### Completed
+* Login
 * Register new accounts.
-* Subscribe to p2p topics.
-* Publish/receive messages in p2p topics.
-* Send/receive presence notifications.
-
-The immediate goal is to have a basic end-to-end working application prototype that one will be able to install and use for the mentioned functionality.
-
-Currently, the following tasks are in flight:
-* Local data persistence: the messages in chat as well as other data (topics, subscriptions, etc.) are stored in a SQLite db after they are received from the server. This way the UI can fetch them from the db instead of going to the server.
-* App UI:
-  * chat/contacts view: after you log in, the app takes you to the list of your chats/contacts view (this is what this view looks like in Tindroid: https://github.com/tinode/tindroid/blob/master/android-contacts-1.png).
-  * message view: When you click on a chat in the chat/contacts view, it should take you to the messages view for that chat (e.g. https://github.com/tinode/tindroid/blob/master/android-chat-1.png).
-
-This is the skeleton functionality that one should be able to build more features around.
-
-The end goal would be feature parity with the Tindroid (Tinode Android) App:
-* Send and receive messages one-on-one or in group chats.
-* Register new accounts.
-* Start new chats.
-* Edit chat parameters.
+* View the list of active chats
+* Send and receive plain text messages one-on-one or in group chats.
 * In-app presence notifications.
 * Unread message counters.
+* Local data persistence.
+
+### Does not work yet
+* Start new chats.
+* Edit chat parameters.
 * Typing indicators.
-* Push notifications.
-* Indicators for messages received/read (little check marks in messages).
-* Drafty: Markdown-style formatting of text, e.g. *styled* → styled. Implemented as spannable.
+* Delivery and received/read indicators for messages (little check marks in messages).
+* Drafty: Markdown-style formatting of text, e.g. *styled* → styled.
 * Attachments and inline images.
 * Muting/un-muting conversations and other permission management.
-* Integration with Android's stock Contacts.
+* Integration with iOS's stock Contacts.
 * Invite contacts to the app by SMS or email.
 * Transport Level Security - https/wss.
-* Offline mode is mostly functional.
 * Editing of personal details.
+* Push notifications.
+
 
 ## Dependencies
 
@@ -57,4 +48,4 @@ Background patterns from http://subtlepatterns.com/, commercial and non-commerci
 
 
 ## Screenshots
-<img src="ios-chats.png" alt="App screenshot - chat list" width="207" />
+<img src="ios-chats.png" alt="App screenshot - chat list" width="207" /> <img src="ios-chat.png" alt="App screenshot - conversation" width="207" />

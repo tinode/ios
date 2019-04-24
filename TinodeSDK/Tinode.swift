@@ -135,6 +135,7 @@ public class Tinode {
     public var store: Storage? = nil
     public var listener: TinodeEventListener? = nil
     public var topicsLoaded = false
+    private(set) public var topicsUpdated: Date? = nil
 
     struct LoginCredentials {
         let scheme: String
@@ -199,11 +200,17 @@ public class Tinode {
             for t in allTopics {
                 t.store = s
                 topics[t.name] = t
+                if let updated = t.updated {
+                    if topicsUpdated == nil || topicsUpdated! < updated {
+                        topicsUpdated = updated
+                    }
+                }
             }
             topicsLoaded = true
         }
         return topicsLoaded
     }
+
     public func updateUser<DP: Codable, DR: Codable>(uid: String, desc: Description<DP, DR>) {
         if let user = users[uid] {
 
@@ -285,13 +292,22 @@ public class Tinode {
                 print("what = \(what)")
             }
         } else if let meta = serverMsg.meta {
+            var updated: Date? = nil
             if let t = getTopic(topicName: meta.topic!) {
                 //t.route
                 t.routeMeta(meta: meta)
-            } else {
-                _ = maybeCreateTopic(meta: meta)
+                updated = t.updated
+            } else if let t = maybeCreateTopic(meta: meta) {
+                updated = t.updated
                 print("maybe create \(String(describing: meta.topic))")
             }
+
+            if let updated = updated {
+                if topicsUpdated == nil || topicsUpdated! < updated {
+                    topicsUpdated = updated
+                }
+            }
+
             listener?.onMetaMessage(meta: meta)
             try resolveWithPacket(id: meta.id, pkt: serverMsg)
             //if t != nil
@@ -347,6 +363,7 @@ public class Tinode {
             throw TinodeError.notConnected("Attempted to send msg to a closed connection.")
         }
         let jsonData = try Tinode.jsonEncoder.encode(msg)
+        print("out: \(jsonData)")
         conn.send(payload: jsonData)
     }
     private func sendWithPromise<DP: Codable, DR: Codable>(

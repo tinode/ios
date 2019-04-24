@@ -18,7 +18,7 @@ protocol MessageDisplayLogic: class {
 }
 
 class MessageViewController: MessageKit.MessagesViewController, MessageDisplayLogic {
-    static let kOutgoingAvatarOverlap: CGFloat = 17.5
+    static let kAvatarSize: CGFloat = 30
 
     var topicName: String? {
         didSet {
@@ -66,35 +66,22 @@ class MessageViewController: MessageKit.MessagesViewController, MessageDisplayLo
 
         // Hide the outgoing avatar and adjust the label alignment to line up with the messages
         layout.setMessageOutgoingAvatarSize(.zero)
-        layout.setMessageOutgoingMessageTopLabelAlignment(LabelAlignment(textAlignment: .right, textInsets: UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 8)))
         layout.setMessageOutgoingMessageBottomLabelAlignment(LabelAlignment(textAlignment: .right, textInsets: UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 8)))
 
         // Set incoming avatar to overlap with the message bubble
-        layout.setMessageIncomingMessageTopLabelAlignment(LabelAlignment(textAlignment: .left, textInsets: UIEdgeInsets(top: 0, left: 18, bottom: MessageViewController.kOutgoingAvatarOverlap, right: 0)))
-
         if topic!.isP2PType {
             layout.setMessageIncomingAvatarSize(.zero)
         } else {
-            layout.setMessageIncomingAvatarSize(CGSize(width: 30, height: 30))
-            layout.setMessageIncomingMessagePadding(UIEdgeInsets(top: -MessageViewController.kOutgoingAvatarOverlap, left: -18, bottom: MessageViewController.kOutgoingAvatarOverlap, right: 18))
+            layout.setMessageIncomingAvatarSize(CGSize(width: MessageViewController.kAvatarSize, height: MessageViewController.kAvatarSize))
+            layout.setMessageIncomingMessageBottomLabelAlignment(LabelAlignment(textAlignment: .left, textInsets: UIEdgeInsets(top: 0, left: MessageViewController.kAvatarSize + 8, bottom: 0, right: 0)))
+            layout.setMessageIncomingMessagePadding(UIEdgeInsets(top: 0, left: -16, bottom: 0, right: 16))
         }
-
-        /*
-         This is the space for the green (i) icons next to message bubbles.
-         Keeping it here for now in case it's needed.
-         layout.setMessageIncomingAccessoryViewSize(CGSize(width: 30, height: 30))
-         layout.setMessageIncomingAccessoryViewPadding(HorizontalEdgeInsets(left: 8, right: 0))
-         layout.setMessageOutgoingAccessoryViewSize(CGSize(width: 30, height: 30))
-         layout.setMessageOutgoingAccessoryViewPadding(HorizontalEdgeInsets(left: 0, right: 8))
-         */
     }
 
     override func viewDidLoad() {
-        messagesCollectionView = MessagesCollectionView(frame: .zero, collectionViewLayout: MessagesFlowLayout())
         super.viewDidLoad()
 
         messagesCollectionView.messagesDataSource = self
-        // messagesCollectionView.messageCellDelegate = self // Not needed for now - handles taps on messages
         messageInputBar.delegate = self
 
         reloadInputViews()
@@ -142,7 +129,7 @@ extension StoredMessage: MessageType {
         get {
             return Sender(
                 id: self.from ?? "?",
-                displayName: "dn-" + (self.from ?? "?"))
+                displayName: (self.from ?? "Unknown")) // This value is used only when the sender is not found.
         }
     }
     var messageId: String {
@@ -172,6 +159,8 @@ extension MessageViewController {
     func displayChatMessages(messages: [StoredMessage]) {
         self.messages = messages.reversed()
         self.messagesCollectionView.reloadData()
+        // FIXME: don't scroll to bottom in response to loading the next page.
+        // Maybe don't scroll to bottom if the view is not at the bottom already.
         self.messagesCollectionView.scrollToBottom()
     }
 
@@ -184,7 +173,7 @@ extension MessageViewController {
 
 extension MessageViewController: MessagesDataSource {
     func currentSender() -> Sender {
-        return Sender(id: myUID ?? "???", displayName: "??")
+        return Sender(id: myUID ?? "???", displayName: "")
     }
     func numberOfSections(in messagesCollectionView: MessagesCollectionView) -> Int {
         return messages.count
@@ -194,31 +183,28 @@ extension MessageViewController: MessagesDataSource {
     }
 
     func isTimeLabelVisible(at indexPath: IndexPath) -> Bool {
-        return indexPath.section % 3 == 0 && !isPreviousMessageSameSender(at: indexPath)
+        return !isPreviousMessageSameDate(at: indexPath)
     }
 
     func cellTopLabelAttributedText(for message: MessageType, at indexPath: IndexPath) -> NSAttributedString? {
         if isTimeLabelVisible(at: indexPath) {
-            return NSAttributedString(string: MessageKitDateFormatter.shared.string(from: message.sentDate), attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 10), NSAttributedString.Key.foregroundColor: UIColor.darkGray])
+            return NSAttributedString(string: RelativeDateFormatter.shared.dateOnly(from: message.sentDate), attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 10), NSAttributedString.Key.foregroundColor: UIColor.darkGray])
         }
         return nil
     }
 
-    func messageTopLabelAttributedText(for message: MessageType, at indexPath: IndexPath) -> NSAttributedString? {
-        if !isPreviousMessageSameSender(at: indexPath) {
-            let dateString = message.sentDate.formatRelative()
-            return NSAttributedString(string: dateString, attributes: [
-                NSAttributedString.Key.font: UIFont.preferredFont(forTextStyle: .caption1),
-                NSAttributedString.Key.foregroundColor: UIColor.gray
-                ])
-        }
-        return nil
-    }
     func messageBottomLabelAttributedText(for message: MessageType, at indexPath: IndexPath) -> NSAttributedString? {
-        guard topic!.isGrpType && !isFromCurrentSender(message: message) else { return nil }
+        guard topic!.isGrpType && (!isNextMessageSameSender(at: indexPath) || !isNextMessageSameDate(at: indexPath))  else { return nil }
 
-        let name = message.sender.displayName
-        return NSAttributedString(string: name, attributes: [
+        var displayName = message.sender.displayName
+        if let sub = topic?.getSubscription(for: message.sender.id) {
+            displayName = sub.pub!.fn!
+        }
+        let timestamp = RelativeDateFormatter.shared.timeOnly(from: message.sentDate)
+        // FIXME: "delivered" is placeholder
+        let label = isFromCurrentSender(message: message) ? "delivered" : "\(displayName), \(timestamp)"
+
+        return NSAttributedString(string: label, attributes: [
             NSAttributedString.Key.font: UIFont.preferredFont(forTextStyle: .caption2),
             NSAttributedString.Key.foregroundColor: UIColor.gray
             ])
@@ -227,6 +213,18 @@ extension MessageViewController: MessagesDataSource {
 
 extension MessageViewController: MessagesDisplayDelegate, MessagesLayoutDelegate {
     // Helper checks.
+
+    func isPreviousMessageSameDate(at indexPath: IndexPath) -> Bool {
+        guard indexPath.section > 0 else { return false }
+        return Calendar.current.isDate(messages[indexPath.section].sentDate,
+                                       inSameDayAs: messages[indexPath.section - 1].sentDate)
+    }
+
+    func isNextMessageSameDate(at indexPath: IndexPath) -> Bool {
+        guard indexPath.section + 1 < messages.count else { return false }
+        return Calendar.current.isDate(messages[indexPath.section].sentDate,
+                                       inSameDayAs: messages[indexPath.section + 1].sentDate)
+    }
 
     func isPreviousMessageSameSender(at indexPath: IndexPath) -> Bool {
         guard indexPath.section > 0 else { return false }
@@ -241,7 +239,7 @@ extension MessageViewController: MessagesDisplayDelegate, MessagesLayoutDelegate
     func configureAvatarView(_ avatarView: AvatarView, for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) {
         // Hide current user's avatar as well as peer's avatar in p2p topics.
         // Avatars are useful in group topics only
-        avatarView.isHidden = topic!.isP2PType || isNextMessageSameSender(at: indexPath)
+        avatarView.isHidden = topic!.isP2PType || (isNextMessageSameSender(at: indexPath) && isNextMessageSameDate(at: indexPath))
         if let sub = topic?.getSubscription(for: message.sender.id) {
             avatarView.set(icon: sub.pub?.photo?.image(), title: sub.pub?.fn, id: message.sender.id)
         } else {
@@ -265,19 +263,19 @@ extension MessageViewController: MessagesDisplayDelegate, MessagesLayoutDelegate
         if isFromCurrentSender(message: message) {
             corners.formUnion(.topLeft)
             corners.formUnion(.bottomLeft)
-            if !isPreviousMessageSameSender(at: indexPath) {
+            if !isPreviousMessageSameSender(at: indexPath) || !isPreviousMessageSameDate(at: indexPath) {
                 corners.formUnion(.topRight)
             }
-            if !isNextMessageSameSender(at: indexPath) {
+            if !isNextMessageSameSender(at: indexPath) || !isNextMessageSameDate(at: indexPath) {
                 corners.formUnion(.bottomRight)
             }
         } else {
             corners.formUnion(.topRight)
             corners.formUnion(.bottomRight)
-            if !isPreviousMessageSameSender(at: indexPath) {
+            if !isPreviousMessageSameSender(at: indexPath) || !isPreviousMessageSameDate(at: indexPath) {
                 corners.formUnion(.topLeft)
             }
-            if !isNextMessageSameSender(at: indexPath) {
+            if !isNextMessageSameSender(at: indexPath) || !isNextMessageSameSender(at: indexPath) {
                 corners.formUnion(.bottomLeft)
             }
         }
@@ -294,19 +292,14 @@ extension MessageViewController: MessagesDisplayDelegate, MessagesLayoutDelegate
 
     func cellTopLabelHeight(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGFloat {
         if isTimeLabelVisible(at: indexPath) {
-            return 18
+            return 24
         }
         return 0
     }
-    func messageTopLabelHeight(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGFloat {
-        if isFromCurrentSender(message: message) {
-            return !isPreviousMessageSameSender(at: indexPath) ? 20 : 0
-        } else {
-            return !isPreviousMessageSameSender(at: indexPath) ? (20 + MessageViewController.kOutgoingAvatarOverlap) : 0
-        }
-    }
+
+    // This is the hight of the field with the sender's name (left) or delivery status (right).
     func messageBottomLabelHeight(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGFloat {
-        return (!isNextMessageSameSender(at: indexPath) && isFromCurrentSender(message: message)) ? 16 : 0
+        return isNextMessageSameSender(at: indexPath) && isNextMessageSameDate(at: indexPath) ? 0 : 16
     }
 }
 
