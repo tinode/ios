@@ -13,7 +13,7 @@ public enum TinodeJsonError: Error {
     case decode
 }
 
-public enum TinodeError: Error {
+public enum TinodeError: Error, CustomStringConvertible {
     case invalidReply(String)
     case invalidState(String)
     case notConnected(String)
