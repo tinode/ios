@@ -425,6 +425,10 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
     }
 
     public func getMetaGetBuilder() -> MetaGetBuilder {
+        // Ensure the topic is fully initialized before any get requests are issued.
+        if subs == nil {
+            loadSubs()
+        }
         return MetaGetBuilder(parent: self)
     }
 
@@ -509,7 +513,7 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
         listener?.onAllMessagesReceived(count: count ?? 0)
     }
 
-    private func loadSubs() -> Int {
+    @discardableResult internal func loadSubs() -> Int {
         guard let loaded = store?.getSubscriptions(topic: self) else { return 0 }
         subsLastUpdated = loaded.max(by: {(s1, s2) -> Bool in
             ((s1.updated ?? Date.distantPast) < (s2.updated ?? Date.distantPast))
@@ -521,7 +525,7 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
 
     public func getSubscription(for key: String?) -> Subscription<SP, SR>? {
         if subs == nil {
-            _ = loadSubs()
+            loadSubs()
         }
         if let k = key {
             return subs != nil ? subs![k] : nil
@@ -939,6 +943,11 @@ open class MeTopic<DP: Codable>: Topic<DP, PrivateType, DP, PrivateType> {
 
     override public var subsUpdated: Date? {
         get { return tinode?.topicsUpdated }
+    }
+
+    override func loadSubs() -> Int {
+        // Don't attempt to load subscriptions: 'me' subscriptions are stored as topics.
+        return 0
     }
 
     override public func routePres(pres: MsgServerPres) {
