@@ -44,7 +44,7 @@ public class Connection {
     
     private var webSocketConnection: WebSocket?
     private var connectionListener: ConnectionListener?
-    private var endpoint: URL
+    private var endpointComponenets: URLComponents
     private var apiKey: String
     private var useTLS = false
     private var connectQueue = DispatchQueue(label: "co.tinode.connection")
@@ -57,10 +57,16 @@ public class Connection {
     init(open url: URL, with apiKey: String, notify listener: ConnectionListener?) {
         self.apiKey = apiKey
         // TODO: apply necessary URL modifications.
-        self.endpoint = url
+        self.endpointComponenets = URLComponents(url: url, resolvingAgainstBaseURL: false)!
         self.connectionListener = listener
-        if url.scheme == "wss" || url.scheme == "https" {
-            self.useTLS = true
+        if let scheme = endpointComponenets.scheme, scheme == "wss" || scheme == "https" {
+            endpointComponenets.scheme = "wss"
+            useTLS = true
+        } else {
+            endpointComponenets.scheme = "ws"
+        }
+        if endpointComponenets.port == nil {
+            endpointComponenets.port = useTLS ? 443 : 80
         }
         self.webSocketConnection = WebSocket()
         // Use a separate thread to run network event handlers.
@@ -102,12 +108,7 @@ public class Connection {
     }
 
     private func createUrlRequest() throws -> URLRequest {
-        var components = URLComponents()
-        components.scheme = self.endpoint.scheme!
-        components.host = self.endpoint.host!
-        components.port = self.endpoint.port!
-        components.path = "/v0/channels"
-        var request = URLRequest(url: components.url!)
+        var request = URLRequest(url: endpointComponenets.url!)
         request.addValue(apiKey, forHTTPHeaderField: "X-Tinode-APIKey")
         return request
     }
