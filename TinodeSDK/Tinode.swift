@@ -817,13 +817,21 @@ public class Tinode {
             leave: MsgClientLeave(id: msgId, topic: topic, unsub: unsub))
         return sendWithPromise(payload: msg, with: msgId)
     }
-    public func publish(topic: String, data: String?) -> PromisedReply<ServerMessage>? {
-        //ClientMessage msg = new ClientMessage(new MsgClientLeave(getNextId(), topicName, unsub)
-        let content = data != nil ? JSONValue.string(data!) : nil
+
+    internal func publish(topic: String, head: [String:JSONValue]?, content: JSONValue?) -> PromisedReply<ServerMessage>? {
         let msgId = getNextMsgId()
         let msg = ClientMessage<Int, Int>(
-            pub: MsgClientPub(id: msgId, topic: topic, noecho: true, head: nil, content: content))
+            pub: MsgClientPub(id: msgId, topic: topic, noecho: true, head: head, content: content))
         return sendWithPromise(payload: msg, with: msgId)
+    }
+
+    public func publish(topic: String, data: String?) -> PromisedReply<ServerMessage>? {
+        let content = data != nil ? JSONValue.string(data!) : nil
+        return publish(topic: topic, head: nil, content: content)
+    }
+
+    public func publish(topic: String, data: Drafty) -> PromisedReply<ServerMessage>? {
+        return try! publish(topic: topic, head: ["mime": JSONValue.string(Drafty.kMimeType)], content: JSONValue(from: data as! Decoder))
     }
 
     public func getFilteredTopics(filter: ((TopicProto) -> Bool)?) -> Array<TopicProto>? {

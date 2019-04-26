@@ -12,7 +12,7 @@ public enum DraftyError: Error {
     case invalidIndex(String)
 }
 
-public protocol Formatter {
+public protocol DraftyFormatter {
     associatedtype Node
 
     func apply(tp: String?, attr: [String:JSONValue]?, content: [Node]) -> [Node]
@@ -150,7 +150,7 @@ public class Drafty: Codable {
 
         var last = spans[0]
         tree.append(last)
-        for i in 0...spans.count {
+        for i in 0..<spans.count {
             let curr = spans[i]
             // Keep spans which start after the end of the previous span or those which
             // are complete within the previous span.
@@ -213,7 +213,7 @@ public class Drafty: Codable {
         var extracted: [ExtractedEnt] = []
         let nsline = line as NSString
 
-        for i in 0...Drafty.kEntityName.count {
+        for i in 0..<Drafty.kEntityName.count {
             let matches = kEntityProc[i].re.matches(in: line, range: NSRange(location: 0, length: nsline.length))
             for m in matches {
                 let ee = ExtractedEnt()
@@ -245,7 +245,7 @@ public class Drafty: Codable {
         for line in lines {
             spans = []
             // Select styled spans.
-            for i in 0...Drafty.kInlineStyleName.count {
+            for i in 0..<Drafty.kInlineStyleName.count {
                 spans!.append(contentsOf: spannify(original: line, re: Drafty.kInlineStyleRE[i], type: Drafty.kInlineStyleName[i]))
             }
 
@@ -294,7 +294,7 @@ public class Drafty: Codable {
             if let bfmt = b.fmt {
                 fmt.append(contentsOf: bfmt)
             }
-            for i in 0...blks.count {
+            for i in 0..<blks.count {
                 let offset = text.count + 1
                 fmt.append(Style(tp: "BR", at: offset - 1, len: 1))
 
@@ -553,12 +553,12 @@ public class Drafty: Codable {
      *
      * @return true if this Drafty has no markup other thn line breaks.
      */
-    public func isPlain() -> Bool {
+    public var isPlain: Bool {
         return ent == nil && fmt == nil
     }
 
     // Inverse of chunkify. Returns a tree of formatted spans.
-    private func forEach<FmtType: Formatter, Node>(line: String, start startAt: Int, end: Int, spans: [Span], formatter: FmtType) -> [Node] where Node == FmtType.Node {
+    private func forEach<FmtType: DraftyFormatter, Node>(line: String, start startAt: Int, end: Int, spans: [Span], formatter: FmtType) -> [Node] where Node == FmtType.Node {
 
         var start = startAt
         guard !spans.isEmpty else {
@@ -629,7 +629,7 @@ public class Drafty: Codable {
      *                  applied to every node in the tree.
      * @return a tree of components.
      */
-    public func format<FmtType: Formatter, Node>(formatter: FmtType) -> [Node] where Node == FmtType.Node {
+    public func format<FmtType: DraftyFormatter, Node>(formatter: FmtType) -> [Node] where Node == FmtType.Node {
         if txt == nil {
             txt = ""
         }
@@ -679,8 +679,19 @@ public class Drafty: Codable {
         return "{txt: '\(txt ?? "nil")', fmt: \(fmt ?? []), ent: \(ent ?? [])}"
     }
 
-    // ================
-    // Internal classes
+    public func serialize() -> String? {
+        return isPlain ? txt : Tinode.serializeObject(t: self)
+    }
+
+    public static func deserialize(from data: String?) -> Drafty? {
+        guard let data = data else { return nil }
+        if let drafty: Drafty = Tinode.deserializeObject(from: data) {
+            return drafty
+        }
+        return Drafty(content: data)
+    }
+
+    // MARK: Internal classes
 
     fileprivate class Block {
         var txt: String

@@ -878,7 +878,7 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
         setRead(read: seq)
         store?.setRead(topic: self, read: seq)
     }
-    public func publish(content: String?, msgId: Int64) -> PromisedReply<ServerMessage>? {
+    public func publish(content: Drafty, msgId: Int64) -> PromisedReply<ServerMessage>? {
         return try! tinode!.publish(topic: name, data: content)?.then(
             onSuccess: { [weak self] msg in
                 self?.processDelivery(ctrl: msg.ctrl, id: msgId)
@@ -889,10 +889,10 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
                 throw err
             })
     }
-    public func publish(content: String?) -> PromisedReply<ServerMessage>? {
+    public func publish(content: Drafty) -> PromisedReply<ServerMessage>? {
         var id: Int64 = -1
-        if let s = store, let c = content {
-            id = s.msgSend(topic: self, data: c)
+        if let s = store {
+            id = s.msgSend(topic: self, data: content)
         }
         if attached {
             return publish(content: content, msgId: id)
@@ -937,7 +937,7 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
         for msg in pendingMsgs {
             let msgId = msg.msgId
             _ = self.store?.msgSyncing(topic: self, dbMessageId: msgId, sync: true)
-            result = self.publish(content: msg.content, msgId: msgId)
+            result = self.publish(content: msg.content!, msgId: msgId)
             /*
             result = try! self.tinode?.publish(
                 topic: self.name, data: msg.content)?.then(

@@ -101,7 +101,7 @@ class MessageDb {
                 setters.append(self.sender <- msg.from)
                 setters.append(self.ts <- msg.ts)
                 setters.append(self.seq <- msg.seq)
-                setters.append(self.content <- msg.content)
+                setters.append(self.content <- msg.content?.serialize())
                 msg.msgId = try db.run(self.table.insert(setters))
             }
             return msg.msgId
@@ -117,7 +117,7 @@ class MessageDb {
             setters.append(self.status <- status!)
         }
         if content != nil {
-            setters.append(self.content <- content!)
+            setters.append(self.content <- content!.serialize())
         }
         if !setters.isEmpty {
             do {
@@ -158,7 +158,7 @@ class MessageDb {
         sm.from = r[self.sender]
         sm.ts = r[self.ts]
         sm.seq = r[self.seq]
-        sm.content = r[self.content]
+        sm.content = Drafty.deserialize(from: r[self.content])
         return sm
     }
     func query(topicId: Int64?, pageCount: Int, pageSize: Int) -> [StoredMessage]? {
