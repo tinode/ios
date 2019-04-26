@@ -403,7 +403,7 @@ public class Drafty: Codable {
         return try! insertImage(at: at, mime: mime, bits: bits, width: width, height: height, fname: fname, refurl: nil, size: 0)
     }
 
-    /// Insert inline image
+    /// Insert image either as a reference or inline.
     ///
     /// - Parameters:
     ///     - at: location to insert image at
@@ -449,7 +449,7 @@ public class Drafty: Codable {
         return self
     }
 
-    /// Attach file to a drafty object in-band.
+    /// Attach file to a drafty object inline.
     ///
     /// - Parameters:
     ///     - mime: Content-type, such as 'text/plain'.
@@ -472,7 +472,7 @@ public class Drafty: Codable {
         return try! attachFile(mime: mime, bits: nil, fname: fname, refurl: refurl, size: size)
     }
 
-    /// Attach file to a drafty object as reference.
+    /// Attach file to a drafty object either as a reference or inline.
     ///
     /// - Parameters:
     ///     - mime: Content-type, such as 'text/plain'.
