@@ -295,7 +295,7 @@ public class Drafty: Codable {
             if let bfmt = b.fmt {
                 fmt.append(contentsOf: bfmt)
             }
-            for i in 0..<blks.count {
+            for i in 1..<blks.count {
                 let offset = text.count + 1
                 fmt.append(Style(tp: "BR", at: offset - 1, len: 1))
 
