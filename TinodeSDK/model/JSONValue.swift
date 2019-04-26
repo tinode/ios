@@ -16,7 +16,7 @@ public enum JSONValue: Codable {
     case bool(Bool)
     case dict([String: JSONValue])
     case array([JSONValue])
-    case bits(Data)
+    case bytes(Data)
     
     public func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
@@ -33,7 +33,7 @@ public enum JSONValue: Codable {
             try container.encode(v)
         case .array(let v):
             try container.encode(v)
-        case .bits(let v):
+        case .bytes(let v):
             try container.encode(v)
         }
     }

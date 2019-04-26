@@ -12,6 +12,13 @@ public enum DraftyError: Error {
     case invalidIndex(String)
 }
 
+public protocol Formatter {
+    associatedtype T
+
+    func apply(tp: String?, attr: [String:JSONValue]?, content: T) -> T
+    func apply(tp: String?, attr: [String:JSONValue]?, content: String?) -> T
+}
+
 public class Drafty: Codable {
     public static let kMimeType = "text/x-drafty"
     public static let kJSONMimeType = "application/json"
@@ -29,24 +36,24 @@ public class Drafty: Codable {
     ]
 
     private static let kEntityName = ["LN", "MN", "HT"]
-    private static let kEntityProc = [
+    private static let kEntityProc = try! [
         EntityProc(name: "LN",
                    pattern: NSRegularExpression(pattern: #"(?<=^|\W)(https?://)?(?:www\.)?[-a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,4}\b(?:[-a-zA-Z0-9@:%_+.~#?&/=]*)"#),
-                   pack: {(m: Matcher) -> [String:JSONValue] in
+                   pack: {(m: NSTextCheckingResult) -> [String:JSONValue] in
                     var data: [String:JSONValue] = [:]
                     data["url"] = m.group(1) == nil ? "http://" + m.group() : m.group()
                     return data
             }),
         EntityProc(name: "MN",
                    pattern: NSRegularExpression(pattern: #"\B@(\w\w+)"#),
-                   pack: {(m: Matcher) -> [String:JSONValue] in
+                   pack: {(m: NSTextCheckingResult) -> [String:JSONValue] in
                     var data: [String:JSONValue] = [:]
                     data["val"] = m.group()
                     return data
             }),
         EntityProc(name: "HT",
                    pattern: NSRegularExpression(pattern: #"(?<=[\s,.!]|^)#(\w\w+)"#),
-                   pack: {(m: Matcher) -> [String:JSONValue] in
+                   pack: {(m: NSTextCheckingResult) -> [String:JSONValue] in
                     var data: [String:JSONValue] = [:]
                     data["val"] = m.group()
                     return data
@@ -68,7 +75,7 @@ public class Drafty: Codable {
         self.ent = that.ent
     }
 
-    init(text: String, fmt: [Style], ent: [Entity]) {
+    init(text: String, fmt: [Style]?, ent: [Entity]?) {
         self.txt = text
         self.fmt = fmt
         self.ent = ent
@@ -78,13 +85,13 @@ public class Drafty: Codable {
     // ignored at this stage.
     private static func spannify(original: String, re: NSRegularExpression, type: String) -> [Span] {
         var spans: [Span] = []
-        let matches = re.matches(in: original, range: NSRange(location: 0, length: original.count)
-        while matcher.find() {
+        let matcher = re.matches(in: original, range: NSRange(location: 0, length: original.count))
+        for match in matcher {
             var s = Span()
-            s.start = matcher.start(0)  // 'hello *world*'
+            s.start = match.start(0)  // 'hello *world*'
             // ^ group(zero) -> index of the opening markup character
-            s.end = matcher.end(1)      // group(one) -> index of the closing markup character
-            s.text = matcher.group(1)          // text without of the markup
+            s.end = match.end(1)      // group(one) -> index of the closing markup character
+            s.text = match.group(1)          // text without of the markup
             s.type = type
             spans.append(s)
         }
@@ -201,14 +208,14 @@ public class Drafty: Codable {
         var extracted: [ExtractedEnt] = []
 
         for i in 0...Drafty.kEntityName.count {
-            var matcher = kEntityProc[i].re.matcher(line)
-            while matcher.find() {
+            var matches = kEntityProc[i].re.matches(in: line)
+            for m in matches {
                 var ee = ExtractedEnt()
-                ee.at = matcher.start(0)
-                ee.value = matcher.group(0)
+                ee.at = m.start(0)
+                ee.value = m.group(0)
                 ee.len = ee.value.count
                 ee.tp = kEntityName[i];
-                ee.data = kEntityProc[i].pack(matcher)
+                ee.data = kEntityProc[i].pack(m)
                 extracted.append(ee)
             }
         }
@@ -222,20 +229,19 @@ public class Drafty: Codable {
         var blks: [Block] = []
         var refs: [Entity] = []
 
-        var spans: [Span] = []
+        var spans: [Span]?
         var entityMap: [String:JSONValue] = [:]
-        var entities: [ExtractedEnt]
         for line in lines {
             spans = []
             // Select styled spans.
             for i in 0...Drafty.kInlineStyleName.count {
-                spans.append(contentsOf: spannify(original: line, re: Drafty.kInlineStyleRE[i], type: Drafty.kInlineStyleName[i]))
+                spans!.append(contentsOf: spannify(original: line, re: Drafty.kInlineStyleRE[i], type: Drafty.kInlineStyleName[i]))
             }
 
-            let b: Block
-            if !spans.isEmpty {
+            let b: Block?
+            if !spans!.isEmpty {
                 // Sort styled spans in ascending order by .start
-                Collection.sort(spans)
+                spans!.sort()
 
                 // Rearrange linear list of styled spans into a tree, throw away invalid spans.
                 spans = toTree(spans: spans)
@@ -249,22 +255,23 @@ public class Drafty: Codable {
                 b = Block(txt: line)
             }
 
-            // Extract entities from the string already cleared of markup.
-            entities = extractEntities(line: b.txt)
-            // Normalize entities by splitting them into spans and references.
-            for ent in entities {
-                // Check if the entity has been indexed already
-                var index = entityMap[ent.value]
-                if index == nil {
-                    index = refs.count;
-                    entityMap[ent.value] = index
-                    refs.append(Entity(tp: ent.tp, data: ent.data))
+            if let b = b {
+                // Extract entities from the string already cleared of markup.
+                let eentities = extractEntities(line: b.txt)
+                // Normalize entities by splitting them into spans and references.
+                for eent in eentities {
+                    // Check if the entity has been indexed already
+                    var index = entityMap[eent.value]
+                    if index == nil {
+                        entityMap[eent.value] = JSONValue.int(refs.count)
+                        refs.append(Entity(tp: eent.tp, data: eent.data))
+                    }
+
+                    b.addStyle(s: Style(at: eent.at, len: eent.len, key: index))
                 }
 
-                b.addStyle(Style(ent.at, ent.len, index))
+                blks.append(b)
             }
-
-            blks.append(b)
         }
 
         var text: String = ""
@@ -272,9 +279,7 @@ public class Drafty: Codable {
         // Merge lines and save line breaks as BR inline formatting.
         if blks.count > 0 {
             var b = blks[0]
-            if let btxt = b.txt {
-                text.append(btxt)
-            }
+            text.append(b.txt)
             if let bfmt = b.fmt {
                 fmt.append(contentsOf: bfmt)
             }
@@ -284,21 +289,17 @@ public class Drafty: Codable {
 
                 b = blks[i]
                 text.append(" ")
-                if let btxt = b.txt {
-                    text.append(btxt)
-                }
+                text.append(b.txt)
                 if let bfmt = b.fmt {
                     for s in bfmt {
-                        s.at += offset
+                        s.at = (s.at ?? 0) + offset
                         fmt.append(s)
                     }
                 }
             }
         }
 
-        return Drafty(text.toString(),
-                          fmt.size() > 0 ? fmt.toArray(new Style[0]) : nil,
-                          refs.size() > 0 ? refs.toArray(new Entity[0]) : nil)
+        return Drafty(text: text, fmt: fmt.isEmpty ? nil : fmt, ent: refs.isEmpty ? nil : refs)
     }
 
     public func getStyles() -> [Style]? {
@@ -320,7 +321,11 @@ public class Drafty: Codable {
         var result: [String] = []
         for anEnt in ent {
             if let ref = anEnt.data?["ref"] {
-                result.append(ref)
+                switch ref {
+                case .string(let str):
+                    result.append(str)
+                default: break
+                }
             }
         }
         return result.isEmpty ? nil : result
@@ -394,7 +399,7 @@ public class Drafty: Codable {
             data["mime"] = JSONValue.string(mime)
         }
         if let bits = bits {
-            data["val"] = JSONValue.bits(bits)
+            data["val"] = JSONValue.bytes(bits)
         }
         data["width"] = JSONValue.int(width)
         data["height"] = JSONValue.int(height)
@@ -460,7 +465,7 @@ public class Drafty: Codable {
             data["mime"] = JSONValue.string(mime)
         }
         if let bits = bits {
-            data["val"] = JSONValue.bits(bits)
+            data["val"] = JSONValue.bytes(bits)
         }
         if let fname = fname, !fname.isEmpty {
             data["name"] = JSONValue.string(fname)
@@ -542,8 +547,9 @@ public class Drafty: Codable {
     }
 
     // Inverse of chunkify. Returns a tree of formatted spans.
-    private func forEach<T>(line: String, start: Int, end: Int, spans: [Span]?, formatter: Formatter) -> [T] {
+    private func forEach<T>(line: String, start startAt: Int, end: Int, spans: [Span]?, formatter: Formatter) -> [T] {
         var result: [T] = []
+        var start = startAt
         guard let spans = spans else {
             if let fs = formatter<T>.apply(nil, nil, line.substring(start, end)) {
                 result.append(fs)
@@ -607,7 +613,7 @@ public class Drafty: Codable {
 
         // Add the last unformatted range.
         if start < end {
-            if let fs = formatter.apply(null, null, line.substring(start, end)) {
+            if let fs = formatter<T>.apply(nil, nil, line.substring(start, end)) {
                 result.append(fs)
             }
         }
@@ -624,60 +630,50 @@ public class Drafty: Codable {
      *                  applied to every node in the tree.
      * @return a tree of components.
      */
-    public func format(formatter: Formatter) -> Any {
+    public func format<T>(formatter: Formatter) -> T {
         if txt == nil {
             txt = ""
         }
 
-        // Handle special case when all values in fmt are 0 and fmt is therefore was
+        // Handle special case when all values in fmt are 0 and fmt therefore was
         // skipped.
-        if (fmt == null || fmt.length == 0) {
-            if (ent != null && ent.length == 1) {
-                fmt = new Style[1];
-                fmt[0] = new Style(0, 0, 0);
+        if fmt == nil || fmt!.isEmpty {
+            if ent != nil && ent!.count == 1 {
+                fmt = [Style(at: 0, len: 0, key: 0)]
             } else {
-                return formatter.apply(null, null, txt);
+                return formatter.apply(nil, nil, txt)
             }
         }
 
-        List<Span> spans = new ArrayList<>();
-        for (Style aFmt : fmt) {
-            if (aFmt.len < 0) {
-                aFmt.len = 0;
+        var spans: [Span] = []
+        for aFmt in fmt! {
+            if aFmt.len < 0 {
+                aFmt.len = 0
             }
-            if (aFmt.at < -1) {
-                aFmt.at = -1;
+            if aFmt.at < -1 {
+                aFmt.at = -1
             }
-            if (aFmt.tp == null || "".equals(aFmt.tp)) {
-                spans.add(new Span(aFmt.at, aFmt.at + aFmt.len,
-                                   aFmt.key != null ? aFmt.key : 0));
+            if aFmt.tp == nil || aFmt.tp!.isEmpty {
+                spans.append(Span(start: aFmt.at ?? 0, end: (aFmt.at ?? 0) + (aFmt.len ?? 0), index: aFmt.key ?? 0))
             } else {
-                spans.add(new Span(aFmt.tp, aFmt.at, aFmt.at + aFmt.len));
+                spans.append(Span(type: aFmt.tp, start: aFmt.at, end: aFmt.at + aFmt.len))
             }
         }
 
         // Sort spans first by start index (asc) then by length (desc).
-        Collections.sort(spans, new Comparator<Span>() {
-            @Override
-            public int compare(Span a, Span b) {
-                if (a.start - b.start == 0) {
-                    return b.end - a.end; // longer one comes first (<0)
-                }
-                return a.start - b.start;
-            }
-        });
+        spans.sort()
 
-        for (Span span : spans) {
-            if (ent != null && (span.type == null || "".equals(span.type))) {
-                if (span.key >= 0 && span.key < ent.length && ent[span.key] != null) {
-                    span.type = ent[span.key].tp;
-                    span.data = ent[span.key].data;
+        for span in spans {
+            if ent != nil && (span.type == nil || span.type!.isEmpty) {
+                if span.key >= 0 && span.key < ent!.count && ent![span.key] != nil {
+                    span.type = ent![span.key].tp
+                    span.data = ent![span.key].data
                 }
             }
 
             // Is type still undefined? Hide the invalid element!
-            if (span.type == null || "".equals(span.type)) {
-                span.type = "HD";
+            if span.type == nil || span.type!.isEmpty {
+                span.type = "HD"
             }
         }
 
@@ -759,7 +755,7 @@ public class Drafty: Codable {
         var tp: String
         var value: String
 
-        var data: [String:Codable]
+        var data: [String:JSONValue]
 
         init() {}
     }
@@ -821,18 +817,12 @@ public class Entity: Codable, CustomStringConvertible {
     }
 }
 
-
-public protocol Formatter {
-    associatedtype T
-    func apply(tp: String, attr: [String:Codable], content: Any) -> T
-}
-
 fileprivate class EntityProc {
     var name: String
     var re: NSRegularExpression
-    var pack: (_ m: Matcher) -> [String:JSONValue]
+    var pack: (_ m: NSTextCheckingResult) -> [String:JSONValue]
 
-    init(name: String, pattern: NSRegularExpression, pack: (_ m: Matcher) -> [String:JSONValue]) {
+    init(name: String, pattern: NSRegularExpression, pack: @escaping (_ m: NSTextCheckingResult) -> [String:JSONValue]) {
         self.name = name
         self.re = pattern
         self.pack = pack
