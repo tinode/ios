@@ -13,10 +13,10 @@ public enum DraftyError: Error {
 }
 
 public protocol Formatter {
-    associatedtype T
+    associatedtype Node
 
-    func apply(tp: String?, attr: [String:JSONValue]?, content: T) -> T
-    func apply(tp: String?, attr: [String:JSONValue]?, content: String?) -> T
+    func apply(tp: String?, attr: [String:JSONValue]?, content: [Node]) -> [Node]
+    func apply(tp: String?, attr: [String:JSONValue]?, content: String?) -> [Node]
 }
 
 public class Drafty: Codable {
@@ -228,7 +228,7 @@ public class Drafty: Codable {
             }
         }
 
-        return extracted;
+        return extracted
     }
 
     public static func parse(content: String) -> Drafty {
@@ -348,7 +348,7 @@ public class Drafty: Codable {
         return ent[index]
     }
 
-    // Convert Drafty to plain text;
+    // Convert Drafty to plain text
     public var string: String {
         get {
             return txt ?? ""
@@ -469,7 +469,7 @@ public class Drafty: Codable {
             throw DraftyError.illegalArgument("Either file bits or reference URL must not be nil.")
         }
 
-        prepareForEntity(at: -1, len: 1);
+        prepareForEntity(at: -1, len: 1)
 
         var data: [String:JSONValue] = [:]
         if let mime = mime, !mime.isEmpty {
@@ -558,50 +558,45 @@ public class Drafty: Codable {
     }
 
     // Inverse of chunkify. Returns a tree of formatted spans.
-    private func forEach<T>(line: String, start startAt: Int, end: Int, spans: [Span]?, formatter: Formatter) -> [T] {
-        var result: [T] = []
+    private func forEach<FmtType: Formatter, Node>(line: String, start startAt: Int, end: Int, spans: [Span], formatter: FmtType) -> [Node] where Node == FmtType.Node {
+
         var start = startAt
-        guard let spans = spans else {
-            if let fs = formatter<T>.apply(nil, nil, String(line[line.index(line.startIndex, offsetBy: start)..<line.index(line.startIndex, offsetBy: end)])) {
-                result.append(fs)
-            }
-            return result
+        guard !spans.isEmpty else {
+            return formatter.apply(tp: nil, attr: nil, content: String(line[line.index(line.startIndex, offsetBy: start)..<line.index(line.startIndex, offsetBy: end)]))
         }
 
-        // Process ranges calling formatter for each range.
-        var iter = spans.makeIterator()
-        while let span = iter.next() {
+        var result: [Node] = []
+
+        // Process ranges calling formatter for each range. Have to use index because it needs to step back.
+        var i = 0
+        while i < spans.count {
+            let span = spans[i]
+            i += 1
             if span.start < 0 && span.type == "EX" {
                 // This is different from JS SDK. JS ignores these spans here.
                 // JS uses Drafty.attachments() to get attachments.
-                if let fs = formatter.apply(span.type, span.data, nil) {
-                    result.append(fs)
-                }
+                result.append(contentsOf: formatter.apply(tp: span.type, attr: span.data, content: nil))
                 continue
             }
 
             // Add un-styled range before the styled span starts.
             if start < span.start {
-                if let fs = formatter.apply(nil, nil, String(line[line.index(line.startIndex, offsetBy: start)..<line.index(line.startIndex, offsetBy: span.start)])) {
-                    result.append(fs)
-                }
+                result.append(contentsOf: formatter.apply(tp: nil, attr: nil, content: String(line[line.index(line.startIndex, offsetBy: start)..<line.index(line.startIndex, offsetBy: span.start)])))
                 start = span.start
             }
 
             // Get all spans which are within the current span.
             var subspans: [Span] = []
-            while let inner = iter.next() {
+            while i < spans.count {
+                let inner = spans[i]
+                i += 1
                 if inner.start < span.end {
                     subspans.append(inner)
                 } else {
                     // Move back.
-                    iter.previous();
+                    i -= 1
                     break
                 }
-            }
-
-            if subspans.isEmpty {
-                subspans = nil
             }
 
             if span.type == "BN" {
@@ -609,14 +604,9 @@ public class Drafty: Codable {
                 span.data = span.data ?? [:]
                 let title = String(line[line.index(line.startIndex, offsetBy: span.start)..<line.index(line.startIndex, offsetBy: span.end)])
                 span.data!["title"] = JSONValue.string(title)
-                if let fs = formatter.apply(span.type, span.data, title) {
-                    result.append(fs)
-                }
+                result.append(contentsOf: formatter.apply(tp: span.type, attr: span.data, content: title))
             } else {
-                if let fs = formatter.apply(span.type, span.data,
-                                            forEach(line, start, span.end, subspans, formatter)) {
-                    result.append(fs)
-                }
+                result.append(contentsOf: formatter.apply(tp: span.type, attr: span.data, content: forEach(line: line, start: start, end: span.end, spans: subspans, formatter: formatter)))
             }
 
             start = span.end
@@ -624,9 +614,7 @@ public class Drafty: Codable {
 
         // Add the last unformatted range.
         if start < end {
-            if let fs = formatter<T>.apply(nil, nil,  String(line[line.index(line.startIndex, offsetBy: start)..<line.index(line.startIndex, offsetBy: end)])) {
-                result.append(fs)
-            }
+            result.append(contentsOf: formatter.apply(tp: nil, attr: nil,  content: String(line[line.index(line.startIndex, offsetBy: start)..<line.index(line.startIndex, offsetBy: end)])))
         }
 
         return result
@@ -641,7 +629,7 @@ public class Drafty: Codable {
      *                  applied to every node in the tree.
      * @return a tree of components.
      */
-    public func format<T>(formatter: Formatter) -> T {
+    public func format<FmtType: Formatter, Node>(formatter: FmtType) -> [Node] where Node == FmtType.Node {
         if txt == nil {
             txt = ""
         }
@@ -652,20 +640,16 @@ public class Drafty: Codable {
             if ent != nil && ent!.count == 1 {
                 fmt = [Style(at: 0, len: 0, key: 0)]
             } else {
-                return formatter.apply(nil, nil, txt)
+                return formatter.apply(tp: nil, attr: nil, content: txt)
             }
         }
 
         var spans: [Span] = []
         for aFmt in fmt! {
-            if aFmt.len < 0 {
-                aFmt.len = 0
-            }
-            if aFmt.at < -1 {
-                aFmt.at = -1
-            }
+            aFmt.len = max(aFmt.len, 0)
+            aFmt.at = max(aFmt.at, -1)
             if aFmt.tp == nil || aFmt.tp!.isEmpty {
-                spans.append(Span(start: aFmt.at ?? 0, end: (aFmt.at ?? 0) + (aFmt.len ?? 0), index: aFmt.key ?? 0))
+                spans.append(Span(start: aFmt.at, end: aFmt.at + aFmt.len, index: aFmt.key ?? 0))
             } else {
                 spans.append(Span(type: aFmt.tp, start: aFmt.at, end: aFmt.at + aFmt.len))
             }
@@ -688,7 +672,7 @@ public class Drafty: Codable {
             }
         }
 
-        return formatter.apply(nil, nil, forEach(txt, 0, txt.length(), spans, formatter));
+        return formatter.apply(tp: nil, attr: nil, content: forEach(line: txt!, start: 0, end: txt!.count, spans: spans, formatter: formatter))
     }
 
     private var plainText: String {
@@ -724,14 +708,19 @@ public class Drafty: Codable {
         var children: [Span]?
 
         init() {
+            start = 0
+            end = 0
+            key = 0
         }
 
-        init(text: String) {
+        convenience init(text: String) {
+            self.init()
             self.text = text
         }
 
         // Inline style
-        init(type: String?, start: Int, end: Int) {
+        convenience init(type: String?, start: Int, end: Int) {
+            self.init()
             self.type = type
             self.start = start
             self.end = end
@@ -746,11 +735,11 @@ public class Drafty: Codable {
         }
 
         static func < (lhs: Drafty.Span, rhs: Drafty.Span) -> Bool {
-            lhs.start < rhs.start
+            return lhs.start < rhs.start
         }
 
         static func == (lhs: Drafty.Span, rhs: Drafty.Span) -> Bool {
-            lhs.start == rhs.start
+            return lhs.start == rhs.start
         }
 
         public var description: String {
@@ -768,7 +757,13 @@ public class Drafty: Codable {
 
         var data: [String:JSONValue]
 
-        init() {}
+        init() {
+            at = 0
+            len = 0
+            tp = ""
+            value = ""
+            data = [:]
+        }
     }
 }
 
@@ -778,7 +773,10 @@ public class Style: Codable, Comparable, CustomStringConvertible {
     var tp: String?
     var key: Int?
 
-    public init() {}
+    public init() {
+        at = 0
+        len = 0
+    }
 
     // Basic inline formatting
     public init(tp: String?, at: Int?, len: Int?) {
@@ -808,7 +806,7 @@ public class Style: Codable, Comparable, CustomStringConvertible {
     }
 
     public var description: String {
-        return "{tp:'\(tp ?? "nil")', at:\(at), len:\(len), key:\(key)}";
+        return "{tp:'\(tp ?? "nil")', at:\(at), len:\(len), key:\(key ?? 0)}"
     }
 }
 
@@ -824,7 +822,7 @@ public class Entity: Codable, CustomStringConvertible {
     }
 
     public var description: String {
-        return "{tp:'\(tp ?? "nil")',data:\(data?.description ?? "nil")}";
+        return "{tp:'\(tp ?? "nil")',data:\(data?.description ?? "nil")}"
     }
 }
 
