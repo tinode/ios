@@ -336,6 +336,32 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
         }
     }
 
+    // Tells how many topic subscribers have reported the message as read or received.
+    internal func msgReadRecvCount(seq: Int?, read: Bool) -> Int {
+        if subs == nil {
+            loadSubs()
+        }
+
+        guard let subs = subs, let me = tinode?.myUid, let seq = seq, seq > 0 else { return 0 }
+        return  subs.reduce(0, { (count, tuple) -> Int in
+            let (key, sub) = tuple
+            if key != me && ((read ? sub.read : sub.recv) ?? Int.max) >= seq {
+                return count + 1;
+            }
+            return count
+        } )
+    }
+
+    // Tells how many topic subscribers have reported the message as read.
+    public func msgReadCount(seq: Int?) -> Int {
+        return msgReadRecvCount(seq: seq, read: true)
+    }
+
+    // Tells how many topic subscribers have reported the message as received.
+    public func msgRecvCount(seq: Int?) -> Int {
+        return msgReadRecvCount(seq: seq, read: false)
+    }
+
     init() {}
 
     /**
