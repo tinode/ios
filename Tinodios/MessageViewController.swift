@@ -244,8 +244,8 @@ extension MessageViewController: MessagesDisplayDelegate, MessagesLayoutDelegate
             // Use current user's avatar for showing delivery markers.
             guard let msg = message as? StoredMessage, let topic = topic else { return }
 
-            var iconName: String?
-            var tint: UIColor? = nil
+            let iconName: String
+            var tint: UIColor = MessageViewController.kDeliveryMarkerColor
             if msg.status == nil || msg.status! <= BaseDb.kStatusSending {
                 iconName = "outline_schedule_white_48pt"
             } else {
@@ -258,11 +258,12 @@ extension MessageViewController: MessagesDisplayDelegate, MessagesLayoutDelegate
                     iconName = "outline_done_white_48pt"
                 }
             }
-            if let iconName = iconName {
-                avatarView.backgroundColor = UIColor.white.withAlphaComponent(0)
-                avatarView.tintColor = tint ?? MessageViewController.kDeliveryMarkerColor
-                avatarView.set(avatar: Avatar(image: UIImage(named: iconName)))
-            }
+
+            avatarView.isHidden = false
+            avatarView.backgroundColor = UIColor.white.withAlphaComponent(0)
+            avatarView.tintColor = tint
+            avatarView.set(avatar: Avatar(image: UIImage(named: iconName)))
+
         } else {
             // Hide peer's avatar in p2p topics. Avatars are useful in group topics only
             avatarView.isHidden = topic!.isP2PType || (isNextMessageSameSender(at: indexPath) && isNextMessageSameDate(at: indexPath))

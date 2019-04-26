@@ -121,6 +121,7 @@ extension UIViewController {
 }
 
 extension UIImage {
+
     // Resize image to given dimentions. If 'clip' is true and aspect ratios are different, crop the central
     // part of the source image and scale it down to the given dimentions.
     public func resize(width: Float, height: Float, clip: Bool) -> UIImage? {
