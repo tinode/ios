@@ -39,23 +39,24 @@ public class Drafty: Codable {
     private static let kEntityProc = try! [
         EntityProc(name: "LN",
                    pattern: NSRegularExpression(pattern: #"(?<=^|\W)(https?://)?(?:www\.)?[-a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,4}\b(?:[-a-zA-Z0-9@:%_+.~#?&/=]*)"#),
-                   pack: {(m: NSTextCheckingResult) -> [String:JSONValue] in
+                   pack: {(text: NSString, m: NSTextCheckingResult) -> [String:JSONValue] in
                     var data: [String:JSONValue] = [:]
-                    data["url"] = m.group(1) == nil ? "http://" + m.group() : m.group()
+                    data["url"] = JSONValue.string(m.range(at: 1).location == NSNotFound ?
+                        "http://" + text.substring(with: m.range) : text.substring(with: m.range))
                     return data
             }),
         EntityProc(name: "MN",
                    pattern: NSRegularExpression(pattern: #"\B@(\w\w+)"#),
-                   pack: {(m: NSTextCheckingResult) -> [String:JSONValue] in
+                   pack: {(text: NSString, m: NSTextCheckingResult) -> [String:JSONValue] in
                     var data: [String:JSONValue] = [:]
-                    data["val"] = m.group()
+                    data["val"] = JSONValue.string(text.substring(with: m.range(at: 1)))
                     return data
             }),
         EntityProc(name: "HT",
                    pattern: NSRegularExpression(pattern: #"(?<=[\s,.!]|^)#(\w\w+)"#),
-                   pack: {(m: NSTextCheckingResult) -> [String:JSONValue] in
+                   pack: {(text: NSString, m: NSTextCheckingResult) -> [String:JSONValue] in
                     var data: [String:JSONValue] = [:]
-                    data["val"] = m.group()
+                    data["val"] = JSONValue.string(text.substring(with: m.range(at: 1)))
                     return data
             })
     ]
@@ -85,13 +86,16 @@ public class Drafty: Codable {
     // ignored at this stage.
     private static func spannify(original: String, re: NSRegularExpression, type: String) -> [Span] {
         var spans: [Span] = []
-        let matcher = re.matches(in: original, range: NSRange(location: 0, length: original.count))
+        let nsoriginal = original as NSString
+        let matcher = re.matches(in: original, range: NSRange(location: 0, length: nsoriginal.length))
         for match in matcher {
-            var s = Span()
-            s.start = match.start(0)  // 'hello *world*'
-            // ^ group(zero) -> index of the opening markup character
-            s.end = match.end(1)      // group(one) -> index of the closing markup character
-            s.text = match.group(1)          // text without of the markup
+            let s = Span()
+            // Convert NSRange to Range otherwise it will fail on strings with characters not
+            // representable in UTF16 (i.e. emoji)
+            let r = Range(match.range, in: original)!
+                        // ^ match.range.lowerBound -> index of the opening markup character
+            s.start = original.distance(from: original.startIndex, to: r.lowerBound) // 'hello *world*'
+            s.end = original.distance(from: original.startIndex, to: r.upperBound)   // match.range.upperBound -> index of the closing markup character
             s.type = type
             spans.append(s)
         }
@@ -206,16 +210,19 @@ public class Drafty: Codable {
     // Get a list of entities from a text.
     private static func extractEntities(line: String) -> [ExtractedEnt] {
         var extracted: [ExtractedEnt] = []
+        let nsline = line as NSString
 
         for i in 0...Drafty.kEntityName.count {
-            var matches = kEntityProc[i].re.matches(in: line)
+            let matches = kEntityProc[i].re.matches(in: line, range: NSRange(location: 0, length: nsline.length))
             for m in matches {
-                var ee = ExtractedEnt()
-                ee.at = m.start(0)
-                ee.value = m.group(0)
+                let ee = ExtractedEnt()
+                // FIXME: convert NSRange to Range first.
+                let r = Range(m.range, in: line)!
+                ee.at = line.distance(from: line.startIndex, to: r.lowerBound)
+                ee.value = nsline.substring(with: m.range)
                 ee.len = ee.value.count
-                ee.tp = kEntityName[i];
-                ee.data = kEntityProc[i].pack(m)
+                ee.tp = kEntityName[i]
+                ee.data = kEntityProc[i].pack(nsline, m)
                 extracted.append(ee)
             }
         }
@@ -224,8 +231,11 @@ public class Drafty: Codable {
     }
 
     public static func parse(content: String) -> Drafty {
-        // Break input into individual lines. Format cannot span multiple lines.
-        let lines = content.split { $0 == "\n" || $0 == "\r\n" }.map(String.init)
+        // Break input into individual lines because format cannot span multiple lines.
+        // This breaks lines by \n only, we do not expect to see Windows-style \r\n.
+        let lines = content.components(separatedBy: .newlines)
+        // This method also accounts for Windows-style line breaks, but it's probably not needed.
+        // let lines = content.split { $0 == "\n" || $0 == "\r\n" }.map(String.init)
         var blks: [Block] = []
         var refs: [Entity] = []
 
@@ -292,7 +302,7 @@ public class Drafty: Codable {
                 text.append(b.txt)
                 if let bfmt = b.fmt {
                     for s in bfmt {
-                        s.at = (s.at ?? 0) + offset
+                        s.at += offset
                         fmt.append(s)
                     }
                 }
@@ -665,7 +675,7 @@ public class Drafty: Codable {
 
         for span in spans {
             if ent != nil && (span.type == nil || span.type!.isEmpty) {
-                if span.key >= 0 && span.key < ent!.count && ent![span.key] != nil {
+                if span.key >= 0 && span.key < ent!.count {
                     span.type = ent![span.key].tp
                     span.data = ent![span.key].data
                 }
@@ -681,7 +691,7 @@ public class Drafty: Codable {
     }
 
     private var plainText: String {
-        return "{txt: '\(txt)', fmt: \(fmt),ent: \(ent)}"
+        return "{txt: '\(txt ?? "nil")', fmt: \(fmt ?? []), ent: \(ent ?? [])}"
     }
 
     // ================
@@ -720,7 +730,7 @@ public class Drafty: Codable {
         }
 
         // Inline style
-        init(type: String, start: Int, end: Int) {
+        init(type: String?, start: Int, end: Int) {
             self.type = type
             self.start = start
             self.end = end
@@ -762,8 +772,8 @@ public class Drafty: Codable {
 }
 
 public class Style: Codable, Comparable, CustomStringConvertible {
-    var at: Int?
-    var len: Int?
+    var at: Int
+    var len: Int
     var tp: String?
     var key: Int?
 
@@ -771,8 +781,8 @@ public class Style: Codable, Comparable, CustomStringConvertible {
 
     // Basic inline formatting
     public init(tp: String?, at: Int?, len: Int?) {
-        self.at = at
-        self.len = len
+        self.at = at ?? 0
+        self.len = len ?? 0
         self.tp = tp
         self.key = nil
     }
@@ -780,8 +790,8 @@ public class Style: Codable, Comparable, CustomStringConvertible {
     // Entity reference
     public init(at: Int?, len: Int?, key: Int?) {
         self.tp = nil
-        self.at = at
-        self.len = len
+        self.at = at ?? 0
+        self.len = len ?? 0
         self.key = key
     }
 
@@ -820,9 +830,9 @@ public class Entity: Codable, CustomStringConvertible {
 fileprivate class EntityProc {
     var name: String
     var re: NSRegularExpression
-    var pack: (_ m: NSTextCheckingResult) -> [String:JSONValue]
+    var pack: (_ text: NSString, _ m: NSTextCheckingResult) -> [String:JSONValue]
 
-    init(name: String, pattern: NSRegularExpression, pack: @escaping (_ m: NSTextCheckingResult) -> [String:JSONValue]) {
+    init(name: String, pattern: NSRegularExpression, pack: @escaping (_ text: NSString, _ m: NSTextCheckingResult) -> [String:JSONValue]) {
         self.name = name
         self.re = pattern
         self.pack = pack
