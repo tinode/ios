@@ -19,6 +19,7 @@ public protocol DraftyFormatter {
     func apply(tp: String?, attr: [String:JSONValue]?, content: String?) -> [Node]
 }
 
+/// Class representing formatted text with optional attachments.
 public class Drafty: Codable {
     public static let kMimeType = "text/x-drafty"
     public static let kJSONMimeType = "application/json"
@@ -61,13 +62,19 @@ public class Drafty: Codable {
             })
     ]
 
-    public var txt: String?
+    public var txt: String
     public var fmt: [Style]?
     public var ent: [Entity]?
 
+    /// Initializes empty object
     public init() {
+        txt = ""
     }
 
+    /// Parses provided content string using markdown-like markup.
+    ///
+    /// - Parameters:
+    ///     - content: a string with optional markwon-style markup
     public init(content: String) {
         let that = Drafty.parse(content: content)
 
@@ -76,6 +83,11 @@ public class Drafty: Codable {
         self.ent = that.ent
     }
 
+    /// Initializes Drafty with text and formatting obeject without parsing the text string.
+    /// - Parameters:
+    ///     - text: text body
+    ///     - fmt: array of inline styles and references to entities
+    ///     - ent: array of entity attachments
     init(text: String, fmt: [Style]?, ent: [Entity]?) {
         self.txt = text
         self.fmt = fmt
@@ -111,7 +123,7 @@ public class Drafty: Codable {
     // This is needed in order to clear markup, i.e. 'hello *world*' -> 'hello world' and convert
     // ranges from markup-ed offsets to plain text offsets.
     private static func chunkify(line: String, start startAt: Int, end: Int, spans: [Span]?) -> [Span]? {
-        guard let spans = spans, spans.count > 0 else { return nil }
+        guard let spans = spans, !spans.isEmpty else { return nil }
 
         var start = startAt
         var chunks: [Span] = []
@@ -145,14 +157,16 @@ public class Drafty: Codable {
         return chunks
     }
 
+    // Convert flat array or spans into a tree representation.
+    // Keep standalone and nested spans, throw away partially overlapping spans.
     private static func toTree(spans: [Span]?) -> [Span]? {
-        guard let spans = spans, spans.count > 0 else { return nil }
+        guard let spans = spans, !spans.isEmpty else { return nil }
 
         var tree: [Span] = []
 
         var last = spans[0]
         tree.append(last)
-        for i in 0..<spans.count {
+        for i in 1..<spans.count {
             let curr = spans[i]
             // Keep spans which start after the end of the previous span or those which
             // are complete within the previous span.
@@ -178,7 +192,7 @@ public class Drafty: Codable {
         return tree
     }
 
-    // Convert a list of chunks into block.
+    // Convert a list of chunks into a block. A block fully describes one line of formatted text.
     private static func draftify(chunks: [Span]?, startAt: Int) -> Block? {
         guard let chunks = chunks else { return nil }
 
@@ -233,6 +247,11 @@ public class Drafty: Codable {
         return extracted
     }
 
+    /// Parse optionally marked-up text into structured representation.
+    ///
+    /// - Parameters:
+    ///     - content: plain-text content to parse.
+    /// - Returns: Drafty object.
     public static func parse(content: String) -> Drafty {
         // Break input into individual lines because format cannot span multiple lines.
         // This breaks lines by \n only, we do not expect to see Windows-style \r\n.
@@ -316,19 +335,19 @@ public class Drafty: Codable {
         return Drafty(text: text, fmt: fmt.isEmpty ? nil : fmt, ent: refs.isEmpty ? nil : refs)
     }
 
-    public func getStyles() -> [Style]? {
+    /// Get inline styles and references to entities
+    public var styles: [Style]? {
         return fmt
     }
 
-    public func getEntities() -> [Entity]? {
+    // Get entities (attachments)
+    public var entities: [Entity]? {
         return ent
     }
 
-    /**
-     * Extract attachment references for use in message header.
-     *
-     * @return string array of attachment references or null if no attachments with references found.
-     */
+    /// Extract attachment references for use in message header.
+    ///
+    /// - Returns: string array of attachment references or nil if no attachments with references were found.
     public func getEntReferences() -> [String]? {
         guard let ent = ent else { return nil }
 
@@ -345,16 +364,17 @@ public class Drafty: Codable {
         return result.isEmpty ? nil : result
     }
 
-    public func entityFor(style: Style) -> Entity? {
+    /// Find entity from the reference given in style object
+    public func entityFor(for style: Style) -> Entity? {
         let index = style.key ?? 0
         guard let ent = ent, ent.count > index else { return nil }
         return ent[index]
     }
 
-    // Convert Drafty to plain text
+    /// Convert Drafty to plain text
     public var string: String {
         get {
-            return txt ?? ""
+            return txt
         }
     }
 
@@ -368,41 +388,39 @@ public class Drafty: Codable {
         }
         fmt!.append(Style(at: at, len: len, key: ent!.count))
     }
-    /**
-     * Insert inline image
-     *
-     * @param at location to insert image at
-     * @param mime Content-type, such as 'image/jpeg'.
-     * @param bits Content as an array of bytes
-     * @param width image width in pixels
-     * @param height image height in pixels
-     * @param fname name of the file to suggest to the receiver.
-     * @return 'this' Drafty object.
-     */
+
+    /// Insert inline image
+    ///
+    /// - Parameters:
+    ///     - at: location to insert image at
+    ///     - mime: Content-type, such as 'image/jpeg'.
+    ///     - bits: Content as an array of bytes
+    ///     - width: image width in pixels
+    ///     - height: image height in pixels
+    ///     - fname: name of the file to suggest to the receiver.
+    /// - Returns: 'self' Drafty object.
     public func insertImage(at: Int, mime: String?, bits: Data, width: Int, height: Int, fname: String?) -> Drafty {
         return try! insertImage(at: at, mime: mime, bits: bits, width: width, height: height, fname: fname, refurl: nil, size: 0)
     }
 
-    /**
-     * Insert inline image
-     *
-     * @param at location to insert image at
-     * @param mime Content-type, such as 'image/jpeg'.
-     * @param bits Content as an array of bytes
-     * @param width image width in pixels
-     * @param height image height in pixels
-     * @param fname name of the file to suggest to the receiver.
-     * @param refurl Reference to full/extended image.
-     * @param size file size hint (in bytes) as reported by the client.
-     *
-     * @return 'this' Drafty object.
-     */
+    /// Insert inline image
+    ///
+    /// - Parameters:
+    ///     - at: location to insert image at
+    ///     - mime: Content-type, such as 'image/jpeg'.
+    ///     - bits: Content as an array of bytes
+    ///     - width: image width in pixels
+    ///     - height: image height in pixels
+    ///     - fname: name of the file to suggest to the receiver.
+    ///     - refurl: Reference to full/extended image.
+    ///     - size: file size hint (in bytes) as reported by the client.
+    /// - Returns: 'self' Drafty object.
     public func insertImage(at: Int, mime: String?, bits: Data?, width: Int, height: Int, fname: String?, refurl: URL?, size: Int) throws -> Drafty {
         guard bits != nil || refurl != nil else {
             throw DraftyError.illegalArgument("Either image bits or reference URL must not be null.")
         }
 
-        guard let txt = txt, txt.count > at && at >= 0 else {
+        guard txt.count > at && at >= 0 else {
             throw DraftyError.invalidIndex("Invalid insertion position")
         }
 
@@ -431,42 +449,38 @@ public class Drafty: Codable {
         return self
     }
 
-    /**
-     * Attach file to a drafty object in-band.
-     *
-     * @param mime Content-type, such as 'text/plain'.
-     * @param bits Content as an array of bytes.
-     * @param fname Optional file name to suggest to the receiver.
-     * @return 'this' Drafty object.
-     */
+    /// Attach file to a drafty object in-band.
+    ///
+    /// - Parameters:
+    ///     - mime: Content-type, such as 'text/plain'.
+    ///     - bits: Content as an array of bytes.
+    ///     - fname: Optional file name to suggest to the receiver.
+    /// - Returns: 'self' Drafty object.
     public func attachFile(mime: String?, bits: Data, fname: String?) -> Drafty {
         return try! attachFile(mime: mime, bits: bits, fname: fname, refurl: nil, size: bits.count)
     }
 
-    /**
-     * Attach file to a drafty object as a reference.
-     *
-     * @param mime Content-type, such as 'text/plain'.
-     * @param fname Optional file name to suggest to the receiver
-     * @param refurl reference to content location. If URL is relative, assume current server.
-     * @param size size of the attachment (untrusted).
-     * @return 'this' Drafty object.
-     */
+    /// Attach file to a drafty object as reference.
+    ///
+    /// - Parameters:
+    ///     - mime: Content-type, such as 'text/plain'.
+    ///     - fname: Optional file name to suggest to the receiver.
+    ///     - refurl: reference to content location. If URL is relative, assume current server.
+    ///     - size: size of the attachment (treated by client as an untrusted hint).
+    /// - Returns: 'self' Drafty object.
     public func attachFile(mime: String?, fname: String?, refurl: URL, size: Int) throws -> Drafty {
         return try! attachFile(mime: mime, bits: nil, fname: fname, refurl: refurl, size: size)
     }
 
-    /**
-     * Attach file to a drafty object.
-     *
-     * @param mime Content-type, such as 'text/plain'.
-     * @param fname Optional file name to suggest to the receiver.
-     * @param bits File content to include inline.
-     * @param refurl Reference to full/extended file content.
-     * @param size file size hint as reported by the client.
-     *
-     * @return 'this' Drafty object.
-     */
+    /// Attach file to a drafty object as reference.
+    ///
+    /// - Parameters:
+    ///     - mime: Content-type, such as 'text/plain'.
+    ///     - fname: Optional file name to suggest to the receiver.
+    ///     - bits: Content as an array of bytes.
+    ///     - refurl: reference to content location. If URL is relative, assume current server.
+    ///     - size: size of the attachment (treated by client as an untrusted hint).
+    /// - Returns: 'self' Drafty object.
     internal func attachFile(mime: String?, bits: Data?, fname: String?, refurl: URL?, size: Int) throws -> Drafty {
         guard bits != nil || refurl != nil else {
             throw DraftyError.illegalArgument("Either file bits or reference URL must not be nil.")
@@ -495,12 +509,11 @@ public class Drafty: Codable {
         return self
     }
 
-    /**
-     * Attach object as json. Intended to be used as a form response.
-     *
-     * @param json object to attach.
-     * @return 'this' Drafty object.
-     */
+    /// Attach object as json. Intended to be used as a form response.
+    ///
+    /// - Parameters:
+    ///     - json: object to attach.
+    /// - Returns: 'self' Drafty object.
     public func attachJSON(json: [String:JSONValue]) -> Drafty {
         prepareForEntity(at: -1, len: 1)
 
@@ -513,17 +526,18 @@ public class Drafty: Codable {
     }
 
 
-    /**
-     * Insert button into Drafty document.
-     * @param at is location where the button is inserted.
-     * @param len is the length of the text to be used as button title.
-     * @param name is an opaque ID of the button. Client should just return it to the server when the button is clicked.
-     * @param actionType is the type of the button, one of 'url' or 'pub'.
-     * @param actionValue is the value associated with the action: 'url': URL, 'pub': optional data to add to response.
-     * @param refUrl parameter required by URL buttons: url to go to on click.
-     *
-     * @return 'this' Drafty object.
-     */
+
+    /// Insert button into Drafty document.
+    ///
+    /// - Parameters:
+    ///     - at: is location where the button is inserted.
+    ///     - len: is the length of the text to be used as button title.
+    ///     - name: is an opaque ID of the button. Client should just return it to the server when the button is clicked.
+    ///     - actionType: is the type of the button, one of 'url' or 'pub'.
+    ///     - actionValue: is the value associated with the action: 'url': URL, 'pub': optional data to add to response.
+    ///     - refUrl: parameter required by URL buttons: url to go to on click.
+    ///
+    /// - Returns: 'self' Drafty object.
     internal func insertButton(at: Int, len: Int, name: String?, actionType: String, actionValue: String?, refUrl: URL?) throws -> Drafty {
         prepareForEntity(at: at, len: len)
 
@@ -551,11 +565,7 @@ public class Drafty: Codable {
         return self
     }
 
-    /**
-     * Check if the give Drafty can be represented by plain text.
-     *
-     * @return true if this Drafty has no markup other thn line breaks.
-     */
+    /// Check if the instance contains no markup.
     public var isPlain: Bool {
         return ent == nil && fmt == nil
     }
@@ -623,20 +633,13 @@ public class Drafty: Codable {
         return result
     }
 
-    /**
-     * Format converts Drafty object into a collection of formatted nodes.
-     * Each node contains either a formatted element or a collection of
-     * formatted elements.
-     *
-     * @param formatter is an interface with an `apply` method. It's iteratively
-     *                  applied to every node in the tree.
-     * @return a tree of components.
-     */
+    /// Format converts Drafty object into a collection of nodes with format definitions.
+    /// Each node contains either a formatted element or a collection of formatted elements.
+    ///
+    /// - Parameters:
+    ///     - formatter: an interface with an `apply` methods. It's iteratively for to every node in the tree.
+    /// - Returns: a tree of nodes.
     public func format<FmtType: DraftyFormatter, Node>(formatter: FmtType) -> [Node] where Node == FmtType.Node {
-        if txt == nil {
-            txt = ""
-        }
-
         // Handle special case when all values in fmt are 0 and fmt therefore was
         // skipped.
         if fmt == nil || fmt!.isEmpty {
@@ -675,17 +678,20 @@ public class Drafty: Codable {
             }
         }
 
-        return formatter.apply(tp: nil, attr: nil, content: forEach(line: txt!, start: 0, end: txt!.count, spans: spans, formatter: formatter))
+        return formatter.apply(tp: nil, attr: nil, content: forEach(line: txt, start: 0, end: txt.count, spans: spans, formatter: formatter))
     }
 
+    /// Some representation of Drafty mostly useful during debugging.
     private var plainText: String {
-        return "{txt: '\(txt ?? "nil")', fmt: \(fmt ?? []), ent: \(ent ?? [])}"
+        return "{txt: '\(txt)', fmt: \(fmt ?? []), ent: \(ent ?? [])}"
     }
 
+    /// Serialize Drafty object for storage in database.
     public func serialize() -> String? {
         return isPlain ? txt : Tinode.serializeObject(t: self)
     }
 
+    /// Deserialize Drafty object from database storage.
     public static func deserialize(from data: String?) -> Drafty? {
         guard let data = data else { return nil }
         if let drafty: Drafty = Tinode.deserializeObject(from: data) {
@@ -782,18 +788,24 @@ public class Drafty: Codable {
     }
 }
 
+/// Representation of inline styles or entity references.
 public class Style: Codable, Comparable, CustomStringConvertible {
     var at: Int
     var len: Int
     var tp: String?
     var key: Int?
 
+    /// Initialize a zero-length unstyled object
     public init() {
         at = 0
         len = 0
     }
 
-    // Basic inline formatting
+    /// Basic inline formatting
+    /// - Parameters:
+    ///     - tp: type of format
+    ///     - at: starting index to apply the format from
+    ///     - len: length of the formatting span
     public init(tp: String?, at: Int?, len: Int?) {
         self.at = at ?? 0
         self.len = len ?? 0
@@ -801,7 +813,11 @@ public class Style: Codable, Comparable, CustomStringConvertible {
         self.key = nil
     }
 
-    // Entity reference
+    /// Initialize with an entity reference
+    /// - Parameters:
+    ///     - at: index to insert entity at
+    ///     - len: length of the span to cover with the entity
+    ///     - Index of the entity in the entity container.
     public init(at: Int?, len: Int?, key: Int?) {
         self.tp = nil
         self.at = at ?? 0
@@ -809,6 +825,7 @@ public class Style: Codable, Comparable, CustomStringConvertible {
         self.key = key
     }
 
+    /// Style sorting first by starting position then by length: earlier span is smaller, if starting positions are the same then shorter span is smaller.
     public static func < (lhs: Style, rhs: Style) -> Bool {
         if lhs.at == rhs.at {
             return lhs.len < rhs.len // longer one comes first (<0)
@@ -816,26 +833,35 @@ public class Style: Codable, Comparable, CustomStringConvertible {
         return lhs.at < rhs.at
     }
 
+    /// Styles are the same if they start at the same location and have the same length.
     public static func == (lhs: Style, rhs: Style) -> Bool {
         return lhs.at == rhs.at && lhs.at == rhs.at
     }
 
+    /// Custom formatter for styles as JSON.
     public var description: String {
         return "{tp:'\(tp ?? "nil")', at:\(at), len:\(len), key:\(key ?? 0)}"
     }
 }
 
+/// Entity: style with additional data.
 public class Entity: Codable, CustomStringConvertible {
     public var tp: String?
     public var data: [String:JSONValue]?
 
+    /// Initialize an empty attachment.
     public init() {}
 
+    /// Initialize an entity with type and payload
+    /// - Parameters:
+    ///     - tp: type of attachment
+    ///     - data: payload
     public init(tp: String?, data: [String:JSONValue]?) {
         self.tp = tp
         self.data = data
     }
 
+    /// Custom formatter for styles as JSON.
     public var description: String {
         return "{tp:'\(tp ?? "nil")',data:\(data?.description ?? "nil")}"
     }
