@@ -38,7 +38,7 @@ public class Drafty: Codable {
     private static let kEntityName = ["LN", "MN", "HT"]
     private static let kEntityProc = try! [
         EntityProc(name: "LN",
-                   pattern: NSRegularExpression(pattern: #"(?<=^|\W)(https?://)?(?:www\.)?[-a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,4}\b(?:[-a-zA-Z0-9@:%_+.~#?&/=]*)"#),
+                   pattern: NSRegularExpression(pattern: #"(?<=^|\W)(https?://)?(?:www\.)?[-a-z0-9@:%._+~#=]{2,256}\.[a-z]{2,4}\b(?:[-a-z0-9@:%_+.~#?&/=]*)"#, options: [.caseInsensitive]),
                    pack: {(text: NSString, m: NSTextCheckingResult) -> [String:JSONValue] in
                     var data: [String:JSONValue] = [:]
                     data["url"] = JSONValue.string(m.range(at: 1).location == NSNotFound ?
