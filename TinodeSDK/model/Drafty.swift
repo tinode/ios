@@ -274,9 +274,10 @@ public class Drafty: Codable {
                 // Normalize entities by splitting them into spans and references.
                 for eent in eentities {
                     // Check if the entity has been indexed already
-                    let index = entityMap[eent.value]
+                    var index = entityMap[eent.value]
                     if index == nil {
                         entityMap[eent.value] = JSONValue.int(refs.count)
+                        index = entityMap[eent.value]
                         refs.append(Entity(tp: eent.tp, data: eent.data))
                     }
 
