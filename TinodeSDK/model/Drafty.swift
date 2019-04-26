@@ -96,6 +96,7 @@ public class Drafty: Codable {
                         // ^ match.range.lowerBound -> index of the opening markup character
             s.start = original.distance(from: original.startIndex, to: r.lowerBound) // 'hello *world*'
             s.end = original.distance(from: original.startIndex, to: r.upperBound)   // match.range.upperBound -> index of the closing markup character
+            s.text = nsoriginal.substring(with: match.range(at: 1))
             s.type = type
             spans.append(s)
         }
@@ -254,7 +255,7 @@ public class Drafty: Codable {
                 // Sort styled spans in ascending order by .start
                 spans!.sort()
 
-                // Rearrange linear list of styled spans into a tree, throw away invalid spans.
+                // Rearrange falt list of styled spans into a tree, throw away invalid spans.
                 spans = toTree(spans: spans)
 
                 // Parse the entire string into spans, styled or unstyled.
@@ -688,7 +689,8 @@ public class Drafty: Codable {
         if let drafty: Drafty = Tinode.deserializeObject(from: data) {
             return drafty
         }
-        return Drafty(content: data)
+        // Don't use init(content: data): there is no need to parse content again.
+        return Drafty(text: data, fmt: nil, ent: nil)
     }
 
     // MARK: Internal classes

@@ -339,7 +339,7 @@ public class Tinode {
         }
     }
     private func note(topic: String, what: String, seq: Int) {
-        let msg = ClientMessage<Int, Int>(
+        let msg = ClientMessage<Int, Int, Int>(
             note: MsgClientNote(topic: topic, what: what, seq: seq))
         do {
             let jsonData = try Tinode.jsonEncoder.encode(msg)
@@ -358,7 +358,7 @@ public class Tinode {
     public func noteKeyPress(topic: String) {
         note(topic: topic, what: Tinode.kNoteKp, seq: 0)
     }
-    private func send<DP: Codable, DR: Codable>(payload msg: ClientMessage<DP, DR>) throws {
+    private func send<C: Codable, DP: Codable, DR: Codable>(payload msg: ClientMessage<C,DP,DR>) throws {
         guard let conn = connection else {
             throw TinodeError.notConnected("Attempted to send msg to a closed connection.")
         }
@@ -366,8 +366,8 @@ public class Tinode {
         print("out: \(jsonData)")
         conn.send(payload: jsonData)
     }
-    private func sendWithPromise<DP: Codable, DR: Codable>(
-        payload msg: ClientMessage<DP, DR>, with id: String) -> PromisedReply<ServerMessage> {
+    private func sendWithPromise<C: Codable, DP: Codable, DR: Codable>(
+        payload msg: ClientMessage<C,DP,DR>, with id: String) -> PromisedReply<ServerMessage> {
         let future = PromisedReply<ServerMessage>()
         do {
             try send(payload: msg)
@@ -383,7 +383,7 @@ public class Tinode {
     }
     private func hello() -> PromisedReply<ServerMessage>? {
         let msgId = getNextMsgId()
-        let msg = ClientMessage<Int, Int>(
+        let msg = ClientMessage<Int, Int, Int>(
             hi: MsgClientHi(id: msgId, ver: kVersion,
                             ua: getUserAgent(), dev: deviceId,
                             lang: kLocale))
@@ -560,7 +560,7 @@ public class Tinode {
             }
         }
 
-        let msg = ClientMessage<Pu,Pr>(acc: msga)
+        let msg = ClientMessage<Int,Pu,Pr>(acc: msga)
         let future = sendWithPromise(payload: msg, with: msgId)
 
         if !loginNow {
@@ -634,7 +634,7 @@ public class Tinode {
                 msgl.addCred(c: c)
             }
         }
-        let msg = ClientMessage<Int, Int>(login: msgl)
+        let msg = ClientMessage<Int, Int, Int>(login: msgl)
         return try! sendWithPromise(payload: msg, with: msgId).then(
             onSuccess: { [weak self] pkt in
                 self?.loginInProgress = false
@@ -793,7 +793,7 @@ public class Tinode {
         set: MsgSetMeta<Pu, Pr>?,
         get: MsgGetMeta?) -> PromisedReply<ServerMessage>? {
         let msgId = getNextMsgId()
-        let msg = ClientMessage<Pu, Pr>(
+        let msg = ClientMessage<Int, Pu, Pr>(
             sub: MsgClientSub(
                 id: msgId,
                 topic: topicName,
@@ -804,7 +804,7 @@ public class Tinode {
 
     public func getMeta(topic: String, query: MsgGetMeta) -> PromisedReply<ServerMessage>? {
         let msgId = getNextMsgId()
-        let msg = ClientMessage<Int, Int>(  // generic params don't matter
+        let msg = ClientMessage<Int, Int, Int>(  // generic params don't matter
             get: MsgClientGet(
                 id: msgId,
                 topic: topic,
@@ -813,25 +813,24 @@ public class Tinode {
     }
     public func leave(topic: String, unsub: Bool?) -> PromisedReply<ServerMessage>? {
         let msgId = getNextMsgId()
-        let msg = ClientMessage<Int, Int>(
+        let msg = ClientMessage<Int, Int, Int>(
             leave: MsgClientLeave(id: msgId, topic: topic, unsub: unsub))
         return sendWithPromise(payload: msg, with: msgId)
     }
 
-    internal func publish(topic: String, head: [String:JSONValue]?, content: JSONValue?) -> PromisedReply<ServerMessage>? {
+    internal func publish<C: Codable>(topic: String, head: [String:JSONValue]?, content: C) -> PromisedReply<ServerMessage>? {
         let msgId = getNextMsgId()
-        let msg = ClientMessage<Int, Int>(
-            pub: MsgClientPub(id: msgId, topic: topic, noecho: true, head: head, content: content))
+        let msg = ClientMessage<C, Int, Int>(
+            pub: MsgClientPub<C>(id: msgId, topic: topic, noecho: true, head: head, content: content))
         return sendWithPromise(payload: msg, with: msgId)
     }
 
     public func publish(topic: String, data: String?) -> PromisedReply<ServerMessage>? {
-        let content = data != nil ? JSONValue.string(data!) : nil
-        return publish(topic: topic, head: nil, content: content)
+        return publish(topic: topic, head: nil, content: data)
     }
 
     public func publish(topic: String, data: Drafty) -> PromisedReply<ServerMessage>? {
-        return try! publish(topic: topic, head: ["mime": JSONValue.string(Drafty.kMimeType)], content: JSONValue(from: data as! Decoder))
+        return publish(topic: topic, head: ["mime": JSONValue.string(Drafty.kMimeType)], content: data)
     }
 
     public func getFilteredTopics(filter: ((TopicProto) -> Bool)?) -> Array<TopicProto>? {
@@ -847,20 +846,20 @@ public class Tinode {
         return result
     }
 
-    private func sendDeleteMessage(msg: ClientMessage<Int, Int>) -> PromisedReply<ServerMessage>? {
+    private func sendDeleteMessage(msg: ClientMessage<Int, Int, Int>) -> PromisedReply<ServerMessage>? {
         guard let msgId = msg.del?.id else { return nil }
         return sendWithPromise(payload: msg, with: msgId)
     }
     func delMessage(topicName: String?, fromId: Int, toId: Int, hard: Bool) -> PromisedReply<ServerMessage>? {
         return sendDeleteMessage(
-            msg: ClientMessage<Int, Int>(
+            msg: ClientMessage<Int, Int, Int>(
                 del: MsgClientDel(id: getNextMsgId(),
                                   topic: topicName,
                                   from: fromId, to: toId, hard: hard)))
     }
     func delMessage(topicName: String?, list: [Int]?, hard: Bool) -> PromisedReply<ServerMessage>? {
         return sendDeleteMessage(
-            msg: ClientMessage<Int, Int>(
+            msg: ClientMessage<Int, Int, Int>(
                 del: MsgClientDel(id: getNextMsgId(),
                                   topic: topicName, list: list, hard: hard)))
     }

@@ -347,13 +347,14 @@ public class MsgClientNote: Encodable {
     }
 }
 
-public class MsgClientPub: Encodable {
+public class MsgClientPub<C: Encodable>: Encodable {
     let id: String?
     let topic: String?
     let noecho: Bool?
     let head: [String:JSONValue]?
-    let content: JSONValue?
-    init(id: String?, topic: String?, noecho: Bool?, head: [String:JSONValue]?, content: JSONValue?) {
+    let content: C
+
+    init(id: String?, topic: String?, noecho: Bool?, head: [String:JSONValue]?, content: C) {
         self.id = id
         self.topic = topic
         self.noecho = noecho
@@ -394,7 +395,7 @@ public class MsgClientDel: Encodable {
     }
 }
 
-public class ClientMessage<Pu: Encodable, Pr: Encodable> : Encodable {
+public class ClientMessage<C: Encodable, Pu: Encodable, Pr: Encodable> : Encodable {
     var hi: MsgClientHi?
     var acc: MsgClientAcc<Pu,Pr>?
     var login: MsgClientLogin?
@@ -402,7 +403,7 @@ public class ClientMessage<Pu: Encodable, Pr: Encodable> : Encodable {
     var get: MsgClientGet?
     var leave: MsgClientLeave?
     var note: MsgClientNote?
-    var pub: MsgClientPub?
+    var pub: MsgClientPub<C>?
     var del: MsgClientDel?
     
     init(hi: MsgClientHi) {
@@ -426,7 +427,7 @@ public class ClientMessage<Pu: Encodable, Pr: Encodable> : Encodable {
     init(note: MsgClientNote) {
         self.note = note
     }
-    init(pub: MsgClientPub) {
+    init(pub: MsgClientPub<C>) {
         self.pub = pub
     }
     init(del: MsgClientDel) {
