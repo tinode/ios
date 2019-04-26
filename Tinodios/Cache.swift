@@ -12,12 +12,12 @@ import TinodeSDK
 class Cache {
     private static let `default` = Cache()
 
-    public static let kHostName = "127.0.0.1:6060" // localhost
-    
+    public static let kHostName = "ws://127.0.0.1:6060" // localhost
+
     private static let kApiKey = "AQEAAAABAAD_rAp4DJh05a1HAwFT3A6K"
-    
+
     var tinode: Tinode? = nil
-    
+
     static func getTinode() -> Tinode {
         return Cache.default.getTinode()
     }

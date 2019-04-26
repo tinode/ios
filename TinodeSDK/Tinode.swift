@@ -776,9 +776,7 @@ public class Tinode {
             print("tinode is already connected: \(isConnected)")
             return nil
         }
-        //let useTLS = false
-        let scheme = "ws" // useTLS ? "wss" : "ws"
-        let urlString = "\(scheme)://\(hostName)/v\(kProtocolVersion)/"
+        let urlString = "\(hostName)/v\(kProtocolVersion)/channels"
         let endpointURL: URL = URL(string: urlString)!
         connection = Connection(open: endpointURL,
                                 with: apiKey,
