@@ -116,7 +116,8 @@ public class Drafty: Codable {
         for span in spans {
             // Grab the initial unstyled chunk.
             if span.start > start {
-                chunks.append(Span(text: line.substring(start, span.start)))
+                // Substrings in Swift are crazy.
+                chunks.append(Span(text: String(line[line.index(line.startIndex, offsetBy: start)..<line.index(line.startIndex, offsetBy: span.start)])))
             }
 
             // Grab the styled chunk. It may include subchunks.
@@ -136,7 +137,7 @@ public class Drafty: Codable {
 
         // Grab the remaining unstyled chunk, after the last span
         if start < end {
-            chunks.append(Span(text: line.substring(start, end)))
+            chunks.append(Span(text: String(line[line.index(line.startIndex, offsetBy: start)..<line.index(line.startIndex, offsetBy: end)])))
         }
 
         return chunks
@@ -185,14 +186,14 @@ public class Drafty: Codable {
             if chunk.text == nil {
                 if let drafty = draftify(chunks: chunk.children, startAt: block.txt.count + startAt) {
                     chunk.text = drafty.txt
-                    if drafty.fmt != nil {
-                        ranges.append(contentsOf: drafty.fmt!)
+                    if let fmt = drafty.fmt {
+                        ranges.append(contentsOf: fmt)
                     }
                 }
             }
 
             if chunk.type != nil {
-                ranges.append(Style(tp: chunk.type, at: block.txt.count + startAt, len: chunk.text.count))
+                ranges.append(Style(tp: chunk.type, at: block.txt.count + startAt, len: chunk.text!.count))
             }
 
             if chunk.text != nil {
@@ -271,13 +272,13 @@ public class Drafty: Codable {
                 // Normalize entities by splitting them into spans and references.
                 for eent in eentities {
                     // Check if the entity has been indexed already
-                    var index = entityMap[eent.value]
+                    let index = entityMap[eent.value]
                     if index == nil {
                         entityMap[eent.value] = JSONValue.int(refs.count)
                         refs.append(Entity(tp: eent.tp, data: eent.data))
                     }
 
-                    b.addStyle(s: Style(at: eent.at, len: eent.len, key: index))
+                    b.addStyle(s: Style(at: eent.at, len: eent.len, key: index!.asInt()))
                 }
 
                 blks.append(b)
@@ -561,7 +562,7 @@ public class Drafty: Codable {
         var result: [T] = []
         var start = startAt
         guard let spans = spans else {
-            if let fs = formatter<T>.apply(nil, nil, line.substring(start, end)) {
+            if let fs = formatter<T>.apply(nil, nil, String(line[line.index(line.startIndex, offsetBy: start)..<line.index(line.startIndex, offsetBy: end)])) {
                 result.append(fs)
             }
             return result
@@ -581,7 +582,7 @@ public class Drafty: Codable {
 
             // Add un-styled range before the styled span starts.
             if start < span.start {
-                if let fs = formatter.apply(nil, nil, line.substring(start, span.start)) {
+                if let fs = formatter.apply(nil, nil, String(line[line.index(line.startIndex, offsetBy: start)..<line.index(line.startIndex, offsetBy: span.start)])) {
                     result.append(fs)
                 }
                 start = span.start
@@ -605,9 +606,9 @@ public class Drafty: Codable {
 
             if span.type == "BN" {
                 // Make button content unstyled.
-                span.data = span.data != nil ? span.data : [:]
-                let title = line.substring(span.start, span.end)
-                span.data["title"] = JSONValue.string(title)
+                span.data = span.data ?? [:]
+                let title = String(line[line.index(line.startIndex, offsetBy: span.start)..<line.index(line.startIndex, offsetBy: span.end)])
+                span.data!["title"] = JSONValue.string(title)
                 if let fs = formatter.apply(span.type, span.data, title) {
                     result.append(fs)
                 }
@@ -623,7 +624,7 @@ public class Drafty: Codable {
 
         // Add the last unformatted range.
         if start < end {
-            if let fs = formatter<T>.apply(nil, nil, line.substring(start, end)) {
+            if let fs = formatter<T>.apply(nil, nil,  String(line[line.index(line.startIndex, offsetBy: start)..<line.index(line.startIndex, offsetBy: end)])) {
                 result.append(fs)
             }
         }

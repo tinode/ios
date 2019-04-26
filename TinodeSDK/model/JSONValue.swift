@@ -52,8 +52,19 @@ public enum JSONValue: Codable {
             self = .dict(value)
         } else if let value = try? container.decode([JSONValue].self) {
             self = .array(value)
+        } else if let value = try? container.decode(Data.self) {
+            self = .bytes(value)
         } else {
             throw DecodingError.typeMismatch(JSONValue.self, DecodingError.Context(codingPath: container.codingPath, debugDescription: "Not a JSON"))
+        }
+    }
+
+    public func asInt() -> Int {
+        switch self {
+        case .int(let val):
+            return val
+        default:
+            return nil! // Crash and burn.
         }
     }
 }
