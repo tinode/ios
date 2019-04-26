@@ -92,11 +92,12 @@ public class Drafty: Codable {
             let s = Span()
             // Convert NSRange to Range otherwise it will fail on strings with characters not
             // representable in UTF16 (i.e. emoji)
-            let r = Range(match.range, in: original)!
+            var r = Range(match.range, in: original)!
                         // ^ match.range.lowerBound -> index of the opening markup character
             s.start = original.distance(from: original.startIndex, to: r.lowerBound) // 'hello *world*'
-            s.end = original.distance(from: original.startIndex, to: r.upperBound)   // match.range.upperBound -> index of the closing markup character
             s.text = nsoriginal.substring(with: match.range(at: 1))
+            r = Range(match.range(at: 1), in: original)!
+            s.end = original.distance(from: original.startIndex, to: r.upperBound)
             s.type = type
             spans.append(s)
         }
@@ -218,7 +219,7 @@ public class Drafty: Codable {
             let matches = kEntityProc[i].re.matches(in: line, range: NSRange(location: 0, length: nsline.length))
             for m in matches {
                 let ee = ExtractedEnt()
-                // FIXME: convert NSRange to Range first.
+                // m.range is the entire match including markup
                 let r = Range(m.range, in: line)!
                 ee.at = line.distance(from: line.startIndex, to: r.lowerBound)
                 ee.value = nsline.substring(with: m.range)
@@ -289,9 +290,9 @@ public class Drafty: Codable {
         var text: String = ""
         var fmt: [Style] = []
         // Merge lines and save line breaks as BR inline formatting.
-        if blks.count > 0 {
+        if !blks.isEmpty {
             var b = blks[0]
-            text.append(b.txt)
+            text = b.txt
             if let bfmt = b.fmt {
                 fmt.append(contentsOf: bfmt)
             }
@@ -300,7 +301,7 @@ public class Drafty: Codable {
                 fmt.append(Style(tp: "BR", at: offset - 1, len: 1))
 
                 b = blks[i]
-                text.append(" ")
+                text.append(" ") // BR points to this space
                 text.append(b.txt)
                 if let bfmt = b.fmt {
                     for s in bfmt {
