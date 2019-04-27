@@ -15,8 +15,8 @@ public enum DraftyError: Error {
 public protocol DraftyFormatter {
     associatedtype Node
 
-    func apply(tp: String?, attr: [String:JSONValue]?, content: [Node]) -> [Node]
-    func apply(tp: String?, attr: [String:JSONValue]?, content: String?) -> [Node]
+    func apply(tp: String?, attr: [String:JSONValue]?, content: [Node]) -> Node
+    func apply(tp: String?, attr: [String:JSONValue]?, content: String?) -> Node
 }
 
 /// Class representing formatted text with optional attachments.
@@ -25,6 +25,10 @@ public class Drafty: Codable {
     public static let kJSONMimeType = "application/json"
 
     private static let kMaxFormElements = 8
+
+    public enum StyleTypes {
+        case st, em, dl, co, ln, mn, ht, hd, bn, rm, rw, none
+    }
 
     // Regular expressions for parsing inline formats.
     // Name of the style, regexp start, regexp end
@@ -575,7 +579,7 @@ public class Drafty: Codable {
 
         var start = startAt
         guard !spans.isEmpty else {
-            return formatter.apply(tp: nil, attr: nil, content: String(line[line.index(line.startIndex, offsetBy: start)..<line.index(line.startIndex, offsetBy: end)]))
+            return [formatter.apply(tp: nil, attr: nil, content: String(line[line.index(line.startIndex, offsetBy: start)..<line.index(line.startIndex, offsetBy: end)]))]
         }
 
         var result: [Node] = []
@@ -588,13 +592,13 @@ public class Drafty: Codable {
             if span.start < 0 && span.type == "EX" {
                 // This is different from JS SDK. JS ignores these spans here.
                 // JS uses Drafty.attachments() to get attachments.
-                result.append(contentsOf: formatter.apply(tp: span.type, attr: span.data, content: nil))
+                result.append(formatter.apply(tp: span.type, attr: span.data, content: nil))
                 continue
             }
 
             // Add un-styled range before the styled span starts.
             if start < span.start {
-                result.append(contentsOf: formatter.apply(tp: nil, attr: nil, content: String(line[line.index(line.startIndex, offsetBy: start)..<line.index(line.startIndex, offsetBy: span.start)])))
+                result.append(formatter.apply(tp: nil, attr: nil, content: String(line[line.index(line.startIndex, offsetBy: start)..<line.index(line.startIndex, offsetBy: span.start)])))
                 start = span.start
             }
 
@@ -617,9 +621,9 @@ public class Drafty: Codable {
                 span.data = span.data ?? [:]
                 let title = String(line[line.index(line.startIndex, offsetBy: span.start)..<line.index(line.startIndex, offsetBy: span.end)])
                 span.data!["title"] = JSONValue.string(title)
-                result.append(contentsOf: formatter.apply(tp: span.type, attr: span.data, content: title))
+                result.append(formatter.apply(tp: span.type, attr: span.data, content: title))
             } else {
-                result.append(contentsOf: formatter.apply(tp: span.type, attr: span.data, content: forEach(line: line, start: start, end: span.end, spans: subspans, formatter: formatter)))
+                result.append(formatter.apply(tp: span.type, attr: span.data, content: forEach(line: line, start: start, end: span.end, spans: subspans, formatter: formatter)))
             }
 
             start = span.end
@@ -627,7 +631,7 @@ public class Drafty: Codable {
 
         // Add the last unformatted range.
         if start < end {
-            result.append(contentsOf: formatter.apply(tp: nil, attr: nil,  content: String(line[line.index(line.startIndex, offsetBy: start)..<line.index(line.startIndex, offsetBy: end)])))
+            result.append(formatter.apply(tp: nil, attr: nil,  content: String(line[line.index(line.startIndex, offsetBy: start)..<line.index(line.startIndex, offsetBy: end)])))
         }
 
         return result
@@ -639,7 +643,7 @@ public class Drafty: Codable {
     /// - Parameters:
     ///     - formatter: an interface with an `apply` methods. It's iteratively for to every node in the tree.
     /// - Returns: a tree of nodes.
-    public func format<FmtType: DraftyFormatter, Node>(formatter: FmtType) -> [Node] where Node == FmtType.Node {
+    public func format<FmtType: DraftyFormatter, Node>(formatter: FmtType) -> Node where Node == FmtType.Node {
         // Handle special case when all values in fmt are 0 and fmt therefore was
         // skipped.
         if fmt == nil || fmt!.isEmpty {
