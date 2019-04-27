@@ -548,7 +548,7 @@ public class Drafty: Codable {
         guard actionType == "url" || actionType == "pub" else {
             throw DraftyError.illegalArgument("Unknown action type \(actionType)")
         }
-        guard actionType == "pub"  || refUrl != nil else {
+        guard actionType == "url" && refUrl != nil else {
             throw DraftyError.illegalArgument("URL required for URL buttons")
         }
 

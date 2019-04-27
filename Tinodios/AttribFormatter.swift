@@ -45,6 +45,33 @@ class AttribFormatter: DraftyFormatter {
         */
     }
 
+    // Convert button payload to an URL.
+    // NSAttributedString.Key.link wants payload to be NSURL.
+    private static func buttonDataAsUrl(attr: [String : JSONValue]) -> URL? {
+        guard let actionType = attr["act"]?.asString() else { return nil }
+        var baseUrl: URLComponents
+        if actionType == "url" {
+            guard let ref = attr["ref"]?.asString() else { return nil }
+            guard let urlc = URLComponents(string: ref) else { return nil }
+            baseUrl = urlc
+        } else if actionType == "pub" {
+            // Custom scheme usr to post back to the server:
+            // tinode:default?name=value
+            baseUrl = URLComponents()
+            baseUrl.scheme = "tinode"
+            baseUrl.host = "default"
+        } else {
+            return nil
+        }
+
+        if let name = attr["name"]?.asString() {
+            let actionValue = attr["val"]?.asString()
+            baseUrl.queryItems?.append(URLQueryItem(name: name, value: actionValue ?? "1"))
+        }
+
+        return baseUrl.url
+    }
+
     internal func apply(tp: String?, attr: [String : JSONValue]?, children: [TreeNode]?, content: String?) -> TreeNode {
 
         // Create unstyled node
