@@ -80,9 +80,9 @@ public class Drafty: Codable {
     required public init(from decoder: Decoder) throws {
         // First try optional decoding of 'txt' from a primitive string.
         // Most content is sent as primitive strings.
-        if let container = try? decoder.singleValueContainer() {
-            // Throw if it does not decode as string
-            txt = try container.decode(String.self)
+        if let container = try? decoder.singleValueContainer(),
+            let txt = try? container.decode(String.self) {
+            self.txt = txt
         } else {
             // Non-optional decoding as a Drafty object.
             let container = try decoder.container(keyedBy: CodingKeys.self)
@@ -715,11 +715,6 @@ public class Drafty: Codable {
         }
 
         return formatter.apply(tp: nil, attr: nil, content: forEach(line: txt, start: 0, end: txt.count, spans: spans, formatter: formatter))
-    }
-
-    /// Some representation of Drafty mostly useful during debugging.
-    private var plainText: String {
-        return "{txt: '\(txt)', fmt: \(fmt ?? []), ent: \(ent ?? [])}"
     }
 
     /// Serialize Drafty object for storage in database.
