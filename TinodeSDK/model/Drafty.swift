@@ -26,6 +26,10 @@ public class Drafty: Codable {
 
     private static let kMaxFormElements = 8
 
+    private enum CodingKeys : CodingKey  {
+        case given, want, mode
+    }
+
     // Regular expressions for parsing inline formats.
     private static let kInlineStyles = try! [
         "ST": NSRegularExpression(pattern: #"(?<=^|\W)\*([^\s*]+)\*(?=$|\W)"#),     // bold *bo*
@@ -66,6 +70,19 @@ public class Drafty: Codable {
     /// Initializes empty object
     public init() {
         txt = ""
+    }
+
+    required public init(from decoder: Decoder) throws {
+        if let drafty = decoder.container(keyedBy: CodingKey.Protocol) {
+        } else {
+            let container = try decoder.singleValueContainer()
+            if let value = try? container.decode(String.self) {
+                // Received a plain text string
+                txt = value
+                fmt = nil
+                ent = nil
+            }
+        }
     }
 
     /// Parses provided content string using markdown-like markup.
