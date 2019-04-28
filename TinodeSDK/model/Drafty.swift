@@ -122,8 +122,8 @@ public class Drafty: Codable {
     //
     // This is needed in order to clear markup, i.e. 'hello *world*' -> 'hello world' and convert
     // ranges from markup-ed offsets to plain text offsets.
-    private static func chunkify(line: String, start startAt: Int, end: Int, spans: [Span]?) -> [Span]? {
-        guard let spans = spans, !spans.isEmpty else { return nil }
+    private static func chunkify(line: String, start startAt: Int, end: Int, spans: [Span]) -> [Span] {
+        guard !spans.isEmpty else { return spans }
 
         var start = startAt
         var chunks: [Span] = []
@@ -138,9 +138,8 @@ public class Drafty: Codable {
             let chunk = Span()
             chunk.type = span.type
 
-            let chld = chunkify(line: line, start: span.start + 1, end: span.end - 1, spans: span.children)
-            if chld != nil {
-                chunk.children = chld!
+            if let children = span.children {
+                chunk.children = chunkify(line: line, start: span.start + 1, end: span.end - 1, spans: children)
             } else {
                 chunk.text = span.text
             }
@@ -159,8 +158,8 @@ public class Drafty: Codable {
 
     // Convert flat array or spans into a tree representation.
     // Keep standalone and nested spans, throw away partially overlapping spans.
-    private static func toTree(spans: [Span]?) -> [Span]? {
-        guard let spans = spans, !spans.isEmpty else { return nil }
+    private static func toTree(spans: [Span]) -> [Span] {
+        guard !spans.isEmpty else { return spans }
 
         var tree: [Span] = []
 
@@ -185,8 +184,10 @@ public class Drafty: Codable {
         }
 
         // Recursively rearrange the subnodes.
-        for s in tree {
-            s.children = toTree(spans: s.children)
+        for span in tree {
+            if let children = span.children {
+                span.children = toTree(spans: children)
+            }
         }
 
         return tree
@@ -261,19 +262,18 @@ public class Drafty: Codable {
         var blks: [Block] = []
         var refs: [Entity] = []
 
-        var spans: [Span]?
         var entityMap: [String:JSONValue] = [:]
         for line in lines {
-            spans = []
+            var spans: [Span] = []
             // Select styled spans.
             for i in 0..<Drafty.kInlineStyleName.count {
-                spans!.append(contentsOf: spannify(original: line, re: Drafty.kInlineStyleRE[i], type: Drafty.kInlineStyleName[i]))
+                spans.append(contentsOf: spannify(original: line, re: Drafty.kInlineStyleRE[i], type: Drafty.kInlineStyleName[i]))
             }
 
             let b: Block?
-            if !spans!.isEmpty {
+            if !spans.isEmpty {
                 // Sort styled spans in ascending order by .start
-                spans!.sort()
+                spans.sort()
 
                 // Rearrange falt list of styled spans into a tree, throw away invalid spans.
                 spans = toTree(spans: spans)
