@@ -27,15 +27,14 @@ public class Drafty: Codable {
     private static let kMaxFormElements = 8
 
     // Regular expressions for parsing inline formats.
-    private static let kInlineStyles: [String:NSRegularExpression] = try! [
+    private static let kInlineStyles = try! [
         "ST": NSRegularExpression(pattern: #"(?<=^|\W)\*([^\s*]+)\*(?=$|\W)"#),     // bold *bo*
         "EM": NSRegularExpression(pattern: #"(?<=^|[\W_])_([^\s_]+)_(?=$|[\W_])"#), // italic _it_
         "DL": NSRegularExpression(pattern: #"(?<=^|\W)~([^\\s~]+)~(?=$|\W)"#),      // strikethough ~st~
         "CO": NSRegularExpression(pattern: #"(?<=^|\W)`([^`]+)`(?=$|\W)"#)          // code/monospace `mono`
     ]
 
-    private static let kEntityName = ["LN", "MN", "HT"]
-    private static let kEntityProc = try! [
+    private static let kEntities = try! [
         EntityProc(name: "LN",
                    pattern: NSRegularExpression(pattern: #"(?<=^|\W)(https?://)?(?:www\.)?[-a-z0-9@:%._+~#=]{2,256}\.[a-z]{2,4}\b(?:[-a-z0-9@:%_+.~#?&/=]*)"#, options: [.caseInsensitive]),
                    pack: {(text: NSString, m: NSTextCheckingResult) -> [String:JSONValue] in
@@ -223,27 +222,23 @@ public class Drafty: Codable {
         return block
     }
 
-    // Get a list of entities from a text.
+    // Extract entities from a line of text.
     private static func extractEntities(line: String) -> [ExtractedEnt] {
-        var extracted: [ExtractedEnt] = []
         let nsline = line as NSString
-
-        for i in 0..<Drafty.kEntityName.count {
-            let matches = kEntityProc[i].re.matches(in: line, range: NSRange(location: 0, length: nsline.length))
-            for m in matches {
+        return Drafty.kEntities.flatMap { (proc: EntityProc) -> [ExtractedEnt] in
+            let matches = proc.re.matches(in: line, range: NSRange(location: 0, length: nsline.length))
+            return matches.map { (m) -> ExtractedEnt in
                 let ee = ExtractedEnt()
                 // m.range is the entire match including markup
                 let r = Range(m.range, in: line)!
                 ee.at = line.distance(from: line.startIndex, to: r.lowerBound)
                 ee.value = nsline.substring(with: m.range)
                 ee.len = ee.value.count
-                ee.tp = kEntityName[i]
-                ee.data = kEntityProc[i].pack(nsline, m)
-                extracted.append(ee)
+                ee.tp = proc.name
+                ee.data = proc.pack(nsline, m)
+                return ee
             }
         }
-
-        return extracted
     }
 
     /// Parse optionally marked-up text into structured representation.
