@@ -181,7 +181,7 @@ public class Drafty: Codable, CustomStringConvertible, Equatable {
             chunk.type = span.type
 
             if let children = span.children {
-                chunk.children = chunkify(line: line, start: span.start + 1, end: span.end - 1, spans: children)
+                chunk.children = chunkify(line: line, start: span.start + 1, end: span.end, spans: children)
             } else {
                 chunk.text = span.text
             }
@@ -304,9 +304,7 @@ public class Drafty: Codable, CustomStringConvertible, Equatable {
         for line in lines {
             var spans = Drafty.kInlineStyles.flatMap { (arg) -> [Span] in
                 let (name, re) = arg
-                let x = spannify(original: line, re: re, type: name)
-                print(x)
-                return x
+                return spannify(original: line, re: re, type: name)
             }
 
             let b: Block?
@@ -316,7 +314,7 @@ public class Drafty: Codable, CustomStringConvertible, Equatable {
                     return lhs.start < rhs.start
                 }
 
-                // Rearrange falt list of styled spans into a tree, throw away invalid spans.
+                // Rearrange flat list of styled spans into a tree, throw away invalid spans.
                 spans = toTree(spans: spans)
 
                 // Parse the entire string into spans, styled or unstyled.
