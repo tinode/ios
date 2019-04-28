@@ -59,12 +59,12 @@ public enum JSONValue: Codable {
         }
     }
 
-    public func asInt() -> Int {
+    public func asInt() -> Int? {
         switch self {
         case .int(let val):
             return val
         default:
-            return nil! // Crash and burn.
+            return nil
         }
     }
 }
