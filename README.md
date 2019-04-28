@@ -1,4 +1,4 @@
-# Tinodios: Tinode Messaging Client for iOS 
+# Tinodios: Tinode Messaging Client for iOS
 
 iOS client for [Tinode](https://github.com/tinode/chat) in Swift.
 
@@ -16,6 +16,7 @@ The immediate goal is to have a basic end-to-end working application prototype t
 * In-app presence notifications.
 * Unread message counters.
 * Local data persistence.
+* Transport Level Security - https/wss.
 
 ### Does not work yet
 * Start new chats.
@@ -27,7 +28,6 @@ The immediate goal is to have a basic end-to-end working application prototype t
 * Muting/un-muting conversations and other permission management.
 * Integration with iOS's stock Contacts.
 * Invite contacts to the app by SMS or email.
-* Transport Level Security - https/wss.
 * Editing of personal details.
 * Push notifications.
 
