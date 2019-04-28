@@ -110,6 +110,7 @@ public class Tinode {
     public static let kNoteKp = "kp"
     public static let kNoteRead = "read"
     public static let kNoteRecv = "recv"
+    private static let log = Log(category: "co.tinode.tinodesdk")
 
     let kProtocolVersion = "0"
     let kVersion = "0.15"
@@ -213,13 +214,10 @@ public class Tinode {
 
     public func updateUser<DP: Codable, DR: Codable>(uid: String, desc: Description<DP, DR>) {
         if let user = users[uid] {
-
-            print("found user \(user)")
             _ = (user as? User<DP>)?.merge(from: desc)
         } else {
             let user = User<DP>(uid: uid, desc: desc)
             users[uid] = user
-            print("updating")
         }
         // store?.userUpdate(user)
     }
@@ -268,7 +266,6 @@ public class Tinode {
             throw TinodeJsonError.decode
         }
         let serverMsg = try Tinode.jsonDecoder.decode(ServerMessage.self, from: data)
-        print("serverMsg = \(serverMsg)")
 
         listener?.onMessage(msg: serverMsg)
 
@@ -283,23 +280,22 @@ public class Tinode {
                             ctrl.code, ctrl.text, ctrl.getStringParam(for: "what")))
                     }
                 }
-                print("ctrl.id = \(id)")
+                Tinode.log.debug("ctrl.id = %d", id)
             }
             if let what = ctrl.getStringParam(for: "what"), what == "data" {
                 if let topic = ctrl.topic, let t = getTopic(topicName: topic) {
                     t.allMessagesReceived(count: ctrl.getIntParam(for: "count"))
                 }
-                print("what = \(what)")
+                Tinode.log.debug("what = %@", what)
             }
         } else if let meta = serverMsg.meta {
             var updated: Date? = nil
             if let t = getTopic(topicName: meta.topic!) {
-                //t.route
                 t.routeMeta(meta: meta)
                 updated = t.updated
             } else if let t = maybeCreateTopic(meta: meta) {
                 updated = t.updated
-                print("maybe create \(String(describing: meta.topic))")
+                Tinode.log.debug("created topic %@", meta.topic ?? "")
             }
 
             if let updated = updated {
@@ -341,13 +337,7 @@ public class Tinode {
     private func note(topic: String, what: String, seq: Int) {
         let msg = ClientMessage<Int, Int>(
             note: MsgClientNote(topic: topic, what: what, seq: seq))
-        do {
-            let jsonData = try Tinode.jsonEncoder.encode(msg)
-            let jd = String(decoding: jsonData, as: UTF8.self)
-            print("note request: \(jd)")
-            connection!.send(payload: jsonData)
-        } catch {
-        }
+        try? send(payload: msg)
     }
     public func noteRecv(topic: String, seq: Int) {
         note(topic: topic, what: Tinode.kNoteRecv, seq: seq)
@@ -363,7 +353,7 @@ public class Tinode {
             throw TinodeError.notConnected("Attempted to send msg to a closed connection.")
         }
         let jsonData = try Tinode.jsonEncoder.encode(msg)
-        print("out: \(jsonData)")
+        Tinode.log.debug("out: %{public}@", String(decoding: jsonData, as: UTF8.self))
         conn.send(payload: jsonData)
     }
     private func sendWithPromise<DP: Codable, DR: Codable>(
@@ -376,7 +366,7 @@ public class Tinode {
             do {
                 try future.reject(error: error)
             } catch {
-                print("Error rejecting promise \(error)")
+                Tinode.log.error("Error rejecting promise: %{public}@", String(describing: error))
             }
         }
         return future
@@ -603,7 +593,8 @@ public class Tinode {
             encodedToken = try AuthScheme.encodeBasicToken(
                 uname: uname, password: password)
         } catch {
-            print("Won't login - failed encoding token: \(error)")
+            Tinode.log.error("Won't login - failed encoding token: %{public}@",
+                             String(describing: error))
             return nil
         }
         return login(scheme: AuthScheme.kLoginBasic,
@@ -713,7 +704,8 @@ public class Tinode {
             self.tinode = tinode
         }
         func onConnect(reconnecting: Bool) -> Void {
-            print("tinode connected")
+            let m = reconnecting ? "YES" : "NO"
+            Tinode.log.info("Tinode connected: after reconnect - %@", m.description)
             do {
                 let future = try tinode.hello()?.then(onSuccess: { [weak self] pkt in
                     guard self != nil else {
@@ -744,24 +736,24 @@ public class Tinode {
                         onFailure: nil)
                 }
             } catch {
-                print("onConnect error \(error)")
+                Tinode.log.error("Connection error: %{public}@",
+                                 String(describing: error))
             }
         }
         func onMessage(with message: String) -> Void {
-            print("in: \(message)")
+            Log.debug("in: %{public}@", message)
             do {
                 try tinode.dispatch(message)
             } catch {
-                print("onMessage error: \(error)")
+                Log.error("onMessage error: %{public}@", String(describing: error))
             }
         }
         func onDisconnect(isServerOriginated: Bool, code: Int, reason: String) -> Void {
-            print("tinode on disconnect")
             tinode.handleDisconnect(isServerOriginated: isServerOriginated, code: code, reason: reason)
         }
         func onError(error: Error) -> Void {
             tinode.handleDisconnect(isServerOriginated: true, code: 0, reason: error.localizedDescription)
-            print("tinode error: \(error)")
+            Log.error("Tinode network error: %{public}@", String(describing: error))
             if let connected = tinode.connectedPromise, !connected.isDone {
                 do {
                     try connected.reject(error: error)
@@ -773,7 +765,7 @@ public class Tinode {
     }
     public func connect(to hostName: String, useTLS: Bool) throws -> PromisedReply<ServerMessage>? {
         if isConnected {
-            print("tinode is already connected: \(isConnected)")
+            Tinode.log.error("Tinode is already connected")
             return nil
         }
         let urlString = "\(hostName)/v\(kProtocolVersion)/channels"
