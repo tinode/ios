@@ -20,7 +20,7 @@ public protocol DraftyFormatter {
 }
 
 /// Class representing formatted text with optional attachments.
-public class Drafty: Codable, Equatable {
+public class Drafty: Codable, CustomStringConvertible, Equatable {
 
     public static let kMimeType = "text/x-drafty"
     public static let kJSONMimeType = "application/json"
@@ -31,7 +31,7 @@ public class Drafty: Codable, Equatable {
     private static let kInlineStyles = try! [
         "ST": NSRegularExpression(pattern: #"(?<=^|\W)\*([^\s*]+)\*(?=$|\W)"#),     // bold *bo*
         "EM": NSRegularExpression(pattern: #"(?<=^|[\W_])_([^\s_]+)_(?=$|[\W_])"#), // italic _it_
-        "DL": NSRegularExpression(pattern: #"(?<=^|\W)~([^\\s~]+)~(?=$|\W)"#),      // strikethough ~st~
+        "DL": NSRegularExpression(pattern: #"(?<=^|\W)~([^\s~]+)~(?=$|\W)"#),    // strikethough ~st~
         "CO": NSRegularExpression(pattern: #"(?<=^|\W)`([^`]+)`(?=$|\W)"#)          // code/monospace `mono`
     ]
 
@@ -304,7 +304,9 @@ public class Drafty: Codable, Equatable {
         for line in lines {
             var spans = Drafty.kInlineStyles.flatMap { (arg) -> [Span] in
                 let (name, re) = arg
-                return spannify(original: line, re: re, type: name)
+                let x = spannify(original: line, re: re, type: name)
+                print(x)
+                return x
             }
 
             let b: Block?
@@ -608,7 +610,7 @@ public class Drafty: Codable, Equatable {
     public static func == (lhs: Drafty, rhs: Drafty) -> Bool {
         return lhs.txt == rhs.txt &&
             lhs.fmt == rhs.fmt &&
-            ((lhs.ent == nil && rhs.ent == nil) || lhs.ent == rhs.ent)
+            ((lhs.ent == nil && rhs.ent == nil) || (lhs.ent == rhs.ent))
     }
 
     /// Check if the instance contains no markup and consequently can be represented by
@@ -748,6 +750,11 @@ public class Drafty: Codable, Equatable {
         return Drafty(text: data, fmt: nil, ent: nil)
     }
 
+    /// Represents Drafty as JSON-like string.
+    public var description: String {
+        return "{txt: \"\(txt)\", fmt:\(fmt ?? []), ent:\(ent ?? [])}"
+    }
+
     // MARK: Internal classes
 
     fileprivate class Block {
@@ -822,7 +829,7 @@ public class Drafty: Codable, Equatable {
 }
 
 /// Representation of inline styles or entity references.
-public class Style: Codable, Equatable {
+public class Style: Codable, CustomStringConvertible, Equatable {
     var at: Int
     var len: Int
     var tp: String?
@@ -863,10 +870,15 @@ public class Style: Codable, Equatable {
     public static func == (lhs: Style, rhs: Style) -> Bool {
         return lhs.tp == rhs.tp && lhs.at == rhs.at && lhs.at == rhs.at && lhs.key == rhs.key
     }
+
+    /// Represents Style as JSON-like string.
+    public var description: String {
+        return "{tp: \(tp ?? "nil"), at: \(at), len:\(len), key:\(key ?? 0)}"
+    }
 }
 
 /// Entity: style with additional data.
-public class Entity: Codable, Equatable {
+public class Entity: Codable, CustomStringConvertible, Equatable {
     public var tp: String?
     public var data: [String:JSONValue]?
 
@@ -885,6 +897,12 @@ public class Entity: Codable, Equatable {
     public static func == (lhs: Entity, rhs: Entity) -> Bool {
         return lhs.tp == rhs.tp && ((lhs.data ?? [:]) == (rhs.data ?? [:]))
     }
+
+    /// Represents Style as JSON-like string.
+    public var description: String {
+        return "{tp: \(tp ?? "nil"), data: \(data ?? [:])}"
+    }
+
 }
 
 fileprivate class EntityProc {

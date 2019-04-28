@@ -351,7 +351,7 @@
 			inputFileListPaths = (
 			);
 			inputPaths = (
-				"${SRCROOT}/Pods/Target Support Files/Pods-TinodeSDKTests/Pods-TinodeSDKTests-frameworks.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-TinodeSDKTests/Pods-TinodeSDKTests-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/SwiftWebSocket-iOS9.0/SwiftWebSocket.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
@@ -362,7 +362,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-TinodeSDKTests/Pods-TinodeSDKTests-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-TinodeSDKTests/Pods-TinodeSDKTests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -538,7 +538,7 @@
 		};
 		0A431BE52244A0BE00A837F7 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 15EB4A3618442D5E79FEAB59 /* Pods-TinodeSDK.debug.xcconfig */;
+			baseConfigurationReference = B4211CF84B51039364CC4DD3 /* Pods-TinodeSDK.debug.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
@@ -564,7 +564,7 @@
 		};
 		0A431BE62244A0BE00A837F7 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = D80621A4BCCAF3C0B58C06E5 /* Pods-TinodeSDK.release.xcconfig */;
+			baseConfigurationReference = B0CD0F1036565AA6D7FCB418 /* Pods-TinodeSDK.release.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
