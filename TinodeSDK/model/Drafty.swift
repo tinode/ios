@@ -29,10 +29,10 @@ public class Drafty: Codable, CustomStringConvertible, Equatable {
 
     // Regular expressions for parsing inline formats.
     private static let kInlineStyles = try! [
-        "ST": NSRegularExpression(pattern: #"(?<=^|\W)\*([^\s*]+)\*(?=$|\W)"#),     // bold *bo*
-        "EM": NSRegularExpression(pattern: #"(?<=^|[\W_])_([^\s_]+)_(?=$|[\W_])"#), // italic _it_
-        "DL": NSRegularExpression(pattern: #"(?<=^|\W)~([^\s~]+)~(?=$|\W)"#),    // strikethough ~st~
-        "CO": NSRegularExpression(pattern: #"(?<=^|\W)`([^`]+)`(?=$|\W)"#)          // code/monospace `mono`
+        "ST": NSRegularExpression(pattern: #"(?<=^|\W)\*([^*]+[^\s*])\*(?=$|\W)"#),     // bold *bo*
+        "EM": NSRegularExpression(pattern: #"(?<=^|[\W_])_([^_]+[^\s_])_(?=$|[\W_])"#), // italic _it_
+        "DL": NSRegularExpression(pattern: #"(?<=^|\W)~([^~]+[^\s~])~(?=$|\W)"#),       // strikethough ~st~
+        "CO": NSRegularExpression(pattern: #"(?<=^|\W)`([^`]+)`(?=$|\W)"#)              // code/monospace `mono`
     ]
 
     private static let kEntities = try! [
