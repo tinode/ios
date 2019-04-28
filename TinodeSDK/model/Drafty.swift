@@ -26,10 +26,6 @@ public class Drafty: Codable {
 
     private static let kMaxFormElements = 8
 
-    private enum CodingKeys : CodingKey  {
-        case given, want, mode
-    }
-
     // Regular expressions for parsing inline formats.
     private static let kInlineStyles = try! [
         "ST": NSRegularExpression(pattern: #"(?<=^|\W)\*([^\s*]+)\*(?=$|\W)"#),     // bold *bo*
@@ -63,6 +59,12 @@ public class Drafty: Codable {
             })
     ]
 
+    private enum CodingKeys : String, CodingKey  {
+        case txt = "txt"
+        case fmt = "fmt"
+        case ent = "ent"
+    }
+
     public var txt: String
     public var fmt: [Style]?
     public var ent: [Entity]?
@@ -72,15 +74,40 @@ public class Drafty: Codable {
         txt = ""
     }
 
+    /// Initializer to comply with Decodable protocol:
+    /// First tries to decode Drafty from plain text, then
+    /// from from JSON.
     required public init(from decoder: Decoder) throws {
-        if let drafty = decoder.container(keyedBy: CodingKey.Protocol) {
+        // First try optional decoding of 'txt' from a primitive string.
+        // Most content is sent as primitive strings.
+        if let container = try? decoder.singleValueContainer() {
+            // Throw if it does not decode as string
+            txt = try container.decode(String.self)
         } else {
-            let container = try decoder.singleValueContainer()
-            if let value = try? container.decode(String.self) {
-                // Received a plain text string
-                txt = value
-                fmt = nil
-                ent = nil
+            // Non-optional decoding as a Drafty object.
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+            txt = try container.decode(String.self, forKey: .txt)
+            fmt = try? container.decode([Style].self, forKey: .fmt)
+            ent = try? container.decode([Entity].self, forKey: .ent)
+        }
+    }
+
+    /// encode makes Drafty compliant with Encodable protocol.
+    /// First checks if Drafty can be represented as plain text and if so encodes
+    /// it as a primitive string. Otherwise encodes into a JSON object.
+    public func encode(to encoder: Encoder) throws {
+        if isPlain {
+            // If trafty contains plain text, encode it as a primitive string.
+            var container = encoder.singleValueContainer()
+            try container.encode(txt)
+        } else {
+            var container = encoder.container(keyedBy: CodingKeys.self)
+            try container.encode(txt, forKey: CodingKeys.txt)
+            // fmt cannot be nil.
+            try container.encode(fmt, forKey: CodingKeys.fmt)
+            // Encode entities only if they are present.
+            if ent != nil {
+                try container.encode(ent, forKey: CodingKeys.ent)
             }
         }
     }
