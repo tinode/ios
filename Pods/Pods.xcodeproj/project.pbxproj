@@ -35,7 +35,7 @@
 		356D8457ED45D5A00DFEA394F464C17E /* MessageInputBar-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 21329BF1339E5F061426071962DE37CA /* MessageInputBar-dummy.m */; };
 		3B47C431DFB20543834F040FDFB2E510 /* MessageInputBar-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 4984A8CEC5FC67085A71D2DE765D8445 /* MessageInputBar-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		40F75BB610D41D4563907EC0F753D5EB /* Sender.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F3F08D564E28D2B77F2C2AAAA32299C /* Sender.swift */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
-		438E1EA87E61972BBAAD6E9067C170FC /* MessageKitAssets.bundle in Resources */ = {isa = PBXBuildFile; fileRef = E1D243B802E3C60F9AE6747CBF1649AD /* MessageKitAssets.bundle */; };
+		438E1EA87E61972BBAAD6E9067C170FC /* MessageKitAssets.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 9C210A5F5E7CF0B8299956407FC5F114 /* MessageKitAssets.bundle */; };
 		4730C256ABF17E5FBE06E6A74000AC90 /* MessageLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF18110E7903175959B29AF0438E9BD8 /* MessageLabel.swift */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		4923270DA2F020E0E864FA38A48A9B25 /* CGRect+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32C2BA7E46DD8AD29A6E2B23A2A9ADB5 /* CGRect+Extensions.swift */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		49921D0D8A70D5F51DC8AFF89E57BEC5 /* CustomFunctions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE94A9AF73508578FF15BDD872B23E53 /* CustomFunctions.swift */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
@@ -63,9 +63,9 @@
 		8C2791843451996A5B67692A6C33B6B6 /* Value.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63E09B920AFD2D68D15EFBE7F523A737 /* Value.swift */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		8E2C3B920996C7DD6FFDFDA2A3807D07 /* WebSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094D8DB46B04280C87787EC51C32331D /* WebSocket.swift */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		8EF27D61C3A9A3300C085F48C3042A41 /* SwiftWebSocket-iOS9.0-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 637BEC3321B8B0E7E66ADC30C38AD2A4 /* SwiftWebSocket-iOS9.0-dummy.m */; };
-		A3CB06857423FD1325473797178BA25F /* Pods-TinodeSDK-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = DC3F7D146F89B43E2B8B3ACDD484FB27 /* Pods-TinodeSDK-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A3CB06857423FD1325473797178BA25F /* Pods-TinodeSDK-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = B06B59808AB9BCA9FCD51BB9595E9E9F /* Pods-TinodeSDK-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A4E43BD315F665D9A0017AD044451082 /* PlayButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF8AB3A2DBE8F6560792D5219EEFA3C4 /* PlayButtonView.swift */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
-		A6E606FBD293F73547BD4FF421C09716 /* Pods-Tinodios-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = A1C17903316EB8316B42C62B987F3CC3 /* Pods-Tinodios-dummy.m */; };
+		A6E606FBD293F73547BD4FF421C09716 /* Pods-Tinodios-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = A7AC2CC94E36B3A7B7CC8A36F0AC9BF5 /* Pods-Tinodios-dummy.m */; };
 		A81120F9EB8763FC41439090DAFC8EAA /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7DFA040447B044FCA53364C547CBC3D9 /* Foundation.framework */; };
 		A8CF2925AEF173AB913F260DE180E079 /* SwiftKeychainWrapper-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = C8926F833CC7540D41844BD75305F1C4 /* SwiftKeychainWrapper-dummy.m */; };
 		AB9ED2CFA6DE93533455477DF28ADA8B /* SwiftWebSocket-iOS10.0-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = F590B920B3532B01FF744937E6BA8F6A /* SwiftWebSocket-iOS10.0-dummy.m */; };
@@ -75,7 +75,7 @@
 		AE060EC047A5D44D57A13985A9F0C032 /* MessageReusableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB4F33513470C29978DABC714C1DF7A1 /* MessageReusableView.swift */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		B1C0FD546C9FC6603CBDB6DE31FEAA66 /* MediaMessageSizeCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7F591E85D7E551615AA3E5A88FE4327 /* MediaMessageSizeCalculator.swift */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		B40CAF43789B027EBE0E228D586202E1 /* DetectorType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4890C2F3CB1E5C28EC3173D979D3E3F3 /* DetectorType.swift */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
-		B65A14A8B075DA72E4AC046E18FB7BD6 /* Pods-TinodeSDK-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 1BBA0904DD60596AB11F264E4651C057 /* Pods-TinodeSDK-dummy.m */; };
+		B65A14A8B075DA72E4AC046E18FB7BD6 /* Pods-TinodeSDK-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 6979A7B92F7D30066318EEC461424003 /* Pods-TinodeSDK-dummy.m */; };
 		B7F49058551B5C80C0AB3ECD5C0CBE72 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7DFA040447B044FCA53364C547CBC3D9 /* Foundation.framework */; };
 		B92CAB92118A7CDF28CB537592014323 /* WebSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094D8DB46B04280C87787EC51C32331D /* WebSocket.swift */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		B9949068702AEFF62A4D083C4D980122 /* MessageKit+Availability.swift in Sources */ = {isa = PBXBuildFile; fileRef = B34B323BB9E9E4B68C97CA7EBB57BE5D /* MessageKit+Availability.swift */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
@@ -87,6 +87,7 @@
 		C0443348E2F4B2BA517E9B1C4D737DFB /* MessageInputBarDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7AF1362136D76DEE1F4176EA90D14CA /* MessageInputBarDelegate.swift */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		C0D9C163A419E4DA303C3C5B7756B009 /* CellSizeCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97AEF9472A302CA4112144EFEFE97A2E /* CellSizeCalculator.swift */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		C62C5A11178B3BF5BFC9C0B100428CA5 /* fts3_tokenizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 8895107699A58B8E2A5DC1A9F21FA3E0 /* fts3_tokenizer.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		C80D83280B1D479DD2D17B1827B90CDD /* Pods-TinodeSDKTests-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = A273ED44FF6555EB805F4BA959078A15 /* Pods-TinodeSDKTests-dummy.m */; };
 		C83EED41D046D1F589E945D7C91EAE5D /* Coding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 581E10DD35FD14EC7E6DBE630176C8D7 /* Coding.swift */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		CB43571A7BAABBBD1B6E644261776E85 /* MessagesDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 514C1FED8E4153F9ABE5B362CD7874B7 /* MessagesDataSource.swift */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		CD018360385F58649008DAF68D031289 /* SwiftKeychainWrapper-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = B334F14778FA7090E73CDABA4426A9FF /* SwiftKeychainWrapper-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -112,8 +113,9 @@
 		E4FA86A5DB73A83B5CFB02E7F3211A8A /* UIEdgeInsets+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C4936F76C8F91690388E17FDCDC6140 /* UIEdgeInsets+Extensions.swift */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		E507AEA7366344D2D75B231D500D32D4 /* SQLite.swift-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 83AB57D3C24B8CC0E2429EC378AFB838 /* SQLite.swift-dummy.m */; };
 		E547159A07AC9A44D70868E5E77BC616 /* Foundation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 049D8C39115220002C844A8DE47AA523 /* Foundation.swift */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
+		E775A4D68311F3FA81B3F74EFF9C4930 /* Pods-TinodeSDKTests-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = DF4D6A4C133434112D2E58DCCF76812E /* Pods-TinodeSDKTests-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		ECC896CED0674114BD552ADC17FAEC1E /* MessageKitError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 009DB91863D4DEA090727A31EF6E578A /* MessageKitError.swift */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
-		ED7DF6F2A5DED2A8E1B89E78E782E939 /* Pods-Tinodios-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = A1D1F6DA31CFD17005965B3706596EF0 /* Pods-Tinodios-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		ED7DF6F2A5DED2A8E1B89E78E782E939 /* Pods-Tinodios-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 5A152C4B06EE8974CDFA0292D3AC7285 /* Pods-Tinodios-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		EE823709C509071E9CD4FA60AFA978D4 /* MessageInputBar.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 185975EAB32140125FC191468B9010F2 /* MessageInputBar.framework */; };
 		EEA570C288601B1D7547B4DF96234406 /* RTree.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01DB8389774C79A9F944F8CB765628C3 /* RTree.swift */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		F0AEFE2BF55EA3BA515228B3231DEB27 /* MessagesCollectionViewLayoutAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19966721F9FEEEDDF71E7E8C4785572A /* MessagesCollectionViewLayoutAttributes.swift */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
@@ -122,6 +124,7 @@
 		F9EAB7B6507D02D420B1499E6A28A327 /* SeparatorLine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E48E68356C881BF3C47ACE0D615D4A4 /* SeparatorLine.swift */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		FA636547CC167A4F43CFA8C919C1156F /* SQLite.swift-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 9E9DDF7D3CA8A26B4F426DDDCE896194 /* SQLite.swift-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		FB366D258A34464361B848A7AEE0650F /* LabelAlignment.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA86E04C0D69E02692D90B1941EF029D /* LabelAlignment.swift */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
+		FDF1AC7731DDF6802E5032CDED372F19 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7DFA040447B044FCA53364C547CBC3D9 /* Foundation.framework */; };
 		FFE2C27762E6EED81E75BF9866182A4E /* MessageInputBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CA381435D403E05F6E23DBBD2E7A7AA /* MessageInputBar.swift */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		FFE2D25A06EFBE5379C2C9D90BDEB083 /* DateAndTimeFunctions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A145090EDD0FF139C52DE8C306192945 /* DateAndTimeFunctions.swift */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 /* End PBXBuildFile section */
@@ -133,6 +136,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 9BFFD719D54E43B04CD54616D8DE2349;
 			remoteInfo = SQLite.swift;
+		};
+		3816C25593622A03D4B9A7D866FD35D1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D41D8CD98F00B204E9800998ECF8427E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 360A62B7E2F9C18C359BC1A17F37961A;
+			remoteInfo = "SwiftWebSocket-iOS9.0";
 		};
 		4E1753B6449564219F70655600B78442 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -195,35 +205,39 @@
 		10107FE1935B033B2ABBFA651D148A90 /* MessageContainerView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = MessageContainerView.swift; path = Sources/Views/MessageContainerView.swift; sourceTree = "<group>"; };
 		142DADA7AF944EEB47CCCAD4538BE0CD /* NSConstraintLayoutSet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = NSConstraintLayoutSet.swift; path = Sources/Models/NSConstraintLayoutSet.swift; sourceTree = "<group>"; };
 		1447CC8AF16758292C6965A24EEE4AB2 /* SwiftWebSocket-iOS10.0-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "SwiftWebSocket-iOS10.0-umbrella.h"; sourceTree = "<group>"; };
+		148D037B1585BF911653DC1DDBAF8B5E /* Pods-TinodeSDKTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-TinodeSDKTests.debug.xcconfig"; sourceTree = "<group>"; };
 		185975EAB32140125FC191468B9010F2 /* MessageInputBar.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MessageInputBar.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		19966721F9FEEEDDF71E7E8C4785572A /* MessagesCollectionViewLayoutAttributes.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = MessagesCollectionViewLayoutAttributes.swift; path = Sources/Layout/MessagesCollectionViewLayoutAttributes.swift; sourceTree = "<group>"; };
 		1B6BC176DCF7E7B02E41958847E7DF32 /* Statement.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Statement.swift; path = Sources/SQLite/Core/Statement.swift; sourceTree = "<group>"; };
-		1BBA0904DD60596AB11F264E4651C057 /* Pods-TinodeSDK-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-TinodeSDK-dummy.m"; sourceTree = "<group>"; };
+		1BAE33A32FDD62441F2DFF1E02F64547 /* Pods-Tinodios.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-Tinodios.release.xcconfig"; sourceTree = "<group>"; };
+		1CE5D90F3AA0D0CF4F0437C773DAF717 /* Pods_Tinodios.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = Pods_Tinodios.framework; path = "Pods-Tinodios.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1D4B5D0F9B62573AF90C5CA4FB3822F9 /* MessageCellDelegate.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = MessageCellDelegate.swift; path = Sources/Protocols/MessageCellDelegate.swift; sourceTree = "<group>"; };
+		1D68BC219CAE2D0321993DF997CA5875 /* Pods_TinodeSDKTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = Pods_TinodeSDKTests.framework; path = "Pods-TinodeSDKTests.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
+		1E02589B52D0F992639D45238BFBA768 /* Pods-TinodeSDK-resources.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-TinodeSDK-resources.sh"; sourceTree = "<group>"; };
 		202D6F64A06ECE657784D6139D24029B /* Images */ = {isa = PBXFileReference; includeInIndex = 1; name = Images; path = Assets/MessageKitAssets.bundle/Images; sourceTree = "<group>"; };
 		21329BF1339E5F061426071962DE37CA /* MessageInputBar-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "MessageInputBar-dummy.m"; sourceTree = "<group>"; };
 		2284B7F94742CA8703C90CB2BE2048C5 /* CoreFunctions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CoreFunctions.swift; path = Sources/SQLite/Typed/CoreFunctions.swift; sourceTree = "<group>"; };
 		22A2E0663FBD0C4D23490EB798F6827F /* SwiftKeychainWrapper.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SwiftKeychainWrapper.h; path = SwiftKeychainWrapper/SwiftKeychainWrapper.h; sourceTree = "<group>"; };
 		24B337502432E1AB24DE80042313D838 /* Expression.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Expression.swift; path = Sources/SQLite/Typed/Expression.swift; sourceTree = "<group>"; };
 		2544B13B7BC30B138E48C7E7EC3B3F27 /* MessagesLayoutDelegate.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = MessagesLayoutDelegate.swift; path = Sources/Protocols/MessagesLayoutDelegate.swift; sourceTree = "<group>"; };
-		25FBA67FB42AC96D58105BB3B9F90580 /* Pods-TinodeSDK-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-TinodeSDK-acknowledgements.markdown"; sourceTree = "<group>"; };
 		279A64326E073A4DBFE82A91A79BD6D6 /* AvatarView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AvatarView.swift; path = Sources/Views/AvatarView.swift; sourceTree = "<group>"; };
 		2876060E1641DCD919402D770DF5F535 /* LocationMessageSizeCalculator.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = LocationMessageSizeCalculator.swift; path = Sources/Layout/LocationMessageSizeCalculator.swift; sourceTree = "<group>"; };
 		2901ECC4D8FCC1528D7C22C0884CBD5B /* InputTextView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = InputTextView.swift; path = Sources/Views/InputTextView.swift; sourceTree = "<group>"; };
 		2CDCF914E3E48AC18EAE849728848510 /* KeychainWrapper.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = KeychainWrapper.swift; path = SwiftKeychainWrapper/KeychainWrapper.swift; sourceTree = "<group>"; };
+		2EA69BAC0AA2F6F532957390CFB9C482 /* Pods-Tinodios-resources.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-Tinodios-resources.sh"; sourceTree = "<group>"; };
 		2F971DF7E932EFAC3A7AB9475D7C0AE6 /* SwiftWebSocket-iOS9.0.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "SwiftWebSocket-iOS9.0.xcconfig"; path = "../SwiftWebSocket-iOS9.0/SwiftWebSocket-iOS9.0.xcconfig"; sourceTree = "<group>"; };
 		30299BBBD3DE657071A22C31BCBCD937 /* LocationMessageSnapshotOptions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = LocationMessageSnapshotOptions.swift; path = Sources/Models/LocationMessageSnapshotOptions.swift; sourceTree = "<group>"; };
 		32C2BA7E46DD8AD29A6E2B23A2A9ADB5 /* CGRect+Extensions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "CGRect+Extensions.swift"; path = "Sources/Extensions/CGRect+Extensions.swift"; sourceTree = "<group>"; };
 		35F9B6E8470BA6C8B3ED43CDB0E1EFCB /* InputBarButtonItem.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = InputBarButtonItem.swift; path = Sources/Controls/InputBarButtonItem.swift; sourceTree = "<group>"; };
+		3A30092C806973D7EB556FB1CFB97A56 /* SwiftKeychainWrapper.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = SwiftKeychainWrapper.framework; path = SwiftKeychainWrapper.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3B481140D7B6C1605E354B481C48CCDB /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3E48E68356C881BF3C47ACE0D615D4A4 /* SeparatorLine.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SeparatorLine.swift; path = Sources/Views/SeparatorLine.swift; sourceTree = "<group>"; };
 		406678D867AED49ABF8E866598B68353 /* SQLite-Bridging.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "SQLite-Bridging.h"; path = "Sources/SQLiteObjc/include/SQLite-Bridging.h"; sourceTree = "<group>"; };
-		41978A5B0803B11A4987A63A45117477 /* Pods-TinodeSDK.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-TinodeSDK.release.xcconfig"; sourceTree = "<group>"; };
 		41CBEC59AA887798F1DE8054E9E337BE /* MessageKitDateFormatter.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = MessageKitDateFormatter.swift; path = Sources/Models/MessageKitDateFormatter.swift; sourceTree = "<group>"; };
 		4219B4730560722F9F6C31BCFA7B6F1D /* UIColor+Extensions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "UIColor+Extensions.swift"; path = "Sources/Extensions/UIColor+Extensions.swift"; sourceTree = "<group>"; };
-		4240948B5D96CBF50AC84B6D3CB94DC9 /* Pods-TinodeSDK-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-TinodeSDK-acknowledgements.plist"; sourceTree = "<group>"; };
 		44F7B4EB063FE40BCD511F55823E429D /* MessagesViewController+Keyboard.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "MessagesViewController+Keyboard.swift"; path = "Sources/Controllers/MessagesViewController+Keyboard.swift"; sourceTree = "<group>"; };
 		452EBBAE7C8C67559C3CA5C273BC6221 /* MediaMessageCell.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = MediaMessageCell.swift; path = Sources/Views/Cells/MediaMessageCell.swift; sourceTree = "<group>"; };
+		4602C09035E048A1584B4F5F9C752FE7 /* MessageInputBar.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = MessageInputBar.framework; path = MessageInputBar.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		463A001A726496DF1B416CA68D54A6E3 /* Blob.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Blob.swift; path = Sources/SQLite/Core/Blob.swift; sourceTree = "<group>"; };
 		469AEC5D49E6DA1CD86DAD8DE382182D /* Collation.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Collation.swift; path = Sources/SQLite/Typed/Collation.swift; sourceTree = "<group>"; };
 		47B44331029AE2E3F1707C4A7F267E5E /* TextMessageCell.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = TextMessageCell.swift; path = Sources/Views/Cells/TextMessageCell.swift; sourceTree = "<group>"; };
@@ -233,64 +247,70 @@
 		4984A8CEC5FC67085A71D2DE765D8445 /* MessageInputBar-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "MessageInputBar-umbrella.h"; sourceTree = "<group>"; };
 		4A7BFB192F105CD87E76D5AA799C4405 /* NSMutableAttributedString+Extensions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "NSMutableAttributedString+Extensions.swift"; path = "Sources/Extensions/NSMutableAttributedString+Extensions.swift"; sourceTree = "<group>"; };
 		4C4936F76C8F91690388E17FDCDC6140 /* UIEdgeInsets+Extensions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "UIEdgeInsets+Extensions.swift"; path = "Sources/Extensions/UIEdgeInsets+Extensions.swift"; sourceTree = "<group>"; };
+		50E400A6F9A401BA3719D36F115C079F /* Pods-Tinodios-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-Tinodios-acknowledgements.markdown"; sourceTree = "<group>"; };
 		51087DFDC12E0FBEB24EFF6FF6CAF0BF /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; name = Info.plist; path = "../SwiftWebSocket-iOS9.0/Info.plist"; sourceTree = "<group>"; };
 		514C1FED8E4153F9ABE5B362CD7874B7 /* MessagesDataSource.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = MessagesDataSource.swift; path = Sources/Protocols/MessagesDataSource.swift; sourceTree = "<group>"; };
+		54B7BE158855AF2F8AEB37B2A364A266 /* Pods-Tinodios.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = "Pods-Tinodios.modulemap"; sourceTree = "<group>"; };
 		54E273C24F5410C47EF4298B42000B45 /* MessageInputBar.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = MessageInputBar.xcconfig; sourceTree = "<group>"; };
-		57E09772A69335F6474E38B90953C9B8 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		581E10DD35FD14EC7E6DBE630176C8D7 /* Coding.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Coding.swift; path = Sources/SQLite/Typed/Coding.swift; sourceTree = "<group>"; };
+		599E2D35BFEA61C0CF80C3B6600FE800 /* Pods-TinodeSDK-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-TinodeSDK-acknowledgements.plist"; sourceTree = "<group>"; };
+		5A152C4B06EE8974CDFA0292D3AC7285 /* Pods-Tinodios-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-Tinodios-umbrella.h"; sourceTree = "<group>"; };
 		5B1494062D6DD015C1E6775BA9214143 /* MessageKit.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = MessageKit.xcconfig; sourceTree = "<group>"; };
-		5D948EA99BE59491E8FB90F3700E3B0C /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		5C5696552EC2B415AC07AF09522906F2 /* SwiftWebSocket.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = SwiftWebSocket.framework; path = "SwiftWebSocket-iOS10.0.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5E299BCC160DF1DA5B93811600AF79A7 /* SwiftWebSocket-iOS10.0.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = "SwiftWebSocket-iOS10.0.modulemap"; sourceTree = "<group>"; };
-		60ABCAF130E716A1DCDE23571C12F70D /* SQLite.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = SQLite.framework; path = SQLite.swift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		62FC15465D84FF5289BF99B470ED50C8 /* MessageStyle.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = MessageStyle.swift; path = Sources/Models/MessageStyle.swift; sourceTree = "<group>"; };
 		637BEC3321B8B0E7E66ADC30C38AD2A4 /* SwiftWebSocket-iOS9.0-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "SwiftWebSocket-iOS9.0-dummy.m"; path = "../SwiftWebSocket-iOS9.0/SwiftWebSocket-iOS9.0-dummy.m"; sourceTree = "<group>"; };
-		63D7BB4CD301E0992E49A0F3328AEED2 /* Pods-TinodeSDK.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-TinodeSDK.debug.xcconfig"; sourceTree = "<group>"; };
 		63E09B920AFD2D68D15EFBE7F523A737 /* Value.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Value.swift; path = Sources/SQLite/Core/Value.swift; sourceTree = "<group>"; };
 		65EDD6FAC2DB9C2FC69E4E1976C67515 /* LocationItem.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = LocationItem.swift; path = Sources/Protocols/LocationItem.swift; sourceTree = "<group>"; };
 		66D966EA9A71F47B1C26A96B53E9A531 /* MessageContentCell.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = MessageContentCell.swift; path = Sources/Views/Cells/MessageContentCell.swift; sourceTree = "<group>"; };
 		68B90A6E987DB3A3275D553D0297CA98 /* SwiftWebSocket-iOS10.0.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "SwiftWebSocket-iOS10.0.xcconfig"; sourceTree = "<group>"; };
 		695B3B2D31526927206F4B77CFE24AB9 /* Query.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Query.swift; path = Sources/SQLite/Typed/Query.swift; sourceTree = "<group>"; };
 		697120A044797AF132B126D8FEF1248A /* MessagesDisplayDelegate.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = MessagesDisplayDelegate.swift; path = Sources/Protocols/MessagesDisplayDelegate.swift; sourceTree = "<group>"; };
+		6979A7B92F7D30066318EEC461424003 /* Pods-TinodeSDK-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-TinodeSDK-dummy.m"; sourceTree = "<group>"; };
 		6A4580B57E560C0A381DCEEF4255D87D /* SQLite.swift-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "SQLite.swift-prefix.pch"; sourceTree = "<group>"; };
+		6B59D60A534F740ED2DCAF581F5B1793 /* MessageKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = MessageKit.framework; path = MessageKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6F6DF2E4ED03ED55B4B32317005A465E /* UIView+Extensions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "UIView+Extensions.swift"; path = "Sources/Extensions/UIView+Extensions.swift"; sourceTree = "<group>"; };
+		77DD7807F08F9FDF337D7B5C5F219E9A /* Pods-TinodeSDKTests-resources.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-TinodeSDKTests-resources.sh"; sourceTree = "<group>"; };
 		78B899E748608B70E256CD810C10E4DD /* InsetLabel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = InsetLabel.swift; path = Sources/Views/InsetLabel.swift; sourceTree = "<group>"; };
-		7C1D2EAFC29A7F3E19996A05567E3091 /* Pods-TinodeSDK-resources.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-TinodeSDK-resources.sh"; sourceTree = "<group>"; };
+		7D716B042DF0C1557A94450A9660037C /* Pods_TinodeSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = Pods_TinodeSDK.framework; path = "Pods-TinodeSDK.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7DFA040447B044FCA53364C547CBC3D9 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		7E6A53DCC43ED43BE453991B379A48E9 /* Avatar.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Avatar.swift; path = Sources/Models/Avatar.swift; sourceTree = "<group>"; };
 		811796CB8C809520E247D4C3B1A2633C /* HorizontalEdgeInsets.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = HorizontalEdgeInsets.swift; path = Sources/Models/HorizontalEdgeInsets.swift; sourceTree = "<group>"; };
+		8375E5FDC0B2A53518F8135565D1462F /* Pods-TinodeSDK.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-TinodeSDK.debug.xcconfig"; sourceTree = "<group>"; };
 		83AB57D3C24B8CC0E2429EC378AFB838 /* SQLite.swift-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "SQLite.swift-dummy.m"; sourceTree = "<group>"; };
 		83D24F9F12F640C38CD0FC45983A85E0 /* Errors.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Errors.swift; path = Sources/SQLite/Core/Errors.swift; sourceTree = "<group>"; };
 		86F30D423B4C7D9AAC4891514AD0C848 /* KeychainItemAccessibility.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = KeychainItemAccessibility.swift; path = SwiftKeychainWrapper/KeychainItemAccessibility.swift; sourceTree = "<group>"; };
 		86F3BABC1A0B8170914D793BC42E0C36 /* ResourceBundle-MessageKitAssets-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "ResourceBundle-MessageKitAssets-Info.plist"; sourceTree = "<group>"; };
+		88735C876C56563E6389A41A9FBCAD0C /* Pods-TinodeSDKTests-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-TinodeSDKTests-frameworks.sh"; sourceTree = "<group>"; };
 		8895107699A58B8E2A5DC1A9F21FA3E0 /* fts3_tokenizer.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = fts3_tokenizer.h; path = Sources/SQLiteObjc/fts3_tokenizer.h; sourceTree = "<group>"; };
-		8A5CE9B4553E9BA08BA27A66962CA40D /* SwiftKeychainWrapper.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = SwiftKeychainWrapper.framework; path = SwiftKeychainWrapper.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		8ACF6F922480173446F6F546784298B0 /* Pods-TinodeSDKTests-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-TinodeSDKTests-acknowledgements.markdown"; sourceTree = "<group>"; };
 		8E743F103F102ACE0A40E03256F403CB /* MessageInputBar-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "MessageInputBar-prefix.pch"; sourceTree = "<group>"; };
+		90D6AF2EC59AEA8B79B08F829B3E9C27 /* Pods-TinodeSDKTests.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = "Pods-TinodeSDKTests.modulemap"; sourceTree = "<group>"; };
 		91F3E0F70091148FC6DAA3FB34B1D60D /* SwiftKeychainWrapper-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "SwiftKeychainWrapper-prefix.pch"; sourceTree = "<group>"; };
 		926109F0AD083445DCA74423C004039B /* NSConstraintLayoutSet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = NSConstraintLayoutSet.swift; path = Sources/Models/NSConstraintLayoutSet.swift; sourceTree = "<group>"; };
 		9277CB8348D4EF882F56719558444496 /* MessageLabelDelegate.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = MessageLabelDelegate.swift; path = Sources/Protocols/MessageLabelDelegate.swift; sourceTree = "<group>"; };
 		93A4A3777CF96A4AAC1D13BA6DCCEA73 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
-		9548018953B944AABEF7AEC5EE6B7410 /* Pods-Tinodios.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-Tinodios.debug.xcconfig"; sourceTree = "<group>"; };
 		9596B636EBD0AA7F4252FA108DBF51B3 /* SwiftWebSocket-iOS9.0-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "SwiftWebSocket-iOS9.0-umbrella.h"; path = "../SwiftWebSocket-iOS9.0/SwiftWebSocket-iOS9.0-umbrella.h"; sourceTree = "<group>"; };
-		975A0685679C01F73E001663B592A273 /* Pods-Tinodios-resources.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-Tinodios-resources.sh"; sourceTree = "<group>"; };
 		97AEF9472A302CA4112144EFEFE97A2E /* CellSizeCalculator.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CellSizeCalculator.swift; path = Sources/Layout/CellSizeCalculator.swift; sourceTree = "<group>"; };
 		991A3662C30578A2FDCDA61376055700 /* SwiftWebSocket-iOS9.0-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "SwiftWebSocket-iOS9.0-prefix.pch"; path = "../SwiftWebSocket-iOS9.0/SwiftWebSocket-iOS9.0-prefix.pch"; sourceTree = "<group>"; };
 		993829287F5BE5533C6290388AAA0409 /* MediaItem.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = MediaItem.swift; path = Sources/Protocols/MediaItem.swift; sourceTree = "<group>"; };
-		9A0A97623099138A9CD24B97543DDEF1 /* Pods_Tinodios.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = Pods_Tinodios.framework; path = "Pods-Tinodios.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9AE3A69E41465B003D0B1AEE9839D0FF /* TextMessageSizeCalculator.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = TextMessageSizeCalculator.swift; path = Sources/Layout/TextMessageSizeCalculator.swift; sourceTree = "<group>"; };
 		9B78008AAA21F99B9AB3DAB6C98B2FEE /* MessageKit-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "MessageKit-umbrella.h"; sourceTree = "<group>"; };
+		9C210A5F5E7CF0B8299956407FC5F114 /* MessageKitAssets.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = MessageKitAssets.bundle; path = "MessageKit-MessageKitAssets.bundle"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9C3B6BA4602C92F4F42BE8683320CF26 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		9C47FBF657F007D67CB4F8C4DB77CD95 /* MessageKit-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "MessageKit-dummy.m"; sourceTree = "<group>"; };
 		9E33462AC4A556189BCFA9EFC303FD5B /* Operators.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Operators.swift; path = Sources/SQLite/Typed/Operators.swift; sourceTree = "<group>"; };
 		9E9DDF7D3CA8A26B4F426DDDCE896194 /* SQLite.swift-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "SQLite.swift-umbrella.h"; sourceTree = "<group>"; };
 		A145090EDD0FF139C52DE8C306192945 /* DateAndTimeFunctions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = DateAndTimeFunctions.swift; path = Sources/SQLite/Typed/DateAndTimeFunctions.swift; sourceTree = "<group>"; };
-		A1C17903316EB8316B42C62B987F3CC3 /* Pods-Tinodios-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-Tinodios-dummy.m"; sourceTree = "<group>"; };
-		A1D1F6DA31CFD17005965B3706596EF0 /* Pods-Tinodios-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-Tinodios-umbrella.h"; sourceTree = "<group>"; };
 		A2369ECEAC62059566397F9CE430B492 /* MessagesCollectionViewFlowLayout.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = MessagesCollectionViewFlowLayout.swift; path = Sources/Layout/MessagesCollectionViewFlowLayout.swift; sourceTree = "<group>"; };
+		A273ED44FF6555EB805F4BA959078A15 /* Pods-TinodeSDKTests-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-TinodeSDKTests-dummy.m"; sourceTree = "<group>"; };
 		A3A5ADAA487B3AAEE659B06D9F47E2DD /* MessagesViewController+Menu.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "MessagesViewController+Menu.swift"; path = "Sources/Controllers/MessagesViewController+Menu.swift"; sourceTree = "<group>"; };
+		A7AC2CC94E36B3A7B7CC8A36F0AC9BF5 /* Pods-Tinodios-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-Tinodios-dummy.m"; sourceTree = "<group>"; };
 		AB4F33513470C29978DABC714C1DF7A1 /* MessageReusableView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = MessageReusableView.swift; path = "Sources/Views/Headers & Footers/MessageReusableView.swift"; sourceTree = "<group>"; };
 		AC51843662701526B768768CD86BC0AD /* MessageCollectionViewCell.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = MessageCollectionViewCell.swift; path = Sources/Views/Cells/MessageCollectionViewCell.swift; sourceTree = "<group>"; };
 		AEADB01B3495C85177315204063E3643 /* SQLite.swift.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = SQLite.swift.xcconfig; sourceTree = "<group>"; };
 		B039F2736EE66181C91F1460484C2372 /* MessageInputBar.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = MessageInputBar.modulemap; sourceTree = "<group>"; };
+		B06B59808AB9BCA9FCD51BB9595E9E9F /* Pods-TinodeSDK-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-TinodeSDK-umbrella.h"; sourceTree = "<group>"; };
 		B0CCB209B71670526CD2361390676F12 /* SwiftKeychainWrapper.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = SwiftKeychainWrapper.modulemap; sourceTree = "<group>"; };
 		B18230E139BAC4CB3A4412540F835808 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B334F14778FA7090E73CDABA4426A9FF /* SwiftKeychainWrapper-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "SwiftKeychainWrapper-umbrella.h"; sourceTree = "<group>"; };
@@ -298,49 +318,50 @@
 		B386FD2499B8B25F1CEBF319E62D759A /* Setter.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Setter.swift; path = Sources/SQLite/Typed/Setter.swift; sourceTree = "<group>"; };
 		B477F76675C63AA856A3C0D4DBA9B78B /* MessageKind.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = MessageKind.swift; path = Sources/Models/MessageKind.swift; sourceTree = "<group>"; };
 		B5FA3837C5DA7ABCC2D56406E050DCF0 /* NSAttributedString+Extensions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "NSAttributedString+Extensions.swift"; path = "Sources/Extensions/NSAttributedString+Extensions.swift"; sourceTree = "<group>"; };
-		B7E84CDCDDF4DC6B95DC8CD392B2780C /* MessageKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = MessageKit.framework; path = MessageKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B9FDA2E6195F71F801A3C9F8A96F6509 /* Pods-Tinodios.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = "Pods-Tinodios.modulemap"; sourceTree = "<group>"; };
 		BA99AF11B0898656ADDE4532CEA9DA0A /* Helpers.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Helpers.swift; path = Sources/SQLite/Helpers.swift; sourceTree = "<group>"; };
 		BB5A6A05BC24FDE6EE1AEA35707C3C9C /* AvatarPosition.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AvatarPosition.swift; path = Sources/Models/AvatarPosition.swift; sourceTree = "<group>"; };
-		BDD6EE89C5953505CDF4FF52F66E5757 /* SwiftWebSocket.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = SwiftWebSocket.framework; path = "SwiftWebSocket-iOS10.0.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BE57C5E00F81379811FD142337B955FE /* SQLite.swift.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = SQLite.swift.modulemap; sourceTree = "<group>"; };
 		BE94A9AF73508578FF15BDD872B23E53 /* CustomFunctions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CustomFunctions.swift; path = Sources/SQLite/Typed/CustomFunctions.swift; sourceTree = "<group>"; };
 		BFB461633F3D2BDEF85967F2A6C0738D /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C39D50099FA48A20D626AF63CA6DFD51 /* Pods-TinodeSDK.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-TinodeSDK.release.xcconfig"; sourceTree = "<group>"; };
+		C505B9B480C9C96C46BFAA4091B2AE03 /* Pods-TinodeSDK.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = "Pods-TinodeSDK.modulemap"; sourceTree = "<group>"; };
 		C56EBBB4D21F858353DC027EA7108500 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C8926F833CC7540D41844BD75305F1C4 /* SwiftKeychainWrapper-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "SwiftKeychainWrapper-dummy.m"; sourceTree = "<group>"; };
 		CB60B4740B98C7EB20A7F2244BCACA8A /* LocationMessageCell.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = LocationMessageCell.swift; path = Sources/Views/Cells/LocationMessageCell.swift; sourceTree = "<group>"; };
 		CBEA5FD55E60D68AC4B49F355171B84D /* SwiftKeychainWrapper.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = SwiftKeychainWrapper.xcconfig; sourceTree = "<group>"; };
+		CCD56F37B8D403610FC7482EE44B3F0A /* Pods-TinodeSDKTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-TinodeSDKTests.release.xcconfig"; sourceTree = "<group>"; };
 		CCFF94E6193FFFB1B5EB6473D76F970B /* InputStackView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = InputStackView.swift; path = Sources/Views/InputStackView.swift; sourceTree = "<group>"; };
+		CDCDAB75FDCABEBB072F0535A9C9258B /* Pods-Tinodios-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-Tinodios-frameworks.sh"; sourceTree = "<group>"; };
+		CDEC06F15F03EBFC522A8CCE43BA5C99 /* Pods-TinodeSDKTests-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-TinodeSDKTests-acknowledgements.plist"; sourceTree = "<group>"; };
+		CF3C76070E2D7895BFA2CC59B397B6C0 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		CF3FE0535AA425A0DDFD81885789A739 /* SQLite.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = SQLite.framework; path = SQLite.swift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF9B48FC2229375ED4520129CF2C4D18 /* MessagesViewController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = MessagesViewController.swift; path = Sources/Controllers/MessagesViewController.swift; sourceTree = "<group>"; };
 		D14CE24BBA1B99D9FF6891A91A145F86 /* MessageType.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = MessageType.swift; path = Sources/Protocols/MessageType.swift; sourceTree = "<group>"; };
-		D2971FB198C71FB04FAF1BABD03D0680 /* Pods-Tinodios.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-Tinodios.release.xcconfig"; sourceTree = "<group>"; };
-		D6A1EB32E5B6B6CA1F5D30613A3AAED0 /* Pods-TinodeSDK.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = "Pods-TinodeSDK.modulemap"; sourceTree = "<group>"; };
+		D1C7CBDFB821E655BFDE069B914EB17E /* Pods-Tinodios-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-Tinodios-acknowledgements.plist"; sourceTree = "<group>"; };
+		D8139C8DCE8D4551BFE116678620C8D5 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D93DC51A9AFA345BD263F2D0A0A001B4 /* SwiftWebSocket.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = SwiftWebSocket.framework; path = "SwiftWebSocket-iOS9.0.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
 		DA86E04C0D69E02692D90B1941EF029D /* LabelAlignment.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = LabelAlignment.swift; path = Sources/Models/LabelAlignment.swift; sourceTree = "<group>"; };
-		DC3F7D146F89B43E2B8B3ACDD484FB27 /* Pods-TinodeSDK-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-TinodeSDK-umbrella.h"; sourceTree = "<group>"; };
 		DD82902A79C9079F3691B3B35F4052A3 /* MessageSizeCalculator.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = MessageSizeCalculator.swift; path = Sources/Layout/MessageSizeCalculator.swift; sourceTree = "<group>"; };
 		DE207DF0A10615BD14FF02ED57413A5B /* Bundle+Extensions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "Bundle+Extensions.swift"; path = "Sources/Extensions/Bundle+Extensions.swift"; sourceTree = "<group>"; };
 		DF18110E7903175959B29AF0438E9BD8 /* MessageLabel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = MessageLabel.swift; path = Sources/Views/MessageLabel.swift; sourceTree = "<group>"; };
+		DF4D6A4C133434112D2E58DCCF76812E /* Pods-TinodeSDKTests-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-TinodeSDKTests-umbrella.h"; sourceTree = "<group>"; };
 		DF81CEA6BCC28E566599EEFA1530CF00 /* Schema.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Schema.swift; path = Sources/SQLite/Typed/Schema.swift; sourceTree = "<group>"; };
-		E022707F129A25407DFAB547AE1664F3 /* MessageInputBar.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = MessageInputBar.framework; path = MessageInputBar.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		E1D243B802E3C60F9AE6747CBF1649AD /* MessageKitAssets.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = MessageKitAssets.bundle; path = "MessageKit-MessageKitAssets.bundle"; sourceTree = BUILT_PRODUCTS_DIR; };
+		E186A057C443B6AFCCC5E4940800951A /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E72323B6531A2B6C8EC158D9BEC234F7 /* SQLite.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SQLite.h; path = Sources/SQLite/SQLite.h; sourceTree = "<group>"; };
 		E99DE6D13F1F7368D992C9C1787C36EB /* FTS4.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = FTS4.swift; path = Sources/SQLite/Extensions/FTS4.swift; sourceTree = "<group>"; };
 		E9CD1139E35982089514D3D1B4BCF580 /* MessagesCollectionView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = MessagesCollectionView.swift; path = Sources/Views/MessagesCollectionView.swift; sourceTree = "<group>"; };
-		EA9EA05E421AA70B700718F8A6F0678E /* Pods_TinodeSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = Pods_TinodeSDK.framework; path = "Pods-TinodeSDK.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
+		EA9EA97F0F6F69BA39D81E91314671D3 /* Pods-TinodeSDK-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-TinodeSDK-acknowledgements.markdown"; sourceTree = "<group>"; };
 		EE9CF2A4D413CD068FE180F56DA9C31E /* MessageKit-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "MessageKit-prefix.pch"; sourceTree = "<group>"; };
 		EFF626CBFBF6E46DA5EDC6BEFE5897FC /* UIView+Extensions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "UIView+Extensions.swift"; path = "Sources/Extensions/UIView+Extensions.swift"; sourceTree = "<group>"; };
+		F326520E209B1CEB596855951FCB60C2 /* Pods-Tinodios.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-Tinodios.debug.xcconfig"; sourceTree = "<group>"; };
 		F388A654F0492B7655D86815D58A4485 /* MessageKit.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = MessageKit.modulemap; sourceTree = "<group>"; };
-		F474E7C1D007CF6DFFA0E9353C2071E8 /* SwiftWebSocket.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = SwiftWebSocket.framework; path = "SwiftWebSocket-iOS9.0.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F590B920B3532B01FF744937E6BA8F6A /* SwiftWebSocket-iOS10.0-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "SwiftWebSocket-iOS10.0-dummy.m"; sourceTree = "<group>"; };
 		F67B1F05AAF2071FD35F3C2D5D4B076B /* SQLite-Bridging.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "SQLite-Bridging.m"; path = "Sources/SQLiteObjc/SQLite-Bridging.m"; sourceTree = "<group>"; };
 		F740F6E6C79599ED075758C876663E5D /* FTS5.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = FTS5.swift; path = Sources/SQLite/Extensions/FTS5.swift; sourceTree = "<group>"; };
 		F7AF1362136D76DEE1F4176EA90D14CA /* MessageInputBarDelegate.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = MessageInputBarDelegate.swift; path = Sources/Protocols/MessageInputBarDelegate.swift; sourceTree = "<group>"; };
 		F7F591E85D7E551615AA3E5A88FE4327 /* MediaMessageSizeCalculator.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = MediaMessageSizeCalculator.swift; path = Sources/Layout/MediaMessageSizeCalculator.swift; sourceTree = "<group>"; };
-		F923B891B79E0BB652C846021E14C88C /* Pods-Tinodios-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-Tinodios-acknowledgements.plist"; sourceTree = "<group>"; };
 		F9AE969577C8290E927EACD33C8FA349 /* AggregateFunctions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AggregateFunctions.swift; path = Sources/SQLite/Typed/AggregateFunctions.swift; sourceTree = "<group>"; };
-		F9B3DC84531278A9ECAF48A80EDB8CE4 /* Pods-Tinodios-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-Tinodios-acknowledgements.markdown"; sourceTree = "<group>"; };
 		FC400069704A90CDC7486E6DBB32EBA5 /* InputPlugin.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = InputPlugin.swift; path = Sources/Protocols/InputPlugin.swift; sourceTree = "<group>"; };
-		FD3F39782CDB846CB72C7E572278C3C2 /* Pods-Tinodios-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-Tinodios-frameworks.sh"; sourceTree = "<group>"; };
 		FD64D16706F667464674DDEAA3545A12 /* SwiftWebSocket-iOS9.0.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; name = "SwiftWebSocket-iOS9.0.modulemap"; path = "../SwiftWebSocket-iOS9.0/SwiftWebSocket-iOS9.0.modulemap"; sourceTree = "<group>"; };
 		FE1D16CF0E04342942F5079F21764955 /* Connection.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Connection.swift; path = Sources/SQLite/Core/Connection.swift; sourceTree = "<group>"; };
 		FF8AB3A2DBE8F6560792D5219EEFA3C4 /* PlayButtonView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = PlayButtonView.swift; path = Sources/Views/PlayButtonView.swift; sourceTree = "<group>"; };
@@ -402,6 +423,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		CAF8134AF6DE008D2F384E1000B337A1 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FDF1AC7731DDF6802E5032CDED372F19 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		E6F9CE8E82D96FCD6A8C4AD91EBD2582 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -422,6 +451,24 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		036930225D4B35FFD1EDB1EE0CBD470F /* Pods-TinodeSDKTests */ = {
+			isa = PBXGroup;
+			children = (
+				E186A057C443B6AFCCC5E4940800951A /* Info.plist */,
+				90D6AF2EC59AEA8B79B08F829B3E9C27 /* Pods-TinodeSDKTests.modulemap */,
+				8ACF6F922480173446F6F546784298B0 /* Pods-TinodeSDKTests-acknowledgements.markdown */,
+				CDEC06F15F03EBFC522A8CCE43BA5C99 /* Pods-TinodeSDKTests-acknowledgements.plist */,
+				A273ED44FF6555EB805F4BA959078A15 /* Pods-TinodeSDKTests-dummy.m */,
+				88735C876C56563E6389A41A9FBCAD0C /* Pods-TinodeSDKTests-frameworks.sh */,
+				77DD7807F08F9FDF337D7B5C5F219E9A /* Pods-TinodeSDKTests-resources.sh */,
+				DF4D6A4C133434112D2E58DCCF76812E /* Pods-TinodeSDKTests-umbrella.h */,
+				148D037B1585BF911653DC1DDBAF8B5E /* Pods-TinodeSDKTests.debug.xcconfig */,
+				CCD56F37B8D403610FC7482EE44B3F0A /* Pods-TinodeSDKTests.release.xcconfig */,
+			);
+			name = "Pods-TinodeSDKTests";
+			path = "Target Support Files/Pods-TinodeSDKTests";
+			sourceTree = "<group>";
+		};
 		0863EBCC7A26A175D84DA3DD7FDE4DF3 /* Support Files */ = {
 			isa = PBXGroup;
 			children = (
@@ -440,23 +487,6 @@
 			);
 			name = "Support Files";
 			path = "../Target Support Files/SwiftWebSocket-iOS10.0";
-			sourceTree = "<group>";
-		};
-		1A1DE79F64F14EE882438275E5E8BBCF /* Pods-TinodeSDK */ = {
-			isa = PBXGroup;
-			children = (
-				57E09772A69335F6474E38B90953C9B8 /* Info.plist */,
-				D6A1EB32E5B6B6CA1F5D30613A3AAED0 /* Pods-TinodeSDK.modulemap */,
-				25FBA67FB42AC96D58105BB3B9F90580 /* Pods-TinodeSDK-acknowledgements.markdown */,
-				4240948B5D96CBF50AC84B6D3CB94DC9 /* Pods-TinodeSDK-acknowledgements.plist */,
-				1BBA0904DD60596AB11F264E4651C057 /* Pods-TinodeSDK-dummy.m */,
-				7C1D2EAFC29A7F3E19996A05567E3091 /* Pods-TinodeSDK-resources.sh */,
-				DC3F7D146F89B43E2B8B3ACDD484FB27 /* Pods-TinodeSDK-umbrella.h */,
-				63D7BB4CD301E0992E49A0F3328AEED2 /* Pods-TinodeSDK.debug.xcconfig */,
-				41978A5B0803B11A4987A63A45117477 /* Pods-TinodeSDK.release.xcconfig */,
-			);
-			name = "Pods-TinodeSDK";
-			path = "Target Support Files/Pods-TinodeSDK";
 			sourceTree = "<group>";
 		};
 		2016C4D6456EADD7E1C33FCF14C90C7F /* Frameworks */ = {
@@ -492,24 +522,6 @@
 				202D6F64A06ECE657784D6139D24029B /* Images */,
 			);
 			name = Resources;
-			sourceTree = "<group>";
-		};
-		2FA703DB4A7A82CFD4C25272B6F9851A /* Pods-Tinodios */ = {
-			isa = PBXGroup;
-			children = (
-				5D948EA99BE59491E8FB90F3700E3B0C /* Info.plist */,
-				B9FDA2E6195F71F801A3C9F8A96F6509 /* Pods-Tinodios.modulemap */,
-				F9B3DC84531278A9ECAF48A80EDB8CE4 /* Pods-Tinodios-acknowledgements.markdown */,
-				F923B891B79E0BB652C846021E14C88C /* Pods-Tinodios-acknowledgements.plist */,
-				A1C17903316EB8316B42C62B987F3CC3 /* Pods-Tinodios-dummy.m */,
-				FD3F39782CDB846CB72C7E572278C3C2 /* Pods-Tinodios-frameworks.sh */,
-				975A0685679C01F73E001663B592A273 /* Pods-Tinodios-resources.sh */,
-				A1D1F6DA31CFD17005965B3706596EF0 /* Pods-Tinodios-umbrella.h */,
-				9548018953B944AABEF7AEC5EE6B7410 /* Pods-Tinodios.debug.xcconfig */,
-				D2971FB198C71FB04FAF1BABD03D0680 /* Pods-Tinodios.release.xcconfig */,
-			);
-			name = "Pods-Tinodios";
-			path = "Target Support Files/Pods-Tinodios";
 			sourceTree = "<group>";
 		};
 		664948DA11DAE29876EF5A1F0254813C /* MessageInputBar */ = {
@@ -570,8 +582,8 @@
 				93A4A3777CF96A4AAC1D13BA6DCCEA73 /* Podfile */,
 				2016C4D6456EADD7E1C33FCF14C90C7F /* Frameworks */,
 				EFC03747F89F363D9A122383754E8FE8 /* Pods */,
-				C611ADE19A593C663B88F33BE9ABEAE8 /* Products */,
-				DFD8A530825B85381CD7A186B346C9F1 /* Targets Support Files */,
+				E6BD8924620CFAE6CA8EBB8E593B4886 /* Products */,
+				9CC5D81493BF59A714FE7F5BE148122B /* Targets Support Files */,
 			);
 			sourceTree = "<group>";
 		};
@@ -634,6 +646,16 @@
 			path = MessageKit;
 			sourceTree = "<group>";
 		};
+		9CC5D81493BF59A714FE7F5BE148122B /* Targets Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				C218BAA3B5347D8D237E1D69D5A2A5D3 /* Pods-TinodeSDK */,
+				036930225D4B35FFD1EDB1EE0CBD470F /* Pods-TinodeSDKTests */,
+				B58C26C278470B1F0FFA899692D6D9B5 /* Pods-Tinodios */,
+			);
+			name = "Targets Support Files";
+			sourceTree = "<group>";
+		};
 		9DAC59B105640B3AC14FCDFB87BFE5F1 /* SwiftKeychainWrapper */ = {
 			isa = PBXGroup;
 			children = (
@@ -678,6 +700,24 @@
 			name = standard;
 			sourceTree = "<group>";
 		};
+		B58C26C278470B1F0FFA899692D6D9B5 /* Pods-Tinodios */ = {
+			isa = PBXGroup;
+			children = (
+				D8139C8DCE8D4551BFE116678620C8D5 /* Info.plist */,
+				54B7BE158855AF2F8AEB37B2A364A266 /* Pods-Tinodios.modulemap */,
+				50E400A6F9A401BA3719D36F115C079F /* Pods-Tinodios-acknowledgements.markdown */,
+				D1C7CBDFB821E655BFDE069B914EB17E /* Pods-Tinodios-acknowledgements.plist */,
+				A7AC2CC94E36B3A7B7CC8A36F0AC9BF5 /* Pods-Tinodios-dummy.m */,
+				CDCDAB75FDCABEBB072F0535A9C9258B /* Pods-Tinodios-frameworks.sh */,
+				2EA69BAC0AA2F6F532957390CFB9C482 /* Pods-Tinodios-resources.sh */,
+				5A152C4B06EE8974CDFA0292D3AC7285 /* Pods-Tinodios-umbrella.h */,
+				F326520E209B1CEB596855951FCB60C2 /* Pods-Tinodios.debug.xcconfig */,
+				1BAE33A32FDD62441F2DFF1E02F64547 /* Pods-Tinodios.release.xcconfig */,
+			);
+			name = "Pods-Tinodios";
+			path = "Target Support Files/Pods-Tinodios";
+			sourceTree = "<group>";
+		};
 		BE7F2944C51F115DED6A5C51DB14478B /* SwiftWebSocket */ = {
 			isa = PBXGroup;
 			children = (
@@ -688,20 +728,21 @@
 			path = SwiftWebSocket;
 			sourceTree = "<group>";
 		};
-		C611ADE19A593C663B88F33BE9ABEAE8 /* Products */ = {
+		C218BAA3B5347D8D237E1D69D5A2A5D3 /* Pods-TinodeSDK */ = {
 			isa = PBXGroup;
 			children = (
-				E022707F129A25407DFAB547AE1664F3 /* MessageInputBar.framework */,
-				B7E84CDCDDF4DC6B95DC8CD392B2780C /* MessageKit.framework */,
-				E1D243B802E3C60F9AE6747CBF1649AD /* MessageKitAssets.bundle */,
-				EA9EA05E421AA70B700718F8A6F0678E /* Pods_TinodeSDK.framework */,
-				9A0A97623099138A9CD24B97543DDEF1 /* Pods_Tinodios.framework */,
-				60ABCAF130E716A1DCDE23571C12F70D /* SQLite.framework */,
-				8A5CE9B4553E9BA08BA27A66962CA40D /* SwiftKeychainWrapper.framework */,
-				BDD6EE89C5953505CDF4FF52F66E5757 /* SwiftWebSocket.framework */,
-				F474E7C1D007CF6DFFA0E9353C2071E8 /* SwiftWebSocket.framework */,
+				CF3C76070E2D7895BFA2CC59B397B6C0 /* Info.plist */,
+				C505B9B480C9C96C46BFAA4091B2AE03 /* Pods-TinodeSDK.modulemap */,
+				EA9EA97F0F6F69BA39D81E91314671D3 /* Pods-TinodeSDK-acknowledgements.markdown */,
+				599E2D35BFEA61C0CF80C3B6600FE800 /* Pods-TinodeSDK-acknowledgements.plist */,
+				6979A7B92F7D30066318EEC461424003 /* Pods-TinodeSDK-dummy.m */,
+				1E02589B52D0F992639D45238BFBA768 /* Pods-TinodeSDK-resources.sh */,
+				B06B59808AB9BCA9FCD51BB9595E9E9F /* Pods-TinodeSDK-umbrella.h */,
+				8375E5FDC0B2A53518F8135565D1462F /* Pods-TinodeSDK.debug.xcconfig */,
+				C39D50099FA48A20D626AF63CA6DFD51 /* Pods-TinodeSDK.release.xcconfig */,
 			);
-			name = Products;
+			name = "Pods-TinodeSDK";
+			path = "Target Support Files/Pods-TinodeSDK";
 			sourceTree = "<group>";
 		};
 		CAC8FFA28C2850420860FE993722FFD8 /* Support Files */ = {
@@ -727,13 +768,21 @@
 			name = iOS;
 			sourceTree = "<group>";
 		};
-		DFD8A530825B85381CD7A186B346C9F1 /* Targets Support Files */ = {
+		E6BD8924620CFAE6CA8EBB8E593B4886 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				1A1DE79F64F14EE882438275E5E8BBCF /* Pods-TinodeSDK */,
-				2FA703DB4A7A82CFD4C25272B6F9851A /* Pods-Tinodios */,
+				4602C09035E048A1584B4F5F9C752FE7 /* MessageInputBar.framework */,
+				6B59D60A534F740ED2DCAF581F5B1793 /* MessageKit.framework */,
+				9C210A5F5E7CF0B8299956407FC5F114 /* MessageKitAssets.bundle */,
+				7D716B042DF0C1557A94450A9660037C /* Pods_TinodeSDK.framework */,
+				1D68BC219CAE2D0321993DF997CA5875 /* Pods_TinodeSDKTests.framework */,
+				1CE5D90F3AA0D0CF4F0437C773DAF717 /* Pods_Tinodios.framework */,
+				CF3FE0535AA425A0DDFD81885789A739 /* SQLite.framework */,
+				3A30092C806973D7EB556FB1CFB97A56 /* SwiftKeychainWrapper.framework */,
+				D93DC51A9AFA345BD263F2D0A0A001B4 /* SwiftWebSocket.framework */,
+				5C5696552EC2B415AC07AF09522906F2 /* SwiftWebSocket.framework */,
 			);
-			name = "Targets Support Files";
+			name = Products;
 			sourceTree = "<group>";
 		};
 		EFC03747F89F363D9A122383754E8FE8 /* Pods */ = {
@@ -813,6 +862,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		E560E810665415EC3F2A2091A1C2AE5A /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E775A4D68311F3FA81B3F74EFF9C4930 /* Pods-TinodeSDKTests-umbrella.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		E63F618AD978120542F684C151BF9CD8 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -847,7 +904,7 @@
 			);
 			name = "SwiftWebSocket-iOS9.0";
 			productName = "SwiftWebSocket-iOS9.0";
-			productReference = F474E7C1D007CF6DFFA0E9353C2071E8 /* SwiftWebSocket.framework */;
+			productReference = D93DC51A9AFA345BD263F2D0A0A001B4 /* SwiftWebSocket.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		47D046F2BDC43DC2061FAB9073F9B9BD /* SwiftKeychainWrapper */ = {
@@ -865,7 +922,26 @@
 			);
 			name = SwiftKeychainWrapper;
 			productName = SwiftKeychainWrapper;
-			productReference = 8A5CE9B4553E9BA08BA27A66962CA40D /* SwiftKeychainWrapper.framework */;
+			productReference = 3A30092C806973D7EB556FB1CFB97A56 /* SwiftKeychainWrapper.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		5ECBC0E81F8B6928C16A17CCE40FFB0C /* Pods-TinodeSDKTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D2E941B0D41FD8D9E36676D35B70B3FD /* Build configuration list for PBXNativeTarget "Pods-TinodeSDKTests" */;
+			buildPhases = (
+				E560E810665415EC3F2A2091A1C2AE5A /* Headers */,
+				ECCFED9FEF6AD415A009C5A95EF11513 /* Sources */,
+				CAF8134AF6DE008D2F384E1000B337A1 /* Frameworks */,
+				730358373E0C90321EB44E1503F2EDA8 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				972E33BC3EB7C448B967FA0BA118F9F7 /* PBXTargetDependency */,
+			);
+			name = "Pods-TinodeSDKTests";
+			productName = "Pods-TinodeSDKTests";
+			productReference = 1D68BC219CAE2D0321993DF997CA5875 /* Pods_TinodeSDKTests.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		718A2C97FA60F149DD622BBCEE0A7428 /* MessageKit */ = {
@@ -885,7 +961,7 @@
 			);
 			name = MessageKit;
 			productName = MessageKit;
-			productReference = B7E84CDCDDF4DC6B95DC8CD392B2780C /* MessageKit.framework */;
+			productReference = 6B59D60A534F740ED2DCAF581F5B1793 /* MessageKit.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		8BD7D9113AC42A0C0127929271BA7C55 /* MessageInputBar */ = {
@@ -903,7 +979,7 @@
 			);
 			name = MessageInputBar;
 			productName = MessageInputBar;
-			productReference = E022707F129A25407DFAB547AE1664F3 /* MessageInputBar.framework */;
+			productReference = 4602C09035E048A1584B4F5F9C752FE7 /* MessageInputBar.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		9BFFD719D54E43B04CD54616D8DE2349 /* SQLite.swift */ = {
@@ -921,7 +997,7 @@
 			);
 			name = SQLite.swift;
 			productName = SQLite.swift;
-			productReference = 60ABCAF130E716A1DCDE23571C12F70D /* SQLite.framework */;
+			productReference = CF3FE0535AA425A0DDFD81885789A739 /* SQLite.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		BDDC52D238995F7547D4302A43FF8051 /* MessageKit-MessageKitAssets */ = {
@@ -938,7 +1014,7 @@
 			);
 			name = "MessageKit-MessageKitAssets";
 			productName = "MessageKit-MessageKitAssets";
-			productReference = E1D243B802E3C60F9AE6747CBF1649AD /* MessageKitAssets.bundle */;
+			productReference = 9C210A5F5E7CF0B8299956407FC5F114 /* MessageKitAssets.bundle */;
 			productType = "com.apple.product-type.bundle";
 		};
 		DE2875353C82B7FF36907BDCA31FBB81 /* Pods-TinodeSDK */ = {
@@ -957,7 +1033,7 @@
 			);
 			name = "Pods-TinodeSDK";
 			productName = "Pods-TinodeSDK";
-			productReference = EA9EA05E421AA70B700718F8A6F0678E /* Pods_TinodeSDK.framework */;
+			productReference = 7D716B042DF0C1557A94450A9660037C /* Pods_TinodeSDK.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		E1EE9EA1D1E3205F8014ADF04EFC7D61 /* SwiftWebSocket-iOS10.0 */ = {
@@ -975,7 +1051,7 @@
 			);
 			name = "SwiftWebSocket-iOS10.0";
 			productName = "SwiftWebSocket-iOS10.0";
-			productReference = BDD6EE89C5953505CDF4FF52F66E5757 /* SwiftWebSocket.framework */;
+			productReference = 5C5696552EC2B415AC07AF09522906F2 /* SwiftWebSocket.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 		F7928FCFC8235544FB2125808E742FC9 /* Pods-Tinodios */ = {
@@ -998,7 +1074,7 @@
 			);
 			name = "Pods-Tinodios";
 			productName = "Pods-Tinodios";
-			productReference = 9A0A97623099138A9CD24B97543DDEF1 /* Pods_Tinodios.framework */;
+			productReference = 1CE5D90F3AA0D0CF4F0437C773DAF717 /* Pods_Tinodios.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 /* End PBXNativeTarget section */
@@ -1018,7 +1094,7 @@
 				en,
 			);
 			mainGroup = 7DB346D0F39D3F0E887471402A8071AB;
-			productRefGroup = C611ADE19A593C663B88F33BE9ABEAE8 /* Products */;
+			productRefGroup = E6BD8924620CFAE6CA8EBB8E593B4886 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -1026,6 +1102,7 @@
 				718A2C97FA60F149DD622BBCEE0A7428 /* MessageKit */,
 				BDDC52D238995F7547D4302A43FF8051 /* MessageKit-MessageKitAssets */,
 				DE2875353C82B7FF36907BDCA31FBB81 /* Pods-TinodeSDK */,
+				5ECBC0E81F8B6928C16A17CCE40FFB0C /* Pods-TinodeSDKTests */,
 				F7928FCFC8235544FB2125808E742FC9 /* Pods-Tinodios */,
 				9BFFD719D54E43B04CD54616D8DE2349 /* SQLite.swift */,
 				47D046F2BDC43DC2061FAB9073F9B9BD /* SwiftKeychainWrapper */,
@@ -1052,6 +1129,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		34F75BD0E56BD56D2FDC1728850386F9 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		730358373E0C90321EB44E1503F2EDA8 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1253,6 +1337,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		ECCFED9FEF6AD415A009C5A95EF11513 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C80D83280B1D479DD2D17B1827B90CDD /* Pods-TinodeSDKTests-dummy.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		F8BC431F576F7B4FEB7D5B0DBA197D6B /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1294,6 +1386,12 @@
 			target = 8BD7D9113AC42A0C0127929271BA7C55 /* MessageInputBar */;
 			targetProxy = 4E1753B6449564219F70655600B78442 /* PBXContainerItemProxy */;
 		};
+		972E33BC3EB7C448B967FA0BA118F9F7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "SwiftWebSocket-iOS9.0";
+			target = 360A62B7E2F9C18C359BC1A17F37961A /* SwiftWebSocket-iOS9.0 */;
+			targetProxy = 3816C25593622A03D4B9A7D866FD35D1 /* PBXContainerItemProxy */;
+		};
 		CA6D83F66E0814959A90130A63935230 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = "SwiftWebSocket-iOS10.0";
@@ -1315,6 +1413,43 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		057BEBC69D8E8AACD4C4D7A52041E11F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 148D037B1585BF911653DC1DDBAF8B5E /* Pods-TinodeSDKTests.debug.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = "Target Support Files/Pods-TinodeSDKTests/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACH_O_TYPE = staticlib;
+				MODULEMAP_FILE = "Target Support Files/Pods-TinodeSDKTests/Pods-TinodeSDKTests.modulemap";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
 		0F2FD8728EDEBC7AEDA348B5604FF049 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5B1494062D6DD015C1E6775BA9214143 /* MessageKit.xcconfig */;
@@ -1388,7 +1523,7 @@
 		};
 		24E1CA7C680B864A1F67E9EEFFEDF1E9 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 9548018953B944AABEF7AEC5EE6B7410 /* Pods-Tinodios.debug.xcconfig */;
+			baseConfigurationReference = F326520E209B1CEB596855951FCB60C2 /* Pods-Tinodios.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				CLANG_ENABLE_OBJC_WEAK = NO;
@@ -1497,7 +1632,7 @@
 		};
 		377FCA9EE7F4191347DA0F905E12012C /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = D2971FB198C71FB04FAF1BABD03D0680 /* Pods-Tinodios.release.xcconfig */;
+			baseConfigurationReference = 1BAE33A32FDD62441F2DFF1E02F64547 /* Pods-Tinodios.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				CLANG_ENABLE_OBJC_WEAK = NO;
@@ -1942,9 +2077,47 @@
 			};
 			name = Debug;
 		};
+		D4CA82C24C9D25E5E0486EB13B77E410 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = CCD56F37B8D403610FC7482EE44B3F0A /* Pods-TinodeSDKTests.release.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = "Target Support Files/Pods-TinodeSDKTests/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACH_O_TYPE = staticlib;
+				MODULEMAP_FILE = "Target Support Files/Pods-TinodeSDKTests/Pods-TinodeSDKTests.modulemap";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
 		E2BA4A4A23EE61CBC1BE278BC9691138 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 63D7BB4CD301E0992E49A0F3328AEED2 /* Pods-TinodeSDK.debug.xcconfig */;
+			baseConfigurationReference = 8375E5FDC0B2A53518F8135565D1462F /* Pods-TinodeSDK.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				CODE_SIGN_IDENTITY = "";
@@ -2017,7 +2190,7 @@
 		};
 		F39D8C09034D54A43B9933510818C2B1 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 41978A5B0803B11A4987A63A45117477 /* Pods-TinodeSDK.release.xcconfig */;
+			baseConfigurationReference = C39D50099FA48A20D626AF63CA6DFD51 /* Pods-TinodeSDK.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				CODE_SIGN_IDENTITY = "";
@@ -2133,6 +2306,15 @@
 			buildConfigurations = (
 				77AC9FE0B1186AA3217EBF553BF9F3C7 /* Debug */,
 				F04227181E36C60011188111F48F2EBC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D2E941B0D41FD8D9E36676D35B70B3FD /* Build configuration list for PBXNativeTarget "Pods-TinodeSDKTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				057BEBC69D8E8AACD4C4D7A52041E11F /* Debug */,
+				D4CA82C24C9D25E5E0486EB13B77E410 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
