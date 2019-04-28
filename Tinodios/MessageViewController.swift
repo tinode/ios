@@ -145,7 +145,10 @@ extension StoredMessage: MessageType {
         get { return self.ts ?? Date() }
     }
     var kind: MessageKind {
-        get { return .text(self.content?.string ?? "") }
+        get {
+            guard let content = self.content else { return .text("") }
+            return .text(content.string)
+        }
     }
 }
 
