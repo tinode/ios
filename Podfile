@@ -29,6 +29,11 @@ target 'TinodeSDK' do
     sdk_pods
 end
 
+target 'TinodeSDKTests' do
+    project 'TinodeSDK'
+    sdk_pods
+end
+
 target 'Tinodios' do
     project 'Tinodios'
     sdk_pods

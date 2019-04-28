@@ -9,7 +9,7 @@ import Foundation
 
 // Needed for encoding/decoding arrays and dictionaries of objects in JSON.
 // Inspired by https://medium.com/grand-parade/parsing-fields-in-codable-structs-that-can-be-of-any-json-type-e0283d5edb
-public enum JSONValue: Codable {
+public enum JSONValue: Codable, Equatable {
     case string(String)
     case int(Int)
     case double(Double)

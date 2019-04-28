@@ -110,6 +110,7 @@ public class Tinode {
     public static let kNoteKp = "kp"
     public static let kNoteRead = "read"
     public static let kNoteRecv = "recv"
+    private static let log = Log(category: "co.tinode.tinodesdk")
 
     let kProtocolVersion = "0"
     let kVersion = "0.15"
@@ -213,13 +214,10 @@ public class Tinode {
 
     public func updateUser<DP: Codable, DR: Codable>(uid: String, desc: Description<DP, DR>) {
         if let user = users[uid] {
-
-            print("found user \(user)")
             _ = (user as? User<DP>)?.merge(from: desc)
         } else {
             let user = User<DP>(uid: uid, desc: desc)
             users[uid] = user
-            print("updating")
         }
         // store?.userUpdate(user)
     }
@@ -236,10 +234,9 @@ public class Tinode {
 
     public func nextUniqueString() -> String {
         nameCounter += 1
-        let millisecSince1970 = Int64((Date().timeIntervalSince1970 as Double) * 1000)
-        let q = millisecSince1970.advanced(by: -1414213562373) << 16
-        let v = q.advanced(by: nameCounter & 0xffff)
-        return String(v, radix: 32)
+        let millisecSince1970 = Int64(Date().timeIntervalSince1970 as Double * 1000)
+        let q = ((millisecSince1970 - 1414213562373) << 16).advanced(by: nameCounter & 0xffff)
+        return String(q, radix: 32)
     }
 
     private func getUserAgent() -> String {
@@ -268,7 +265,6 @@ public class Tinode {
             throw TinodeJsonError.decode
         }
         let serverMsg = try Tinode.jsonDecoder.decode(ServerMessage.self, from: data)
-        print("serverMsg = \(serverMsg)")
 
         listener?.onMessage(msg: serverMsg)
 
@@ -283,23 +279,22 @@ public class Tinode {
                             ctrl.code, ctrl.text, ctrl.getStringParam(for: "what")))
                     }
                 }
-                print("ctrl.id = \(id)")
+                Tinode.log.debug("ctrl.id = %d", id)
             }
             if let what = ctrl.getStringParam(for: "what"), what == "data" {
                 if let topic = ctrl.topic, let t = getTopic(topicName: topic) {
                     t.allMessagesReceived(count: ctrl.getIntParam(for: "count"))
                 }
-                print("what = \(what)")
+                Tinode.log.debug("what = %@", what)
             }
         } else if let meta = serverMsg.meta {
             var updated: Date? = nil
             if let t = getTopic(topicName: meta.topic!) {
-                //t.route
                 t.routeMeta(meta: meta)
                 updated = t.updated
             } else if let t = maybeCreateTopic(meta: meta) {
                 updated = t.updated
-                print("maybe create \(String(describing: meta.topic))")
+                Tinode.log.debug("created topic %@", meta.topic ?? "")
             }
 
             if let updated = updated {
@@ -339,15 +334,9 @@ public class Tinode {
         }
     }
     private func note(topic: String, what: String, seq: Int) {
-        let msg = ClientMessage<Int, Int, Int>(
+        let msg = ClientMessage<Int, Int>(
             note: MsgClientNote(topic: topic, what: what, seq: seq))
-        do {
-            let jsonData = try Tinode.jsonEncoder.encode(msg)
-            let jd = String(decoding: jsonData, as: UTF8.self)
-            print("note request: \(jd)")
-            connection!.send(payload: jsonData)
-        } catch {
-        }
+        try? send(payload: msg)
     }
     public func noteRecv(topic: String, seq: Int) {
         note(topic: topic, what: Tinode.kNoteRecv, seq: seq)
@@ -358,16 +347,16 @@ public class Tinode {
     public func noteKeyPress(topic: String) {
         note(topic: topic, what: Tinode.kNoteKp, seq: 0)
     }
-    private func send<C: Codable, DP: Codable, DR: Codable>(payload msg: ClientMessage<C,DP,DR>) throws {
+    private func send<DP: Codable, DR: Codable>(payload msg: ClientMessage<DP,DR>) throws {
         guard let conn = connection else {
             throw TinodeError.notConnected("Attempted to send msg to a closed connection.")
         }
         let jsonData = try Tinode.jsonEncoder.encode(msg)
-        print("out: \(jsonData)")
+        Tinode.log.debug("out: %{public}@", String(decoding: jsonData, as: UTF8.self))
         conn.send(payload: jsonData)
     }
-    private func sendWithPromise<C: Codable, DP: Codable, DR: Codable>(
-        payload msg: ClientMessage<C,DP,DR>, with id: String) -> PromisedReply<ServerMessage> {
+    private func sendWithPromise<DP: Codable, DR: Codable>(
+        payload msg: ClientMessage<DP,DR>, with id: String) -> PromisedReply<ServerMessage> {
         let future = PromisedReply<ServerMessage>()
         do {
             try send(payload: msg)
@@ -376,14 +365,14 @@ public class Tinode {
             do {
                 try future.reject(error: error)
             } catch {
-                print("Error rejecting promise \(error)")
+                Tinode.log.error("Error rejecting promise: %{public}@", String(describing: error))
             }
         }
         return future
     }
     private func hello() -> PromisedReply<ServerMessage>? {
         let msgId = getNextMsgId()
-        let msg = ClientMessage<Int, Int, Int>(
+        let msg = ClientMessage<Int, Int>(
             hi: MsgClientHi(id: msgId, ver: kVersion,
                             ua: getUserAgent(), dev: deviceId,
                             lang: kLocale))
@@ -560,7 +549,7 @@ public class Tinode {
             }
         }
 
-        let msg = ClientMessage<Int,Pu,Pr>(acc: msga)
+        let msg = ClientMessage<Pu,Pr>(acc: msga)
         let future = sendWithPromise(payload: msg, with: msgId)
 
         if !loginNow {
@@ -603,7 +592,8 @@ public class Tinode {
             encodedToken = try AuthScheme.encodeBasicToken(
                 uname: uname, password: password)
         } catch {
-            print("Won't login - failed encoding token: \(error)")
+            Tinode.log.error("Won't login - failed encoding token: %{public}@",
+                             String(describing: error))
             return nil
         }
         return login(scheme: AuthScheme.kLoginBasic,
@@ -634,7 +624,7 @@ public class Tinode {
                 msgl.addCred(c: c)
             }
         }
-        let msg = ClientMessage<Int, Int, Int>(login: msgl)
+        let msg = ClientMessage<Int, Int>(login: msgl)
         return try! sendWithPromise(payload: msg, with: msgId).then(
             onSuccess: { [weak self] pkt in
                 self?.loginInProgress = false
@@ -713,7 +703,8 @@ public class Tinode {
             self.tinode = tinode
         }
         func onConnect(reconnecting: Bool) -> Void {
-            print("tinode connected")
+            let m = reconnecting ? "YES" : "NO"
+            Tinode.log.info("Tinode connected: after reconnect - %@", m.description)
             do {
                 let future = try tinode.hello()?.then(onSuccess: { [weak self] pkt in
                     guard self != nil else {
@@ -744,24 +735,24 @@ public class Tinode {
                         onFailure: nil)
                 }
             } catch {
-                print("onConnect error \(error)")
+                Tinode.log.error("Connection error: %{public}@",
+                                 String(describing: error))
             }
         }
         func onMessage(with message: String) -> Void {
-            print("in: \(message)")
+            Log.debug("in: %{public}@", message)
             do {
                 try tinode.dispatch(message)
             } catch {
-                print("onMessage error: \(error)")
+                Log.error("onMessage error: %{public}@", String(describing: error))
             }
         }
         func onDisconnect(isServerOriginated: Bool, code: Int, reason: String) -> Void {
-            print("tinode on disconnect")
             tinode.handleDisconnect(isServerOriginated: isServerOriginated, code: code, reason: reason)
         }
         func onError(error: Error) -> Void {
             tinode.handleDisconnect(isServerOriginated: true, code: 0, reason: error.localizedDescription)
-            print("tinode error: \(error)")
+            Log.error("Tinode network error: %{public}@", String(describing: error))
             if let connected = tinode.connectedPromise, !connected.isDone {
                 do {
                     try connected.reject(error: error)
@@ -773,7 +764,7 @@ public class Tinode {
     }
     public func connect(to hostName: String, useTLS: Bool) throws -> PromisedReply<ServerMessage>? {
         if isConnected {
-            print("tinode is already connected: \(isConnected)")
+            Tinode.log.error("Tinode is already connected")
             return nil
         }
         let urlString = "\(hostName)/v\(kProtocolVersion)/channels"
@@ -791,7 +782,7 @@ public class Tinode {
         set: MsgSetMeta<Pu, Pr>?,
         get: MsgGetMeta?) -> PromisedReply<ServerMessage>? {
         let msgId = getNextMsgId()
-        let msg = ClientMessage<Int, Pu, Pr>(
+        let msg = ClientMessage<Pu, Pr>(
             sub: MsgClientSub(
                 id: msgId,
                 topic: topicName,
@@ -802,7 +793,7 @@ public class Tinode {
 
     public func getMeta(topic: String, query: MsgGetMeta) -> PromisedReply<ServerMessage>? {
         let msgId = getNextMsgId()
-        let msg = ClientMessage<Int, Int, Int>(  // generic params don't matter
+        let msg = ClientMessage<Int, Int>(  // generic params don't matter
             get: MsgClientGet(
                 id: msgId,
                 topic: topic,
@@ -811,24 +802,22 @@ public class Tinode {
     }
     public func leave(topic: String, unsub: Bool?) -> PromisedReply<ServerMessage>? {
         let msgId = getNextMsgId()
-        let msg = ClientMessage<Int, Int, Int>(
+        let msg = ClientMessage<Int, Int>(
             leave: MsgClientLeave(id: msgId, topic: topic, unsub: unsub))
         return sendWithPromise(payload: msg, with: msgId)
     }
 
-    internal func publish<C: Codable>(topic: String, head: [String:JSONValue]?, content: C) -> PromisedReply<ServerMessage>? {
+    internal func publish(topic: String, head: [String:JSONValue]?, content: Drafty) -> PromisedReply<ServerMessage>? {
         let msgId = getNextMsgId()
-        let msg = ClientMessage<C, Int, Int>(
-            pub: MsgClientPub<C>(id: msgId, topic: topic, noecho: true, head: head, content: content))
+        let msg = ClientMessage<Int, Int>(
+            pub: MsgClientPub(id: msgId, topic: topic, noecho: true, head: head, content: content))
         return sendWithPromise(payload: msg, with: msgId)
     }
 
-    public func publish(topic: String, data: String?) -> PromisedReply<ServerMessage>? {
-        return publish(topic: topic, head: nil, content: data)
-    }
-
     public func publish(topic: String, data: Drafty) -> PromisedReply<ServerMessage>? {
-        return publish(topic: topic, head: ["mime": JSONValue.string(Drafty.kMimeType)], content: data)
+        return publish(topic: topic,
+                       head: data.isPlain ? nil : ["mime": JSONValue.string(Drafty.kMimeType)],
+                       content: data)
     }
 
     public func getFilteredTopics(filter: ((TopicProto) -> Bool)?) -> Array<TopicProto>? {
@@ -844,20 +833,20 @@ public class Tinode {
         return result
     }
 
-    private func sendDeleteMessage(msg: ClientMessage<Int, Int, Int>) -> PromisedReply<ServerMessage>? {
+    private func sendDeleteMessage(msg: ClientMessage<Int, Int>) -> PromisedReply<ServerMessage>? {
         guard let msgId = msg.del?.id else { return nil }
         return sendWithPromise(payload: msg, with: msgId)
     }
     func delMessage(topicName: String?, fromId: Int, toId: Int, hard: Bool) -> PromisedReply<ServerMessage>? {
         return sendDeleteMessage(
-            msg: ClientMessage<Int, Int, Int>(
+            msg: ClientMessage<Int, Int>(
                 del: MsgClientDel(id: getNextMsgId(),
                                   topic: topicName,
                                   from: fromId, to: toId, hard: hard)))
     }
     func delMessage(topicName: String?, list: [Int]?, hard: Bool) -> PromisedReply<ServerMessage>? {
         return sendDeleteMessage(
-            msg: ClientMessage<Int, Int, Int>(
+            msg: ClientMessage<Int, Int>(
                 del: MsgClientDel(id: getNextMsgId(),
                                   topic: topicName, list: list, hard: hard)))
     }

@@ -20,7 +20,8 @@ public protocol DraftyFormatter {
 }
 
 /// Class representing formatted text with optional attachments.
-public class Drafty: Codable {
+public class Drafty: Codable, CustomStringConvertible, Equatable {
+
     public static let kMimeType = "text/x-drafty"
     public static let kJSONMimeType = "application/json"
 
@@ -31,17 +32,14 @@ public class Drafty: Codable {
     }
 
     // Regular expressions for parsing inline formats.
-    // Name of the style, regexp start, regexp end
-    private static let kInlineStyleName = ["ST", "EM", "DL", "CO"]
-    private static let kInlineStyleRE = try! [
-        NSRegularExpression(pattern: #"(?<=^|\W)\*([^\s*]+)\*(?=$|\W)"#),     // bold *bo*
-        NSRegularExpression(pattern: #"(?<=^|[\W_])_([^\s_]+)_(?=$|[\W_])"#), // italic _it_
-        NSRegularExpression(pattern: #"(?<=^|\W)~([^\\s~]+)~(?=$|\W)"#),      // strikethough ~st~
-        NSRegularExpression(pattern: #"(?<=^|\W)`([^`]+)`(?=$|\W)"#)          // code/monospace `mono`
+    private static let kInlineStyles = try! [
+        "ST": NSRegularExpression(pattern: #"(?<=^|\W)\*([^*]+[^\s*])\*(?=$|\W)"#),     // bold *bo*
+        "EM": NSRegularExpression(pattern: #"(?<=^|[\W_])_([^_]+[^\s_])_(?=$|[\W_])"#), // italic _it_
+        "DL": NSRegularExpression(pattern: #"(?<=^|\W)~([^~]+[^\s~])~(?=$|\W)"#),       // strikethough ~st~
+        "CO": NSRegularExpression(pattern: #"(?<=^|\W)`([^`]+)`(?=$|\W)"#)              // code/monospace `mono`
     ]
 
-    private static let kEntityName = ["LN", "MN", "HT"]
-    private static let kEntityProc = try! [
+    private static let kEntities = try! [
         EntityProc(name: "LN",
                    pattern: NSRegularExpression(pattern: #"(?<=^|\W)(https?://)?(?:www\.)?[-a-z0-9@:%._+~#=]{2,256}\.[a-z]{2,4}\b(?:[-a-z0-9@:%_+.~#?&/=]*)"#, options: [.caseInsensitive]),
                    pack: {(text: NSString, m: NSTextCheckingResult) -> [String:JSONValue] in
@@ -66,6 +64,12 @@ public class Drafty: Codable {
             })
     ]
 
+    private enum CodingKeys : String, CodingKey  {
+        case txt = "txt"
+        case fmt = "fmt"
+        case ent = "ent"
+    }
+
     public var txt: String
     public var fmt: [Style]?
     public var ent: [Entity]?
@@ -73,6 +77,44 @@ public class Drafty: Codable {
     /// Initializes empty object
     public init() {
         txt = ""
+    }
+
+    /// Initializer to comply with Decodable protocol:
+    /// First tries to decode Drafty from plain text, then
+    /// from from JSON.
+    required public init(from decoder: Decoder) throws {
+        // First try optional decoding of 'txt' from a primitive string.
+        // Most content is sent as primitive strings.
+        if let container = try? decoder.singleValueContainer(),
+            let txt = try? container.decode(String.self) {
+            self.txt = txt
+        } else {
+            // Non-optional decoding as a Drafty object.
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+            txt = try container.decode(String.self, forKey: .txt)
+            fmt = try? container.decode([Style].self, forKey: .fmt)
+            ent = try? container.decode([Entity].self, forKey: .ent)
+        }
+    }
+
+    /// encode makes Drafty compliant with Encodable protocol.
+    /// First checks if Drafty can be represented as plain text and if so encodes
+    /// it as a primitive string. Otherwise encodes into a JSON object.
+    public func encode(to encoder: Encoder) throws {
+        if isPlain {
+            // If trafty contains plain text, encode it as a primitive string.
+            var container = encoder.singleValueContainer()
+            try container.encode(txt)
+        } else {
+            var container = encoder.container(keyedBy: CodingKeys.self)
+            try container.encode(txt, forKey: CodingKeys.txt)
+            // fmt cannot be nil.
+            try container.encode(fmt, forKey: CodingKeys.fmt)
+            // Encode entities only if they are present.
+            if ent != nil {
+                try container.encode(ent, forKey: CodingKeys.ent)
+            }
+        }
     }
 
     /// Parses provided content string using markdown-like markup.
@@ -126,8 +168,8 @@ public class Drafty: Codable {
     //
     // This is needed in order to clear markup, i.e. 'hello *world*' -> 'hello world' and convert
     // ranges from markup-ed offsets to plain text offsets.
-    private static func chunkify(line: String, start startAt: Int, end: Int, spans: [Span]?) -> [Span]? {
-        guard let spans = spans, !spans.isEmpty else { return nil }
+    private static func chunkify(line: String, start startAt: Int, end: Int, spans: [Span]) -> [Span] {
+        guard !spans.isEmpty else { return spans }
 
         var start = startAt
         var chunks: [Span] = []
@@ -142,9 +184,8 @@ public class Drafty: Codable {
             let chunk = Span()
             chunk.type = span.type
 
-            let chld = chunkify(line: line, start: span.start + 1, end: span.end - 1, spans: span.children)
-            if chld != nil {
-                chunk.children = chld!
+            if let children = span.children {
+                chunk.children = chunkify(line: line, start: span.start + 1, end: span.end, spans: children)
             } else {
                 chunk.text = span.text
             }
@@ -163,8 +204,8 @@ public class Drafty: Codable {
 
     // Convert flat array or spans into a tree representation.
     // Keep standalone and nested spans, throw away partially overlapping spans.
-    private static func toTree(spans: [Span]?) -> [Span]? {
-        guard let spans = spans, !spans.isEmpty else { return nil }
+    private static func toTree(spans: [Span]) -> [Span] {
+        guard !spans.isEmpty else { return spans }
 
         var tree: [Span] = []
 
@@ -189,8 +230,10 @@ public class Drafty: Codable {
         }
 
         // Recursively rearrange the subnodes.
-        for s in tree {
-            s.children = toTree(spans: s.children)
+        for span in tree {
+            if let children = span.children {
+                span.children = toTree(spans: children)
+            }
         }
 
         return tree
@@ -228,27 +271,23 @@ public class Drafty: Codable {
         return block
     }
 
-    // Get a list of entities from a text.
+    // Extract entities from a line of text.
     private static func extractEntities(line: String) -> [ExtractedEnt] {
-        var extracted: [ExtractedEnt] = []
         let nsline = line as NSString
-
-        for i in 0..<Drafty.kEntityName.count {
-            let matches = kEntityProc[i].re.matches(in: line, range: NSRange(location: 0, length: nsline.length))
-            for m in matches {
+        return Drafty.kEntities.flatMap { (proc: EntityProc) -> [ExtractedEnt] in
+            let matches = proc.re.matches(in: line, range: NSRange(location: 0, length: nsline.length))
+            return matches.map { (m) -> ExtractedEnt in
                 let ee = ExtractedEnt()
                 // m.range is the entire match including markup
                 let r = Range(m.range, in: line)!
                 ee.at = line.distance(from: line.startIndex, to: r.lowerBound)
                 ee.value = nsline.substring(with: m.range)
                 ee.len = ee.value.count
-                ee.tp = kEntityName[i]
-                ee.data = kEntityProc[i].pack(nsline, m)
-                extracted.append(ee)
+                ee.tp = proc.name
+                ee.data = proc.pack(nsline, m)
+                return ee
             }
         }
-
-        return extracted
     }
 
     /// Parse optionally marked-up text into structured representation.
@@ -265,21 +304,21 @@ public class Drafty: Codable {
         var blks: [Block] = []
         var refs: [Entity] = []
 
-        var spans: [Span]?
         var entityMap: [String:JSONValue] = [:]
         for line in lines {
-            spans = []
-            // Select styled spans.
-            for i in 0..<Drafty.kInlineStyleName.count {
-                spans!.append(contentsOf: spannify(original: line, re: Drafty.kInlineStyleRE[i], type: Drafty.kInlineStyleName[i]))
+            var spans = Drafty.kInlineStyles.flatMap { (arg) -> [Span] in
+                let (name, re) = arg
+                return spannify(original: line, re: re, type: name)
             }
 
             let b: Block?
-            if !spans!.isEmpty {
+            if !spans.isEmpty {
                 // Sort styled spans in ascending order by .start
-                spans!.sort()
+                spans.sort { lhs, rhs in
+                    return lhs.start < rhs.start
+                }
 
-                // Rearrange falt list of styled spans into a tree, throw away invalid spans.
+                // Rearrange flat list of styled spans into a tree, throw away invalid spans.
                 spans = toTree(spans: spans)
 
                 // Parse the entire string into spans, styled or unstyled.
@@ -569,7 +608,15 @@ public class Drafty: Codable {
         return self
     }
 
-    /// Check if the instance contains no markup.
+    // Comparator is needed for testing.
+    public static func == (lhs: Drafty, rhs: Drafty) -> Bool {
+        return lhs.txt == rhs.txt &&
+            lhs.fmt == rhs.fmt &&
+            ((lhs.ent == nil && rhs.ent == nil) || (lhs.ent == rhs.ent))
+    }
+
+    /// Check if the instance contains no markup and consequently can be represented by
+    /// plain String without loss of information.
     public var isPlain: Bool {
         return ent == nil && fmt == nil
     }
@@ -666,7 +713,12 @@ public class Drafty: Codable {
         }
 
         // Sort spans first by start index (asc) then by length (desc).
-        spans.sort()
+        spans.sort { lhs, rhs in
+            if lhs.start == rhs.start {
+                return rhs.end < lhs.end; // longer one comes first (<0)
+            }
+            return lhs.start < rhs.start;
+        }
 
         for span in spans {
             if ent != nil && (span.type == nil || span.type!.isEmpty) {
@@ -685,11 +737,6 @@ public class Drafty: Codable {
         return formatter.apply(tp: nil, attr: nil, content: forEach(line: txt, start: 0, end: txt.count, spans: spans, formatter: formatter))
     }
 
-    /// Some representation of Drafty mostly useful during debugging.
-    private var plainText: String {
-        return "{txt: '\(txt)', fmt: \(fmt ?? []), ent: \(ent ?? [])}"
-    }
-
     /// Serialize Drafty object for storage in database.
     public func serialize() -> String? {
         return isPlain ? txt : Tinode.serializeObject(t: self)
@@ -703,6 +750,11 @@ public class Drafty: Codable {
         }
         // Don't use init(content: data): there is no need to parse content again.
         return Drafty(text: data, fmt: nil, ent: nil)
+    }
+
+    /// Represents Drafty as JSON-like string.
+    public var description: String {
+        return "{txt: \"\(txt)\", fmt:\(fmt ?? []), ent:\(ent ?? [])}"
     }
 
     // MARK: Internal classes
@@ -723,7 +775,7 @@ public class Drafty: Codable {
         }
     }
 
-    fileprivate class Span: Comparable, CustomStringConvertible {
+    fileprivate class Span {
         var start: Int
         var end: Int
         var key: Int
@@ -758,20 +810,6 @@ public class Drafty: Codable {
             self.end = end
             self.key = index
         }
-
-        static func < (lhs: Drafty.Span, rhs: Drafty.Span) -> Bool {
-            return lhs.start < rhs.start
-        }
-
-        static func == (lhs: Drafty.Span, rhs: Drafty.Span) -> Bool {
-            return lhs.start == rhs.start
-        }
-
-        public var description: String {
-            return """
-            {start=\(start),end=\(end),type=\(type ?? "nil"),data=\(data?.description ?? "nil")}
-            """
-        }
     }
 
     fileprivate class ExtractedEnt {
@@ -793,7 +831,7 @@ public class Drafty: Codable {
 }
 
 /// Representation of inline styles or entity references.
-public class Style: Codable, Comparable, CustomStringConvertible {
+public class Style: Codable, CustomStringConvertible, Equatable {
     var at: Int
     var len: Int
     var tp: String?
@@ -829,27 +867,20 @@ public class Style: Codable, Comparable, CustomStringConvertible {
         self.key = key
     }
 
-    /// Style sorting first by starting position then by length: earlier span is smaller, if starting positions are the same then shorter span is smaller.
-    public static func < (lhs: Style, rhs: Style) -> Bool {
-        if lhs.at == rhs.at {
-            return lhs.len < rhs.len // longer one comes first (<0)
-        }
-        return lhs.at < rhs.at
-    }
-
-    /// Styles are the same if they start at the same location and have the same length.
+    /// Styles are the same if they are the same type, start at the same location,
+    /// have the same length and key
     public static func == (lhs: Style, rhs: Style) -> Bool {
-        return lhs.at == rhs.at && lhs.at == rhs.at
+        return lhs.tp == rhs.tp && lhs.at == rhs.at && lhs.at == rhs.at && lhs.key == rhs.key
     }
 
-    /// Custom formatter for styles as JSON.
+    /// Represents Style as JSON-like string.
     public var description: String {
-        return "{tp:'\(tp ?? "nil")', at:\(at), len:\(len), key:\(key ?? 0)}"
+        return "{tp: \(tp ?? "nil"), at: \(at), len:\(len), key:\(key ?? 0)}"
     }
 }
 
 /// Entity: style with additional data.
-public class Entity: Codable, CustomStringConvertible {
+public class Entity: Codable, CustomStringConvertible, Equatable {
     public var tp: String?
     public var data: [String:JSONValue]?
 
@@ -865,10 +896,15 @@ public class Entity: Codable, CustomStringConvertible {
         self.data = data
     }
 
-    /// Custom formatter for styles as JSON.
-    public var description: String {
-        return "{tp:'\(tp ?? "nil")',data:\(data?.description ?? "nil")}"
+    public static func == (lhs: Entity, rhs: Entity) -> Bool {
+        return lhs.tp == rhs.tp && ((lhs.data ?? [:]) == (rhs.data ?? [:]))
     }
+
+    /// Represents Style as JSON-like string.
+    public var description: String {
+        return "{tp: \(tp ?? "nil"), data: \(data ?? [:])}"
+    }
+
 }
 
 fileprivate class EntityProc {

@@ -146,11 +146,8 @@ extension StoredMessage: MessageType {
     }
     var kind: MessageKind {
         get {
-            if let content = self.content {
-                return content.isPlain ? .text(content.string) : .attributedText(AttribFormatter.toAttributed(container: nil, content: content, clicker: nil))
-            } else {
-                return .text("NONE")
-            }
+            guard let content = self.content else { return .text("NONE") }
+            return content.isPlain ? .text(content.string) : .attributedText(AttribFormatter.toAttributed(container: nil, content: content, clicker: nil))
         }
     }
 }
