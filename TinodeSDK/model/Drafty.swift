@@ -27,13 +27,11 @@ public class Drafty: Codable {
     private static let kMaxFormElements = 8
 
     // Regular expressions for parsing inline formats.
-    // Name of the style, regexp start, regexp end
-    private static let kInlineStyleName = ["ST", "EM", "DL", "CO"]
-    private static let kInlineStyleRE = try! [
-        NSRegularExpression(pattern: #"(?<=^|\W)\*([^\s*]+)\*(?=$|\W)"#),     // bold *bo*
-        NSRegularExpression(pattern: #"(?<=^|[\W_])_([^\s_]+)_(?=$|[\W_])"#), // italic _it_
-        NSRegularExpression(pattern: #"(?<=^|\W)~([^\\s~]+)~(?=$|\W)"#),      // strikethough ~st~
-        NSRegularExpression(pattern: #"(?<=^|\W)`([^`]+)`(?=$|\W)"#)          // code/monospace `mono`
+    private static let kInlineStyles: [String:NSRegularExpression] = try! [
+        "ST": NSRegularExpression(pattern: #"(?<=^|\W)\*([^\s*]+)\*(?=$|\W)"#),     // bold *bo*
+        "EM": NSRegularExpression(pattern: #"(?<=^|[\W_])_([^\s_]+)_(?=$|[\W_])"#), // italic _it_
+        "DL": NSRegularExpression(pattern: #"(?<=^|\W)~([^\\s~]+)~(?=$|\W)"#),      // strikethough ~st~
+        "CO": NSRegularExpression(pattern: #"(?<=^|\W)`([^`]+)`(?=$|\W)"#)          // code/monospace `mono`
     ]
 
     private static let kEntityName = ["LN", "MN", "HT"]
@@ -264,10 +262,9 @@ public class Drafty: Codable {
 
         var entityMap: [String:JSONValue] = [:]
         for line in lines {
-            var spans: [Span] = []
-            // Select styled spans.
-            for i in 0..<Drafty.kInlineStyleName.count {
-                spans.append(contentsOf: spannify(original: line, re: Drafty.kInlineStyleRE[i], type: Drafty.kInlineStyleName[i]))
+            var spans = Drafty.kInlineStyles.flatMap { (arg) -> [Span] in
+                let (name, re) = arg
+                return spannify(original: line, re: re, type: name)
             }
 
             let b: Block?
