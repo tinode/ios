@@ -37,9 +37,8 @@ class AttribFormatter: DraftyFormatter {
         // Create border around text.
         /*
         content.style(cstyle: [
-            .strokeWidth: -3.0,
-            .strokeColor: UIColor.yellow,
             .foregroundColor: UIColor.red,
+            .backgroundColor: UIColor.blue,
             NSAttributedString.Key.link: NSURL(string: url) as Any
             ])
         */
@@ -218,7 +217,7 @@ class AttribFormatter: DraftyFormatter {
         }
 
         func toAttributed() -> NSAttributedString {
-            let attributed = NSMutableAttributedString(string: "")
+            let attributed = NSMutableAttributedString()
             if let text = self.text {
                 attributed.append(text)
             } else if let children = self.children {
@@ -230,7 +229,7 @@ class AttribFormatter: DraftyFormatter {
             if let cstyle = cStyle {
                 attributed.addAttributes(cstyle, range: NSRange(location: 0, length: attributed.length))
             } else if let pstyle = pStyle {
-                //attributed.addAttributes(pstyle, range: NSRange(location: 0, length: attributed.length))
+                attributed.addAttributes([NSAttributedString.Key.paragraphStyle: pstyle], range: NSRange(location: 0, length: attributed.length))
             }
 
             return attributed
