@@ -20,7 +20,8 @@ public protocol DraftyFormatter {
 }
 
 /// Class representing formatted text with optional attachments.
-public class Drafty: Codable {
+public class Drafty: Codable, Equatable {
+
     public static let kMimeType = "text/x-drafty"
     public static let kJSONMimeType = "application/json"
 
@@ -309,7 +310,9 @@ public class Drafty: Codable {
             let b: Block?
             if !spans.isEmpty {
                 // Sort styled spans in ascending order by .start
-                spans.sort()
+                spans.sort { lhs, rhs in
+                    return lhs.start < rhs.start
+                }
 
                 // Rearrange falt list of styled spans into a tree, throw away invalid spans.
                 spans = toTree(spans: spans)
@@ -601,7 +604,15 @@ public class Drafty: Codable {
         return self
     }
 
-    /// Check if the instance contains no markup.
+    // Comparator is needed for testing.
+    public static func == (lhs: Drafty, rhs: Drafty) -> Bool {
+        return lhs.txt == rhs.txt &&
+            lhs.fmt == rhs.fmt &&
+            ((lhs.ent == nil && rhs.ent == nil) || lhs.ent == rhs.ent)
+    }
+
+    /// Check if the instance contains no markup and consequently can be represented by
+    /// plain String without loss of information.
     public var isPlain: Bool {
         return ent == nil && fmt == nil
     }
@@ -698,7 +709,12 @@ public class Drafty: Codable {
         }
 
         // Sort spans first by start index (asc) then by length (desc).
-        spans.sort()
+        spans.sort { lhs, rhs in
+            if lhs.start == rhs.start {
+                return rhs.end < lhs.end; // longer one comes first (<0)
+            }
+            return lhs.start < rhs.start;
+        }
 
         for span in spans {
             if ent != nil && (span.type == nil || span.type!.isEmpty) {
@@ -750,7 +766,7 @@ public class Drafty: Codable {
         }
     }
 
-    fileprivate class Span: Comparable, CustomStringConvertible {
+    fileprivate class Span {
         var start: Int
         var end: Int
         var key: Int
@@ -785,20 +801,6 @@ public class Drafty: Codable {
             self.end = end
             self.key = index
         }
-
-        static func < (lhs: Drafty.Span, rhs: Drafty.Span) -> Bool {
-            return lhs.start < rhs.start
-        }
-
-        static func == (lhs: Drafty.Span, rhs: Drafty.Span) -> Bool {
-            return lhs.start == rhs.start
-        }
-
-        public var description: String {
-            return """
-            {start=\(start),end=\(end),type=\(type ?? "nil"),data=\(data?.description ?? "nil")}
-            """
-        }
     }
 
     fileprivate class ExtractedEnt {
@@ -820,7 +822,7 @@ public class Drafty: Codable {
 }
 
 /// Representation of inline styles or entity references.
-public class Style: Codable, Comparable, CustomStringConvertible {
+public class Style: Codable, Equatable {
     var at: Int
     var len: Int
     var tp: String?
@@ -856,27 +858,15 @@ public class Style: Codable, Comparable, CustomStringConvertible {
         self.key = key
     }
 
-    /// Style sorting first by starting position then by length: earlier span is smaller, if starting positions are the same then shorter span is smaller.
-    public static func < (lhs: Style, rhs: Style) -> Bool {
-        if lhs.at == rhs.at {
-            return lhs.len < rhs.len // longer one comes first (<0)
-        }
-        return lhs.at < rhs.at
-    }
-
-    /// Styles are the same if they start at the same location and have the same length.
+    /// Styles are the same if they are the same type, start at the same location,
+    /// have the same length and key
     public static func == (lhs: Style, rhs: Style) -> Bool {
-        return lhs.at == rhs.at && lhs.at == rhs.at
-    }
-
-    /// Custom formatter for styles as JSON.
-    public var description: String {
-        return "{tp:'\(tp ?? "nil")', at:\(at), len:\(len), key:\(key ?? 0)}"
+        return lhs.tp == rhs.tp && lhs.at == rhs.at && lhs.at == rhs.at && lhs.key == rhs.key
     }
 }
 
 /// Entity: style with additional data.
-public class Entity: Codable, CustomStringConvertible {
+public class Entity: Codable, Equatable {
     public var tp: String?
     public var data: [String:JSONValue]?
 
@@ -892,9 +882,8 @@ public class Entity: Codable, CustomStringConvertible {
         self.data = data
     }
 
-    /// Custom formatter for styles as JSON.
-    public var description: String {
-        return "{tp:'\(tp ?? "nil")',data:\(data?.description ?? "nil")}"
+    public static func == (lhs: Entity, rhs: Entity) -> Bool {
+        return lhs.tp == rhs.tp && ((lhs.data ?? [:]) == (rhs.data ?? [:]))
     }
 }
 

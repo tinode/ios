@@ -16,19 +16,24 @@ class DraftyTest: XCTestCase {
     override func tearDown() {
     }
 
-    func testExample() {
-        var text = Drafty("abc")
-        text.append("d")
-        XCTAssertEqual(text, "abcd", "Appending a 'd' to \"abc\" should produce \"abcd\"")
+    func testParse() {
+        var d1 = Drafty("abc")
+        var d2 = Drafty(text: "abc", fmt: nil, ent: nil)
+        XCTAssertEqual(d1, d2, "Parsing 'abc' should produce '\(d2)'")
+
+        d1 = Drafty("this is *bold*, `code` and _italic_, ~strike~")
+        d2 = Drafty(text: "this is bold, code and italic, strike",
+                    fmt: [Style(at:8, len:4,tp:"ST"),
+                          Style(at:14, len:4, tp:"CO"),
+                          Style(at:23, len:6, tp:"EM"),
+                          Style(at:31, len:6, tp:"DL")], ent: [])
+        XCTAssertEqual(d1, d2, "Parsing 'this is *bold*, `code` and _italic_, ~strike~' should produce '\(d2)', NOT '\(d1)'")
     }
 
-    func testPerformanceExample() {
+    func testPerformanceParse() {
         self.measure {
             for i in 0..<10000 {
-                var m = Drafty("abcd \(i)")
-                let start = m.index(m.startIndex, offsetBy: 1)
-                let end = m.index(m.startIndex, offsetBy: 3)
-                m.replaceSubrange(start..<end, with: "!!")
+                var m = Drafty("*abcd _\(i)_*\nsecond line https://www.example.com/ @mention")
             }
         }
     }

@@ -127,15 +127,15 @@
 			isa = PBXGroup;
 			children = (
 				0A44B00F2244AB0F00A98866 /* model */,
-				0A431BF32244A14C00A837F7 /* RFC3339Format.swift */,
-				0A431BF62244A14D00A837F7 /* Tinode.swift */,
 				0A431BF52244A14C00A837F7 /* AuthScheme.swift */,
 				0A431BF42244A14C00A837F7 /* Connection.swift */,
+				0A610452227563E200C6A9D2 /* Log.swift */,
 				0A431BF22244A14C00A837F7 /* PromisedReply.swift */,
+				0A431BF32244A14C00A837F7 /* RFC3339Format.swift */,
+				0A431BF72244A14D00A837F7 /* Storage.swift */,
+				0A431BF62244A14D00A837F7 /* Tinode.swift */,
 				0A431BF82244A14D00A837F7 /* Topic.swift */,
 				0A431BF92244A14D00A837F7 /* User.swift */,
-				0A431BF72244A14D00A837F7 /* Storage.swift */,
-				0A610452227563E200C6A9D2 /* Log.swift */,
 				0A431BDF2244A0BE00A837F7 /* TinodeSDK.h */,
 				0A431BE02244A0BE00A837F7 /* Info.plist */,
 			);

@@ -234,10 +234,9 @@ public class Tinode {
 
     public func nextUniqueString() -> String {
         nameCounter += 1
-        let millisecSince1970 = Int64((Date().timeIntervalSince1970 as Double) * 1000)
-        let q = millisecSince1970.advanced(by: -1414213562373) << 16
-        let v = q.advanced(by: nameCounter & 0xffff)
-        return String(v, radix: 32)
+        let millisecSince1970 = Int64(Date().timeIntervalSince1970 as Double * 1000)
+        let q = ((millisecSince1970 - 1414213562373) << 16).advanced(by: nameCounter & 0xffff)
+        return String(q, radix: 32)
     }
 
     private func getUserAgent() -> String {
