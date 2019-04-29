@@ -108,6 +108,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         }
         return false
     }
+
     func sendMessage(content: Drafty) -> Bool {
         guard let topic = self.topic else { return false }
         defer {

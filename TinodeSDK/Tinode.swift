@@ -13,7 +13,7 @@ public enum TinodeJsonError: Error {
     case decode
 }
 
-public enum TinodeError: Error {
+public enum TinodeError: Error, CustomStringConvertible {
     case invalidReply(String)
     case invalidState(String)
     case notConnected(String)
@@ -234,10 +234,9 @@ public class Tinode {
 
     public func nextUniqueString() -> String {
         nameCounter += 1
-        let millisecSince1970 = Int64((Date().timeIntervalSince1970 as Double) * 1000)
-        let q = millisecSince1970.advanced(by: -1414213562373) << 16
-        let v = q.advanced(by: nameCounter & 0xffff)
-        return String(v, radix: 32)
+        let millisecSince1970 = Int64(Date().timeIntervalSince1970 as Double * 1000)
+        let q = ((millisecSince1970 - 1414213562373) << 16).advanced(by: nameCounter & 0xffff)
+        return String(q, radix: 32)
     }
 
     private func getUserAgent() -> String {
@@ -348,7 +347,7 @@ public class Tinode {
     public func noteKeyPress(topic: String) {
         note(topic: topic, what: Tinode.kNoteKp, seq: 0)
     }
-    private func send<DP: Codable, DR: Codable>(payload msg: ClientMessage<DP, DR>) throws {
+    private func send<DP: Codable, DR: Codable>(payload msg: ClientMessage<DP,DR>) throws {
         guard let conn = connection else {
             throw TinodeError.notConnected("Attempted to send msg to a closed connection.")
         }
@@ -357,7 +356,7 @@ public class Tinode {
         conn.send(payload: jsonData)
     }
     private func sendWithPromise<DP: Codable, DR: Codable>(
-        payload msg: ClientMessage<DP, DR>, with id: String) -> PromisedReply<ServerMessage> {
+        payload msg: ClientMessage<DP,DR>, with id: String) -> PromisedReply<ServerMessage> {
         let future = PromisedReply<ServerMessage>()
         do {
             try send(payload: msg)
@@ -807,13 +806,18 @@ public class Tinode {
             leave: MsgClientLeave(id: msgId, topic: topic, unsub: unsub))
         return sendWithPromise(payload: msg, with: msgId)
     }
-    public func publish(topic: String, data: String?) -> PromisedReply<ServerMessage>? {
-        //ClientMessage msg = new ClientMessage(new MsgClientLeave(getNextId(), topicName, unsub)
-        let content = data != nil ? JSONValue.string(data!) : nil
+
+    internal func publish(topic: String, head: [String:JSONValue]?, content: Drafty) -> PromisedReply<ServerMessage>? {
         let msgId = getNextMsgId()
         let msg = ClientMessage<Int, Int>(
-            pub: MsgClientPub(id: msgId, topic: topic, noecho: true, head: nil, content: content))
+            pub: MsgClientPub(id: msgId, topic: topic, noecho: true, head: head, content: content))
         return sendWithPromise(payload: msg, with: msgId)
+    }
+
+    public func publish(topic: String, data: Drafty) -> PromisedReply<ServerMessage>? {
+        return publish(topic: topic,
+                       head: data.isPlain ? nil : ["mime": JSONValue.string(Drafty.kMimeType)],
+                       content: data)
     }
 
     public func getFilteredTopics(filter: ((TopicProto) -> Bool)?) -> Array<TopicProto>? {

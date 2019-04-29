@@ -9,13 +9,14 @@ import Foundation
 
 // Needed for encoding/decoding arrays and dictionaries of objects in JSON.
 // Inspired by https://medium.com/grand-parade/parsing-fields-in-codable-structs-that-can-be-of-any-json-type-e0283d5edb
-public enum JSONValue: Codable {
+public enum JSONValue: Codable, Equatable {
     case string(String)
     case int(Int)
     case double(Double)
     case bool(Bool)
     case dict([String: JSONValue])
     case array([JSONValue])
+    case bytes(Data)
     
     public func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
@@ -31,6 +32,8 @@ public enum JSONValue: Codable {
         case .dict(let v):
             try container.encode(v)
         case .array(let v):
+            try container.encode(v)
+        case .bytes(let v):
             try container.encode(v)
         }
     }
@@ -49,8 +52,19 @@ public enum JSONValue: Codable {
             self = .dict(value)
         } else if let value = try? container.decode([JSONValue].self) {
             self = .array(value)
+        } else if let value = try? container.decode(Data.self) {
+            self = .bytes(value)
         } else {
             throw DecodingError.typeMismatch(JSONValue.self, DecodingError.Context(codingPath: container.codingPath, debugDescription: "Not a JSON"))
+        }
+    }
+
+    public func asInt() -> Int? {
+        switch self {
+        case .int(let val):
+            return val
+        default:
+            return nil
         }
     }
 }

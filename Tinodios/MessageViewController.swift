@@ -145,7 +145,10 @@ extension StoredMessage: MessageType {
         get { return self.ts ?? Date() }
     }
     var kind: MessageKind {
-        get { return .text(self.content ?? "") }
+        get {
+            guard let content = self.content else { return .text("") }
+            return .text(content.string)
+        }
     }
 }
 
@@ -332,7 +335,7 @@ extension MessageViewController: MessagesDisplayDelegate, MessagesLayoutDelegate
 
 extension MessageViewController: MessageInputBarDelegate {
     func messageInputBar(_ inputBar: MessageInputBar, didPressSendButtonWith text: String) {
-        _ = interactor?.sendMessage(content: text)
+        _ = interactor?.sendMessage(content: Drafty(content: text))
         messageInputBar.inputTextView.text.removeAll()
         messageInputBar.invalidatePlugins()
     }

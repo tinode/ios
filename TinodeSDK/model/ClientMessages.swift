@@ -352,8 +352,9 @@ public class MsgClientPub: Encodable {
     let topic: String?
     let noecho: Bool?
     let head: [String:JSONValue]?
-    let content: JSONValue?
-    init(id: String?, topic: String?, noecho: Bool?, head: [String:JSONValue]?, content: JSONValue?) {
+    let content: Drafty?
+
+    init(id: String?, topic: String?, noecho: Bool?, head: [String:JSONValue]?, content: Drafty?) {
         self.id = id
         self.topic = topic
         self.noecho = noecho
