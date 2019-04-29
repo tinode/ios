@@ -521,7 +521,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="hJE-4j-6S3" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2561" y="125"/>
+            <point key="canvasLocation" x="4578" y="655"/>
         </scene>
         <!--Confirm credentials-->
         <scene sceneID="Fsr-7A-t2q">
@@ -614,6 +614,9 @@
                                     <rect key="frame" x="0.0" y="0.0" width="375" height="43.666666666666664"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </tableViewCellContentView>
+                                <connections>
+                                    <segue destination="l6T-LK-IbJ" kind="show" identifier="Find2Messages" id="Icu-Sw-xtx"/>
+                                </connections>
                             </tableViewCell>
                         </prototypes>
                         <connections>
@@ -625,7 +628,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="QKh-Hs-4aI" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1017" y="1586"/>
+            <point key="canvasLocation" x="836" y="1586"/>
         </scene>
         <!--New Group Controller-->
         <scene sceneID="H36-1e-dDP">
@@ -664,4 +667,7 @@
         <image name="logo-ios" width="288" height="288"/>
         <image name="outline_add_a_photo_white_48pt" width="48" height="48"/>
     </resources>
+    <inferredMetricsTieBreakers>
+        <segue reference="Icu-Sw-xtx"/>
+    </inferredMetricsTieBreakers>
 </document>
