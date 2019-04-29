@@ -27,6 +27,7 @@ public class Drafty: Codable, CustomStringConvertible, Equatable {
 
     private static let kMaxFormElements = 8
 
+    // TODO: Switch from string types to enum
     public enum StyleTypes {
         case st, em, dl, co, ln, mn, ht, hd, bn, rm, rw, none
     }
