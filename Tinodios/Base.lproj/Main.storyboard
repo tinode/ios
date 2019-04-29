@@ -624,7 +624,7 @@
                             <outlet property="delegate" destination="UgX-En-K1m" id="O3P-Zr-dvN"/>
                         </connections>
                     </tableView>
-                    <tabBarItem key="tabBarItem" title="Find" id="rqZ-eR-8TP" userLabel="Find"/>
+                    <tabBarItem key="tabBarItem" title="Find" image="outline_search_white_24pt" id="rqZ-eR-8TP" userLabel="Find"/>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="QKh-Hs-4aI" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -640,7 +640,7 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <viewLayoutGuide key="safeArea" id="NQz-eu-3qO"/>
                     </view>
-                    <tabBarItem key="tabBarItem" title="New Group" id="bYb-ea-USw"/>
+                    <tabBarItem key="tabBarItem" title="New Group" image="outline_group_add_white_24pt" id="bYb-ea-USw"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="bTN-HH-J8a" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -656,7 +656,7 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <viewLayoutGuide key="safeArea" id="fz2-hY-t16"/>
                     </view>
-                    <tabBarItem key="tabBarItem" title="By ID" id="T7l-iC-Rs6"/>
+                    <tabBarItem key="tabBarItem" title="By ID" image="bits_white_24pt" id="T7l-iC-Rs6"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ICE-Ms-S7M" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -664,8 +664,11 @@
         </scene>
     </scenes>
     <resources>
+        <image name="bits_white_24pt" width="24" height="24"/>
         <image name="logo-ios" width="288" height="288"/>
         <image name="outline_add_a_photo_white_48pt" width="48" height="48"/>
+        <image name="outline_group_add_white_24pt" width="24" height="24"/>
+        <image name="outline_search_white_24pt" width="24" height="24"/>
     </resources>
     <inferredMetricsTieBreakers>
         <segue reference="Icu-Sw-xtx"/>

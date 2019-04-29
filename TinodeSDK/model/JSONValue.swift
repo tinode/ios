@@ -76,4 +76,13 @@ public enum JSONValue: Codable, Equatable {
             return nil
         }
     }
+
+    public func asData() -> Data? {
+        switch self {
+        case .bytes(let val):
+            return val
+        default:
+            return nil
+        }
+    }
 }

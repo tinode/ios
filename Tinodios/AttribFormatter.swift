@@ -14,7 +14,7 @@ import UIKit
 class AttribFormatter: DraftyFormatter {
     typealias Node = AttribFormatter.TreeNode
 
-    private static let kFormLineSpacing: CFloat = 1.5
+    private static let kFormLineSpacing: CGFloat = 1.5
 
     typealias CharacterStyle = [NSAttributedString.Key: Any]
     //let container: UILabel
@@ -27,27 +27,39 @@ class AttribFormatter: DraftyFormatter {
         self.clicker = clicker
     }
 
-    private func handleImage(ctx: Void, content: TreeNode, attr: [String : JSONValue]?) {
+    // Inline image
+    private func handleImage(content: TreeNode, attr: [String : JSONValue]?) {
+        guard let attr = attr, let data = attr["val"] else { return }
+        let image = NSTextAttachment(data: data.asData(), ofType: attr["mime"]?.asString())
+        content.style(cstyle: [NSAttributedString.Key.attachment: image])
     }
 
-    private func handleAttachment(ctx: Void, content: TreeNode, attr: [String : JSONValue]?) {
+    private func handleAttachment(content: TreeNode, attr: [String : JSONValue]?) {
+        guard let attr = attr, let data = attr["val"] else { return }
+        let file = NSTextAttachment(data: data.asData(), ofType: attr["mime"]?.asString())
+        content.style(cstyle: [NSAttributedString.Key.attachment: file])
     }
 
     private func handleButton(content: TreeNode, attr: [String : JSONValue]?) {
-        // Create border around text.
-        /*
+        guard let uri = AttribFormatter.buttonDataAsUri(attr) else { return }
+
+        // Create button-like background.
         content.style(cstyle: [
-            .foregroundColor: UIColor.red,
-            .backgroundColor: UIColor.blue,
-            NSAttributedString.Key.link: NSURL(string: url) as Any
+            .buttonBackground: UIColor.white.withAlphaComponent(0.9),
+            .baselineOffset: 4,
+            NSAttributedString.Key.link: NSURL(string: uri) as Any
             ])
-        */
+
+        let pstyle = NSMutableParagraphStyle()
+        pstyle.alignment = .center
+        pstyle.lineHeightMultiple = AttribFormatter.kFormLineSpacing
+        content.style(pstyle: pstyle)
     }
 
     // Convert button payload to an URL.
     // NSAttributedString.Key.link wants payload to be NSURL.
-    private static func buttonDataAsUrl(attr: [String : JSONValue]) -> URL? {
-        guard let actionType = attr["act"]?.asString() else { return nil }
+    private static func buttonDataAsUri(_ attr: [String : JSONValue]?) -> String? {
+        guard let attr = attr, let actionType = attr["act"]?.asString() else { return nil }
         var baseUrl: URLComponents
         if actionType == "url" {
             guard let ref = attr["ref"]?.asString() else { return nil }
@@ -68,10 +80,10 @@ class AttribFormatter: DraftyFormatter {
             baseUrl.queryItems?.append(URLQueryItem(name: name, value: actionValue ?? "1"))
         }
 
-        return baseUrl.url
+        return baseUrl.url?.absoluteString
     }
 
-    internal func apply(tp: String?, attr: [String : JSONValue]?, children: [TreeNode]?, content: String?) -> TreeNode {
+    private func apply(tp: String?, attr: [String : JSONValue]?, children: [TreeNode]?, content: String?) -> TreeNode {
 
         // Create unstyled node
         var span = TreeNode(text: content, nodes: children)
@@ -94,18 +106,18 @@ class AttribFormatter: DraftyFormatter {
         case "HT": break
         case "HD": break // Hidden text
         case "IM":
-            // Additional processing for images
-            handleImage(ctx: Void(), content: span, attr: attr)
+            // Inline image
+            handleImage(content: span, attr: attr)
         case "EX":
-            // Attachments
-            handleAttachment(ctx: Void(), content: span, attr: attr)
+            // Attachment
+            handleAttachment(content: span, attr: attr)
         case "BN":
             // Button
             handleButton(content: span, attr: attr)
         case "FM":
             // Form
             if let children = children, !children.isEmpty {
-                // Add line breaks between form elements.
+                // Add line breaks between form elements: each row is a paragraph.
                 for i in 0..<children.count {
                     span.addNode(node: children[i])
                     span.addNode(content: "\n");
