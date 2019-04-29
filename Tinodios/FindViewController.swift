@@ -66,3 +66,11 @@ class FindViewController: UITableViewController, FindDisplayLogic {
         return cell
     }
 }
+
+extension FindViewController {
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "Find2Messages" {
+            router?.routeToChat(segue: segue)
+        }
+    }
+}
