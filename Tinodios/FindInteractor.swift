@@ -57,6 +57,8 @@ class FindInteractor: FindBusinessLogic {
                 .filter { $0.value.service == FindInteractor.kTinodeImProtocol  }
                 .map { $0.value.username }
             return contactHolder
+        }.filter {
+            ($0.ims?.count ?? 0) > 0
         }
     }
     func loadAndPresentContacts() {
