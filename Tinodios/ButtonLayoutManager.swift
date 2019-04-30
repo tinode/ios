@@ -13,7 +13,8 @@ import Foundation
 import UIKit
 
 class ButtonLayoutManager: NSLayoutManager {
-    
+
+    // Draws a background with rounded corners.
     override func drawBackground(forGlyphRange glyphsToShow: NSRange, at origin: CGPoint) {
         super.drawBackground(forGlyphRange: glyphsToShow, at: origin)
         let range = self.characterRange(forGlyphRange: glyphsToShow, actualGlyphRange: nil)
