@@ -17,13 +17,9 @@ class AttribFormatter: DraftyFormatter {
     private static let kFormLineSpacing: CGFloat = 1.5
 
     typealias CharacterStyle = [NSAttributedString.Key: Any]
-    //let container: UILabel
-    //let viewportWidth: CGFloat
     let clicker: UITextViewDelegate?
 
     init(container: UILabel?, clicker: UITextViewDelegate?) {
-        //self.container = container
-        //self.viewportWidth = container.frame.width
         self.clicker = clicker
     }
 
@@ -31,22 +27,27 @@ class AttribFormatter: DraftyFormatter {
     private func handleImage(content: TreeNode, attr: [String : JSONValue]?) {
         guard let attr = attr, let data = attr["val"] else { return }
         let image = NSTextAttachment(data: data.asData(), ofType: attr["mime"]?.asString())
+        // FIXME: probably should clear the anchor text.
         content.style(cstyle: [NSAttributedString.Key.attachment: image])
     }
 
     private func handleAttachment(content: TreeNode, attr: [String : JSONValue]?) {
         guard let attr = attr, let data = attr["val"] else { return }
         let file = NSTextAttachment(data: data.asData(), ofType: attr["mime"]?.asString())
+        // FIXME: probably should clear the anchor text.
         content.style(cstyle: [NSAttributedString.Key.attachment: file])
     }
 
     private func handleButton(content: TreeNode, attr: [String : JSONValue]?) {
         guard let uri = AttribFormatter.buttonDataAsUri(attr) else { return }
 
+        // TODO: ensure button width: if it's the only one in a row, it's fine, if there
+        // are multiple buttons per row, add spaces before and after and stretch them by kerning.
+
         // Create button-like background.
         content.style(cstyle: [
             .buttonBackground: UIColor.white.withAlphaComponent(0.9),
-            .baselineOffset: 4,
+            .baselineOffset: 4, // FIXME: Calculate correct offset from view height and font size
             NSAttributedString.Key.link: NSURL(string: uri) as Any
             ])
 

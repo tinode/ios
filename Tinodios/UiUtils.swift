@@ -308,26 +308,3 @@ extension AvatarView {
         }
     }
 }
-
-// These extensions are needed for selecting the color of avatar background
-fileprivate extension Character {
-    var asciiValue: UInt32? {
-        return String(self).unicodeScalars.filter{$0.isASCII}.first?.value
-    }
-}
-
-fileprivate extension String {
-    // ASCII array to map the string
-    var asciiArray: [UInt32] {
-        return unicodeScalars.filter{$0.isASCII}.map{$0.value}
-    }
-
-    // hashCode produces output equal to the Java hash function.
-    func hashCode() -> Int32 {
-        var hash : Int32 = 0
-        for i in self.asciiArray {
-            hash = 31 &* hash &+ Int32(i) // Be aware of overflow operators,
-        }
-        return hash
-    }
-}

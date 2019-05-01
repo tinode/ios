@@ -14,7 +14,7 @@ import UIKit
 
 class ButtonLayoutManager: NSLayoutManager {
 
-    // Draws a background with rounded corners.
+    // Draws a background with rounded corners creating an appearance of a button.
     override func drawBackground(forGlyphRange glyphsToShow: NSRange, at origin: CGPoint) {
         super.drawBackground(forGlyphRange: glyphsToShow, at: origin)
         let range = self.characterRange(forGlyphRange: glyphsToShow, actualGlyphRange: nil)
@@ -27,16 +27,16 @@ class ButtonLayoutManager: NSLayoutManager {
                                                    effectiveRange: nil)
 
                 // draw background
-                let context = UIGraphicsGetCurrentContext();
-                context!.saveGState()
-                context!.translateBy(x: origin.x, y: origin.y)
-                context!.setFillColor(color.cgColor)
+                guard let context = UIGraphicsGetCurrentContext() else { return }
+                context.saveGState()
+                context.translateBy(x: origin.x, y: origin.y)
+                context.setFillColor(color.cgColor)
                 let rect = self.boundingRect(forGlyphRange: glyphRange, in: container!)
 
                 // UIBezierPath with rounded corners
                 let path = UIBezierPath(roundedRect: rect, cornerRadius: 100)
                 path.fill()
-                context!.restoreGState()
+                context.restoreGState()
             }
         })
     }
