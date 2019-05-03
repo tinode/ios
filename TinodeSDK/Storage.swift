@@ -10,6 +10,16 @@ import Foundation
 public protocol Message {
     // Get current message payload.
     var content: Drafty? { get }
+
+    // Timestamp
+    var ts: Date? { get }
+
+    // Sender ID
+    var from: String? { get }
+
+    // Sync status
+    var status: Int? { get }
+
     // Get current message unique ID (database ID).
     var msgId: Int64 { get }
 
@@ -21,6 +31,7 @@ public protocol Message {
     var isDeleted: Bool { get }
     func isDeleted(hard: Bool) -> Bool
     var isSynced: Bool { get }
+    var isPending: Bool { get }
 }
 
 // Base protocol for implementing persistance.

@@ -73,7 +73,7 @@ class RoundImageView: UIImageView {
         self.set(icon: icon, title: title, id: id)
     }
 
-    public func set(icon: UIImage?, title: String?, id: String?) {
+    private func set(icon: UIImage?, title: String?, id: String?) {
         if let icon = icon {
             self.image = icon
         } else {
@@ -90,7 +90,7 @@ class RoundImageView: UIImageView {
         }
     }
 
-    static func selectBackground(id: String?, dark: Bool = false) -> (UIColor, UIColor) {
+    private static func selectBackground(id: String?, dark: Bool = false) -> (UIColor, UIColor) {
         guard let id = id else {
             return (UIColor.white, UIColor.gray)
         }
@@ -150,7 +150,7 @@ class RoundImageView: UIImageView {
     }
 
     // Find the biggest font to fit the text with the given width and height.
-    // If no adjustment is needed, returns original font.
+    // If no adjustment is needed, returns the original font.
     private func adjustFontSize(text: String, font: UIFont, width: CGFloat, height: CGFloat) -> UIFont {
         var attributedText = NSAttributedString(string: text, attributes: [.font: font])
         var newFont = font
@@ -165,7 +165,7 @@ class RoundImageView: UIImageView {
     private func calcTextRect(outerViewWidth diameter: CGFloat) -> CGRect {
         let size = diameter * 0.70710678118
         let offset = diameter * 0.1464466094
-        // In case the font exactly fits to the region, put 2 pixel both left and right
+        // In case the font exactly fits to the region, put 2 pixels both left and right
         return CGRect(x: offset+2, y: offset, width: size-4, height: size)
     }
 
@@ -218,11 +218,6 @@ class RoundImageView: UIImageView {
         UIColor(red: 0xEF/255, green: 0x6C/255, blue: 0x00/255, alpha: 1.0),
         UIColor(red: 0xD8/255, green: 0x43/255, blue: 0x15/255, alpha: 1.0)
     ]
-}
-
-fileprivate extension FloatingPoint {
-    var degreesToRadians: Self { return self * .pi / 180 }
-    var radiansToDegrees: Self { return self * 180 / .pi }
 }
 
 // These extensions are needed for selecting the color of avatar background

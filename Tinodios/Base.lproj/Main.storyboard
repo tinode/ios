@@ -400,7 +400,7 @@
                                     <rect key="frame" x="0.0" y="0.0" width="375" height="59.666666666666664"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
-                                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="q2G-eT-jLv" customClass="AvatarView" customModule="MessageKit">
+                                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="q2G-eT-jLv" customClass="RoundImageView" customModule="Tinodios" customModuleProvider="target">
                                             <rect key="frame" x="13" y="9" width="40" height="40"/>
                                             <accessibility key="accessibilityConfiguration" identifier="icon">
                                                 <accessibilityTraits key="traits" image="YES"/>
@@ -567,15 +567,6 @@
                                     <rect key="frame" x="0.0" y="0.0" width="375" height="50"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </view>
-                            </collectionViewCell>
-                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="DateSeparatorCell" id="L9A-0m-AJo">
-                                <rect key="frame" x="0.0" y="180" width="375" height="24"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO">
-                                    <rect key="frame" x="0.0" y="0.0" width="375" height="24"/>
-                                    <autoresizingMask key="autoresizingMask"/>
-                                </view>
-                                <size key="customSize" width="375" height="24"/>
                             </collectionViewCell>
                         </cells>
                         <connections>
