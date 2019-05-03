@@ -201,8 +201,16 @@ extension MessageViewController: UICollectionViewDataSource {
         return cell
     }
 
+    func collectionView(_ collectionView: UICollectionView,
+                        layout collectionViewLayout: UICollectionViewLayout,
+                        sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let calculateHeightFromContent = 50
+        return CGSize(width: collectionView.bounds.size.width, height: CGFloat(calculateHeightFromContent))
+    }
+
     func configureCell(cell: MessageCell, with message: Message, at indexPath: IndexPath) {
 
+        cell.backgroundColor = UIColor.blue
         cell.delegate = self
 
         cell.avatarView = avatarView(for: message, at: indexPath)
