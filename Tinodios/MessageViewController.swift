@@ -27,11 +27,15 @@ class MessageViewController: UIViewController {
     static let kOutgoingBubbleColor = UIColor(red: 230/255, green: 230/255, blue: 230/255, alpha: 1)
     static let kIncomingBubbleColor = UIColor(red: 69/255, green: 193/255, blue: 89/255, alpha: 1)
 
-    // MARK: properties
+    /// The `MessageInputBar` used as the `inputAccessoryView` in the view controller.
+    private var messageInputBar = MessageInputBar()
 
     private weak var collectionView: MessageView!
+
     private var interactor: (MessageBusinessLogic & MessageDataStore)?
     private let refreshControl = UIRefreshControl()
+
+    // MARK: properties
 
     var topicName: String? {
         didSet {
@@ -42,7 +46,7 @@ class MessageViewController: UIViewController {
     }
     var topicType: TopicType?
     var myUID: String?
-    weak var topic: DefaultComTopic?
+    var topic: DefaultComTopic?
 
     private var noteTimer: Timer? = nil
 
@@ -71,13 +75,17 @@ class MessageViewController: UIViewController {
         self.interactor = interactor
     }
 
+    // MARK: lifecycle
+
     deinit {
-        removeKeyboardObservers()
-        removeMenuControllerObservers()
+        // removeKeyboardObservers()
+        // removeMenuControllerObservers()
     }
 
     override func loadView() {
         super.loadView()
+
+        let collectionView = MessageView()
 
         // Appearance and behavior.
         extendedLayoutIncludesOpaqueBars = true
@@ -87,23 +95,24 @@ class MessageViewController: UIViewController {
         collectionView.keyboardDismissMode = .interactive
         collectionView.alwaysBounceVertical = true
         view.addSubview(collectionView)
+        self.collectionView = collectionView
 
         collectionView.addSubview(refreshControl)
         refreshControl.addTarget(self, action: #selector(loadNextPage), for: .valueChanged)
 
-        // Setup UICollectionView constraints
+        // Setup UICollectionView constraints: fill the screen
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         let top = collectionView.topAnchor.constraint(equalTo: view.topAnchor, constant: topLayoutGuide.length)
         let bottom = collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        let trailing: NSLayoutConstraint, leading: NSLayoutConstraint
         if #available(iOS 11.0, *) {
-            let leading = collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor)
-            let trailing = collectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor)
-            NSLayoutConstraint.activate([top, bottom, trailing, leading])
+            leading = collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor)
+            trailing = collectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor)
         } else {
-            let leading = collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor)
-            let trailing = collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
-            NSLayoutConstraint.activate([top, bottom, trailing, leading])
+            leading = collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor)
+            trailing = collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
         }
+        NSLayoutConstraint.activate([top, bottom, trailing, leading])
     }
 
     override func viewDidLoad() {
@@ -187,9 +196,22 @@ extension MessageViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
 
         let message = messages[indexPath.item]
-        let cell = collectionView.dequeueReusableCell(TextMessageCell.self, for: indexPath)
-        cell.configure(with: message, at: indexPath)
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: MessageCell.self), for: indexPath) as! MessageCell
+        configureCell(cell: cell, with: message, at: indexPath)
         return cell
+    }
+
+    func configureCell(cell: MessageCell, with message: Message, at indexPath: IndexPath) {
+
+        cell.delegate = self
+
+        cell.avatarView = avatarView(for: message, at: indexPath)
+
+        cell.containerView.backgroundColor = backgroundColor(for: message, at: indexPath)
+        bubbleDecorator(for: message, at: indexPath)(cell.containerView)
+
+        cell.newDateLabel.attributedText = newDateLabel(for: message, at: indexPath)
+        cell.senderNameLabel.attributedText = senderFullName(for: message, at: indexPath)
     }
 
     func isFromCurrentSender(message: Message) -> Bool {
@@ -200,12 +222,12 @@ extension MessageViewController: UICollectionViewDataSource {
         return topic!.isGrpType && !isFromCurrentSender(message: message) && (!isNextMessageSameSender(at: indexPath) || !isNextMessageSameDate(at: indexPath))
     }
 
-    func isTimeLabelVisible(at indexPath: IndexPath) -> Bool {
+    func isNewDateLabelVisible(at indexPath: IndexPath) -> Bool {
         return !isPreviousMessageSameDate(at: indexPath)
     }
 
-    func messageTimestamp(for message: Message, at indexPath: IndexPath) -> NSAttributedString? {
-        if isTimeLabelVisible(at: indexPath) {
+    func newDateLabel(for message: Message, at indexPath: IndexPath) -> NSAttributedString? {
+        if isNewDateLabelVisible(at: indexPath) {
             return NSAttributedString(string: RelativeDateFormatter.shared.dateOnly(from: message.ts), attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 10), NSAttributedString.Key.foregroundColor: UIColor.darkGray])
         }
         return nil
@@ -277,15 +299,16 @@ extension MessageViewController {
         return marker
     }
 
-    func avatar(for message: Message, at indexPath: IndexPath) -> UIImageView? {
-        guard shouldShowAvatar(message: message, at: indexPath) else { return nil }
+    func avatarView(for message: Message, at indexPath: IndexPath) -> UIImageView {
+        guard shouldShowAvatar(message: message, at: indexPath) else { return UIImageView() }
 
         if let sub = topic?.getSubscription(for: message.from) {
             return RoundImageView(icon: sub.pub?.photo?.image(), title: sub.pub?.fn, id: message.from)
         }
 
         print("Subscription not found for \(message.from ?? "nil")")
-        return nil
+
+        return UIImageView()
     }
 
     func textColor(for message: Message, at indexPath: IndexPath) -> UIColor {
@@ -296,8 +319,8 @@ extension MessageViewController {
         return !isFromCurrentSender(message: message) ? MessageViewController.kIncomingBubbleColor : MessageViewController.kOutgoingBubbleColor
     }
 
-    func messageStyle(for message: Message, at indexPath: IndexPath) -> MessageStyle {
-
+    // Returns function which draws message bubble.
+    func bubbleDecorator(for message: Message, at indexPath: IndexPath) -> (UIView) -> Void {
         var corners: UIRectCorner = []
 
         if isFromCurrentSender(message: message) {
@@ -320,7 +343,7 @@ extension MessageViewController {
             }
         }
 
-        return .custom { view in
+        return { view in
             let radius: CGFloat = 16
             let path = UIBezierPath(roundedRect: view.bounds, byRoundingCorners: corners, cornerRadii: CGSize(width: radius, height: radius))
             let mask = CAShapeLayer()
@@ -333,16 +356,27 @@ extension MessageViewController {
 // Message size calculation
 extension MessageViewController: UICollectionViewDelegateFlowLayout {
 
-    func cellTopLabelHeight(for message: Message, at indexPath: IndexPath) -> CGFloat {
-        if isTimeLabelVisible(at: indexPath) {
+    // Hight of the label above the first message in the day
+    func newDateLabelHeight(for message: Message, at indexPath: IndexPath) -> CGFloat {
+        if isNewDateLabelVisible(at: indexPath) {
             return 24
         }
         return 0
     }
 
-    // This is the hight of the field with the sender's name (left) or delivery status (right).
-    func messageBottomLabelHeight(for message: Message, at indexPath: IndexPath) -> CGFloat {
+    // This is the hight of the field with the sender's name.
+    func senderNameLabelHeight(for message: Message, at indexPath: IndexPath) -> CGFloat {
         return isFromCurrentSender(message: message) || (isNextMessageSameSender(at: indexPath) && isNextMessageSameDate(at: indexPath)) ? 0 : 16
+    }
+}
+
+extension MessageViewController: MessageCellDelegate {
+    func didTapMessage(in cell: MessageCell) {
+        print("didTapMessage")
+    }
+
+    func didTapAvatar(in cell: MessageCell) {
+        print("didTapAvatar")
     }
 }
 
@@ -361,3 +395,5 @@ extension MessageViewController: MessageInputBarDelegate {
         // Use to change any other subview insets
     }
 }
+
+

@@ -190,7 +190,9 @@ class RelativeDateFormatter {
 
     private let formatter = DateFormatter()
 
-    func dateOnly(from date: Date, style: DateFormatter.Style = .medium) -> String {
+    func dateOnly(from date: Date?, style: DateFormatter.Style = .medium) -> String {
+        guard let date = date else { return "Never ??:??" }
+
         formatter.timeStyle = .none
         formatter.dateStyle = style
         switch true {
@@ -207,104 +209,11 @@ class RelativeDateFormatter {
         return formatter.string(from: date)
     }
 
-    func timeOnly(from date: Date, style: DateFormatter.Style = .short) -> String {
+    func timeOnly(from date: Date?, style: DateFormatter.Style = .short) -> String {
+        guard let date = date else { return "??:??" }
+
         formatter.timeStyle = style
         formatter.dateStyle = .none
         return formatter.string(from: date)
-    }
-}
-
-extension AvatarView {
-    private static let kLightColors: [UIColor] = [
-        UIColor(red: 0xef/255, green: 0x9a/255, blue: 0x9a/255, alpha: 1.0),
-        UIColor(red: 0x90/255, green: 0xca/255, blue: 0xf9/255, alpha: 1.0),
-        UIColor(red: 0xb0/255, green: 0xbe/255, blue: 0xc5/255, alpha: 1.0),
-        UIColor(red: 0xb3/255, green: 0x9d/255, blue: 0xdb/255, alpha: 1.0),
-        UIColor(red: 0xff/255, green: 0xab/255, blue: 0x91/255, alpha: 1.0),
-        UIColor(red: 0xa5/255, green: 0xd6/255, blue: 0xa7/255, alpha: 1.0),
-        UIColor(red: 0xdd/255, green: 0xdd/255, blue: 0xdd/255, alpha: 1.0),
-        UIColor(red: 0xe6/255, green: 0xee/255, blue: 0x9c/255, alpha: 1.0),
-        UIColor(red: 0xc5/255, green: 0xe1/255, blue: 0xa5/255, alpha: 1.0),
-        UIColor(red: 0xff/255, green: 0xf5/255, blue: 0x9d/255, alpha: 1.0),
-        UIColor(red: 0xf4/255, green: 0x8f/255, blue: 0xb1/255, alpha: 1.0),
-        UIColor(red: 0x9f/255, green: 0xa8/255, blue: 0xda/255, alpha: 1.0),
-        UIColor(red: 0xff/255, green: 0xe0/255, blue: 0x82/255, alpha: 1.0),
-        UIColor(red: 0xbc/255, green: 0xaa/255, blue: 0xa4/255, alpha: 1.0),
-        UIColor(red: 0x80/255, green: 0xde/255, blue: 0xea/255, alpha: 1.0),
-        UIColor(red: 0xce/255, green: 0x93/255, blue: 0xd8/255, alpha: 1.0)
-    ]
-
-    private static let kDarkColors: [UIColor] = [
-        UIColor(red: 0xC6/255, green: 0x28/255, blue: 0x28/255, alpha: 1.0),
-        UIColor(red: 0xAD/255, green: 0x14/255, blue: 0x57/255, alpha: 1.0),
-        UIColor(red: 0x6A/255, green: 0x1B/255, blue: 0x9A/255, alpha: 1.0),
-        UIColor(red: 0x45/255, green: 0x27/255, blue: 0xA0/255, alpha: 1.0),
-        UIColor(red: 0x28/255, green: 0x35/255, blue: 0x93/255, alpha: 1.0),
-        UIColor(red: 0x15/255, green: 0x65/255, blue: 0xC0/255, alpha: 1.0),
-        UIColor(red: 0x02/255, green: 0x77/255, blue: 0xBD/255, alpha: 1.0),
-        UIColor(red: 0x00/255, green: 0x83/255, blue: 0x8F/255, alpha: 1.0),
-        UIColor(red: 0x00/255, green: 0x69/255, blue: 0x5C/255, alpha: 1.0),
-        UIColor(red: 0x2E/255, green: 0x7D/255, blue: 0x32/255, alpha: 1.0),
-        UIColor(red: 0x55/255, green: 0x8B/255, blue: 0x2F/255, alpha: 1.0),
-        UIColor(red: 0x9E/255, green: 0x9D/255, blue: 0x24/255, alpha: 1.0),
-        UIColor(red: 0xF9/255, green: 0xA8/255, blue: 0x25/255, alpha: 1.0),
-        UIColor(red: 0xFF/255, green: 0x8F/255, blue: 0x00/255, alpha: 1.0),
-        UIColor(red: 0xEF/255, green: 0x6C/255, blue: 0x00/255, alpha: 1.0),
-        UIColor(red: 0xD8/255, green: 0x43/255, blue: 0x15/255, alpha: 1.0)
-    ]
-
-    public convenience init(icon: UIImage?, title: String?, id: String?) {
-        self.init()
-        self.set(icon: icon, title: title, id: id)
-    }
-
-    override open var bounds: CGRect {
-        didSet {
-            // Repeating the call from super.didSet because design of AvatarView isn't great + swift is bad.
-            setCorner(radius: nil)
-            if let initials = initials {
-                // Force redrawing the placeholder image when size changes
-                self.initials = "" + initials
-            }
-        }
-    }
-
-    public func set(icon: UIImage?, title: String?, id: String?) {
-        if let icon = icon {
-            self.set(avatar: Avatar(image: icon))
-        } else {
-            self.adjustsFontSizeToFitWidth = false
-            self.placeholderFont = UIFont.preferredFont(forTextStyle: .title2)
-            let (fg, bg) = AvatarView.selectBackground(id: id, dark: Tinode.topicTypeByName(name: id) == TopicType.p2p)
-            self.placeholderTextColor = fg
-            self.backgroundColor = bg
-
-            // Avatar placeholder.
-            var firstChar = title ?? ""
-            firstChar = firstChar.isEmpty ? "?" : firstChar
-            self.set(avatar: Avatar(initials: String(firstChar[firstChar.startIndex]).uppercased()))
-        }
-    }
-
-    static func selectBackground(id: String?, dark: Bool = false) -> (UIColor, UIColor) {
-        guard let id = id else {
-            return (UIColor.white, UIColor.gray)
-        }
-
-        let defaultBackgroundColorLight = UIColor(red: 0x9e/255, green: 0x9e/255, blue: 0x9e/255, alpha: 1.0)
-        let defaultBackgroundColorDark = UIColor(red: 0x75/255, green: 0x75/255, blue: 0x75/255, alpha: 1.0)
-        let foregroundColorDark = UIColor(red: 0xDE/255, green: 0xDE/255, blue: 0xDE/255, alpha: 1.0)
-        let foregroundColorLight = UIColor.white
-
-        let hash = UInt(id.hashCode().magnitude)
-        if hash == 0 {
-            return dark ?
-                (foregroundColorDark, defaultBackgroundColorDark) :
-                (foregroundColorLight, defaultBackgroundColorLight)
-        } else if dark {
-            return (foregroundColorDark, kDarkColors[Int(hash % UInt(kDarkColors.count))])
-        } else {
-            return (foregroundColorLight, kLightColors[Int(hash % UInt(kLightColors.count))])
-        }
     }
 }

@@ -73,7 +73,7 @@ class RoundImageView: UIImageView {
         self.set(icon: icon, title: title, id: id)
     }
 
-    private func set(icon: UIImage?, title: String?, id: String?) {
+    public func set(icon: UIImage?, title: String?, id: String?) {
         if let icon = icon {
             self.image = icon
         } else {

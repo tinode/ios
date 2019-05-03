@@ -8,19 +8,20 @@
 
 import UIKit
 
-open class MessageView: UICollectionView {
+class MessageView: UICollectionView {
 
     // MARK: - Properties
 
-    open weak var messageCellDelegate: MessageCellDelegate?
+    weak var cellDelegate: MessageCellDelegate?
 
     // MARK: - Initializers
 
     public override init(frame: CGRect, collectionViewLayout layout: UICollectionViewLayout) {
         super.init(frame: frame, collectionViewLayout: layout)
         backgroundColor = .white
+
         // Reusable message cells
-        register(TextMessageCell.self, forCellWithReuseIdentifier: String(describing: TextMessageCell.self))
+        register(MessageCell.self, forCellWithReuseIdentifier: String(describing: MessageCell.self))
 
         // Gesture recognizer
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTapGesture(_:)))
@@ -29,11 +30,11 @@ open class MessageView: UICollectionView {
     }
 
     required public init?(coder aDecoder: NSCoder) {
-        super.init(frame: .zero, collectionViewLayout: MessagesCollectionViewFlowLayout())
+        super.init(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
     }
 
     public convenience init() {
-        self.init(frame: .zero, collectionViewLayout: MessagesCollectionViewFlowLayout())
+        self.init(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
     }
 
     // MARK: - Methods
@@ -45,8 +46,9 @@ open class MessageView: UICollectionView {
         let touchLocation = gesture.location(in: self)
         guard let indexPath = indexPathForItem(at: touchLocation) else { return }
 
-        let cell = cellForItem(at: indexPath) as? MessageContentCell
-        cell?.handleTapGesture(gesture)
+        if let cell = cellForItem(at: indexPath) as? MessageCell {
+            cell.handleTapGesture(gesture)
+        }
     }
 
     func scrollToBottom(animated: Bool = false) {
