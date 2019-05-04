@@ -394,18 +394,23 @@ extension MessageViewController: UICollectionViewDelegateFlowLayout {
 
     // Calculate size of the view which holds message content.
     func containerSize(for message: Message, avatarVisible: Bool) -> CGSize {
+        // FIXME: these calculations can be simplified, particularly no need to check isFromCurrentSender
+
         let insets = isFromCurrentSender(message: message) ? UIEdgeInsets(top: 7, left: 14, bottom: 7, right: 18) : UIEdgeInsets(top: 7, left: 18, bottom: 7, right: 14)
 
         let avatarWidth = avatarVisible ? MessageViewController.kAvatarSize : 0
-        let messagePadding = messageContainerPadding(for: message)
-        let maxWidth = collectionView.frame.width - avatarWidth - messagePadding.horizontal
+
+        let padding = isFromCurrentSender(message: message) ? UIEdgeInsets(top: 0, left: 30, bottom: 0, right: 4) : UIEdgeInsets(top: 0, left: 4, bottom: 0, right: 30)
+        let maxWidth = collectionView.frame.width - avatarWidth - padding.left - padding.right
 
         let text = message.content?.string ?? "none"
         let attributedText = NSAttributedString(string: text, attributes: [.font: MessageViewController.kContentFont])
         var size = textSize(for: attributedText, considering: maxWidth)
 
-        size.width += insets.horizontal
-        size.height += insets.vertical
+        size.width += insets.left + insets.right
+        size.height += insets.top + insets.bottom
+
+        return size
     }
 }
 
