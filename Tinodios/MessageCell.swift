@@ -47,25 +47,20 @@ class MessageCell: UICollectionViewCell {
         return containerView
     }()
 
+    /// The message content
+    var content: PaddedLabel = PaddedLabel()
+
     /// The label above the messageBubble which holds the date of conversation.
-    var newDateLabel: PaddedLabel = {
-        return PaddedLabel()
-    }()
+    var newDateLabel: PaddedLabel = PaddedLabel()
 
     /// The label under the messageBubble: sender's name in group topics.
-    var senderNameLabel: PaddedLabel = {
-        return PaddedLabel()
-    }()
+    var senderNameLabel: PaddedLabel = PaddedLabel()
 
     /// Delivery marker.
-    var deliveryMarker: UIImageView = {
-        return UIImageView()
-    }()
+    var deliveryMarker: UIImageView = UIImageView()
 
     /// Message timestamp.
-    var timestampLabel: PaddedLabel = {
-        return PaddedLabel()
-    }()
+    var timestampLabel: PaddedLabel = PaddedLabel()
 
     /// The `MessageCellDelegate` for the cell.
     weak var delegate: MessageCellDelegate?
@@ -74,6 +69,9 @@ class MessageCell: UICollectionViewCell {
         contentView.addSubview(newDateLabel)
         contentView.addSubview(senderNameLabel)
         contentView.addSubview(containerView)
+        containerView.addSubview(content)
+        // containerView.addSubview(deliveryMarker)
+        // containerView.addSubview(timestampLabel)
         contentView.addSubview(avatarView)
     }
 

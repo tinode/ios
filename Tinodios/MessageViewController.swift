@@ -26,6 +26,7 @@ class MessageViewController: UIViewController {
     static let kDeliveryMarkerColor = UIColor.gray.withAlphaComponent(0.7)
     static let kOutgoingBubbleColor = UIColor(red: 230/255, green: 230/255, blue: 230/255, alpha: 1)
     static let kIncomingBubbleColor = UIColor(red: 69/255, green: 193/255, blue: 89/255, alpha: 1)
+    static let kContentFont = UIFont.preferredFont(forTextStyle: .body)
 
     /// The `MessageInputBar` used as the `inputAccessoryView` in the view controller.
     private var messageInputBar = MessageInputBar()
@@ -216,6 +217,7 @@ extension MessageViewController: UICollectionViewDataSource {
         cell.avatarView = avatarView(for: message, at: indexPath)
 
         cell.containerView.backgroundColor = backgroundColor(for: message, at: indexPath)
+        cell.content.text = message.content?.string
         bubbleDecorator(for: message, at: indexPath)(cell.containerView)
 
         cell.newDateLabel.attributedText = newDateLabel(for: message, at: indexPath)
@@ -260,6 +262,8 @@ extension MessageViewController: UICollectionViewDataSource {
 // Helper methods for displaying message content
 extension MessageViewController {
     // Helper checks.
+
+    // MARK: helper methods for displaying message content.
 
     func isPreviousMessageSameDate(at indexPath: IndexPath) -> Bool {
         guard indexPath.item > 0 else { return false }
@@ -327,8 +331,9 @@ extension MessageViewController {
         return !isFromCurrentSender(message: message) ? MessageViewController.kIncomingBubbleColor : MessageViewController.kOutgoingBubbleColor
     }
 
-    // Returns function which draws message bubble.
+    // Returns closure which draws message bubble in the supplied UIView.
     func bubbleDecorator(for message: Message, at indexPath: IndexPath) -> (UIView) -> Void {
+        // FIXME: add tail to last message in sequence.
         var corners: UIRectCorner = []
 
         if isFromCurrentSender(message: message) {
@@ -364,17 +369,43 @@ extension MessageViewController {
 // Message size calculation
 extension MessageViewController: UICollectionViewDelegateFlowLayout {
 
-    // Hight of the label above the first message in the day
-    func newDateLabelHeight(for message: Message, at indexPath: IndexPath) -> CGFloat {
-        if isNewDateLabelVisible(at: indexPath) {
-            return 24
-        }
-        return 0
+    func assignCellAttributes(attributes: UICollectionViewLayoutAttributes) {
+        guard let attributes = attributes as? MessageLayoutAttributes else { return }
+
+        let indexPath = attributes.indexPath
+        let message = messages[indexPath.item]
+
+        let isAvatarVisible = shouldShowAvatar(message: message, at: indexPath)
+        attributes.avatarSize = isAvatarVisible ? CGSize(width: MessageViewController.kAvatarSize, height: MessageViewController.kAvatarSize) : .zero
+
+        // Message container.
+        attributes.containerPadding = isFromCurrentSender(message: message) ?
+            UIEdgeInsets(top: 0, left: 30, bottom: 0, right: 4) : UIEdgeInsets(top: 0, left: 4, bottom: 0, right: 30)
+        attributes.containerSize = containerSize(for: message, avatarVisible: isAvatarVisible)
+
+        attributes.newDateLabelSize = isNewDateLabelVisible(at: indexPath) ? CGSize(width: collectionView.frame.width, height: 24) : .zero
+        // This is the hight of the field with the sender's name.
+        attributes.senderNameLabelSize = isAvatarVisible ? CGSize(width: collectionView.frame.width, height: 16) : .zero
     }
 
-    // This is the hight of the field with the sender's name.
-    func senderNameLabelHeight(for message: Message, at indexPath: IndexPath) -> CGFloat {
-        return isFromCurrentSender(message: message) || (isNextMessageSameSender(at: indexPath) && isNextMessageSameDate(at: indexPath)) ? 0 : 16
+    func textSize(for attributedText: NSAttributedString, considering maxWidth: CGFloat) -> CGSize {
+        return attributedText.boundingRect(with: CGSize(width: maxWidth, height: .greatestFiniteMagnitude), options: [.usesLineFragmentOrigin, .usesFontLeading], context: nil).integral.size
+    }
+
+    // Calculate size of the view which holds message content.
+    func containerSize(for message: Message, avatarVisible: Bool) -> CGSize {
+        let insets = isFromCurrentSender(message: message) ? UIEdgeInsets(top: 7, left: 14, bottom: 7, right: 18) : UIEdgeInsets(top: 7, left: 18, bottom: 7, right: 14)
+
+        let avatarWidth = avatarVisible ? MessageViewController.kAvatarSize : 0
+        let messagePadding = messageContainerPadding(for: message)
+        let maxWidth = collectionView.frame.width - avatarWidth - messagePadding.horizontal
+
+        let text = message.content?.string ?? "none"
+        let attributedText = NSAttributedString(string: text, attributes: [.font: MessageViewController.kContentFont])
+        var size = textSize(for: attributedText, considering: maxWidth)
+
+        size.width += insets.horizontal
+        size.height += insets.vertical
     }
 }
 
