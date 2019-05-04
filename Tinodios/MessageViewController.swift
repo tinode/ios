@@ -202,13 +202,6 @@ extension MessageViewController: UICollectionViewDataSource {
         return cell
     }
 
-    func collectionView(_ collectionView: UICollectionView,
-                        layout collectionViewLayout: UICollectionViewLayout,
-                        sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let calculateHeightFromContent = 50
-        return CGSize(width: collectionView.bounds.size.width, height: CGFloat(calculateHeightFromContent))
-    }
-
     func configureCell(cell: MessageCell, with message: Message, at indexPath: IndexPath) {
 
         cell.backgroundColor = UIColor.blue
@@ -369,6 +362,24 @@ extension MessageViewController {
 // Message size calculation
 extension MessageViewController: UICollectionViewDelegateFlowLayout {
 
+    // Entry point for calculations.
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+
+        let height = cellHeightFromContent(for: messages[indexPath.item], at: indexPath)
+        return CGSize(width: collectionView.bounds.size.width, height: CGFloat(height))
+    }
+
+    func cellHeightFromContent(for message: Message, at indexPath: IndexPath) -> CGFloat {
+        let isAvatarVisible = shouldShowAvatar(message: message, at: indexPath)
+        let containerHeight = containerSize(for: message, avatarVisible: isAvatarVisible).height
+        let senderNameLabelHeight: CGFloat = isAvatarVisible ? 16 : 0
+        let newDateLabelHeight: CGFloat = isNewDateLabelVisible(at: indexPath) ? 24 : 0
+        let avatarHeight = isAvatarVisible ? MessageViewController.kAvatarSize : 0
+
+        let totalLabelHeight: CGFloat = newDateLabelHeight + containerHeight + senderNameLabelHeight
+        return max(avatarHeight, totalLabelHeight)
+    }
+
     func assignCellAttributes(attributes: UICollectionViewLayoutAttributes) {
         guard let attributes = attributes as? MessageLayoutAttributes else { return }
 
@@ -388,6 +399,7 @@ extension MessageViewController: UICollectionViewDelegateFlowLayout {
         attributes.senderNameLabelSize = isAvatarVisible ? CGSize(width: collectionView.frame.width, height: 16) : .zero
     }
 
+    // Size of rectangle taken by the message content as attributedText.
     func textSize(for attributedText: NSAttributedString, considering maxWidth: CGFloat) -> CGSize {
         return attributedText.boundingRect(with: CGSize(width: maxWidth, height: .greatestFiniteMagnitude), options: [.usesLineFragmentOrigin, .usesFontLeading], context: nil).integral.size
     }
@@ -439,5 +451,3 @@ extension MessageViewController: MessageInputBarDelegate {
         // Use to change any other subview insets
     }
 }
-
-
