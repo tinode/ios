@@ -198,20 +198,27 @@ extension MessageViewController: UICollectionViewDataSource {
 
         let message = messages[indexPath.item]
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: MessageCell.self), for: indexPath) as! MessageCell
+
         configureCell(cell: cell, with: message, at: indexPath)
+
+        let attributes = MessageLayoutAttributes()
+        attributes.indexPath = indexPath
+        assignCellAttributes(attributes: attributes)
+        cell.apply(attributes)
+        bubbleDecorator(for: message, at: indexPath)(cell.containerView)
+
         return cell
     }
 
     func configureCell(cell: MessageCell, with message: Message, at indexPath: IndexPath) {
 
-        cell.backgroundColor = UIColor.blue
+        cell.backgroundColor = UIColor.white
         cell.delegate = self
 
-        cell.avatarView = avatarView(for: message, at: indexPath)
+        fillAvatarView(cell.avatarView, for: message, at: indexPath)
 
         cell.containerView.backgroundColor = backgroundColor(for: message, at: indexPath)
         cell.content.text = message.content?.string
-        bubbleDecorator(for: message, at: indexPath)(cell.containerView)
 
         cell.newDateLabel.attributedText = newDateLabel(for: message, at: indexPath)
         cell.senderNameLabel.attributedText = senderFullName(for: message, at: indexPath)
@@ -221,8 +228,14 @@ extension MessageViewController: UICollectionViewDataSource {
         return message.from == myUID
     }
 
-    func shouldShowAvatar(message: Message, at indexPath: IndexPath) -> Bool {
-        return topic!.isGrpType && !isFromCurrentSender(message: message) && (!isNextMessageSameSender(at: indexPath) || !isNextMessageSameDate(at: indexPath))
+    // Should avatars be shown at all for any message?
+    func avatarsVisible(message: Message) -> Bool {
+        return topic!.isGrpType && !isFromCurrentSender(message: message)
+    }
+
+    // Show avatar in the given message
+    func shouldShowAvatar(for message: Message, at indexPath: IndexPath) -> Bool {
+        return avatarsVisible(message: message) && (!isNextMessageSameSender(at: indexPath) || !isNextMessageSameDate(at: indexPath))
     }
 
     func isNewDateLabelVisible(at indexPath: IndexPath) -> Bool {
@@ -236,8 +249,9 @@ extension MessageViewController: UICollectionViewDataSource {
         return nil
     }
 
+    // Get sender name
     func senderFullName(for message: Message, at indexPath: IndexPath) -> NSAttributedString? {
-        guard shouldShowAvatar(message: message, at: indexPath) else { return nil }
+        guard shouldShowAvatar(for: message, at: indexPath) else { return nil }
 
         var senderName: String?
         if let sub = topic?.getSubscription(for: message.from), let pub = sub.pub {
@@ -304,16 +318,14 @@ extension MessageViewController {
         return marker
     }
 
-    func avatarView(for message: Message, at indexPath: IndexPath) -> UIImageView {
-        guard shouldShowAvatar(message: message, at: indexPath) else { return UIImageView() }
+    func fillAvatarView(_ roundImageView: RoundImageView, for message: Message, at indexPath: IndexPath) {
+        guard shouldShowAvatar(for: message, at: indexPath) else { return }
 
         if let sub = topic?.getSubscription(for: message.from) {
-            return RoundImageView(icon: sub.pub?.photo?.image(), title: sub.pub?.fn, id: message.from)
+            roundImageView.set(icon: sub.pub?.photo?.image(), title: sub.pub?.fn, id: message.from)
         }
 
         print("Subscription not found for \(message.from ?? "nil")")
-
-        return UIImageView()
     }
 
     func textColor(for message: Message, at indexPath: IndexPath) -> UIColor {
@@ -370,7 +382,8 @@ extension MessageViewController: UICollectionViewDelegateFlowLayout {
     }
 
     func cellHeightFromContent(for message: Message, at indexPath: IndexPath) -> CGFloat {
-        let isAvatarVisible = shouldShowAvatar(message: message, at: indexPath)
+        let isAvatarVisible = shouldShowAvatar(for: message, at: indexPath)
+
         let containerHeight = containerSize(for: message, avatarVisible: isAvatarVisible).height
         let senderNameLabelHeight: CGFloat = isAvatarVisible ? 16 : 0
         let newDateLabelHeight: CGFloat = isNewDateLabelVisible(at: indexPath) ? 24 : 0
@@ -386,7 +399,7 @@ extension MessageViewController: UICollectionViewDelegateFlowLayout {
         let indexPath = attributes.indexPath
         let message = messages[indexPath.item]
 
-        let isAvatarVisible = shouldShowAvatar(message: message, at: indexPath)
+        let isAvatarVisible = shouldShowAvatar(for: message, at: indexPath)
         attributes.avatarSize = isAvatarVisible ? CGSize(width: MessageViewController.kAvatarSize, height: MessageViewController.kAvatarSize) : .zero
 
         // Message container.

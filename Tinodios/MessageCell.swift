@@ -34,9 +34,7 @@ class MessageCell: UICollectionViewCell {
     }
 
     /// The image view with the avatar.
-    var avatarView: UIImageView = {
-        return RoundImageView()
-    }()
+    var avatarView: RoundImageView = RoundImageView()
 
     /// The UIImageView with background being the bubble,
     /// holds the message's content view.
@@ -143,6 +141,12 @@ class MessageCell: UICollectionViewCell {
         origin.x = attributes.avatarSize.width + attributes.containerPadding.left
 
         containerView.frame = CGRect(origin: origin, size: attributes.containerSize)
+
+        content.textInsets = attributes.messageLabelInsets
+        content.font = attributes.messageLabelFont
+        content.frame = containerView.bounds
+
+        // FIXME: lay out delivery marker and timestamp.
     }
 
     /// Positions the message bubble's top label.
