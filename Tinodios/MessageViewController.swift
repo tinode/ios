@@ -366,7 +366,7 @@ extension MessageViewController: UICollectionViewDataSource {
             if !isPreviousMessageSameSender(at: indexPath) || !isPreviousMessageSameDate(at: indexPath) {
                 corners.formUnion(.topLeft)
             }
-            if !isNextMessageSameSender(at: indexPath) || !isNextMessageSameSender(at: indexPath) {
+            if !isNextMessageSameSender(at: indexPath) || !isNextMessageSameDate(at: indexPath) {
                 corners.formUnion(.bottomLeft)
             }
         }

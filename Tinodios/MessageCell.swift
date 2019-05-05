@@ -50,6 +50,7 @@ class MessageCell: UICollectionViewCell {
     /// The message content
     var content: PaddedLabel = {
         let content = PaddedLabel()
+        // Indicates multiline content.
         content.numberOfLines = 0
         return content
     }()
