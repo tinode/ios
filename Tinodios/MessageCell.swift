@@ -23,12 +23,14 @@ class MessageCell: UICollectionViewCell {
 
     public override init(frame: CGRect) {
         super.init(frame: frame)
+        backgroundColor = UIColor.white
         contentView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         setupSubviews()
     }
 
     public required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
+        backgroundColor = UIColor.white
         contentView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         setupSubviews()
     }
@@ -39,20 +41,32 @@ class MessageCell: UICollectionViewCell {
     /// The UIImageView with background being the bubble,
     /// holds the message's content view.
     var containerView: UIImageView = {
-        let containerView = UIImageView()
-        containerView.clipsToBounds = true
-        containerView.layer.masksToBounds = true
-        return containerView
+        let view = UIImageView()
+        view.clipsToBounds = true
+        view.layer.masksToBounds = true
+        return view
     }()
 
     /// The message content
-    var content: PaddedLabel = PaddedLabel()
+    var content: PaddedLabel = {
+        let content = PaddedLabel()
+        content.numberOfLines = 0
+        return content
+    }()
 
     /// The label above the messageBubble which holds the date of conversation.
-    var newDateLabel: PaddedLabel = PaddedLabel()
+    var newDateLabel: PaddedLabel = {
+        let label = PaddedLabel()
+        label.textAlignment = .center
+        return label
+    }()
 
     /// The label under the messageBubble: sender's name in group topics.
-    var senderNameLabel: PaddedLabel = PaddedLabel()
+    var senderNameLabel: PaddedLabel = {
+        let label = PaddedLabel()
+        label.textAlignment = .natural
+        return label
+    }()
 
     /// Delivery marker.
     var deliveryMarker: UIImageView = UIImageView()
@@ -79,19 +93,6 @@ class MessageCell: UICollectionViewCell {
         senderNameLabel.text = nil
     }
 
-    // MARK: - Configuration
-
-    override func apply(_ layoutAttributes: UICollectionViewLayoutAttributes) {
-        super.apply(layoutAttributes)
-
-        guard let attributes = layoutAttributes as? MessageLayoutAttributes else { return }
-        // Call this before other laying out other subviews
-        layoutContainerView(with: attributes)
-        layoutSenderNameLabel(with: attributes)
-        layoutNewDateLabel(with: attributes)
-        layoutAvatarView(with: attributes)
-    }
-
     /// Handle tap gesture on contentView and its subviews.
     func handleTapGesture(_ gesture: UIGestureRecognizer) {
         let touchLocation = gesture.location(in: self)
@@ -116,61 +117,6 @@ class MessageCell: UICollectionViewCell {
     /// Handle `ContentView`'s tap gesture, return false when `ContentView` doesn't needs to handle gesture
     func cellContentView(canHandle touchPoint: CGPoint) -> Bool {
         return false
-    }
-
-    // MARK: - Origin Calculations
-
-    /// Positions the cell's `AvatarView`.
-    /// - attributes: The `MessagesCollectionViewLayoutAttributes` for the cell.
-    func layoutAvatarView(with attributes: MessageLayoutAttributes) {
-        var origin: CGPoint = .zero
-
-        // Left-bottom of the cell
-        origin.y = attributes.frame.height - attributes.avatarSize.height
-
-        avatarView.frame = CGRect(origin: origin, size: attributes.avatarSize)
-    }
-
-    /// Positions the cell's `containerView`.
-    /// - attributes: The `MessagesCollectionViewLayoutAttributes` for the cell.
-    func layoutContainerView(with attributes: MessageLayoutAttributes) {
-        var origin: CGPoint = .zero
-
-        origin.y = attributes.newDateLabelSize.height + attributes.containerPadding.top
-
-        origin.x = attributes.avatarSize.width + attributes.containerPadding.left
-
-        containerView.frame = CGRect(origin: origin, size: attributes.containerSize)
-
-        content.textInsets = attributes.messageLabelInsets
-        content.font = attributes.messageLabelFont
-        content.frame = containerView.bounds
-
-        // FIXME: lay out delivery marker and timestamp.
-    }
-
-    /// Positions the message bubble's top label.
-    /// - attributes: The `MessagesCollectionViewLayoutAttributes` for the cell.
-    func layoutNewDateLabel(with attributes: MessageLayoutAttributes) {
-        newDateLabel.textAlignment = .center
-        newDateLabel.textInsets = .zero
-
-        let y = containerView.frame.minY - attributes.containerPadding.top - attributes.newDateLabelSize.height
-        let origin = CGPoint(x: 0, y: y)
-
-        newDateLabel.frame = CGRect(origin: origin, size: attributes.newDateLabelSize)
-    }
-
-    /// Positions the cell's bottom label.
-    /// - attributes: The `MessagesCollectionViewLayoutAttributes` for the cell.
-    func layoutSenderNameLabel(with attributes: MessageLayoutAttributes) {
-        senderNameLabel.textAlignment = .natural
-        senderNameLabel.textInsets = .zero
-
-        let y = containerView.frame.maxY + attributes.containerPadding.bottom
-        let origin = CGPoint(x: 0, y: y)
-
-        senderNameLabel.frame = CGRect(origin: origin, size: attributes.senderNameLabelSize)
     }
 }
 

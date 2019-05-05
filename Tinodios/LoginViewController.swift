@@ -64,7 +64,7 @@ class LoginViewController: UIViewController {
         let userName = UiUtils.ensureDataInTextField(userNameTextEdit)
         let password = UiUtils.ensureDataInTextField(passwordTextEdit)
 
-        if (userName == "" || password == "") {
+        if userName == "" || password == "" {
             print("form elements are empty")
             return
         }

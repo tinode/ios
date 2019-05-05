@@ -48,7 +48,6 @@
 		B0DF0319227C2517000F9492 /* MessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0DF0318227C2517000F9492 /* MessageView.swift */; };
 		B0DF031D227C604C000F9492 /* MessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0DF031C227C604C000F9492 /* MessageCell.swift */; };
 		B0DF031F227C6898000F9492 /* PaddedLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0DF031E227C6898000F9492 /* PaddedLabel.swift */; };
-		B0DF0321227C8DC0000F9492 /* MessageLayoutAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0DF0320227C8DC0000F9492 /* MessageLayoutAttributes.swift */; };
 		B0E8FA0822770E61005097F1 /* ButtonLayoutManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0E8FA0722770E61005097F1 /* ButtonLayoutManager.swift */; };
 /* End PBXBuildFile section */
 
@@ -111,7 +110,6 @@
 		B0DF0318227C2517000F9492 /* MessageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageView.swift; sourceTree = "<group>"; };
 		B0DF031C227C604C000F9492 /* MessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageCell.swift; sourceTree = "<group>"; };
 		B0DF031E227C6898000F9492 /* PaddedLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaddedLabel.swift; sourceTree = "<group>"; };
-		B0DF0320227C8DC0000F9492 /* MessageLayoutAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageLayoutAttributes.swift; sourceTree = "<group>"; };
 		B0E8FA0722770E61005097F1 /* ButtonLayoutManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonLayoutManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -166,7 +164,6 @@
 				0AE50D4322156A250021F7B7 /* FindViewController.swift */,
 				0A6F260921BE51D800B9726E /* LoginViewController.swift */,
 				B0DF031C227C604C000F9492 /* MessageCell.swift */,
-				B0DF0320227C8DC0000F9492 /* MessageLayoutAttributes.swift */,
 				0A0016E621E7236900088188 /* MessageInteractor.swift */,
 				0A0016E821E736CD00088188 /* MessagePresenter.swift */,
 				B0DF0318227C2517000F9492 /* MessageView.swift */,
@@ -380,7 +377,6 @@
 				0A0380D821B3CC8100A3FA0E /* AppDelegate.swift in Sources */,
 				0A484E5121E359A800FE9AFE /* MessageDb.swift in Sources */,
 				7DDADC5021D5C156009733B5 /* RegisterViewController.swift in Sources */,
-				B0DF0321227C8DC0000F9492 /* MessageLayoutAttributes.swift in Sources */,
 				B0DF031F227C6898000F9492 /* PaddedLabel.swift in Sources */,
 				0AE50D4A22156A6C0021F7B7 /* FindRouter.swift in Sources */,
 				B02F5C8B22679BC80079A97E /* ImagePicker.swift in Sources */,
