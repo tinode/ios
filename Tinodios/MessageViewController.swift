@@ -100,6 +100,15 @@ class MessageViewController: UIViewController {
         // removeMenuControllerObservers()
     }
 
+    // This makes messageInputBar visible.
+    override var inputAccessoryView: UIView? {
+        return messageInputBar
+    }
+
+    override var canBecomeFirstResponder: Bool {
+        return true
+    }
+
     override func loadView() {
         super.loadView()
 
@@ -116,6 +125,7 @@ class MessageViewController: UIViewController {
         self.collectionView = collectionView
 
         collectionView.layoutMargins = UIEdgeInsets(top: 0, left: 4, bottom: 0, right: 4)
+
         collectionView.addSubview(refreshControl)
         refreshControl.addTarget(self, action: #selector(loadNextPage), for: .valueChanged)
 
@@ -145,6 +155,9 @@ class MessageViewController: UIViewController {
         // addMenuControllerObservers()
 
         messageInputBar.delegate = self
+        messageInputBar.backgroundColor = .blue
+        messageInputBar.inputTextView.tintColor = UIColor(red: 69/255, green: 193/255, blue: 89/255, alpha: 1)
+        messageInputBar.sendButton.tintColor = UIColor(red: 69/255, green: 193/255, blue: 89/255, alpha: 1)
 
         reloadInputViews()
     }
