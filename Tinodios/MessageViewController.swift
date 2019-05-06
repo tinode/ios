@@ -35,8 +35,15 @@ class MessageViewController: UIViewController {
     static let kSenderNameLabelHeight: CGFloat = 16
     static let kNewDateFont = UIFont.boldSystemFont(ofSize: 10)
     static let kNewDateLabelHeight: CGFloat = 24
+    // Vertical spacing between messages from the same user
     static let kVerticalCellSpacing: CGFloat = 2
-    static let kMinimumCellWidth:CGFloat = 60
+    // Additional vertical spacing between messages from different users in P2P topics.
+    static let kAdditionalP2PVerticalCellSpacing: CGFloat = 4
+    static let kMinimumCellWidth: CGFloat = 60
+
+    // Padding between the message bubble and content.
+    static let kIncomingMessageContentInset = UIEdgeInsets(top: 7, left: 18, bottom: 7, right: 14)
+    static let kOutgoingMessageContentInset = UIEdgeInsets(top: 7, left: 14, bottom: 7, right: 18)
 
     /// The `MessageInputBar` used as the `inputAccessoryView` in the view controller.
     private var messageInputBar = MessageInputBar()
@@ -227,14 +234,17 @@ extension MessageViewController: UICollectionViewDataSource {
 
         // Get cell frame and bounds.
         let attributes = collectionView.layoutAttributesForItem(at: indexPath)
+        // Available cell width: full width of the screen minus the padding.
+        let cellWidth = attributes!.frame.width - (collectionView.layoutMargins.left + collectionView.layoutMargins.right)
 
         // Height of the field with the current date above the first message of the day.
-        let newDateLabelHeight = isNewDateLabelVisible(at: indexPath) ? MessageViewController.kNewDateLabelHeight : 0
+        let newDateLabelHeight = calcNewDateLabelHeight(at: indexPath)
+
         // This is the height of the field with the sender's name.
         let senderNameLabelHeight = isAvatarVisible ? MessageViewController.kSenderNameLabelHeight : 0
 
         if isAvatarVisible {
-            cell.avatarView.frame = CGRect(origin: CGPoint(x: 0, y: attributes!.frame.height - MessageViewController.kAvatarSize - senderNameLabelHeight), size: CGSize(width: MessageViewController.kAvatarSize, height: MessageViewController.kAvatarSize))
+            cell.avatarView.frame = CGRect(origin: CGPoint(x: collectionView.layoutMargins.left, y: attributes!.frame.height - MessageViewController.kAvatarSize - senderNameLabelHeight), size: CGSize(width: MessageViewController.kAvatarSize, height: MessageViewController.kAvatarSize))
 
             // The avatar image should be assigned after setting the size. Otherwise it may be drawn twice.
             if let sub = topic?.getSubscription(for: message.from) {
@@ -255,24 +265,24 @@ extension MessageViewController: UICollectionViewDataSource {
             UIEdgeInsets(top: 0, left: 30, bottom: 0, right: 4) : UIEdgeInsets(top: 0, left: 4, bottom: 0, right: 30)
         let containerSize = calcContainerSize(for: message, avatarsVisible: hasAvatars)
         // isFromCurrent Sender ? Flush container right : flush left.
-        let originX = isFromCurrentSender(message: message) ? attributes!.frame.width - avatarPadding - containerSize.width - containerPadding.right : avatarPadding + containerPadding.left
+        let originX = collectionView.layoutMargins.left +  (isFromCurrentSender(message: message) ? cellWidth - avatarPadding - containerSize.width - containerPadding.right : avatarPadding + containerPadding.left)
         cell.containerView.frame = CGRect(origin: CGPoint(x: originX, y: newDateLabelHeight + containerPadding.top), size: containerSize)
 
         // Content UILabel.
-        cell.content.textInsets = isFromCurrentSender(message: message) ? UIEdgeInsets(top: 7, left: 14, bottom: 7, right: 18) : UIEdgeInsets(top: 7, left: 18, bottom: 7, right: 14)
+        cell.content.textInsets = isFromCurrentSender(message: message) ? MessageViewController.kOutgoingMessageContentInset : MessageViewController.kIncomingMessageContentInset
         cell.content.font = MessageViewController.kContentFont
         cell.content.frame = cell.containerView.bounds
 
         // New date label
         if newDateLabelHeight > 0 {
-            cell.newDateLabel.frame = CGRect(origin: CGPoint(x: 0, y: cell.containerView.frame.minY - containerPadding.top - newDateLabelHeight), size: CGSize(width: attributes!.frame.width, height: newDateLabelHeight))
+            cell.newDateLabel.frame = CGRect(origin: CGPoint(x: 0, y: cell.containerView.frame.minY - containerPadding.top - newDateLabelHeight), size: CGSize(width: cellWidth, height: newDateLabelHeight))
         } else {
             cell.newDateLabel.frame = .zero
         }
 
         // Sender name under the avatar.
         if isAvatarVisible {
-            cell.senderNameLabel.frame = CGRect(origin: CGPoint(x: 0, y: cell.containerView.frame.maxY + containerPadding.bottom), size: CGSize(width: attributes!.frame.width, height: senderNameLabelHeight))
+            cell.senderNameLabel.frame = CGRect(origin: CGPoint(x: collectionView.layoutMargins.left, y: cell.containerView.frame.maxY + containerPadding.bottom), size: CGSize(width: cellWidth, height: senderNameLabelHeight))
         } else {
             cell.senderNameLabel.frame = .zero
         }
@@ -445,12 +455,24 @@ extension MessageViewController: UICollectionViewDelegateFlowLayout {
         let hasAvatars = avatarsVisible(message: message)
 
         let containerHeight = calcContainerSize(for: message, avatarsVisible: hasAvatars).height
-        let senderNameLabelHeight: CGFloat = shouldShowAvatar(for: message, at: indexPath) ? 16 : 0
-        let newDateLabelHeight: CGFloat = isNewDateLabelVisible(at: indexPath) ? 24 : 0
+        let senderNameLabelHeight: CGFloat = shouldShowAvatar(for: message, at: indexPath) ? MessageViewController.kSenderNameLabelHeight : 0
+        let newDateLabelHeight: CGFloat = calcNewDateLabelHeight(at: indexPath)
         let avatarHeight = hasAvatars ? MessageViewController.kAvatarSize : 0
 
         let totalLabelHeight: CGFloat = newDateLabelHeight + containerHeight + senderNameLabelHeight
         return max(avatarHeight, totalLabelHeight)
+    }
+
+    func calcNewDateLabelHeight(at indexPath: IndexPath) -> CGFloat {
+        let height: CGFloat
+        if isNewDateLabelVisible(at: indexPath) {
+            height = MessageViewController.kNewDateLabelHeight
+        } else if !topic!.isGrpType && !isPreviousMessageSameSender(at: indexPath) {
+            height = MessageViewController.kAdditionalP2PVerticalCellSpacing
+        } else {
+            height = 0
+        }
+        return height
     }
 
     // Size of rectangle taken by the message content as attributedText.
@@ -462,7 +484,7 @@ extension MessageViewController: UICollectionViewDelegateFlowLayout {
     func calcContainerSize(for message: Message, avatarsVisible: Bool) -> CGSize {
         // FIXME: these calculations can be simplified, particularly no need to check isFromCurrentSender
 
-        let insets = isFromCurrentSender(message: message) ? UIEdgeInsets(top: 7, left: 14, bottom: 7, right: 18) : UIEdgeInsets(top: 7, left: 18, bottom: 7, right: 14)
+        let insets = isFromCurrentSender(message: message) ? MessageViewController.kOutgoingMessageContentInset : MessageViewController.kIncomingMessageContentInset
 
         let avatarWidth = avatarsVisible ? MessageViewController.kAvatarSize : 0
 
