@@ -40,6 +40,10 @@ class MessageViewController: UIViewController {
     // Additional vertical spacing between messages from different users in P2P topics.
     static let kAdditionalP2PVerticalCellSpacing: CGFloat = 4
     static let kMinimumCellWidth: CGFloat = 60
+    // This is the space between the other side of the message and the edge of screen.
+    // I.e. for incoming messages the space between the message and the *right* edge, for
+    // outfoing between the message and the left edge.
+    static let kFarSideHorizontalSpacing: CGFloat = 30
 
     // Padding between the message bubble and content.
     static let kIncomingMessageContentInset = UIEdgeInsets(top: 7, left: 18, bottom: 7, right: 14)
@@ -48,6 +52,7 @@ class MessageViewController: UIViewController {
     /// The `MessageInputBar` used as the `inputAccessoryView` in the view controller.
     private var messageInputBar = MessageInputBar()
 
+    // Pointer to the view holding messages.
     weak var collectionView: MessageView!
 
     private var interactor: (MessageBusinessLogic & MessageDataStore)?
@@ -69,6 +74,8 @@ class MessageViewController: UIViewController {
     private var noteTimer: Timer? = nil
 
     var messages: [Message] = []
+
+    var isInitialLayout = true
 
     // MARK: initializers
 
@@ -152,7 +159,6 @@ class MessageViewController: UIViewController {
         self.collectionView.delegate = self
         self.collectionView.dataSource = self
 
-        addKeyboardObservers()
         // addMenuControllerObservers()
 
         messageInputBar.delegate = self
@@ -161,6 +167,14 @@ class MessageViewController: UIViewController {
         messageInputBar.sendButton.tintColor = UIColor(red: 69/255, green: 193/255, blue: 89/255, alpha: 1)
 
         reloadInputViews()
+    }
+
+    override func viewDidLayoutSubviews() {
+        // Otherwise setting contentInset after viewDidAppear will be animated.
+        if isInitialLayout {
+            defer { isInitialLayout = false }
+            addKeyboardObservers()
+        }
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -276,7 +290,7 @@ extension MessageViewController: UICollectionViewDataSource {
 
         // Message content container (message bubble).
         let containerPadding = isFromCurrentSender(message: message) ?
-            UIEdgeInsets(top: 0, left: 30, bottom: 0, right: 4) : UIEdgeInsets(top: 0, left: 4, bottom: 0, right: 30)
+            UIEdgeInsets(top: 0, left: MessageViewController.kFarSideHorizontalSpacing, bottom: 0, right: 4) : UIEdgeInsets(top: 0, left: 4, bottom: 0, right: MessageViewController.kFarSideHorizontalSpacing)
         let containerSize = calcContainerSize(for: message, avatarsVisible: hasAvatars)
         // isFromCurrent Sender ? Flush container right : flush left.
         let originX = collectionView.layoutMargins.left +  (isFromCurrentSender(message: message) ? cellWidth - avatarPadding - containerSize.width - containerPadding.right : avatarPadding + containerPadding.left)
