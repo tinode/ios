@@ -48,6 +48,7 @@
 		B0DF0319227C2517000F9492 /* MessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0DF0318227C2517000F9492 /* MessageView.swift */; };
 		B0DF031D227C604C000F9492 /* MessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0DF031C227C604C000F9492 /* MessageCell.swift */; };
 		B0DF031F227C6898000F9492 /* PaddedLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0DF031E227C6898000F9492 /* PaddedLabel.swift */; };
+		B0DF0323228051B4000F9492 /* MessageViewController+Keyboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0DF0322228051B4000F9492 /* MessageViewController+Keyboard.swift */; };
 		B0E8FA0822770E61005097F1 /* ButtonLayoutManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0E8FA0722770E61005097F1 /* ButtonLayoutManager.swift */; };
 /* End PBXBuildFile section */
 
@@ -110,6 +111,7 @@
 		B0DF0318227C2517000F9492 /* MessageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageView.swift; sourceTree = "<group>"; };
 		B0DF031C227C604C000F9492 /* MessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageCell.swift; sourceTree = "<group>"; };
 		B0DF031E227C6898000F9492 /* PaddedLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaddedLabel.swift; sourceTree = "<group>"; };
+		B0DF0322228051B4000F9492 /* MessageViewController+Keyboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MessageViewController+Keyboard.swift"; sourceTree = "<group>"; };
 		B0E8FA0722770E61005097F1 /* ButtonLayoutManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonLayoutManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -168,6 +170,7 @@
 				0A0016E821E736CD00088188 /* MessagePresenter.swift */,
 				B0DF0318227C2517000F9492 /* MessageView.swift */,
 				0A8C8A4521E5E72D00D8751E /* MessageViewController.swift */,
+				B0DF0322228051B4000F9492 /* MessageViewController+Keyboard.swift */,
 				7DDADC4F21D5C156009733B5 /* RegisterViewController.swift */,
 				B031BE5622631304004160AE /* SettingsHelper.swift */,
 				0AEE8BED226456080022EC3F /* UiUtils.swift */,
@@ -366,6 +369,7 @@
 				0A8A8BDA21C380E80090BCBA /* Cache.swift in Sources */,
 				B0DF031D227C604C000F9492 /* MessageCell.swift in Sources */,
 				0A15739621DB531E0070C31F /* UserDb.swift in Sources */,
+				B0DF0323228051B4000F9492 /* MessageViewController+Keyboard.swift in Sources */,
 				0AE50D4822156A5B0021F7B7 /* FindPresenter.swift in Sources */,
 				0A0016E721E7236900088188 /* MessageInteractor.swift in Sources */,
 				0ACB5F1022097665008FE740 /* ChatListRouter.swift in Sources */,

@@ -48,7 +48,7 @@ class MessageViewController: UIViewController {
     /// The `MessageInputBar` used as the `inputAccessoryView` in the view controller.
     private var messageInputBar = MessageInputBar()
 
-    private weak var collectionView: MessageView!
+    weak var collectionView: MessageView!
 
     private var interactor: (MessageBusinessLogic & MessageDataStore)?
     private let refreshControl = UIRefreshControl()
@@ -96,7 +96,7 @@ class MessageViewController: UIViewController {
     // MARK: lifecycle
 
     deinit {
-        // removeKeyboardObservers()
+        removeKeyboardObservers()
         // removeMenuControllerObservers()
     }
 
@@ -149,9 +149,10 @@ class MessageViewController: UIViewController {
 
         view.backgroundColor = .white
 
-        collectionView.delegate = self
-        collectionView.dataSource = self
+        self.collectionView.delegate = self
+        self.collectionView.dataSource = self
 
+        addKeyboardObservers()
         // addMenuControllerObservers()
 
         messageInputBar.delegate = self
