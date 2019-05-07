@@ -1,6 +1,6 @@
 //
 //  FindInteractor.swift
-//  ios
+//  Tinodios
 //
 //  Copyright © 2019 Tinode. All rights reserved.
 //

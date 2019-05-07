@@ -1,6 +1,6 @@
 //
 //  MessageViewController.swift
-//  ios
+//  Tinodios
 //
 //  Copyright © 2019 Tinode. All rights reserved.
 //
@@ -162,7 +162,6 @@ class MessageViewController: UIViewController {
         // addMenuControllerObservers()
 
         messageInputBar.delegate = self
-        messageInputBar.backgroundColor = .blue
         messageInputBar.inputTextView.tintColor = UIColor(red: 69/255, green: 193/255, blue: 89/255, alpha: 1)
         messageInputBar.sendButton.tintColor = UIColor(red: 69/255, green: 193/255, blue: 89/255, alpha: 1)
 

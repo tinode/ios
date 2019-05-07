@@ -2,7 +2,6 @@
 //  ButtonLayoutManager.swift
 //  Tinodios
 //
-//  Created by Gene Sokolov on 29/04/2019.
 //  Copyright © 2019 Tinode. All rights reserved.
 //
 //  This is an NSLayoutManager for drawing button-like background

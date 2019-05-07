@@ -1,6 +1,6 @@
 //
-//  ViewController.swift
-//  ios
+//  ChatListViewController.swift
+//  Tinodios
 //
 //  Copyright © 2018 Tinode. All rights reserved.
 //

@@ -1,6 +1,6 @@
 //
-//  ChatListAdapter.swift
-//  ios
+//  ChatListInteractor.swift
+//  Tinodios
 //
 //  Copyright © 2018 Tinode. All rights reserved.
 //
