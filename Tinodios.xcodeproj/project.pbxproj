@@ -51,6 +51,7 @@
 		B0DF0323228051B4000F9492 /* MessageViewController+Keyboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0DF0322228051B4000F9492 /* MessageViewController+Keyboard.swift */; };
 		B0DF03252281A11F000F9492 /* SendMessageBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0DF03242281A11F000F9492 /* SendMessageBar.swift */; };
 		B0DF03272281CCE0000F9492 /* UITextView+Placeholder.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0DF03262281CCE0000F9492 /* UITextView+Placeholder.swift */; };
+		B0DF032922820064000F9492 /* SendMessageBar.xib in Resources */ = {isa = PBXBuildFile; fileRef = B0DF032822820064000F9492 /* SendMessageBar.xib */; };
 		B0E8FA0822770E61005097F1 /* ButtonLayoutManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0E8FA0722770E61005097F1 /* ButtonLayoutManager.swift */; };
 /* End PBXBuildFile section */
 
@@ -116,6 +117,7 @@
 		B0DF0322228051B4000F9492 /* MessageViewController+Keyboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MessageViewController+Keyboard.swift"; sourceTree = "<group>"; };
 		B0DF03242281A11F000F9492 /* SendMessageBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendMessageBar.swift; sourceTree = "<group>"; };
 		B0DF03262281CCE0000F9492 /* UITextView+Placeholder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITextView+Placeholder.swift"; sourceTree = "<group>"; };
+		B0DF032822820064000F9492 /* SendMessageBar.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SendMessageBar.xib; sourceTree = "<group>"; };
 		B0E8FA0722770E61005097F1 /* ButtonLayoutManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonLayoutManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -237,6 +239,7 @@
 				B0DF03162279F027000F9492 /* RoundImageView.swift */,
 				B0DF031E227C6898000F9492 /* PaddedLabel.swift */,
 				B0DF03242281A11F000F9492 /* SendMessageBar.swift */,
+				B0DF032822820064000F9492 /* SendMessageBar.xib */,
 				B0DF03262281CCE0000F9492 /* UITextView+Placeholder.swift */,
 			);
 			path = widgets;
@@ -304,6 +307,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B031BE552263075E004160AE /* Settings.bundle in Resources */,
+				B0DF032922820064000F9492 /* SendMessageBar.xib in Resources */,
 				0A0380E221B3CC8200A3FA0E /* LaunchScreen.storyboard in Resources */,
 				0A0380DF21B3CC8200A3FA0E /* Assets.xcassets in Resources */,
 				0A0380DD21B3CC8100A3FA0E /* Main.storyboard in Resources */,
