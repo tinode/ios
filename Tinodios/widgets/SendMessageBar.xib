@@ -10,68 +10,88 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
-        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="SendMessageBar" customModule="Tinodios" customModuleProvider="target">
+            <connections>
+                <outlet property="attachButton" destination="Sxl-U7-4Vy" id="Qpf-Oc-dWr"/>
+                <outlet property="backgroundDecoration" destination="4Pi-UF-5rE" id="Fbf-Qj-GKZ"/>
+                <outlet property="inputField" destination="bxx-m5-ifU" id="wwU-HN-RWu"/>
+                <outlet property="inputFieldHeight" destination="gP4-QC-iyW" id="XbB-0g-jEE"/>
+                <outlet property="sendButton" destination="LQB-Eu-unW" id="PaC-Hi-AC5"/>
+            </connections>
+        </placeholder>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
         <view contentMode="scaleToFill" id="iN0-l3-epB">
-            <rect key="frame" x="0.0" y="0.0" width="414" height="50"/>
+            <rect key="frame" x="0.0" y="0.0" width="414" height="150"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4I9-Mm-KhW" userLabel="AttachmentButton">
-                    <rect key="frame" x="2" y="2" width="32" height="32"/>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Sxl-U7-4Vy" userLabel="attachButton">
+                    <rect key="frame" x="8" y="4" width="36" height="36"/>
                     <constraints>
-                        <constraint firstAttribute="width" secondItem="4I9-Mm-KhW" secondAttribute="height" multiplier="1:1" id="HWc-on-79y"/>
-                        <constraint firstAttribute="width" constant="32" id="ouM-U1-rqN"/>
+                        <constraint firstAttribute="width" secondItem="Sxl-U7-4Vy" secondAttribute="height" multiplier="1:1" id="4Wy-xE-ah9"/>
+                        <constraint firstAttribute="width" constant="36" id="vxu-KV-i5b"/>
                     </constraints>
-                    <state key="normal" image="outline_add_a_photo_white_48pt"/>
+                    <state key="normal" image="outline_schedule_white_48pt"/>
+                    <connections>
+                        <action selector="attach:" destination="-1" eventType="touchUpInside" id="24B-da-FDG"/>
+                    </connections>
                 </button>
-                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="jj9-rs-WNw">
-                    <rect key="frame" x="38" y="0.0" width="376" height="36"/>
-                    <subviews>
-                        <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="7BJ-Tc-97q">
-                            <rect key="frame" x="0.0" y="0.0" width="333" height="36"/>
-                            <constraints>
-                                <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="36" id="AfF-se-bVg"/>
-                            </constraints>
-                            <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
-                            <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
-                            <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
-                        </textView>
-                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dyA-qT-H4o" userLabel="SendButton">
-                            <rect key="frame" x="339" y="5" width="32" height="32"/>
-                            <constraints>
-                                <constraint firstAttribute="width" secondItem="dyA-qT-H4o" secondAttribute="height" multiplier="1:1" id="kOT-Mx-Azd"/>
-                            </constraints>
-                            <state key="normal" title="Button" image="outline_error_outline_white_48pt"/>
-                        </button>
-                    </subviews>
-                    <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="bxx-m5-ifU">
+                    <rect key="frame" x="52" y="57" width="306" height="36"/>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     <constraints>
-                        <constraint firstItem="7BJ-Tc-97q" firstAttribute="leading" secondItem="jj9-rs-WNw" secondAttribute="leading" id="6sb-St-T3d"/>
-                        <constraint firstItem="7BJ-Tc-97q" firstAttribute="height" secondItem="jj9-rs-WNw" secondAttribute="height" id="Bft-gk-thc"/>
-                        <constraint firstItem="dyA-qT-H4o" firstAttribute="leading" secondItem="7BJ-Tc-97q" secondAttribute="trailing" constant="6" id="dLJ-ka-Iip"/>
-                        <constraint firstAttribute="trailing" secondItem="dyA-qT-H4o" secondAttribute="trailing" constant="5" id="f09-bu-o6d"/>
-                        <constraint firstAttribute="bottom" secondItem="dyA-qT-H4o" secondAttribute="bottom" constant="-1" id="qB8-T2-lcA"/>
-                        <constraint firstItem="7BJ-Tc-97q" firstAttribute="top" secondItem="jj9-rs-WNw" secondAttribute="top" id="wMT-WN-91S"/>
-                        <constraint firstItem="dyA-qT-H4o" firstAttribute="top" secondItem="jj9-rs-WNw" secondAttribute="top" constant="5" id="zsM-wn-kzm"/>
+                        <constraint firstAttribute="height" relation="greaterThanOrEqual" id="gP4-QC-iyW"/>
+                    </constraints>
+                    <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
+                    <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
+                    <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                </textView>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="4Pi-UF-5rE">
+                    <rect key="frame" x="52" y="4" width="370" height="44"/>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="44" id="z1R-al-HO3"/>
                     </constraints>
                 </view>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LQB-Eu-unW" userLabel="sendButton">
+                    <rect key="frame" x="358" y="57" width="36" height="36"/>
+                    <color key="backgroundColor" red="0.25098039220000001" green="0.75294117650000003" blue="0.25098039220000001" alpha="1" colorSpace="calibratedRGB"/>
+                    <constraints>
+                        <constraint firstAttribute="width" secondItem="LQB-Eu-unW" secondAttribute="height" multiplier="1:1" id="O3z-8u-PRJ"/>
+                        <constraint firstAttribute="width" constant="36" id="Ths-Pf-Iw7"/>
+                    </constraints>
+                    <state key="normal" image="send-48"/>
+                    <userDefinedRuntimeAttributes>
+                        <userDefinedRuntimeAttribute type="boolean" keyPath="layer.masksToBounds" value="YES"/>
+                        <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                            <integer key="value" value="18"/>
+                        </userDefinedRuntimeAttribute>
+                    </userDefinedRuntimeAttributes>
+                    <connections>
+                        <action selector="send:" destination="-1" eventType="touchUpInside" id="7cQ-kx-erM"/>
+                    </connections>
+                </button>
             </subviews>
-            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
             <constraints>
-                <constraint firstItem="jj9-rs-WNw" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="6eI-0M-mfF"/>
-                <constraint firstAttribute="trailing" secondItem="jj9-rs-WNw" secondAttribute="trailing" id="DUP-4r-Hsb"/>
-                <constraint firstItem="4I9-Mm-KhW" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="2" id="Xwl-6W-ff4"/>
-                <constraint firstItem="4I9-Mm-KhW" firstAttribute="centerY" secondItem="jj9-rs-WNw" secondAttribute="centerY" id="cdm-gI-YjT"/>
-                <constraint firstItem="jj9-rs-WNw" firstAttribute="leading" secondItem="4I9-Mm-KhW" secondAttribute="trailing" constant="4" id="l8O-Oj-ow0"/>
-                <constraint firstItem="vUN-kp-3ea" firstAttribute="top" secondItem="jj9-rs-WNw" secondAttribute="bottom" constant="8" symbolic="YES" id="uvQ-QV-hVW"/>
+                <constraint firstItem="bxx-m5-ifU" firstAttribute="leading" secondItem="4Pi-UF-5rE" secondAttribute="leading" id="SFS-Ag-f78"/>
+                <constraint firstItem="4Pi-UF-5rE" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="4" id="UBo-OJ-gxG"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="LQB-Eu-unW" secondAttribute="trailing" constant="20" id="Z2V-gR-DQe"/>
+                <constraint firstItem="4Pi-UF-5rE" firstAttribute="trailing" secondItem="vUN-kp-3ea" secondAttribute="trailing" constant="8" id="aLV-a8-GhT"/>
+                <constraint firstItem="LQB-Eu-unW" firstAttribute="leading" secondItem="bxx-m5-ifU" secondAttribute="trailing" id="bTB-yN-D6d"/>
+                <constraint firstItem="LQB-Eu-unW" firstAttribute="top" secondItem="4Pi-UF-5rE" secondAttribute="bottom" constant="9" id="eBK-B1-HA5"/>
+                <constraint firstItem="Sxl-U7-4Vy" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="4" id="gBG-6N-LRx"/>
+                <constraint firstItem="4Pi-UF-5rE" firstAttribute="leading" secondItem="Sxl-U7-4Vy" secondAttribute="trailing" constant="8" id="gzJ-Hw-iiA"/>
+                <constraint firstItem="bxx-m5-ifU" firstAttribute="top" secondItem="4Pi-UF-5rE" secondAttribute="bottom" constant="9" id="oOx-FG-3Ph"/>
+                <constraint firstItem="Sxl-U7-4Vy" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="8" id="rTM-U0-Opq"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="bxx-m5-ifU" secondAttribute="bottom" constant="23" id="yZA-U6-QcI"/>
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
-            <point key="canvasLocation" x="57.971014492753625" y="-230.69196428571428"/>
+            <point key="canvasLocation" x="-97" y="-23"/>
         </view>
     </objects>
     <resources>
-        <image name="outline_add_a_photo_white_48pt" width="48" height="48"/>
-        <image name="outline_error_outline_white_48pt" width="48" height="48"/>
+        <image name="outline_schedule_white_48pt" width="48" height="48"/>
+        <image name="send-48" width="48" height="48"/>
     </resources>
 </document>

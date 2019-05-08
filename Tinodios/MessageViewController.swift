@@ -20,37 +20,46 @@ class MessageViewController: UIViewController {
 
     // MARK: static parameters
 
-    static let kAvatarSize: CGFloat = 30
-    static let kDeliveryMarkerSize: CGFloat = 16
-    // Color of "read" marker.
-    static let kDeliveryMarkerTint = UIColor(red: 19/255, green: 144/255, blue:255/255, alpha: 0.8)
-    // Color of all other markers.
-    static let kDeliveryMarkerColor = UIColor.gray.withAlphaComponent(0.7)
-    // Light gray color
-    static let kOutgoingBubbleColor = UIColor(red: 230/255, green: 230/255, blue: 230/255, alpha: 1)
-    // Bright green color
-    static let kIncomingBubbleColor = UIColor(red: 69/255, green: 193/255, blue: 89/255, alpha: 1)
-    static let kContentFont = UIFont.preferredFont(forTextStyle: .body)
-    static let kSenderNameFont = UIFont.preferredFont(forTextStyle: .caption2)
-    static let kSenderNameLabelHeight: CGFloat = 16
-    static let kNewDateFont = UIFont.boldSystemFont(ofSize: 10)
-    static let kNewDateLabelHeight: CGFloat = 24
-    // Vertical spacing between messages from the same user
-    static let kVerticalCellSpacing: CGFloat = 2
-    // Additional vertical spacing between messages from different users in P2P topics.
-    static let kAdditionalP2PVerticalCellSpacing: CGFloat = 4
-    static let kMinimumCellWidth: CGFloat = 60
-    // This is the space between the other side of the message and the edge of screen.
-    // I.e. for incoming messages the space between the message and the *right* edge, for
-    // outfoing between the message and the left edge.
-    static let kFarSideHorizontalSpacing: CGFloat = 30
+    private enum Constants {
+        static let kAvatarSize: CGFloat = 30
+        static let kDeliveryMarkerSize: CGFloat = 16
+        // Color of "read" marker.
+        static let kDeliveryMarkerTint = UIColor(red: 19/255, green: 144/255, blue:255/255, alpha: 0.8)
+        // Color of all other markers.
+        static let kDeliveryMarkerColor = UIColor.gray.withAlphaComponent(0.7)
+        // Light gray color
+        static let kOutgoingBubbleColor = UIColor(red: 230/255, green: 230/255, blue: 230/255, alpha: 1)
+        // Bright green color
+        static let kIncomingBubbleColor = UIColor(red: 69/255, green: 193/255, blue: 89/255, alpha: 1)
+        static let kContentFont = UIFont.preferredFont(forTextStyle: .body)
+        static let kSenderNameFont = UIFont.preferredFont(forTextStyle: .caption2)
+        static let kSenderNameLabelHeight: CGFloat = 16
+        static let kNewDateFont = UIFont.boldSystemFont(ofSize: 10)
+        static let kNewDateLabelHeight: CGFloat = 24
+        // Vertical spacing between messages from the same user
+        static let kVerticalCellSpacing: CGFloat = 2
+        // Additional vertical spacing between messages from different users in P2P topics.
+        static let kAdditionalP2PVerticalCellSpacing: CGFloat = 4
+        static let kMinimumCellWidth: CGFloat = 60
+        // This is the space between the other side of the message and the edge of screen.
+        // I.e. for incoming messages the space between the message and the *right* edge, for
+        // outfoing between the message and the left edge.
+        static let kFarSideHorizontalSpacing: CGFloat = 30
 
-    // Padding between the message bubble and content.
-    static let kIncomingMessageContentInset = UIEdgeInsets(top: 7, left: 18, bottom: 7, right: 14)
-    static let kOutgoingMessageContentInset = UIEdgeInsets(top: 7, left: 14, bottom: 7, right: 18)
+        // Padding around content inside the message bubble.
+        static let kIncomingMessageContentInset = UIEdgeInsets(top: 7, left: 18, bottom: 7, right: 14)
+        static let kOutgoingMessageContentInset = UIEdgeInsets(top: 7, left: 14, bottom: 7, right: 18)
+    }
 
     /// The `MessageInputBar` used as the `inputAccessoryView` in the view controller.
-    private var messageInputBar = MessageInputBar()
+    // private var messageInputBar = SendMessageBar() // MessageInputBar()
+    private lazy var messageInputBar: UIView = {
+        let view = SendMessageBar()
+        view.autoresizingMask = .flexibleHeight
+        print("messageInputBar requested")
+        return view
+    }()
+
 
     // Pointer to the view holding messages.
     weak var collectionView: MessageView!
@@ -161,11 +170,11 @@ class MessageViewController: UIViewController {
 
         // addMenuControllerObservers()
 
-        messageInputBar.delegate = self
-        messageInputBar.inputTextView.tintColor = UIColor(red: 69/255, green: 193/255, blue: 89/255, alpha: 1)
-        messageInputBar.sendButton.tintColor = UIColor(red: 69/255, green: 193/255, blue: 89/255, alpha: 1)
+        //messageInputBar.delegate = self
+        //messageInputBar.inputTextView.tintColor = UIColor(red: 69/255, green: 193/255, blue: 89/255, alpha: 1)
+        //messageInputBar.sendButton.tintColor = UIColor(red: 69/255, green: 193/255, blue: 89/255, alpha: 1)
 
-        reloadInputViews()
+        // reloadInputViews()
     }
 
     override func viewDidLayoutSubviews() {
@@ -268,10 +277,10 @@ extension MessageViewController: UICollectionViewDataSource {
         let newDateLabelHeight = calcNewDateLabelHeight(at: indexPath)
 
         // This is the height of the field with the sender's name.
-        let senderNameLabelHeight = isAvatarVisible ? MessageViewController.kSenderNameLabelHeight : 0
+        let senderNameLabelHeight = isAvatarVisible ? Constants.kSenderNameLabelHeight : 0
 
         if isAvatarVisible {
-            cell.avatarView.frame = CGRect(origin: CGPoint(x: collectionView.layoutMargins.left, y: attributes!.frame.height - MessageViewController.kAvatarSize - senderNameLabelHeight), size: CGSize(width: MessageViewController.kAvatarSize, height: MessageViewController.kAvatarSize))
+            cell.avatarView.frame = CGRect(origin: CGPoint(x: collectionView.layoutMargins.left, y: attributes!.frame.height - Constants.kAvatarSize - senderNameLabelHeight), size: CGSize(width: Constants.kAvatarSize, height: Constants.kAvatarSize))
 
             // The avatar image should be assigned after setting the size. Otherwise it may be drawn twice.
             if let sub = topic?.getSubscription(for: message.from) {
@@ -285,19 +294,19 @@ extension MessageViewController: UICollectionViewDataSource {
         }
 
         // Left padding in group topics with avatar
-        let avatarPadding = hasAvatars ? MessageViewController.kAvatarSize : 0
+        let avatarPadding = hasAvatars ? Constants.kAvatarSize : 0
 
         // Message content container (message bubble).
         let containerPadding = isFromCurrentSender(message: message) ?
-            UIEdgeInsets(top: 0, left: MessageViewController.kFarSideHorizontalSpacing, bottom: 0, right: 4) : UIEdgeInsets(top: 0, left: 4, bottom: 0, right: MessageViewController.kFarSideHorizontalSpacing)
+            UIEdgeInsets(top: 0, left: Constants.kFarSideHorizontalSpacing, bottom: 0, right: 4) : UIEdgeInsets(top: 0, left: 4, bottom: 0, right: Constants.kFarSideHorizontalSpacing)
         let containerSize = calcContainerSize(for: message, avatarsVisible: hasAvatars)
         // isFromCurrent Sender ? Flush container right : flush left.
         let originX = collectionView.layoutMargins.left +  (isFromCurrentSender(message: message) ? cellWidth - avatarPadding - containerSize.width - containerPadding.right : avatarPadding + containerPadding.left)
         cell.containerView.frame = CGRect(origin: CGPoint(x: originX, y: newDateLabelHeight + containerPadding.top), size: containerSize)
 
         // Content UILabel.
-        cell.content.textInsets = isFromCurrentSender(message: message) ? MessageViewController.kOutgoingMessageContentInset : MessageViewController.kIncomingMessageContentInset
-        cell.content.font = MessageViewController.kContentFont
+        cell.content.textInsets = isFromCurrentSender(message: message) ? Constants.kOutgoingMessageContentInset : Constants.kIncomingMessageContentInset
+        cell.content.font = Constants.kContentFont
         cell.content.frame = cell.containerView.bounds
 
         // New date label
@@ -323,10 +332,10 @@ extension MessageViewController: UICollectionViewDataSource {
     private func configureCell(cell: MessageCell, with message: Message, at indexPath: IndexPath) {
 
         if isFromCurrentSender(message: message) {
-            cell.containerView.backgroundColor = MessageViewController.kOutgoingBubbleColor
+            cell.containerView.backgroundColor = Constants.kOutgoingBubbleColor
             cell.content.textColor = .darkText
         } else {
-            cell.containerView.backgroundColor = MessageViewController.kIncomingBubbleColor
+            cell.containerView.backgroundColor = Constants.kIncomingBubbleColor
             cell.content.textColor = .white
         }
 
@@ -338,7 +347,7 @@ extension MessageViewController: UICollectionViewDataSource {
 
     func newDateLabel(for message: Message, at indexPath: IndexPath) -> NSAttributedString? {
         if isNewDateLabelVisible(at: indexPath) {
-            return NSAttributedString(string: RelativeDateFormatter.shared.dateOnly(from: message.ts), attributes: [NSAttributedString.Key.font: MessageViewController.kNewDateFont, NSAttributedString.Key.foregroundColor: UIColor.darkGray])
+            return NSAttributedString(string: RelativeDateFormatter.shared.dateOnly(from: message.ts), attributes: [NSAttributedString.Key.font: Constants.kNewDateFont, NSAttributedString.Key.foregroundColor: UIColor.darkGray])
         }
         return nil
     }
@@ -354,7 +363,7 @@ extension MessageViewController: UICollectionViewDataSource {
         senderName = senderName ?? "Unknown \(message.from ?? "none")"
 
         return NSAttributedString(string: senderName!, attributes: [
-            NSAttributedString.Key.font: MessageViewController.kSenderNameFont,
+            NSAttributedString.Key.font: Constants.kSenderNameFont,
             NSAttributedString.Key.foregroundColor: UIColor.gray
             ])
     }
@@ -363,13 +372,13 @@ extension MessageViewController: UICollectionViewDataSource {
         guard isFromCurrentSender(message: message), let topic = topic else { return nil }
 
         let iconName: String
-        var tint: UIColor = MessageViewController.kDeliveryMarkerColor
+        var tint: UIColor = Constants.kDeliveryMarkerColor
         if message.isPending {
             iconName = "outline_schedule_white_48pt"
         } else {
             if topic.msgReadCount(seq: message.seqId) > 0 {
                 iconName = "outline_done_all_white_48pt"
-                tint = MessageViewController.kDeliveryMarkerTint
+                tint = Constants.kDeliveryMarkerTint
             } else if topic.msgRecvCount(seq: message.seqId) > 0 {
                 iconName = "outline_done_all_white_48pt"
             } else {
@@ -475,16 +484,16 @@ extension MessageViewController: UICollectionViewDelegateFlowLayout {
 
     // Vertical spacing between message cells
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        return MessageViewController.kVerticalCellSpacing
+        return Constants.kVerticalCellSpacing
     }
 
     func cellHeightFromContent(for message: Message, at indexPath: IndexPath) -> CGFloat {
         let hasAvatars = avatarsVisible(message: message)
 
         let containerHeight = calcContainerSize(for: message, avatarsVisible: hasAvatars).height
-        let senderNameLabelHeight: CGFloat = shouldShowAvatar(for: message, at: indexPath) ? MessageViewController.kSenderNameLabelHeight : 0
+        let senderNameLabelHeight: CGFloat = shouldShowAvatar(for: message, at: indexPath) ? Constants.kSenderNameLabelHeight : 0
         let newDateLabelHeight: CGFloat = calcNewDateLabelHeight(at: indexPath)
-        let avatarHeight = hasAvatars ? MessageViewController.kAvatarSize : 0
+        let avatarHeight = hasAvatars ? Constants.kAvatarSize : 0
 
         let totalLabelHeight: CGFloat = newDateLabelHeight + containerHeight + senderNameLabelHeight
         return max(avatarHeight, totalLabelHeight)
@@ -493,9 +502,9 @@ extension MessageViewController: UICollectionViewDelegateFlowLayout {
     func calcNewDateLabelHeight(at indexPath: IndexPath) -> CGFloat {
         let height: CGFloat
         if isNewDateLabelVisible(at: indexPath) {
-            height = MessageViewController.kNewDateLabelHeight
+            height = Constants.kNewDateLabelHeight
         } else if !topic!.isGrpType && !isPreviousMessageSameSender(at: indexPath) {
-            height = MessageViewController.kAdditionalP2PVerticalCellSpacing
+            height = Constants.kAdditionalP2PVerticalCellSpacing
         } else {
             height = 0
         }
@@ -511,19 +520,19 @@ extension MessageViewController: UICollectionViewDelegateFlowLayout {
     func calcContainerSize(for message: Message, avatarsVisible: Bool) -> CGSize {
         // FIXME: these calculations can be simplified, particularly no need to check isFromCurrentSender
 
-        let insets = isFromCurrentSender(message: message) ? MessageViewController.kOutgoingMessageContentInset : MessageViewController.kIncomingMessageContentInset
+        let insets = isFromCurrentSender(message: message) ? Constants.kOutgoingMessageContentInset : Constants.kIncomingMessageContentInset
 
-        let avatarWidth = avatarsVisible ? MessageViewController.kAvatarSize : 0
+        let avatarWidth = avatarsVisible ? Constants.kAvatarSize : 0
 
         let padding = isFromCurrentSender(message: message) ? UIEdgeInsets(top: 0, left: 30, bottom: 0, right: 4) : UIEdgeInsets(top: 0, left: 4, bottom: 0, right: 30)
         let maxWidth = collectionView.frame.width - avatarWidth - padding.left - padding.right - insets.left - insets.right
 
         let text = message.content?.string ?? "none"
-        let attributedText = NSAttributedString(string: text, attributes: [.font: MessageViewController.kContentFont])
+        let attributedText = NSAttributedString(string: text, attributes: [.font: Constants.kContentFont])
         var size = textSize(for: attributedText, considering: maxWidth)
 
         size.width += insets.left + insets.right
-        size.width = max(size.width, MessageViewController.kMinimumCellWidth)
+        size.width = max(size.width, Constants.kMinimumCellWidth)
         size.height += insets.top + insets.bottom
 
         return size
@@ -539,7 +548,7 @@ extension MessageViewController: MessageCellDelegate {
         print("didTapAvatar")
     }
 }
-
+/*
 extension MessageViewController: MessageInputBarDelegate {
     func messageInputBar(_ inputBar: MessageInputBar, didPressSendButtonWith text: String) {
         _ = interactor?.sendMessage(content: Drafty(content: text))
@@ -555,3 +564,4 @@ extension MessageViewController: MessageInputBarDelegate {
         // Use to change any other subview insets
     }
 }
+*/
