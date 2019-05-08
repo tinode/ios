@@ -61,9 +61,10 @@ class UserDb {
         }
         return id
     }
+    @discardableResult
     func insert(sub: SubscriptionProto?) -> Int64 {
         guard let sub = sub else { return -1 }
-        return self.insert(uid: sub.user, updated: sub.updated, serializedPub: sub.serializePub())
+        return self.insert(uid: sub.user ?? sub.topic, updated: sub.updated, serializedPub: sub.serializePub())
     }
     private func insert(uid: String?, updated: Date?, serializedPub: String?) -> Int64 {
         do {
@@ -82,15 +83,18 @@ class UserDb {
             return -1
         }
     }
+    @discardableResult
     func update(user: UserProto?) -> Bool {
         guard let user = user, let su = user.payload as? StoredUser, let userId = su.id, userId > 0 else { return false }
         return self.update(userId: userId, updated: user.updated, serializedPub: user.serializePub())
     }
+    @discardableResult
     func update(sub: SubscriptionProto?) -> Bool {
         guard let st = sub?.payload as? StoredSubscription, let userId = st.userId else { return false }
         return self.update(userId: userId, updated: sub?.updated, serializedPub: sub?.serializePub())
     }
-    private func update(userId: Int64, updated: Date?, serializedPub: String?) -> Bool {
+    @discardableResult
+    func update(userId: Int64, updated: Date?, serializedPub: String?) -> Bool {
         var setters = [Setter]()
         if let u = updated {
             setters.append(self.updated <- u)
@@ -104,6 +108,16 @@ class UserDb {
             return try self.db.run(record.update(setters)) > 0
         } catch {
             print("UserDb update failed: \(error)")
+            return false
+        }
+    }
+    @discardableResult
+    func deleteRow(for id: Int64) -> Bool {
+        let record = self.table.filter(self.id == id)
+        do {
+            return try self.db.run(record.delete()) > 0
+        } catch {
+            print("UserDb delete failed for id \(id): \(error)")
             return false
         }
     }

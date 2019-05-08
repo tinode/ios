@@ -12,12 +12,10 @@
 		092F4169B2BEBF2E7A80ACA21303DCF6 /* Setter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FABC175D60BA8F018A9CBC71691D18E /* Setter.swift */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		0D70A47D3900F2EAB0D9116BC91B88E3 /* MessagesCollectionViewFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7CDDF206AACE5A5295193A3AB230C69 /* MessagesCollectionViewFlowLayout.swift */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		11E7D5251AFAE3588DE03C006B4D7FF0 /* LocationMessageSizeCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE785196BE26F89F339D2AB991CD94E7 /* LocationMessageSizeCalculator.swift */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
-		15D9B914F28298E6A9354219AC7B5C16 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 972CF76E015235B93E0E40C7F82CE795 /* Foundation.framework */; };
 		163C2E863DA48CE5D25BAE2B2B778BB7 /* MessagesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80F87F6A3539D209B43A944B099FDFA8 /* MessagesViewController.swift */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		166412092358558ADC4CA43E8EB02921 /* FTS4.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AA21A783BEA4067801AB1352958A39E /* FTS4.swift */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		18CA048682C653FF172248DDE50C0519 /* SeparatorLine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4237E57BC280E1595D319FEFFEA11007 /* SeparatorLine.swift */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		1A04A0DA66B70E5FF085C017398734DC /* Images in Resources */ = {isa = PBXBuildFile; fileRef = 2411AFBA35378C922945FF2D4EB17BDE /* Images */; };
-		1C10802FF92F7204D23C3C54F101FC4B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 972CF76E015235B93E0E40C7F82CE795 /* Foundation.framework */; };
 		1D81A1D1B14009DDD3440C360499FA71 /* SQLite.h in Headers */ = {isa = PBXBuildFile; fileRef = 75CCF4919ECFC382F4D9E64194EA576D /* SQLite.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1F35F42D4F9508E02F3C53A55F8FEBC9 /* CoreFunctions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A2DFB1C796F3D5549B8824614EE3D3A /* CoreFunctions.swift */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		1F56B996DC584D856E4A16DFB2D6357A /* MessageInputBar-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 000027B957C17CC1BB5C47AB0C78812F /* MessageInputBar-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -36,23 +34,25 @@
 		3F0317D0C17D4B8C2B4A72F7A67C035E /* Connection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 616E82E5B47B82C7F804935C213A423F /* Connection.swift */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		40869597F9B95B17A4B0FD1711602E8E /* AvatarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D966741B5D8AAD716EEA220E55D77F6C /* AvatarView.swift */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		42D4699928DA1EA220CAAFBFE54E3CB4 /* KeychainWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D49730A7159958D6FDE1E9F278E0CEEF /* KeychainWrapper.swift */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
-		44DA8A319C14F7FE1498C9CF32C1BDEB /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 972CF76E015235B93E0E40C7F82CE795 /* Foundation.framework */; };
 		45302141C0DE1762E4EEE5215B11678E /* Bundle+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEEC8C91E38FDCB4F10F41BEC3050956 /* Bundle+Extensions.swift */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		46CA2E472BEB55851B6D65B8F5885EC5 /* SwiftKeychainWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 141B2252808332C1D44532DF704C49A5 /* SwiftKeychainWrapper.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		47C4E38C08AFC3035378FDC8541805E3 /* MessageCellDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D4663ED875C380BDC627E810E4BC3D2 /* MessageCellDelegate.swift */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		488DF4D971A8C29A588CB9B7A68A2664 /* SwiftWebSocket-iOS10.0-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = DA2E4820DA46DB3EBBD0E237A3BA5F07 /* SwiftWebSocket-iOS10.0-dummy.m */; };
 		4B8AA219A25BFA1B2DC9ED3E9C781DD4 /* TextMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBAEE6F6AECA8A3CB538CD89C0076EFA /* TextMessageCell.swift */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
-		4D768ECDFDDE393CBEC4F54A069C4C6E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 972CF76E015235B93E0E40C7F82CE795 /* Foundation.framework */; };
 		5142F147EA49F4FE41B4E185E1622F5D /* InputTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3D25CE141A2EFAAEA8AF33DC439A674 /* InputTextView.swift */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
-		53A57C9A72DFFDF63244FA479622C03A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 972CF76E015235B93E0E40C7F82CE795 /* Foundation.framework */; };
+		56E21BBD0A391AA4FCED1D52CCF415C8 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D9BDAC8F084C735B7061D07460C0D15C /* Foundation.framework */; };
 		5983829CB5FDFC39B8703A4AE40D1E92 /* MessageInputBar-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 8FFA453474B7B72B4613C8B42DEADE95 /* MessageInputBar-dummy.m */; };
 		5C68E1FF614796DE9112033856A0FE23 /* CellSizeCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22DDD75561CDF9FDE273078B56BDFF54 /* CellSizeCalculator.swift */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
+		5E65D453F730833F4B08D7C5FEE561BD /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D9BDAC8F084C735B7061D07460C0D15C /* Foundation.framework */; };
 		60FD0811AF3AC4DD10927DCE00525882 /* Pods-TinodeSDKTests-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = E558A8FAB874132BF94114C3ACA83EE8 /* Pods-TinodeSDKTests-dummy.m */; };
 		6164B686FE921991DB3938924484289F /* MediaMessageSizeCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF5B6414DF5BD92213A7DB8BEC8DAA52 /* MediaMessageSizeCalculator.swift */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		62537D2D6FB19C2008A67C55CD4A8505 /* InputItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028977E17C109E0A61B5C36ED3502EDD /* InputItem.swift */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		635AFB52281C06B9321937C8768BD05B /* MessageLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BADEC218C3169F2D118495AC5D2BAFB3 /* MessageLabel.swift */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
+		6374CDB222D11B7FF4069CA082B2A185 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D9BDAC8F084C735B7061D07460C0D15C /* Foundation.framework */; };
 		6406105CEFEDC4D89AD0CAA69C7D864F /* UIEdgeInsets+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E888339C83F7B8E9735D87BFD1D4FD6B /* UIEdgeInsets+Extensions.swift */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		65E1CED9FA02E5462A752114C4D1470D /* Query.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1759B5944A6CC30850864EE0FEC97A4B /* Query.swift */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
+		66F8A9CAF047AF1367FEE27C98F1FC61 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D9BDAC8F084C735B7061D07460C0D15C /* Foundation.framework */; };
+		677625FD66CA84905091B4E0FFEBDBE6 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D9BDAC8F084C735B7061D07460C0D15C /* Foundation.framework */; };
 		68A0DD5A4442B8331168AA3FC6A18197 /* MessagesViewController+Keyboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82449894F25098C091F76DA67213FAF7 /* MessagesViewController+Keyboard.swift */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		6A18E8D394B554DE23C0C8055A7D3183 /* Value.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F66DF7B6DF63F860158A21CB8D9230A /* Value.swift */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		6C8F79A08FC161CC10773A9658824625 /* Sender.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49E888279DDBFBA834FC12A560F6C4BD /* Sender.swift */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
@@ -67,9 +67,8 @@
 		7B4E59E40D33576C9D9C40D02A87A6C2 /* DateAndTimeFunctions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D7C1F21C5C4353B1A433C84B384D7AA /* DateAndTimeFunctions.swift */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		7B6F79DB963161A8E9E216506D6C18A7 /* MessageLabelDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 861A707A42CE4EAC3C98B2C80DDA1197 /* MessageLabelDelegate.swift */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		7BD72BE29A3E18A3040DE59C885CC1BF /* MessageKitAssets.bundle in Resources */ = {isa = PBXBuildFile; fileRef = D6957DB28C43650EB6BCB4138E4DD11A /* MessageKitAssets.bundle */; };
-		7E9833DA384B953FC1A20224DD26FC19 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 972CF76E015235B93E0E40C7F82CE795 /* Foundation.framework */; };
-		7E98BC28E7C4678B6D1FE68B89E3F9FB /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 972CF76E015235B93E0E40C7F82CE795 /* Foundation.framework */; };
 		7F80CBCBB4E7599EBA5546AEAB44A6A6 /* SwiftKeychainWrapper-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 4D8A4DA742276496D31AAF42356C4FB5 /* SwiftKeychainWrapper-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		814CD4276587E94C5395DA6F17376D7D /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D9BDAC8F084C735B7061D07460C0D15C /* Foundation.framework */; };
 		82905D89DBC3C14829C63CF1AE17DBF7 /* MessageCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F82753EC704BB1C4FBF60A7D17AE4E39 /* MessageCollectionViewCell.swift */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		83D13B73A867488E7F94F7AFF5E6486E /* WebSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92689A6FA62A8FC7A49D6DE707975471 /* WebSocket.swift */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		852BBBD7B7FD39C7FF6C647BCCEFF619 /* CGRect+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 482C8C9BA3D9169246B502DD3331A291 /* CGRect+Extensions.swift */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
@@ -80,6 +79,7 @@
 		9089D695BC0ECC99224F24E91B7DED4B /* MessageType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 364ED6AEC7F14178C3F4CCE5B2AAA730 /* MessageType.swift */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		938AE1EC54CB7E0BEBBCDC0C72A02E3F /* CustomFunctions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D2F751BECA560491E5B24DD4BB7C5D5 /* CustomFunctions.swift */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		942E48A2BF2EC9CB0DBA92DF5FEFCFF8 /* MessageKit-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 2C6D48B09C3A6EA26FD279C20749DE90 /* MessageKit-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		94322D49353D152195343955D3370480 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D9BDAC8F084C735B7061D07460C0D15C /* Foundation.framework */; };
 		95728119A53E830F445501BF727F70A9 /* MessageStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 809958D3A0566A86C503AAA25F7E3F8E /* MessageStyle.swift */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		96F11DB554C6C7474F6FB4268CA6E40C /* WebSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92689A6FA62A8FC7A49D6DE707975471 /* WebSocket.swift */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		9A5A667A110127F4D232FA0B8ED77612 /* UIColor+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96958A07D8F88F15FD05E8024481EED9 /* UIColor+Extensions.swift */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
@@ -89,10 +89,8 @@
 		A226FC83672E3AF26BA5CF7118893CA3 /* MessageKit-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = CBCCDAC7037BE3633B07C7397597657F /* MessageKit-dummy.m */; };
 		A6CD6E11CE5FE8E1D6FE3318A34CB84C /* MessageInputBarDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B67788841E906C4E4A894562F3434119 /* MessageInputBarDelegate.swift */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		AA1AAAC5FF06B56B32A1660D5CB1F4AB /* MessagesCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A011D5E3761F6618B2ADC32DD8B34F5 /* MessagesCollectionView.swift */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
-		AAC592E558E5BDA61D13B768A30C6443 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 972CF76E015235B93E0E40C7F82CE795 /* Foundation.framework */; };
 		ACC26B2D2E879FF1A653203E4CF75F8E /* SQLite.swift-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AC84344CD38A80ACED5DBEA968E3ACE /* SQLite.swift-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		AD6EB79D00A8D95ADD2FA9C05EC17ADF /* Pods-TinodeSDK-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 435303A6ABD2439B59ADECDC9FC295A5 /* Pods-TinodeSDK-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		AE942F31A9A07B0E68EB98D0BD143935 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 972CF76E015235B93E0E40C7F82CE795 /* Foundation.framework */; };
 		AF1E87BF3101216D1ACAAFEE00EBCF45 /* NSConstraintLayoutSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 723024A1DFC3F4C1F9A53B7D03ED2565 /* NSConstraintLayoutSet.swift */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		B2BB9B68C0B6CCA171634F30C0D62E88 /* MessageSizeCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0866C3880C3ED8050592FB4F03F54320 /* MessageSizeCalculator.swift */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		B2CA669A3D0EFC03855C2485FB810898 /* MessageReusableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3092BF7DE35960DAC0D4FFBBA8B093DD /* MessageReusableView.swift */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
@@ -113,6 +111,7 @@
 		DA283F89B02187B6595518818CEBA444 /* InputBarButtonItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = D40ACA648338D85391A5E6F146166A85 /* InputBarButtonItem.swift */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		DA83E2229D9350D03914A4D02FABB90F /* LocationMessageSnapshotOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 610A42675887460D669F8CCAFF8D2029 /* LocationMessageSnapshotOptions.swift */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		DA8F6FE518219D531F12DCA538E7763D /* LabelAlignment.swift in Sources */ = {isa = PBXBuildFile; fileRef = F322B985691D1ED5945E98D73EB80782 /* LabelAlignment.swift */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
+		DDD230579F97AD822847EAA9C4F6C5F7 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D9BDAC8F084C735B7061D07460C0D15C /* Foundation.framework */; };
 		E074218DB7BABB773463721BFBA84E2F /* PlayButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FE3455B2526ACA3A53C1FFEDD73E86F /* PlayButtonView.swift */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		E516D01FCD710E9D1F7B7250F84EE4CB /* HorizontalEdgeInsets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28BFA629DD271E2C65377045931B2695 /* HorizontalEdgeInsets.swift */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		EDFC3B0B9365F1FBD57FE6139A537C31 /* UIView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA8AAF9BDACB86F0F606CDF37E12C95A /* UIView+Extensions.swift */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
@@ -122,6 +121,7 @@
 		F2CE3B6E8927D5795F4A2C244BF87414 /* MediaItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48E49175FE9827AB2024A6B5745AA613 /* MediaItem.swift */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		F36B84E292659E1D2B0BD5BE758E8910 /* MessagesLayoutDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55D6E7BE4619ADC93378FBA6403C9C2C /* MessagesLayoutDelegate.swift */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		F827E5A8357B3747DD67EDF98B9838AB /* SwiftWebSocket-iOS9.0-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 1C812D81702993C6DC936FD87980862A /* SwiftWebSocket-iOS9.0-dummy.m */; };
+		F8E9B0BA87547D7BBE36419C364EAFD1 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D9BDAC8F084C735B7061D07460C0D15C /* Foundation.framework */; };
 		F94DD95677BD94F7A4A5AA70CB2E0DA6 /* MessageKitError.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEE7F105487A75080FBBEAB7C86026C0 /* MessageKitError.swift */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		FB7C29E1F934A7CA31DE47627FBC2D5C /* Blob.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85581C08BF195B94D89E31E148828E8D /* Blob.swift */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
 		FDAC090FD6EDDA56070022CBEF358A1C /* SQLite-Bridging.m in Sources */ = {isa = PBXBuildFile; fileRef = AA16EC1B8CADB905F6F6AB073FC791EB /* SQLite-Bridging.m */; settings = {COMPILER_FLAGS = "-w -Xanalyzer -analyzer-disable-all-checks"; }; };
@@ -295,7 +295,6 @@
 		93FB8AE15EE0138E15CE9247226F6CFD /* SwiftWebSocket-iOS10.0.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = "SwiftWebSocket-iOS10.0.modulemap"; sourceTree = "<group>"; };
 		957517D048487F23310EC7BE3F86931E /* UIView+Extensions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "UIView+Extensions.swift"; path = "Sources/Extensions/UIView+Extensions.swift"; sourceTree = "<group>"; };
 		96958A07D8F88F15FD05E8024481EED9 /* UIColor+Extensions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "UIColor+Extensions.swift"; path = "Sources/Extensions/UIColor+Extensions.swift"; sourceTree = "<group>"; };
-		972CF76E015235B93E0E40C7F82CE795 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		99F6E99D45B81F7473A9CF8D5612088A /* Pods-TinodeSDKTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-TinodeSDKTests.debug.xcconfig"; sourceTree = "<group>"; };
 		9A3BCDD2756A586352BD0F3029DEF524 /* SwiftWebSocket-iOS10.0-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "SwiftWebSocket-iOS10.0-Info.plist"; sourceTree = "<group>"; };
 		9C1C3D5238F4312DA57BE4DAFA68420F /* MessageInputBar.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = MessageInputBar.framework; path = MessageInputBar.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -345,6 +344,7 @@
 		D8E3EA1D7DFF9208D80B5DE5D2D6312B /* Pods-TinodeSDKTests-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-TinodeSDKTests-frameworks.sh"; sourceTree = "<group>"; };
 		D908762E9F9B50A3F51165F56E621D89 /* MessageInputBar.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MessageInputBar.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D966741B5D8AAD716EEA220E55D77F6C /* AvatarView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AvatarView.swift; path = Sources/Views/AvatarView.swift; sourceTree = "<group>"; };
+		D9BDAC8F084C735B7061D07460C0D15C /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.2.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		DA2E4820DA46DB3EBBD0E237A3BA5F07 /* SwiftWebSocket-iOS10.0-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "SwiftWebSocket-iOS10.0-dummy.m"; sourceTree = "<group>"; };
 		DD6D6560934C82BBD63AB4C8F9FA5F03 /* Pods-Tinodios.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-Tinodios.release.xcconfig"; sourceTree = "<group>"; };
 		E00E96BF4638D830BE3FD207BBEECE7B /* SQLite.swift-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "SQLite.swift-prefix.pch"; sourceTree = "<group>"; };
@@ -369,7 +369,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				44DA8A319C14F7FE1498C9CF32C1BDEB /* Foundation.framework in Frameworks */,
+				6374CDB222D11B7FF4069CA082B2A185 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -377,7 +377,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7E98BC28E7C4678B6D1FE68B89E3F9FB /* Foundation.framework in Frameworks */,
+				66F8A9CAF047AF1367FEE27C98F1FC61 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -385,7 +385,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4D768ECDFDDE393CBEC4F54A069C4C6E /* Foundation.framework in Frameworks */,
+				F8E9B0BA87547D7BBE36419C364EAFD1 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -393,7 +393,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				53A57C9A72DFFDF63244FA479622C03A /* Foundation.framework in Frameworks */,
+				5E65D453F730833F4B08D7C5FEE561BD /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -401,7 +401,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AE942F31A9A07B0E68EB98D0BD143935 /* Foundation.framework in Frameworks */,
+				56E21BBD0A391AA4FCED1D52CCF415C8 /* Foundation.framework in Frameworks */,
 				2EC41E54D79EEC0A3B5B2E21D412658D /* MessageInputBar.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -417,7 +417,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				15D9B914F28298E6A9354219AC7B5C16 /* Foundation.framework in Frameworks */,
+				94322D49353D152195343955D3370480 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -425,7 +425,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1C10802FF92F7204D23C3C54F101FC4B /* Foundation.framework in Frameworks */,
+				677625FD66CA84905091B4E0FFEBDBE6 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -433,7 +433,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7E9833DA384B953FC1A20224DD26FC19 /* Foundation.framework in Frameworks */,
+				814CD4276587E94C5395DA6F17376D7D /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -441,7 +441,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AAC592E558E5BDA61D13B768A30C6443 /* Foundation.framework in Frameworks */,
+				DDD230579F97AD822847EAA9C4F6C5F7 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -488,14 +488,6 @@
 			);
 			name = "Support Files";
 			path = "../Target Support Files/MessageInputBar";
-			sourceTree = "<group>";
-		};
-		0A41E286B2E2FE8646BA0D8AC8021FFE /* iOS */ = {
-			isa = PBXGroup;
-			children = (
-				972CF76E015235B93E0E40C7F82CE795 /* Foundation.framework */,
-			);
-			name = iOS;
 			sourceTree = "<group>";
 		};
 		0BDF86ED706FA941E17B7AFA3F8E4ABD /* Support Files */ = {
@@ -670,6 +662,14 @@
 			path = "../Target Support Files/SwiftKeychainWrapper";
 			sourceTree = "<group>";
 		};
+		B15E6B37799B1E18449C869D2F1B416E /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				D9BDAC8F084C735B7061D07460C0D15C /* Foundation.framework */,
+			);
+			name = iOS;
+			sourceTree = "<group>";
+		};
 		CA134AF57F79E086C646304291F9666E /* Support Files */ = {
 			isa = PBXGroup;
 			children = (
@@ -718,7 +718,7 @@
 			isa = PBXGroup;
 			children = (
 				D908762E9F9B50A3F51165F56E621D89 /* MessageInputBar.framework */,
-				0A41E286B2E2FE8646BA0D8AC8021FFE /* iOS */,
+				B15E6B37799B1E18449C869D2F1B416E /* iOS */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -1077,12 +1077,12 @@
 		BFDFE7DC352907FC980B868725387E98 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 0930;
-				LastUpgradeCheck = 0930;
+				LastSwiftUpdateCheck = 1020;
+				LastUpgradeCheck = 1020;
 			};
 			buildConfigurationList = 4821239608C13582E20E6DA73FD5F1F9 /* Build configuration list for PBXProject "Pods" */;
 			compatibilityVersion = "Xcode 9.3";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
@@ -1407,70 +1407,6 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		07488D4657FB0A78086563621D425F8A /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_COMMA = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INFINITE_RECURSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
-				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
-				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
-				CLANG_WARN_STRICT_PROTOTYPES = YES;
-				CLANG_WARN_SUSPICIOUS_MOVE = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_TESTABILITY = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"POD_CONFIGURATION_DEBUG=1",
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
-				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
-				MTL_FAST_MATH = YES;
-				ONLY_ACTIVE_ARCH = YES;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				STRIP_INSTALLED_PRODUCT = NO;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 4.2;
-				SYMROOT = "${SRCROOT}/../build";
-			};
-			name = Debug;
-		};
 		1BF1B3AB3E1BE00912D0D28A6B2F76DA /* Release */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = EC101E6BAA3AC0630EE98232DEFE0ACC /* SwiftKeychainWrapper.xcconfig */;
@@ -1847,42 +1783,7 @@
 			};
 			name = Release;
 		};
-		988395564DAFCB7CD617DE49EE318120 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5CE98D46BF789A933592FDA3BEDB3CD7 /* MessageInputBar.xcconfig */;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_PREFIX_HEADER = "Target Support Files/MessageInputBar/MessageInputBar-prefix.pch";
-				INFOPLIST_FILE = "Target Support Files/MessageInputBar/MessageInputBar-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MODULEMAP_FILE = "Target Support Files/MessageInputBar/MessageInputBar.modulemap";
-				PRODUCT_MODULE_NAME = MessageInputBar;
-				PRODUCT_NAME = MessageInputBar;
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_VERSION = 4.2;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Debug;
-		};
-		A1962E6FF39BBAC201A2E5DDF99557DF /* Release */ = {
+		8F17DC3A99F99FBAD606CE6963886315 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -1937,10 +1838,109 @@
 				STRIP_INSTALLED_PRODUCT = NO;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 				SYMROOT = "${SRCROOT}/../build";
 			};
 			name = Release;
+		};
+		916E0404255105F480DC4950B7625F7A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"POD_CONFIGURATION_DEBUG=1",
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRIP_INSTALLED_PRODUCT = NO;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				SYMROOT = "${SRCROOT}/../build";
+			};
+			name = Debug;
+		};
+		988395564DAFCB7CD617DE49EE318120 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5CE98D46BF789A933592FDA3BEDB3CD7 /* MessageInputBar.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_PREFIX_HEADER = "Target Support Files/MessageInputBar/MessageInputBar-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/MessageInputBar/MessageInputBar-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/MessageInputBar/MessageInputBar.modulemap";
+				PRODUCT_MODULE_NAME = MessageInputBar;
+				PRODUCT_NAME = MessageInputBar;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 4.2;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
 		};
 		A823A34374FA1BA44B294F39171B11B5 /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -2249,8 +2249,8 @@
 		4821239608C13582E20E6DA73FD5F1F9 /* Build configuration list for PBXProject "Pods" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				07488D4657FB0A78086563621D425F8A /* Debug */,
-				A1962E6FF39BBAC201A2E5DDF99557DF /* Release */,
+				916E0404255105F480DC4950B7625F7A /* Debug */,
+				8F17DC3A99F99FBAD606CE6963886315 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
