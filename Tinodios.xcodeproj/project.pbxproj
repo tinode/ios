@@ -21,6 +21,7 @@
 		0A431C032244A26200A837F7 /* TinodeSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A431C022244A26200A837F7 /* TinodeSDK.framework */; };
 		0A431C042244A26200A837F7 /* TinodeSDK.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0A431C022244A26200A837F7 /* TinodeSDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		0A484E5121E359A800FE9AFE /* MessageDb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A484E5021E359A800FE9AFE /* MessageDb.swift */; };
+		0A4E1D3022829C46006C0912 /* ContactsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4E1D2F22829C46006C0912 /* ContactsManager.swift */; };
 		0A6F260A21BE51D800B9726E /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A6F260921BE51D800B9726E /* LoginViewController.swift */; };
 		0A8A108121D4C78000B90D73 /* BaseDb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8A108021D4C78000B90D73 /* BaseDb.swift */; };
 		0A8A108321D4C78C00B90D73 /* TopicDb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8A108221D4C78C00B90D73 /* TopicDb.swift */; };
@@ -75,6 +76,7 @@
 		0A37D6F421DA075100A124CA /* AccountDb.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountDb.swift; sourceTree = "<group>"; };
 		0A431C022244A26200A837F7 /* TinodeSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = TinodeSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		0A484E5021E359A800FE9AFE /* MessageDb.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageDb.swift; sourceTree = "<group>"; };
+		0A4E1D2F22829C46006C0912 /* ContactsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsManager.swift; sourceTree = "<group>"; };
 		0A6F260921BE51D800B9726E /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		0A8A108021D4C78000B90D73 /* BaseDb.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseDb.swift; sourceTree = "<group>"; };
 		0A8A108221D4C78C00B90D73 /* TopicDb.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopicDb.swift; sourceTree = "<group>"; };
@@ -136,6 +138,7 @@
 		0A0380D621B3CC8100A3FA0E /* Tinodios */ = {
 			isa = PBXGroup;
 			children = (
+				0A4E1D3122829C52006C0912 /* account */,
 				0A8A107F21D4C77000B90D73 /* db */,
 				0A8A8BD921C380E80090BCBA /* Cache.swift */,
 				0AD5552921C625BB0027FD16 /* ChatListInteractor.swift */,
@@ -174,6 +177,14 @@
 				0A0380E021B3CC8200A3FA0E /* LaunchScreen.storyboard */,
 			);
 			path = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		0A4E1D3122829C52006C0912 /* account */ = {
+			isa = PBXGroup;
+			children = (
+				0A4E1D2F22829C46006C0912 /* ContactsManager.swift */,
+			);
+			path = account;
 			sourceTree = "<group>";
 		};
 		0A8A107F21D4C77000B90D73 /* db */ = {
@@ -343,6 +354,7 @@
 				0ACB5F1022097665008FE740 /* ChatListRouter.swift in Sources */,
 				0A6F260A21BE51D800B9726E /* LoginViewController.swift in Sources */,
 				0A09810C21CCB80400600013 /* StoredMessage.swift in Sources */,
+				0A4E1D3022829C46006C0912 /* ContactsManager.swift in Sources */,
 				0ACB5F0E22097651008FE740 /* ChatListPresenter.swift in Sources */,
 				0A8A108121D4C78000B90D73 /* BaseDb.swift in Sources */,
 				0A37D6F521DA075100A124CA /* AccountDb.swift in Sources */,
