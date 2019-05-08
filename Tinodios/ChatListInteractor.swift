@@ -38,6 +38,9 @@ class ChatListInteractor: ChatListBusinessLogic, ChatListDataStore {
         override func onMetaSub(sub: Subscription<VCard, PrivateType>) {
             // TODO: sub.pub?.constructBitmap()
             print("on meta sub")
+            if Tinode.topicTypeByName(name: sub.topic) == .p2p {
+                ContactsManager.default.processSubscription(sub: sub)
+            }
         }
         override func onMetaDesc(desc: Description<VCard, PrivateType>) {
             // TODO: desc.pub?.constructBitmap()

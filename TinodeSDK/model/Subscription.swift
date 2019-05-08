@@ -34,6 +34,7 @@ public protocol SubscriptionProto: class, Decodable {
     var user: String? { get set }
     var topic: String? { get set }
     var updated: Date? { get set }
+    var deleted: Date? { get set }
     var payload: Payload? { get set }
     var acs: Acs? { get set }
     var read: Int? { get set }
@@ -45,6 +46,7 @@ public protocol SubscriptionProto: class, Decodable {
     var clear: Int? { get set }
     var getClear: Int { get }
     var seen: LastSeen? { get set }
+    var uniqueId: String? { get }
     func serializePub() -> String?
     @discardableResult
     func deserializePub(from data: String?) -> Bool
@@ -91,6 +93,18 @@ public class Subscription<SP: Codable, SR: Codable>: SubscriptionProto {
     public var pub: SP?
     public var seen: LastSeen?
     public var payload: Payload? = nil
+    
+    public var uniqueId: String? {
+        get {
+            if topic == nil {
+                return user
+            }
+            if user == nil {
+                return topic
+            }
+            return topic! + ":" + user!
+        }
+    }
 
     private enum CodingKeys : String, CodingKey {
         case user, updated, deleted, touched,
