@@ -18,7 +18,7 @@ private class CountDownLatch {
     private var conditionCount: Int
 
     public init(count: Int) {
-        assert(count > 0, "CountDownLatch must have an initial count that is greater than 0.")
+        assert(count >= 0, "CountDownLatch must have an initial count that is not negative.")
         conditionCount = count
     }
     public func countDown() {
@@ -94,13 +94,12 @@ public class PromisedReply<Value> {
         countDownLatch = CountDownLatch(count: 1)
     }
     public init(value: Value) {
-        //result = .success(value)
         state = .resolved(value)
-        countDownLatch = CountDownLatch(count: 1)
+        countDownLatch = CountDownLatch(count: 0)
     }
     public init(error: Error) {
         state = .rejected(error)
-        countDownLatch = CountDownLatch(count: 1)
+        countDownLatch = CountDownLatch(count: 0)
     }
 
     func resolve(result: Value) throws {
@@ -262,7 +261,7 @@ public class PromisedReply<Value> {
         }
     }
     @discardableResult
-    func waitResult() throws -> Bool {
+    public func waitResult() throws -> Bool {
         countDownLatch?.await()
         return isResolved
     }

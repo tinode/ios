@@ -17,6 +17,8 @@
 		0A09810C21CCB80400600013 /* StoredMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A09810B21CCB80400600013 /* StoredMessage.swift */; };
 		0A15739421DB53130070C31F /* SubscriberDb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A15739321DB53130070C31F /* SubscriberDb.swift */; };
 		0A15739621DB531E0070C31F /* UserDb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A15739521DB531E0070C31F /* UserDb.swift */; };
+		0A35BA9E22836CCF00AA5E2F /* ContactsSynchronizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A35BA9D22836CCF00AA5E2F /* ContactsSynchronizer.swift */; };
+		0A35BAA02283A37500AA5E2F /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A35BA9F2283A37500AA5E2F /* Utils.swift */; };
 		0A37D6F521DA075100A124CA /* AccountDb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A37D6F421DA075100A124CA /* AccountDb.swift */; };
 		0A431C032244A26200A837F7 /* TinodeSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A431C022244A26200A837F7 /* TinodeSDK.framework */; };
 		0A431C042244A26200A837F7 /* TinodeSDK.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0A431C022244A26200A837F7 /* TinodeSDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -83,6 +85,8 @@
 		0A09810B21CCB80400600013 /* StoredMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoredMessage.swift; sourceTree = "<group>"; };
 		0A15739321DB53130070C31F /* SubscriberDb.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriberDb.swift; sourceTree = "<group>"; };
 		0A15739521DB531E0070C31F /* UserDb.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDb.swift; sourceTree = "<group>"; };
+		0A35BA9D22836CCF00AA5E2F /* ContactsSynchronizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsSynchronizer.swift; sourceTree = "<group>"; };
+		0A35BA9F2283A37500AA5E2F /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		0A37D6F421DA075100A124CA /* AccountDb.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountDb.swift; sourceTree = "<group>"; };
 		0A431C022244A26200A837F7 /* TinodeSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = TinodeSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		0A484E5021E359A800FE9AFE /* MessageDb.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageDb.swift; sourceTree = "<group>"; };
@@ -184,6 +188,7 @@
 				7DDADC4F21D5C156009733B5 /* RegisterViewController.swift */,
 				B031BE5622631304004160AE /* SettingsHelper.swift */,
 				0AEE8BED226456080022EC3F /* UiUtils.swift */,
+				0A35BA9F2283A37500AA5E2F /* Utils.swift */,
 				7DDADC5121D5C219009733B5 /* Validate.swift */,
 				0A0380DB21B3CC8100A3FA0E /* Main.storyboard */,
 				B031BE542263075E004160AE /* Settings.bundle */,
@@ -206,6 +211,7 @@
 			isa = PBXGroup;
 			children = (
 				0A4E1D2F22829C46006C0912 /* ContactsManager.swift */,
+				0A35BA9D22836CCF00AA5E2F /* ContactsSynchronizer.swift */,
 			);
 			path = account;
 			sourceTree = "<group>";
@@ -393,6 +399,7 @@
 				B0DF0323228051B4000F9492 /* MessageViewController+Keyboard.swift in Sources */,
 				0AE50D4822156A5B0021F7B7 /* FindPresenter.swift in Sources */,
 				B0DF03312283FFD8000F9492 /* PlaceholderTextView.swift in Sources */,
+				0A35BA9E22836CCF00AA5E2F /* ContactsSynchronizer.swift in Sources */,
 				0A0016E721E7236900088188 /* MessageInteractor.swift in Sources */,
 				0ACB5F1022097665008FE740 /* ChatListRouter.swift in Sources */,
 				0A6F260A21BE51D800B9726E /* LoginViewController.swift in Sources */,
@@ -413,6 +420,7 @@
 				7DDADC5421D5C2E6009733B5 /* CredentialsViewController.swift in Sources */,
 				B0DF03172279F027000F9492 /* RoundImageView.swift in Sources */,
 				B031BE5722631304004160AE /* SettingsHelper.swift in Sources */,
+				0A35BAA02283A37500AA5E2F /* Utils.swift in Sources */,
 				0ADDBC8B2249F617000BD00D /* ChatListTableViewCell.swift in Sources */,
 				0A8A108321D4C78C00B90D73 /* TopicDb.swift in Sources */,
 				0A0016E921E736CD00088188 /* MessagePresenter.swift in Sources */,

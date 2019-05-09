@@ -6,49 +6,42 @@
 //
 
 import UIKit
-import SwiftKeychainWrapper
+//import SwiftKeychainWrapper
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
-    static let kTinodeHasRunBefore = "tinodeHasRunBefore"
+    //static let kTinodeHasRunBefore = "tinodeHasRunBefore"
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
-        let userDefaults = UserDefaults.standard
-        if !userDefaults.bool(forKey: AppDelegate.kTinodeHasRunBefore) {
-            // Clear the app keychain.
-            KeychainWrapper.standard.removeAllKeys()
-            userDefaults.set(true, forKey: AppDelegate.kTinodeHasRunBefore)
-        } else {
-            if let token = KeychainWrapper.standard.string(
-                forKey: LoginViewController.kTokenKey), !token.isEmpty {
-                let tinode = Cache.getTinode()
-                var success = false
-                do {
-                    let (hostName, useTLS, _) = SettingsHelper.getConnectionSettings()
-                    // TODO: implement TLS.
-                    tinode.setAutoLoginWithToken(token: token)
-                    _ = try tinode.connect(to: (hostName ?? Cache.kHostName), useTLS: (useTLS ?? false))?.getResult()
-                    let msg = try! tinode.loginToken(token: token, creds: nil)?.getResult()
-                    if let code = msg?.ctrl?.code, code < 300 {
-                        print("login successful for: \(tinode.myUid!)")
-                        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-                        let initialViewController =
-                            storyboard.instantiateViewController(
-                                withIdentifier: "ChatsNavigator") as! UINavigationController
-                        self.window!.rootViewController = initialViewController
-                        success = true
-                    }
-                } catch {
-                    print("Failed to automatically login to Tinode: \(error).")
+        if let token = Utils.getAuthToken(), !token.isEmpty {
+            let tinode = Cache.getTinode()
+            var success = false
+            do {
+                let (hostName, useTLS, _) = SettingsHelper.getConnectionSettings()
+                // TODO: implement TLS.
+                tinode.setAutoLoginWithToken(token: token)
+                _ = try tinode.connect(to: (hostName ?? Cache.kHostName), useTLS: (useTLS ?? false))?.getResult()
+                let msg = try tinode.loginToken(token: token, creds: nil)?.getResult()
+                if let code = msg?.ctrl?.code, code < 300 {
+                    print("login successful for: \(tinode.myUid!)")
+                    let storyboard = UIStoryboard(name: "Main", bundle: nil)
+                    let initialViewController =
+                        storyboard.instantiateViewController(
+                            withIdentifier: "ChatsNavigator") as! UINavigationController
+                    self.window!.rootViewController = initialViewController
+                    success = true
                 }
-                if !success {
-                    _ = tinode.logout()
-                }
+            } catch {
+                print("Failed to automatically login to Tinode: \(error).")
+            }
+            if !success {
+                _ = tinode.logout()
             }
         }
+        Cache.synchronizeContactsPeriodically()
         return true
     }
 
