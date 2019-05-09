@@ -611,7 +611,7 @@ public class Tinode {
         }
         guard !isConnectionAuthenticated else {
             // Already logged in.
-            return PromisedReply<ServerMessage>()
+            return PromisedReply<ServerMessage>(value: ServerMessage())
         }
         guard !loginInProgress else {
             return PromisedReply<ServerMessage>(error: TinodeError.invalidState("Login in progress"))
@@ -765,7 +765,7 @@ public class Tinode {
     public func connect(to hostName: String, useTLS: Bool) throws -> PromisedReply<ServerMessage>? {
         if isConnected {
             Tinode.log.error("Tinode is already connected")
-            return nil
+            return PromisedReply<ServerMessage>(value: ServerMessage())
         }
         let urlString = "\(hostName)/v\(kProtocolVersion)/channels"
         let endpointURL: URL = URL(string: urlString)!
@@ -798,6 +798,14 @@ public class Tinode {
                 id: msgId,
                 topic: topic,
                 query: query))
+        return sendWithPromise(payload: msg, with: msgId)
+    }
+    public func setMeta<Pu: Codable, Pr: Codable>(
+        for topic: String, meta: MsgSetMeta<Pu, Pr>?) -> PromisedReply<ServerMessage>? {
+        let msgId = getNextMsgId()
+        let msg = ClientMessage(
+            set: MsgClientSet(id: msgId, topic: topic, meta: meta)
+        )
         return sendWithPromise(payload: msg, with: msgId)
     }
     public func leave(topic: String, unsub: Bool?) -> PromisedReply<ServerMessage>? {

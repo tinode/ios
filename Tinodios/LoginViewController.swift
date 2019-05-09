@@ -87,6 +87,8 @@ class LoginViewController: UIViewController {
                                 print("Could not save auth token...")
                             }
                         }
+                        // TODO: handle credentials validation (pkt.ctrl.code >= 300).
+                        Cache.synchronizeContactsPeriodically()
                         self?.routeToChats()
                         return nil
                     }, onFailure: { err in

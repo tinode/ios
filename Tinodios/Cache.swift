@@ -16,10 +16,19 @@ class Cache {
 
     private static let kApiKey = "AQEAAAABAAD_rAp4DJh05a1HAwFT3A6K"
 
-    var tinode: Tinode? = nil
+    private var tinode: Tinode? = nil
+    private var timer = RepeatingTimer(timeInterval: 60 * 60 * 4) // Once every 4 hours.
 
-    static func getTinode() -> Tinode {
+    public static func getTinode() -> Tinode {
         return Cache.default.getTinode()
+    }
+    public static func synchronizeContactsPeriodically() {
+        Cache.default.timer.suspend()
+        // Try to synchronize contacts immediately
+        ContactsSynchronizer.default.run()
+        // And repeat once every 4 hours.
+        Cache.default.timer.eventHandler = { ContactsSynchronizer.default.run() }
+        Cache.default.timer.resume()
     }
     private func getTinode() -> Tinode {
         if tinode == nil {
