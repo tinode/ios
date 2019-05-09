@@ -13,7 +13,6 @@
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="SendMessageBar" customModule="Tinodios" customModuleProvider="target">
             <connections>
                 <outlet property="attachButton" destination="Sxl-U7-4Vy" id="Qpf-Oc-dWr"/>
-                <outlet property="backgroundDecoration" destination="4Pi-UF-5rE" id="Fbf-Qj-GKZ"/>
                 <outlet property="inputField" destination="bxx-m5-ifU" id="wwU-HN-RWu"/>
                 <outlet property="inputFieldHeight" destination="gP4-QC-iyW" id="XbB-0g-jEE"/>
                 <outlet property="sendButton" destination="LQB-Eu-unW" id="PaC-Hi-AC5"/>
@@ -25,7 +24,7 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Sxl-U7-4Vy" userLabel="attachButton">
-                    <rect key="frame" x="8" y="4" width="36" height="36"/>
+                    <rect key="frame" x="8" y="80" width="36" height="36"/>
                     <constraints>
                         <constraint firstAttribute="width" secondItem="Sxl-U7-4Vy" secondAttribute="height" multiplier="1:1" id="4Wy-xE-ah9"/>
                         <constraint firstAttribute="width" constant="36" id="vxu-KV-i5b"/>
@@ -36,7 +35,7 @@
                     </connections>
                 </button>
                 <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="bxx-m5-ifU" customClass="PlaceholderTextView" customModule="Tinodios" customModuleProvider="target">
-                    <rect key="frame" x="52" y="57" width="306" height="36"/>
+                    <rect key="frame" x="54" y="4" width="304" height="112"/>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     <constraints>
                         <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="32" id="gP4-QC-iyW"/>
@@ -53,15 +52,8 @@
                         <userDefinedRuntimeAttribute type="string" keyPath="placeholderText" value="AbCd..."/>
                     </userDefinedRuntimeAttributes>
                 </textView>
-                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="4Pi-UF-5rE">
-                    <rect key="frame" x="52" y="4" width="370" height="44"/>
-                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                    <constraints>
-                        <constraint firstAttribute="height" constant="44" id="z1R-al-HO3"/>
-                    </constraints>
-                </view>
-                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LQB-Eu-unW" userLabel="sendButton">
-                    <rect key="frame" x="358" y="57" width="36" height="36"/>
+                <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LQB-Eu-unW" userLabel="sendButton">
+                    <rect key="frame" x="368" y="37" width="36" height="36"/>
                     <color key="backgroundColor" red="0.25098039220000001" green="0.75294117650000003" blue="0.25098039220000001" alpha="1" colorSpace="calibratedRGB"/>
                     <constraints>
                         <constraint firstAttribute="width" secondItem="LQB-Eu-unW" secondAttribute="height" multiplier="1:1" id="O3z-8u-PRJ"/>
@@ -81,20 +73,17 @@
             </subviews>
             <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
             <constraints>
-                <constraint firstItem="bxx-m5-ifU" firstAttribute="leading" secondItem="4Pi-UF-5rE" secondAttribute="leading" id="SFS-Ag-f78"/>
-                <constraint firstItem="4Pi-UF-5rE" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="4" id="UBo-OJ-gxG"/>
-                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="LQB-Eu-unW" secondAttribute="trailing" constant="20" id="Z2V-gR-DQe"/>
-                <constraint firstItem="4Pi-UF-5rE" firstAttribute="trailing" secondItem="vUN-kp-3ea" secondAttribute="trailing" constant="8" id="aLV-a8-GhT"/>
+                <constraint firstAttribute="trailing" secondItem="LQB-Eu-unW" secondAttribute="trailing" constant="20" id="Z2V-gR-DQe"/>
+                <constraint firstItem="bxx-m5-ifU" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="4" id="Zfs-dm-dD8"/>
                 <constraint firstItem="LQB-Eu-unW" firstAttribute="leading" secondItem="bxx-m5-ifU" secondAttribute="trailing" id="bTB-yN-D6d"/>
-                <constraint firstItem="LQB-Eu-unW" firstAttribute="top" secondItem="4Pi-UF-5rE" secondAttribute="bottom" constant="9" id="eBK-B1-HA5"/>
-                <constraint firstItem="Sxl-U7-4Vy" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="4" id="gBG-6N-LRx"/>
-                <constraint firstItem="4Pi-UF-5rE" firstAttribute="leading" secondItem="Sxl-U7-4Vy" secondAttribute="trailing" constant="8" id="gzJ-Hw-iiA"/>
-                <constraint firstItem="bxx-m5-ifU" firstAttribute="top" secondItem="4Pi-UF-5rE" secondAttribute="bottom" constant="9" id="oOx-FG-3Ph"/>
+                <constraint firstItem="bxx-m5-ifU" firstAttribute="leading" secondItem="Sxl-U7-4Vy" secondAttribute="trailing" constant="10" id="cn1-M7-S72"/>
+                <constraint firstItem="LQB-Eu-unW" firstAttribute="bottom" secondItem="bxx-m5-ifU" secondAttribute="bottom" id="eBK-B1-HA5"/>
+                <constraint firstItem="Sxl-U7-4Vy" firstAttribute="bottom" secondItem="bxx-m5-ifU" secondAttribute="bottom" id="gBG-6N-LRx"/>
                 <constraint firstItem="Sxl-U7-4Vy" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="8" id="rTM-U0-Opq"/>
-                <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="bxx-m5-ifU" secondAttribute="bottom" constant="23" id="yZA-U6-QcI"/>
+                <constraint firstItem="UC5-i1-la2" firstAttribute="bottom" secondItem="bxx-m5-ifU" secondAttribute="bottom" id="yZA-U6-QcI"/>
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
-            <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
+            <viewLayoutGuide key="safeArea" id="UC5-i1-la2"/>
             <point key="canvasLocation" x="-97" y="-23"/>
         </view>
     </objects>
