@@ -35,7 +35,7 @@
                     </connections>
                 </button>
                 <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="bxx-m5-ifU" customClass="PlaceholderTextView" customModule="Tinodios" customModuleProvider="target">
-                    <rect key="frame" x="54" y="4" width="304" height="112"/>
+                    <rect key="frame" x="54" y="4" width="356" height="112"/>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     <constraints>
                         <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="32" id="gP4-QC-iyW"/>
@@ -52,8 +52,8 @@
                         <userDefinedRuntimeAttribute type="string" keyPath="placeholderText" value="AbCd..."/>
                     </userDefinedRuntimeAttributes>
                 </textView>
-                <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LQB-Eu-unW" userLabel="sendButton">
-                    <rect key="frame" x="368" y="37" width="36" height="36"/>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LQB-Eu-unW" userLabel="sendButton">
+                    <rect key="frame" x="370" y="80" width="36" height="36"/>
                     <color key="backgroundColor" red="0.25098039220000001" green="0.75294117650000003" blue="0.25098039220000001" alpha="1" colorSpace="calibratedRGB"/>
                     <constraints>
                         <constraint firstAttribute="width" secondItem="LQB-Eu-unW" secondAttribute="height" multiplier="1:1" id="O3z-8u-PRJ"/>
@@ -73,9 +73,10 @@
             </subviews>
             <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
             <constraints>
-                <constraint firstAttribute="trailing" secondItem="LQB-Eu-unW" secondAttribute="trailing" constant="20" id="Z2V-gR-DQe"/>
+                <constraint firstItem="LQB-Eu-unW" firstAttribute="trailing" secondItem="bxx-m5-ifU" secondAttribute="trailing" constant="-4" id="C9M-dY-tg9"/>
+                <constraint firstItem="bxx-m5-ifU" firstAttribute="trailing" secondItem="LQB-Eu-unW" secondAttribute="trailing" constant="4" id="Z2V-gR-DQe"/>
                 <constraint firstItem="bxx-m5-ifU" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="4" id="Zfs-dm-dD8"/>
-                <constraint firstItem="LQB-Eu-unW" firstAttribute="leading" secondItem="bxx-m5-ifU" secondAttribute="trailing" id="bTB-yN-D6d"/>
+                <constraint firstItem="UC5-i1-la2" firstAttribute="trailing" secondItem="bxx-m5-ifU" secondAttribute="trailing" constant="4" id="bTB-yN-D6d"/>
                 <constraint firstItem="bxx-m5-ifU" firstAttribute="leading" secondItem="Sxl-U7-4Vy" secondAttribute="trailing" constant="10" id="cn1-M7-S72"/>
                 <constraint firstItem="LQB-Eu-unW" firstAttribute="bottom" secondItem="bxx-m5-ifU" secondAttribute="bottom" id="eBK-B1-HA5"/>
                 <constraint firstItem="Sxl-U7-4Vy" firstAttribute="bottom" secondItem="bxx-m5-ifU" secondAttribute="bottom" id="gBG-6N-LRx"/>
@@ -84,7 +85,7 @@
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <viewLayoutGuide key="safeArea" id="UC5-i1-la2"/>
-            <point key="canvasLocation" x="-97" y="-23"/>
+            <point key="canvasLocation" x="-251" y="12"/>
         </view>
     </objects>
     <resources>
