@@ -50,9 +50,9 @@
 		B0DF031D227C604C000F9492 /* MessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0DF031C227C604C000F9492 /* MessageCell.swift */; };
 		B0DF031F227C6898000F9492 /* PaddedLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0DF031E227C6898000F9492 /* PaddedLabel.swift */; };
 		B0DF0323228051B4000F9492 /* MessageViewController+Keyboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0DF0322228051B4000F9492 /* MessageViewController+Keyboard.swift */; };
-		B0DF03272281CCE0000F9492 /* UITextView+Placeholder.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0DF03262281CCE0000F9492 /* UITextView+Placeholder.swift */; };
 		B0DF032D2282EE8A000F9492 /* SendMessageBar.xib in Resources */ = {isa = PBXBuildFile; fileRef = B0DF032C2282EE8A000F9492 /* SendMessageBar.xib */; };
 		B0DF032F2282FF46000F9492 /* SendMessageBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0DF032E2282FF46000F9492 /* SendMessageBar.swift */; };
+		B0DF03312283FFD8000F9492 /* PlaceholderTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0DF03302283FFD8000F9492 /* PlaceholderTextView.swift */; };
 		B0E8FA0822770E61005097F1 /* ButtonLayoutManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0E8FA0722770E61005097F1 /* ButtonLayoutManager.swift */; };
 /* End PBXBuildFile section */
 
@@ -117,9 +117,9 @@
 		B0DF031C227C604C000F9492 /* MessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageCell.swift; sourceTree = "<group>"; };
 		B0DF031E227C6898000F9492 /* PaddedLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaddedLabel.swift; sourceTree = "<group>"; };
 		B0DF0322228051B4000F9492 /* MessageViewController+Keyboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MessageViewController+Keyboard.swift"; sourceTree = "<group>"; };
-		B0DF03262281CCE0000F9492 /* UITextView+Placeholder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITextView+Placeholder.swift"; sourceTree = "<group>"; };
 		B0DF032C2282EE8A000F9492 /* SendMessageBar.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SendMessageBar.xib; sourceTree = "<group>"; };
 		B0DF032E2282FF46000F9492 /* SendMessageBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendMessageBar.swift; sourceTree = "<group>"; };
+		B0DF03302283FFD8000F9492 /* PlaceholderTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceholderTextView.swift; sourceTree = "<group>"; };
 		B0E8FA0722770E61005097F1 /* ButtonLayoutManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonLayoutManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -249,9 +249,9 @@
 				B0E8FA0722770E61005097F1 /* ButtonLayoutManager.swift */,
 				B0DF03162279F027000F9492 /* RoundImageView.swift */,
 				B0DF031E227C6898000F9492 /* PaddedLabel.swift */,
-				B0DF03262281CCE0000F9492 /* UITextView+Placeholder.swift */,
 				B0DF032C2282EE8A000F9492 /* SendMessageBar.xib */,
 				B0DF032E2282FF46000F9492 /* SendMessageBar.swift */,
+				B0DF03302283FFD8000F9492 /* PlaceholderTextView.swift */,
 			);
 			path = widgets;
 			sourceTree = "<group>";
@@ -392,6 +392,7 @@
 				0A15739621DB531E0070C31F /* UserDb.swift in Sources */,
 				B0DF0323228051B4000F9492 /* MessageViewController+Keyboard.swift in Sources */,
 				0AE50D4822156A5B0021F7B7 /* FindPresenter.swift in Sources */,
+				B0DF03312283FFD8000F9492 /* PlaceholderTextView.swift in Sources */,
 				0A0016E721E7236900088188 /* MessageInteractor.swift in Sources */,
 				0ACB5F1022097665008FE740 /* ChatListRouter.swift in Sources */,
 				0A6F260A21BE51D800B9726E /* LoginViewController.swift in Sources */,
@@ -406,7 +407,6 @@
 				B0DF031F227C6898000F9492 /* PaddedLabel.swift in Sources */,
 				0AE50D4A22156A6C0021F7B7 /* FindRouter.swift in Sources */,
 				B0DF032F2282FF46000F9492 /* SendMessageBar.swift in Sources */,
-				B0DF03272281CCE0000F9492 /* UITextView+Placeholder.swift in Sources */,
 				B02F5C8B22679BC80079A97E /* ImagePicker.swift in Sources */,
 				7DDADC5221D5C219009733B5 /* Validate.swift in Sources */,
 				B0DF0319227C2517000F9492 /* MessageView.swift in Sources */,
