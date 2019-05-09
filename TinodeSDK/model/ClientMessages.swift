@@ -129,7 +129,7 @@ public class MetaGetSub: Encodable {
     let user: String?
     let ims: Date?
     let limit: Int?
-    init(user: String?, ims: Date?, limit: Int?) {
+    public init(user: String?, ims: Date?, limit: Int?) {
         self.user = user
         self.ims = ims
         self.limit = limit
@@ -183,7 +183,7 @@ public class MsgGetMeta: CustomStringConvertible, Encodable {
         self.what = "\(MsgGetMeta.kDesc) \(MsgGetMeta.kData) \(MsgGetMeta.kDel) \(MsgGetMeta.kTags)"
     }
     
-    init(desc: MetaGetDesc?, sub: MetaGetSub?, data: MetaGetData?, del: MetaGetData?, tags: Bool) {
+    public init(desc: MetaGetDesc?, sub: MetaGetSub?, data: MetaGetData?, del: MetaGetData?, tags: Bool) {
         self.desc = desc
         self.sub = sub
         self.data = data
@@ -259,12 +259,6 @@ public class MetaSetDesc<P: Encodable, R: Encodable>: Encodable {
     var defacs: Defacs? = nil
     var pub: P? = nil
     var priv: R? = nil
-    
-    public init(pub: P, priv: R) {
-        self.pub = pub
-        self.priv = priv
-    }
-    
     public init(da: Defacs) {
         self.defacs = da
     }
@@ -286,7 +280,7 @@ public class MsgSetMeta<Pu: Encodable, Pr: Encodable>: Encodable {
     let sub: MetaSetSub?
     let tags: [String]?
     
-    init(desc: MetaSetDesc<Pu, Pr>?, sub: MetaSetSub?, tags: [String]?) {
+    public init(desc: MetaSetDesc<Pu, Pr>?, sub: MetaSetSub?, tags: [String]?) {
         self.desc = desc
         self.sub = sub
         self.tags = tags
@@ -321,6 +315,22 @@ public class MsgClientGet: Encodable {
         self.desc = query.desc
         self.sub = query.sub
         self.data = query.data
+    }
+}
+
+public class MsgClientSet<Pu: Encodable, Pr: Encodable>: Encodable {
+    let id: String?
+    let topic: String?
+    let desc: MetaSetDesc<Pu, Pr>?
+    let sub: MetaSetSub?
+    init(id: String, topic: String, desc: MetaSetDesc<Pu, Pr>?, sub: MetaSetSub?) {
+        self.id = id
+        self.topic = topic
+        self.desc = desc
+        self.sub = sub
+    }
+    convenience init(id: String, topic: String, meta: MsgSetMeta<Pu, Pr>?) {
+        self.init(id: id, topic: topic, desc: meta?.desc, sub: meta?.sub)
     }
 }
 
@@ -401,6 +411,7 @@ public class ClientMessage<Pu: Encodable, Pr: Encodable> : Encodable {
     var login: MsgClientLogin?
     var sub: MsgClientSub<Pu, Pr>?
     var get: MsgClientGet?
+    var set: MsgClientSet<Pu, Pr>?
     var leave: MsgClientLeave?
     var note: MsgClientNote?
     var pub: MsgClientPub?
@@ -420,6 +431,9 @@ public class ClientMessage<Pu: Encodable, Pr: Encodable> : Encodable {
     }
     init(get: MsgClientGet) {
         self.get = get
+    }
+    init(set: MsgClientSet<Pu, Pr>) {
+        self.set = set
     }
     init(leave: MsgClientLeave) {
         self.leave = leave

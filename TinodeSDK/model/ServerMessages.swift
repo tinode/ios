@@ -105,13 +105,13 @@ public typealias FndDescription = Description<String, String>
 public typealias FndSubscription = Subscription<VCard, Array<String>>
 
 public class MsgServerMeta: Decodable {
-    let id: String?
-    let topic: String?
-    let ts: Date?
-    let desc: DescriptionProto?
-    let sub: [SubscriptionProto]?
-    let del: DelValues?
-    let tags: [String]?
+    public let id: String?
+    public let topic: String?
+    public let ts: Date?
+    public let desc: DescriptionProto?
+    public let sub: [SubscriptionProto]?
+    public let del: DelValues?
+    public let tags: [String]?
     
     private enum CodingKeys: String, CodingKey  {
         case id, topic, ts, desc, sub, del, tags
