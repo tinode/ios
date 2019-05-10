@@ -13,12 +13,18 @@ import UIKit
 class AttribFormatter: DraftyFormatter {
     typealias Node = AttribFormatter.TreeNode
 
-    private static let kFormLineSpacing: CGFloat = 1.5
+    private enum Constants {
+        static let kFormLineSpacing: CGFloat = 1.5
+        static let kDefaultFont: UIFont = UIFont.preferredFont(forTextStyle: .body)
+    }
 
     typealias CharacterStyle = [NSAttributedString.Key: Any]
-    let clicker: UITextViewDelegate?
 
-    init(container: UILabel?, clicker: UITextViewDelegate?) {
+    let clicker: UITextViewDelegate?
+    let baseFont: UIFont?
+
+    init(baseFont font: UIFont?, clicker: UITextViewDelegate?) {
+        self.baseFont = font
         self.clicker = clicker
     }
 
@@ -52,7 +58,7 @@ class AttribFormatter: DraftyFormatter {
 
         let pstyle = NSMutableParagraphStyle()
         pstyle.alignment = .center
-        pstyle.lineHeightMultiple = AttribFormatter.kFormLineSpacing
+        pstyle.lineHeightMultiple = Constants.kFormLineSpacing
         content.style(pstyle: pstyle)
     }
 
@@ -102,8 +108,8 @@ class AttribFormatter: DraftyFormatter {
             if let url = attr?["url"]?.asString() {
                 span.style(cstyle: [NSAttributedString.Key.link: NSURL(string: url) as Any])
             }
-        case "MN": break
-        case "HT": break
+        case "MN": break // TODO: add fupport for @mentions
+        case "HT": break // TODO: add support for #hashtangs
         case "HD": break // Hidden text
         case "IM":
             // Inline image
@@ -141,7 +147,7 @@ class AttribFormatter: DraftyFormatter {
         return apply(tp: tp, attr: attr, children: nil, content: content)
     }
 
-    public static func toAttributed(container: UILabel?, content: Drafty?, clicker: UITextViewDelegate?) -> NSAttributedString {
+    public static func toAttributed(baseFont font: UIFont?, content: Drafty?, clicker: UITextViewDelegate?) -> NSAttributedString {
         guard let content = content else {
             return NSAttributedString(string: "")
         }
@@ -149,19 +155,21 @@ class AttribFormatter: DraftyFormatter {
             return NSAttributedString(string: content.string)
         }
 
-        let result = content.format(formatter: AttribFormatter(container: container, clicker: clicker))
-        return result.toAttributed()
+        let result = content.format(formatter: AttribFormatter(baseFont: font, clicker: clicker))
+        let attributed = result.toAttributed()
+
+        return attributed
     }
 
-    // Take the default font from container and create the same size and family font with a given trait.
+    // Take font from the container and create the same size and family font with a given trait.
     private func font(_ trait: UIFontDescriptor.SymbolicTraits) -> UIFont {
-        let normalFont = UIFont.preferredFont(forTextStyle: .body)
-        // let normalFont = container.font!
-        return UIFont(descriptor: normalFont.fontDescriptor.withSymbolicTraits(trait)!, size: normalFont.pointSize)
+        let font = baseFont ?? Constants.kDefaultFont
+        return UIFont(descriptor: font.fontDescriptor.withSymbolicTraits(trait)!, size: font.pointSize)
     }
 
     // Structure representing Drafty as a tree of formatting nodes.
-    internal class TreeNode {
+    class TreeNode : CustomStringConvertible {
+
         var cStyle: CharacterStyle?
         var pStyle: NSMutableParagraphStyle?
         var text: NSMutableAttributedString?
@@ -201,6 +209,10 @@ class AttribFormatter: DraftyFormatter {
             self.children!.append(content)
         }
 
+        var description: String {
+            return text != nil ? text!.string : children?.description ?? "nil"
+        }
+
         func style(cstyle: CharacterStyle) {
             cStyle = cstyle
         }
@@ -228,7 +240,7 @@ class AttribFormatter: DraftyFormatter {
             return (text == nil || text!.length == 0) && (children == nil || children!.isEmpty)
         }
 
-        func toAttributed() -> NSAttributedString {
+        func toAttributed() -> NSMutableAttributedString {
             let attributed = NSMutableAttributedString()
             if let text = self.text {
                 attributed.append(text)

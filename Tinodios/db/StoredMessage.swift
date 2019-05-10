@@ -35,6 +35,7 @@ public class StoredMessage : MsgServerData, Message {
     // MARK: initializers
 
     public override init() { super.init() }
+
     convenience init(from m: MsgServerData) {
         self.init()
         self.topic = m.topic
@@ -44,6 +45,7 @@ public class StoredMessage : MsgServerData, Message {
         self.seq = m.seq
         self.content = m.content
     }
+
     convenience init(from m: MsgServerData, status: Int) {
         self.init(from: m)
         self.status = status

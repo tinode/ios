@@ -5,7 +5,6 @@
 //  Copyright © 2019 Tinode. All rights reserved.
 //
 
-import Foundation
 import UIKit
 import TinodeSDK
 
@@ -146,12 +145,13 @@ class MessageViewController: UIViewController {
         // Setup UICollectionView constraints: fill the screen
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         let top = collectionView.topAnchor.constraint(equalTo: view.topAnchor, constant: topLayoutGuide.length)
-        let bottom = collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-        let trailing: NSLayoutConstraint, leading: NSLayoutConstraint
+        let trailing: NSLayoutConstraint, leading: NSLayoutConstraint, bottom: NSLayoutConstraint
         if #available(iOS 11.0, *) {
+            bottom = collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -50)
             leading = collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor)
             trailing = collectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor)
         } else {
+            bottom = collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
             leading = collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor)
             trailing = collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
         }
@@ -300,7 +300,6 @@ extension MessageViewController: UICollectionViewDataSource {
 
         // Content UILabel.
         cell.content.textInsets = isFromCurrentSender(message: message) ? Constants.kOutgoingMessageContentInset : Constants.kIncomingMessageContentInset
-        cell.content.font = Constants.kContentFont
         cell.content.frame = cell.containerView.bounds
 
         // New date label
@@ -333,7 +332,16 @@ extension MessageViewController: UICollectionViewDataSource {
             cell.content.textColor = .white
         }
 
-        cell.content.text = message.content?.string
+        cell.content.font = Constants.kContentFont
+
+        if let drafty = message.content {
+            if drafty.isPlain {
+                cell.content.text = drafty.string
+            } else {
+                let attributed = AttribFormatter.toAttributed(baseFont: Constants.kContentFont, content: drafty, clicker: nil)
+                cell.content.attributedText = attributed
+            }
+        }
 
         cell.newDateLabel.attributedText = newDateLabel(for: message, at: indexPath)
         cell.senderNameLabel.attributedText = senderFullName(for: message, at: indexPath)
@@ -518,11 +526,20 @@ extension MessageViewController: UICollectionViewDelegateFlowLayout {
 
         let avatarWidth = avatarsVisible ? Constants.kAvatarSize : 0
 
-        let padding = isFromCurrentSender(message: message) ? UIEdgeInsets(top: 0, left: 30, bottom: 0, right: 4) : UIEdgeInsets(top: 0, left: 4, bottom: 0, right: 30)
+        let padding = isFromCurrentSender(message: message) ? UIEdgeInsets(top: 0, left: Constants.kFarSideHorizontalSpacing, bottom: 0, right: 4) : UIEdgeInsets(top: 0, left: 4, bottom: 0, right: Constants.kFarSideHorizontalSpacing)
         let maxWidth = collectionView.frame.width - avatarWidth - padding.left - padding.right - insets.left - insets.right
 
-        let text = message.content?.string ?? "none"
-        let attributedText = NSAttributedString(string: text, attributes: [.font: Constants.kContentFont])
+        let attributedText: NSAttributedString
+        attributedText = NSAttributedString(string: message.content?.string ?? "none", attributes: [.font: Constants.kContentFont])
+        /*
+        if let drafty = message.content {
+            attributedText = AttribFormatter.toAttributed(baseFont: Constants.kContentFont, content: drafty, clicker: nil)
+            print("Calculating size for \(attributedText.description) in \(maxWidth)")
+        } else {
+            attributedText = NSAttributedString(string: "none", attributes: [.font: Constants.kContentFont])
+        }
+         */
+
         var size = textSize(for: attributedText, considering: maxWidth)
 
         size.width += insets.left + insets.right
