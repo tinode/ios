@@ -771,17 +771,15 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
     }
 
     public func routeInfo(info: MsgServerInfo) {
-        if info.what == Tinode.kNoteKp {
+        if info.what != Tinode.kNoteKp {
             if let sub = getSubscription(for: info.from) {
                 switch info.what {
                 case Tinode.kNoteRecv:
                     sub.recv = info.seq
                     store?.msgRecvByRemote(sub: sub, recv: info.seq)
-                    break
                 case Tinode.kNoteRead:
                     sub.read = info.seq
                     store?.msgReadByRemote(sub: sub, read: info.seq)
-                    break
                 default:
                     break
                 }

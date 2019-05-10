@@ -471,14 +471,12 @@ public class Tinode {
                 r = .me
             case kTopicFnd:
                 r = .fnd
-                break
             default:
                 if name.starts(with: kTopicGrpPrefix) || name.starts(with: kTopicNew) {
                     r = .grp
                 } else if name.starts(with: kTopicUsrPrefix) {
                     r = .p2p
                 }
-                break
             }
         }
         return r

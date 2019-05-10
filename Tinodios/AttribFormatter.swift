@@ -6,10 +6,10 @@
 //
 //  Converts Drafty instance into attributed text suitable for display in UITextView
 
-import Foundation
 import TinodeSDK
 import UIKit
 
+// iOS's support for styled strings is much weaker than Android's and web. Some styles cannot be nested. They have to be constructed and applied all at once at the leaf level.
 class AttribFormatter: DraftyFormatter {
     typealias Node = AttribFormatter.TreeNode
 
