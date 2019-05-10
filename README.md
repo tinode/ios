@@ -23,7 +23,7 @@ The immediate goal is to have a basic end-to-end working application prototype t
 * Edit chat parameters.
 * Typing indicators.
 * Delivery and received/read indicators for messages (little check marks in messages).
-* Drafty: Markdown-style formatting of text, e.g. *styled* → styled.
+* Drafty: Markdown-style formatting of text, e.g. \*style\* → **style**.
 * Attachments and inline images.
 * Muting/un-muting conversations and other permission management.
 * Integration with iOS's stock Contacts.
@@ -34,8 +34,6 @@ The immediate goal is to have a basic end-to-end working application prototype t
 
 ## Dependencies
 
-* https://github.com/MessageKit
-* https://github.com/MessageKit/MessageInputBar
 * https://github.com/stephencelis/SQLite.swift
 * https://github.com/jrendel/SwiftKeychainWrapper
 * https://github.com/tidwall/SwiftWebSocket
