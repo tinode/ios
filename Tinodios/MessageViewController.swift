@@ -7,7 +7,6 @@
 
 import Foundation
 import UIKit
-import MessageInputBar
 import TinodeSDK
 
 protocol MessageDisplayLogic: class {

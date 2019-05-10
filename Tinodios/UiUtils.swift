@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import MessageKit
 import TinodeSDK
 
 class UiTinodeEventListener : TinodeEventListener {

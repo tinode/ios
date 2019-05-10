@@ -6,7 +6,6 @@
 //
 
 import UIKit
-import MessageKit
 import TinodeSDK
 
 protocol ChatListDisplayLogic: class {

@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import MessageKit
 import UIKit
 import TinodeSDK
 
@@ -18,7 +17,7 @@ class RegisterViewController: UIViewController {
     @IBOutlet weak var credentialText: UITextField!
     @IBOutlet weak var signUpBtn: UIButton!
     @IBOutlet weak var loadAvatar: UIButton!
-    @IBOutlet weak var avatarView: AvatarView!
+    @IBOutlet weak var avatarView: RoundImageView!
 
     var imagePicker: ImagePicker!
 

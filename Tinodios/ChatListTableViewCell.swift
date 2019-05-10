@@ -6,7 +6,6 @@
 //
 
 import UIKit
-import MessageKit
 
 class ChatListTableViewCell: UITableViewCell {
 

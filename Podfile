@@ -19,8 +19,6 @@ def ui_pods
     # Temporary workaround for https://github.com/stephencelis/SQLite.swift/issues/895
     # TODO(aforge): remove after 0.11.6 is released.
     pod 'SQLite.swift', :git => 'https://github.com/stephencelis/SQLite.swift', :branch => 'master'
-    pod 'MessageKit', '~> 2.0.0'
-    pod 'MessageInputBar', '~> 0.4.1'
     pod 'SwiftKeychainWrapper', '~> 3.2'
 end
 
