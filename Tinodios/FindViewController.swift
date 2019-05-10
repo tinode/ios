@@ -61,7 +61,7 @@ class FindViewController: UITableViewController, FindDisplayLogic {
         // Configure the cell...
         let contact = contacts[indexPath.row]
         cell.textLabel?.text = contact.displayName
-        cell.detailTextLabel?.text = contact.ims?.count ?? 0 > 0 ? contact.ims![0] : nil
+        cell.detailTextLabel?.text = contact.uniqueId
 
         return cell
     }
