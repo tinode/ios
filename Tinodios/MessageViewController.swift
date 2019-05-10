@@ -52,8 +52,7 @@ class MessageViewController: UIViewController {
     }
 
     /// The `MessageInputBar` used as the `inputAccessoryView` in the view controller.
-    // private var messageInputBar = SendMessageBar() // MessageInputBar()
-    private lazy var messageInputBar: UIView = {
+    private lazy var sendMessageBar: SendMessageBar = {
         let view = SendMessageBar()
         view.autoresizingMask = .flexibleHeight
         print("messageInputBar requested")
@@ -118,7 +117,7 @@ class MessageViewController: UIViewController {
 
     // This makes messageInputBar visible.
     override var inputAccessoryView: UIView? {
-        return messageInputBar
+        return sendMessageBar
     }
 
     override var canBecomeFirstResponder: Bool {
@@ -170,11 +169,7 @@ class MessageViewController: UIViewController {
 
         // addMenuControllerObservers()
 
-        //messageInputBar.delegate = self
-        //messageInputBar.inputTextView.tintColor = UIColor(red: 69/255, green: 193/255, blue: 89/255, alpha: 1)
-        //messageInputBar.sendButton.tintColor = UIColor(red: 69/255, green: 193/255, blue: 89/255, alpha: 1)
-
-        // reloadInputViews()
+        sendMessageBar.delegate = self
     }
 
     override func viewDidLayoutSubviews() {
@@ -548,20 +543,17 @@ extension MessageViewController: MessageCellDelegate {
         print("didTapAvatar")
     }
 }
-/*
-extension MessageViewController: MessageInputBarDelegate {
-    func messageInputBar(_ inputBar: MessageInputBar, didPressSendButtonWith text: String) {
-        _ = interactor?.sendMessage(content: Drafty(content: text))
-        messageInputBar.inputTextView.text.removeAll()
-        messageInputBar.invalidatePlugins()
+
+extension MessageViewController: SendMessageBarDelegate {
+    func sendMessageBar(sendText: String) -> Bool? {
+        return interactor?.sendMessage(content: Drafty(content: sendText))
     }
 
-    func messageInputBar(_ inputBar: MessageInputBar, textViewTextDidChangeTo text: String) {
-        // Use to send a typing indicator
+    func sendMessageBar(attachment: Bool) {
+        // Show file picker
     }
 
-    func messageInputBar(_ inputBar: MessageInputBar, didChangeIntrinsicContentTo size: CGSize) {
-        // Use to change any other subview insets
+    func sendMessageBar(textChangedTo text: String) {
+        interactor?.sendTypingNotification()
     }
 }
-*/

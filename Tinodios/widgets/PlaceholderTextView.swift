@@ -11,6 +11,8 @@ import UIKit
 // UITexView with an optional placeholder text.
 @IBDesignable class PlaceholderTextView: UITextView {
 
+    // MARK: constants
+
     private enum Constants {
         static let defaultPlaceholderColor = UIColor(red: 0.0, green: 0.0, blue: 25/255, alpha: 0.22)
         static let defaultPlaceholderText = "AbCd..."
@@ -18,10 +20,14 @@ import UIKit
 
     private var isShowingPlaceholder: Bool = false
 
+    // MARK: IB variables
+
     @IBInspectable var placeholderText: String = Constants.defaultPlaceholderText
 
     @IBInspectable open var mainTextColor: UIColor = UIColor.black
     @IBInspectable open var placeholderColor: UIColor = Constants.defaultPlaceholderColor
+
+    // MARK: overrired UITextView variables
 
     override var text: String! {
         didSet {
@@ -34,6 +40,8 @@ import UIKit
             checkForEmptyText()
         }
     }
+
+    // MARK: initializers
 
     override public init(frame: CGRect, textContainer: NSTextContainer?) {
         super.init(frame: frame, textContainer: textContainer)
@@ -55,6 +63,8 @@ import UIKit
         }
     }
 
+    // MARK: private methods
+
     private func addTextChangeObserver() {
         NotificationCenter.default.addObserver(self, selector: #selector(textBeginEditing), name: UITextView.textDidBeginEditingNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(checkForEmptyText), name: UITextView.textDidEndEditingNotification, object: nil)
@@ -69,7 +79,7 @@ import UIKit
     }
 
     @objc private func checkForEmptyText() {
-        if text.isEmpty && !isShowingPlaceholder {
+        if text.isEmpty && !isShowingPlaceholder && !isFirstResponder {
             text = placeholderText
             textColor = placeholderColor
             isShowingPlaceholder = true

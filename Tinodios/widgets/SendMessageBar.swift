@@ -7,28 +7,50 @@
 
 import UIKit
 
+protocol SendMessageBarDelegate: class {
+    func sendMessageBar(sendText: String) -> Bool?
+
+    func sendMessageBar(attachment: Bool)
+
+    func sendMessageBar(textChangedTo text: String)
+}
+
 class SendMessageBar: UIView {
+
+    // MARK: Action delegate
+
+    weak var delegate: SendMessageBarDelegate?
 
     // MARK: IBoutlets
 
     @IBOutlet weak var attachButton: UIButton!
     @IBOutlet weak var sendButton: UIButton!
     @IBOutlet weak var inputField: UITextView!
-    @IBOutlet weak var backgroundDecoration: UIView!
     @IBOutlet weak var inputFieldHeight: NSLayoutConstraint!
 
     // MARK: IBactions
 
     @IBAction func attach(_ sender: UIButton) {
+        delegate?.sendMessageBar(attachment: true)
     }
 
     @IBAction func send(_ sender: UIButton) {
+        let msg = inputField.text.trimmingCharacters(in: .whitespacesAndNewlines)
+        if msg.isEmpty {
+            return
+        }
+        if delegate?.sendMessageBar(sendText: msg) ?? false {
+            inputField.text = nil
+            textViewDidChange(inputField)
+        }
     }
 
     // MARK: - Constants
 
     private enum Constants {
         static let maxLines: CGFloat = 4
+        static let inputFieldInsetLeading: CGFloat = 4
+        static let inputFieldInsetTrailing: CGFloat = 40
     }
 
     // MARK: - Private properties
@@ -70,16 +92,15 @@ class SendMessageBar: UIView {
     }
 
     private func configure() {
-        inputField.layer.borderWidth = 1.0
-        inputField.layer.borderColor = UIColor.lightGray.cgColor
-        inputField.layer.cornerRadius = 16.0
+        inputField.layer.borderWidth = 0
+        inputField.layer.cornerRadius = 18
         inputField.autoresizingMask = [.flexibleHeight]
         inputField.delegate = self
         inputField.textContainerInset = UIEdgeInsets(
             top: inputField.textContainerInset.top,
-            left: 4,
+            left: Constants.inputFieldInsetLeading,
             bottom: inputField.textContainerInset.bottom,
-            right: 4)
+            right: Constants.inputFieldInsetTrailing)
 
         if let font = inputField.font {
             inputFieldMaxHeight = font.lineHeight * Constants.maxLines
@@ -93,16 +114,14 @@ class SendMessageBar: UIView {
 extension SendMessageBar: UITextViewDelegate {
 
     func textViewDidChange(_ textView: UITextView) {
-        //if let tv = textView as? TextViewWithPlaceholder {
-        //    tv.placeholderLabel.isHidden = !textView.text.isEmpty
-        //}
+        delegate?.sendMessageBar(textChangedTo: textView.text)
 
-        let size = CGSize(width: frame.width, height: .greatestFiniteMagnitude)
+        let size = CGSize(width: frame.width - Constants.inputFieldInsetLeading - Constants.inputFieldInsetTrailing, height: .greatestFiniteMagnitude)
         let fittingSize = inputField.sizeThatFits(size)
 
         if !(fittingSize.height > inputFieldMaxHeight) {
             inputField.isScrollEnabled = false
-            inputFieldHeight.constant = fittingSize.height
+            inputFieldHeight.constant = fittingSize.height + 1 // Not sure why but it seems to be off by 1
         } else {
             textView.isScrollEnabled = true
         }

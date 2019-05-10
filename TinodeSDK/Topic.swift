@@ -66,6 +66,9 @@ public enum TopicType: Int {
     }
 }
 
+// Cannot make it a class constant because Swift is poorly designed: "Static stored properties not supported in generic types"
+fileprivate let kIntervalBetweenKeyPresses: TimeInterval = 3.0
+
 open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto {
     enum TopicError: Error {
         case alreadySubscribed
@@ -74,6 +77,7 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
     enum NoteType {
         case kRead
         case kRecv
+        case kKeyPress
     }
 
     //open class Listener2<DP2: Codable, DR2: Codable, SP2: Codable, SR2: Codable> {
@@ -279,7 +283,7 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
     // Cache of topic subscribers indexed by userID
     private var subs: [String:Subscription<SP,SR>]? = nil
     public var tags: [String]? = nil
-    private var lastKeyPress: Int64 = 0
+    private var lastKeyPress: Date = Date(timeIntervalSince1970: 0)
 
     public var online: Bool = false {
         didSet {
@@ -690,7 +694,7 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
         // update listener
         listener?.onMeta(meta: meta)
     }
-    private func noteReadRecv(what: NoteType) -> Int {
+    private func note(what: NoteType) -> Int {
         var result = 0
         switch what {
         case .kRecv:
@@ -700,7 +704,6 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
                 result = seq
                 description!.recv = seq
             }
-            break
         case .kRead:
             let seq = description!.getSeq
             if description!.getRead < seq {
@@ -708,21 +711,28 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
                 result = seq
                 description!.read = seq
             }
-            break
+        case .kKeyPress:
+            if lastKeyPress.addingTimeInterval(kIntervalBetweenKeyPresses) < Date() {
+                lastKeyPress = Date()
+                tinode!.noteKeyPress(topic: name)
+            }
         }
         return result
     }
     @discardableResult
     public func noteRead() -> Int {
-        let result = noteReadRecv(what: NoteType.kRead)
+        let result = note(what: NoteType.kRead)
         store?.setRead(topic: self, read: result)
         return result
     }
     @discardableResult
     public func noteRecv() -> Int {
-        let result = noteReadRecv(what: NoteType.kRecv)
+        let result = note(what: NoteType.kRecv)
         store?.setRecv(topic: self, recv: result)
         return result
+    }
+    public func noteKeyPress() {
+        _ = note(what: NoteType.kKeyPress)
     }
     private func setSeq(seq: Int) {
         if description!.getSeq < seq {

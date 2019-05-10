@@ -23,22 +23,30 @@
             <rect key="frame" x="0.0" y="0.0" width="414" height="150"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
+                <visualEffectView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Mh3-pG-tJg">
+                    <rect key="frame" x="0.0" y="0.0" width="414" height="150"/>
+                    <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="CDd-rP-fsf">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="150"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                    </view>
+                    <blurEffect style="light"/>
+                </visualEffectView>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Sxl-U7-4Vy" userLabel="attachButton">
-                    <rect key="frame" x="8" y="80" width="36" height="36"/>
+                    <rect key="frame" x="8" y="76" width="32" height="32"/>
                     <constraints>
                         <constraint firstAttribute="width" secondItem="Sxl-U7-4Vy" secondAttribute="height" multiplier="1:1" id="4Wy-xE-ah9"/>
-                        <constraint firstAttribute="width" constant="36" id="vxu-KV-i5b"/>
+                        <constraint firstAttribute="width" constant="32" id="vxu-KV-i5b"/>
                     </constraints>
-                    <state key="normal" image="outline_schedule_white_48pt"/>
+                    <state key="normal" image="add-48"/>
                     <connections>
                         <action selector="attach:" destination="-1" eventType="touchUpInside" id="24B-da-FDG"/>
                     </connections>
                 </button>
                 <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="bxx-m5-ifU" customClass="PlaceholderTextView" customModule="Tinodios" customModuleProvider="target">
-                    <rect key="frame" x="54" y="4" width="356" height="112"/>
+                    <rect key="frame" x="50" y="4" width="360" height="108"/>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     <constraints>
-                        <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="32" id="gP4-QC-iyW"/>
+                        <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="40" id="gP4-QC-iyW"/>
                     </constraints>
                     <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                     <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
@@ -53,17 +61,18 @@
                     </userDefinedRuntimeAttributes>
                 </textView>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LQB-Eu-unW" userLabel="sendButton">
-                    <rect key="frame" x="370" y="80" width="36" height="36"/>
+                    <rect key="frame" x="374" y="76" width="32" height="32"/>
                     <color key="backgroundColor" red="0.25098039220000001" green="0.75294117650000003" blue="0.25098039220000001" alpha="1" colorSpace="calibratedRGB"/>
                     <constraints>
                         <constraint firstAttribute="width" secondItem="LQB-Eu-unW" secondAttribute="height" multiplier="1:1" id="O3z-8u-PRJ"/>
-                        <constraint firstAttribute="width" constant="36" id="Ths-Pf-Iw7"/>
+                        <constraint firstAttribute="width" constant="32" id="Ths-Pf-Iw7"/>
                     </constraints>
-                    <state key="normal" image="send-48"/>
+                    <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <state key="normal" image="arrow-up-48"/>
                     <userDefinedRuntimeAttributes>
                         <userDefinedRuntimeAttribute type="boolean" keyPath="layer.masksToBounds" value="YES"/>
                         <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
-                            <integer key="value" value="18"/>
+                            <integer key="value" value="16"/>
                         </userDefinedRuntimeAttribute>
                     </userDefinedRuntimeAttributes>
                     <connections>
@@ -71,25 +80,27 @@
                     </connections>
                 </button>
             </subviews>
-            <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
             <constraints>
                 <constraint firstItem="LQB-Eu-unW" firstAttribute="trailing" secondItem="bxx-m5-ifU" secondAttribute="trailing" constant="-4" id="C9M-dY-tg9"/>
-                <constraint firstItem="bxx-m5-ifU" firstAttribute="trailing" secondItem="LQB-Eu-unW" secondAttribute="trailing" constant="4" id="Z2V-gR-DQe"/>
+                <constraint firstItem="Mh3-pG-tJg" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="FjB-HD-awt"/>
                 <constraint firstItem="bxx-m5-ifU" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="4" id="Zfs-dm-dD8"/>
                 <constraint firstItem="UC5-i1-la2" firstAttribute="trailing" secondItem="bxx-m5-ifU" secondAttribute="trailing" constant="4" id="bTB-yN-D6d"/>
                 <constraint firstItem="bxx-m5-ifU" firstAttribute="leading" secondItem="Sxl-U7-4Vy" secondAttribute="trailing" constant="10" id="cn1-M7-S72"/>
-                <constraint firstItem="LQB-Eu-unW" firstAttribute="bottom" secondItem="bxx-m5-ifU" secondAttribute="bottom" id="eBK-B1-HA5"/>
-                <constraint firstItem="Sxl-U7-4Vy" firstAttribute="bottom" secondItem="bxx-m5-ifU" secondAttribute="bottom" id="gBG-6N-LRx"/>
+                <constraint firstItem="LQB-Eu-unW" firstAttribute="bottom" secondItem="bxx-m5-ifU" secondAttribute="bottom" constant="-4" id="eBK-B1-HA5"/>
+                <constraint firstItem="Sxl-U7-4Vy" firstAttribute="bottom" secondItem="bxx-m5-ifU" secondAttribute="bottom" constant="-4" id="gBG-6N-LRx"/>
+                <constraint firstItem="Mh3-pG-tJg" firstAttribute="trailing" secondItem="UC5-i1-la2" secondAttribute="trailing" id="jxj-Dw-oTU"/>
+                <constraint firstAttribute="bottom" secondItem="Mh3-pG-tJg" secondAttribute="bottom" id="kbY-qT-wTJ"/>
                 <constraint firstItem="Sxl-U7-4Vy" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="8" id="rTM-U0-Opq"/>
-                <constraint firstItem="UC5-i1-la2" firstAttribute="bottom" secondItem="bxx-m5-ifU" secondAttribute="bottom" id="yZA-U6-QcI"/>
+                <constraint firstItem="Mh3-pG-tJg" firstAttribute="leading" secondItem="UC5-i1-la2" secondAttribute="leading" id="xKs-M0-L34"/>
+                <constraint firstItem="UC5-i1-la2" firstAttribute="bottom" secondItem="bxx-m5-ifU" secondAttribute="bottom" constant="4" id="yZA-U6-QcI"/>
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <viewLayoutGuide key="safeArea" id="UC5-i1-la2"/>
-            <point key="canvasLocation" x="-251" y="12"/>
+            <point key="canvasLocation" x="-252.17391304347828" y="11.383928571428571"/>
         </view>
     </objects>
     <resources>
-        <image name="outline_schedule_white_48pt" width="48" height="48"/>
-        <image name="send-48" width="48" height="48"/>
+        <image name="add-48" width="48" height="48"/>
+        <image name="arrow-up-48" width="36" height="36"/>
     </resources>
 </document>

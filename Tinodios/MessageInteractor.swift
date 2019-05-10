@@ -17,6 +17,7 @@ protocol MessageBusinessLogic: class {
 
     func sendMessage(content: Drafty) -> Bool
     func sendReadNotification()
+    func sendTypingNotification()
 }
 
 protocol MessageDataStore {
@@ -134,7 +135,10 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         return true
     }
     func sendReadNotification() {
-        self.topic?.noteRecv()
+        topic?.noteRecv()
+    }
+    func sendTypingNotification() {
+        topic?.noteKeyPress()
     }
     func loadMessages() {
         DispatchQueue.global(qos: .userInteractive).async {
