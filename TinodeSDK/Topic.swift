@@ -549,7 +549,6 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
             ((s1.updated ?? Date.distantPast) < (s2.updated ?? Date.distantPast))
         })?.updated
         subs = (Dictionary(uniqueKeysWithValues: loaded.map { ($0.user, $0) }) as! [String : Subscription<SP, SR>])
-        print("loadSubs got \(subs?.count ?? -1) entries")
         return subs!.count
     }
 
@@ -565,10 +564,8 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
     }
 
     private func routeMetaDesc(meta: MsgServerMeta) {
-        print("routing desc")
         update(desc: meta.desc as! Description<DP, DR>)
         if case .p2p = topicType {
-            print("updating user")
             tinode?.updateUser(uid: name, desc: meta.desc as! DefaultDescription)
             //mTinode.updateUser(getName(), meta.desc);
         }
