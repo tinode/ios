@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import Contacts
+import TinodeSDK
 
 protocol FindBusinessLogic: class {
     func loadAndPresentContacts()
@@ -14,51 +14,33 @@ protocol FindBusinessLogic: class {
 
 class ContactHolder {
     var displayName: String? = nil
-    var imageThumbnail: Data? = nil
-    var phones: [String]? = nil
-    var emails: [String]? = nil
-    var ims: [String]? = nil
+    var image: UIImage? = nil
+    var uniqueId: String? = nil
+
+    init(displayName: String?, image: UIImage?, uniqueId: String?) {
+        self.displayName = displayName
+        self.image = image
+        self.uniqueId = uniqueId
+    }
 }
 
 class FindInteractor: FindBusinessLogic {
     static let kTinodeImProtocol = "Tinode"
     var presenter: FindPresentationLogic?
     var router: FindRoutingLogic?
-    let store = CNContactStore()
+    //let store = CNContactStore()
     var queue = DispatchQueue(label: "co.tinode.contacts")
+    private let baseDb = BaseDb.getInstance()
     private func fetchContacts() -> [ContactHolder]? {
-        let keysToFetch: [CNKeyDescriptor] = [
-            CNContactFormatter.descriptorForRequiredKeys(for: .fullName),
-            CNContactPhoneNumbersKey as CNKeyDescriptor,
-            CNContactEmailAddressesKey as CNKeyDescriptor,
-            CNContactInstantMessageAddressesKey as CNKeyDescriptor,
-            CNContactImageDataAvailableKey as CNKeyDescriptor,
-            CNContactImageDataKey as CNKeyDescriptor
-        ]
-        guard let allContainers = try? store.containers(matching: nil) else {
-            return nil
-        }
-        var contacts: [CNContact] = []
-        for container in allContainers {
-            let fetchPredicate =  CNContact.predicateForContactsInContainer(withIdentifier: container.identifier)
-            if let containerResults = try? self.store.unifiedContacts(
-                matching: fetchPredicate, keysToFetch: keysToFetch) {
-                contacts.append(contentsOf: containerResults)
-            }
-        }
-        return contacts.map {
-            let systemContact = $0
-            let contactHolder = ContactHolder()
-            contactHolder.displayName = "\(systemContact.givenName) \(systemContact.familyName)"
-            contactHolder.imageThumbnail = systemContact.imageDataAvailable ? systemContact.thumbnailImageData : nil
-            contactHolder.emails = systemContact.emailAddresses.map { String($0.value) }
-            contactHolder.phones = systemContact.phoneNumbers.map { String($0.value.stringValue) }
-            contactHolder.ims = systemContact.instantMessageAddresses
-                .filter { $0.value.service == FindInteractor.kTinodeImProtocol  }
-                .map { $0.value.username }
-            return contactHolder
-        }.filter {
-            ($0.ims?.count ?? 0) > 0
+        guard let userDb = self.baseDb.userDb, let uid = Cache.getTinode().myUid else { return nil }
+        guard let users = userDb.readAll(for: uid) else { return nil }
+        // Turn users into contacts.
+        return users.map { user in
+            let q = user as! DefaultUser
+            return ContactHolder(
+                displayName: q.pub?.fn,
+                image: q.pub?.photo?.image(),
+                uniqueId: q.uid)
         }
     }
     func loadAndPresentContacts() {

@@ -130,13 +130,7 @@ class UserDb {
         }
         return -1
     }
-    func readOne(uid: String?) -> UserProto? {
-        guard let uid = uid, let accountId = BaseDb.getInstance().account?.id else {
-            return nil
-        }
-        guard let row = try? db.pluck(self.table.filter(self.uid == uid && self.accountId == accountId)), let r = row else {
-            return nil
-        }
+    private func rowToUser(r: Row, uid: String) -> UserProto? {
         let id = r[self.id]
         let updated = r[self.updated]
         let pub = r[self.pub]
@@ -144,5 +138,35 @@ class UserDb {
         let storedUser = StoredUser(id: id)
         user.payload = storedUser
         return user
+    }
+    func readOne(uid: String?) -> UserProto? {
+        guard let uid = uid, let accountId = BaseDb.getInstance().account?.id else {
+            return nil
+        }
+        guard let row = try? db.pluck(self.table.filter(self.uid == uid && self.accountId == accountId)), let r = row else {
+            return nil
+        }
+        return rowToUser(r: r, uid: uid)
+    }
+    func readAll(for uid: String?) -> [UserProto]? {
+        guard let uid = uid else { return nil }
+        guard let accountId = BaseDb.getInstance().account?.id else  {
+            return nil
+        }
+        let query = self.table.select(self.table[*])
+            .where(self.accountId == accountId && self.uid != uid)
+            .order(self.updated.desc)
+        do {
+            var users = [UserProto]()
+            for r in try db.prepare(query) {
+                if let u = rowToUser(r: r, uid: uid) {
+                    users.append(u)
+                }
+            }
+            return users
+        } catch {
+            print("UserDb select all rows for account id \(accountId): \(error)")
+        }
+        return nil
     }
 }
