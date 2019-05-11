@@ -146,6 +146,7 @@ class SqlStore : Storage {
     
     func msgReceived(topic: TopicProto, sub: SubscriptionProto?, msg: MsgServerData?) -> Int64 {
         guard let msg = msg else { return -1 }
+
         var topicId: Int64 = -1
         var userId: Int64 = -1
         if let ss = sub?.payload as? StoredSubscription {

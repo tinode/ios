@@ -61,7 +61,7 @@ public class User<P: Codable>: UserProto {
     }
     public func serializePub() -> String? {
         guard let p = pub else { return nil }
-        return Tinode.serializeObject(t: p)
+        return Tinode.serializeObject(p)
     }
     func merge(from user: User<P>) -> Bool {
         var changed = false

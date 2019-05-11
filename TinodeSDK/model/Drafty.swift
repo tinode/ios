@@ -740,7 +740,7 @@ public class Drafty: Codable, CustomStringConvertible, Equatable {
 
     /// Serialize Drafty object for storage in database.
     public func serialize() -> String? {
-        return isPlain ? txt : Tinode.serializeObject(t: self)
+        return isPlain ? txt : Tinode.serializeObject(self)
     }
 
     /// Deserialize Drafty object from database storage.
@@ -838,6 +838,22 @@ public class Style: Codable, CustomStringConvertible, Equatable {
     var tp: String?
     var key: Int?
 
+    private enum CodingKeys : String, CodingKey  {
+        case at = "at"
+        case len = "len"
+        case tp = "tp"
+        case key = "key"
+    }
+
+    /// Initializer to comply with Decodable protocol.
+    required public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        at = (try? container.decode(Int.self, forKey: .at)) ?? 0
+        len = (try? container.decode(Int.self, forKey: .len)) ?? 0
+        tp = try? container.decode(String.self, forKey: .tp)
+        key = try? container.decode(Int.self, forKey: .key)
+    }
+
     /// Initialize a zero-length unstyled object
     public init() {
         at = 0
@@ -884,6 +900,18 @@ public class Style: Codable, CustomStringConvertible, Equatable {
 public class Entity: Codable, CustomStringConvertible, Equatable {
     public var tp: String?
     public var data: [String:JSONValue]?
+
+    private enum CodingKeys : String, CodingKey  {
+        case tp = "tp"
+        case data = "data"
+    }
+
+    /// Initializer to comply with Decodable protocol.
+    required public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        tp = try? container.decode(String.self, forKey: .tp)
+        data = try? container.decode([String:JSONValue].self, forKey: .data)
+    }
 
     /// Initialize an empty attachment.
     public init() {}

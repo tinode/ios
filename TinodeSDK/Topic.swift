@@ -422,11 +422,11 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
     */
     public func serializePub() -> String? {
         guard let p = pub else { return nil }
-        return Tinode.serializeObject(t: p)
+        return Tinode.serializeObject(p)
     }
     public func serializePriv() -> String? {
         guard let p = priv else { return nil }
-        return Tinode.serializeObject(t: p)
+        return Tinode.serializeObject(p)
     }
     /*
     private func deserializeObject<T: Codable>(from data: String?) -> T? {

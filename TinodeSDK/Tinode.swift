@@ -856,7 +856,7 @@ public class Tinode {
                 del: MsgClientDel(id: getNextMsgId(),
                                   topic: topicName, list: list, hard: hard)))
     }
-    static func serializeObject<T: Encodable>(t: T) -> String? {
+    static func serializeObject<T: Encodable>(_ t: T) -> String? {
         guard let jsonData = try? Tinode.jsonEncoder.encode(t) else {
             return nil
         }
