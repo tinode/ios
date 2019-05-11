@@ -89,19 +89,20 @@ class AttribFormatter: DraftyFormatter {
         return baseUrl.url?.absoluteString
     }
 
+    // Construct a tree representing formatting styles and content.
     private func apply(tp: String?, attr: [String : JSONValue]?, children: [TreeNode]?, content: String?) -> TreeNode {
 
         // Create unstyled node
         var span = TreeNode(text: content, nodes: children)
         switch tp {
         case "ST":
-            span.style(cstyle: [NSAttributedString.Key.font: font(.traitBold)])
+            span.style(fontTraits: .traitBold)
         case "EM":
-            span.style(cstyle: [NSAttributedString.Key.font: font(.traitItalic)])
+            span.style(fontTraits: .traitItalic)
         case "DL":
             span.style(cstyle: [NSAttributedString.Key.strikethroughStyle: NSUnderlineStyle.single.rawValue])
         case "CO":
-            span.style(cstyle: [NSAttributedString.Key.font: font(.traitMonoSpace)])
+            span.style(fontTraits: .traitMonoSpace)
         case "BR":
             span = TreeNode(content: "\n")
         case "LN":
@@ -147,37 +148,40 @@ class AttribFormatter: DraftyFormatter {
         return apply(tp: tp, attr: attr, children: nil, content: content)
     }
 
-    public static func toAttributed(baseFont font: UIFont?, content: Drafty?, clicker: UITextViewDelegate?) -> NSAttributedString {
-        guard let content = content else {
-            return NSAttributedString(string: "")
-        }
+    /// Convert drafty object into NSAttributedString
+    /// - Parameters:
+    ///    - content: Drafty object to convert
+    ///    - baseFont: base font to derive styles from.
+    ///    - clicker: methods to call in response to touch events in formatted text.
+    public static func toAttributed(_ content: Drafty, baseFont font: UIFont?, clicker: UITextViewDelegate?) -> NSAttributedString {
+
         if content.isPlain {
-            return NSAttributedString(string: content.string)
+            let attributed = NSMutableAttributedString(string: content.string)
+            attributed.addAttributes([.font : (font ?? Constants.kDefaultFont)], range: NSRange(location: 0, length: attributed.length))
+            return attributed
         }
 
         let result = content.format(formatter: AttribFormatter(baseFont: font, clicker: clicker))
-        let attributed = result.toAttributed()
+        let attributed = result.toAttributed(baseFont: font ?? Constants.kDefaultFont, fontTraits: nil)
 
         return attributed
-    }
-
-    // Take font from the container and create the same size and family font with a given trait.
-    private func font(_ trait: UIFontDescriptor.SymbolicTraits) -> UIFont {
-        let font = baseFont ?? Constants.kDefaultFont
-        return UIFont(descriptor: font.fontDescriptor.withSymbolicTraits(trait)!, size: font.pointSize)
     }
 
     // Structure representing Drafty as a tree of formatting nodes.
     class TreeNode : CustomStringConvertible {
 
+        // A set of font traits to apply at the leaf level
+        var cFont: UIFontDescriptor.SymbolicTraits?
+        // Character style which can be applied over leaf or subtree
         var cStyle: CharacterStyle?
+        // Paragraph-level style to apply to leaf or subtree
         var pStyle: NSMutableParagraphStyle?
+        // Leaf
         var text: NSMutableAttributedString?
+        // Subtree
         var children: [TreeNode]?
 
         private init() {
-            cStyle = nil
-            pStyle = nil
             text = nil
             children = nil
         }
@@ -221,6 +225,10 @@ class AttribFormatter: DraftyFormatter {
             pStyle = pstyle
         }
 
+        func style(fontTraits: UIFontDescriptor.SymbolicTraits) {
+            cFont = fontTraits
+        }
+
         func addNode(node: TreeNode?) {
             guard let node = node else { return }
 
@@ -240,20 +248,43 @@ class AttribFormatter: DraftyFormatter {
             return (text == nil || text!.length == 0) && (children == nil || children!.isEmpty)
         }
 
-        func toAttributed() -> NSMutableAttributedString {
+        func toAttributed(baseFont: UIFont, fontTraits parentFontTraits: UIFontDescriptor.SymbolicTraits?) -> NSMutableAttributedString {
             let attributed = NSMutableAttributedString()
-            if let text = self.text {
-                attributed.append(text)
-            } else if let children = self.children {
-                for child in children {
-                    attributed.append(child.toAttributed())
+
+            // First apply font styles to each same-style substring individually.
+
+            // Font traits for this substring and all its children.
+            var fontTraits: UIFontDescriptor.SymbolicTraits? = cFont
+            if let parentFontTraits = parentFontTraits {
+                if fontTraits != nil {
+                    fontTraits!.insert(parentFontTraits)
+                } else {
+                    fontTraits = parentFontTraits
                 }
             }
 
+            if let text = self.text {
+                // Apply font styles to subbstring.
+                attributed.append(text)
+                let font: UIFont
+                if let fontTraits = fontTraits {
+                    font = UIFont(descriptor: baseFont.fontDescriptor.withSymbolicTraits(fontTraits)!, size: baseFont.pointSize)
+                } else {
+                    font = baseFont
+                }
+                attributed.addAttributes([.font : font], range: NSRange(location: 0, length: attributed.length))
+            } else if let children = self.children {
+                // Pass calculated font styles to children.
+                for child in children {
+                    attributed.append(child.toAttributed(baseFont: baseFont, fontTraits: fontTraits))
+                }
+            }
+
+            // Then apply styles to the entire string.
             if let cstyle = cStyle {
                 attributed.addAttributes(cstyle, range: NSRange(location: 0, length: attributed.length))
             } else if let pstyle = pStyle {
-                attributed.addAttributes([NSAttributedString.Key.paragraphStyle: pstyle], range: NSRange(location: 0, length: attributed.length))
+                attributed.addAttributes([.paragraphStyle: pstyle], range: NSRange(location: 0, length: attributed.length))
             }
 
             return attributed

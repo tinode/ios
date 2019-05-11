@@ -337,8 +337,10 @@ extension MessageViewController: UICollectionViewDataSource {
         if let drafty = message.content {
             if drafty.isPlain {
                 cell.content.text = drafty.string
+                print("plain string '\(drafty.string)' from \(drafty.description)")
             } else {
-                let attributed = AttribFormatter.toAttributed(baseFont: Constants.kContentFont, content: drafty, clicker: nil)
+                let attributed = AttribFormatter.toAttributed(drafty, baseFont: Constants.kContentFont, clicker: nil)
+                print("styled string '\(attributed.description)'")
                 cell.content.attributedText = attributed
             }
         }
@@ -530,15 +532,16 @@ extension MessageViewController: UICollectionViewDelegateFlowLayout {
         let maxWidth = collectionView.frame.width - avatarWidth - padding.left - padding.right - insets.left - insets.right
 
         let attributedText: NSAttributedString
-        attributedText = NSAttributedString(string: message.content?.string ?? "none", attributes: [.font: Constants.kContentFont])
         /*
+        attributedText = NSAttributedString(string: message.content?.string ?? "none", attributes: [.font: Constants.kContentFont])
+        */
+
         if let drafty = message.content {
-            attributedText = AttribFormatter.toAttributed(baseFont: Constants.kContentFont, content: drafty, clicker: nil)
-            print("Calculating size for \(attributedText.description) in \(maxWidth)")
+            attributedText = AttribFormatter.toAttributed(drafty, baseFont: Constants.kContentFont, clicker: nil)
+            // print("Calculating size for \(attributedText.description) in \(maxWidth)")
         } else {
             attributedText = NSAttributedString(string: "none", attributes: [.font: Constants.kContentFont])
         }
-         */
 
         var size = textSize(for: attributedText, considering: maxWidth)
 
