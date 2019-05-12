@@ -165,11 +165,13 @@ public class Tinode {
 
     static let jsonEncoder: JSONEncoder = {
         let encoder = JSONEncoder()
+        encoder.dataEncodingStrategy = .base64
         encoder.dateEncodingStrategy = .customRFC3339
         return encoder
     }()
     static let jsonDecoder: JSONDecoder = {
         let decoder = JSONDecoder()
+        decoder.dataDecodingStrategy = .base64
         decoder.dateDecodingStrategy = .customRFC3339
         return decoder
     }()

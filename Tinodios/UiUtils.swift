@@ -121,64 +121,72 @@ extension UIViewController {
 
 extension UIImage {
 
-    // Resize image to given dimentions. If 'clip' is true and aspect ratios are different, crop the central
-    // part of the source image and scale it down to the given dimentions.
-    public func resize(width: Float, height: Float, clip: Bool) -> UIImage? {
-        guard let size = calcSize(maxWidth: width, maxHeight: height, clip: clip) else { return nil }
+    /// Resize image to given dimentions.
+    ///
+    /// - Parameters:
+    ///     - maxWidth: maxumum width of the image
+    ///     - maxHeight: maximum height of the image
+    ///     - clip: first crops the image to the new aspect ratio then shrinks it; otherwise the
+    ///       image keeps the original aspect ratio but is shrunk to be under the
+    ///       maxWidth/maxHeight
+    public func resize(width: CGFloat, height: CGFloat, clip: Bool) -> UIImage? {
+        let size = sizeUnder(maxWidth: width, maxHeight: height, clip: clip)
 
         // cropRect for cropping the original image to the required aspect ratio.
-        let cropRect = CGRect(x: size.xOffset, y: size.yOffset, width: Int(size.srcWidth), height: Int(size.srcHeight))
-        let scaleDown = CGAffineTransform(scaleX: CGFloat(size.dstWidth / size.srcWidth),
-                                          y: CGFloat(size.dstWidth / size.srcWidth))
+        let cropRect = size.src
+        let scaleDown = CGAffineTransform(scaleX: size.dst.width / size.src.width, y: size.dst.width / size.src.width)
 
         // Scale image to the requested dimentions
         guard let imageOut = CIImage(image: self)?.cropped(to: cropRect).transformed(by: scaleDown) else { return nil }
 
-        // This is some iOS weirdness. The image cannot be converted to png without it.
+        // This 'UIGraphicsBeginImageContext' is some iOS weirdness. The image cannot be converted to png without it.
         UIGraphicsBeginImageContext(imageOut.extent.size)
         defer { UIGraphicsEndImageContext() }
         UIImage(ciImage: imageOut).draw(in: CGRect(origin: .zero, size: imageOut.extent.size))
         return UIGraphicsGetImageFromCurrentImageContext()
     }
 
-    // Calculate linear dimensions for scaling image down to fit under a certain size.
-    // Returns a tuple which contains destination image sizes, source sizes, and offsets
-    // into source (when 'clip' is true).
-    //
-    // The 'clip' parameter forces image to have the new dimensions. Otherwise the
-    // image keeps the original aspect ratio with width and hight being under the
-    // maxWindth/maxHeight
-    private func calcSize(maxWidth: Float, maxHeight: Float, clip: Bool) -> (dstWidth: Float, dstHeight: Float, xOffset: Int, yOffset: Int, srcWidth: Float, srcHeight: Float)? {
+    /// Calculate linear dimensions for scaling image down to fit under a certain size.
+    /// Returns a tuple which contains destination image sizes, source sizes, and offsets
+    /// into source (when 'clip' is true).
+    ///
+    /// - Parameters:
+    ///     - maxWidth: maximum width of the image
+    ///     - maxHeight: maximum height of the image
+    ///     - clip: first crops the image to the new aspect ratio then shrinks it; otherwise the
+    ///       image keeps the original aspect ratio but is shrunk to be under the
+    ///       maxWidth/maxHeight
+    public func sizeUnder(maxWidth: CGFloat, maxHeight: CGFloat, clip: Bool) -> (dst: CGSize, src: CGRect) {
 
         // Sanity check
-        guard maxWidth > 0 && maxHeight > 0 else { return nil }
+        assert(maxWidth > 0 && maxHeight > 0, "Maxumum dimensions must be positive")
 
-        let originalWidth = Float(self.size.width)
-        let originalHeight = Float(self.size.height)
+        let originalWidth = CGFloat(self.size.width)
+        let originalHeight = CGFloat(self.size.height)
 
+        // scale is [0,1): 0 - very large original, 1: under the limits already.
         let scaleX = min(originalWidth, maxWidth) / originalWidth
         let scaleY = min(originalHeight, maxHeight) / originalHeight
         let scale = clip ?
-            // How much to scale the image that eidth width or height are below the limits; clip the other dimension,
-            // the image will have the new aspect ratio.
+            // How much to scale the image with at least of of either width or height below the limits; clip the other dimension, the image will have the new aspect ratio.
             max(scaleX, scaleY) :
-            // How much to scale the image that both width and height are below the limits: no clipping will occur,
+            // How much to scale the image that has both width and height below the limits: no clipping will occur,
             // the image will keep the original aspect ratio.
             min(scaleX, scaleY)
 
-        let dstWidth = min(maxWidth, originalWidth * scale)
-        let dstHeight = min(maxHeight, originalHeight * scale)
+        let dstSize = CGSize(width: min(maxWidth, originalWidth * scale), height: min(maxHeight, originalHeight * scale))
 
-        let srcWidth = dstWidth / scale
-        let srcHeight = dstHeight / scale
+        let srcWidth = dstSize.width / scale
+        let srcHeight = dstSize.height / scale
 
         return (
-            dstWidth: dstWidth,
-            dstHeight: dstHeight,
-            xOffset: Int(0.5 * (originalWidth - srcWidth)),
-            yOffset: Int(0.5 * (originalHeight - srcHeight)),
-            srcWidth: srcWidth,
-            srcHeight: srcHeight
+            dst: dstSize,
+            src: CGRect(
+                x: 0.5 * (originalWidth - srcWidth),
+                y: 0.5 * (originalHeight - srcHeight),
+                width: srcWidth,
+                height: srcHeight
+            )
         )
     }
 }

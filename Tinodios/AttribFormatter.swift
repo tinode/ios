@@ -30,17 +30,24 @@ class AttribFormatter: DraftyFormatter {
 
     // Inline image
     private func handleImage(content: TreeNode, attr: [String : JSONValue]?) {
-        guard let attr = attr, let data = attr["val"] else { return }
-        let image = NSTextAttachment(data: data.asData(), ofType: attr["mime"]?.asString())
-        // FIXME: probably should clear the anchor text.
-        content.style(cstyle: [NSAttributedString.Key.attachment: image])
+        guard let attr = attr, let data = attr["val"]?.asString() else { return }
+
+        if let imageData = Data(base64Encoded: data, options: .ignoreUnknownCharacters) {
+            var attachment = Attachment()
+            attachment.image = UIImage(data: imageData)
+            attachment.mime = attr["mime"]?.asString()
+            content.attachment(attachment)
+        }
     }
 
     private func handleAttachment(content: TreeNode, attr: [String : JSONValue]?) {
-        guard let attr = attr, let data = attr["val"] else { return }
-        let file = NSTextAttachment(data: data.asData(), ofType: attr["mime"]?.asString())
-        // FIXME: probably should clear the anchor text.
-        content.style(cstyle: [NSAttributedString.Key.attachment: file])
+        guard let attr = attr, let data = attr["val"]?.asString() else { return }
+
+        if let bits = Data(base64Encoded: data, options: .ignoreUnknownCharacters) {
+            var attachment = Attachment()
+            attachment.data = bits
+            attachment.mime = attr["mime"]?.asString()
+        }
     }
 
     private func handleButton(content: TreeNode, attr: [String : JSONValue]?) {
@@ -111,7 +118,7 @@ class AttribFormatter: DraftyFormatter {
             }
         case "MN": break // TODO: add fupport for @mentions
         case "HT": break // TODO: add support for #hashtangs
-        case "HD": break // Hidden text
+        case "HD": break // Hidden/ignored text
         case "IM":
             // Inline image
             handleImage(content: span, attr: attr)
@@ -153,7 +160,8 @@ class AttribFormatter: DraftyFormatter {
     ///    - content: Drafty object to convert
     ///    - baseFont: base font to derive styles from.
     ///    - clicker: methods to call in response to touch events in formatted text.
-    public static func toAttributed(_ content: Drafty, baseFont font: UIFont?, clicker: UITextViewDelegate?) -> NSAttributedString {
+    ///    - maxSize: maximum size of attached images
+    public static func toAttributed(_ content: Drafty, baseFont font: UIFont?, clicker: UITextViewDelegate?, maxSize: CGSize) -> NSAttributedString {
 
         if content.isPlain {
             let attributed = NSMutableAttributedString(string: content.string)
@@ -162,12 +170,19 @@ class AttribFormatter: DraftyFormatter {
         }
 
         let result = content.format(formatter: AttribFormatter(baseFont: font, clicker: clicker))
-        let attributed = result.toAttributed(baseFont: font ?? Constants.kDefaultFont, fontTraits: nil)
+        let attributed = result.toAttributed(baseFont: font ?? Constants.kDefaultFont, fontTraits: nil, size: maxSize)
 
         return attributed
     }
 
-    // Structure representing Drafty as a tree of formatting nodes.
+    // File or image attachment.
+    struct Attachment {
+        var data: Data?
+        var image: UIImage?
+        var mime: String?
+    }
+
+    // Class representing Drafty as a tree of nodes with content and styles attached.
     class TreeNode : CustomStringConvertible {
 
         // A set of font traits to apply at the leaf level
@@ -176,6 +191,9 @@ class AttribFormatter: DraftyFormatter {
         var cStyle: CharacterStyle?
         // Paragraph-level style to apply to leaf or subtree
         var pStyle: NSMutableParagraphStyle?
+        // Attachment. Apple is really bad at designing interfaces.
+        var attachment: Attachment?
+
         // Leaf
         var text: NSMutableAttributedString?
         // Subtree
@@ -229,6 +247,10 @@ class AttribFormatter: DraftyFormatter {
             cFont = fontTraits
         }
 
+        func attachment(_ attachment: Attachment) {
+            self.attachment = attachment
+        }
+
         func addNode(node: TreeNode?) {
             guard let node = node else { return }
 
@@ -248,7 +270,7 @@ class AttribFormatter: DraftyFormatter {
             return (text == nil || text!.length == 0) && (children == nil || children!.isEmpty)
         }
 
-        func toAttributed(baseFont: UIFont, fontTraits parentFontTraits: UIFontDescriptor.SymbolicTraits?) -> NSMutableAttributedString {
+        func toAttributed(baseFont: UIFont, fontTraits parentFontTraits: UIFontDescriptor.SymbolicTraits?, size: CGSize) -> NSMutableAttributedString {
             let attributed = NSMutableAttributedString()
 
             // First apply font styles to each same-style substring individually.
@@ -263,8 +285,19 @@ class AttribFormatter: DraftyFormatter {
                 }
             }
 
-            if let text = self.text {
-                // Apply font styles to subbstring.
+            // First check for attachments.
+            if let attachment = self.attachment {
+                if let image = attachment.image {
+                    let wrapper = NSTextAttachment()
+                    wrapper.image = image
+                    let (scaledSize, _) = image.sizeUnder(maxWidth: size.width, maxHeight: size.height, clip: false)
+                    wrapper.bounds = CGRect(origin: .zero, size: scaledSize)
+                    attributed.append(NSAttributedString(attachment: wrapper))
+                } else if let bits = attachment.data {
+                    attributed.append(NSAttributedString(attachment: NSTextAttachment(data: bits, ofType: attachment.mime)))
+                }
+            } else if let text = self.text {
+                // Uniformly styled substring. Apply uniform font style.
                 attributed.append(text)
                 let font: UIFont
                 if let fontTraits = fontTraits {
@@ -276,7 +309,7 @@ class AttribFormatter: DraftyFormatter {
             } else if let children = self.children {
                 // Pass calculated font styles to children.
                 for child in children {
-                    attributed.append(child.toAttributed(baseFont: baseFont, fontTraits: fontTraits))
+                    attributed.append(child.toAttributed(baseFont: baseFont, fontTraits: fontTraits, size: size))
                 }
             }
 

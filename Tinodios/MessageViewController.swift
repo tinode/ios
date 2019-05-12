@@ -254,9 +254,6 @@ extension MessageViewController: UICollectionViewDataSource {
         // Cell content
         let message = messages[indexPath.item]
 
-        // Set colors and fill out content except for avatar.
-        configureCell(cell: cell, with: message, at: indexPath)
-
         // The message set has avatars.
         let hasAvatars = avatarsVisible(message: message)
         // This message has an avatar.
@@ -266,6 +263,13 @@ extension MessageViewController: UICollectionViewDataSource {
         let attributes = collectionView.layoutAttributesForItem(at: indexPath)
         // Available cell width: full width of the screen minus the padding.
         let cellWidth = attributes!.frame.width - (collectionView.layoutMargins.left + collectionView.layoutMargins.right)
+
+        // Message content container (message bubble).
+        let containerPadding = isFromCurrentSender(message: message) ?
+            UIEdgeInsets(top: 0, left: Constants.kFarSideHorizontalSpacing, bottom: 0, right: 4) : UIEdgeInsets(top: 0, left: 4, bottom: 0, right: Constants.kFarSideHorizontalSpacing)
+
+        // Set colors and fill out content except for avatar.
+        configureCell(cell: cell, with: message, at: indexPath, maxSize: CGSize(width: cellWidth - containerPadding.left - containerPadding.right, height: attributes!.frame.height * 0.66))
 
         // Height of the field with the current date above the first message of the day.
         let newDateLabelHeight = calcNewDateLabelHeight(at: indexPath)
@@ -290,9 +294,6 @@ extension MessageViewController: UICollectionViewDataSource {
         // Left padding in group topics with avatar
         let avatarPadding = hasAvatars ? Constants.kAvatarSize : 0
 
-        // Message content container (message bubble).
-        let containerPadding = isFromCurrentSender(message: message) ?
-            UIEdgeInsets(top: 0, left: Constants.kFarSideHorizontalSpacing, bottom: 0, right: 4) : UIEdgeInsets(top: 0, left: 4, bottom: 0, right: Constants.kFarSideHorizontalSpacing)
         let containerSize = calcContainerSize(for: message, avatarsVisible: hasAvatars)
         // isFromCurrent Sender ? Flush container right : flush left.
         let originX = collectionView.layoutMargins.left +  (isFromCurrentSender(message: message) ? cellWidth - avatarPadding - containerSize.width - containerPadding.right : avatarPadding + containerPadding.left)
@@ -322,7 +323,7 @@ extension MessageViewController: UICollectionViewDataSource {
         return cell
     }
 
-    private func configureCell(cell: MessageCell, with message: Message, at indexPath: IndexPath) {
+    private func configureCell(cell: MessageCell, with message: Message, at indexPath: IndexPath, maxSize: CGSize) {
 
         if isFromCurrentSender(message: message) {
             cell.containerView.backgroundColor = Constants.kOutgoingBubbleColor
@@ -339,7 +340,7 @@ extension MessageViewController: UICollectionViewDataSource {
                 cell.content.text = drafty.string
                 // print("plain string '\(drafty.string)' from \(drafty.description)")
             } else {
-                let attributed = AttribFormatter.toAttributed(drafty, baseFont: Constants.kContentFont, clicker: nil)
+                let attributed = AttribFormatter.toAttributed(drafty, baseFont: Constants.kContentFont, clicker: nil, maxSize: maxSize)
                 // print("styled string '\(attributed.description)'")
                 cell.content.attributedText = attributed
             }
@@ -534,7 +535,7 @@ extension MessageViewController: UICollectionViewDelegateFlowLayout {
         let attributedText: NSAttributedString
 
         if let drafty = message.content {
-            attributedText = AttribFormatter.toAttributed(drafty, baseFont: Constants.kContentFont, clicker: nil)
+            attributedText = AttribFormatter.toAttributed(drafty, baseFont: Constants.kContentFont, clicker: nil, maxSize: CGSize(width: maxWidth, height: collectionView.frame.height * 0.66))
         } else {
             attributedText = NSAttributedString(string: "none", attributes: [.font: Constants.kContentFont])
         }
