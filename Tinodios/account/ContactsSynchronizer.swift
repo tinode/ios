@@ -182,7 +182,7 @@ private extension CNPhoneNumber {
     // Hack: simply filters out all non-digit characters.
     var naiveE164: String {
         get {
-            return "+" + String(self.stringValue.unicodeScalars.filter { CharacterSet.decimalDigits.contains($0) })
+            return self.value(forKey: "unformattedInternationalStringValue") as? String ?? ""
         }
     }
 }

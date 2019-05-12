@@ -259,6 +259,9 @@ public class MetaSetDesc<P: Encodable, R: Encodable>: Encodable {
     var defacs: Defacs? = nil
     var pub: P? = nil
     var priv: R? = nil
+    private enum CodingKeys : String, CodingKey {
+        case defacs, pub = "public", priv = "private"
+    }
     public init(da: Defacs) {
         self.defacs = da
     }
