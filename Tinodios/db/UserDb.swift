@@ -134,7 +134,7 @@ class UserDb {
         let id = r[self.id]
         let updated = r[self.updated]
         let pub = r[self.pub]
-        guard let user = DefaultUser.createFromPublicData(uid: uid, updated: updated, data: pub) else { return nil }
+        guard let user = DefaultUser.createFromPublicData(uid: r[self.uid], updated: updated, data: pub) else { return nil }
         let storedUser = StoredUser(id: id)
         user.payload = storedUser
         return user
