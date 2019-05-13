@@ -28,8 +28,18 @@ public class Drafty: Codable, CustomStringConvertible, Equatable {
     private static let kMaxFormElements = 8
 
     // TODO: Switch from string types to enum
-    public enum StyleTypes {
-        case st, em, dl, co, ln, mn, ht, hd, bn, rm, rw, none
+    public enum StyleType: String {
+        case st = "ST" // Strong / bold
+        case em = "EM" // Emphesized / italic
+        case dl = "DL" // Deleted / strikethrough
+        case co = "CO" // Code / mono
+        case ln = "LN" // Link / URL
+        case mn = "MN" // Mention
+        case ht = "HT" // Hashtag (deprecated)
+        case hd = "HD" // Hidden
+        case bn = "BN" // Button
+        case fm = "FM" // Form
+        case rw = "RW" // Row in a form
     }
 
     // Regular expressions for parsing inline formats.
@@ -900,6 +910,8 @@ public class Style: Codable, CustomStringConvertible, Equatable {
 public class Entity: Codable, CustomStringConvertible, Equatable {
     public var tp: String?
     public var data: [String:JSONValue]?
+    // Decoded components of data
+    private var dataCache: [String:Any]?
 
     private enum CodingKeys : String, CodingKey  {
         case tp = "tp"

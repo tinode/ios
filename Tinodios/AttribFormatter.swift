@@ -111,12 +111,14 @@ class AttribFormatter: DraftyFormatter {
         case "DL":
             span.style(cstyle: [NSAttributedString.Key.strikethroughStyle: NSUnderlineStyle.single.rawValue])
         case "CO":
-            span.style(fontTraits: .traitMonoSpace)
+            // .traitMonoSpace is not a real font trait. It cannot be applied to an arbitrary font. A real
+            // monospaced font must be selected manually.
+            span.style(cstyle: [NSAttributedString.Key.font: UIFont(name: "Courier", size: (baseFont ?? Constants.kDefaultFont).pointSize)!])
         case "BR":
             span = TreeNode(content: "\n")
         case "LN":
-            if let url = attr?["url"]?.asString() {
-                span.style(cstyle: [NSAttributedString.Key.link: NSURL(string: url) as Any])
+            if let urlString = attr?["url"]?.asString(), let url = NSURL(string: urlString) {
+                span.style(cstyle: [NSAttributedString.Key.link: url])
             }
         case "MN": break // TODO: add fupport for @mentions
         case "HT": break // TODO: add support for #hashtangs
@@ -171,8 +173,8 @@ class AttribFormatter: DraftyFormatter {
             return attributed
         }
 
-        let result = content.format(formatter: AttribFormatter(baseFont: font, clicker: clicker))
-        let attributed = result.toAttributed(baseFont: font ?? Constants.kDefaultFont, fontTraits: nil, size: maxSize)
+        let formatTree = content.format(formatter: AttribFormatter(baseFont: font, clicker: clicker))
+        let attributed = formatTree.toAttributed(baseFont: font ?? Constants.kDefaultFont, fontTraits: nil, size: maxSize)
 
         return attributed
     }
