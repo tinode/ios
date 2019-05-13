@@ -102,7 +102,12 @@ public class Drafty: Codable, CustomStringConvertible, Equatable {
         } else {
             // Non-optional decoding as a Drafty object.
             let container = try decoder.container(keyedBy: CodingKeys.self)
-            txt = try container.decode(String.self, forKey: .txt)
+            // Txt is missing for attachments. 
+            do {
+                txt = try container.decode(String.self, forKey: .txt)
+            } catch DecodingError.keyNotFound {
+                txt = ""
+            }
             fmt = try? container.decode([Style].self, forKey: .fmt)
             ent = try? container.decode([Entity].self, forKey: .ent)
         }

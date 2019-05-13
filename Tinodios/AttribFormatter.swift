@@ -6,6 +6,8 @@
 //
 //  Converts Drafty instance into attributed text suitable for display in UITextView
 
+// For MIME -> UTI conversion
+import MobileCoreServices
 import TinodeSDK
 import UIKit
 
@@ -16,6 +18,7 @@ class AttribFormatter: DraftyFormatter {
     private enum Constants {
         static let kFormLineSpacing: CGFloat = 1.5
         static let kDefaultFont: UIFont = UIFont.preferredFont(forTextStyle: .body)
+        static let kAttachmentIconSize = CGSize(width: 24, height: 32)
     }
 
     typealias CharacterStyle = [NSAttributedString.Key: Any]
@@ -37,6 +40,10 @@ class AttribFormatter: DraftyFormatter {
             var attachment = Attachment()
             attachment.image = UIImage(data: imageData)
             attachment.mime = attr["mime"]?.asString()
+            attachment.name = attr["name"]?.asString()
+            attachment.size = attr["size"]?.asInt()
+            attachment.width = attr["width"]?.asInt()
+            attachment.height = attr["height"]?.asInt()
             content.attachment(attachment)
         }
     }
@@ -49,6 +56,9 @@ class AttribFormatter: DraftyFormatter {
             var attachment = Attachment()
             attachment.data = bits
             attachment.mime = attr["mime"]?.asString()
+            attachment.name = attr["name"]?.asString()
+            attachment.size = attr["size"]?.asInt()
+            content.attachment(attachment)
         }
     }
 
@@ -134,12 +144,12 @@ class AttribFormatter: DraftyFormatter {
             handleButton(content: span, attr: attr)
         case "FM":
             // Form
-            if let children = children, !children.isEmpty {
-                // Add line breaks between form elements: each row is a paragraph.
-                for i in 0..<children.count {
-                    span.addNode(node: children[i])
-                    span.addNode(content: "\n");
+            if var children = span.children, !children.isEmpty {
+                // Add line breaks between form elements: each direct descendant is a paragraph.
+                for i in stride(from: children.count, to: 0, by: -1) {
+                    children.insert(TreeNode(content: "\n"), at: i);
                 }
+                span.children = children
             }
         case "RW":
             // Form element formatting is dependent on element content.
@@ -184,6 +194,11 @@ class AttribFormatter: DraftyFormatter {
         var data: Data?
         var image: UIImage?
         var mime: String?
+        var name: String?
+        var ref: String?
+        var size: Int?
+        var width: Int?
+        var height: Int?
     }
 
     // Class representing Drafty as a tree of nodes with content and styles attached.
@@ -274,6 +289,77 @@ class AttribFormatter: DraftyFormatter {
             return (text == nil || text!.length == 0) && (children == nil || children!.isEmpty)
         }
 
+        func attachmentToAttributed(_ attachment: Attachment, baseFont: UIFont, maxSize size: CGSize) -> NSAttributedString {
+            // Image handling is easy.
+            if let image = attachment.image {
+                let wrapper = NSTextAttachment()
+                wrapper.image = image
+                let (scaledSize, _) = image.sizeUnder(maxWidth: size.width, maxHeight: size.height, clip: false)
+                wrapper.bounds = CGRect(origin: .zero, size: scaledSize)
+                return NSAttributedString(attachment: wrapper)
+            }
+
+            // File attachment is harder: constructing custom view.
+            guard let bits = attachment.data else { return NSAttributedString() }
+
+            let attributed = NSMutableAttributedString()
+            attributed.beginEditing()
+            /*
+             TODO: use provided mime type to show custom icons for different types.
+             let unmanagedUti = UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, (attachment.mime ?? "application/octet-stream") as CFString, nil)
+             var uti = unmanagedUti?.takeRetainedValue() ?? kUTTypeData
+             uti = kUTTypeData
+             */
+            // Using basic kUTTypeData to prevent iOS from displaying ugly previews.
+
+            let wrapper = NSTextAttachment(data: bits, ofType: kUTTypeData as String)
+            wrapper.bounds = CGRect(origin: CGPoint(x: 0, y: baseFont.capHeight - Constants.kAttachmentIconSize.height), size: Constants.kAttachmentIconSize)
+            attributed.append(NSAttributedString(attachment: wrapper))
+
+            // Append document's file name.
+            var fname: String = attachment.name ?? "tinode_file_attachment"
+            if fname.count > 32 {
+                fname = fname.prefix(14) + "…" + fname.suffix(14)
+            }
+            attributed.append(NSAttributedString(string: " "))
+            attributed.append(NSAttributedString(string: fname, attributes: [NSAttributedString.Key.font : UIFont(name: "Courier", size: baseFont.pointSize)!]))
+
+            // Append reported file size.
+            if let size = attachment.size {
+                attributed.append(NSAttributedString(string: " (" + UiUtils.bytesToHumanSize(Int64(size)) + ")", attributes: [NSAttributedString.Key.foregroundColor : UIColor.lightText, NSAttributedString.Key.font : baseFont]))
+            } else {
+                print("size of attachment is not set")
+            }
+
+            // Insert linebreak then a clickable [↓ save] line
+            attributed.append(NSAttributedString(string: "\u{2009}\n", attributes: [NSAttributedString.Key.font : baseFont]))
+
+            let second = NSMutableAttributedString()
+            second.beginEditing()
+
+            // Add 'download file' icon
+            let icon = NSTextAttachment()
+            icon.image = UIImage(named: "download-22")
+            icon.bounds = CGRect(origin: CGPoint(x: 0, y: -2), size: CGSize(width: baseFont.lineHeight * 0.8, height: baseFont.lineHeight * 0.8))
+            second.append(NSAttributedString(attachment: icon))
+
+            // Add "save" text.
+            // TODO: make it clickable
+            second.append(NSAttributedString(string: " save", attributes: [NSAttributedString.Key.font : baseFont]))
+
+            let paragraph = NSMutableParagraphStyle()
+            paragraph.firstLineHeadIndent = Constants.kAttachmentIconSize.width + baseFont.capHeight * 0.25
+            paragraph.lineSpacing = 0
+            paragraph.maximumLineHeight = 4
+            second.addAttributes([NSAttributedString.Key.paragraphStyle : paragraph], range: NSRange(location: 0, length: second.length))
+
+            second.endEditing()
+            attributed.append(second)
+
+            attributed.endEditing()
+            return attributed
+        }
+
         func toAttributed(baseFont: UIFont, fontTraits parentFontTraits: UIFontDescriptor.SymbolicTraits?, size: CGSize) -> NSMutableAttributedString {
             let attributed = NSMutableAttributedString()
 
@@ -291,15 +377,7 @@ class AttribFormatter: DraftyFormatter {
 
             // First check for attachments.
             if let attachment = self.attachment {
-                if let image = attachment.image {
-                    let wrapper = NSTextAttachment()
-                    wrapper.image = image
-                    let (scaledSize, _) = image.sizeUnder(maxWidth: size.width, maxHeight: size.height, clip: false)
-                    wrapper.bounds = CGRect(origin: .zero, size: scaledSize)
-                    attributed.append(NSAttributedString(attachment: wrapper))
-                } else if let bits = attachment.data {
-                    attributed.append(NSAttributedString(attachment: NSTextAttachment(data: bits, ofType: attachment.mime)))
-                }
+                attributed.append(attachmentToAttributed(attachment, baseFont: baseFont, maxSize: size))
             } else if let text = self.text {
                 // Uniformly styled substring. Apply uniform font style.
                 attributed.append(text)

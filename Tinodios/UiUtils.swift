@@ -63,6 +63,22 @@ class UiUtils {
         // Reset red border to default.
         field.layer.borderWidth = 0.0
     }
+
+    public static func bytesToHumanSize(_ bytes: Int64) -> String {
+        if bytes <= 0 {
+            return "0 Bytes";
+        }
+
+        let sizes = ["Bytes", "KB", "MB", "GB", "TB"]
+        let bucket = (63 - bytes.leadingZeroBitCount) / 10
+        let count: Double = Double(bytes) / Double(pow(1024, Double(bucket)))
+        // Multiplier for rounding fractions.
+        let roundTo: Int = bucket > 0 ? (count < 3 ? 2 : (count < 30 ? 1 : 0)) : 0
+        let multiplier: Double = pow(10, Double(roundTo))
+        let whole: Int = Int(count)
+        let fraction: String = roundTo > 1 ? "." + "\(round(count * multiplier))".suffix(roundTo) : ""
+        return "\(whole)\(fraction) \(sizes[bucket])"
+    }
 }
 
 extension UIViewController {

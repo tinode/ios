@@ -149,6 +149,7 @@ class MessageViewController: UIViewController {
         let top = collectionView.topAnchor.constraint(equalTo: view.topAnchor, constant: topLayoutGuide.length)
         let trailing: NSLayoutConstraint, leading: NSLayoutConstraint, bottom: NSLayoutConstraint
         if #available(iOS 11.0, *) {
+            // Extra padding as -50. It's probably due to a bug somewhere.
             bottom = collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -50)
             leading = collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor)
             trailing = collectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor)
@@ -225,7 +226,7 @@ extension MessageViewController: MessageDisplayLogic {
 
     func displayChatMessages(messages: [StoredMessage]) {
         self.messages = messages.reversed()
-        self.cellSizeCache = Array.init(repeating: nil, count: messages.count)
+        self.cellSizeCache = Array(repeating: nil, count: messages.count)
         self.collectionView.reloadData()
         // FIXME: don't scroll to bottom in response to loading the next page.
         // Maybe don't scroll to bottom if the view is not at the bottom already.
