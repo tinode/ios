@@ -32,6 +32,7 @@ class AttribFormatter: DraftyFormatter {
     private func handleImage(content: TreeNode, attr: [String : JSONValue]?) {
         guard let attr = attr, let data = attr["val"]?.asString() else { return }
 
+        // FIXME: cache result of converting string to image.
         if let imageData = Data(base64Encoded: data, options: .ignoreUnknownCharacters) {
             var attachment = Attachment()
             attachment.image = UIImage(data: imageData)
@@ -43,6 +44,7 @@ class AttribFormatter: DraftyFormatter {
     private func handleAttachment(content: TreeNode, attr: [String : JSONValue]?) {
         guard let attr = attr, let data = attr["val"]?.asString() else { return }
 
+        // FIXME: cache result of converting string to binary data.
         if let bits = Data(base64Encoded: data, options: .ignoreUnknownCharacters) {
             var attachment = Attachment()
             attachment.data = bits
