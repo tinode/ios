@@ -19,6 +19,7 @@ class AttribFormatter: DraftyFormatter {
         static let kFormLineSpacing: CGFloat = 1.5
         static let kDefaultFont: UIFont = UIFont.preferredFont(forTextStyle: .body)
         static let kAttachmentIconSize = CGSize(width: 24, height: 32)
+        static let kLinkColor = UIColor(red: 0, green: 122/255, blue: 1, alpha: 1)
     }
 
     typealias CharacterStyle = [NSAttributedString.Key: Any]
@@ -334,12 +335,14 @@ class AttribFormatter: DraftyFormatter {
             // Insert linebreak then a clickable [↓ save] line
             attributed.append(NSAttributedString(string: "\u{2009}\n", attributes: [NSAttributedString.Key.font : baseFont]))
 
-            let second = NSMutableAttributedString()
+            // \u{2009} because iOS is buggy as hell and bugs go unfixed for years.
+            // https://stackoverflow.com/questions/29041458/how-to-set-color-of-templated-image-in-nstextattachment
+            let second = NSMutableAttributedString(string: "\u{2009}")
             second.beginEditing()
 
             // Add 'download file' icon
             let icon = NSTextAttachment()
-            icon.image = UIImage(named: "download-22")
+            icon.image = UIImage(named: "download-24")?.withRenderingMode(.alwaysTemplate)
             icon.bounds = CGRect(origin: CGPoint(x: 0, y: -2), size: CGSize(width: baseFont.lineHeight * 0.8, height: baseFont.lineHeight * 0.8))
             second.append(NSAttributedString(attachment: icon))
 
@@ -347,11 +350,12 @@ class AttribFormatter: DraftyFormatter {
             // TODO: make it clickable
             second.append(NSAttributedString(string: " save", attributes: [NSAttributedString.Key.font : baseFont]))
 
+            // Add paragraph style and coloring
             let paragraph = NSMutableParagraphStyle()
             paragraph.firstLineHeadIndent = Constants.kAttachmentIconSize.width + baseFont.capHeight * 0.25
             paragraph.lineSpacing = 0
             paragraph.maximumLineHeight = 4
-            second.addAttributes([NSAttributedString.Key.paragraphStyle : paragraph], range: NSRange(location: 0, length: second.length))
+            second.addAttributes([NSAttributedString.Key.paragraphStyle : paragraph, NSAttributedString.Key.foregroundColor : Constants.kLinkColor], range: NSRange(location: 0, length: second.length))
 
             second.endEditing()
             attributed.append(second)
