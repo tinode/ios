@@ -112,6 +112,9 @@ class ChatListInteractor: ChatListBusinessLogic, ChatListDataStore {
     func cleanup() {
         self.meTopic?.listener = nil
         Cache.getTinode().listener = nil
+        if self.meTopic?.attached ?? false {
+            self.meTopic?.leave()
+        }
     }
     func loadAndPresentTopics() {
         print("loadAndPresentTopics")
