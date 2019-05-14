@@ -41,7 +41,7 @@ class AttribFormatter: DraftyFormatter {
         attachment.image = UIImage(data: bits)
         attachment.mime = attr["mime"]?.asString()
         attachment.name = attr["name"]?.asString()
-        attachment.size = attr["size"]?.asInt()
+        attachment.size = bits.count
         attachment.width = attr["width"]?.asInt()
         attachment.height = attr["height"]?.asInt()
         content.attachment(attachment)
@@ -54,7 +54,7 @@ class AttribFormatter: DraftyFormatter {
         attachment.data = bits
         attachment.mime = attr["mime"]?.asString()
         attachment.name = attr["name"]?.asString()
-        attachment.size = attr["size"]?.asInt()
+        attachment.size = bits.count
         content.attachment(attachment)
     }
 
@@ -320,11 +320,9 @@ class AttribFormatter: DraftyFormatter {
             attributed.append(NSAttributedString(string: " "))
             attributed.append(NSAttributedString(string: fname, attributes: [NSAttributedString.Key.font : UIFont(name: "Courier", size: baseFont.pointSize)!]))
 
-            // Append reported file size.
+            // Append file size.
             if let size = attachment.size {
-                attributed.append(NSAttributedString(string: " (" + UiUtils.bytesToHumanSize(Int64(size)) + ")", attributes: [NSAttributedString.Key.foregroundColor : UIColor.lightText, NSAttributedString.Key.font : baseFont]))
-            } else {
-                print("size of attachment is not set")
+                attributed.append(NSAttributedString(string: " (" + UiUtils.bytesToHumanSize(Int64(size)) + ")", attributes: [NSAttributedString.Key.font : baseFont]))
             }
 
             // Insert linebreak then a clickable [↓ save] line
