@@ -17,5 +17,9 @@ public class PaddedLabel: UILabel {
         let insetRect = rect.inset(by: textInsets)
         super.drawText(in: insetRect)
     }
+
+    public func getURLForTap(_ location: CGPoint) -> URL? {
+        return nil
+    }
 }
 

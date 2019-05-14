@@ -570,6 +570,10 @@ extension MessageViewController: UICollectionViewDelegateFlowLayout {
 }
 
 extension MessageViewController: MessageCellDelegate {
+    func didTapContent(in cell: MessageCell, url: URL?) {
+        print("didTapContent URL=\(url?.absoluteString ?? "nil")")
+    }
+
     func didTapMessage(in cell: MessageCell) {
         print("didTapMessage")
     }

@@ -47,6 +47,7 @@
 		B02F5C8B22679BC80079A97E /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = B02F5C8A22679BC80079A97E /* ImagePicker.swift */; };
 		B031BE552263075E004160AE /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = B031BE542263075E004160AE /* Settings.bundle */; };
 		B031BE5722631304004160AE /* SettingsHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = B031BE5622631304004160AE /* SettingsHelper.swift */; };
+		B0A612AF228B08EC00569DFE /* RichTextLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0A612AE228B08EC00569DFE /* RichTextLabel.swift */; };
 		B0DF03172279F027000F9492 /* RoundImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0DF03162279F027000F9492 /* RoundImageView.swift */; };
 		B0DF0319227C2517000F9492 /* MessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0DF0318227C2517000F9492 /* MessageView.swift */; };
 		B0DF031D227C604C000F9492 /* MessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0DF031C227C604C000F9492 /* MessageCell.swift */; };
@@ -116,6 +117,7 @@
 		B02F5C8A22679BC80079A97E /* ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
 		B031BE542263075E004160AE /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		B031BE5622631304004160AE /* SettingsHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsHelper.swift; sourceTree = "<group>"; };
+		B0A612AE228B08EC00569DFE /* RichTextLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RichTextLabel.swift; sourceTree = "<group>"; };
 		B0DF03162279F027000F9492 /* RoundImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundImageView.swift; sourceTree = "<group>"; };
 		B0DF0318227C2517000F9492 /* MessageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageView.swift; sourceTree = "<group>"; };
 		B0DF031C227C604C000F9492 /* MessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageCell.swift; sourceTree = "<group>"; };
@@ -251,13 +253,14 @@
 		B0C496B022787C020084FA0D /* widgets */ = {
 			isa = PBXGroup;
 			children = (
-				B02F5C8A22679BC80079A97E /* ImagePicker.swift */,
 				B0E8FA0722770E61005097F1 /* ButtonLayoutManager.swift */,
-				B0DF03162279F027000F9492 /* RoundImageView.swift */,
+				B02F5C8A22679BC80079A97E /* ImagePicker.swift */,
 				B0DF031E227C6898000F9492 /* PaddedLabel.swift */,
+				B0DF03302283FFD8000F9492 /* PlaceholderTextView.swift */,
+				B0A612AE228B08EC00569DFE /* RichTextLabel.swift */,
+				B0DF03162279F027000F9492 /* RoundImageView.swift */,
 				B0DF032C2282EE8A000F9492 /* SendMessageBar.xib */,
 				B0DF032E2282FF46000F9492 /* SendMessageBar.swift */,
-				B0DF03302283FFD8000F9492 /* PlaceholderTextView.swift */,
 			);
 			path = widgets;
 			sourceTree = "<group>";
@@ -414,6 +417,7 @@
 				7DDADC5221D5C219009733B5 /* Validate.swift in Sources */,
 				B0DF0319227C2517000F9492 /* MessageView.swift in Sources */,
 				7DDADC5421D5C2E6009733B5 /* CredentialsViewController.swift in Sources */,
+				B0A612AF228B08EC00569DFE /* RichTextLabel.swift in Sources */,
 				B0DF03172279F027000F9492 /* RoundImageView.swift in Sources */,
 				B031BE5722631304004160AE /* SettingsHelper.swift in Sources */,
 				0A35BAA02283A37500AA5E2F /* Utils.swift in Sources */,

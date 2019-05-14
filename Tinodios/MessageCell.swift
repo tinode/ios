@@ -10,8 +10,11 @@ import TinodeSDK
 
 /// A protocol used to detect taps in the chat message.
 protocol MessageCellDelegate: class {
+    /// Tap on the message bubble
     func didTapMessage(in cell: MessageCell)
-
+    /// Tap on message content
+    func didTapContent(in cell: MessageCell, url: URL?)
+    /// Tap on avatar
     func didTapAvatar(in cell: MessageCell)
 }
 
@@ -51,6 +54,7 @@ class MessageCell: UICollectionViewCell {
         let content = PaddedLabel()
         // Indicates multiline content.
         content.numberOfLines = 0
+        content.isUserInteractionEnabled = true
         return content
     }()
 
@@ -98,7 +102,10 @@ class MessageCell: UICollectionViewCell {
         let touchLocation = gesture.location(in: self)
 
         switch true {
-        case containerView.frame.contains(touchLocation) && !cellContentView(canHandle: convert(touchLocation, to: containerView)):
+        case content.frame.contains(convert(touchLocation, to: content)):
+            let url = content.getURLForTap(convert(touchLocation, to: content))
+            delegate?.didTapContent(in: self, url: url)
+        case containerView.frame.contains(touchLocation):
             delegate?.didTapMessage(in: self)
         case avatarView.frame.contains(touchLocation):
             delegate?.didTapAvatar(in: self)
@@ -107,16 +114,11 @@ class MessageCell: UICollectionViewCell {
         }
     }
 
-    /// Handle long press gesture, return true when gestureRecognizer's touch point in `messageContainerView`'s frame
+    /// Handle long press gesture, return true when gestureRecognizer's touch point in `containerView`'s frame
     override func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
         let touchPoint = gestureRecognizer.location(in: self)
         guard gestureRecognizer.isKind(of: UILongPressGestureRecognizer.self) else { return false }
         return containerView.frame.contains(touchPoint)
-    }
-
-    /// Handle `ContentView`'s tap gesture, return false when `ContentView` doesn't needs to handle gesture
-    func cellContentView(canHandle touchPoint: CGPoint) -> Bool {
-        return false
     }
 }
 
