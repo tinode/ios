@@ -296,7 +296,7 @@ extension MessageViewController: UICollectionViewDataSource {
             }
 
             // Sender name under the avatar.
-            cell.senderNameLabel.frame = CGRect(origin: CGPoint(x: collectionView.layoutMargins.left, y: cell.containerView.frame.maxY + containerPadding.bottom), size: CGSize(width: cellWidth, height: senderNameLabelHeight))
+            cell.senderNameLabel.frame = CGRect(origin: CGPoint(x: collectionView.layoutMargins.left, y: attributes!.frame.height - senderNameLabelHeight), size: CGSize(width: cellWidth, height: senderNameLabelHeight))
         } else {
             cell.avatarView.frame = .zero
             cell.senderNameLabel.frame = .zero
