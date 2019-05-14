@@ -915,8 +915,6 @@ public class Style: Codable, CustomStringConvertible, Equatable {
 public class Entity: Codable, CustomStringConvertible, Equatable {
     public var tp: String?
     public var data: [String:JSONValue]?
-    // Decoded components of data
-    private var dataCache: [String:Any]?
 
     private enum CodingKeys : String, CodingKey  {
         case tp = "tp"
@@ -928,6 +926,16 @@ public class Entity: Codable, CustomStringConvertible, Equatable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         tp = try? container.decode(String.self, forKey: .tp)
         data = try? container.decode([String:JSONValue].self, forKey: .data)
+
+        // data["val"] is expected to be a large base64-encoded string. Decode it to Data so it does not need to decoded it every time it's accessed
+        if let val = data?["val"]?.asString() {
+            if let bits = Data(base64Encoded: val, options: .ignoreUnknownCharacters) {
+                data!["val"] = JSONValue.bytes(bits)
+            } else {
+                // If the data cannot be decoded then it's useless
+                data!["val"] = nil
+            }
+        }
     }
 
     /// Initialize an empty attachment.

@@ -34,33 +34,28 @@ class AttribFormatter: DraftyFormatter {
 
     // Inline image
     private func handleImage(content: TreeNode, attr: [String : JSONValue]?) {
-        guard let attr = attr, let data = attr["val"]?.asString() else { return }
+        guard let attr = attr, let bits = attr["val"]?.asData() else { return }
 
-        // FIXME: cache result of converting string to image.
-        if let imageData = Data(base64Encoded: data, options: .ignoreUnknownCharacters) {
-            var attachment = Attachment()
-            attachment.image = UIImage(data: imageData)
-            attachment.mime = attr["mime"]?.asString()
-            attachment.name = attr["name"]?.asString()
-            attachment.size = attr["size"]?.asInt()
-            attachment.width = attr["width"]?.asInt()
-            attachment.height = attr["height"]?.asInt()
-            content.attachment(attachment)
-        }
+        // FIXME: maybe cache result of converting Data to image.
+        var attachment = Attachment()
+        attachment.image = UIImage(data: bits)
+        attachment.mime = attr["mime"]?.asString()
+        attachment.name = attr["name"]?.asString()
+        attachment.size = attr["size"]?.asInt()
+        attachment.width = attr["width"]?.asInt()
+        attachment.height = attr["height"]?.asInt()
+        content.attachment(attachment)
     }
 
     private func handleAttachment(content: TreeNode, attr: [String : JSONValue]?) {
-        guard let attr = attr, let data = attr["val"]?.asString() else { return }
+        guard let attr = attr, let bits = attr["val"]?.asData() else { return }
 
-        // FIXME: cache result of converting string to binary data.
-        if let bits = Data(base64Encoded: data, options: .ignoreUnknownCharacters) {
-            var attachment = Attachment()
-            attachment.data = bits
-            attachment.mime = attr["mime"]?.asString()
-            attachment.name = attr["name"]?.asString()
-            attachment.size = attr["size"]?.asInt()
-            content.attachment(attachment)
-        }
+        var attachment = Attachment()
+        attachment.data = bits
+        attachment.mime = attr["mime"]?.asString()
+        attachment.name = attr["name"]?.asString()
+        attachment.size = attr["size"]?.asInt()
+        content.attachment(attachment)
     }
 
     private func handleButton(content: TreeNode, attr: [String : JSONValue]?) {
