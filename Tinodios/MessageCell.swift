@@ -19,7 +19,7 @@ protocol MessageCellDelegate: class {
 }
 
 // Contains message bubble + avatar + delivery markers.
-class MessageCell: UICollectionViewCell {
+class MessageCell: UICollectionViewCell, UITextViewDelegate {
 
     // MARK: - Initializers
 
@@ -50,11 +50,13 @@ class MessageCell: UICollectionViewCell {
     }()
 
     /// The message content
-    var content: PaddedLabel = {
-        let content = PaddedLabel()
-        // Indicates multiline content.
-        content.numberOfLines = 0
+    var content: RichTextLabel = {
+        let content = RichTextLabel()
         content.isUserInteractionEnabled = true
+        if #available(iOS 11.0, *) {
+            content.contentInsetAdjustmentBehavior = .never
+        }
+
         return content
     }()
 
@@ -85,6 +87,7 @@ class MessageCell: UICollectionViewCell {
         contentView.addSubview(newDateLabel)
         contentView.addSubview(senderNameLabel)
         contentView.addSubview(containerView)
+        content.delegate = self
         containerView.addSubview(content)
         // containerView.addSubview(deliveryMarker)
         // containerView.addSubview(timestampLabel)
@@ -119,6 +122,16 @@ class MessageCell: UICollectionViewCell {
         let touchPoint = gestureRecognizer.location(in: self)
         guard gestureRecognizer.isKind(of: UILongPressGestureRecognizer.self) else { return false }
         return containerView.frame.contains(touchPoint)
+    }
+
+    func textView(_ content: UITextView, shouldInteractWith: NSTextAttachment, in: NSRange, interaction: UITextItemInteraction) -> Bool {
+        print("shouldInteractWith attachment \(shouldInteractWith)")
+        return true
+    }
+
+    func textView(_ content: UITextView, shouldInteractWith: URL, in: NSRange, interaction: UITextItemInteraction) -> Bool {
+        print("shouldInteractWith URL \(shouldInteractWith)")
+        return true
     }
 }
 

@@ -31,7 +31,7 @@ class DraftyLayoutManager: NSLayoutManager {
                 let rect = self.boundingRect(forGlyphRange: glyphRange, in: container!)
 
                 // UIBezierPath with rounded corners
-                let path = UIBezierPath(roundedRect: rect, cornerRadius: 100)
+                let path = UIBezierPath(roundedRect: rect, cornerRadius: 18)
                 path.fill()
                 context!.restoreGState()
             }
@@ -40,7 +40,24 @@ class DraftyLayoutManager: NSLayoutManager {
 
 }
 
-// UILabel with custom layout. Used for displaying message content.
+// UITextView with custom layout. Used for displaying message content.
 // Custom layout is used for drawing Drafty forms and detecting clicks.
-class RichTextLabel : PaddedLabel {
+class RichTextLabel : UITextView {
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        setup()
+    }
+
+    func setup() {
+        // See https://stackoverflow.com/questions/746670/how-to-lose-margin-padding-in-uitextview
+        textContainerInset = UIEdgeInsets.zero
+        textContainer.lineFragmentPadding = 0
+    }
+
+    // MARK: public methods
+
+    public func getURLForTap(_ location: CGPoint) -> URL? {
+        return nil
+    }
 }

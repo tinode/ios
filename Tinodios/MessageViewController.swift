@@ -314,8 +314,8 @@ extension MessageViewController: UICollectionViewDataSource {
         let originX = collectionView.layoutMargins.left +  (isFromCurrentSender(message: message) ? cellWidth - avatarPadding - containerSize.width - containerPadding.right : avatarPadding + containerPadding.left)
         cell.containerView.frame = CGRect(origin: CGPoint(x: originX, y: newDateLabelHeight + containerPadding.top), size: containerSize)
 
-        // Content UILabel.
-        cell.content.textInsets = isFromCurrentSender(message: message) ? Constants.kOutgoingMessageContentInset : Constants.kIncomingMessageContentInset
+        // Content RichTextLabel.
+        cell.content.contentInset = isFromCurrentSender(message: message) ? Constants.kOutgoingMessageContentInset : Constants.kIncomingMessageContentInset
         cell.content.frame = cell.containerView.bounds
 
         // New date label
@@ -333,6 +333,7 @@ extension MessageViewController: UICollectionViewDataSource {
 
     private func configureCell(cell: MessageCell, with message: Message, at indexPath: IndexPath, maxSize: CGSize) {
 
+        cell.content.backgroundColor = nil
         if isFromCurrentSender(message: message) {
             cell.containerView.backgroundColor = Constants.kOutgoingBubbleColor
             cell.content.textColor = .darkText
@@ -346,10 +347,8 @@ extension MessageViewController: UICollectionViewDataSource {
         if let drafty = message.content {
             if drafty.isPlain {
                 cell.content.text = drafty.string
-                // print("plain string '\(drafty.string)' from \(drafty.description)")
             } else {
                 let attributed = AttribFormatter.toAttributed(drafty, baseFont: Constants.kContentFont, clicker: nil, maxSize: maxSize)
-                // print("styled string '\(attributed.description)'")
                 cell.content.attributedText = attributed
             }
         }
@@ -530,11 +529,6 @@ extension MessageViewController: UICollectionViewDelegateFlowLayout {
         return height
     }
 
-    // Size of rectangle taken by the message content as attributedText.
-    func textSize(for attributedText: NSAttributedString, considering maxWidth: CGFloat) -> CGSize {
-        return attributedText.boundingRect(with: CGSize(width: maxWidth, height: .greatestFiniteMagnitude), options: [.usesLineFragmentOrigin, .usesFontLeading], context: nil).integral.size
-    }
-
     // Calculate maximum width of content inside message bubble
     func calcMaxContentWidth(for message: Message, avatarsVisible: Bool) -> CGFloat {
 
@@ -563,7 +557,7 @@ extension MessageViewController: UICollectionViewDelegateFlowLayout {
 
         let insets = isFromCurrentSender(message: message) ? Constants.kOutgoingMessageContentInset : Constants.kIncomingMessageContentInset
 
-        var size = textSize(for: attributedText, considering: maxWidth)
+        var size = attributedText.boundingRect(with: CGSize(width: maxWidth - insets.left - insets.right, height: .greatestFiniteMagnitude), options: [.usesLineFragmentOrigin, .usesFontLeading], context: nil).integral.size
 
         size.width += insets.left + insets.right
         size.width = max(size.width, Constants.kMinimumCellWidth)
