@@ -93,6 +93,9 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                         self?.messageSenderQueue.async {
                             _ = self?.topic?.syncAll()
                         }
+                        if self?.topicId == -1 {
+                            self?.topicId = BaseDb.getInstance().topicDb?.getId(topic: self?.topicName)
+                        }
                         return nil
                     },
                     onFailure: { err in
