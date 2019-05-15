@@ -69,7 +69,11 @@ class MessageViewController: UIViewController {
         didSet {
             topicType = Tinode.topicTypeByName(name: self.topicName)
             // Needed in order to get sender's avatar and display name
-            topic = Cache.getTinode().getTopic(topicName: topicName!) as? DefaultComTopic
+            let tinode = Cache.getTinode()
+            topic = tinode.getTopic(topicName: topicName!) as? DefaultComTopic
+            if topic == nil {
+                topic = tinode.newTopic(for: topicName!, with: nil) as? DefaultComTopic
+            }
         }
     }
     var topicType: TopicType?
