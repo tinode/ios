@@ -60,7 +60,12 @@ class FindViewController: UITableViewController, FindDisplayLogic {
         self.setup()
     }
     override func viewDidAppear(_ animated: Bool) {
+        self.interactor?.setup()
+        self.interactor?.attachToFndTopic()
         self.interactor?.loadAndPresentContacts(searchQuery: nil)
+    }
+    override func viewDidDisappear(_ animated: Bool) {
+        self.interactor?.cleanup()
     }
 
     // MARK: - Table view data source

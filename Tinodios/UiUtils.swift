@@ -45,6 +45,15 @@ class UiUtils {
         // TODO: logout on failure and route to login view.
         return me!.subscribe(set: nil, get: get)
     }
+    public static func attachToFndTopic(fndListener: DefaultFndTopic.Listener?) -> PromisedReply<ServerMessage>? {
+        let tinode = Cache.getTinode()
+        let fnd = tinode.getOrCreateFndTopic()
+        fnd.listener = fndListener
+        //if fnd.
+        return !fnd.attached ?
+            fnd.subscribe(set: nil, get: nil) :
+            PromisedReply<ServerMessage>(value: ServerMessage())
+    }
 
     // Get text from UITextField or mark the field red if the field is blank
     public static func ensureDataInTextField(_ field: UITextField) -> String {

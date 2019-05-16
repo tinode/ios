@@ -456,6 +456,12 @@ public class Tinode {
     public func getMeTopic() -> DefaultMeTopic? {
         return getTopic(topicName: Tinode.kTopicMe) as? DefaultMeTopic
     }
+    public func getOrCreateFndTopic() -> DefaultFndTopic {
+        if let fnd = getTopic(topicName: Tinode.kTopicFnd) as? DefaultFndTopic {
+            return fnd
+        }
+        return DefaultFndTopic(tinode: self)
+    }
     public func getTopic(topicName: String) -> TopicProto? {
         if topicName.isEmpty {
             return nil
