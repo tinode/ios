@@ -9,7 +9,7 @@ import Foundation
 import TinodeSDK
 
 protocol FindBusinessLogic: class {
-    func loadAndPresentContacts()
+    func loadAndPresentContacts(searchQuery: String?)
 }
 
 class ContactHolder {
@@ -28,8 +28,11 @@ class FindInteractor: FindBusinessLogic {
     static let kTinodeImProtocol = "Tinode"
     var presenter: FindPresentationLogic?
     var router: FindRoutingLogic?
-    //let store = CNContactStore()
     var queue = DispatchQueue(label: "co.tinode.contacts")
+    // All known contacts from BaseDb's Users table.
+    var allContacts: [ContactHolder]?
+    // Current search query (nil if none).
+    var searchQuery: String?
     private let baseDb = BaseDb.getInstance()
     private func fetchContacts() -> [ContactHolder]? {
         guard let userDb = self.baseDb.userDb, let uid = Cache.getTinode().myUid else { return nil }
@@ -43,9 +46,20 @@ class FindInteractor: FindBusinessLogic {
                 uniqueId: q.uid)
         }
     }
-    func loadAndPresentContacts() {
+    func loadAndPresentContacts(searchQuery: String? = nil) {
+        self.searchQuery = searchQuery
         queue.async {
-            let contacts: [ContactHolder] = self.fetchContacts() ?? []
+            if self.allContacts == nil {
+                self.allContacts = self.fetchContacts() ?? []
+            }
+            let contacts: [ContactHolder] =
+                self.searchQuery != nil ?
+                    self.allContacts!.filter { u in
+                        guard let displayName = u.displayName else { return false }
+                        guard let r = displayName.range(of: self.searchQuery!, options: .caseInsensitive) else {return false}
+                        return r.contains(displayName.startIndex)
+                    } :
+                    self.allContacts!
             self.presenter?.presentContacts(contacts: contacts)
         }
     }
