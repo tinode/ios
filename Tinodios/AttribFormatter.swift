@@ -330,7 +330,7 @@ class AttribFormatter: DraftyFormatter {
             // Insert linebreak then a clickable [↓ save] line
             attributed.append(NSAttributedString(string: "\u{2009}\n", attributes: [NSAttributedString.Key.font : baseFont]))
 
-            // \u{2009} because iOS is buggy as hell and bugs go unfixed for years.
+            // \u{2009} because iOS is buggy and bugs go unfixed for years.
             // https://stackoverflow.com/questions/29041458/how-to-set-color-of-templated-image-in-nstextattachment
             let second = NSMutableAttributedString(string: "\u{2009}")
             second.beginEditing()

@@ -96,6 +96,7 @@ class MessageCell: UICollectionViewCell, UITextViewDelegate {
 
     override func prepareForReuse() {
         super.prepareForReuse()
+        content.text = nil
         content.attributedText = nil
         newDateLabel.text = nil
         senderNameLabel.text = nil

@@ -42,7 +42,7 @@ class MessageViewController: UIViewController {
         // This is the space between the other side of the message and the edge of screen.
         // I.e. for incoming messages the space between the message and the *right* edge, for
         // outfoing between the message and the left edge.
-        static let kFarSideHorizontalSpacing: CGFloat = 30
+        static let kFarSideHorizontalSpacing: CGFloat = 45
 
         // Padding around content inside the message bubble.
         static let kIncomingMessageContentInset = UIEdgeInsets(top: 7, left: 18, bottom: 7, right: 14)
@@ -267,7 +267,7 @@ extension MessageViewController: UICollectionViewDataSource {
         // This message has an avatar.
         let isAvatarVisible = shouldShowAvatar(for: message, at: indexPath)
 
-        // Insets for the message bubble relative to collectionView: bubble should not touch the opposite side of the screen.
+        // Insets for the message bubble relative to collectionView: bubble should not touch the sides of the screen.
         let containerPadding = isFromCurrentSender(message: message) ? UIEdgeInsets(top: 0, left: Constants.kFarSideHorizontalSpacing, bottom: 0, right: 4) : UIEdgeInsets(top: 0, left: 4, bottom: 0, right: Constants.kFarSideHorizontalSpacing)
 
         // Maxumum allowed content width.
@@ -313,8 +313,8 @@ extension MessageViewController: UICollectionViewDataSource {
         cell.containerView.frame = CGRect(origin: CGPoint(x: originX, y: newDateLabelHeight + containerPadding.top), size: containerSize)
 
         // Content: RichTextLabel.
-        //let contentInset = isFromCurrentSender(message: message) ? Constants.kOutgoingMessageContentInset : Constants.kIncomingMessageContentInset
-        cell.content.frame = cell.containerView.bounds//.inset(by: contentInset)
+        let contentInset = isFromCurrentSender(message: message) ? Constants.kOutgoingMessageContentInset : Constants.kIncomingMessageContentInset
+        cell.content.frame = cell.containerView.bounds.inset(by: contentInset)
 
         // New date label
         if newDateLabelHeight > 0 {
@@ -506,7 +506,10 @@ extension MessageViewController : UICollectionViewDelegateFlowLayout {
             return size
         }
 
-        let size = CGSize(width: calcCellWidth(), height: calcCellHeightFromContent(for: messages[indexPath.item], at: indexPath))
+        let message = messages[indexPath.item]
+        let hasAvatars = avatarsVisible(message: message)
+        let containerHeight = calcContainerSize(for: message, avatarsVisible: hasAvatars).height
+        let size = CGSize(width: calcCellWidth(), height: calcCellHeightFromContent(for: message, at: indexPath, containerHeight: containerHeight, avatarsVisible: hasAvatars))
         cellSizeCache[indexPath.item] = size
         return size
     }
@@ -515,10 +518,8 @@ extension MessageViewController : UICollectionViewDelegateFlowLayout {
         return collectionView.frame.width - collectionView.layoutMargins.left - collectionView.layoutMargins.right
     }
 
-    func calcCellHeightFromContent(for message: Message, at indexPath: IndexPath) -> CGFloat {
-        let hasAvatars = avatarsVisible(message: message)
+    func calcCellHeightFromContent(for message: Message, at indexPath: IndexPath, containerHeight: CGFloat, avatarsVisible hasAvatars: Bool) -> CGFloat {
 
-        let containerHeight = calcContainerSize(for: message, avatarsVisible: hasAvatars).height
         let senderNameLabelHeight: CGFloat = shouldShowAvatar(for: message, at: indexPath) ? Constants.kSenderNameLabelHeight : 0
         let newDateLabelHeight: CGFloat = calcNewDateLabelHeight(at: indexPath)
         let avatarHeight = hasAvatars ? Constants.kAvatarSize : 0
@@ -556,7 +557,7 @@ extension MessageViewController : UICollectionViewDelegateFlowLayout {
         let maxWidth = calcMaxContentWidth(for: message, avatarsVisible: avatarsVisible)
         let insets = isFromCurrentSender(message: message) ? Constants.kOutgoingMessageContentInset : Constants.kIncomingMessageContentInset
 
-        var size = calcContentSize(for: message, maxWidth: maxWidth, contentInsets: insets)
+        var size = calcContentSize(for: message, maxWidth: maxWidth)
 
         size.width += insets.left + insets.right
         size.width = max(size.width, Constants.kMinimumCellWidth)
@@ -566,7 +567,7 @@ extension MessageViewController : UICollectionViewDelegateFlowLayout {
     }
 
     /// Calculate size of message content.
-    func calcContentSize(for message: Message, maxWidth: CGFloat, contentInsets insets: UIEdgeInsets) -> CGSize {
+    func calcContentSize(for message: Message, maxWidth: CGFloat) -> CGSize {
         let attributedText: NSAttributedString
 
         if let drafty = message.content {
@@ -575,7 +576,8 @@ extension MessageViewController : UICollectionViewDelegateFlowLayout {
             attributedText = NSAttributedString(string: "none", attributes: [.font: Constants.kContentFont])
         }
 
-        return attributedText.boundingRect(with: CGSize(width: maxWidth - insets.left - insets.right, height: .greatestFiniteMagnitude), options: [.usesLineFragmentOrigin, .usesFontLeading], context: nil).integral.size
+        let size = attributedText.boundingRect(with: CGSize(width: maxWidth, height: .greatestFiniteMagnitude), options: [.usesLineFragmentOrigin, .usesFontLeading], context: nil).integral.size
+        return size
     }
 }
 
