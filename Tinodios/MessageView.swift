@@ -29,11 +29,11 @@ class MessageView: UICollectionView {
     }
 
     required public init?(coder aDecoder: NSCoder) {
-        super.init(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
+        super.init(frame: .zero, collectionViewLayout: MessageViewLayout())
     }
 
     public convenience init() {
-        self.init(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
+        self.init(frame: .zero, collectionViewLayout: MessageViewLayout())
     }
 
     // MARK: - Methods

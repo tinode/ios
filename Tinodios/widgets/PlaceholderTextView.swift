@@ -8,7 +8,7 @@
 
 import UIKit
 
-// UITexView with an optional placeholder text.
+// UITexеView with an optional placeholder text.
 @IBDesignable class PlaceholderTextView: UITextView {
 
     // MARK: constants

@@ -50,8 +50,8 @@ class MessageCell: UICollectionViewCell, UITextViewDelegate {
     }()
 
     /// The message content
-    var content: RichTextLabel = {
-        let content = RichTextLabel()
+    var content: RichTextView = {
+        let content = RichTextView()
         content.isUserInteractionEnabled = true
         if #available(iOS 11.0, *) {
             content.contentInsetAdjustmentBehavior = .never
@@ -96,8 +96,12 @@ class MessageCell: UICollectionViewCell, UITextViewDelegate {
 
     override func prepareForReuse() {
         super.prepareForReuse()
+        content.attributedText = nil
         newDateLabel.text = nil
         senderNameLabel.text = nil
+        timestampLabel.text = nil
+        deliveryMarker.image = nil
+        avatarView.image = nil
     }
 
     /// Handle tap gesture on contentView and its subviews.
@@ -106,8 +110,9 @@ class MessageCell: UICollectionViewCell, UITextViewDelegate {
 
         switch true {
         case content.frame.contains(convert(touchLocation, to: content)):
-            let url = content.getURLForTap(convert(touchLocation, to: content))
-            delegate?.didTapContent(in: self, url: url)
+            // let url = content.getURLForTap(convert(touchLocation, to: content))
+            //delegate?.didTapContent(in: self, url: url)
+            break
         case containerView.frame.contains(touchLocation):
             delegate?.didTapMessage(in: self)
         case avatarView.frame.contains(touchLocation):

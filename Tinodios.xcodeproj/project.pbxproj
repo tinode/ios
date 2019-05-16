@@ -47,7 +47,8 @@
 		B02F5C8B22679BC80079A97E /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = B02F5C8A22679BC80079A97E /* ImagePicker.swift */; };
 		B031BE552263075E004160AE /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = B031BE542263075E004160AE /* Settings.bundle */; };
 		B031BE5722631304004160AE /* SettingsHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = B031BE5622631304004160AE /* SettingsHelper.swift */; };
-		B0A612AF228B08EC00569DFE /* RichTextLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0A612AE228B08EC00569DFE /* RichTextLabel.swift */; };
+		B0A612AF228B08EC00569DFE /* RichTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0A612AE228B08EC00569DFE /* RichTextView.swift */; };
+		B0A612B1228C85C300569DFE /* MessageViewLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0A612B0228C85C300569DFE /* MessageViewLayout.swift */; };
 		B0DF03172279F027000F9492 /* RoundImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0DF03162279F027000F9492 /* RoundImageView.swift */; };
 		B0DF0319227C2517000F9492 /* MessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0DF0318227C2517000F9492 /* MessageView.swift */; };
 		B0DF031D227C604C000F9492 /* MessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0DF031C227C604C000F9492 /* MessageCell.swift */; };
@@ -56,7 +57,6 @@
 		B0DF032D2282EE8A000F9492 /* SendMessageBar.xib in Resources */ = {isa = PBXBuildFile; fileRef = B0DF032C2282EE8A000F9492 /* SendMessageBar.xib */; };
 		B0DF032F2282FF46000F9492 /* SendMessageBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0DF032E2282FF46000F9492 /* SendMessageBar.swift */; };
 		B0DF03312283FFD8000F9492 /* PlaceholderTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0DF03302283FFD8000F9492 /* PlaceholderTextView.swift */; };
-		B0E8FA0822770E61005097F1 /* ButtonLayoutManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0E8FA0722770E61005097F1 /* ButtonLayoutManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -117,7 +117,8 @@
 		B02F5C8A22679BC80079A97E /* ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
 		B031BE542263075E004160AE /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		B031BE5622631304004160AE /* SettingsHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsHelper.swift; sourceTree = "<group>"; };
-		B0A612AE228B08EC00569DFE /* RichTextLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RichTextLabel.swift; sourceTree = "<group>"; };
+		B0A612AE228B08EC00569DFE /* RichTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RichTextView.swift; sourceTree = "<group>"; };
+		B0A612B0228C85C300569DFE /* MessageViewLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageViewLayout.swift; sourceTree = "<group>"; };
 		B0DF03162279F027000F9492 /* RoundImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundImageView.swift; sourceTree = "<group>"; };
 		B0DF0318227C2517000F9492 /* MessageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageView.swift; sourceTree = "<group>"; };
 		B0DF031C227C604C000F9492 /* MessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageCell.swift; sourceTree = "<group>"; };
@@ -126,7 +127,6 @@
 		B0DF032C2282EE8A000F9492 /* SendMessageBar.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SendMessageBar.xib; sourceTree = "<group>"; };
 		B0DF032E2282FF46000F9492 /* SendMessageBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendMessageBar.swift; sourceTree = "<group>"; };
 		B0DF03302283FFD8000F9492 /* PlaceholderTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceholderTextView.swift; sourceTree = "<group>"; };
-		B0E8FA0722770E61005097F1 /* ButtonLayoutManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonLayoutManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -185,6 +185,7 @@
 				0A0016E621E7236900088188 /* MessageInteractor.swift */,
 				0A0016E821E736CD00088188 /* MessagePresenter.swift */,
 				B0DF0318227C2517000F9492 /* MessageView.swift */,
+				B0A612B0228C85C300569DFE /* MessageViewLayout.swift */,
 				0A8C8A4521E5E72D00D8751E /* MessageViewController.swift */,
 				B0DF0322228051B4000F9492 /* MessageViewController+Keyboard.swift */,
 				7DDADC4F21D5C156009733B5 /* RegisterViewController.swift */,
@@ -253,11 +254,10 @@
 		B0C496B022787C020084FA0D /* widgets */ = {
 			isa = PBXGroup;
 			children = (
-				B0E8FA0722770E61005097F1 /* ButtonLayoutManager.swift */,
 				B02F5C8A22679BC80079A97E /* ImagePicker.swift */,
 				B0DF031E227C6898000F9492 /* PaddedLabel.swift */,
 				B0DF03302283FFD8000F9492 /* PlaceholderTextView.swift */,
-				B0A612AE228B08EC00569DFE /* RichTextLabel.swift */,
+				B0A612AE228B08EC00569DFE /* RichTextView.swift */,
 				B0DF03162279F027000F9492 /* RoundImageView.swift */,
 				B0DF032C2282EE8A000F9492 /* SendMessageBar.xib */,
 				B0DF032E2282FF46000F9492 /* SendMessageBar.swift */,
@@ -417,16 +417,16 @@
 				7DDADC5221D5C219009733B5 /* Validate.swift in Sources */,
 				B0DF0319227C2517000F9492 /* MessageView.swift in Sources */,
 				7DDADC5421D5C2E6009733B5 /* CredentialsViewController.swift in Sources */,
-				B0A612AF228B08EC00569DFE /* RichTextLabel.swift in Sources */,
+				B0A612AF228B08EC00569DFE /* RichTextView.swift in Sources */,
 				B0DF03172279F027000F9492 /* RoundImageView.swift in Sources */,
 				B031BE5722631304004160AE /* SettingsHelper.swift in Sources */,
 				0A35BAA02283A37500AA5E2F /* Utils.swift in Sources */,
 				0ADDBC8B2249F617000BD00D /* ChatListTableViewCell.swift in Sources */,
 				0A8A108321D4C78C00B90D73 /* TopicDb.swift in Sources */,
 				0A0016E921E736CD00088188 /* MessagePresenter.swift in Sources */,
+				B0A612B1228C85C300569DFE /* MessageViewLayout.swift in Sources */,
 				0AEE8BEE226456080022EC3F /* UiUtils.swift in Sources */,
 				0A15739421DB53130070C31F /* SubscriberDb.swift in Sources */,
-				B0E8FA0822770E61005097F1 /* ButtonLayoutManager.swift in Sources */,
 				0A8A108521D4C79700B90D73 /* SqlStore.swift in Sources */,
 				0AE50D4622156A4B0021F7B7 /* FindInteractor.swift in Sources */,
 				0A8C8A4621E5E72D00D8751E /* MessageViewController.swift in Sources */,

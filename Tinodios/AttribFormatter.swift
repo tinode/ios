@@ -20,6 +20,8 @@ class AttribFormatter: DraftyFormatter {
         static let kDefaultFont: UIFont = UIFont.preferredFont(forTextStyle: .body)
         static let kAttachmentIconSize = CGSize(width: 24, height: 32)
         static let kLinkColor = UIColor(red: 0, green: 122/255, blue: 1, alpha: 1)
+        // Minumum width of the button in fontHeights/2
+        static let kMinButtonWidth: Int = 10
     }
 
     typealias CharacterStyle = [NSAttributedString.Key: Any]
@@ -66,9 +68,9 @@ class AttribFormatter: DraftyFormatter {
 
         // Create button-like background.
         content.style(cstyle: [
-            .buttonBackground: UIColor.white.withAlphaComponent(0.9),
-            .baselineOffset: 4, // FIXME: Calculate correct offset from view height and font size
-            NSAttributedString.Key.link: NSURL(string: uri) as Any
+            .draftyButton: UIColor.white.withAlphaComponent(0.8),
+            .baselineOffset: 0, // FIXME: Calculate correct offset from view height and font size
+            NSAttributedString.Key.link: NSURL(string: uri)!
             ])
 
         let pstyle = NSMutableParagraphStyle()
