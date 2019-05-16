@@ -215,4 +215,5 @@ public class ServerMessage: Decodable {
     public var data: MsgServerData?
     public var pres: MsgServerPres?
     public var info: MsgServerInfo?
+    public init() {}
 }

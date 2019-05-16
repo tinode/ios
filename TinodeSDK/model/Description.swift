@@ -11,12 +11,12 @@ import Foundation
 // Messages may send descriptions with different
 // public and private types. We need to have a common type
 // to handle descriptions with all these types.
-public protocol DescriptionProto: Decodable {}
+public protocol DescriptionProto: Codable {}
 
-public typealias DescPublic = Any & Decodable
-public typealias DescPrivate = Any & Decodable
+public typealias DescPublic = Any & Codable
+public typealias DescPrivate = Any & Codable
 
-public class Description<DP: Decodable, DR: Decodable>: DescriptionProto {
+public class Description<DP: Codable, DR: Codable>: DescriptionProto {
     var created: Date? = nil
     var updated: Date? = nil
     var touched: Date? = nil
@@ -126,6 +126,24 @@ public class Description<DP: Decodable, DR: Decodable>: DescriptionProto {
         if sub.priv != nil {
             priv = sub.priv as? DR
             changed += 1
+        }
+        return changed > 0
+    }
+    func merge(desc: MetaSetDesc<DP, DR>) -> Bool {
+        var changed = 0
+        if let defacs = desc.defacs {
+            if self.defacs == nil {
+                self.defacs = defacs
+                changed += 1
+            } else {
+                changed += self.defacs!.merge(defacs: defacs) ? 1 : 0
+            }
+        }
+        if let pub = desc.pub {
+            self.pub = pub
+        }
+        if let priv = desc.priv {
+            self.priv = priv
         }
         return changed > 0
     }

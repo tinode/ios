@@ -610,6 +610,32 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
         self.tags = tags
         store?.topicUpdate(topic: self)
     }
+    fileprivate func update(desc: MetaSetDesc<DP, DR>) {
+        if self.description?.merge(desc: desc) ?? false {
+            self.store?.topicUpdate(topic: self)
+        }
+    }
+    // Topic sent an update to description or subscription, got a confirmation, now
+    // update local data with the new info.
+    fileprivate func update(ctrl: MsgServerCtrl, meta: MsgSetMeta<DP, DR>) {
+        if let desc = meta.desc {
+            self.update(desc: desc)
+            if let d = self.description {
+                self.listener?.onMetaDesc(desc: d)
+            }
+        }
+        if let sub = meta.sub {
+            // TODO: self.update(ctrl.params, sub)
+            if let d = sub.user, let description = self.description {
+                self.listener?.onMetaDesc(desc: description)
+            }
+            self.listener?.onSubsUpdated()
+        }
+        if let tags = meta.tags {
+            self.update(tags: tags)
+            self.listener?.onMetaTags(tags: tags)
+        }
+    }
     private func addSubToCache(sub: Subscription<SP, SR>) {
         if subs == nil {
             subs = [:]
@@ -761,6 +787,22 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
     @discardableResult
     public func getMeta(query: MsgGetMeta) -> PromisedReply<ServerMessage>? {
         return tinode?.getMeta(topic: name, query: query)
+    }
+
+    public func setMeta(meta: MsgSetMeta<DP, DR>) -> PromisedReply<ServerMessage>? {
+        do {
+            return try tinode?.setMeta(for: self.name, meta: meta)?.thenApply(
+                onSuccess: { msg in
+                    print("setMeta thenApply -> ctrl: \(msg.ctrl)")
+                    if let ctrl = msg.ctrl {
+                        self.update(ctrl: ctrl, meta: meta)
+                    }
+                    return nil
+                })
+        } catch {
+            print("failed to set meta on topic: \(error)")
+            return nil
+        }
     }
 
     public func updateAccessMode(ac: AccessChange?) -> Bool {
@@ -1085,7 +1127,7 @@ open class MeTopic<DP: Codable>: Topic<DP, PrivateType, DP, PrivateType> {
 }
 public class FndTopic<SP: Codable>: Topic<String, String, SP, Array<String>> {
     init(tinode: Tinode?) {
-        super.init(tinode: tinode, name: Tinode.kTopicMe)
+        super.init(tinode: tinode, name: Tinode.kTopicFnd)
     }
 }
 

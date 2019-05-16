@@ -15,6 +15,8 @@ class FindViewController: UITableViewController, FindDisplayLogic {
     var interactor: FindBusinessLogic?
     var contacts: [ContactHolder] = []
     var router: FindRoutingLogic?
+    var searchController: UISearchController!
+    var pendingSearchRequest: DispatchWorkItem? = nil
 
     private func setup() {
         let viewController = self
@@ -28,6 +30,22 @@ class FindViewController: UITableViewController, FindDisplayLogic {
         interactor.router = router
         presenter.viewController = viewController
         router.viewController = viewController
+
+        searchController = UISearchController(searchResultsController: nil)
+        searchController.searchResultsUpdater = self
+        searchController.searchBar.autocapitalizationType = .none
+        searchController.searchBar.placeholder = "Search by tags"
+
+        // Make it a-la Telegram UI instead of placing the search bar
+        // in the navigation item.
+        self.tableView.tableHeaderView = searchController.searchBar
+
+        searchController.delegate = self
+        // The default is true.
+        searchController.dimsBackgroundDuringPresentation = false
+        // Monitor when the search button is tapped.
+        searchController.searchBar.delegate = self
+        self.definesPresentationContext = true
     }
 
     func displayContacts(contacts newContacts: [ContactHolder]) {
@@ -42,7 +60,12 @@ class FindViewController: UITableViewController, FindDisplayLogic {
         self.setup()
     }
     override func viewDidAppear(_ animated: Bool) {
-        self.interactor?.loadAndPresentContacts()
+        self.interactor?.setup()
+        self.interactor?.attachToFndTopic()
+        self.interactor?.loadAndPresentContacts(searchQuery: nil)
+    }
+    override func viewDidDisappear(_ animated: Bool) {
+        self.interactor?.cleanup()
     }
 
     // MARK: - Table view data source
@@ -70,7 +93,51 @@ class FindViewController: UITableViewController, FindDisplayLogic {
 extension FindViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "Find2Messages" {
+            // If the search bar is active, deactivate it.
+            if searchController.isActive {
+                DispatchQueue.main.async {
+                    self.searchController.isActive = false
+                }
+            }
             router?.routeToChat(segue: segue)
         }
+    }
+}
+
+// MARK: - Search functionality
+
+extension FindViewController: UISearchResultsUpdating, UISearchControllerDelegate, UISearchBarDelegate {
+
+    private func doSearch(queryString: String?) {
+        print("Searching contacts for: \(queryString)")
+        self.interactor?.loadAndPresentContacts(searchQuery: queryString)
+    }
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.resignFirstResponder()
+        pendingSearchRequest?.cancel()
+        pendingSearchRequest = nil
+        guard let s = getQueryString() else { return }
+        doSearch(queryString: s)
+    }
+    private func getQueryString() -> String? {
+        let whitespaceCharacterSet = CharacterSet.whitespaces
+        let queryString =
+            searchController.searchBar.text!.trimmingCharacters(in: whitespaceCharacterSet)
+        return !queryString.isEmpty ? queryString : nil
+    }
+    func updateSearchResults(for searchController: UISearchController) {
+        pendingSearchRequest?.cancel()
+        pendingSearchRequest = nil
+        let queryString = getQueryString()
+        let currentSearchRequest = DispatchWorkItem() {
+            self.doSearch(queryString: queryString)
+        }
+        pendingSearchRequest = currentSearchRequest
+        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1), execute: currentSearchRequest)
+    }
+    func didDismissSearchController(_ searchController: UISearchController) {
+        pendingSearchRequest?.cancel()
+        pendingSearchRequest = nil
+        self.interactor?.loadAndPresentContacts(searchQuery: nil)
     }
 }
