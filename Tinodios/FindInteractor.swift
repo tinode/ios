@@ -9,7 +9,9 @@ import Foundation
 import TinodeSDK
 
 protocol FindBusinessLogic: class {
+    var fndTopic: DefaultFndTopic? { get }
     func loadAndPresentContacts(searchQuery: String?)
+    func updateAndPresentRemoteContacts()
     func setup()
     func cleanup()
     func attachToFndTopic()
@@ -29,11 +31,12 @@ class ContactHolder {
 
 class FindInteractor: FindBusinessLogic {
     private class FndListener: DefaultFndTopic.Listener {
+        weak var interactor: FindBusinessLogic?
         override func onMetaSub(sub: Subscription<VCard, Array<String>>) {
             // bitmaps?
         }
         override func onSubsUpdated() {
-            // reload view
+            self.interactor?.updateAndPresentRemoteContacts()
         }
     }
 
@@ -47,7 +50,7 @@ class FindInteractor: FindBusinessLogic {
     // Current search query (nil if none).
     private var searchQuery: String?
     private let baseDb = BaseDb.getInstance()
-    private var fndTopic: DefaultFndTopic?
+    var fndTopic: DefaultFndTopic?
     private var fndListener: FindInteractor.FndListener?
     // Contacts returned by the server
     // in response to a search request.
@@ -66,6 +69,7 @@ class FindInteractor: FindBusinessLogic {
     }
     func setup() {
         fndListener = FindInteractor.FndListener()
+        fndListener?.interactor = self
     }
     func cleanup() {
         fndTopic?.listener = nil
@@ -90,6 +94,16 @@ class FindInteractor: FindBusinessLogic {
         }
 
     }
+    func updateAndPresentRemoteContacts() {
+        if let subs = fndTopic?.getSubscriptions() {
+            self.remoteContacts = subs.map { sub in
+                return ContactHolder(displayName: sub.pub?.fn, image: nil, uniqueId: sub.uniqueId)
+            }
+        } else {
+            self.remoteContacts?.removeAll()
+        }
+        self.presenter?.presentRemoteContacts(contacts: self.remoteContacts!)
+    }
     func loadAndPresentContacts(searchQuery: String? = nil) {
         self.searchQuery = searchQuery
         queue.async {
@@ -108,18 +122,17 @@ class FindInteractor: FindBusinessLogic {
                     } :
                     self.localContacts!
             if let queryString = searchQuery, queryString.count >= FindInteractor.kMinTagLength {
-                /*
-                let tinode = Cache.getTinode()
-                let metaDesc: MetaSetDesc<String, String> = MetaSetDesc(pub: queryString, priv: nil)
-                let setMeta: MsgSetMeta<String, String> = MsgSetMeta<String, String>(
-                    desc: metaDesc, sub: nil, tags: nil)
-                */
+                self.fndTopic?.setMeta(
+                    meta: MsgSetMeta(desc: MetaSetDesc(pub: queryString, priv: nil),
+                    sub: nil, tags: nil))
+                self.fndTopic?.getMeta(query: MsgGetMeta.sub())
+
                 self.remoteContacts?.removeAll()
-            } else {
+            }/* else {
                 // Clear remoteContacts.
                 self.remoteContacts?.removeAll()
-            }
-            self.presenter?.presentContacts(contacts: contacts)
+            }*/
+            self.presenter?.presentLocalContacts(contacts: contacts)
         }
     }
 }

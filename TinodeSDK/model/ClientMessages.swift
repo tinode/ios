@@ -182,7 +182,6 @@ public class MsgGetMeta: CustomStringConvertible, Encodable {
     init() {
         self.what = "\(MsgGetMeta.kDesc) \(MsgGetMeta.kData) \(MsgGetMeta.kDel) \(MsgGetMeta.kTags)"
     }
-    
     public init(desc: MetaGetDesc?, sub: MetaGetSub?, data: MetaGetData?, del: MetaGetData?, tags: Bool) {
         self.desc = desc
         self.sub = sub
@@ -245,12 +244,10 @@ public class MsgGetMeta: CustomStringConvertible, Encodable {
         set |= MsgGetMeta.kTagsSet
         buildWhat()
     }
-    
     private init(what: String) {
         self.what = what
     }
-    
-    static func sub() -> MsgGetMeta {
+    public static func sub() -> MsgGetMeta {
         return MsgGetMeta(what: kSub)
     }
 }

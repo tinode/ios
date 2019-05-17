@@ -54,6 +54,7 @@ public class Acs: Codable, Equatable {
             self.mode = AcsHelper(str: modeStr)
         }
     }
+    @discardableResult
     func merge(from am: Acs?) -> Bool {
         var changed = 0
         if let am0 = am, self != am0 {

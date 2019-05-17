@@ -277,7 +277,7 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
     public var attached = false
     weak public var listener: Listener? = nil
     // Cache of topic subscribers indexed by userID
-    private var subs: [String:Subscription<SP,SR>]? = nil
+    fileprivate var subs: [String:Subscription<SP,SR>]? = nil
     public var tags: [String]? = nil
     private var lastKeyPress: Int64 = 0
 
@@ -559,6 +559,15 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
             return nil
         }
     }
+    public func getSubscriptions() -> [Subscription<SP, SR>]? {
+        if subs == nil {
+            loadSubs()
+        }
+        if let v = subs?.values {
+            return Array(v)
+        }
+        return nil
+    }
 
     private func routeMetaDesc(meta: MsgServerMeta) {
         print("routing desc")
@@ -624,8 +633,9 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
             }
         }
         if let sub = meta.sub {
-            // TODO: self.update(ctrl.params, sub)
-            if let d = sub.user, let description = self.description {
+            let acsMap = ctrl.getStringDict(for: "acs")
+            self.update(acsMap: acsMap, sub: sub)
+            if sub.user == nil, let description = self.description {
                 self.listener?.onMetaDesc(desc: description)
             }
             self.listener?.onSubsUpdated()
@@ -635,7 +645,49 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
             self.listener?.onMetaTags(tags: tags)
         }
     }
-    private func addSubToCache(sub: Subscription<SP, SR>) {
+    fileprivate func update(acsMap: [String:String]?, sub: MetaSetSub) {
+        var user = sub.user
+        var acs: Acs
+        if let acsMap = acsMap {
+            acs = Acs(from: acsMap)
+            print("mode from map \(acs)")
+        } else {
+            acs = Acs()
+            print("blank mode \(acs)")
+            if user == nil {
+                acs.want = AcsHelper(str: sub.mode)
+            } else {
+                acs.given = AcsHelper(str: sub.mode)
+            }
+        }
+        print("mode is \(acs)")
+        if user == nil || (tinode?.isMe(uid: user) ?? false) {
+            user = tinode?.myUid
+            var changed = false
+            if self.description?.acs == nil {
+                self.description?.acs = acs
+                changed = true
+                print("Desc set to \(String(describing: self.description?.acs))")
+            } else {
+                self.description!.acs!.merge(from: acs)
+                print("Merged to Desc: \(String(describing: self.description?.acs))")
+            }
+            if changed {
+                self.store?.topicUpdate(topic: self)
+            }
+        }
+        if let sub2 = self.getSubscription(for: user) {
+            sub2.acs?.merge(from: acs)
+            store?.subUpdate(topic: self, sub: sub2)
+        } else {
+            let sub2 = Subscription<SP, SR>()
+            sub2.user = user
+            sub2.acs = acs
+            self.addSubToCache(sub: sub2)
+            _ = self.store?.subNew(topic: self, sub: sub2)
+        }
+    }
+    fileprivate func addSubToCache(sub: Subscription<SP, SR>) {
         if subs == nil {
             subs = [:]
         }
@@ -1123,6 +1175,36 @@ open class MeTopic<DP: Codable>: Topic<DP, PrivateType, DP, PrivateType> {
 public class FndTopic<SP: Codable>: Topic<String, String, SP, Array<String>> {
     init(tinode: Tinode?) {
         super.init(tinode: tinode, name: Tinode.kTopicFnd)
+    }
+    @discardableResult
+    override public func setMeta(meta: MsgSetMeta<String, String>) -> PromisedReply<ServerMessage>? {
+        if self.subs != nil {
+            self.subs!.removeAll()
+            self.subs = nil
+            self.subsLastUpdated = nil
+            self.listener?.onSubsUpdated()
+        }
+        return super.setMeta(meta: meta)
+    }
+    override func routeMetaSub(meta: MsgServerMeta) {
+        if let subscriptions = meta.sub {
+            for upd in subscriptions {
+                var sub = getSubscription(for: upd.uniqueId)
+                if sub != nil {
+                    _ = sub!.merge(sub: upd as! Subscription<SP, [String]>)
+                } else {
+                    sub = upd as? Subscription<SP, [String]>
+                    self.addSubToCache(sub: sub!)
+                }
+                self.listener?.onMetaSub(sub: sub!)
+            }
+        }
+        self.listener?.onSubsUpdated()
+    }
+    override public func getSubscriptions() -> [Subscription<SP, Array<String>>]? {
+        //return mSubs != null ? mSubs.values() : null;
+        guard let v = subs?.values else { return nil }
+        return Array(v)
     }
 }
 

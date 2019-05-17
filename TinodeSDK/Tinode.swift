@@ -211,7 +211,9 @@ public class Tinode {
         }
         return topicsLoaded
     }
-
+    public func isMe(uid: String?) -> Bool {
+        return self.myUid == uid
+    }
     public func updateUser<DP: Codable, DR: Codable>(uid: String, desc: Description<DP, DR>) {
         if let user = users[uid] {
             _ = (user as? User<DP>)?.merge(from: desc)
