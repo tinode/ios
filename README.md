@@ -9,6 +9,7 @@ The immediate goal is to have a basic end-to-end working application prototype t
 ## Features
 
 ### Completed
+
 * Login
 * Register new accounts.
 * View the list of active chats
@@ -17,19 +18,21 @@ The immediate goal is to have a basic end-to-end working application prototype t
 * Unread message counters.
 * Local data persistence.
 * Transport Level Security - https/wss.
+* Drafty: Markdown-style formatting of text, e.g. \*style\* → **style**.
+* Viewing attachments and inline images.
+
 
 ### Does not work yet
+
 * Start new chats.
 * Edit chat parameters.
 * Typing indicators.
 * Delivery and received/read indicators for messages (little check marks in messages).
-* Drafty: Markdown-style formatting of text, e.g. \*style\* → **style**.
-* Attachments and inline images.
 * Muting/un-muting conversations and other permission management.
-* Integration with iOS's stock Contacts.
 * Invite contacts to the app by SMS or email.
 * Editing of personal details.
 * Push notifications.
+* Attachments and inline images cannot be created yet.
 
 
 ## Dependencies
