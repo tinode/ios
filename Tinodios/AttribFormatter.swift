@@ -26,12 +26,10 @@ class AttribFormatter: DraftyFormatter {
 
     typealias CharacterStyle = [NSAttributedString.Key: Any]
 
-    let clicker: UITextViewDelegate?
     let baseFont: UIFont?
 
-    init(baseFont font: UIFont?, clicker: UITextViewDelegate?) {
+    init(baseFont font: UIFont?) {
         self.baseFont = font
-        self.clicker = clicker
     }
 
     // Inline image
@@ -160,9 +158,9 @@ class AttribFormatter: DraftyFormatter {
     /// - Parameters:
     ///    - content: Drafty object to convert
     ///    - baseFont: base font to derive styles from.
-    ///    - clicker: methods to call in response to touch events in formatted text.
+    ///    - textColor: default text color.
     ///    - maxSize: maximum size of attached images
-    public static func toAttributed(_ content: Drafty, baseFont font: UIFont?, clicker: UITextViewDelegate?, maxSize: CGSize) -> NSAttributedString {
+    public static func toAttributed(_ content: Drafty, baseFont font: UIFont?, textColor color: UIColor?, maxSize: CGSize) -> NSAttributedString {
 
         if content.isPlain {
             let attributed = NSMutableAttributedString(string: content.string)
@@ -170,9 +168,11 @@ class AttribFormatter: DraftyFormatter {
             return attributed
         }
 
-        let formatTree = content.format(formatter: AttribFormatter(baseFont: font, clicker: clicker))
+        let formatTree = content.format(formatter: AttribFormatter(baseFont: font))
         let attributed = formatTree.toAttributed(baseFont: font ?? Constants.kDefaultFont, fontTraits: nil, size: maxSize)
-
+        if let color = color {
+            attributed.addAttribute(NSAttributedString.Key.foregroundColor, value: color, range: NSRange(location: 0, length: attributed.length))
+        }
         return attributed
     }
 
