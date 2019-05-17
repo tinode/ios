@@ -8,13 +8,17 @@
 import Foundation
 
 protocol FindPresentationLogic {
-    func presentContacts(contacts: [ContactHolder])
+    func presentLocalContacts(contacts: [ContactHolder])
+    func presentRemoteContacts(contacts: [ContactHolder])
 }
 
 class FindPresenter: FindPresentationLogic {
     weak var viewController: FindDisplayLogic?
     
-    func presentContacts(contacts: [ContactHolder]) {
-        viewController?.displayContacts(contacts: contacts)
+    func presentLocalContacts(contacts: [ContactHolder]) {
+        viewController?.displayLocalContacts(contacts: contacts)
+    }
+    func presentRemoteContacts(contacts: [ContactHolder]) {
+        viewController?.displayRemoteContacts(contacts: contacts)
     }
 }

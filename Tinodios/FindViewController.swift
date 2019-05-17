@@ -8,12 +8,14 @@
 import UIKit
 
 protocol FindDisplayLogic: class {
-    func displayContacts(contacts: [ContactHolder])
+    func displayLocalContacts(contacts: [ContactHolder])
+    func displayRemoteContacts(contacts: [ContactHolder])
 }
 
 class FindViewController: UITableViewController, FindDisplayLogic {
     var interactor: FindBusinessLogic?
-    var contacts: [ContactHolder] = []
+    var localContacts: [ContactHolder] = []
+    var remoteContacts: [ContactHolder] = []
     var router: FindRoutingLogic?
     var searchController: UISearchController!
     var pendingSearchRequest: DispatchWorkItem? = nil
@@ -48,8 +50,14 @@ class FindViewController: UITableViewController, FindDisplayLogic {
         self.definesPresentationContext = true
     }
 
-    func displayContacts(contacts newContacts: [ContactHolder]) {
-        self.contacts = newContacts
+    func displayLocalContacts(contacts newContacts: [ContactHolder]) {
+        self.localContacts = newContacts
+        DispatchQueue.main.async {
+            self.tableView.reloadData()
+        }
+    }
+    func displayRemoteContacts(contacts newContacts: [ContactHolder]) {
+        self.remoteContacts = newContacts
         DispatchQueue.main.async {
             self.tableView.reloadData()
         }
@@ -71,18 +79,29 @@ class FindViewController: UITableViewController, FindDisplayLogic {
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
+        return 2
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.contacts.count
+        switch section {
+        case 0: return self.localContacts.count
+        case 1: return self.remoteContacts.count
+        default: return 0
+        }
+    }
+    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        switch section {
+        case 0: return "Local Contacts"
+        case 1: return "Directory"
+        default: return nil
+        }
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "FindTableViewCell", for: indexPath)
 
         // Configure the cell...
-        let contact = contacts[indexPath.row]
+        let contact = indexPath.section == 0 ? localContacts[indexPath.row] : remoteContacts[indexPath.row]
         cell.textLabel?.text = contact.displayName
         cell.detailTextLabel?.text = contact.uniqueId
 
