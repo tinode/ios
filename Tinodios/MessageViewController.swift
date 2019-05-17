@@ -44,7 +44,14 @@ class MessageViewController: UIViewController {
         // outfoing between the message and the left edge.
         static let kFarSideHorizontalSpacing: CGFloat = 45
 
-        // Padding around content inside the message bubble.
+        // Insets around collection view, i.e. main view padding
+        static let kCollectionViewInset = UIEdgeInsets(top: 0, left: 4, bottom: 0, right: 4)
+
+        // Insets for the message bubble relative to collectionView: bubble should not touch the sides of the screen.
+        static let kIncomingContainerPadding = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: Constants.kFarSideHorizontalSpacing)
+        static let kOutgoingContainerPadding = UIEdgeInsets(top: 0, left: Constants.kFarSideHorizontalSpacing, bottom: 0, right: 0)
+
+        // Insets around content inside the message bubble.
         static let kIncomingMessageContentInset = UIEdgeInsets(top: 7, left: 18, bottom: 7, right: 14)
         static let kOutgoingMessageContentInset = UIEdgeInsets(top: 7, left: 14, bottom: 7, right: 18)
     }
@@ -143,7 +150,7 @@ class MessageViewController: UIViewController {
         view.addSubview(collectionView)
         self.collectionView = collectionView
 
-        collectionView.layoutMargins = UIEdgeInsets(top: 0, left: 4, bottom: 0, right: 4)
+        collectionView.layoutMargins = Constants.kCollectionViewInset
 
         collectionView.addSubview(refreshControl)
         refreshControl.addTarget(self, action: #selector(loadNextPage), for: .valueChanged)
@@ -268,7 +275,7 @@ extension MessageViewController: UICollectionViewDataSource {
         let isAvatarVisible = shouldShowAvatar(for: message, at: indexPath)
 
         // Insets for the message bubble relative to collectionView: bubble should not touch the sides of the screen.
-        let containerPadding = isFromCurrentSender(message: message) ? UIEdgeInsets(top: 0, left: Constants.kFarSideHorizontalSpacing, bottom: 0, right: 4) : UIEdgeInsets(top: 0, left: 4, bottom: 0, right: Constants.kFarSideHorizontalSpacing)
+        let containerPadding = isFromCurrentSender(message: message) ? Constants.kOutgoingContainerPadding : Constants.kIncomingContainerPadding
 
         // Maxumum allowed content width.
         let maxContentWidth = calcMaxContentWidth(for: message, avatarsVisible: hasAvatars)
@@ -286,7 +293,7 @@ extension MessageViewController: UICollectionViewDataSource {
         let senderNameLabelHeight = isAvatarVisible ? Constants.kSenderNameLabelHeight : 0
 
         if isAvatarVisible {
-            cell.avatarView.frame = CGRect(origin: CGPoint(x: collectionView.layoutMargins.left, y: cellSize.height - Constants.kAvatarSize - senderNameLabelHeight), size: CGSize(width: Constants.kAvatarSize, height: Constants.kAvatarSize))
+            cell.avatarView.frame = CGRect(origin: CGPoint(x: 0, y: cellSize.height - Constants.kAvatarSize - senderNameLabelHeight), size: CGSize(width: Constants.kAvatarSize, height: Constants.kAvatarSize))
 
             // The avatar image should be assigned after setting the size. Otherwise it may be drawn twice.
             if let sub = topic?.getSubscription(for: message.from) {
@@ -297,7 +304,7 @@ extension MessageViewController: UICollectionViewDataSource {
             }
 
             // Sender name under the avatar.
-            cell.senderNameLabel.frame = CGRect(origin: CGPoint(x: collectionView.layoutMargins.left, y: cellSize.height - senderNameLabelHeight), size: CGSize(width: cellSize.width, height: senderNameLabelHeight))
+            cell.senderNameLabel.frame = CGRect(origin: CGPoint(x: 0, y: cellSize.height - senderNameLabelHeight), size: CGSize(width: cellSize.width, height: senderNameLabelHeight))
         } else {
             cell.avatarView.frame = .zero
             cell.senderNameLabel.frame = .zero
@@ -309,7 +316,7 @@ extension MessageViewController: UICollectionViewDataSource {
         // FIXME: this call calculates content size for the second time.
         let containerSize = calcContainerSize(for: message, avatarsVisible: hasAvatars)
         // isFromCurrent Sender ? Flush container right : flush left.
-        let originX = collectionView.layoutMargins.left +  (isFromCurrentSender(message: message) ? cellSize.width - avatarPadding - containerSize.width - containerPadding.right : avatarPadding + containerPadding.left)
+        let originX = isFromCurrentSender(message: message) ? cellSize.width - avatarPadding - containerSize.width - containerPadding.right : avatarPadding + containerPadding.left
         cell.containerView.frame = CGRect(origin: CGPoint(x: originX, y: newDateLabelHeight + containerPadding.top), size: containerSize)
 
         // Content: RichTextLabel.
@@ -546,7 +553,7 @@ extension MessageViewController : UICollectionViewDelegateFlowLayout {
 
         let avatarWidth = avatarsVisible ? Constants.kAvatarSize : 0
 
-        let padding = isFromCurrentSender(message: message) ? UIEdgeInsets(top: 0, left: Constants.kFarSideHorizontalSpacing, bottom: 0, right: 4) : UIEdgeInsets(top: 0, left: 4, bottom: 0, right: Constants.kFarSideHorizontalSpacing)
+        let padding = isFromCurrentSender(message: message) ? Constants.kOutgoingContainerPadding : Constants.kIncomingContainerPadding
 
         return calcCellWidth() - avatarWidth - padding.left - padding.right - insets.left - insets.right
     }
