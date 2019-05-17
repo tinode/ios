@@ -61,22 +61,11 @@ class AttribFormatter: DraftyFormatter {
     }
 
     private func handleButton(content: TreeNode, attr: [String : JSONValue]?) {
-        guard let uri = AttribFormatter.buttonDataAsUri(attr) else { return }
+        guard let urlStr = AttribFormatter.buttonDataAsUri(attr), let url = URL(string: urlStr) else { return }
 
-        // TODO: ensure button width: if it's the only one in a row, it's fine, if there
-        // are multiple buttons per row, add spaces before and after and stretch them by kerning.
-
-        // Create button-like background.
-        content.style(cstyle: [
-            .draftyButton: UIColor.white.withAlphaComponent(0.8),
-            .baselineOffset: 0, // FIXME: Calculate correct offset from view height and font size
-            NSAttributedString.Key.link: NSURL(string: uri)!
-            ])
-
-        let pstyle = NSMutableParagraphStyle()
-        pstyle.alignment = .center
-        pstyle.lineHeightMultiple = Constants.kFormLineSpacing
-        content.style(pstyle: pstyle)
+        var attachment = Attachment()
+        attachment.button = url
+        content.attachment(attachment)
     }
 
     // Convert button payload to an URL.
@@ -191,6 +180,8 @@ class AttribFormatter: DraftyFormatter {
     struct Attachment {
         var data: Data?
         var image: UIImage?
+        var button: URL?
+
         var mime: String?
         var name: String?
         var ref: String?
@@ -212,7 +203,7 @@ class AttribFormatter: DraftyFormatter {
         var attachment: Attachment?
 
         // Leaf
-        var text: NSMutableAttributedString?
+        var text: NSAttributedString?
         // Subtree
         var children: [TreeNode]?
 
@@ -223,7 +214,7 @@ class AttribFormatter: DraftyFormatter {
 
         // Create unstyled node
         init(text: String?, nodes: [TreeNode]?) {
-            self.text = text == nil ? nil : NSMutableAttributedString(string: text!)
+            self.text = text == nil ? nil : NSAttributedString(string: text!)
             self.children = nodes
         }
 
@@ -288,7 +279,7 @@ class AttribFormatter: DraftyFormatter {
         }
 
         // Custom layout for attachments.
-        func attachmentToAttributed(_ attachment: Attachment, baseFont: UIFont, maxSize size: CGSize) -> NSAttributedString {
+        private func attachmentToAttributed(_ attachment: Attachment, baseFont: UIFont, fontTraits: UIFontDescriptor.SymbolicTraits?, maxSize size: CGSize) -> NSAttributedString {
             // Image handling is easy.
             if let image = attachment.image {
                 let wrapper = NSTextAttachment()
@@ -296,6 +287,21 @@ class AttribFormatter: DraftyFormatter {
                 let (scaledSize, _) = image.sizeUnder(maxWidth: size.width, maxHeight: size.height, clip: false)
                 wrapper.bounds = CGRect(origin: .zero, size: scaledSize)
                 return NSAttributedString(attachment: wrapper)
+            }
+
+            // button is also not too hard
+            if let buttonUrl = attachment.button {
+                let faceText = NSMutableAttributedString()
+                if let text = text {
+                    faceText.append(textToAttributed(text, baseFont: baseFont, fontTraits: fontTraits))
+                } else if let children = children {
+                    for child in children {
+                        faceText.append(child.toAttributed(baseFont: baseFont, fontTraits: fontTraits, size: size))
+                    }
+                } else {
+                    faceText.append(NSAttributedString(string: "button"))
+                }
+                return NSAttributedString(attachment: DraftyButtonAttachment(face: faceText, data: buttonUrl))
             }
 
             // File attachment is harder: construct attributed string fr showing an attachment.
@@ -361,6 +367,21 @@ class AttribFormatter: DraftyFormatter {
             return attributed
         }
 
+        private func textToAttributed(_ text: NSAttributedString, baseFont: UIFont, fontTraits: UIFontDescriptor.SymbolicTraits?) -> NSAttributedString {
+            let attributed = NSMutableAttributedString()
+
+            attributed.append(text)
+            let font: UIFont
+            if let fontTraits = fontTraits {
+                font = UIFont(descriptor: baseFont.fontDescriptor.withSymbolicTraits(fontTraits)!, size: baseFont.pointSize)
+            } else {
+                font = baseFont
+            }
+            attributed.addAttributes([.font : font], range: NSRange(location: 0, length: attributed.length))
+
+            return attributed
+        }
+
         func toAttributed(baseFont: UIFont, fontTraits parentFontTraits: UIFontDescriptor.SymbolicTraits?, size: CGSize) -> NSMutableAttributedString {
             let attributed = NSMutableAttributedString()
 
@@ -378,17 +399,11 @@ class AttribFormatter: DraftyFormatter {
 
             // First check for attachments.
             if let attachment = self.attachment {
-                attributed.append(attachmentToAttributed(attachment, baseFont: baseFont, maxSize: size))
+                // Image or file attachment
+                attributed.append(attachmentToAttributed(attachment, baseFont: baseFont, fontTraits: fontTraits, maxSize: size))
             } else if let text = self.text {
                 // Uniformly styled substring. Apply uniform font style.
-                attributed.append(text)
-                let font: UIFont
-                if let fontTraits = fontTraits {
-                    font = UIFont(descriptor: baseFont.fontDescriptor.withSymbolicTraits(fontTraits)!, size: baseFont.pointSize)
-                } else {
-                    font = baseFont
-                }
-                attributed.addAttributes([.font : font], range: NSRange(location: 0, length: attributed.length))
+                attributed.append(textToAttributed(text, baseFont: baseFont, fontTraits: fontTraits))
             } else if let children = self.children {
                 // Pass calculated font styles to children.
                 for child in children {

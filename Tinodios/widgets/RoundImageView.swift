@@ -163,8 +163,8 @@ class RoundImageView: UIImageView {
 
     // Calculate the size of the square which fits inside the cirlce of the given diameter.
     private func calcTextRect(outerViewWidth diameter: CGFloat) -> CGRect {
-        let size = diameter * 0.70710678118
-        let offset = diameter * 0.1464466094
+        let size = diameter * 0.70710678118 // = sqrt(2) / 2
+        let offset = diameter * 0.1464466094 // (1 - sqrt(2) / 2) / 2
         // In case the font exactly fits to the region, put 2 pixels both left and right
         return CGRect(x: offset+2, y: offset, width: size-4, height: size)
     }

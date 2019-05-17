@@ -49,6 +49,7 @@
 		B031BE5722631304004160AE /* SettingsHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = B031BE5622631304004160AE /* SettingsHelper.swift */; };
 		B0A612AF228B08EC00569DFE /* RichTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0A612AE228B08EC00569DFE /* RichTextView.swift */; };
 		B0A612B1228C85C300569DFE /* MessageViewLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0A612B0228C85C300569DFE /* MessageViewLayout.swift */; };
+		B0A612B3228EDC7B00569DFE /* DraftyButtonAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0A612B2228EDC7B00569DFE /* DraftyButtonAttachment.swift */; };
 		B0DF03172279F027000F9492 /* RoundImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0DF03162279F027000F9492 /* RoundImageView.swift */; };
 		B0DF0319227C2517000F9492 /* MessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0DF0318227C2517000F9492 /* MessageView.swift */; };
 		B0DF031D227C604C000F9492 /* MessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0DF031C227C604C000F9492 /* MessageCell.swift */; };
@@ -119,6 +120,7 @@
 		B031BE5622631304004160AE /* SettingsHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsHelper.swift; sourceTree = "<group>"; };
 		B0A612AE228B08EC00569DFE /* RichTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RichTextView.swift; sourceTree = "<group>"; };
 		B0A612B0228C85C300569DFE /* MessageViewLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageViewLayout.swift; sourceTree = "<group>"; };
+		B0A612B2228EDC7B00569DFE /* DraftyButtonAttachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DraftyButtonAttachment.swift; sourceTree = "<group>"; };
 		B0DF03162279F027000F9492 /* RoundImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundImageView.swift; sourceTree = "<group>"; };
 		B0DF0318227C2517000F9492 /* MessageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageView.swift; sourceTree = "<group>"; };
 		B0DF031C227C604C000F9492 /* MessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageCell.swift; sourceTree = "<group>"; };
@@ -261,6 +263,7 @@
 				B0DF03162279F027000F9492 /* RoundImageView.swift */,
 				B0DF032C2282EE8A000F9492 /* SendMessageBar.xib */,
 				B0DF032E2282FF46000F9492 /* SendMessageBar.swift */,
+				B0A612B2228EDC7B00569DFE /* DraftyButtonAttachment.swift */,
 			);
 			path = widgets;
 			sourceTree = "<group>";
@@ -421,6 +424,7 @@
 				B0DF03172279F027000F9492 /* RoundImageView.swift in Sources */,
 				B031BE5722631304004160AE /* SettingsHelper.swift in Sources */,
 				0A35BAA02283A37500AA5E2F /* Utils.swift in Sources */,
+				B0A612B3228EDC7B00569DFE /* DraftyButtonAttachment.swift in Sources */,
 				0ADDBC8B2249F617000BD00D /* ChatListTableViewCell.swift in Sources */,
 				0A8A108321D4C78C00B90D73 /* TopicDb.swift in Sources */,
 				0A0016E921E736CD00088188 /* MessagePresenter.swift in Sources */,
