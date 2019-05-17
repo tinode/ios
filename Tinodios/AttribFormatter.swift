@@ -80,14 +80,18 @@ class AttribFormatter: DraftyFormatter {
             // tinode:default?name=value
             baseUrl = URLComponents()
             baseUrl.scheme = "tinode"
-            baseUrl.host = "default"
+            baseUrl.host = ""
+            baseUrl.path = "/post"
         } else {
             return nil
         }
 
         if let name = attr["name"]?.asString() {
-            let actionValue = attr["val"]?.asString()
-            baseUrl.queryItems?.append(URLQueryItem(name: name, value: actionValue ?? "1"))
+            let actionValue = attr["val"]?.asString() ?? "1"
+            if baseUrl.queryItems == nil {
+                baseUrl.queryItems = []
+            }
+            baseUrl.queryItems?.append(URLQueryItem(name: name, value: actionValue))
         }
 
         return baseUrl.url?.absoluteString

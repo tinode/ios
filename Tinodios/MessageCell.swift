@@ -18,8 +18,8 @@ protocol MessageCellDelegate: class {
     func didTapAvatar(in cell: MessageCell)
 }
 
-// Contains message bubble + avatar + delivery markers.
-class MessageCell: UICollectionViewCell, UITextViewDelegate {
+// Optional date, avatar, sender name, message bubble: content, delivery marker, timestamp.
+class MessageCell: UICollectionViewCell {
 
     // MARK: - Initializers
 
@@ -57,6 +57,11 @@ class MessageCell: UICollectionViewCell, UITextViewDelegate {
             content.contentInsetAdjustmentBehavior = .never
         }
 
+        content.isScrollEnabled = false
+        content.isUserInteractionEnabled = true
+        content.isEditable = false
+        content.isSelectable = true
+
         return content
     }()
 
@@ -87,7 +92,7 @@ class MessageCell: UICollectionViewCell, UITextViewDelegate {
         contentView.addSubview(newDateLabel)
         contentView.addSubview(senderNameLabel)
         contentView.addSubview(containerView)
-        content.delegate = self
+        // content.delegate = self
         containerView.addSubview(content)
         // containerView.addSubview(deliveryMarker)
         // containerView.addSubview(timestampLabel)
@@ -111,9 +116,8 @@ class MessageCell: UICollectionViewCell, UITextViewDelegate {
 
         switch true {
         case content.frame.contains(convert(touchLocation, to: content)):
-            // let url = content.getURLForTap(convert(touchLocation, to: content))
-            //delegate?.didTapContent(in: self, url: url)
-            break
+            let url = content.getURLForTap(convert(touchLocation, to: content))
+            delegate?.didTapContent(in: self, url: url)
         case containerView.frame.contains(touchLocation):
             delegate?.didTapMessage(in: self)
         case avatarView.frame.contains(touchLocation):
@@ -125,11 +129,12 @@ class MessageCell: UICollectionViewCell, UITextViewDelegate {
 
     /// Handle long press gesture, return true when gestureRecognizer's touch point in `containerView`'s frame
     override func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+        print("gesture recognizer should begin")
         let touchPoint = gestureRecognizer.location(in: self)
         guard gestureRecognizer.isKind(of: UILongPressGestureRecognizer.self) else { return false }
         return containerView.frame.contains(touchPoint)
     }
-
+/*
     func textView(_ content: UITextView, shouldInteractWith: NSTextAttachment, in: NSRange, interaction: UITextItemInteraction) -> Bool {
         print("shouldInteractWith attachment \(shouldInteractWith)")
         return true
@@ -139,5 +144,6 @@ class MessageCell: UICollectionViewCell, UITextViewDelegate {
         print("shouldInteractWith URL \(shouldInteractWith)")
         return true
     }
+*/
 }
 

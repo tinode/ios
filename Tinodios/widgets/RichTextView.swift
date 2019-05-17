@@ -7,7 +7,7 @@
 
 import UIKit
 
-// UITextView with some layout issues fixed.
+/// UITextView with some layout issues fixed.
 class RichTextView : UITextView {
 
     override func layoutSubviews() {
@@ -21,7 +21,11 @@ class RichTextView : UITextView {
         textContainerInset = .zero //UIEdgeInsets(top: 6, left: 0, bottom: 4, right: 0)
         textContainer.lineFragmentPadding = 0
         contentInset = UIEdgeInsets.zero
+
         isScrollEnabled = false
+        isUserInteractionEnabled = true
+        isEditable = false
+        isSelectable = true
 
         var b = bounds
         let h = sizeThatFits(CGSize(
@@ -39,6 +43,31 @@ class RichTextView : UITextView {
     // MARK: public methods
 
     public func getURLForTap(_ location: CGPoint) -> URL? {
-        return nil
+        // See discussion: https://stackoverflow.com/questions/19318092/how-to-detect-touch-on-nstextattachment/49153247#49153247
+
+        let glyphIndex: Int = layoutManager.glyphIndex(for: location, in: textContainer, fractionOfDistanceThroughGlyph: nil)
+        let glyphRect = layoutManager.boundingRect(forGlyphRange: NSRange(location: glyphIndex, length: 1), in: textContainer)
+
+        guard glyphRect.contains(location) else { return nil }
+
+        let characterIndex: Int = layoutManager.characterIndexForGlyph(at: glyphIndex)
+
+        guard characterIndex < textStorage.length else { return nil }
+
+        // Check if an URL was tapped
+        if let link = textStorage.attribute(.link, at: characterIndex, effectiveRange: nil) as? NSURL {
+            return link.absoluteURL
+        }
+
+        guard NSTextAttachment.character == (textStorage.string as NSString).character(at: characterIndex) else { return nil }
+        guard let attachment = textStorage.attribute(.attachment, at: characterIndex, effectiveRange: nil) as? NSTextAttachment else { return nil }
+
+        if let button = attachment as? DraftyButtonAttachment {
+            return button.payload
+        }
+
+        print("Generic attachment \(attachment) tapped")
+
+        return URL(string: "tinode://generic-attachment/")
     }
 }
