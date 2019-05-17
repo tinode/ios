@@ -287,6 +287,7 @@ class AttribFormatter: DraftyFormatter {
             return (text == nil || text!.length == 0) && (children == nil || children!.isEmpty)
         }
 
+        // Custom layout for attachments.
         func attachmentToAttributed(_ attachment: Attachment, baseFont: UIFont, maxSize size: CGSize) -> NSAttributedString {
             // Image handling is easy.
             if let image = attachment.image {
@@ -297,7 +298,8 @@ class AttribFormatter: DraftyFormatter {
                 return NSAttributedString(attachment: wrapper)
             }
 
-            // File attachment is harder: constructing custom view.
+            // File attachment is harder: construct attributed string fr showing an attachment.
+
             guard let bits = attachment.data else { return NSAttributedString() }
 
             let attributed = NSMutableAttributedString()
