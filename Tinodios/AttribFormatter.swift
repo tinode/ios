@@ -16,20 +16,23 @@ class AttribFormatter: DraftyFormatter {
     typealias Node = AttribFormatter.TreeNode
 
     private enum Constants {
-        static let kFormLineSpacing: CGFloat = 1.5
         static let kDefaultFont: UIFont = UIFont.preferredFont(forTextStyle: .body)
+        /// Size of the document icon in attachments.
         static let kAttachmentIconSize = CGSize(width: 24, height: 32)
+        /// URL and Button text color
         static let kLinkColor = UIColor(red: 0, green: 122/255, blue: 1, alpha: 1)
-        // Minumum width of the button in fontHeights/2
+        /// Minumum width of the button in fontHeights/2
         static let kMinButtonWidth: Int = 10
+        // Line hight multiplier in forms.
+        static let kFormLineSpacing: CGFloat = 1.5
     }
 
     typealias CharacterStyle = [NSAttributedString.Key: Any]
 
-    let baseFont: UIFont?
+    let defaultAttrs: [NSAttributedString.Key: Any]
 
-    init(baseFont font: UIFont?) {
-        self.baseFont = font
+    init(defaultAttrs attrs: [NSAttributedString.Key: Any]) {
+        defaultAttrs = attrs
     }
 
     // Inline image
@@ -112,7 +115,10 @@ class AttribFormatter: DraftyFormatter {
         case "CO":
             // .traitMonoSpace is not a real font trait. It cannot be applied to an arbitrary font. A real
             // monospaced font must be selected manually.
-            span.style(cstyle: [NSAttributedString.Key.font: UIFont(name: "Courier", size: (baseFont ?? Constants.kDefaultFont).pointSize)!])
+            let baseFont = defaultAttrs[.font] as! UIFont
+            var attributes = defaultAttrs
+            attributes[.font] = UIFont(name: "Courier", size: baseFont.pointSize)!
+            span.style(cstyle: attributes)
         case "BR":
             span = TreeNode(content: "\n")
         case "LN":
@@ -161,23 +167,22 @@ class AttribFormatter: DraftyFormatter {
     /// Convert drafty object into NSAttributedString
     /// - Parameters:
     ///    - content: Drafty object to convert
-    ///    - baseFont: base font to derive styles from.
-    ///    - textColor: default text color.
     ///    - maxSize: maximum size of attached images
-    public static func toAttributed(_ content: Drafty, baseFont font: UIFont?, textColor color: UIColor?, maxSize: CGSize) -> NSAttributedString {
+    ///    - defaultAttrs: default attribues to apply to all otherwise unstyled content.
+    ///    - textColor: default text color.
+    public static func toAttributed(_ content: Drafty, maxSize: CGSize, defaultAttrs: [NSAttributedString.Key : Any]? = nil) -> NSAttributedString {
+
+        var attributes: [NSAttributedString.Key : Any] = defaultAttrs ?? [:]
+        if attributes[.font] == nil {
+            attributes[.font] = Constants.kDefaultFont
+        }
 
         if content.isPlain {
-            let attributed = NSMutableAttributedString(string: content.string)
-            attributed.addAttributes([.font : (font ?? Constants.kDefaultFont)], range: NSRange(location: 0, length: attributed.length))
-            return attributed
+            return NSMutableAttributedString(string: content.string, attributes: attributes)
         }
 
-        let formatTree = content.format(formatter: AttribFormatter(baseFont: font))
-        let attributed = formatTree.toAttributed(baseFont: font ?? Constants.kDefaultFont, fontTraits: nil, size: maxSize)
-        if let color = color {
-            attributed.addAttribute(NSAttributedString.Key.foregroundColor, value: color, range: NSRange(location: 0, length: attributed.length))
-        }
-        return attributed
+        let formatTree = content.format(formatter: AttribFormatter(defaultAttrs: attributes))
+        return formatTree.toAttributed(defaultAttrs: attributes, fontTraits: nil, size: maxSize)
     }
 
     // File or image attachment.
@@ -207,7 +212,7 @@ class AttribFormatter: DraftyFormatter {
         var attachment: Attachment?
 
         // Leaf
-        var text: NSAttributedString?
+        var text: String?
         // Subtree
         var children: [TreeNode]?
 
@@ -218,7 +223,7 @@ class AttribFormatter: DraftyFormatter {
 
         // Create unstyled node
         init(text: String?, nodes: [TreeNode]?) {
-            self.text = text == nil ? nil : NSAttributedString(string: text!)
+            self.text = text
             self.children = nodes
         }
 
@@ -244,7 +249,7 @@ class AttribFormatter: DraftyFormatter {
         }
 
         var description: String {
-            return text != nil ? text!.string : children?.description ?? "nil"
+            return text ?? children?.description ?? "nil"
         }
 
         func style(cstyle: CharacterStyle) {
@@ -279,11 +284,11 @@ class AttribFormatter: DraftyFormatter {
         }
 
         var isEmpty: Bool {
-            return (text == nil || text!.length == 0) && (children == nil || children!.isEmpty)
+            return (text == nil || text!.isEmpty) && (children == nil || children!.isEmpty)
         }
 
-        // Custom layout for attachments.
-        private func attachmentToAttributed(_ attachment: Attachment, baseFont: UIFont, fontTraits: UIFontDescriptor.SymbolicTraits?, maxSize size: CGSize) -> NSAttributedString {
+        /// Create custom layout for attachments.
+        private func attachmentToAttributed(_ attachment: Attachment, defaultAttrs attributes: [NSAttributedString.Key : Any], fontTraits: UIFontDescriptor.SymbolicTraits?, maxSize size: CGSize) -> NSAttributedString {
             // Image handling is easy.
             if let image = attachment.image {
                 let wrapper = NSTextAttachment()
@@ -296,14 +301,17 @@ class AttribFormatter: DraftyFormatter {
             // button is also not too hard
             if let buttonUrl = attachment.button {
                 let faceText = NSMutableAttributedString()
+                // Change color of text from default to link color.
+                var attrs = attributes
+                attrs[.foregroundColor] = Constants.kLinkColor
                 if let text = text {
-                    faceText.append(textToAttributed(text, baseFont: baseFont, fontTraits: fontTraits))
+                    faceText.append(textToAttributed(text, defaultAttrs: attrs, fontTraits: fontTraits))
                 } else if let children = children {
                     for child in children {
-                        faceText.append(child.toAttributed(baseFont: baseFont, fontTraits: fontTraits, size: size))
+                        faceText.append(child.toAttributed(defaultAttrs: attrs, fontTraits: fontTraits, size: size))
                     }
                 } else {
-                    faceText.append(NSAttributedString(string: "button"))
+                    faceText.append(NSAttributedString(string: "button", attributes: attrs))
                 }
                 return NSAttributedString(attachment: DraftyButtonAttachment(face: faceText, data: buttonUrl))
             }
@@ -320,14 +328,15 @@ class AttribFormatter: DraftyFormatter {
              var uti = unmanagedUti?.takeRetainedValue() ?? kUTTypeData
              uti = kUTTypeData
              */
-            // Using basic kUTTypeData to prevent iOS from displaying ugly previews.
+            // Using basic kUTTypeData to prevent iOS from displaying distorted previews.
 
             let wrapper = NSTextAttachment(data: bits, ofType: kUTTypeData as String)
+            let baseFont = attributes[.font] as! UIFont
             wrapper.bounds = CGRect(origin: CGPoint(x: 0, y: baseFont.capHeight - Constants.kAttachmentIconSize.height), size: Constants.kAttachmentIconSize)
             attributed.append(NSAttributedString(attachment: wrapper))
 
             // Append document's file name.
-            var fname: String = attachment.name ?? "tinode_file_attachment"
+            var fname = attachment.name ?? "tinode_file_attachment"
             if fname.count > 32 {
                 fname = fname.prefix(14) + "…" + fname.suffix(14)
             }
@@ -336,7 +345,7 @@ class AttribFormatter: DraftyFormatter {
 
             // Append file size.
             if let size = attachment.size {
-                attributed.append(NSAttributedString(string: " (" + UiUtils.bytesToHumanSize(Int64(size)) + ")", attributes: [NSAttributedString.Key.font : baseFont]))
+                attributed.append(NSAttributedString(string: " (" + UiUtils.bytesToHumanSize(Int64(size)) + ")", attributes: attributes))
             }
 
             // Insert linebreak then a clickable [↓ save] line
@@ -371,25 +380,20 @@ class AttribFormatter: DraftyFormatter {
             return attributed
         }
 
-        private func textToAttributed(_ text: NSAttributedString, baseFont: UIFont, fontTraits: UIFontDescriptor.SymbolicTraits?) -> NSAttributedString {
-            let attributed = NSMutableAttributedString()
+        /// Plain text to attributed string.
+        private func textToAttributed(_ text: String, defaultAttrs: [NSAttributedString.Key : Any], fontTraits: UIFontDescriptor.SymbolicTraits?) -> NSAttributedString {
 
-            attributed.append(text)
-            let font: UIFont
+            var attributes = defaultAttrs
             if let fontTraits = fontTraits {
-                font = UIFont(descriptor: baseFont.fontDescriptor.withSymbolicTraits(fontTraits)!, size: baseFont.pointSize)
-            } else {
-                font = baseFont
+                let font = defaultAttrs[NSAttributedString.Key.font] as! UIFont
+                attributes[.font] = UIFont(descriptor: font.fontDescriptor.withSymbolicTraits(fontTraits)!, size: font.pointSize)
             }
-            attributed.addAttributes([.font : font], range: NSRange(location: 0, length: attributed.length))
 
-            return attributed
+            return NSAttributedString(string: text, attributes: attributes)
         }
 
-        func toAttributed(baseFont: UIFont, fontTraits parentFontTraits: UIFontDescriptor.SymbolicTraits?, size: CGSize) -> NSMutableAttributedString {
-            let attributed = NSMutableAttributedString()
-
-            // First apply font styles to each same-style substring individually.
+        /// Convert tree of nodes into an attributed string
+        func toAttributed(defaultAttrs attributes: [NSAttributedString.Key : Any], fontTraits parentFontTraits: UIFontDescriptor.SymbolicTraits?, size: CGSize) -> NSAttributedString {
 
             // Font traits for this substring and all its children.
             var fontTraits: UIFontDescriptor.SymbolicTraits? = cFont
@@ -401,17 +405,20 @@ class AttribFormatter: DraftyFormatter {
                 }
             }
 
+            let attributed = NSMutableAttributedString()
+            attributed.beginEditing()
+
             // First check for attachments.
             if let attachment = self.attachment {
                 // Image or file attachment
-                attributed.append(attachmentToAttributed(attachment, baseFont: baseFont, fontTraits: fontTraits, maxSize: size))
+                attributed.append(attachmentToAttributed(attachment, defaultAttrs: attributes, fontTraits: fontTraits, maxSize: size))
             } else if let text = self.text {
                 // Uniformly styled substring. Apply uniform font style.
-                attributed.append(textToAttributed(text, baseFont: baseFont, fontTraits: fontTraits))
+                attributed.append(textToAttributed(text, defaultAttrs: attributes, fontTraits: fontTraits))
             } else if let children = self.children {
                 // Pass calculated font styles to children.
                 for child in children {
-                    attributed.append(child.toAttributed(baseFont: baseFont, fontTraits: fontTraits, size: size))
+                    attributed.append(child.toAttributed(defaultAttrs: attributes, fontTraits: fontTraits, size: size))
                 }
             }
 
@@ -422,6 +429,7 @@ class AttribFormatter: DraftyFormatter {
                 attributed.addAttributes([.paragraphStyle: pstyle], range: NSRange(location: 0, length: attributed.length))
             }
 
+            attributed.endEditing()
             return attributed
         }
     }

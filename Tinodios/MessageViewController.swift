@@ -364,7 +364,7 @@ extension MessageViewController: UICollectionViewDataSource {
             if drafty.isPlain {
                 cell.content.text = drafty.string
             } else {
-                cell.content.attributedText = AttribFormatter.toAttributed(drafty, baseFont: Constants.kContentFont, textColor: cell.content.textColor, maxSize: maxSize)
+                cell.content.attributedText = AttribFormatter.toAttributed(drafty, maxSize: maxSize, defaultAttrs: [.font: Constants.kContentFont, .foregroundColor: cell.content.textColor!])
             }
         }
 
@@ -588,7 +588,7 @@ extension MessageViewController : UICollectionViewDelegateFlowLayout {
         let attributedText: NSAttributedString
 
         if let drafty = message.content {
-            attributedText = AttribFormatter.toAttributed(drafty, baseFont: Constants.kContentFont, textColor: nil, maxSize: CGSize(width: maxWidth, height: collectionView.frame.height * 0.66))
+            attributedText = AttribFormatter.toAttributed(drafty, maxSize: CGSize(width: maxWidth, height: collectionView.frame.height * 0.66), defaultAttrs: [.font: Constants.kContentFont])
         } else {
             attributedText = NSAttributedString(string: "none", attributes: [.font: Constants.kContentFont])
         }
