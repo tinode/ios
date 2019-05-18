@@ -80,10 +80,18 @@ class MessageCell: UICollectionViewCell {
     }()
 
     /// Delivery marker.
-    var deliveryMarker: UIImageView = UIImageView()
+    var deliveryMarker: UIImageView = {
+        let view = UIImageView()
+        view.contentMode = UIView.ContentMode.scaleAspectFit
+        return view
+    }()
 
     /// Message timestamp.
-    var timestampLabel: PaddedLabel = PaddedLabel()
+    var timestampLabel: PaddedLabel = {
+        let label = PaddedLabel()
+        label.font = UIFont.preferredFont(forTextStyle: .caption2)
+        return label
+    }()
 
     /// The `MessageCellDelegate` for the cell.
     weak var delegate: MessageCellDelegate?
@@ -92,10 +100,9 @@ class MessageCell: UICollectionViewCell {
         contentView.addSubview(newDateLabel)
         contentView.addSubview(senderNameLabel)
         contentView.addSubview(containerView)
-        // content.delegate = self
         containerView.addSubview(content)
-        containerView.addSubview(deliveryMarker)
         containerView.addSubview(timestampLabel)
+        containerView.addSubview(deliveryMarker)
         contentView.addSubview(avatarView)
     }
 
@@ -134,16 +141,5 @@ class MessageCell: UICollectionViewCell {
         guard gestureRecognizer.isKind(of: UILongPressGestureRecognizer.self) else { return false }
         return containerView.frame.contains(touchPoint)
     }
-/*
-    func textView(_ content: UITextView, shouldInteractWith: NSTextAttachment, in: NSRange, interaction: UITextItemInteraction) -> Bool {
-        print("shouldInteractWith attachment \(shouldInteractWith)")
-        return true
-    }
-
-    func textView(_ content: UITextView, shouldInteractWith: URL, in: NSRange, interaction: UITextItemInteraction) -> Bool {
-        print("shouldInteractWith URL \(shouldInteractWith)")
-        return true
-    }
-*/
 }
 

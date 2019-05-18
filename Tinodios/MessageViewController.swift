@@ -60,6 +60,13 @@ class MessageViewController: UIViewController {
         // Insets around content inside the message bubble.
         static let kIncomingMessageContentInset = UIEdgeInsets(top: 7, left: 18, bottom: 7, right: 14)
         static let kOutgoingMessageContentInset = UIEdgeInsets(top: 7, left: 14, bottom: 7, right: 18)
+
+        // Approximate width of the timestamp
+        static let kTimestampWidth: CGFloat = 50
+
+        // Carve out for timestamp and delivery marker in the bottom-right corner.
+        static let kIncomingMetadataCarveout = CGSize(width: kTimestampWidth, height: kDeliveryMarkerSize)
+        static let kOutgoingMetadataCarveout = CGSize(width: kDeliveryMarkerSize + 2 + kTimestampWidth, height: kDeliveryMarkerSize)
     }
 
     /// The `sendMessageBar` is used as the `inputAccessoryView` in the view controller.
@@ -281,13 +288,15 @@ extension MessageViewController: UICollectionViewDataSource {
         // Cell content
         let message = messages[indexPath.item]
 
+        // Is this an outgoing message?
+        let isOutgoing = isFromCurrentSender(message: message)
         // The message set has avatars.
         let hasAvatars = avatarsVisible(message: message)
         // This message has an avatar.
         let isAvatarVisible = shouldShowAvatar(for: message, at: indexPath)
 
         // Insets for the message bubble relative to collectionView: bubble should not touch the sides of the screen.
-        let containerPadding = isFromCurrentSender(message: message) ? Constants.kOutgoingContainerPadding : Constants.kIncomingContainerPadding
+        let containerPadding = isOutgoing ? Constants.kOutgoingContainerPadding : Constants.kIncomingContainerPadding
 
         // Maxumum allowed content width.
         let maxContentWidth = calcMaxContentWidth(for: message, avatarsVisible: hasAvatars)
@@ -305,7 +314,7 @@ extension MessageViewController: UICollectionViewDataSource {
         let senderNameLabelHeight = isAvatarVisible ? Constants.kSenderNameLabelHeight : 0
 
         if isAvatarVisible {
-            cell.avatarView.frame = CGRect(origin: CGPoint(x: 0, y: cellSize.height - Constants.kAvatarSize - senderNameLabelHeight), size: CGSize(width: Constants.kAvatarSize, height: Constants.kAvatarSize))
+            cell.avatarView.frame = CGRect(x: 0, y: cellSize.height - Constants.kAvatarSize - senderNameLabelHeight, width: Constants.kAvatarSize, height: Constants.kAvatarSize)
 
             // The avatar image should be assigned after setting the size. Otherwise it may be drawn twice.
             if let sub = topic?.getSubscription(for: message.from) {
@@ -328,12 +337,25 @@ extension MessageViewController: UICollectionViewDataSource {
         // FIXME: this call calculates content size for the second time.
         let containerSize = calcContainerSize(for: message, avatarsVisible: hasAvatars)
         // isFromCurrent Sender ? Flush container right : flush left.
-        let originX = isFromCurrentSender(message: message) ? cellSize.width - avatarPadding - containerSize.width - containerPadding.right : avatarPadding + containerPadding.left
+        let originX = isOutgoing ? cellSize.width - avatarPadding - containerSize.width - containerPadding.right : avatarPadding + containerPadding.left
         cell.containerView.frame = CGRect(origin: CGPoint(x: originX, y: newDateLabelHeight + containerPadding.top), size: containerSize)
 
         // Content: RichTextLabel.
-        let contentInset = isFromCurrentSender(message: message) ? Constants.kOutgoingMessageContentInset : Constants.kIncomingMessageContentInset
+        let contentInset = isOutgoing ? Constants.kOutgoingMessageContentInset : Constants.kIncomingMessageContentInset
         cell.content.frame = cell.containerView.bounds.inset(by: contentInset)
+
+        var rightEdge = CGPoint(x: cell.containerView.bounds.width, y: cell.containerView.bounds.height - Constants.kDeliveryMarkerSize)
+        if isOutgoing {
+            rightEdge.x -= Constants.kDeliveryMarkerSize
+            cell.deliveryMarker.frame = CGRect(x: 10, y: 10, width: Constants.kDeliveryMarkerSize, height: Constants.kDeliveryMarkerSize)
+            // cell.deliveryMarker.image = UIImage(named: "logo-ios")
+            print("delivery marker frame: \(cell.deliveryMarker.frame), image: \(cell.deliveryMarker.image?.size ?? .zero)")
+        } else {
+            cell.deliveryMarker.frame = .zero
+        }
+
+        cell.timestampLabel.sizeToFit()
+        cell.timestampLabel.frame = CGRect(x: rightEdge.x - cell.timestampLabel.frame.width - 2, y: rightEdge.y, width: cell.timestampLabel.frame.width, height: cell.timestampLabel.frame.height)
 
         // New date label
         if newDateLabelHeight > 0 {
@@ -343,7 +365,7 @@ extension MessageViewController: UICollectionViewDataSource {
         }
 
         // Draw the bubble
-        bubbleDecorator(for: message, at: indexPath)(cell.containerView)
+        // bubbleDecorator(for: message, at: indexPath)(cell.containerView)
 
         return cell
     }
@@ -369,6 +391,14 @@ extension MessageViewController: UICollectionViewDataSource {
             }
         }
 
+        if let (image, tint) = deliveryMarker(for: message, at: indexPath) {
+            cell.deliveryMarker.image = image
+            cell.deliveryMarker.tintColor = tint
+        }
+        if let ts = message.ts {
+            cell.timestampLabel.text = RelativeDateFormatter.shared.timeOnly(from: ts)
+            cell.timestampLabel.textColor = isFromCurrentSender(message: message) ? UIColor.gray : UIColor.lightText
+        }
         cell.newDateLabel.attributedText = newDateLabel(for: message, at: indexPath)
         cell.senderNameLabel.attributedText = senderFullName(for: message, at: indexPath)
     }
@@ -396,7 +426,7 @@ extension MessageViewController: UICollectionViewDataSource {
             ])
     }
 
-    func deliveryMarker(for message: Message, at indexPath: IndexPath) -> UIImageView? {
+    func deliveryMarker(for message: Message, at indexPath: IndexPath) -> (UIImage, UIColor)? {
         guard isFromCurrentSender(message: message), let topic = topic else { return nil }
 
         let iconName: String
@@ -414,10 +444,7 @@ extension MessageViewController: UICollectionViewDataSource {
             }
         }
 
-        let marker = UIImageView(image: UIImage(named: iconName))
-        marker.tintColor = tint
-
-        return marker
+        return (UIImage(named: iconName)!, tint)
     }
 
     // Returns closure which draws message bubble in the supplied UIView.
