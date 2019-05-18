@@ -94,8 +94,8 @@ class MessageCell: UICollectionViewCell {
         contentView.addSubview(containerView)
         // content.delegate = self
         containerView.addSubview(content)
-        // containerView.addSubview(deliveryMarker)
-        // containerView.addSubview(timestampLabel)
+        containerView.addSubview(deliveryMarker)
+        containerView.addSubview(timestampLabel)
         contentView.addSubview(avatarView)
     }
 

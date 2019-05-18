@@ -266,6 +266,7 @@ extension MessageViewController: MessageDisplayLogic {
 extension MessageViewController: UICollectionViewDataSource {
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        self.collectionView.showNoMessagesNote(messages.count == 0)
         return messages.count
     }
 
