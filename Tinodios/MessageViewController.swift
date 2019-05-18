@@ -19,20 +19,8 @@ class MessageViewController: UIViewController {
     // MARK: static parameters
 
     private enum Constants {
-        /// Size of the Avatar in the nav bar in large state.
-        static let kNavBarAvatarLargeState: CGFloat = 40
         /// Size of the avatar in the nav bar in small state.
         static let kNavBarAvatarSmallState: CGFloat = 32
-
-        /// Height of NavBar for small state.
-        static let kNavBarHeightSmallState: CGFloat = 44
-        /// Height of NavBar for large state. Usually it's just 96.5 but may change if font changes.
-        static let kNavBarHeightLargeState: CGFloat = 96.5
-
-        /// Margin from bottom anchor of NavBar to bottom anchor of avatar for large state.
-        static let kNavBarAvatarBottomMarginLarge: CGFloat = 12
-        /// Margin from bottom anchor of NavBar to bottom anchor of avatar for small state.
-        static let kNavBarAvatarBottomMarginSmall: CGFloat = 6
 
         /// Size of the avatar in group topics.
         static let kAvatarSize: CGFloat = 30
@@ -81,8 +69,12 @@ class MessageViewController: UIViewController {
         return view
     }()
 
+    /// Avatar in the NavBar
+    private lazy var navBarAvatarView: UIImageView = {
+        return UIImageView()
+    }()
 
-    // Pointer to the view holding messages.
+    /// Pointer to the view holding messages.
     weak var collectionView: MessageView!
 
     private var interactor: (MessageBusinessLogic & MessageDataStore)?
@@ -245,12 +237,13 @@ extension MessageViewController: MessageDisplayLogic {
     func updateTitleBar(icon: UIImage?, title: String?) {
         self.navigationItem.title = title ?? "Undefined"
 
-        let avatarView = RoundImageView(icon: icon, title: title, id: topicName)
+        navBarAvatarView = RoundImageView(icon: icon, title: title, id: topicName)
+        navBarAvatarView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-                avatarView.heightAnchor.constraint(equalToConstant: Constants.kNavBarAvatarSmallState),
-                avatarView.widthAnchor.constraint(equalTo: avatarView.heightAnchor)
+                navBarAvatarView.heightAnchor.constraint(equalToConstant: Constants.kNavBarAvatarSmallState),
+                navBarAvatarView.widthAnchor.constraint(equalTo: navBarAvatarView.heightAnchor)
             ])
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: avatarView)
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: navBarAvatarView)
    }
 
     func displayChatMessages(messages: [StoredMessage]) {
@@ -632,40 +625,5 @@ extension MessageViewController : SendMessageBarDelegate {
 
     func sendMessageBar(textChangedTo text: String) {
         interactor?.sendTypingNotification()
-    }
-}
-
-extension MessageViewController : UIScrollViewDelegate {
-
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        guard let height = navigationController?.navigationBar.frame.height else { return }
-        moveAndResizeImage(for: height)
-    }
-
-    private func moveAndResizeImage(for height: CGFloat) {
-        let coeff: CGFloat = {
-            let delta = height - Constants.kNavBarHeightSmallState
-            let heightDifferenceBetweenStates = Constants.kNavBarHeightLargeState - Constants.kNavBarHeightSmallState
-            return delta / heightDifferenceBetweenStates
-        }()
-
-        let factor = Constants.kNavBarAvatarSmallState / Constants.kNavBarAvatarLargeState
-
-        let scale: CGFloat = {
-            let sizeAddendumFactor = coeff * (1.0 - factor)
-            return min(1.0, sizeAddendumFactor + factor)
-        }()
-
-        // Value of difference between icons for large and small states
-        let sizeDiff = Constants.kNavBarAvatarLargeState * (1.0 - factor) // 8.0
-        let yTranslation: CGFloat = {
-            /// This value = 14. It equals to difference of 12 and 6 (bottom margin for large and small states). Also it adds 8.0 (size difference when the image gets smaller size)
-            let maxYTranslation = Constants.kNavBarAvatarBottomMarginLarge - Constants.kNavBarAvatarBottomMarginSmall + sizeDiff
-            return max(0, min(maxYTranslation, (maxYTranslation - coeff * (Constants.kNavBarAvatarBottomMarginSmall + sizeDiff))))
-        }()
-
-        let xTranslation = max(0, sizeDiff - coeff * sizeDiff)
-
-        // imageView.transform = CGAffineTransform.identity.scaledBy(x: scale, y: scale).translatedBy(x: xTranslation, y: yTranslation)
     }
 }
