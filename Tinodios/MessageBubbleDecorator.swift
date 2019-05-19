@@ -7,7 +7,7 @@
 
 import UIKit
 
-/// Draws message bubble in iMessage style.
+/// Draws message bubble as bezier path in iMessage style.
 class MessageBubbleDecorator {
 
     public enum Style {
