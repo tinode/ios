@@ -439,15 +439,15 @@ extension MessageViewController: UICollectionViewDataSource {
         let iconName: String
         var tint: UIColor = Constants.kDeliveryMarkerColor
         if message.isPending {
-            iconName = "outline_schedule_white_48pt"
+            iconName = "schedule_48"
         } else {
             if topic.msgReadCount(seq: message.seqId) > 0 {
-                iconName = "outline_done_all_white_48pt"
+                iconName = "done_all_48"
                 tint = Constants.kDeliveryMarkerTint
             } else if topic.msgRecvCount(seq: message.seqId) > 0 {
-                iconName = "outline_done_all_white_48pt"
+                iconName = "done_all_48"
             } else {
-                iconName = "outline_done_white_48pt"
+                iconName = "done_48"
             }
         }
 
