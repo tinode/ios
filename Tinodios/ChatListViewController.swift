@@ -75,6 +75,7 @@ class ChatListViewController: UITableViewController, ChatListDisplayLogic {
     }
 }
 
+// UITableViewController
 extension ChatListViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "Chats2Messages" {
@@ -87,6 +88,7 @@ extension ChatListViewController {
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        showNoChatsNote(topics.count == 0)
         return topics.count
     }
 
@@ -114,5 +116,27 @@ extension ChatListViewController {
         cell.icon.set(icon: topic.pub?.photo?.image(), title: topic.pub?.fn, id: topic.name)
 
         return cell
+    }
+}
+
+extension ChatListViewController {
+
+    /// Show notification that the chat list is empty
+    public func showNoChatsNote(_ show: Bool) {
+        if show {
+            let rect = CGRect(x: 0, y: 0, width: view.bounds.width, height: view.bounds.height)
+            let messageLabel = UILabel(frame: rect)
+            messageLabel.text = "You have no chats\n\n¯\\_(ツ)_/¯"
+            messageLabel.textColor = UIColor.darkText
+            messageLabel.numberOfLines = 0
+            messageLabel.textAlignment = .center
+            messageLabel.font = UIFont.preferredFont(forTextStyle: .body)
+            messageLabel.sizeToFit()
+
+            tableView.backgroundView = messageLabel
+            tableView.separatorStyle = .none
+        } else {
+            tableView.backgroundView = nil
+        }
     }
 }

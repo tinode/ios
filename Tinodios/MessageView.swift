@@ -78,7 +78,7 @@ class MessageView: UICollectionView {
 
 extension MessageView {
 
-    // Show notification that the conversation is empty
+    /// Show notification that the conversation is empty
     public func showNoMessagesNote(_ show: Bool) {
         if show {
             let messageLabel = UILabel(frame: CGRect(x: 0, y: 0, width: self.bounds.size.width, height: self.bounds.size.height))
