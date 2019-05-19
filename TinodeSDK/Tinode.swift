@@ -110,6 +110,7 @@ public class Tinode {
     public static let kNoteKp = "kp"
     public static let kNoteRead = "read"
     public static let kNoteRecv = "recv"
+    public static let kNullValue = "\u{2421}"
     private static let log = Log(category: "co.tinode.tinodesdk")
 
     let kProtocolVersion = "0"
