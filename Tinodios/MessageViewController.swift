@@ -376,6 +376,8 @@ extension MessageViewController: UICollectionViewDataSource {
 
     private func configureCell(cell: MessageCell, with message: Message, at indexPath: IndexPath, maxSize: CGSize) {
 
+        cell.seqId = message.seqId
+
         cell.content.backgroundColor = nil
         if isFromCurrentSender(message: message) {
             cell.containerView.backgroundColor = Constants.kOutgoingBubbleColor
@@ -636,6 +638,13 @@ extension MessageViewController : MessageCellDelegate {
         print("didTapContent URL=\(url.absoluteString)")
 
         if url.scheme == "tinode" {
+            switch url.path {
+            case "/post":
+                handleButtonPost(in: cell, data: url)
+            default:
+                print("Unknown tinode:// action '\(url.path)'")
+                break
+            }
             // TODO: post message, save attachment.
             return
         }
@@ -653,6 +662,28 @@ extension MessageViewController : MessageCellDelegate {
 
     func didTapAvatar(in cell: MessageCell) {
         print("didTapAvatar")
+    }
+
+    private func handleButtonPost(in cell: MessageCell, data url: URL) {
+        let parts = URLComponents(url: url, resolvingAgainstBaseURL: false)
+        var query: [String : String]?
+        if let queryItems = parts?.queryItems {
+            query = [:]
+            for item in queryItems {
+                query![item.name] = item.value
+            }
+        }
+        let newMsg = Drafty(content: query?["title"] ?? "undefined")
+        var json: [String : JSONValue] = [:]
+        // {"seq":6,"resp":{"yes":1}}
+        if let name = query?["name"], let val = query?["val"] {
+            var resp: [String : JSONValue] = [:]
+            resp[name] = JSONValue.string(val)
+            json["resp"] = JSONValue.dict(resp)
+        }
+        json["seq"] = JSONValue.int(cell.seqId)
+
+        _ = interactor?.sendMessage(content: newMsg.attachJSON(json))
     }
 }
 

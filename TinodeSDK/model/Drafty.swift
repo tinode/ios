@@ -573,7 +573,7 @@ public class Drafty: Codable, CustomStringConvertible, Equatable {
     /// - Parameters:
     ///     - json: object to attach.
     /// - Returns: 'self' Drafty object.
-    public func attachJSON(json: [String:JSONValue]) -> Drafty {
+    public func attachJSON(_ json: [String:JSONValue]) -> Drafty {
         prepareForEntity(at: -1, len: 1)
 
         var data: [String:JSONValue] = [:]

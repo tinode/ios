@@ -96,6 +96,8 @@ class MessageCell: UICollectionViewCell {
     /// The `MessageCellDelegate` for the cell.
     weak var delegate: MessageCellDelegate?
 
+    var seqId: Int = 0
+
     func setupSubviews() {
         contentView.addSubview(newDateLabel)
         contentView.addSubview(senderNameLabel)

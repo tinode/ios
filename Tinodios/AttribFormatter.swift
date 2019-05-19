@@ -62,7 +62,7 @@ class AttribFormatter: DraftyFormatter {
     }
 
     private func handleButton(content: TreeNode, attr: [String : JSONValue]?) {
-        guard let urlStr = AttribFormatter.buttonDataAsUri(attr), let url = URL(string: urlStr) else { return }
+        guard let urlStr = AttribFormatter.buttonDataAsUri(face: content, attr: attr), let url = URL(string: urlStr) else { return }
 
         var attachment = Attachment()
         attachment.button = url
@@ -71,13 +71,20 @@ class AttribFormatter: DraftyFormatter {
 
     // Convert button payload to an URL.
     // NSAttributedString.Key.link wants payload to be NSURL.
-    private static func buttonDataAsUri(_ attr: [String : JSONValue]?) -> String? {
+    private static func buttonDataAsUri(face: TreeNode, attr: [String : JSONValue]?) -> String? {
         guard let attr = attr, let actionType = attr["act"]?.asString() else { return nil }
         var baseUrl: URLComponents
         if actionType == "url" {
             guard let ref = attr["ref"]?.asString() else { return nil }
             guard let urlc = URLComponents(string: ref) else { return nil }
             baseUrl = urlc
+            if let name = attr["name"]?.asString() {
+                let actionValue = attr["val"]?.asString() ?? "1"
+                if baseUrl.queryItems == nil {
+                    baseUrl.queryItems = []
+                }
+                baseUrl.queryItems!.append(URLQueryItem(name: name, value: actionValue))
+            }
         } else if actionType == "pub" {
             // Custom scheme usr to post back to the server:
             // tinode:default?name=value
@@ -85,16 +92,15 @@ class AttribFormatter: DraftyFormatter {
             baseUrl.scheme = "tinode"
             baseUrl.host = ""
             baseUrl.path = "/post"
+            baseUrl.queryItems = []
+            baseUrl.queryItems!.append(URLQueryItem(name: "title", value: face.toString()))
+            if let name = attr["name"]?.asString() {
+                baseUrl.queryItems!.append(URLQueryItem(name: "name", value: name))
+                let actionValue = attr["val"]?.asString() ?? "1"
+                baseUrl.queryItems!.append(URLQueryItem(name: "val", value: actionValue))
+            }
         } else {
             return nil
-        }
-
-        if let name = attr["name"]?.asString() {
-            let actionValue = attr["val"]?.asString() ?? "1"
-            if baseUrl.queryItems == nil {
-                baseUrl.queryItems = []
-            }
-            baseUrl.queryItems?.append(URLQueryItem(name: name, value: actionValue))
         }
 
         return baseUrl.url?.absoluteString
@@ -287,6 +293,34 @@ class AttribFormatter: DraftyFormatter {
             return (text == nil || text!.isEmpty) && (children == nil || children!.isEmpty)
         }
 
+        /// Simple representation of an attachment as plain string.
+        private func attachmentToString(_ attachment: Attachment) -> String {
+            if let _ = attachment.image {
+                return "[img \(attachment.name ?? "unnamed")]"
+            }
+
+            if let _ = attachment.button {
+                if let text = text {
+                    return "[btn \(text)]"
+                }
+                if let children = children {
+                    var faceText = ""
+                    for child in children {
+                        faceText += child.toString()
+                    }
+                    return "[btn \(faceText)]"
+                }
+                return "[button]"
+            }
+
+            guard attachment.data != nil else { return "" }
+            var fname = attachment.name ?? "unnamed"
+            if fname.count > 32 {
+                fname = fname.prefix(14) + "…" + fname.suffix(14)
+            }
+            return "[att \(fname)]"
+        }
+
         /// Create custom layout for attachments.
         private func attachmentToAttributed(_ attachment: Attachment, defaultAttrs attributes: [NSAttributedString.Key : Any], fontTraits: UIFontDescriptor.SymbolicTraits?, maxSize size: CGSize) -> NSAttributedString {
             // Image handling is easy.
@@ -392,7 +426,25 @@ class AttribFormatter: DraftyFormatter {
             return NSAttributedString(string: text, attributes: attributes)
         }
 
-        /// Convert tree of nodes into an attributed string
+        /// Convert tree of nodes into a plain string.
+        func toString() -> String {
+            var str: String = ""
+            // First check for attachments.
+            if let attachment = self.attachment {
+                // Image or file attachment
+                str += attachmentToString(attachment)
+            } else if let text = self.text {
+                str += text
+            } else if let children = self.children {
+                // Process children.
+                for child in children {
+                    str += child.toString()
+                }
+            }
+            return str
+        }
+
+        /// Convert tree of nodes into an attributed string.
         func toAttributed(defaultAttrs attributes: [NSAttributedString.Key : Any], fontTraits parentFontTraits: UIFontDescriptor.SymbolicTraits?, size: CGSize) -> NSAttributedString {
 
             // Font traits for this substring and all its children.
