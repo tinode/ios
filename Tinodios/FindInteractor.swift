@@ -121,17 +121,16 @@ class FindInteractor: FindBusinessLogic {
                         return r.contains(displayName.startIndex)
                     } :
                     self.localContacts!
+            self.fndTopic?.setMeta(
+                meta: MsgSetMeta(desc: MetaSetDesc(pub: searchQuery != nil ? searchQuery! : Tinode.kNullValue, priv: nil),
+                                 sub: nil, tags: nil))
+            self.remoteContacts?.removeAll()
             if let queryString = searchQuery, queryString.count >= FindInteractor.kMinTagLength {
-                self.fndTopic?.setMeta(
-                    meta: MsgSetMeta(desc: MetaSetDesc(pub: queryString, priv: nil),
-                    sub: nil, tags: nil))
                 self.fndTopic?.getMeta(query: MsgGetMeta.sub())
-
-                self.remoteContacts?.removeAll()
-            }/* else {
+            } else {
                 // Clear remoteContacts.
-                self.remoteContacts?.removeAll()
-            }*/
+                self.presenter?.presentRemoteContacts(contacts: self.remoteContacts!)
+            }
             self.presenter?.presentLocalContacts(contacts: contacts)
         }
     }
