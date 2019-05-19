@@ -494,7 +494,8 @@
                     </tableView>
                     <toolbarItems/>
                     <navigationItem key="navigationItem" title="Tinodios" id="Rgo-YL-uPZ">
-                        <barButtonItem key="rightBarButtonItem" systemItem="compose" id="LVG-dB-flA">
+                        <barButtonItem key="leftBarButtonItem" title="Profile" style="plain" id="rlG-v4-QUc"/>
+                        <barButtonItem key="rightBarButtonItem" title="New Chat" image="new-chat-24" style="plain" id="LVG-dB-flA">
                             <connections>
                                 <segue destination="qBo-ye-avT" kind="show" id="PRK-dk-KAe"/>
                             </connections>
@@ -667,10 +668,11 @@
         <image name="data-25" width="25" height="25"/>
         <image name="edit-48" width="48" height="48"/>
         <image name="logo-ios" width="288" height="288"/>
+        <image name="new-chat-24" width="24" height="24"/>
         <image name="new-group-25" width="25" height="25"/>
         <image name="search-25" width="25" height="25"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="Icu-Sw-xtx"/>
+        <segue reference="ANE-DH-PdS"/>
     </inferredMetricsTieBreakers>
 </document>

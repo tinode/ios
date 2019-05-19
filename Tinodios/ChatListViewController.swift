@@ -134,7 +134,6 @@ extension ChatListViewController {
             messageLabel.sizeToFit()
 
             tableView.backgroundView = messageLabel
-            tableView.separatorStyle = .none
         } else {
             tableView.backgroundView = nil
         }
