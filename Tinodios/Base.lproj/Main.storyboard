@@ -266,7 +266,7 @@
                                                         </constraints>
                                                         <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                         <inset key="imageEdgeInsets" minX="10" minY="10" maxX="10" maxY="10"/>
-                                                        <state key="normal" title="Add Avatar" image="outline_add_a_photo_white_48pt"/>
+                                                        <state key="normal" title="Add Avatar" image="edit-48"/>
                                                         <userDefinedRuntimeAttributes>
                                                             <userDefinedRuntimeAttribute type="boolean" keyPath="layer.masksToBounds" value="YES"/>
                                                             <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
@@ -665,9 +665,9 @@
     </scenes>
     <resources>
         <image name="data-25" width="25" height="25"/>
+        <image name="edit-48" width="48" height="48"/>
         <image name="logo-ios" width="288" height="288"/>
         <image name="new-group-25" width="25" height="25"/>
-        <image name="outline_add_a_photo_white_48pt" width="48" height="48"/>
         <image name="search-25" width="25" height="25"/>
     </resources>
     <inferredMetricsTieBreakers>

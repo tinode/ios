@@ -50,7 +50,7 @@ class MessageViewController: UIViewController {
         static let kVerticalCellSpacing: CGFloat = 2
         // Additional vertical spacing between messages from different users in P2P topics.
         static let kAdditionalP2PVerticalCellSpacing: CGFloat = 4
-        static let kMinimumCellWidth: CGFloat = 60
+        static let kMinimumCellWidth: CGFloat = 80
         // This is the space between the other side of the message and the edge of screen.
         // I.e. for incoming messages the space between the message and the *right* edge, for
         // outfoing between the message and the left edge.
@@ -631,7 +631,20 @@ extension MessageViewController : UICollectionViewDelegateFlowLayout {
 
 extension MessageViewController : MessageCellDelegate {
     func didTapContent(in cell: MessageCell, url: URL?) {
-        print("didTapContent URL=\(url?.absoluteString ?? "nil")")
+        guard let url = url else { return }
+
+        print("didTapContent URL=\(url.absoluteString)")
+
+        if url.scheme == "tinode" {
+            // TODO: post message, save attachment.
+            return
+        }
+
+        if #available(iOS 10.0, *) {
+            UIApplication.shared.open(url)
+        } else {
+            UIApplication.shared.openURL(url)
+        }
     }
 
     func didTapMessage(in cell: MessageCell) {
