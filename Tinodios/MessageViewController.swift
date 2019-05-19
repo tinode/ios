@@ -27,6 +27,11 @@ class MessageViewController: UIViewController {
 
         // Size of delivery marker (checkmarks etc)
         static let kDeliveryMarkerSize: CGFloat = 16
+        // Horizontal space between delivery marker and the edge of the message bubble
+        static let kDeliveryMarkerPadding: CGFloat = 6
+        // Horizontal space between delivery marker and timestamp
+        static let kTimestampPadding: CGFloat = 2
+
         // Color of "read" delivery marker.
         static let kDeliveryMarkerTint = UIColor(red: 19/255, green: 144/255, blue:255/255, alpha: 0.8)
         // Color of all other markers.
@@ -37,6 +42,7 @@ class MessageViewController: UIViewController {
         static let kIncomingBubbleColor = UIColor(red: 69/255, green: 193/255, blue: 89/255, alpha: 1)
         static let kContentFont = UIFont.preferredFont(forTextStyle: .body)
         static let kSenderNameFont = UIFont.preferredFont(forTextStyle: .caption2)
+        static let kTimestampFont = UIFont.preferredFont(forTextStyle: .caption2)
         static let kSenderNameLabelHeight: CGFloat = 16
         static let kNewDateFont = UIFont.boldSystemFont(ofSize: 10)
         static let kNewDateLabelHeight: CGFloat = 24
@@ -51,22 +57,22 @@ class MessageViewController: UIViewController {
         static let kFarSideHorizontalSpacing: CGFloat = 45
 
         // Insets around collection view, i.e. main view padding
-        static let kCollectionViewInset = UIEdgeInsets(top: 0, left: 4, bottom: 0, right: 4)
+        static let kCollectionViewInset = UIEdgeInsets(top: 0, left: 4, bottom: 0, right: 2)
 
         // Insets for the message bubble relative to collectionView: bubble should not touch the sides of the screen.
         static let kIncomingContainerPadding = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: Constants.kFarSideHorizontalSpacing)
         static let kOutgoingContainerPadding = UIEdgeInsets(top: 0, left: Constants.kFarSideHorizontalSpacing, bottom: 0, right: 0)
 
         // Insets around content inside the message bubble.
-        static let kIncomingMessageContentInset = UIEdgeInsets(top: 7, left: 18, bottom: 7, right: 14)
-        static let kOutgoingMessageContentInset = UIEdgeInsets(top: 7, left: 14, bottom: 7, right: 18)
+        static let kIncomingMessageContentInset = UIEdgeInsets(top: 4, left: 18, bottom: 13, right: 14)
+        static let kOutgoingMessageContentInset = UIEdgeInsets(top: 4, left: 14, bottom: 13, right: 18)
 
         // Approximate width of the timestamp
         static let kTimestampWidth: CGFloat = 50
 
         // Carve out for timestamp and delivery marker in the bottom-right corner.
-        static let kIncomingMetadataCarveout = CGSize(width: kTimestampWidth, height: kDeliveryMarkerSize)
-        static let kOutgoingMetadataCarveout = CGSize(width: kDeliveryMarkerSize + 2 + kTimestampWidth, height: kDeliveryMarkerSize)
+        static let kIncomingMetadataCarveout = "     "
+        static let kOutgoingMetadataCarveout = "       "
     }
 
     /// The `sendMessageBar` is used as the `inputAccessoryView` in the view controller.
@@ -344,18 +350,16 @@ extension MessageViewController: UICollectionViewDataSource {
         let contentInset = isOutgoing ? Constants.kOutgoingMessageContentInset : Constants.kIncomingMessageContentInset
         cell.content.frame = cell.containerView.bounds.inset(by: contentInset)
 
-        var rightEdge = CGPoint(x: cell.containerView.bounds.width, y: cell.containerView.bounds.height - Constants.kDeliveryMarkerSize)
+        var rightEdge = CGPoint(x: cell.containerView.bounds.width - Constants.kDeliveryMarkerPadding, y: cell.containerView.bounds.height - Constants.kDeliveryMarkerSize)
         if isOutgoing {
             rightEdge.x -= Constants.kDeliveryMarkerSize
-            cell.deliveryMarker.frame = CGRect(x: 10, y: 10, width: Constants.kDeliveryMarkerSize, height: Constants.kDeliveryMarkerSize)
-            // cell.deliveryMarker.image = UIImage(named: "logo-ios")
-            print("delivery marker frame: \(cell.deliveryMarker.frame), image: \(cell.deliveryMarker.image?.size ?? .zero)")
+            cell.deliveryMarker.frame = CGRect(x: rightEdge.x, y: rightEdge.y, width: Constants.kDeliveryMarkerSize, height: Constants.kDeliveryMarkerSize)
         } else {
             cell.deliveryMarker.frame = .zero
         }
 
         cell.timestampLabel.sizeToFit()
-        cell.timestampLabel.frame = CGRect(x: rightEdge.x - cell.timestampLabel.frame.width - 2, y: rightEdge.y, width: cell.timestampLabel.frame.width, height: cell.timestampLabel.frame.height)
+        cell.timestampLabel.frame = CGRect(x: rightEdge.x - cell.timestampLabel.frame.width - Constants.kTimestampPadding, y: rightEdge.y, width: cell.timestampLabel.frame.width, height: cell.timestampLabel.frame.height)
 
         // New date label
         if newDateLabelHeight > 0 {
@@ -365,7 +369,7 @@ extension MessageViewController: UICollectionViewDataSource {
         }
 
         // Draw the bubble
-        // bubbleDecorator(for: message, at: indexPath)(cell.containerView)
+        bubbleDecorator(for: message, at: indexPath)(cell.containerView)
 
         return cell
     }
@@ -384,10 +388,13 @@ extension MessageViewController: UICollectionViewDataSource {
         cell.content.font = Constants.kContentFont
 
         if let drafty = message.content {
+            let carveout = (isFromCurrentSender(message: message) ? Constants.kOutgoingMetadataCarveout : Constants.kIncomingMetadataCarveout)
             if drafty.isPlain {
-                cell.content.text = drafty.string
+                cell.content.text = drafty.string + carveout
             } else {
-                cell.content.attributedText = AttribFormatter.toAttributed(drafty, maxSize: maxSize, defaultAttrs: [.font: Constants.kContentFont, .foregroundColor: cell.content.textColor!])
+                let text = NSMutableAttributedString(attributedString: AttribFormatter.toAttributed(drafty, maxSize: maxSize, defaultAttrs: [.font: Constants.kContentFont, .foregroundColor: cell.content.textColor!]))
+                text.append(NSAttributedString(string: carveout, attributes: [.font: Constants.kContentFont]))
+                cell.content.attributedText = text
             }
         }
 
@@ -447,34 +454,27 @@ extension MessageViewController: UICollectionViewDataSource {
         return (UIImage(named: iconName)!, tint)
     }
 
-    // Returns closure which draws message bubble in the supplied UIView.
+    // Returns closure which adds message bubble mask to the supplied UIView.
     func bubbleDecorator(for message: Message, at indexPath: IndexPath) -> (UIView) -> Void {
-        // FIXME: add tail to last message in sequence.
-        var corners: UIRectCorner = []
+        let isIncoming = !isFromCurrentSender(message: message)
 
-        if isFromCurrentSender(message: message) {
-            corners.formUnion(.topLeft)
-            corners.formUnion(.bottomLeft)
-            if !isPreviousMessageSameSender(at: indexPath) || !isPreviousMessageSameDate(at: indexPath) {
-                corners.formUnion(.topRight)
-            }
-            if !isNextMessageSameSender(at: indexPath) || !isNextMessageSameDate(at: indexPath) {
-                corners.formUnion(.bottomRight)
-            }
-        } else {
-            corners.formUnion(.topRight)
-            corners.formUnion(.bottomRight)
-            if !isPreviousMessageSameSender(at: indexPath) || !isPreviousMessageSameDate(at: indexPath) {
-                corners.formUnion(.topLeft)
-            }
-            if !isNextMessageSameSender(at: indexPath) || !isNextMessageSameDate(at: indexPath) {
-                corners.formUnion(.bottomLeft)
-            }
+        let breakBefore = !isPreviousMessageSameSender(at: indexPath) || !isPreviousMessageSameDate(at: indexPath)
+        let breakAfter = !isNextMessageSameSender(at: indexPath) || !isNextMessageSameDate(at: indexPath)
+
+        let style: MessageBubbleDecorator.Style
+        switch true {
+        case breakBefore && breakAfter:
+            style = .single
+        case breakBefore:
+            style = .first
+        case breakAfter:
+            style = .last
+        default:
+            style = .middle
         }
 
         return { view in
-            let radius: CGFloat = 16
-            let path = UIBezierPath(roundedRect: view.bounds, byRoundingCorners: corners, cornerRadii: CGSize(width: radius, height: radius))
+            let path = MessageBubbleDecorator.draw(view.bounds, isIncoming: isIncoming, style: style)
             let mask = CAShapeLayer()
             mask.path = path.cgPath
             view.layer.mask = mask
@@ -613,14 +613,15 @@ extension MessageViewController : UICollectionViewDelegateFlowLayout {
 
     /// Calculate size of message content.
     func calcContentSize(for message: Message, maxWidth: CGFloat) -> CGSize {
-        let attributedText: NSAttributedString
+        let attributedText = NSMutableAttributedString()
 
+        let carveout = isFromCurrentSender(message: message) ? Constants.kOutgoingMetadataCarveout : Constants.kIncomingMetadataCarveout
         if let drafty = message.content {
-            attributedText = AttribFormatter.toAttributed(drafty, maxSize: CGSize(width: maxWidth, height: collectionView.frame.height * 0.66), defaultAttrs: [.font: Constants.kContentFont])
+            attributedText.append(AttribFormatter.toAttributed(drafty, maxSize: CGSize(width: maxWidth, height: collectionView.frame.height * 0.66), defaultAttrs: [.font: Constants.kContentFont]))
         } else {
-            attributedText = NSAttributedString(string: "none", attributes: [.font: Constants.kContentFont])
+            attributedText.append(NSAttributedString(string: "none", attributes: [.font: Constants.kContentFont]))
         }
-
+        attributedText.append(NSAttributedString(string: carveout, attributes: [.font: Constants.kContentFont]))
         let size = attributedText.boundingRect(with: CGSize(width: maxWidth, height: .greatestFiniteMagnitude), options: [.usesLineFragmentOrigin, .usesFontLeading], context: nil).integral.size
         return size
     }

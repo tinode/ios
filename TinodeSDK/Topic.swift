@@ -1078,7 +1078,7 @@ open class MeTopic<DP: Codable>: Topic<DP, PrivateType, DP, PrivateType> {
     override public func routePres(pres: MsgServerPres) {
         let what = MsgServerPres.parseWhat(what: pres.what)
         if let topic = tinode!.getTopic(topicName: pres.src!) {
-            switch (what) {
+            switch what {
             case .kOn: // topic came online
                 topic.online = true
             case .kOff: // topic went offline
@@ -1121,7 +1121,7 @@ open class MeTopic<DP: Codable>: Topic<DP, PrivateType, DP, PrivateType> {
             }
         } else {
             // New topic
-            switch (what) {
+            switch what {
             case .kAcs:
                 let acs = Acs()
                 acs.update(from: pres.dacs)
