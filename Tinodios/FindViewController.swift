@@ -121,6 +121,13 @@ extension FindViewController {
             router?.routeToChat(segue: segue)
         }
     }
+    func getUniqueId(for path: IndexPath) -> String? {
+        switch path.section {
+        case 0: return self.localContacts[path.row].uniqueId
+        case 1: return self.remoteContacts[path.row].uniqueId
+        default: return nil
+        }
+    }
 }
 
 // MARK: - Search functionality
