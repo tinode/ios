@@ -20,7 +20,7 @@ public protocol DraftyFormatter {
 }
 
 /// Class representing formatted text with optional attachments.
-public class Drafty: Codable, CustomStringConvertible, Equatable {
+open class Drafty: Codable, CustomStringConvertible, Equatable {
 
     public static let kMimeType = "text/x-drafty"
     public static let kJSONMimeType = "application/json"

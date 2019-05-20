@@ -21,14 +21,14 @@ class SendMessageBar: UIView {
 
     weak var delegate: SendMessageBarDelegate?
 
-    // MARK: IBoutlets
+    // MARK: IBOutlets
 
     @IBOutlet weak var attachButton: UIButton!
     @IBOutlet weak var sendButton: UIButton!
     @IBOutlet weak var inputField: UITextView!
     @IBOutlet weak var inputFieldHeight: NSLayoutConstraint!
 
-    // MARK: IBactions
+    // MARK: IBActions
 
     @IBAction func attach(_ sender: UIButton) {
         delegate?.sendMessageBar(attachment: true)
@@ -107,7 +107,6 @@ class SendMessageBar: UIView {
         }
 
         sendButton.isEnabled = false
-        print("configured SendMessageBar \(frame)")
     }
 }
 

@@ -486,3 +486,15 @@ class AttribFormatter: DraftyFormatter {
         }
     }
 }
+
+extension StoredMessage {
+
+    func attributedContent(maxSize size: CGSize, defaultAttrs attributes: [NSAttributedString.Key : Any]? = nil) -> NSAttributedString? {
+        if cachedContent != nil {
+            return cachedContent
+        }
+        guard let content = content else { return nil }
+        cachedContent = AttribFormatter.toAttributed(content, maxSize: size, defaultAttrs: attributes)
+        return cachedContent
+    }
+}

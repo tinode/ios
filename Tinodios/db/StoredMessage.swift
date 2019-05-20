@@ -32,6 +32,9 @@ public class StoredMessage : MsgServerData, Message {
     /// Message has not been delivered to the server yet.
     public var isPending: Bool { get { return status == nil || status! <= BaseDb.kStatusSending } }
 
+    /// Cached representation of message content as attributed string.
+    public var cachedContent: NSAttributedString?
+
     // MARK: initializers
 
     public override init() { super.init() }

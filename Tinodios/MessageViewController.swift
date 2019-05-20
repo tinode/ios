@@ -28,19 +28,28 @@ class MessageViewController: UIViewController {
         // Size of delivery marker (checkmarks etc)
         static let kDeliveryMarkerSize: CGFloat = 16
         // Horizontal space between delivery marker and the edge of the message bubble
-        static let kDeliveryMarkerPadding: CGFloat = 6
+        static let kDeliveryMarkerPadding: CGFloat = 10
         // Horizontal space between delivery marker and timestamp
-        static let kTimestampPadding: CGFloat = 2
+        static let kTimestampPadding: CGFloat = 0
+        // Approximate width of the timestamp
+        static let kTimestampWidth: CGFloat = 48
 
         // Color of "read" delivery marker.
         static let kDeliveryMarkerTint = UIColor(red: 19/255, green: 144/255, blue:255/255, alpha: 0.8)
         // Color of all other markers.
         static let kDeliveryMarkerColor = UIColor.gray.withAlphaComponent(0.7)
-        // Light gray color
+
+        // Light gray color: outgoing messages
         static let kOutgoingBubbleColor = UIColor(red: 230/255, green: 230/255, blue: 230/255, alpha: 1)
+        // And corresponding text color
+        static let kOutgoingTextColor = UIColor.darkText
         // Bright green color
         static let kIncomingBubbleColor = UIColor(red: 69/255, green: 193/255, blue: 89/255, alpha: 1)
+        // And corresponding font color
+        static let kIncomingTextColor = UIColor.white
+
         static let kContentFont = UIFont.preferredFont(forTextStyle: .body)
+
         static let kSenderNameFont = UIFont.preferredFont(forTextStyle: .caption2)
         static let kTimestampFont = UIFont.preferredFont(forTextStyle: .caption2)
         static let kSenderNameLabelHeight: CGFloat = 16
@@ -66,9 +75,6 @@ class MessageViewController: UIViewController {
         // Insets around content inside the message bubble.
         static let kIncomingMessageContentInset = UIEdgeInsets(top: 4, left: 18, bottom: 13, right: 14)
         static let kOutgoingMessageContentInset = UIEdgeInsets(top: 4, left: 14, bottom: 13, right: 18)
-
-        // Approximate width of the timestamp
-        static let kTimestampWidth: CGFloat = 50
 
         // Carve out for timestamp and delivery marker in the bottom-right corner.
         static let kIncomingMetadataCarveout = "     "
@@ -114,8 +120,9 @@ class MessageViewController: UIViewController {
 
     // Messages to be displayed
     var messages: [Message] = []
+
     // Cache of message cell sizes. Calculation of cell sizes is heavy. Caching the result to improve scrolling performance.
-    var cellSizeCache: [CGSize?] = []
+    // var cellSizeCache: [CGSize?] = []
 
     var isInitialLayout = true
 
@@ -158,6 +165,10 @@ class MessageViewController: UIViewController {
         return true
     }
 
+    override var canResignFirstResponder: Bool {
+        return true
+    }
+
     override func loadView() {
         super.loadView()
 
@@ -170,10 +181,9 @@ class MessageViewController: UIViewController {
         // Collection View setup
         collectionView.keyboardDismissMode = .interactive
         collectionView.alwaysBounceVertical = true
+        collectionView.layoutMargins = Constants.kCollectionViewInset
         view.addSubview(collectionView)
         self.collectionView = collectionView
-
-        collectionView.layoutMargins = Constants.kCollectionViewInset
 
         collectionView.addSubview(refreshControl)
         refreshControl.addTarget(self, action: #selector(loadNextPage), for: .valueChanged)
@@ -198,17 +208,19 @@ class MessageViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        view.backgroundColor = .white
+        if let layout = collectionView?.collectionViewLayout as? MessageViewLayout {
+            layout.delegate = self
+        }
 
-        self.collectionView.delegate = self
         self.collectionView.dataSource = self
-
-        // addMenuControllerObservers()
-
         sendMessageBar.delegate = self
+
+        view.backgroundColor = .white
     }
 
     override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+
         // Otherwise setting contentInset after viewDidAppear will be animated.
         if isInitialLayout {
             defer { isInitialLayout = false }
@@ -261,11 +273,13 @@ extension MessageViewController: MessageDisplayLogic {
 
     func displayChatMessages(messages: [StoredMessage]) {
         self.messages = messages.reversed()
-        self.cellSizeCache = Array(repeating: nil, count: messages.count)
-        self.collectionView.reloadData()
+
+        collectionView.reloadData()
+        collectionView.layoutIfNeeded()
+
         // FIXME: don't scroll to bottom in response to loading the next page.
         // Maybe don't scroll to bottom if the view is not at the bottom already.
-        self.collectionView.scrollToBottom()
+        collectionView.scrollToBottom()
     }
 
     func endRefresh() {
@@ -294,34 +308,14 @@ extension MessageViewController: UICollectionViewDataSource {
         // Cell content
         let message = messages[indexPath.item]
 
-        // Is this an outgoing message?
-        let isOutgoing = isFromCurrentSender(message: message)
-        // The message set has avatars.
-        let hasAvatars = avatarsVisible(message: message)
-        // This message has an avatar.
-        let isAvatarVisible = shouldShowAvatar(for: message, at: indexPath)
-
-        // Insets for the message bubble relative to collectionView: bubble should not touch the sides of the screen.
-        let containerPadding = isOutgoing ? Constants.kOutgoingContainerPadding : Constants.kIncomingContainerPadding
-
-        // Maxumum allowed content width.
-        let maxContentWidth = calcMaxContentWidth(for: message, avatarsVisible: hasAvatars)
+        // Get cell attributes from cache.
+        let attributes = collectionView.layoutAttributesForItem(at: indexPath) as! MessageViewLayoutAttributes
 
         // Set colors and fill out content except for the avatar. The maxumum size is needed for placing attached images.
-        configureCell(cell: cell, with: message, at: indexPath, maxSize: CGSize(width: maxContentWidth, height: collectionView.frame.height * 0.66))
+        configureCell(cell: cell, with: message, at: indexPath)
 
-        // Now that the cell is filled with content, get cell frame and bounds.
-        let cellSize = calcCellSize(forItemAt: indexPath)
-
-        // Height of the field with the current date above the first message of the day.
-        let newDateLabelHeight = calcNewDateLabelHeight(at: indexPath)
-
-        // This is the height of the field with the sender's name.
-        let senderNameLabelHeight = isAvatarVisible ? Constants.kSenderNameLabelHeight : 0
-
-        if isAvatarVisible {
-            cell.avatarView.frame = CGRect(x: 0, y: cellSize.height - Constants.kAvatarSize - senderNameLabelHeight, width: Constants.kAvatarSize, height: Constants.kAvatarSize)
-
+        cell.avatarView.frame = attributes.avatarFrame
+        if attributes.avatarFrame != .zero  {
             // The avatar image should be assigned after setting the size. Otherwise it may be drawn twice.
             if let sub = topic?.getSubscription(for: message.from) {
                 cell.avatarView.set(icon: sub.pub?.photo?.image(), title: sub.pub?.fn, id: message.from)
@@ -329,44 +323,22 @@ extension MessageViewController: UICollectionViewDataSource {
                 cell.avatarView.set(icon: nil, title: nil, id: message.from)
                 print("Subscription not found for \(message.from ?? "nil")")
             }
-
-            // Sender name under the avatar.
-            cell.senderNameLabel.frame = CGRect(origin: CGPoint(x: 0, y: cellSize.height - senderNameLabelHeight), size: CGSize(width: cellSize.width, height: senderNameLabelHeight))
-        } else {
-            cell.avatarView.frame = .zero
-            cell.senderNameLabel.frame = .zero
         }
 
-        // Additional left padding in group topics with avatar
-        let avatarPadding = hasAvatars ? Constants.kAvatarSize : 0
+        // Sender name under the avatar.
+        cell.senderNameLabel.frame = attributes.senderNameFrame
 
-        // FIXME: this call calculates content size for the second time.
-        let containerSize = calcContainerSize(for: message, avatarsVisible: hasAvatars)
-        // isFromCurrent Sender ? Flush container right : flush left.
-        let originX = isOutgoing ? cellSize.width - avatarPadding - containerSize.width - containerPadding.right : avatarPadding + containerPadding.left
-        cell.containerView.frame = CGRect(origin: CGPoint(x: originX, y: newDateLabelHeight + containerPadding.top), size: containerSize)
+        cell.containerView.frame = attributes.containerFrame
 
         // Content: RichTextLabel.
-        let contentInset = isOutgoing ? Constants.kOutgoingMessageContentInset : Constants.kIncomingMessageContentInset
-        cell.content.frame = cell.containerView.bounds.inset(by: contentInset)
+        cell.content.frame = attributes.contentFrame
 
-        var rightEdge = CGPoint(x: cell.containerView.bounds.width - Constants.kDeliveryMarkerPadding, y: cell.containerView.bounds.height - Constants.kDeliveryMarkerSize)
-        if isOutgoing {
-            rightEdge.x -= Constants.kDeliveryMarkerSize
-            cell.deliveryMarker.frame = CGRect(x: rightEdge.x, y: rightEdge.y, width: Constants.kDeliveryMarkerSize, height: Constants.kDeliveryMarkerSize)
-        } else {
-            cell.deliveryMarker.frame = .zero
-        }
+        cell.deliveryMarker.frame = attributes.deliveryMarkerFrame
 
         cell.timestampLabel.sizeToFit()
-        cell.timestampLabel.frame = CGRect(x: rightEdge.x - cell.timestampLabel.frame.width - Constants.kTimestampPadding, y: rightEdge.y, width: cell.timestampLabel.frame.width, height: cell.timestampLabel.frame.height)
+        cell.timestampLabel.frame = attributes.timestampFrame
 
-        // New date label
-        if newDateLabelHeight > 0 {
-            cell.newDateLabel.frame = CGRect(origin: CGPoint(x: 0, y: cell.containerView.frame.minY - containerPadding.top - newDateLabelHeight), size: CGSize(width: cellSize.width, height: newDateLabelHeight))
-        } else {
-            cell.newDateLabel.frame = .zero
-        }
+        cell.newDateLabel.frame = attributes.newDateFrame
 
         // Draw the bubble
         bubbleDecorator(for: message, at: indexPath)(cell.containerView)
@@ -374,7 +346,7 @@ extension MessageViewController: UICollectionViewDataSource {
         return cell
     }
 
-    private func configureCell(cell: MessageCell, with message: Message, at indexPath: IndexPath, maxSize: CGSize) {
+    private func configureCell(cell: MessageCell, with message: Message, at indexPath: IndexPath) {
 
         cell.seqId = message.seqId
 
@@ -389,15 +361,12 @@ extension MessageViewController: UICollectionViewDataSource {
 
         cell.content.font = Constants.kContentFont
 
-        if let drafty = message.content {
+        let storedMessage = message as! StoredMessage
+        if let attributedText = storedMessage.cachedContent {
             let carveout = (isFromCurrentSender(message: message) ? Constants.kOutgoingMetadataCarveout : Constants.kIncomingMetadataCarveout)
-            if drafty.isPlain {
-                cell.content.text = drafty.string + carveout
-            } else {
-                let text = NSMutableAttributedString(attributedString: AttribFormatter.toAttributed(drafty, maxSize: maxSize, defaultAttrs: [.font: Constants.kContentFont, .foregroundColor: cell.content.textColor!]))
-                text.append(NSAttributedString(string: carveout, attributes: [.font: Constants.kContentFont]))
-                cell.content.attributedText = text
-            }
+            let text = NSMutableAttributedString(attributedString: attributedText)
+            text.append(NSAttributedString(string: carveout, attributes: [.font: Constants.kContentFont]))
+            cell.content.attributedText = text
         }
 
         if let (image, tint) = deliveryMarker(for: message, at: indexPath) {
@@ -531,37 +500,97 @@ extension MessageViewController {
 }
 
 // Message size calculation
-extension MessageViewController : UICollectionViewDelegateFlowLayout {
+extension MessageViewController : MessageViewLayoutDelegate {
 
-    // MARK: UICollectionViewDelegateFlowLayout methods
+    // MARK: MessageViewLayoutDelegate method
 
-    // Entry point for cell size calculations.
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return calcCellSize(forItemAt: indexPath)
-    }
+    // Claculate positions and sizes of all subviews in a cell.
+    func collectionView(_ collectionView: UICollectionView, fillAttributes attr: MessageViewLayoutAttributes) {
+        let indexPath = attr.indexPath
 
-    // Vertical spacing between message cells
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        return Constants.kVerticalCellSpacing
+        // Cell content
+        let message = messages[indexPath.item]
+
+        // Is this an outgoing message?
+        let isOutgoing = isFromCurrentSender(message: message)
+        // The message set has avatars.
+        let hasAvatars = avatarsVisible(message: message)
+        // This message has an avatar.
+        let isAvatarVisible = shouldShowAvatar(for: message, at: indexPath)
+
+        // Insets for the message bubble relative to collectionView: bubble should not touch the sides of the screen.
+        let containerPadding = isOutgoing ? Constants.kOutgoingContainerPadding : Constants.kIncomingContainerPadding
+
+        // Get cell size.
+        let cellSize = calcCellSize(forItemAt: indexPath)
+        attr.cellSpacing = Constants.kVerticalCellSpacing
+
+        // Height of the field with the current date above the first message of the day.
+        let newDateLabelHeight = calcNewDateLabelHeight(at: indexPath)
+
+        // This is the height of the field with the sender's name.
+        let senderNameLabelHeight = isAvatarVisible ? Constants.kSenderNameLabelHeight : 0
+
+        if isAvatarVisible {
+            attr.avatarFrame = CGRect(x: 0, y: cellSize.height - Constants.kAvatarSize - senderNameLabelHeight, width: Constants.kAvatarSize, height: Constants.kAvatarSize)
+
+            // Sender name under the avatar.
+            attr.senderNameFrame = CGRect(origin: CGPoint(x: 0, y: cellSize.height - senderNameLabelHeight), size: CGSize(width: cellSize.width, height: senderNameLabelHeight))
+        } else {
+            attr.avatarFrame = .zero
+            attr.senderNameFrame = .zero
+        }
+
+        // Additional left padding in group topics with avatar
+        let avatarPadding = hasAvatars ? Constants.kAvatarSize : 0
+
+        // Size of the message bubble.
+        let containerSize = calcContainerSize(for: message, avatarsVisible: hasAvatars)
+        // isFromCurrent Sender ? Flush container right : flush left.
+        let originX = isOutgoing ? cellSize.width - avatarPadding - containerSize.width - containerPadding.right : avatarPadding + containerPadding.left
+        attr.containerFrame = CGRect(origin: CGPoint(x: originX, y: newDateLabelHeight + containerPadding.top), size: containerSize)
+
+        // Content: RichTextLabel.
+        let contentInset = isOutgoing ? Constants.kOutgoingMessageContentInset : Constants.kIncomingMessageContentInset
+        attr.contentFrame = CGRect(x: contentInset.left, y: contentInset.top, width: attr.containerFrame.width - contentInset.left - contentInset.right, height: attr.containerFrame.height - contentInset.top - contentInset.bottom)
+
+        var rightEdge = CGPoint(x: attr.containerFrame.width - Constants.kDeliveryMarkerPadding, y: attr.containerFrame.height - Constants.kDeliveryMarkerSize)
+        if isOutgoing {
+            rightEdge.x -= Constants.kDeliveryMarkerSize
+            attr.deliveryMarkerFrame = CGRect(x: rightEdge.x, y: rightEdge.y, width: Constants.kDeliveryMarkerSize, height: Constants.kDeliveryMarkerSize)
+        } else {
+            attr.deliveryMarkerFrame = .zero
+        }
+
+        attr.timestampFrame = CGRect(x: rightEdge.x - Constants.kTimestampWidth - Constants.kTimestampPadding, y: rightEdge.y, width: Constants.kTimestampWidth, height: Constants.kDeliveryMarkerSize)
+
+        // New date label
+        if newDateLabelHeight > 0 {
+            attr.newDateFrame = CGRect(origin: CGPoint(x: 0, y: attr.containerFrame.minY - containerPadding.top - newDateLabelHeight), size: CGSize(width: cellSize.width, height: newDateLabelHeight))
+        } else {
+            attr.newDateFrame = .zero
+        }
+
+        attr.frame = CGRect(origin: CGPoint(), size: cellSize)
     }
 
     // MARK: supporting methods
 
     // Calculate and cache message cell size
     func calcCellSize(forItemAt indexPath: IndexPath) -> CGSize {
-        if let size = cellSizeCache[indexPath.item] {
-            return size
-        }
+        //if let size = cellSizeCache[indexPath.item] {
+        //    return size
+        // }
 
         let message = messages[indexPath.item]
         let hasAvatars = avatarsVisible(message: message)
         let containerHeight = calcContainerSize(for: message, avatarsVisible: hasAvatars).height
         let size = CGSize(width: calcCellWidth(), height: calcCellHeightFromContent(for: message, at: indexPath, containerHeight: containerHeight, avatarsVisible: hasAvatars))
-        cellSizeCache[indexPath.item] = size
+        // cellSizeCache[indexPath.item] = size
         return size
     }
 
-    func calcCellWidth() ->CGFloat {
+    func calcCellWidth() -> CGFloat {
         return collectionView.frame.width - collectionView.layoutMargins.left - collectionView.layoutMargins.right
     }
 
@@ -618,8 +647,12 @@ extension MessageViewController : UICollectionViewDelegateFlowLayout {
         let attributedText = NSMutableAttributedString()
 
         let carveout = isFromCurrentSender(message: message) ? Constants.kOutgoingMetadataCarveout : Constants.kIncomingMetadataCarveout
-        if let drafty = message.content {
-            attributedText.append(AttribFormatter.toAttributed(drafty, maxSize: CGSize(width: maxWidth, height: collectionView.frame.height * 0.66), defaultAttrs: [.font: Constants.kContentFont]))
+
+        let textColor = isFromCurrentSender(message: message) ? Constants.kOutgoingTextColor : Constants.kIncomingTextColor
+
+        let storedMessage = message as! StoredMessage
+        if let content = storedMessage.attributedContent(maxSize: CGSize(width: maxWidth, height: collectionView.frame.height * 0.66), defaultAttrs: [.font: Constants.kContentFont, .foregroundColor: textColor]) {
+            attributedText.append(content)
         } else {
             attributedText.append(NSAttributedString(string: "none", attributes: [.font: Constants.kContentFont]))
         }
