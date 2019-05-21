@@ -11,7 +11,7 @@ protocol MessageViewLayoutDelegate: class {
     func collectionView(_ collectionView: UICollectionView, fillAttributes: MessageViewLayoutAttributes)
 }
 
-class MessageViewLayout: UICollectionViewFlowLayout {
+class MessageViewLayout: UICollectionViewLayout {
 
     // MARK: private vars
 

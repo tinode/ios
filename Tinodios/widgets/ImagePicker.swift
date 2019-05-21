@@ -5,7 +5,7 @@
 //  Copyright © 2019 Tinode. All rights reserved.
 //
 
-import Foundation
+import MobileCoreServices
 import UIKit
 
 public protocol ImagePickerDelegate: class {
@@ -26,9 +26,10 @@ open class ImagePicker: NSObject {
         self.presentationController = presentationController
         self.delegate = delegate
 
-        self.pickerController.delegate = self
+        //self.pickerController.delegate = self
         self.pickerController.allowsEditing = true
-        self.pickerController.mediaTypes = ["public.image"]
+
+        self.pickerController.mediaTypes = [kUTTypeImage as String]
     }
 
     private func action(for type: UIImagePickerController.SourceType, title: String) -> UIAlertAction? {
@@ -92,7 +93,4 @@ extension ImagePicker: UIImagePickerControllerDelegate {
         }
         self.pickerController(picker, didSelect: image)
     }
-}
-
-extension ImagePicker: UINavigationControllerDelegate {
 }

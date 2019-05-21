@@ -41,6 +41,11 @@ import UIKit
         }
     }
 
+    override func resignFirstResponder() -> Bool {
+        print("PlaceholderTextView got resignFirstResponder")
+        return super.resignFirstResponder()
+    }
+
     // MARK: initializers
 
     override public init(frame: CGRect, textContainer: NSTextContainer?) {

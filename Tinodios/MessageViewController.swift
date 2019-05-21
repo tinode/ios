@@ -59,7 +59,7 @@ class MessageViewController: UIViewController {
         static let kVerticalCellSpacing: CGFloat = 2
         // Additional vertical spacing between messages from different users in P2P topics.
         static let kAdditionalP2PVerticalCellSpacing: CGFloat = 4
-        static let kMinimumCellWidth: CGFloat = 80
+        static let kMinimumCellWidth: CGFloat = 90
         // This is the space between the other side of the message and the edge of screen.
         // I.e. for incoming messages the space between the message and the *right* edge, for
         // outfoing between the message and the left edge.
@@ -96,7 +96,7 @@ class MessageViewController: UIViewController {
     /// Pointer to the view holding messages.
     weak var collectionView: MessageView!
 
-    private var interactor: (MessageBusinessLogic & MessageDataStore)?
+    var interactor: (MessageBusinessLogic & MessageDataStore)?
     private let refreshControl = UIRefreshControl()
 
     // MARK: properties
@@ -162,10 +162,6 @@ class MessageViewController: UIViewController {
     }
 
     override var canBecomeFirstResponder: Bool {
-        return true
-    }
-
-    override var canResignFirstResponder: Bool {
         return true
     }
 
@@ -272,7 +268,11 @@ extension MessageViewController: MessageDisplayLogic {
    }
 
     func displayChatMessages(messages: [StoredMessage]) {
+        let oldData = self.messages
         self.messages = messages.reversed()
+
+        let diff = Utils.diffMessageArray(old: oldData, new: self.messages)
+        print("inserted: \(diff.inserted); removed: \(diff.removed)")
 
         collectionView.reloadData()
         collectionView.layoutIfNeeded()
@@ -717,19 +717,5 @@ extension MessageViewController : MessageCellDelegate {
         json["seq"] = JSONValue.int(cell.seqId)
 
         _ = interactor?.sendMessage(content: newMsg.attachJSON(json))
-    }
-}
-
-extension MessageViewController : SendMessageBarDelegate {
-    func sendMessageBar(sendText: String) -> Bool? {
-        return interactor?.sendMessage(content: Drafty(content: sendText))
-    }
-
-    func sendMessageBar(attachment: Bool) {
-        // TODO: Show file picker
-    }
-
-    func sendMessageBar(textChangedTo text: String) {
-        interactor?.sendTypingNotification()
     }
 }
