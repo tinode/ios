@@ -135,7 +135,7 @@ extension FindViewController {
 extension FindViewController: UISearchResultsUpdating, UISearchControllerDelegate, UISearchBarDelegate {
 
     private func doSearch(queryString: String?) {
-        print("Searching contacts for: \(queryString)")
+        //print("Searching contacts for: \(queryString)")
         self.interactor?.loadAndPresentContacts(searchQuery: queryString)
     }
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {

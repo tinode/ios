@@ -29,7 +29,6 @@ class FindInteractor: FindBusinessLogic {
     }
 
     static let kTinodeImProtocol = "Tinode"
-    static let kMinTagLength = 4
     var presenter: FindPresentationLogic?
     var router: FindRoutingLogic?
     private var queue = DispatchQueue(label: "co.tinode.contacts")
@@ -37,7 +36,6 @@ class FindInteractor: FindBusinessLogic {
     private var localContacts: [ContactHolder]?
     // Current search query (nil if none).
     private var searchQuery: String?
-    //private let baseDb = BaseDb.getInstance()
     var fndTopic: DefaultFndTopic?
     private var fndListener: FindInteractor.FndListener?
     // Contacts returned by the server
@@ -103,7 +101,7 @@ class FindInteractor: FindBusinessLogic {
                 meta: MsgSetMeta(desc: MetaSetDesc(pub: searchQuery != nil ? searchQuery! : Tinode.kNullValue, priv: nil),
                                  sub: nil, tags: nil))
             self.remoteContacts?.removeAll()
-            if let queryString = searchQuery, queryString.count >= FindInteractor.kMinTagLength {
+            if let queryString = searchQuery, queryString.count >= UiUtils.kMinTagLength {
                 self.fndTopic?.getMeta(query: MsgGetMeta.sub())
             } else {
                 // Clear remoteContacts.

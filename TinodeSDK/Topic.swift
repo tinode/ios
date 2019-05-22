@@ -270,9 +270,11 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
     private var description: Description<DP, DR>? = nil
     public var pub: DP? {
         get { return description?.pub }
+        set { description?.pub = newValue }
     }
     public var priv: DR? {
         get { return description?.priv }
+        set { description?.priv = newValue }
     }
     public var attached = false
     weak public var listener: Listener? = nil
@@ -380,9 +382,6 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
 
     init(tinode: Tinode?, name: String, l: Listener? = nil) {
         self.superInit(tinode: tinode, name: name, l: l)
-    }
-    convenience init(tinode: Tinode?) {
-        self.init(tinode: tinode!, name: Tinode.kTopicNew + tinode!.nextUniqueString())
     }
     init(tinode: Tinode?, sub: Subscription<SP, SR>) {
         self.superInit(tinode: tinode, name: sub.topic!)
@@ -1217,6 +1216,9 @@ public class ComTopic<DP: Codable>: Topic<DP, PrivateType, DP, PrivateType> {
     }
     override init(tinode: Tinode?, name: String, desc: Description<DP, PrivateType>) {
         super.init(tinode: tinode, name: name, desc: desc)
+    }
+    public convenience init(in tinode: Tinode?, forwardingEventsTo l: Listener? = nil) {
+        self.init(tinode: tinode!, name: Tinode.kTopicNew + tinode!.nextUniqueString(), l: l)
     }
 
     public var isArchived: Bool {

@@ -22,6 +22,11 @@ class Utils {
         return KeychainWrapper.standard.string(
             forKey: LoginViewController.kTokenKey)
     }
+    public static func parseTags(from tagsString: String?) -> [String]? {
+        guard let tagsString = tagsString else { return nil }
+        let candidates = tagsString.split(separator: ",")
+        return candidates.filter { $0.count >= UiUtils.kMinTagLength }.map { String($0) }
+    }
 }
 
 // Per
