@@ -293,7 +293,7 @@ extension MessageViewController: MessageDisplayLogic {
 extension MessageViewController: UICollectionViewDataSource {
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        self.collectionView.showNoMessagesNote(messages.count == 0)
+        self.collectionView.toggleNoMessagesNote(on: messages.isEmpty)
         return messages.count
     }
 
@@ -651,7 +651,7 @@ extension MessageViewController : MessageViewLayoutDelegate {
         let textColor = isFromCurrentSender(message: message) ? Constants.kOutgoingTextColor : Constants.kIncomingTextColor
 
         let storedMessage = message as! StoredMessage
-        if let content = storedMessage.attributedContent(maxSize: CGSize(width: maxWidth, height: collectionView.frame.height * 0.66), defaultAttrs: [.font: Constants.kContentFont, .foregroundColor: textColor]) {
+        if let content = storedMessage.attributedContent(fitIn: CGSize(width: maxWidth, height: collectionView.frame.height * 0.66), withDefaultAttributes: [.font: Constants.kContentFont, .foregroundColor: textColor]) {
             attributedText.append(content)
         } else {
             attributedText.append(NSAttributedString(string: "none", attributes: [.font: Constants.kContentFont]))

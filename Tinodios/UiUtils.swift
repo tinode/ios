@@ -74,11 +74,12 @@ class UiUtils {
     }
 
     public static func bytesToHumanSize(_ bytes: Int64) -> String {
-        if bytes <= 0 {
+        guard bytes > 0 else {
             return "0 Bytes";
         }
 
-        let sizes = ["Bytes", "KB", "MB", "GB", "TB"]
+        // Not that GB+ are likely to be used ever, just making sure sizes[bucket] does not crash on large values.
+        let sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB"]
         let bucket = (63 - bytes.leadingZeroBitCount) / 10
         let count: Double = Double(bytes) / Double(pow(1024, Double(bucket)))
         // Multiplier for rounding fractions.

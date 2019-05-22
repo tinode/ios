@@ -164,12 +164,12 @@ class AttributedStringFormatter: DraftyFormatter {
     /// Convert drafty object into NSAttributedString
     /// - Parameters:
     ///    - content: Drafty object to convert
-    ///    - maxSize: maximum size of attached images
+    ///    - fitIn: maximum size of attached images.
     ///    - defaultAttrs: default attribues to apply to all otherwise unstyled content.
     ///    - textColor: default text color.
-    public static func toAttributed(_ content: Drafty, maxSize: CGSize, defaultAttrs: [NSAttributedString.Key : Any]? = nil) -> NSAttributedString {
+    public static func toAttributed(_ content: Drafty, fitIn maxSize: CGSize, withDefaultAttributes attributes: [NSAttributedString.Key : Any]? = nil) -> NSAttributedString {
 
-        var attributes: [NSAttributedString.Key : Any] = defaultAttrs ?? [:]
+        var attributes: [NSAttributedString.Key : Any] = attributes ?? [:]
         if attributes[.font] == nil {
             attributes[.font] = Constants.kDefaultFont
         }
@@ -179,7 +179,7 @@ class AttributedStringFormatter: DraftyFormatter {
         }
 
         let formatTree = content.format(formatter: AttributedStringFormatter(withDefaultAttributes: attributes))
-        return formatTree.toAttributed(defaultAttrs: attributes, fontTraits: nil, size: maxSize)
+        return formatTree.toAttributed(withDefaultAttributes: attributes, fontTraits: nil, fitIn: maxSize)
     }
 
     // File or image attachment.
@@ -335,7 +335,7 @@ class AttributedStringFormatter: DraftyFormatter {
                     faceText.append(textToAttributed(text, defaultAttrs: attrs, fontTraits: fontTraits))
                 } else if let children = children {
                     for child in children {
-                        faceText.append(child.toAttributed(defaultAttrs: attrs, fontTraits: fontTraits, size: size))
+                        faceText.append(child.toAttributed(withDefaultAttributes: attrs, fontTraits: fontTraits, fitIn: size))
                     }
                 } else {
                     faceText.append(NSAttributedString(string: "button", attributes: attrs))
@@ -437,7 +437,7 @@ class AttributedStringFormatter: DraftyFormatter {
         }
 
         /// Convert tree of nodes into an attributed string.
-        func toAttributed(defaultAttrs attributes: [NSAttributedString.Key : Any], fontTraits parentFontTraits: UIFontDescriptor.SymbolicTraits?, size: CGSize) -> NSAttributedString {
+        func toAttributed(withDefaultAttributes attributes: [NSAttributedString.Key : Any], fontTraits parentFontTraits: UIFontDescriptor.SymbolicTraits?, fitIn size: CGSize) -> NSAttributedString {
 
             // Font traits for this substring and all its children.
             var fontTraits: UIFontDescriptor.SymbolicTraits? = cFont
@@ -462,7 +462,7 @@ class AttributedStringFormatter: DraftyFormatter {
             } else if let children = self.children {
                 // Pass calculated font styles to children.
                 for child in children {
-                    attributed.append(child.toAttributed(defaultAttrs: attributes, fontTraits: fontTraits, size: size))
+                    attributed.append(child.toAttributed(withDefaultAttributes: attributes, fontTraits: fontTraits, fitIn: size))
                 }
             }
 
@@ -476,17 +476,5 @@ class AttributedStringFormatter: DraftyFormatter {
             attributed.endEditing()
             return attributed
         }
-    }
-}
-
-extension StoredMessage {
-
-    func attributedContent(maxSize size: CGSize, defaultAttrs attributes: [NSAttributedString.Key : Any]? = nil) -> NSAttributedString? {
-        if cachedContent != nil {
-            return cachedContent
-        }
-        guard let content = content else { return nil }
-        cachedContent = AttributedStringFormatter.toAttributed(content, maxSize: size, defaultAttrs: attributes)
-        return cachedContent
     }
 }

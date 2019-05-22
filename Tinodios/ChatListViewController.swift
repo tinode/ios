@@ -88,7 +88,7 @@ extension ChatListViewController {
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        showNoChatsNote(topics.count == 0)
+        toggleNoChatsNote(on: topics.isEmpty)
         return topics.count
     }
 
@@ -122,7 +122,7 @@ extension ChatListViewController {
 extension ChatListViewController {
 
     /// Show notification that the chat list is empty
-    public func showNoChatsNote(_ show: Bool) {
+    public func toggleNoChatsNote(on show: Bool) {
         if show {
             let rect = CGRect(x: 0, y: 0, width: view.bounds.width, height: view.bounds.height)
             let messageLabel = UILabel(frame: rect)

@@ -35,6 +35,16 @@ public class StoredMessage : MsgServerData, Message {
     /// Cached representation of message content as attributed string.
     public var cachedContent: NSAttributedString?
 
+    /// Generate and cache NSAttributedString representation of Drafty content.
+    func attributedContent(fitIn size: CGSize, withDefaultAttributes attributes: [NSAttributedString.Key : Any]? = nil) -> NSAttributedString? {
+        if cachedContent != nil {
+            return cachedContent
+        }
+        guard let content = content else { return nil }
+        cachedContent = AttributedStringFormatter.toAttributed(content, fitIn: size, withDefaultAttributes: attributes)
+        return cachedContent
+    }
+
     // MARK: initializers
 
     public override init() { super.init() }
