@@ -30,6 +30,8 @@
 		0A8A108521D4C79700B90D73 /* SqlStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8A108421D4C79700B90D73 /* SqlStore.swift */; };
 		0A8A8BDA21C380E80090BCBA /* Cache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8A8BD921C380E80090BCBA /* Cache.swift */; };
 		0A8C8A4621E5E72D00D8751E /* MessageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8C8A4521E5E72D00D8751E /* MessageViewController.swift */; };
+		0A9F621A2295169A0087CCF5 /* NewGroupInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A9F62192295169A0087CCF5 /* NewGroupInteractor.swift */; };
+		0AC33D032293C7A00060D263 /* NewGroupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC33D022293C7A00060D263 /* NewGroupViewController.swift */; };
 		0ACB5F0E22097651008FE740 /* ChatListPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACB5F0D22097651008FE740 /* ChatListPresenter.swift */; };
 		0ACB5F1022097665008FE740 /* ChatListRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACB5F0F22097665008FE740 /* ChatListRouter.swift */; };
 		0AD5552A21C625BB0027FD16 /* ChatListInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AD5552921C625BB0027FD16 /* ChatListInteractor.swift */; };
@@ -101,6 +103,8 @@
 		0A8A108421D4C79700B90D73 /* SqlStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SqlStore.swift; sourceTree = "<group>"; };
 		0A8A8BD921C380E80090BCBA /* Cache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cache.swift; sourceTree = "<group>"; };
 		0A8C8A4521E5E72D00D8751E /* MessageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageViewController.swift; sourceTree = "<group>"; };
+		0A9F62192295169A0087CCF5 /* NewGroupInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewGroupInteractor.swift; sourceTree = "<group>"; };
+		0AC33D022293C7A00060D263 /* NewGroupViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewGroupViewController.swift; sourceTree = "<group>"; };
 		0ACB5F0D22097651008FE740 /* ChatListPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatListPresenter.swift; sourceTree = "<group>"; };
 		0ACB5F0F22097665008FE740 /* ChatListRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatListRouter.swift; sourceTree = "<group>"; };
 		0AD5552921C625BB0027FD16 /* ChatListInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatListInteractor.swift; sourceTree = "<group>"; };
@@ -196,6 +200,8 @@
 				0A8C8A4521E5E72D00D8751E /* MessageViewController.swift */,
 				B0A612B62294288F00569DFE /* MessageViewController+SendMessageBarDelegate.swift */,
 				B0DF0322228051B4000F9492 /* MessageViewController+Keyboard.swift */,
+				0A9F62192295169A0087CCF5 /* NewGroupInteractor.swift */,
+				0AC33D022293C7A00060D263 /* NewGroupViewController.swift */,
 				7DDADC4F21D5C156009733B5 /* RegisterViewController.swift */,
 				B031BE5622631304004160AE /* SettingsHelper.swift */,
 				0AEE8BED226456080022EC3F /* UiUtils.swift */,
@@ -401,6 +407,7 @@
 				0A0380DA21B3CC8100A3FA0E /* ChatListViewController.swift in Sources */,
 				0AE50D4422156A250021F7B7 /* FindViewController.swift in Sources */,
 				0AD5552A21C625BB0027FD16 /* ChatListInteractor.swift in Sources */,
+				0A9F621A2295169A0087CCF5 /* NewGroupInteractor.swift in Sources */,
 				0A8A8BDA21C380E80090BCBA /* Cache.swift in Sources */,
 				B0DF031D227C604C000F9492 /* MessageCell.swift in Sources */,
 				0A15739621DB531E0070C31F /* UserDb.swift in Sources */,
@@ -438,6 +445,7 @@
 				0A0016E921E736CD00088188 /* MessagePresenter.swift in Sources */,
 				B0A612B1228C85C300569DFE /* MessageViewLayout.swift in Sources */,
 				0AEE8BEE226456080022EC3F /* UiUtils.swift in Sources */,
+				0AC33D032293C7A00060D263 /* NewGroupViewController.swift in Sources */,
 				0A15739421DB53130070C31F /* SubscriberDb.swift in Sources */,
 				0A8A108521D4C79700B90D73 /* SqlStore.swift in Sources */,
 				0AE50D4622156A4B0021F7B7 /* FindInteractor.swift in Sources */,

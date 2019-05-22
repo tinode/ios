@@ -32,6 +32,8 @@ class UiTinodeEventListener : TinodeEventListener {
 }
 
 class UiUtils {
+    static let kMinTagLength = 4
+    static let kAvatarSize = 128
     public static func attachToMeTopic(meListener: DefaultMeTopic.Listener?) -> PromisedReply<ServerMessage>? {
         let tinode = Cache.getTinode()
         var me = tinode.getMeTopic()

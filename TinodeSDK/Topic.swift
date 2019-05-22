@@ -72,6 +72,8 @@ fileprivate let kIntervalBetweenKeyPresses: TimeInterval = 3.0
 open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto {
     enum TopicError: Error {
         case alreadySubscribed
+        case notSynchronized
+        case subscriptionFailure(String)
     }
 
     enum NoteType {
@@ -274,9 +276,11 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
     private var description: Description<DP, DR>? = nil
     public var pub: DP? {
         get { return description?.pub }
+        set { description?.pub = newValue }
     }
     public var priv: DR? {
         get { return description?.priv }
+        set { description?.priv = newValue }
     }
     public var attached = false
     weak public var listener: Listener? = nil
@@ -384,9 +388,6 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
 
     init(tinode: Tinode?, name: String, l: Listener? = nil) {
         self.superInit(tinode: tinode, name: name, l: l)
-    }
-    convenience init(tinode: Tinode?) {
-        self.init(tinode: tinode!, name: Tinode.kTopicNew + tinode!.nextUniqueString())
     }
     init(tinode: Tinode?, sub: Subscription<SP, SR>) {
         self.superInit(tinode: tinode, name: sub.topic!)
@@ -868,6 +869,49 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
         }
         return description!.acs!.update(from: ac)
     }
+    @discardableResult
+    public func invite(user uid: String, in mode: String?) -> PromisedReply<ServerMessage>? {
+        var sub = getSubscription(for: uid)
+        if sub != nil {// : Subscription<SP, SR>
+            sub!.acs?.given = mode != nil ? AcsHelper(str: mode) : nil
+        } else {
+            let subUnwrapped = Subscription<SP, SR>()
+            subUnwrapped.topic = self.name
+            subUnwrapped.user = uid
+            subUnwrapped.acs = Acs()
+            subUnwrapped.acs!.given = mode != nil ? AcsHelper(str: mode) : nil
+            _ = store?.subNew(topic: self, sub: subUnwrapped)
+            let user: User<SP>? = tinode?.getUser(with: uid)
+            subUnwrapped.pub = user?.pub
+            addSubToCache(sub: subUnwrapped)
+            sub = subUnwrapped
+        }
+        listener?.onMetaSub(sub: sub!)
+        listener?.onSubsUpdated()
+        // Check if topic is already synchronized. If not, don't send the request, it will fail anyway.
+        if isNew {
+            return PromisedReply<ServerMessage>(error: TopicError.notSynchronized)
+        }
+        do {
+            let metaSetSub = MetaSetSub(user: uid, mode: mode)
+            //metaSetSub.user = uid
+            //metaSetSub.mode = mode
+            let future = setMeta(meta: MsgSetMeta(desc: nil, sub: metaSetSub, tags: nil))
+            return try future?.thenApply(
+                onSuccess: { [weak self] msg in
+                    if let topic = self {
+                        topic.store?.subUpdate(topic: topic, sub: sub!)
+                        topic.listener?.onMetaSub(sub: sub!)
+                        topic.listener?.onSubsUpdated()
+                    }
+                    return nil
+                })
+        } catch {
+            return PromisedReply<ServerMessage>(
+                error: TopicError.subscriptionFailure(
+                    error.localizedDescription))
+        }
+    }
 
     public func routeInfo(info: MsgServerInfo) {
         if info.what != Tinode.kNoteKp {
@@ -1227,6 +1271,9 @@ public class ComTopic<DP: Codable>: Topic<DP, PrivateType, DP, PrivateType> {
     }
     override init(tinode: Tinode?, name: String, desc: Description<DP, PrivateType>) {
         super.init(tinode: tinode, name: name, desc: desc)
+    }
+    public convenience init(in tinode: Tinode?, forwardingEventsTo l: Listener? = nil) {
+        self.init(tinode: tinode!, name: Tinode.kTopicNew + tinode!.nextUniqueString(), l: l)
     }
 
     public var isArchived: Bool {
