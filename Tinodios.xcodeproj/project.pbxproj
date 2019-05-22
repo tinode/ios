@@ -46,6 +46,7 @@
 		7DDADC5221D5C219009733B5 /* Validate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DDADC5121D5C219009733B5 /* Validate.swift */; };
 		7DDADC5421D5C2E6009733B5 /* CredentialsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DDADC5321D5C2E6009733B5 /* CredentialsViewController.swift */; };
 		B008593C22741B8A002C5168 /* AttributedStringFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B008593B22741B89002C5168 /* AttributedStringFormatter.swift */; };
+		B026EB5A229593320067A264 /* FindTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B026EB59229593320067A264 /* FindTableViewCell.swift */; };
 		B02F5C8B22679BC80079A97E /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = B02F5C8A22679BC80079A97E /* ImagePicker.swift */; };
 		B031BE552263075E004160AE /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = B031BE542263075E004160AE /* Settings.bundle */; };
 		B031BE5722631304004160AE /* SettingsHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = B031BE5622631304004160AE /* SettingsHelper.swift */; };
@@ -121,6 +122,7 @@
 		7DDADC5121D5C219009733B5 /* Validate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Validate.swift; sourceTree = "<group>"; };
 		7DDADC5321D5C2E6009733B5 /* CredentialsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CredentialsViewController.swift; sourceTree = "<group>"; };
 		B008593B22741B89002C5168 /* AttributedStringFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttributedStringFormatter.swift; sourceTree = "<group>"; };
+		B026EB59229593320067A264 /* FindTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FindTableViewCell.swift; sourceTree = "<group>"; };
 		B02F5C8A22679BC80079A97E /* ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
 		B031BE542263075E004160AE /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		B031BE5622631304004160AE /* SettingsHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsHelper.swift; sourceTree = "<group>"; };
@@ -190,6 +192,7 @@
 				0AE50D4722156A5B0021F7B7 /* FindPresenter.swift */,
 				0AE50D4922156A6C0021F7B7 /* FindRouter.swift */,
 				0AE50D4322156A250021F7B7 /* FindViewController.swift */,
+				B026EB59229593320067A264 /* FindTableViewCell.swift */,
 				0A6F260921BE51D800B9726E /* LoginViewController.swift */,
 				B0A612B4229132CC00569DFE /* MessageBubbleDecorator.swift */,
 				B0DF031C227C604C000F9492 /* MessageCell.swift */,
@@ -425,6 +428,7 @@
 				0A37D6F521DA075100A124CA /* AccountDb.swift in Sources */,
 				0A0380D821B3CC8100A3FA0E /* AppDelegate.swift in Sources */,
 				0A484E5121E359A800FE9AFE /* MessageDb.swift in Sources */,
+				B026EB5A229593320067A264 /* FindTableViewCell.swift in Sources */,
 				7DDADC5021D5C156009733B5 /* RegisterViewController.swift in Sources */,
 				B0DF031F227C6898000F9492 /* PaddedLabel.swift in Sources */,
 				0AE50D4A22156A6C0021F7B7 /* FindRouter.swift in Sources */,

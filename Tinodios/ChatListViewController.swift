@@ -19,7 +19,7 @@ class ChatListViewController: UITableViewController, ChatListDisplayLogic {
     var interactor: ChatListBusinessLogic?
     var topics: [DefaultComTopic] = []
     // Index of contacts: name => position in topics
-    var rowIndex: Dictionary<String, Int> = Dictionary()
+    var rowIndex: [String : Int] = [:]
     var router: ChatListRoutingLogic?
 
     private func setup() {
@@ -127,7 +127,7 @@ extension ChatListViewController {
             let rect = CGRect(x: 0, y: 0, width: view.bounds.width, height: view.bounds.height)
             let messageLabel = UILabel(frame: rect)
             messageLabel.text = "You have no chats\n\n¯\\_(ツ)_/¯"
-            messageLabel.textColor = UIColor.darkText
+            messageLabel.textColor = .darkGray
             messageLabel.numberOfLines = 0
             messageLabel.textAlignment = .center
             messageLabel.font = UIFont.preferredFont(forTextStyle: .body)

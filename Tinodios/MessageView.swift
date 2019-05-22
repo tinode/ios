@@ -82,7 +82,7 @@ extension MessageView {
         if show {
             let messageLabel = UILabel(frame: CGRect(x: 0, y: 0, width: self.bounds.size.width, height: self.bounds.size.height))
             messageLabel.text = "No messages in the conversation"
-            messageLabel.textColor = .darkText
+            messageLabel.textColor = .darkGray
             messageLabel.numberOfLines = 0;
             messageLabel.textAlignment = .center;
             messageLabel.font = .preferredFont(forTextStyle: .body)

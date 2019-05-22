@@ -15,9 +15,9 @@ class LoginViewController: UIViewController {
     @IBOutlet weak var userNameTextEdit: UITextField!
     @IBOutlet weak var passwordTextEdit: UITextField!
     @IBOutlet weak var scrollView: UIScrollView!
-    
+
     static let kTokenKey = "co.tinode.token"
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -46,7 +46,7 @@ class LoginViewController: UIViewController {
         scrollView.contentInset = .zero
         scrollView.scrollIndicatorInsets = .zero
     }
-    
+
     private func routeToChats() {
         DispatchQueue.main.async {
             let storyboard = UIStoryboard(name: "Main", bundle: nil)

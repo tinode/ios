@@ -84,8 +84,8 @@ class FindViewController: UITableViewController, FindDisplayLogic {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
-        case 0: return self.localContacts.count
-        case 1: return self.remoteContacts.count
+        case 0: return localContacts.isEmpty ? 1 : localContacts.count
+        case 1: return remoteContacts.isEmpty ? 1 : remoteContacts.count
         default: return 0
         }
     }
@@ -98,14 +98,28 @@ class FindViewController: UITableViewController, FindDisplayLogic {
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "FindTableViewCell", for: indexPath)
+        if isSectionEmpty(section: indexPath.section) {
+            return tableView.dequeueReusableCell(withIdentifier: "FindTableViewCellEmpty", for: indexPath)
+        } else {
+            let cell = tableView.dequeueReusableCell(withIdentifier: "FindTableViewCell", for: indexPath) as! FindTableViewCell
 
-        // Configure the cell...
-        let contact = indexPath.section == 0 ? localContacts[indexPath.row] : remoteContacts[indexPath.row]
-        cell.textLabel?.text = contact.displayName
-        cell.detailTextLabel?.text = contact.uniqueId
+            // Configure the cell...
+            let contact = indexPath.section == 0 ? localContacts[indexPath.row] : remoteContacts[indexPath.row]
+            cell.icon.set(icon: contact.image, title: contact.displayName, id: contact.uniqueId)
+            cell.title.text = contact.displayName
+            cell.title.sizeToFit()
+            cell.subtitle.text = contact.uniqueId
+            cell.subtitle.sizeToFit()
+            return cell
+        }
+    }
 
-        return cell
+    private func isSectionEmpty(section: Int) -> Bool {
+        switch section {
+        case 0: return localContacts.isEmpty
+        case 1: return remoteContacts.isEmpty
+        default: return true
+        }
     }
 }
 
