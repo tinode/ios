@@ -769,6 +769,8 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
         // update listener
         listener?.onMeta(meta: meta)
     }
+
+    @discardableResult
     private func note(what: NoteType) -> Int {
         var result = 0
         switch what {
@@ -794,20 +796,23 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
         }
         return result
     }
+
     @discardableResult
     public func noteRead() -> Int {
-        let result = note(what: NoteType.kRead)
+        let result = note(what: .kRead)
         store?.setRead(topic: self, read: result)
         return result
     }
+
     @discardableResult
     public func noteRecv() -> Int {
-        let result = note(what: NoteType.kRecv)
+        let result = note(what: .kRecv)
         store?.setRecv(topic: self, recv: result)
         return result
     }
+
     public func noteKeyPress() {
-        _ = note(what: NoteType.kKeyPress)
+        note(what: .kKeyPress)
     }
     private func setSeq(seq: Int) {
         if description!.getSeq < seq {

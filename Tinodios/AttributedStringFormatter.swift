@@ -12,8 +12,8 @@ import TinodeSDK
 import UIKit
 
 // iOS's support for styled strings is much weaker than Android's and web. Some styles cannot be nested. They have to be constructed and applied all at once at the leaf level.
-class AttribFormatter: DraftyFormatter {
-    typealias Node = AttribFormatter.TreeNode
+class AttributedStringFormatter: DraftyFormatter {
+    typealias Node = AttributedStringFormatter.TreeNode
 
     private enum Constants {
         static let kDefaultFont: UIFont = UIFont.preferredFont(forTextStyle: .body)
@@ -31,42 +31,32 @@ class AttribFormatter: DraftyFormatter {
 
     let defaultAttrs: [NSAttributedString.Key: Any]
 
-    init(defaultAttrs attrs: [NSAttributedString.Key: Any]) {
+    init(withDefaultAttributes attrs: [NSAttributedString.Key: Any]) {
         defaultAttrs = attrs
     }
 
     // Inline image
-    private func handleImage(content: TreeNode, attr: [String : JSONValue]?) {
+    private func handleImage(from node: TreeNode, with attr: [String : JSONValue]?) {
         guard let attr = attr, let bits = attr["val"]?.asData() else { return }
 
         // FIXME: maybe cache result of converting Data to image.
-        var attachment = Attachment()
-        attachment.image = UIImage(data: bits)
-        attachment.mime = attr["mime"]?.asString()
-        attachment.name = attr["name"]?.asString()
-        attachment.size = bits.count
-        attachment.width = attr["width"]?.asInt()
-        attachment.height = attr["height"]?.asInt()
-        content.attachment(attachment)
+        // TODO: if image UIImage(data: bits) fails, use "broken image" icon from resources.
+        let attachment = Attachment(content: .image(UIImage(data: bits) ?? UIImage()), mime: attr["mime"]?.asString(), name: attr["name"]?.asString(), ref: nil, size: bits.count, width: attr["width"]?.asInt(), height: attr["height"]?.asInt())
+        node.attachment(attachment)
     }
 
-    private func handleAttachment(content: TreeNode, attr: [String : JSONValue]?) {
+    private func handleAttachment(from node: TreeNode, with attr: [String : JSONValue]?) {
         guard let attr = attr, let bits = attr["val"]?.asData() else { return }
 
-        var attachment = Attachment()
-        attachment.data = bits
-        attachment.mime = attr["mime"]?.asString()
-        attachment.name = attr["name"]?.asString()
-        attachment.size = bits.count
-        content.attachment(attachment)
+        let attachment = Attachment(content: .data(bits), mime: attr["mime"]?.asString(), name: attr["name"]?.asString(), ref: nil, size: bits.count, width: nil, height: nil)
+        node.attachment(attachment)
     }
 
-    private func handleButton(content: TreeNode, attr: [String : JSONValue]?) {
-        guard let urlStr = AttribFormatter.buttonDataAsUri(face: content, attr: attr), let url = URL(string: urlStr) else { return }
+    private func handleButton(from node: TreeNode, with attr: [String : JSONValue]?) {
+        guard let urlStr = AttributedStringFormatter.buttonDataAsUri(face: node, attr: attr), let url = URL(string: urlStr) else { return }
 
-        var attachment = Attachment()
-        attachment.button = url
-        content.attachment(attachment)
+        let attachment = Attachment(content: .button(url), mime: nil, name: nil, ref: nil, size: nil, width: nil, height: nil)
+        node.attachment(attachment)
     }
 
     // Convert button payload to an URL.
@@ -74,7 +64,8 @@ class AttribFormatter: DraftyFormatter {
     private static func buttonDataAsUri(face: TreeNode, attr: [String : JSONValue]?) -> String? {
         guard let attr = attr, let actionType = attr["act"]?.asString() else { return nil }
         var baseUrl: URLComponents
-        if actionType == "url" {
+        switch actionType {
+        case "url":
             guard let ref = attr["ref"]?.asString() else { return nil }
             guard let urlc = URLComponents(string: ref) else { return nil }
             baseUrl = urlc
@@ -85,7 +76,7 @@ class AttribFormatter: DraftyFormatter {
                 }
                 baseUrl.queryItems!.append(URLQueryItem(name: name, value: actionValue))
             }
-        } else if actionType == "pub" {
+        case "pub":
             // Custom scheme usr to post back to the server:
             // tinode:default?name=value
             baseUrl = URLComponents()
@@ -99,7 +90,7 @@ class AttribFormatter: DraftyFormatter {
                 let actionValue = attr["val"]?.asString() ?? "1"
                 baseUrl.queryItems!.append(URLQueryItem(name: "val", value: actionValue))
             }
-        } else {
+        default:
             return nil
         }
 
@@ -136,13 +127,13 @@ class AttribFormatter: DraftyFormatter {
         case "HD": break // Hidden/ignored text
         case "IM":
             // Inline image
-            handleImage(content: span, attr: attr)
+            handleImage(from: span, with: attr)
         case "EX":
             // Attachment
-            handleAttachment(content: span, attr: attr)
+            handleAttachment(from: span, with: attr)
         case "BN":
             // Button
-            handleButton(content: span, attr: attr)
+            handleButton(from: span, with: attr)
         case "FM":
             // Form
             if var children = span.children, !children.isEmpty {
@@ -162,11 +153,11 @@ class AttribFormatter: DraftyFormatter {
         return span
     }
 
-    func apply(tp: String?, attr: [String : JSONValue]?, content: [AttribFormatter.TreeNode]) -> AttribFormatter.TreeNode {
+    func apply(tp: String?, attr: [String : JSONValue]?, content: [AttributedStringFormatter.TreeNode]) -> AttributedStringFormatter.TreeNode {
         return apply(tp: tp, attr: attr, children: content, content: nil)
     }
 
-    func apply(tp: String?, attr: [String : JSONValue]?, content: String?) -> AttribFormatter.TreeNode {
+    func apply(tp: String?, attr: [String : JSONValue]?, content: String?) -> AttributedStringFormatter.TreeNode {
         return apply(tp: tp, attr: attr, children: nil, content: content)
     }
 
@@ -187,15 +178,19 @@ class AttribFormatter: DraftyFormatter {
             return NSMutableAttributedString(string: content.string, attributes: attributes)
         }
 
-        let formatTree = content.format(formatter: AttribFormatter(defaultAttrs: attributes))
+        let formatTree = content.format(formatter: AttributedStringFormatter(withDefaultAttributes: attributes))
         return formatTree.toAttributed(defaultAttrs: attributes, fontTraits: nil, size: maxSize)
     }
 
     // File or image attachment.
     struct Attachment {
-        var data: Data?
-        var image: UIImage?
-        var button: URL?
+        enum AttachmentType {
+            case data(Data)
+            case image(UIImage)
+            case button(URL)
+        }
+
+        var content: AttachmentType
 
         var mime: String?
         var name: String?
@@ -290,16 +285,15 @@ class AttribFormatter: DraftyFormatter {
         }
 
         var isEmpty: Bool {
-            return (text == nil || text!.isEmpty) && (children == nil || children!.isEmpty)
+            return (text?.isEmpty ?? true) && (children?.isEmpty ?? true)
         }
 
         /// Simple representation of an attachment as plain string.
         private func attachmentToString(_ attachment: Attachment) -> String {
-            if let _ = attachment.image {
+            switch attachment.content {
+            case .image:
                 return "[img \(attachment.name ?? "unnamed")]"
-            }
-
-            if let _ = attachment.button {
+            case .button:
                 if let text = text {
                     return "[btn \(text)]"
                 }
@@ -311,29 +305,28 @@ class AttribFormatter: DraftyFormatter {
                     return "[btn \(faceText)]"
                 }
                 return "[button]"
+            case .data:
+                var fname = attachment.name ?? "unnamed"
+                if fname.count > 32 {
+                    fname = fname.prefix(14) + "…" + fname.suffix(14)
+                }
+                return "[att \(fname)]"
             }
-
-            guard attachment.data != nil else { return "" }
-            var fname = attachment.name ?? "unnamed"
-            if fname.count > 32 {
-                fname = fname.prefix(14) + "…" + fname.suffix(14)
-            }
-            return "[att \(fname)]"
         }
 
         /// Create custom layout for attachments.
         private func attachmentToAttributed(_ attachment: Attachment, defaultAttrs attributes: [NSAttributedString.Key : Any], fontTraits: UIFontDescriptor.SymbolicTraits?, maxSize size: CGSize) -> NSAttributedString {
+            switch attachment.content {
             // Image handling is easy.
-            if let image = attachment.image {
+            case .image(let image):
                 let wrapper = NSTextAttachment()
                 wrapper.image = image
                 let (scaledSize, _) = image.sizeUnder(maxWidth: size.width, maxHeight: size.height, clip: false)
                 wrapper.bounds = CGRect(origin: .zero, size: scaledSize)
                 return NSAttributedString(attachment: wrapper)
-            }
 
-            // button is also not too hard
-            if let buttonUrl = attachment.button {
+            // Button is also not too hard
+            case .button(let buttonUrl):
                 let faceText = NSMutableAttributedString()
                 // Change color of text from default to link color.
                 var attrs = attributes
@@ -348,70 +341,69 @@ class AttribFormatter: DraftyFormatter {
                     faceText.append(NSAttributedString(string: "button", attributes: attrs))
                 }
                 return NSAttributedString(attachment: DraftyButtonAttachment(face: faceText, data: buttonUrl))
-            }
 
             // File attachment is harder: construct attributed string fr showing an attachment.
+            case .data(let bits):
 
-            guard let bits = attachment.data else { return NSAttributedString() }
+                let attributed = NSMutableAttributedString()
+                attributed.beginEditing()
+                /*
+                 TODO: use provided mime type to show custom icons for different types.
+                 let unmanagedUti = UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, (attachment.mime ?? "application/octet-stream") as CFString, nil)
+                 var uti = unmanagedUti?.takeRetainedValue() ?? kUTTypeData
+                 uti = kUTTypeData
+                 */
+                // Using basic kUTTypeData to prevent iOS from displaying distorted previews.
 
-            let attributed = NSMutableAttributedString()
-            attributed.beginEditing()
-            /*
-             TODO: use provided mime type to show custom icons for different types.
-             let unmanagedUti = UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, (attachment.mime ?? "application/octet-stream") as CFString, nil)
-             var uti = unmanagedUti?.takeRetainedValue() ?? kUTTypeData
-             uti = kUTTypeData
-             */
-            // Using basic kUTTypeData to prevent iOS from displaying distorted previews.
+                let wrapper = NSTextAttachment(data: bits, ofType: kUTTypeData as String)
+                let baseFont = attributes[.font] as! UIFont
+                wrapper.bounds = CGRect(origin: CGPoint(x: 0, y: baseFont.capHeight - Constants.kAttachmentIconSize.height), size: Constants.kAttachmentIconSize)
+                attributed.append(NSAttributedString(attachment: wrapper))
 
-            let wrapper = NSTextAttachment(data: bits, ofType: kUTTypeData as String)
-            let baseFont = attributes[.font] as! UIFont
-            wrapper.bounds = CGRect(origin: CGPoint(x: 0, y: baseFont.capHeight - Constants.kAttachmentIconSize.height), size: Constants.kAttachmentIconSize)
-            attributed.append(NSAttributedString(attachment: wrapper))
+                // Append document's file name.
+                var fname = attachment.name ?? "tinode_file_attachment"
+                if fname.count > 32 {
+                    fname = fname.prefix(14) + "…" + fname.suffix(14)
+                }
+                attributed.append(NSAttributedString(string: " "))
+                attributed.append(NSAttributedString(string: fname, attributes: [NSAttributedString.Key.font : UIFont(name: "Courier", size: baseFont.pointSize)!]))
 
-            // Append document's file name.
-            var fname = attachment.name ?? "tinode_file_attachment"
-            if fname.count > 32 {
-                fname = fname.prefix(14) + "…" + fname.suffix(14)
+                // Append file size.
+                if let size = attachment.size {
+                    attributed.append(NSAttributedString(string: " (" + UiUtils.bytesToHumanSize(Int64(size)) + ")", attributes: attributes))
+                }
+
+                // Insert linebreak then a clickable [↓ save] line
+                attributed.append(NSAttributedString(string: "\u{2009}\n", attributes: [NSAttributedString.Key.font : baseFont]))
+
+                // \u{2009} because iOS is buggy and bugs go unfixed for years.
+                // https://stackoverflow.com/questions/29041458/how-to-set-color-of-templated-image-in-nstextattachment
+                let second = NSMutableAttributedString(string: "\u{2009}")
+                second.beginEditing()
+
+                // Add 'download file' icon
+                let icon = NSTextAttachment()
+                icon.image = UIImage(named: "download-24")?.withRenderingMode(.alwaysTemplate)
+                icon.bounds = CGRect(origin: CGPoint(x: 0, y: -2), size: CGSize(width: baseFont.lineHeight * 0.8, height: baseFont.lineHeight * 0.8))
+                second.append(NSAttributedString(attachment: icon))
+
+                // Add "save" text.
+                // TODO: make it clickable
+                second.append(NSAttributedString(string: " save", attributes: [NSAttributedString.Key.font : baseFont]))
+
+                // Add paragraph style and coloring
+                let paragraph = NSMutableParagraphStyle()
+                paragraph.firstLineHeadIndent = Constants.kAttachmentIconSize.width + baseFont.capHeight * 0.25
+                paragraph.lineSpacing = 0
+                paragraph.maximumLineHeight = 4
+                second.addAttributes([NSAttributedString.Key.paragraphStyle : paragraph, NSAttributedString.Key.foregroundColor : Constants.kLinkColor], range: NSRange(location: 0, length: second.length))
+
+                second.endEditing()
+                attributed.append(second)
+
+                attributed.endEditing()
+                return attributed
             }
-            attributed.append(NSAttributedString(string: " "))
-            attributed.append(NSAttributedString(string: fname, attributes: [NSAttributedString.Key.font : UIFont(name: "Courier", size: baseFont.pointSize)!]))
-
-            // Append file size.
-            if let size = attachment.size {
-                attributed.append(NSAttributedString(string: " (" + UiUtils.bytesToHumanSize(Int64(size)) + ")", attributes: attributes))
-            }
-
-            // Insert linebreak then a clickable [↓ save] line
-            attributed.append(NSAttributedString(string: "\u{2009}\n", attributes: [NSAttributedString.Key.font : baseFont]))
-
-            // \u{2009} because iOS is buggy and bugs go unfixed for years.
-            // https://stackoverflow.com/questions/29041458/how-to-set-color-of-templated-image-in-nstextattachment
-            let second = NSMutableAttributedString(string: "\u{2009}")
-            second.beginEditing()
-
-            // Add 'download file' icon
-            let icon = NSTextAttachment()
-            icon.image = UIImage(named: "download-24")?.withRenderingMode(.alwaysTemplate)
-            icon.bounds = CGRect(origin: CGPoint(x: 0, y: -2), size: CGSize(width: baseFont.lineHeight * 0.8, height: baseFont.lineHeight * 0.8))
-            second.append(NSAttributedString(attachment: icon))
-
-            // Add "save" text.
-            // TODO: make it clickable
-            second.append(NSAttributedString(string: " save", attributes: [NSAttributedString.Key.font : baseFont]))
-
-            // Add paragraph style and coloring
-            let paragraph = NSMutableParagraphStyle()
-            paragraph.firstLineHeadIndent = Constants.kAttachmentIconSize.width + baseFont.capHeight * 0.25
-            paragraph.lineSpacing = 0
-            paragraph.maximumLineHeight = 4
-            second.addAttributes([NSAttributedString.Key.paragraphStyle : paragraph, NSAttributedString.Key.foregroundColor : Constants.kLinkColor], range: NSRange(location: 0, length: second.length))
-
-            second.endEditing()
-            attributed.append(second)
-
-            attributed.endEditing()
-            return attributed
         }
 
         /// Plain text to attributed string.
@@ -494,7 +486,7 @@ extension StoredMessage {
             return cachedContent
         }
         guard let content = content else { return nil }
-        cachedContent = AttribFormatter.toAttributed(content, maxSize: size, defaultAttrs: attributes)
+        cachedContent = AttributedStringFormatter.toAttributed(content, maxSize: size, defaultAttrs: attributes)
         return cachedContent
     }
 }

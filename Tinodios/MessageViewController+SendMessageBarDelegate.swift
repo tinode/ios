@@ -42,9 +42,9 @@ extension MessageViewController : UIDocumentPickerDelegate {
                 let unmanaged = UTTypeCopyPreferredTagWithClass(uti as CFString, kUTTagClassMIMEType)
                 mimeType = unmanaged?.takeRetainedValue() as String?
             }
-            let drafty = Drafty()
+
             print("Got data count=\(bits.count), fname='\(fname)', mime: \(mimeType ?? "nil")")
-            _ = interactor?.sendMessage(content: drafty.attachFile(mime: mimeType, bits: bits, fname: fname))
+            _ = interactor?.sendMessage(content: Drafty().attachFile(mime: mimeType, bits: bits, fname: fname))
         } catch {
             print("Failed to read file \(error)")
         }
