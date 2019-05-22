@@ -309,18 +309,13 @@ public class Tinode {
                 Tinode.log.debug("what = %@", what)
             }
         } else if let meta = serverMsg.meta {
-            var updated: Date? = nil
-            if let t = getTopic(topicName: meta.topic!) {
+            if let t = getTopic(topicName: meta.topic!) ?? maybeCreateTopic(meta: meta) {
                 t.routeMeta(meta: meta)
-                updated = t.updated
-            } else if let t = maybeCreateTopic(meta: meta) {
-                updated = t.updated
-                Tinode.log.debug("created topic %@", meta.topic ?? "")
-            }
 
-            if let updated = updated {
-                if topicsUpdated == nil || topicsUpdated! < updated {
-                    topicsUpdated = updated
+                if let updated = t.updated {
+                    if topicsUpdated ?? Date.distantPast < updated {
+                        topicsUpdated = updated
+                    }
                 }
             }
 

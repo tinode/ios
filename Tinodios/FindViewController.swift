@@ -108,7 +108,7 @@ class FindViewController: UITableViewController, FindDisplayLogic {
             cell.icon.set(icon: contact.image, title: contact.displayName, id: contact.uniqueId)
             cell.title.text = contact.displayName
             cell.title.sizeToFit()
-            cell.subtitle.text = contact.uniqueId
+            cell.subtitle.text = contact.subtitle ?? contact.uniqueId
             cell.subtitle.sizeToFit()
             return cell
         }

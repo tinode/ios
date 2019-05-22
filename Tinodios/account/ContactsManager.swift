@@ -12,11 +12,14 @@ class ContactHolder {
     var displayName: String? = nil
     var image: UIImage? = nil
     var uniqueId: String? = nil
+    // This is used when the contact was found in search: what was matched.
+    var subtitle: String? = nil
 
-    init(displayName: String?, image: UIImage?, uniqueId: String?) {
+    init(displayName: String?, image: UIImage?, uniqueId: String?, subtitle: String? = nil) {
         self.displayName = displayName
         self.image = image
         self.uniqueId = uniqueId
+        self.subtitle = subtitle
     }
 }
 
