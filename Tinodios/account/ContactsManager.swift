@@ -8,6 +8,18 @@
 import Foundation
 import TinodeSDK
 
+class ContactHolder {
+    var displayName: String? = nil
+    var image: UIImage? = nil
+    var uniqueId: String? = nil
+
+    init(displayName: String?, image: UIImage?, uniqueId: String?) {
+        self.displayName = displayName
+        self.image = image
+        self.uniqueId = uniqueId
+    }
+}
+
 class ContactsManager {
     public static var `default` = ContactsManager()
 
@@ -42,6 +54,19 @@ class ContactsManager {
                 // New contact.
                 userDb.insert(sub: sub)
             }
+        }
+    }
+    // Returns contacts from the sqlite database's UserDb.
+    public func fetchContacts() -> [ContactHolder]? {
+        guard let uid = Cache.getTinode().myUid else { return nil }
+        guard let users = userDb.readAll(for: uid) else { return nil }
+        // Turn users into contacts.
+        return users.map { user in
+            let q = user as! DefaultUser
+            return ContactHolder(
+                displayName: q.pub?.fn,
+                image: q.pub?.photo?.image(),
+                uniqueId: q.uid)
         }
     }
 }
