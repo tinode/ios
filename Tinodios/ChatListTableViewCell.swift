@@ -1,16 +1,15 @@
 //
 //  ChatListTableViewCell.swift
-//  ios
+//  Tinodios
 //
 //  Copyright © 2019 Tinode. All rights reserved.
 //
 
 import UIKit
-import MessageKit
 
 class ChatListTableViewCell: UITableViewCell {
 
-    @IBOutlet weak var icon: AvatarView!
+    @IBOutlet weak var icon: RoundImageView!
     @IBOutlet weak var title: UILabel!
     @IBOutlet weak var subtitle: UILabel!
     @IBOutlet weak var unreadCount: UILabel!

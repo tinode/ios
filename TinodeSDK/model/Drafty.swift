@@ -15,24 +15,39 @@ public enum DraftyError: Error {
 public protocol DraftyFormatter {
     associatedtype Node
 
-    func apply(tp: String?, attr: [String:JSONValue]?, content: [Node]) -> [Node]
-    func apply(tp: String?, attr: [String:JSONValue]?, content: String?) -> [Node]
+    func apply(tp: String?, attr: [String:JSONValue]?, content: [Node]) -> Node
+    func apply(tp: String?, attr: [String:JSONValue]?, content: String?) -> Node
 }
 
 /// Class representing formatted text with optional attachments.
-public class Drafty: Codable, CustomStringConvertible, Equatable {
+open class Drafty: Codable, CustomStringConvertible, Equatable {
 
     public static let kMimeType = "text/x-drafty"
     public static let kJSONMimeType = "application/json"
 
     private static let kMaxFormElements = 8
 
+    // TODO: Switch from string types to enum
+    public enum StyleType: String {
+        case st = "ST" // Strong / bold
+        case em = "EM" // Emphesized / italic
+        case dl = "DL" // Deleted / strikethrough
+        case co = "CO" // Code / mono
+        case ln = "LN" // Link / URL
+        case mn = "MN" // Mention
+        case ht = "HT" // Hashtag (deprecated)
+        case hd = "HD" // Hidden
+        case bn = "BN" // Button
+        case fm = "FM" // Form
+        case rw = "RW" // Row in a form
+    }
+
     // Regular expressions for parsing inline formats.
     private static let kInlineStyles = try! [
-        "ST": NSRegularExpression(pattern: #"(?<=^|\W)\*([^*]+[^\s*])\*(?=$|\W)"#),     // bold *bo*
-        "EM": NSRegularExpression(pattern: #"(?<=^|[\W_])_([^_]+[^\s_])_(?=$|[\W_])"#), // italic _it_
-        "DL": NSRegularExpression(pattern: #"(?<=^|\W)~([^~]+[^\s~])~(?=$|\W)"#),       // strikethough ~st~
-        "CO": NSRegularExpression(pattern: #"(?<=^|\W)`([^`]+)`(?=$|\W)"#)              // code/monospace `mono`
+        "ST": NSRegularExpression(pattern: #"(?<=^|[\W_])\*([^*]+[^\s*])\*(?=$|[\W_])"#), // bold *bo*
+        "EM": NSRegularExpression(pattern: #"(?<=^|\W)_([^_]+[^\s_])_(?=$|\W)"#),         // italic _it_
+        "DL": NSRegularExpression(pattern: #"(?<=^|[\W_])~([^~]+[^\s~])~(?=$|[\W_])"#),   // strikethough ~st~
+        "CO": NSRegularExpression(pattern: #"(?<=^|\W)`([^`]+)`(?=$|\W)"#)                // code/monospace `mono`
     ]
 
     private static let kEntities = try! [
@@ -87,7 +102,12 @@ public class Drafty: Codable, CustomStringConvertible, Equatable {
         } else {
             // Non-optional decoding as a Drafty object.
             let container = try decoder.container(keyedBy: CodingKeys.self)
-            txt = try container.decode(String.self, forKey: .txt)
+            // Txt is missing for attachments. 
+            do {
+                txt = try container.decode(String.self, forKey: .txt)
+            } catch DecodingError.keyNotFound {
+                txt = ""
+            }
             fmt = try? container.decode([Style].self, forKey: .fmt)
             ent = try? container.decode([Entity].self, forKey: .ent)
         }
@@ -553,7 +573,7 @@ public class Drafty: Codable, CustomStringConvertible, Equatable {
     /// - Parameters:
     ///     - json: object to attach.
     /// - Returns: 'self' Drafty object.
-    public func attachJSON(json: [String:JSONValue]) -> Drafty {
+    public func attachJSON(_ json: [String:JSONValue]) -> Drafty {
         prepareForEntity(at: -1, len: 1)
 
         var data: [String:JSONValue] = [:]
@@ -583,7 +603,7 @@ public class Drafty: Codable, CustomStringConvertible, Equatable {
         guard actionType == "url" || actionType == "pub" else {
             throw DraftyError.illegalArgument("Unknown action type \(actionType)")
         }
-        guard actionType == "pub"  || refUrl != nil else {
+        guard actionType == "url" && refUrl != nil else {
             throw DraftyError.illegalArgument("URL required for URL buttons")
         }
 
@@ -622,7 +642,7 @@ public class Drafty: Codable, CustomStringConvertible, Equatable {
 
         var start = startAt
         guard !spans.isEmpty else {
-            return formatter.apply(tp: nil, attr: nil, content: String(line[line.index(line.startIndex, offsetBy: start)..<line.index(line.startIndex, offsetBy: end)]))
+            return [formatter.apply(tp: nil, attr: nil, content: String(line[line.index(line.startIndex, offsetBy: start)..<line.index(line.startIndex, offsetBy: end)]))]
         }
 
         var result: [Node] = []
@@ -635,13 +655,13 @@ public class Drafty: Codable, CustomStringConvertible, Equatable {
             if span.start < 0 && span.type == "EX" {
                 // This is different from JS SDK. JS ignores these spans here.
                 // JS uses Drafty.attachments() to get attachments.
-                result.append(contentsOf: formatter.apply(tp: span.type, attr: span.data, content: nil))
+                result.append(formatter.apply(tp: span.type, attr: span.data, content: nil))
                 continue
             }
 
             // Add un-styled range before the styled span starts.
             if start < span.start {
-                result.append(contentsOf: formatter.apply(tp: nil, attr: nil, content: String(line[line.index(line.startIndex, offsetBy: start)..<line.index(line.startIndex, offsetBy: span.start)])))
+                result.append(formatter.apply(tp: nil, attr: nil, content: String(line[line.index(line.startIndex, offsetBy: start)..<line.index(line.startIndex, offsetBy: span.start)])))
                 start = span.start
             }
 
@@ -664,9 +684,9 @@ public class Drafty: Codable, CustomStringConvertible, Equatable {
                 span.data = span.data ?? [:]
                 let title = String(line[line.index(line.startIndex, offsetBy: span.start)..<line.index(line.startIndex, offsetBy: span.end)])
                 span.data!["title"] = JSONValue.string(title)
-                result.append(contentsOf: formatter.apply(tp: span.type, attr: span.data, content: title))
+                result.append(formatter.apply(tp: span.type, attr: span.data, content: title))
             } else {
-                result.append(contentsOf: formatter.apply(tp: span.type, attr: span.data, content: forEach(line: line, start: start, end: span.end, spans: subspans, formatter: formatter)))
+                result.append(formatter.apply(tp: span.type, attr: span.data, content: forEach(line: line, start: start, end: span.end, spans: subspans, formatter: formatter)))
             }
 
             start = span.end
@@ -674,7 +694,7 @@ public class Drafty: Codable, CustomStringConvertible, Equatable {
 
         // Add the last unformatted range.
         if start < end {
-            result.append(contentsOf: formatter.apply(tp: nil, attr: nil,  content: String(line[line.index(line.startIndex, offsetBy: start)..<line.index(line.startIndex, offsetBy: end)])))
+            result.append(formatter.apply(tp: nil, attr: nil,  content: String(line[line.index(line.startIndex, offsetBy: start)..<line.index(line.startIndex, offsetBy: end)])))
         }
 
         return result
@@ -686,7 +706,7 @@ public class Drafty: Codable, CustomStringConvertible, Equatable {
     /// - Parameters:
     ///     - formatter: an interface with an `apply` methods. It's iteratively for to every node in the tree.
     /// - Returns: a tree of nodes.
-    public func format<FmtType: DraftyFormatter, Node>(formatter: FmtType) -> [Node] where Node == FmtType.Node {
+    public func format<FmtType: DraftyFormatter, Node>(formatter: FmtType) -> Node where Node == FmtType.Node {
         // Handle special case when all values in fmt are 0 and fmt therefore was
         // skipped.
         if fmt == nil || fmt!.isEmpty {
@@ -735,7 +755,7 @@ public class Drafty: Codable, CustomStringConvertible, Equatable {
 
     /// Serialize Drafty object for storage in database.
     public func serialize() -> String? {
-        return isPlain ? txt : Tinode.serializeObject(t: self)
+        return isPlain ? txt : Tinode.serializeObject(self)
     }
 
     /// Deserialize Drafty object from database storage.
@@ -833,6 +853,22 @@ public class Style: Codable, CustomStringConvertible, Equatable {
     var tp: String?
     var key: Int?
 
+    private enum CodingKeys : String, CodingKey  {
+        case at = "at"
+        case len = "len"
+        case tp = "tp"
+        case key = "key"
+    }
+
+    /// Initializer to comply with Decodable protocol.
+    required public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        at = (try? container.decode(Int.self, forKey: .at)) ?? 0
+        len = (try? container.decode(Int.self, forKey: .len)) ?? 0
+        tp = try? container.decode(String.self, forKey: .tp)
+        key = try? container.decode(Int.self, forKey: .key)
+    }
+
     /// Initialize a zero-length unstyled object
     public init() {
         at = 0
@@ -879,6 +915,28 @@ public class Style: Codable, CustomStringConvertible, Equatable {
 public class Entity: Codable, CustomStringConvertible, Equatable {
     public var tp: String?
     public var data: [String:JSONValue]?
+
+    private enum CodingKeys : String, CodingKey  {
+        case tp = "tp"
+        case data = "data"
+    }
+
+    /// Initializer to comply with Decodable protocol.
+    required public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        tp = try? container.decode(String.self, forKey: .tp)
+        data = try? container.decode([String:JSONValue].self, forKey: .data)
+
+        // data["val"] is expected to be a large base64-encoded string. Decode it to Data so it does not need to decoded it every time it's accessed
+        if let val = data?["val"]?.asString() {
+            if let bits = Data(base64Encoded: val, options: .ignoreUnknownCharacters) {
+                data!["val"] = JSONValue.bytes(bits)
+            } else {
+                // If the data cannot be decoded then it's useless
+                data!["val"] = nil
+            }
+        }
+    }
 
     /// Initialize an empty attachment.
     public init() {}

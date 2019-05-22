@@ -250,8 +250,8 @@
                                             <view contentMode="scaleToFill" horizontalHuggingPriority="251" horizontalCompressionResistancePriority="140" verticalCompressionResistancePriority="751" translatesAutoresizingMaskIntoConstraints="NO" id="8aH-WX-U6V" userLabel="Avatar View">
                                                 <rect key="frame" x="171.66666666666663" y="0.0" width="163.33333333333337" height="128"/>
                                                 <subviews>
-                                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="248" verticalHuggingPriority="248" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fmd-4t-Dd6" userLabel="Avatar" customClass="AvatarView" customModule="MessageKit">
-                                                        <rect key="frame" x="0.0" y="4" width="128" height="128"/>
+                                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="248" verticalHuggingPriority="248" translatesAutoresizingMaskIntoConstraints="NO" id="fmd-4t-Dd6" userLabel="Avatar" customClass="RoundImageView" customModule="Tinodios" customModuleProvider="target">
+                                                        <rect key="frame" x="35.333333333333343" y="4" width="128" height="128"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="128" id="OEi-Av-izu"/>
                                                             <constraint firstAttribute="width" constant="128" id="sDc-gf-cmh"/>
@@ -266,7 +266,7 @@
                                                         </constraints>
                                                         <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                         <inset key="imageEdgeInsets" minX="10" minY="10" maxX="10" maxY="10"/>
-                                                        <state key="normal" title="Add Avatar" image="outline_add_a_photo_white_48pt"/>
+                                                        <state key="normal" title="Add Avatar" image="edit-48"/>
                                                         <userDefinedRuntimeAttributes>
                                                             <userDefinedRuntimeAttribute type="boolean" keyPath="layer.masksToBounds" value="YES"/>
                                                             <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
@@ -400,7 +400,7 @@
                                     <rect key="frame" x="0.0" y="0.0" width="375" height="59.666666666666664"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
-                                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="q2G-eT-jLv" customClass="AvatarView" customModule="MessageKit">
+                                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="q2G-eT-jLv" customClass="RoundImageView" customModule="Tinodios" customModuleProvider="target">
                                             <rect key="frame" x="13" y="9" width="40" height="40"/>
                                             <accessibility key="accessibilityConfiguration" identifier="icon">
                                                 <accessibilityTraits key="traits" image="YES"/>
@@ -494,7 +494,8 @@
                     </tableView>
                     <toolbarItems/>
                     <navigationItem key="navigationItem" title="Tinodios" id="Rgo-YL-uPZ">
-                        <barButtonItem key="rightBarButtonItem" systemItem="compose" id="LVG-dB-flA">
+                        <barButtonItem key="leftBarButtonItem" title="Profile" style="plain" id="rlG-v4-QUc"/>
+                        <barButtonItem key="rightBarButtonItem" title="New Chat" image="new-chat-24" style="plain" id="LVG-dB-flA">
                             <connections>
                                 <segue destination="qBo-ye-avT" kind="show" id="PRK-dk-KAe"/>
                             </connections>
@@ -521,7 +522,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="hJE-4j-6S3" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="4578" y="655"/>
+            <point key="canvasLocation" x="4084" y="650"/>
         </scene>
         <!--Confirm credentials-->
         <scene sceneID="Fsr-7A-t2q">
@@ -624,7 +625,7 @@
                             <outlet property="delegate" destination="UgX-En-K1m" id="O3P-Zr-dvN"/>
                         </connections>
                     </tableView>
-                    <tabBarItem key="tabBarItem" title="Find" id="rqZ-eR-8TP" userLabel="Find"/>
+                    <tabBarItem key="tabBarItem" title="Find" image="search-25" id="rqZ-eR-8TP" userLabel="Find"/>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="QKh-Hs-4aI" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -711,7 +712,7 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <viewLayoutGuide key="safeArea" id="NQz-eu-3qO"/>
                     </view>
-                    <tabBarItem key="tabBarItem" title="New Group" id="bYb-ea-USw"/>
+                    <tabBarItem key="tabBarItem" title="New Group" image="new-group-25" id="bYb-ea-USw"/>
                     <toolbarItems>
                         <barButtonItem systemItem="save" id="18D-3K-VJ1">
                             <connections>
@@ -743,7 +744,7 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <viewLayoutGuide key="safeArea" id="fz2-hY-t16"/>
                     </view>
-                    <tabBarItem key="tabBarItem" title="By ID" id="T7l-iC-Rs6"/>
+                    <tabBarItem key="tabBarItem" title="By ID" image="data-25" id="T7l-iC-Rs6"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ICE-Ms-S7M" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -751,10 +752,14 @@
         </scene>
     </scenes>
     <resources>
+        <image name="data-25" width="25" height="25"/>
+        <image name="edit-48" width="48" height="48"/>
         <image name="logo-ios" width="288" height="288"/>
-        <image name="outline_add_a_photo_white_48pt" width="48" height="48"/>
+        <image name="new-chat-24" width="24" height="24"/>
+        <image name="new-group-25" width="25" height="25"/>
+        <image name="search-25" width="25" height="25"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="Icu-Sw-xtx"/>
+        <segue reference="ANE-DH-PdS"/>
     </inferredMetricsTieBreakers>
 </document>

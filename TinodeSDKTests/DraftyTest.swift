@@ -40,6 +40,19 @@ class DraftyTest: XCTestCase {
                           Style(tp:"ST", at:6, len:12)], ent: nil)
         XCTAssertEqual(d1, d2, "Nested: 'start *b1 _italic_ b2* close'")
 
+        d1 = Drafty(content: "*bold _italic_*")
+        d2 = Drafty(text: "bold italic",
+                    fmt: [Style(tp:"EM", at:5, len:6),
+                          Style(tp:"ST", at:0, len:11)], ent: nil)
+        XCTAssertEqual(d1, d2, "Nested II: '*bold _italic_*'")
+
+        d1 = Drafty(content: "_italic *bold*_")
+        d2 = Drafty(text: "italic bold",
+                    fmt: [Style(tp:"ST", at:7, len:4),
+                          Style(tp:"EM", at:0, len:11)], ent: nil)
+        XCTAssertEqual(d1, d2, "Nested III: '_italic *bold*_'")
+
+
         d1 = Drafty(content: "мама _мыла_ раму")
         d2 = Drafty(text: "мама мыла раму",
                     fmt: [Style(tp:"EM", at:5, len:4)], ent: nil)

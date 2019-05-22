@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftKeychainWrapper
+import TinodeSDK
 
 class Utils {
     static let kTinodeHasRunBefore = "tinodeHasRunBefore"
@@ -22,6 +23,53 @@ class Utils {
         return KeychainWrapper.standard.string(
             forKey: LoginViewController.kTokenKey)
     }
+
+    // Calculate difference between two arrays of messages. Returns a tuple of insertion indexes and deletion indexes.
+    // The indexes are for respective arrays.
+    public static func diffMessageArray(old: [Message], new: [Message]) -> (inserted: [Int], removed: [Int]) {
+        if old.isEmpty && new.isEmpty {
+            return (inserted: [], removed: [])
+        }
+        if old.isEmpty {
+            return (inserted: Array(0 ..< new.count), removed: [])
+        }
+        if new.isEmpty {
+            return (inserted: [], removed: Array(0 ..< old.count))
+        }
+
+        var inserted: [Int] = []
+        var removed: [Int] = []
+
+        // Match old array against the new array and separate removed items from inserted.
+        var o = 0, n = 0
+        while o < old.count || n < new.count {
+            if o == old.count || (n < new.count && old[o].seqId > new[n].seqId) {
+                // Present in new, missing in old: added
+                inserted.append(n)
+                n += 1
+
+            } else if n == new.count || old[o].seqId < new[n].seqId {
+                // Present in old, missing in new: removed
+                removed.append(o)
+                o += 1
+
+            } else {
+                // present in both
+                if o < old.count {
+                    o += 1
+                }
+                if n < new.count {
+                    n += 1
+                }
+            }
+        }
+
+        print("old: \(old.map({ $0.seqId }))")
+        print("new: \(new.map({ $0.seqId }))")
+
+        return (inserted: inserted, removed: removed)
+    }
+
     public static func parseTags(from tagsString: String?) -> [String]? {
         guard let tagsString = tagsString else { return nil }
         let candidates = tagsString.split(separator: ",")

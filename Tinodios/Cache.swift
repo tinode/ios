@@ -1,11 +1,10 @@
 //
 //  Cache.swift
-//  ios
+//  Tinodios
 //
 //  Copyright © 2018 Tinode. All rights reserved.
 //
 
-import Foundation
 import UIKit
 import TinodeSDK
 

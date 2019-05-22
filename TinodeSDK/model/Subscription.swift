@@ -150,7 +150,7 @@ public class Subscription<SP: Codable, SR: Codable>: SubscriptionProto {
     }
     public func serializePub() -> String? {
         guard let p = pub else { return nil }
-        return Tinode.serializeObject(t: p)
+        return Tinode.serializeObject(p)
     }
     @discardableResult
     public func deserializePub(from data: String?) -> Bool {
@@ -162,7 +162,7 @@ public class Subscription<SP: Codable, SR: Codable>: SubscriptionProto {
     }
     public func serializePriv() -> String? {
         guard let p = priv else { return nil }
-        return Tinode.serializeObject(t: p)
+        return Tinode.serializeObject(p)
     }
     @discardableResult
     public func deserializePriv(from data: String?) -> Bool {

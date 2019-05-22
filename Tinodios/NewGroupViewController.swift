@@ -7,7 +7,6 @@
 
 import UIKit
 import TinodeSDK
-import MessageKit
 
 protocol NewGroupDisplayLogic: class {
     func displayContacts(contacts: [ContactHolder])
@@ -20,7 +19,7 @@ class NewGroupViewController: UIViewController, UITableViewDataSource {
     @IBOutlet weak var groupNameTextField: UITextField!
     @IBOutlet weak var privateTextField: UITextField!
     @IBOutlet weak var tagsTextField: UITextField!
-    @IBOutlet weak var avatarView: AvatarView!
+    @IBOutlet weak var avatarView: RoundImageView!
 
     private var contacts = [ContactHolder]()
     private var interactor: NewGroupBusinessLogic?
@@ -89,7 +88,7 @@ class NewGroupViewController: UIViewController, UITableViewDataSource {
             return
         }
         guard !groupName.isEmpty && !privateInfo.isEmpty && !tags.isEmpty else { return }
-        let avatar = avatarView.image?.resize(width: Float(UiUtils.kAvatarSize), height: Float(UiUtils.kAvatarSize), clip: true)
+        let avatar = avatarView.image?.resize(width: CGFloat(Float(UiUtils.kAvatarSize)), height: CGFloat(Float(UiUtils.kAvatarSize)), clip: true)
         let tagsList = Utils.parseTags(from: tags)
         self.interactor?.createGroupTopic(titled: groupName, subtitled: privateInfo, with: tagsList, consistingOf: members, withAvatar: avatar)
     }

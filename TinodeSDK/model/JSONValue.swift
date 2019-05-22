@@ -59,9 +59,29 @@ public enum JSONValue: Codable, Equatable {
         }
     }
 
+    /// MARK:  Convenience accessors.
+
+    public func asString() -> String? {
+        switch self {
+        case .string(let val):
+            return val
+        default:
+            return nil
+        }
+    }
+
     public func asInt() -> Int? {
         switch self {
         case .int(let val):
+            return val
+        default:
+            return nil
+        }
+    }
+
+    public func asData() -> Data? {
+        switch self {
+        case .bytes(let val):
             return val
         default:
             return nil

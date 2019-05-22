@@ -223,13 +223,10 @@ public class PromisedReply<Value> {
         switch r.state {
         case .resolved(let value):
             try np.resolve(result: value)
-            break
         case .rejected(let error):
             try np.reject(error: error)
-            break
         case .waiting:
             r.insertNextPromise(next: np)
-            break
         }
     }
 

@@ -66,6 +66,9 @@ public enum TopicType: Int {
     }
 }
 
+// Cannot make it a class constant because Swift is poorly designed: "Static stored properties not supported in generic types"
+fileprivate let kIntervalBetweenKeyPresses: TimeInterval = 3.0
+
 open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto {
     enum TopicError: Error {
         case alreadySubscribed
@@ -76,6 +79,7 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
     enum NoteType {
         case kRead
         case kRecv
+        case kKeyPress
     }
 
     //open class Listener2<DP2: Codable, DR2: Codable, SP2: Codable, SR2: Codable> {
@@ -283,7 +287,7 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
     // Cache of topic subscribers indexed by userID
     fileprivate var subs: [String:Subscription<SP,SR>]? = nil
     public var tags: [String]? = nil
-    private var lastKeyPress: Int64 = 0
+    private var lastKeyPress: Date = Date(timeIntervalSince1970: 0)
 
     public var online: Bool = false {
         didSet {
@@ -419,11 +423,11 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
     */
     public func serializePub() -> String? {
         guard let p = pub else { return nil }
-        return Tinode.serializeObject(t: p)
+        return Tinode.serializeObject(p)
     }
     public func serializePriv() -> String? {
         guard let p = priv else { return nil }
-        return Tinode.serializeObject(t: p)
+        return Tinode.serializeObject(p)
     }
     /*
     private func deserializeObject<T: Codable>(from data: String?) -> T? {
@@ -546,7 +550,6 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
             ((s1.updated ?? Date.distantPast) < (s2.updated ?? Date.distantPast))
         })?.updated
         subs = (Dictionary(uniqueKeysWithValues: loaded.map { ($0.user, $0) }) as! [String : Subscription<SP, SR>])
-        print("loadSubs got \(subs?.count ?? -1) entries")
         return subs!.count
     }
 
@@ -571,10 +574,8 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
     }
 
     private func routeMetaDesc(meta: MsgServerMeta) {
-        print("routing desc")
         update(desc: meta.desc as! Description<DP, DR>)
         if case .p2p = topicType {
-            print("updating user")
             tinode?.updateUser(uid: name, desc: meta.desc as! DefaultDescription)
             //mTinode.updateUser(getName(), meta.desc);
         }
@@ -769,7 +770,9 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
         // update listener
         listener?.onMeta(meta: meta)
     }
-    private func noteReadRecv(what: NoteType) -> Int {
+
+    @discardableResult
+    private func note(what: NoteType) -> Int {
         var result = 0
         switch what {
         case .kRecv:
@@ -779,7 +782,6 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
                 result = seq
                 description!.recv = seq
             }
-            break
         case .kRead:
             let seq = description!.getSeq
             if description!.getRead < seq {
@@ -787,21 +789,31 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
                 result = seq
                 description!.read = seq
             }
-            break
+        case .kKeyPress:
+            if lastKeyPress.addingTimeInterval(kIntervalBetweenKeyPresses) < Date() {
+                lastKeyPress = Date()
+                tinode!.noteKeyPress(topic: name)
+            }
         }
         return result
     }
+
     @discardableResult
     public func noteRead() -> Int {
-        let result = noteReadRecv(what: NoteType.kRead)
+        let result = note(what: .kRead)
         store?.setRead(topic: self, read: result)
         return result
     }
+
     @discardableResult
     public func noteRecv() -> Int {
-        let result = noteReadRecv(what: NoteType.kRecv)
+        let result = note(what: .kRecv)
         store?.setRecv(topic: self, recv: result)
         return result
+    }
+
+    public func noteKeyPress() {
+        note(what: .kKeyPress)
     }
     private func setSeq(seq: Int) {
         if description!.getSeq < seq {
@@ -902,17 +914,15 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
     }
 
     public func routeInfo(info: MsgServerInfo) {
-        if info.what == Tinode.kNoteKp {
+        if info.what != Tinode.kNoteKp {
             if let sub = getSubscription(for: info.from) {
                 switch info.what {
                 case Tinode.kNoteRecv:
                     sub.recv = info.seq
                     store?.msgRecvByRemote(sub: sub, recv: info.seq)
-                    break
                 case Tinode.kNoteRead:
                     sub.read = info.seq
                     store?.msgReadByRemote(sub: sub, read: info.seq)
-                    break
                 default:
                     break
                 }
@@ -1117,7 +1127,7 @@ open class MeTopic<DP: Codable>: Topic<DP, PrivateType, DP, PrivateType> {
     override public func routePres(pres: MsgServerPres) {
         let what = MsgServerPres.parseWhat(what: pres.what)
         if let topic = tinode!.getTopic(topicName: pres.src!) {
-            switch (what) {
+            switch what {
             case .kOn: // topic came online
                 topic.online = true
             case .kOff: // topic went offline
@@ -1160,7 +1170,7 @@ open class MeTopic<DP: Codable>: Topic<DP, PrivateType, DP, PrivateType> {
             }
         } else {
             // New topic
-            switch (what) {
+            switch what {
             case .kAcs:
                 let acs = Acs()
                 acs.update(from: pres.dacs)
