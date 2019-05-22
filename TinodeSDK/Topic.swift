@@ -69,6 +69,8 @@ public enum TopicType: Int {
 open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto {
     enum TopicError: Error {
         case alreadySubscribed
+        case notSynchronized
+        case subscriptionFailure(String)
     }
 
     enum NoteType {
@@ -854,6 +856,49 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
             description!.acs = Acs(from: nil as Acs?)
         }
         return description!.acs!.update(from: ac)
+    }
+    @discardableResult
+    public func invite(user uid: String, in mode: String?) -> PromisedReply<ServerMessage>? {
+        var sub = getSubscription(for: uid)
+        if sub != nil {// : Subscription<SP, SR>
+            sub!.acs?.given = mode != nil ? AcsHelper(str: mode) : nil
+        } else {
+            let subUnwrapped = Subscription<SP, SR>()
+            subUnwrapped.topic = self.name
+            subUnwrapped.user = uid
+            subUnwrapped.acs = Acs()
+            subUnwrapped.acs!.given = mode != nil ? AcsHelper(str: mode) : nil
+            _ = store?.subNew(topic: self, sub: subUnwrapped)
+            let user: User<SP>? = tinode?.getUser(with: uid)
+            subUnwrapped.pub = user?.pub
+            addSubToCache(sub: subUnwrapped)
+            sub = subUnwrapped
+        }
+        listener?.onMetaSub(sub: sub!)
+        listener?.onSubsUpdated()
+        // Check if topic is already synchronized. If not, don't send the request, it will fail anyway.
+        if isNew {
+            return PromisedReply<ServerMessage>(error: TopicError.notSynchronized)
+        }
+        do {
+            let metaSetSub = MetaSetSub(user: uid, mode: mode)
+            //metaSetSub.user = uid
+            //metaSetSub.mode = mode
+            let future = setMeta(meta: MsgSetMeta(desc: nil, sub: metaSetSub, tags: nil))
+            return try future?.thenApply(
+                onSuccess: { [weak self] msg in
+                    if let topic = self {
+                        topic.store?.subUpdate(topic: topic, sub: sub!)
+                        topic.listener?.onMetaSub(sub: sub!)
+                        topic.listener?.onSubsUpdated()
+                    }
+                    return nil
+                })
+        } catch {
+            return PromisedReply<ServerMessage>(
+                error: TopicError.subscriptionFailure(
+                    error.localizedDescription))
+        }
     }
 
     public func routeInfo(info: MsgServerInfo) {

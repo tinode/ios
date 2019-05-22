@@ -83,6 +83,7 @@ public protocol Storage: class {
     // Insert new user.
     func userAdd(user: UserProto) -> Int64
     // Update existing user.
+    @discardableResult
     func userUpdate(user: UserProto) -> Bool
 
     // Message received from the server.

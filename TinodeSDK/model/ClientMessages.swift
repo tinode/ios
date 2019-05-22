@@ -272,8 +272,16 @@ public class MetaSetDesc<P: Encodable, R: Encodable>: Encodable {
 }
 
 public class MetaSetSub: Encodable {
-    let user: String? = nil
-    let mode: String? = nil
+    let user: String?
+    let mode: String?
+    public init() {
+        self.user = nil
+        self.mode = nil
+    }
+    public init(user: String?, mode: String?) {
+        self.user = user
+        self.mode = mode
+    }
 }
 public class MsgSetMeta<Pu: Encodable, Pr: Encodable>: Encodable {
     let desc: MetaSetDesc<Pu, Pr>?

@@ -50,6 +50,9 @@ class NewGroupInteractor: NewGroupBusinessLogic {
             try topic.subscribe()?.then(
                 onSuccess: { msg in
                     // TODO: invite members
+                    for u in members {
+                        topic.invite(user: u, in: nil)
+                    }
                     // route to chat
                     self.presenter?.presentChat(with: topic.name)
                     return nil

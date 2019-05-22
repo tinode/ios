@@ -216,23 +216,39 @@ public class Tinode {
         return self.myUid == uid
     }
     public func updateUser<DP: Codable, DR: Codable>(uid: String, desc: Description<DP, DR>) {
+        var userPtr: UserProto?
         if let user = users[uid] {
             _ = (user as? User<DP>)?.merge(from: desc)
+            userPtr = user
         } else {
             let user = User<DP>(uid: uid, desc: desc)
             users[uid] = user
+            userPtr = user
         }
-        // store?.userUpdate(user)
+        store?.userUpdate(user: userPtr!)
     }
     public func updateUser<DP: Codable, DR: Codable>(sub: Subscription<DP, DR>) {
+        var userPtr: UserProto?
         let uid = sub.user!
         if let user = users[uid] {
             _ = (user as? User<DP>)?.merge(from: sub)
+            userPtr = user
         } else {
             let user = try! User<DP>(sub: sub)
             users[uid] = user
+            userPtr = user
         }
-        // store?.userUpdate(user)
+        store?.userUpdate(user: userPtr!)
+    }
+    public func getUser<SP: Codable>(with uid: String) -> User<SP>? {
+        if let user = users[uid] {
+            return user as? User<SP>
+        }
+        if let user = store?.userGet(uid: uid) {
+            users[uid] = user
+            return user as? User<SP>
+        }
+        return nil
     }
 
     public func nextUniqueString() -> String {
