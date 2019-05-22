@@ -313,7 +313,7 @@ public class Tinode {
                 t.routeMeta(meta: meta)
 
                 if let updated = t.updated {
-                    if topicsUpdated == nil || topicsUpdated! < updated {
+                    if topicsUpdated ?? Date.distantPast < updated {
                         topicsUpdated = updated
                     }
                 }
