@@ -117,6 +117,21 @@ extension ChatListViewController {
 
         return cell
     }
+
+    override func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
+
+        // Delete item at indexPath
+        let delete = UITableViewRowAction(style: .destructive, title: "Delete") { (action, indexPath) in
+            let topic = self.topics[indexPath.row]
+            self.interactor?.deleteTopic(topic.name)
+
+            // FIXME: delete only if command succeeded.
+            self.topics.remove(at: indexPath.row)
+            tableView.deleteRows(at: [indexPath], with: .fade)
+        }
+
+        return [delete]
+    }
 }
 
 extension ChatListViewController {

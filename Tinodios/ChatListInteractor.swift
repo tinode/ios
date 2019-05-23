@@ -15,6 +15,7 @@ protocol ChatListBusinessLogic: class {
     func updateChat(_ name: String)
     func setup()
     func cleanup()
+    func deleteTopic(_ name: String)
 }
 
 protocol ChatListDataStore: class {
@@ -129,4 +130,9 @@ class ChatListInteractor: ChatListBusinessLogic, ChatListDataStore {
     func updateChat(_ name: String) {
         self.presenter?.updateChat(name)
     }
+
+    func deleteTopic(_ name: String) {
+        Cache.getTinode().delTopic(name)
+    }
+
 }
