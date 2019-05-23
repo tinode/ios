@@ -26,7 +26,7 @@ open class ImagePicker: NSObject {
         self.presentationController = presentationController
         self.delegate = delegate
 
-        //self.pickerController.delegate = self
+        self.pickerController.delegate = self
         self.pickerController.allowsEditing = true
 
         self.pickerController.mediaTypes = [kUTTypeImage as String]
@@ -80,7 +80,7 @@ open class ImagePicker: NSObject {
     }
 }
 
-extension ImagePicker: UIImagePickerControllerDelegate {
+extension ImagePicker: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
 
     public func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         self.pickerController(picker, didSelect: nil)

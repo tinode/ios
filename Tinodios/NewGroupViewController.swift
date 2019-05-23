@@ -70,6 +70,12 @@ class NewGroupViewController: UIViewController, UITableViewDataSource {
         cell.textLabel?.text = contact.displayName
         cell.detailTextLabel?.text = contact.uniqueId
 
+        // Data reload clears selection. If we already have any selected users,
+        // select the corresponding rows in the table.
+        if let uniqueId = contact.uniqueId, self.interactor?.userSelected(with: uniqueId) ?? false {
+            tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none)
+        }
+
         return cell
     }
 
@@ -120,6 +126,7 @@ extension NewGroupViewController: UITableViewDelegate {
         } else {
             print("no unique id for user \(contact.displayName ?? "No name")")
         }
+        print("+ selected rows: \(self.interactor?.selectedMembers ?? [])")
     }
     func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
         print("deselected index path = \(indexPath)")
@@ -129,6 +136,7 @@ extension NewGroupViewController: UITableViewDelegate {
         } else {
             print("no unique id for user \(contact.displayName ?? "No name")")
         }
+        print("- selected rows: \(self.interactor?.selectedMembers ?? [])")
     }
 }
 
