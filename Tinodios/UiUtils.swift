@@ -145,6 +145,16 @@ extension UIViewController {
             })
         })
     }
+    public func presentChatReplacingCurrentVC(with topicName: String) {
+        DispatchQueue.main.async {
+            if let navController = self.navigationController {
+                let messageVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "MessageViewController") as! MessageViewController
+                messageVC.topicName = topicName
+                navController.popViewController(animated: false)
+                navController.pushViewController(messageVC, animated: true)
+            }
+        }
+    }
 }
 
 extension UIImage {
