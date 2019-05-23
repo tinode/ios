@@ -771,6 +771,21 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
         listener?.onMeta(meta: meta)
     }
 
+    /// Delete topic
+    @discardableResult
+    public func delete() -> PromisedReply<ServerMessage>? {
+        // Delete works even if the topic is not attached.
+        return try! tinode!.delTopic(topicName: name)?.then(
+            onSuccess: { [weak self] msg in
+                guard let topic = self else { return nil }
+                topic.topicLeft(unsub: true, code: msg.ctrl?.code, reason: msg.ctrl?.text)
+                topic.tinode!.stopTrackingTopic(topicName: topic.name)
+                topic.persist(false)
+                return nil
+            }
+        )
+    }
+
     @discardableResult
     private func note(what: NoteType) -> Int {
         var result = 0

@@ -12,6 +12,7 @@ protocol ChatListDisplayLogic: class {
     func displayChats(_ topics: [DefaultComTopic])
     func displayLoginView()
     func updateChat(_ name: String)
+    func deleteChat(_ name: String)
 }
 
 class ChatListViewController: UITableViewController, ChatListDisplayLogic {
@@ -73,6 +74,14 @@ class ChatListViewController: UITableViewController, ChatListDisplayLogic {
             self.tableView!.reloadRows(at: [IndexPath(item: position, section: 0)], with: .none)
         }
     }
+
+    func deleteChat(_ name: String) {
+        guard let position = rowIndex[name] else { return }
+        DispatchQueue.main.async {
+            self.topics.remove(at: position)
+            self.tableView!.deleteRows(at: [IndexPath(item: position, section: 0)], with: .fade)
+        }
+    }
 }
 
 // UITableViewController
@@ -119,15 +128,10 @@ extension ChatListViewController {
     }
 
     override func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
-
         // Delete item at indexPath
         let delete = UITableViewRowAction(style: .destructive, title: "Delete") { (action, indexPath) in
             let topic = self.topics[indexPath.row]
             self.interactor?.deleteTopic(topic.name)
-
-            // FIXME: delete only if command succeeded.
-            self.topics.remove(at: indexPath.row)
-            tableView.deleteRows(at: [indexPath], with: .fade)
         }
 
         return [delete]
