@@ -14,6 +14,7 @@ protocol NewGroupBusinessLogic: class {
     func loadAndPresentContacts()
     func addUser(with uniqueId: String)
     func removeUser(with uniqueId: String)
+    func userSelected(with uniqueId: String) -> Bool
     func createGroupTopic(
         titled name: String, subtitled subtitle: String,
         with tags: [String]?, consistingOf members: [String],
@@ -39,6 +40,9 @@ class NewGroupInteractor: NewGroupBusinessLogic {
     }
     func removeUser(with uniqueId: String) {
         self.selectedUsers.remove(uniqueId)
+    }
+    func userSelected(with uniqueId: String) -> Bool {
+        return self.selectedUsers.contains(uniqueId)
     }
     func createGroupTopic(titled name: String, subtitled subtitle: String, with tags: [String]?, consistingOf members: [String], withAvatar avatar: UIImage?) {
         let tinode = Cache.getTinode()

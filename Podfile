@@ -16,9 +16,7 @@ def sdk_pods
 end
 
 def ui_pods
-    # Temporary workaround for https://github.com/stephencelis/SQLite.swift/issues/895
-    # TODO(aforge): remove after 0.11.6 is released.
-    pod 'SQLite.swift', :git => 'https://github.com/stephencelis/SQLite.swift', :branch => 'master'
+    pod 'SQLite.swift', '~> 0.12.0'
     pod 'SwiftKeychainWrapper', '~> 3.2'
 end
 

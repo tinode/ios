@@ -70,6 +70,7 @@ class SqlStore : Storage {
             try dbh?.db?.savepoint("SqlStore.topicDelete") {
                 // TODO:
                 // self.dbh?.messageDb?.delete(st.id, from: 0, told: -1)
+                self.dbh?.messageDb?.delete(topicId: topicId, from: 0, to: nil)
                 self.dbh?.subscriberDb?.deleteForTopic(topicId: topicId)
                 self.dbh?.topicDb?.delete(recordId: topicId)
             }

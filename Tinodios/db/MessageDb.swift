@@ -140,6 +140,19 @@ class MessageDb {
             return false
         }
     }
+    @discardableResult
+    func delete(topicId: Int64, from loId: Int?, to hiId: Int?) -> Bool {
+        let startId = loId ?? 0
+        let endId = hiId ?? Int.max
+        // delete from messages where topic_id = topicId and seq between startId and endId.
+        let rows = self.table.filter(self.topicId == topicId && startId...endId ~= self.seq)
+        do {
+            return try self.db.run(rows.delete()) > 0
+        } catch {
+            print("delete failed: \(error)")
+            return false
+        }
+    }
     func delete(msgId: Int64) -> Bool {
         let record = self.table.filter(self.id == msgId)
         do {

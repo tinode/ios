@@ -1,35 +1,26 @@
 PODS:
-  - SQLite.swift (0.11.5):
-    - SQLite.swift/standard (= 0.11.5)
-  - SQLite.swift/standard (0.11.5)
+  - SQLite.swift (0.12.0):
+    - SQLite.swift/standard (= 0.12.0)
+  - SQLite.swift/standard (0.12.0)
   - SwiftKeychainWrapper (3.2.0)
   - SwiftWebSocket (2.7.0)
 
 DEPENDENCIES:
-  - SQLite.swift (from `https://github.com/stephencelis/SQLite.swift`, branch `master`)
+  - SQLite.swift (~> 0.12.0)
   - SwiftKeychainWrapper (~> 3.2)
   - SwiftWebSocket (~> 2.7.0)
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
+    - SQLite.swift
     - SwiftKeychainWrapper
     - SwiftWebSocket
 
-EXTERNAL SOURCES:
-  SQLite.swift:
-    :branch: master
-    :git: https://github.com/stephencelis/SQLite.swift
-
-CHECKOUT OPTIONS:
-  SQLite.swift:
-    :commit: 861ff28adec8d175e7f5923340947f0895121416
-    :git: https://github.com/stephencelis/SQLite.swift
-
 SPEC CHECKSUMS:
-  SQLite.swift: 7e42c4b88dc7a5d764fbd431001e6d8dc8c1cfce
+  SQLite.swift: 7cad9db150a03716336e69469ec9559c85aece5b
   SwiftKeychainWrapper: 82c4c02cdc36f9a24f7edfcaab3e336401caa1a1
   SwiftWebSocket: 612c9729fd503cb6b0b8b45390c788686dac306f
 
-PODFILE CHECKSUM: 54e22bcad27ba567f7af655b9e8a2f535ddba680
+PODFILE CHECKSUM: c0e2e3ef0a3c87748f4c33f48569f8c6d1a22510
 
 COCOAPODS: 1.6.1
