@@ -878,6 +878,18 @@ public class Tinode {
                 del: MsgClientDel(id: getNextMsgId(),
                                   topic: topicName, list: list, hard: hard)))
     }
+
+    /// Low-level request to delete topic. Use {@link Topic#delete()} instead.
+    ///
+    /// - Parameters:
+    ///   - topicName: name of the topic to delete
+    /// - Returns: PromisedReply of the reply ctrl message
+    func delTopic(topicName: String?) -> PromisedReply<ServerMessage>? {
+        let msgId = getNextMsgId()
+        let msg = ClientMessage<Int, Int>(del: MsgClientDel(id: msgId, topic: topicName))
+        return sendWithPromise(payload: msg, with: msgId)
+    }
+
     static func serializeObject<T: Encodable>(_ t: T) -> String? {
         guard let jsonData = try? Tinode.jsonEncoder.encode(t) else {
             return nil

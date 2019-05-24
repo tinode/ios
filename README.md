@@ -43,9 +43,8 @@ The immediate goal is to have a basic end-to-end working application prototype t
 
 ## Other
 
-* Demo avatars and some other graphics are from https://www.pexels.com/ under [CC0 license](https://www.pexels.com/photo-license/).
-* Background patterns from http://subtlepatterns.com/, commercial and non-commercial use allowed with attribution.
-* Some icons from https://icons8.com/ ([attribution required](https://icons8.com/license))
+* Demo avatars and some other graphics are from https://www.pexels.com/ under [CC0](https://www.pexels.com/photo-license/) license.
+* Some iOS icons are from https://icons8.com/ under [CC BY-ND 3.0](https://icons8.com/license) license.
 
 ## Screenshots
 <img src="ios-chats.png" alt="App screenshot - chat list" width="207" /> <img src="ios-chat.png" alt="App screenshot - conversation" width="207" />

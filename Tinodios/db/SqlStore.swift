@@ -68,8 +68,6 @@ class SqlStore : Storage {
         guard let st = topic.payload as? StoredTopic, let topicId = st.id else { return false }
         do {
             try dbh?.db?.savepoint("SqlStore.topicDelete") {
-                // TODO:
-                // self.dbh?.messageDb?.delete(st.id, from: 0, told: -1)
                 self.dbh?.messageDb?.delete(topicId: topicId, from: 0, to: nil)
                 self.dbh?.subscriberDb?.deleteForTopic(topicId: topicId)
                 self.dbh?.topicDb?.delete(recordId: topicId)

@@ -391,6 +391,8 @@ public class MsgClientDel: Encodable {
     let delseq: [MsgDelRange]?
     let user: String?
     let hard: Bool?
+
+
     init(id: String?, topic: String?, what: String?, ranges: [MsgDelRange]?, user: String?, hard: Bool?) {
         self.id = id
         self.topic = topic
@@ -401,15 +403,25 @@ public class MsgClientDel: Encodable {
         self.user = what == MsgClientDel.kStrSub ? user : nil
         self.hard = (hard ?? false) ? true : nil
     }
+
+    /// Delete messages by list
     convenience init(id: String?, topic: String?, list: [Int]?, hard: Bool?) {
         self.init(id: id, topic: topic, what: MsgClientDel.kStrMsg,
                   ranges: MsgDelRange.listToRanges(list: list),
                   user: nil, hard: hard)
     }
+
+    /// Delete messages by range
     convenience init(id: String?, topic: String?, from: Int, to: Int, hard: Bool?) {
         self.init(id: id, topic: topic, what: MsgClientDel.kStrMsg,
                   ranges: [MsgDelRange(low: from, hi: to)],
                   user: nil, hard: hard)
+    }
+
+    /// Delete topic
+    convenience init(id: String?, topic: String?) {
+        self.init(id: id, topic: topic, what: MsgClientDel.kStrTopic,
+                  ranges: nil, user: nil, hard: nil)
     }
 }
 
