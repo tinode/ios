@@ -121,7 +121,7 @@ public class MetaGetData: Encodable {
 public class MetaGetDesc: Encodable {
     // ims = If modified since...
     let ims: Date?
-    public init(ims: Date?) {
+    public init(ims: Date? = nil) {
         self.ims = ims
     }
 }

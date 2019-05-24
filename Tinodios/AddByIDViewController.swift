@@ -28,14 +28,14 @@ class AddByIDViewController: UIViewController {
         let id = UiUtils.ensureDataInTextField(idTextField)
         guard !id.isEmpty else { return }
         okayButton.isEnabled = false
-        let getMeta = MsgGetMeta(desc: MetaGetDesc(ims: Date.distantPast), sub: nil, data: nil, del: nil, tags: false)
+        let getMeta = MsgGetMeta(desc: MetaGetDesc(), sub: nil, data: nil, del: nil, tags: false)
         _ = try? tinode.getMeta(topic: id, query: getMeta)?.then(
             onSuccess: { [weak self] msg in
                 // Valid topic id.
                 self?.presentChatReplacingCurrentVC(with: id)
                 return nil
             },
-            onFailure: { [weak self] err in
+            onFailure: { err in
                 print("err = \(err)")
                 if let e = err as? TinodeError {
                     if case TinodeError.serverResponseError(let code, let text, _) = e {
