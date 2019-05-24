@@ -91,15 +91,18 @@ class UiUtils {
         let fraction: String = roundTo > 1 ? "." + "\(round(count * multiplier))".suffix(roundTo) : ""
         return "\(whole)\(fraction) \(sizes[bucket])"
     }
-}
 
-extension UIViewController {
-    // Displays bottom pannel with an error message.
-    func showToast(message: String, duration: TimeInterval = 3.0) {
+    /// Displays bottom pannel with an error message.
+    /// - Parameters:
+    ///  - message: message to display
+    ///  - duration: duration of display in seconds.
+    public static func showToast(message: String, duration: TimeInterval = 3.0) {
+        guard let parent = UIApplication.shared.keyWindow else { return }
+
         let iconSize: CGFloat = 32
         let spacing: CGFloat = 8
         let messageHeight = iconSize + spacing * 2
-        let toastHeight = max(min(self.view.frame.height * 0.1, 100), messageHeight)
+        let toastHeight = max(min(parent.frame.height * 0.1, 100), messageHeight)
 
         // Prevent very short toasts
         guard duration > 0.5 else { return }
@@ -121,16 +124,16 @@ extension UIViewController {
 
         let toastView = UIView()
         toastView.alpha = 0
-        toastView.backgroundColor = UIColor.red.withAlphaComponent(0.6)
+        toastView.backgroundColor = UIColor(red: 1, green: 102/255, blue: 102/255, alpha: 1)
         toastView.addSubview(icon)
         toastView.addSubview(label)
 
-        self.view.addSubview(toastView)
+        parent.addSubview(toastView)
         toastView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            toastView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 0),
-            toastView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: 0),
-            toastView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: toastHeight),
+            toastView.leadingAnchor.constraint(equalTo: parent.leadingAnchor, constant: 0),
+            toastView.trailingAnchor.constraint(equalTo: parent.trailingAnchor, constant: 0),
+            toastView.bottomAnchor.constraint(equalTo: parent.bottomAnchor, constant: toastHeight),
             toastView.heightAnchor.constraint(equalToConstant: toastHeight)
             ])
 
@@ -145,6 +148,9 @@ extension UIViewController {
             })
         })
     }
+}
+
+extension UIViewController {
     public func presentChatReplacingCurrentVC(with topicName: String) {
         DispatchQueue.main.async {
             if let navController = self.navigationController {
