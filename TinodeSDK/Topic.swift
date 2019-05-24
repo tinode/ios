@@ -776,11 +776,10 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
     public func delete() -> PromisedReply<ServerMessage>? {
         // Delete works even if the topic is not attached.
         return try! tinode!.delTopic(topicName: name)?.then(
-            onSuccess: { [weak self] msg in
-                guard let topic = self else { return nil }
-                topic.topicLeft(unsub: true, code: msg.ctrl?.code, reason: msg.ctrl?.text)
-                topic.tinode!.stopTrackingTopic(topicName: topic.name)
-                topic.persist(false)
+            onSuccess: { msg in
+                self.topicLeft(unsub: true, code: msg.ctrl?.code, reason: msg.ctrl?.text)
+                self.tinode!.stopTrackingTopic(topicName: self.name)
+                self.persist(false)
                 return nil
             }
         )
