@@ -120,11 +120,30 @@ public class Tinode {
     public var deviceId: String = ""
     public var OsVersion: String = ""
 
+    private class ConcurrentFuturesMap {
+        private var futuresDict = [String:PromisedReply<ServerMessage>]()
+        private let queue = DispatchQueue(label: "co.tinode.futuresmap")
+        subscript(key: String) -> PromisedReply<ServerMessage>? {
+            get { return queue.sync { return futuresDict[key] } }
+            set { queue.sync { futuresDict[key] = newValue } }
+        }
+        func removeValue(forKey key: String) -> PromisedReply<ServerMessage>? {
+            return queue.sync { return futuresDict.removeValue(forKey: key) }
+        }
+        func rejectAndPurgeAll(withError e: Error) {
+            queue.sync {
+                for f in futuresDict.values {
+                    try? f.reject(error: e)
+                }
+                futuresDict.removeAll()
+            }
+        }
+    }
     public var appName: String
     public var apiKey: String
     public var connection: Connection?
     public var nextMsgId = 1
-    public var futures: [String:PromisedReply<ServerMessage>] = [:]
+    private var futures = ConcurrentFuturesMap()
     public var serverVersion: String?
     public var serverBuild: String?
     public var connectedPromise: PromisedReply<ServerMessage>?
@@ -705,10 +724,7 @@ public class Tinode {
     }
     private func handleDisconnect(isServerOriginated: Bool, code: Int, reason: String) {
         let e = TinodeError.notConnected("no longer connected to server")
-        for f in futures.values {
-            try? f.reject(error: e)
-        }
-        futures.removeAll()
+        futures.rejectAndPurgeAll(withError: e)
         serverBuild = nil
         serverVersion = nil
         isConnectionAuthenticated = false

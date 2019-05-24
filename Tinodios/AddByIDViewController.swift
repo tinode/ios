@@ -35,7 +35,7 @@ class AddByIDViewController: UIViewController {
                 self?.presentChatReplacingCurrentVC(with: id)
                 return nil
             },
-            onFailure: { [weak self] err in
+            onFailure: { err in
                 print("err = \(err)")
                 if let e = err as? TinodeError {
                     if case TinodeError.serverResponseError(let code, let text, _) = e {
