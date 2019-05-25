@@ -121,7 +121,7 @@ public class Tinode {
     public var OsVersion: String = ""
 
     private class ConcurrentFuturesMap {
-        static let kFutureExpiryInterval = 1.0
+        static let kFutureExpiryInterval = 10.0
         static let kFutureExpiryTimerTolerance = 0.2
         static let kFutureTimeout = 5.0
         private var futuresDict = [String:PromisedReply<ServerMessage>]()
@@ -143,7 +143,6 @@ public class Tinode {
         }
         @objc private func expireFutures() {
             queue.sync {
-                print("expire futures....")
                 let expirationThreshold = Date().addingTimeInterval(TimeInterval(-ConcurrentFuturesMap.kFutureTimeout))
                 let error = TinodeError.serverResponseError(504, "timeout", nil)
                 var expiredKeys = [String]()
@@ -151,7 +150,6 @@ public class Tinode {
                     if f.creationTimestamp < expirationThreshold {
                         try? f.reject(error: error)
                         expiredKeys.append(id)
-                        print("expiring \(id)")
                     }
                 }
                 for id in expiredKeys {
