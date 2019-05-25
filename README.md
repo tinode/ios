@@ -47,4 +47,4 @@ The immediate goal is to have a basic end-to-end working application prototype t
 * Some iOS icons are from https://icons8.com/ under [CC BY-ND 3.0](https://icons8.com/license) license.
 
 ## Screenshots
-<img src="ios-chats.png" alt="App screenshot - chat list" width="207" /> <img src="ios-chat.png" alt="App screenshot - conversation" width="207" />
+<img src="ios-chats.png" alt="App screenshot - chat list" width="207" /> <img src="ios-chat.png" alt="App screenshot - conversation" width="207" /> <img src="ios-find-people.png" alt="App screenshot - find people" width="207" />
