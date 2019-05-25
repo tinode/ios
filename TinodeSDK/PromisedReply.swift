@@ -72,6 +72,7 @@ public class PromisedReply<Value> {
     private var nextPromise: PromisedReply<Value>?
     private var countDownLatch: CountDownLatch?
     private var queue = DispatchQueue(label: "co.tinode.promise")
+    private(set) var creationTimestamp: Date = Date()
     var isResolved: Bool {
         get {
             if case .resolved = state { return true }

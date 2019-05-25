@@ -121,8 +121,44 @@ public class Tinode {
     public var OsVersion: String = ""
 
     private class ConcurrentFuturesMap {
+        static let kFutureExpiryInterval = 1.0
+        static let kFutureExpiryTimerTolerance = 0.2
+        static let kFutureTimeout = 5.0
         private var futuresDict = [String:PromisedReply<ServerMessage>]()
         private let queue = DispatchQueue(label: "co.tinode.futuresmap")
+        private var timer: Timer?
+        init() {
+            timer = Timer.scheduledTimer(
+                timeInterval: ConcurrentFuturesMap.kFutureExpiryInterval,
+                target: self,
+                selector: #selector(expireFutures),
+                userInfo: nil,
+                repeats: true)
+            timer!.tolerance = ConcurrentFuturesMap.kFutureExpiryTimerTolerance
+            // Do not run on the UI thread.
+            RunLoop.current.add(timer!, forMode: .common)
+        }
+        deinit {
+            timer!.invalidate()
+        }
+        @objc private func expireFutures() {
+            queue.sync {
+                print("expire futures....")
+                let expirationThreshold = Date().addingTimeInterval(TimeInterval(-ConcurrentFuturesMap.kFutureTimeout))
+                let error = TinodeError.serverResponseError(504, "timeout", nil)
+                var expiredKeys = [String]()
+                for (id, f) in futuresDict {
+                    if f.creationTimestamp < expirationThreshold {
+                        try? f.reject(error: error)
+                        expiredKeys.append(id)
+                        print("expiring \(id)")
+                    }
+                }
+                for id in expiredKeys {
+                    futuresDict.removeValue(forKey: id)
+                }
+            }
+        }
         subscript(key: String) -> PromisedReply<ServerMessage>? {
             get { return queue.sync { return futuresDict[key] } }
             set { queue.sync { futuresDict[key] = newValue } }
