@@ -405,9 +405,6 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
     public static func isNewByName(name: String) -> Bool {
         return name.starts(with: Tinode.kTopicNew)
     }
-    private func setUpdated(updated: Date) {
-        description?.updated = updated
-    }
     private func setName(name: String) {
         self.name = name
     }
@@ -514,7 +511,7 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
                         if !(ctrl.params?.isEmpty ?? false) {
                             self?.description?.acs = Acs(from: ctrl.getStringDict(for: "acs"))
                             if self?.isNew ?? false {
-                                self?.setUpdated(updated: ctrl.ts)
+                                self?.updated = ctrl.ts
                                 self?.setName(name: ctrl.topic!)
                                 _ = self?.tinode?.changeTopicName(topic: self!, oldName: name)
                             }
