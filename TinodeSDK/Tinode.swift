@@ -121,22 +121,26 @@ public class Tinode {
     public var OsVersion: String = ""
 
     private class ConcurrentFuturesMap {
-        static let kFutureExpiryInterval = 10.0
+        static let kFutureExpiryInterval = 3.0
         static let kFutureExpiryTimerTolerance = 0.2
         static let kFutureTimeout = 5.0
         private var futuresDict = [String:PromisedReply<ServerMessage>]()
         private let queue = DispatchQueue(label: "co.tinode.futuresmap")
         private var timer: Timer?
         init() {
-            timer = Timer.scheduledTimer(
+            timer = Timer(
                 timeInterval: ConcurrentFuturesMap.kFutureExpiryInterval,
                 target: self,
                 selector: #selector(expireFutures),
                 userInfo: nil,
                 repeats: true)
             timer!.tolerance = ConcurrentFuturesMap.kFutureExpiryTimerTolerance
-            // Do not run on the UI thread.
-            RunLoop.current.add(timer!, forMode: .common)
+            // Run on the background thread.
+            DispatchQueue.global(qos: .background).async {
+                let runLoop = RunLoop.current
+                runLoop.add(self.timer!, forMode: .common)
+                runLoop.run()
+            }
         }
         deinit {
             timer!.invalidate()
