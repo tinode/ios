@@ -7,13 +7,38 @@
 
 // Implementation of a circular image view with either an image or letters
 
-import Foundation
 import TinodeSDK
 import UIKit
 
-class RoundImageView: UIImageView {
+@IBDesignable class RoundImageView: UIImageView {
+
+    public enum IconType {
+        case p2p, grp, none
+
+        init(from: String) {
+            switch from {
+            case "p2p": self = .p2p
+            case "grp": self = .grp
+            default: self = .none
+            }
+        }
+    }
 
     // MARK: - Properties
+    public var iconType: IconType = .none {
+        didSet {
+            updateDefaultIcon()
+        }
+    }
+
+    /// Element to set default icon type when no other info is provided: "grp" or "p2p".
+    @IBInspectable public var defaultType: String? {
+        didSet {
+            guard let tp = defaultType else { return }
+            iconType = IconType(from: tp)
+            print("set icon type to \(iconType) from \(tp)")
+        }
+    }
 
     public var initials: String? {
         didSet {
@@ -52,8 +77,8 @@ class RoundImageView: UIImageView {
         }
     }
 
-
     // MARK: - Initializers
+
     override public init(frame: CGRect) {
         super.init(frame: frame)
         prepareView()
@@ -75,19 +100,34 @@ class RoundImageView: UIImageView {
 
     public func set(icon: UIImage?, title: String?, id: String?) {
         if let icon = icon {
+            // Avatar image provided.
             self.image = icon
         } else {
-            self.letterTileFont = UIFont.preferredFont(forTextStyle: .title2)
-            let (fg, bg) = RoundImageView.selectBackground(id: id, dark: Tinode.topicTypeByName(name: id) == TopicType.p2p)
-            self.letterTileTextColor = fg
-            self.backgroundColor = bg
+            if id != nil && !id!.isEmpty {
+                switch Tinode.topicTypeByName(name: id) {
+                case .p2p: iconType = .p2p
+                case .grp: iconType = .grp
+                default: break
+                }
+            }
 
-            // Avatar placeholder.
-            var firstChar = title ?? ""
-            firstChar = firstChar.isEmpty ? "?" : firstChar
+            if let title = title, !title.isEmpty {
+                // No avatar image but have avatar name, show initial.
+                self.letterTileFont = UIFont.preferredFont(forTextStyle: .title2)
+                let (fg, bg) = RoundImageView.selectBackground(id: id, dark: iconType == .p2p)
+                self.letterTileTextColor = fg
+                self.backgroundColor = bg
 
-            self.initials = String(firstChar[firstChar.startIndex]).uppercased()
+                self.initials = String(title[title.startIndex]).uppercased()
+            } else {
+                // Placeholder image
+                updateDefaultIcon()
+            }
         }
+    }
+
+    public func setIconType(_ type: IconType) {
+        self.iconType = type
     }
 
     private static func selectBackground(id: String?, dark: Bool = false) -> (UIColor, UIColor) {
@@ -175,6 +215,17 @@ class RoundImageView: UIImageView {
         layer.masksToBounds = true
         clipsToBounds = true
         setCornerRadius()
+        updateDefaultIcon()
+    }
+
+    private func updateDefaultIcon() {
+        let icon: UIImage?
+        switch iconType {
+        case .p2p: icon = UIImage(named: "user-96")
+        case .grp: icon = UIImage(named: "group-96")
+        default: icon =  nil
+        }
+        self.image = icon
     }
 
     private func setCornerRadius() {
