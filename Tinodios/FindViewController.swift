@@ -178,11 +178,15 @@ extension FindViewController: ContactViewCellDelegate {
         guard let id = getUniqueId(for: indexPath) else { return }
         // If the search bar is active, deactivate it.
         if searchController.isActive {
-            DispatchQueue.main.async {
-                self.searchController.isActive = false
+            // Disable the animation as we are going straight to another view
+            UIView.performWithoutAnimation {
+                searchController.isActive = false
             }
         }
 
-        presentChatReplacingCurrentVC(with: id, afterDelay: .milliseconds(300))
+        // Have to do it with a delay because it takes time to dismiss searchController and
+        // navbar won't swap controllers while in transition:
+        // pushViewController:animated: called on <UINavigationController 0x7ff2cf80e400> while an existing transition or presentation is occurring; the navigation stack will not be updated.
+        presentChatReplacingCurrentVC(with: id, afterDelay: .milliseconds(30))
     }
 }

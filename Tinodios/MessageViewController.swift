@@ -271,7 +271,7 @@ extension MessageViewController: MessageDisplayLogic {
         let oldData = self.messages
         self.messages = messages.reversed()
 
-        let diff = Utils.diffMessageArray(old: oldData, new: self.messages)
+        let diff = Utils.diffMessageArray(sortedOld: oldData, sortedNew: self.messages)
         print("inserted: \(diff.inserted); removed: \(diff.removed)")
 
         collectionView.reloadData()
