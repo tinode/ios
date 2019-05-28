@@ -31,6 +31,7 @@
 		0A8A108521D4C79700B90D73 /* SqlStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8A108421D4C79700B90D73 /* SqlStore.swift */; };
 		0A8A8BDA21C380E80090BCBA /* Cache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8A8BD921C380E80090BCBA /* Cache.swift */; };
 		0A8C8A4621E5E72D00D8751E /* MessageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8C8A4521E5E72D00D8751E /* MessageViewController.swift */; };
+		0A95F4D4229BD95900AEF7D3 /* AccountSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A95F4D3229BD95900AEF7D3 /* AccountSettingsViewController.swift */; };
 		0A9F621A2295169A0087CCF5 /* NewGroupInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A9F62192295169A0087CCF5 /* NewGroupInteractor.swift */; };
 		0AC33D032293C7A00060D263 /* NewGroupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC33D022293C7A00060D263 /* NewGroupViewController.swift */; };
 		0ACB5F0E22097651008FE740 /* ChatListPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACB5F0D22097651008FE740 /* ChatListPresenter.swift */; };
@@ -106,6 +107,7 @@
 		0A8A108421D4C79700B90D73 /* SqlStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SqlStore.swift; sourceTree = "<group>"; };
 		0A8A8BD921C380E80090BCBA /* Cache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cache.swift; sourceTree = "<group>"; };
 		0A8C8A4521E5E72D00D8751E /* MessageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageViewController.swift; sourceTree = "<group>"; };
+		0A95F4D3229BD95900AEF7D3 /* AccountSettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountSettingsViewController.swift; sourceTree = "<group>"; };
 		0A9F62192295169A0087CCF5 /* NewGroupInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewGroupInteractor.swift; sourceTree = "<group>"; };
 		0AC33D022293C7A00060D263 /* NewGroupViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewGroupViewController.swift; sourceTree = "<group>"; };
 		0ACB5F0D22097651008FE740 /* ChatListPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatListPresenter.swift; sourceTree = "<group>"; };
@@ -182,6 +184,7 @@
 				0A8A107F21D4C77000B90D73 /* db */,
 				B0C496B022787C020084FA0D /* widgets */,
 				0A0380D721B3CC8100A3FA0E /* AppDelegate.swift */,
+				0A95F4D3229BD95900AEF7D3 /* AccountSettingsViewController.swift */,
 				0A2F81C5229677DD007E562C /* AddByIDViewController.swift */,
 				B008593B22741B89002C5168 /* AttributedStringFormatter.swift */,
 				0A8A8BD921C380E80090BCBA /* Cache.swift */,
@@ -426,6 +429,7 @@
 				0ACB5F1022097665008FE740 /* ChatListRouter.swift in Sources */,
 				0A6F260A21BE51D800B9726E /* LoginViewController.swift in Sources */,
 				0A09810C21CCB80400600013 /* StoredMessage.swift in Sources */,
+				0A95F4D4229BD95900AEF7D3 /* AccountSettingsViewController.swift in Sources */,
 				0A4E1D3022829C46006C0912 /* ContactsManager.swift in Sources */,
 				0ACB5F0E22097651008FE740 /* ChatListPresenter.swift in Sources */,
 				0A8A108121D4C78000B90D73 /* BaseDb.swift in Sources */,
