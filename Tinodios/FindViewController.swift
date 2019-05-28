@@ -41,7 +41,7 @@ class FindViewController: UITableViewController, FindDisplayLogic {
         // Make it a-la Telegram UI instead of placing the search bar
         // in the navigation item.
         self.tableView.tableHeaderView = searchController.searchBar
-        self.tableView.register(UINib(nibName: "GroupMemberViewCell", bundle: nil), forCellReuseIdentifier: "GroupMemberViewCell")
+        self.tableView.register(UINib(nibName: "ContactViewCell", bundle: nil), forCellReuseIdentifier: "ContactViewCell")
 
         searchController.delegate = self
         // The default is true.
@@ -102,7 +102,7 @@ class FindViewController: UITableViewController, FindDisplayLogic {
         if isSectionEmpty(section: indexPath.section) {
             return tableView.dequeueReusableCell(withIdentifier: "FindTableViewCellEmpty", for: indexPath)
         } else {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "GroupMemberViewCell", for: indexPath) as! GroupMemberViewCell
+            let cell = tableView.dequeueReusableCell(withIdentifier: "ContactViewCell", for: indexPath) as! ContactViewCell
             cell.delegate = self
 
             // Configure the cell...
@@ -172,7 +172,7 @@ extension FindViewController: UISearchResultsUpdating, UISearchControllerDelegat
     }
 }
 
-extension FindViewController: GroupMemberViewCellDelegate {
+extension FindViewController: ContactViewCellDelegate {
     func selected(from cell: UITableViewCell) {
         guard let indexPath = tableView.indexPathForSelectedRow else { return }
         guard let id = getUniqueId(for: indexPath) else { return }

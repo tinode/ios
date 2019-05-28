@@ -1,22 +1,21 @@
 //
-//  GroupMemberViewCell.swift
+//  ContactViewCell.swift
 //  Tinodios
 //
-//  Created by Gene Sokolov on 27/05/2019.
 //  Copyright © 2019 Tinode. All rights reserved.
 //
 
 import UIKit
 
-protocol GroupMemberViewCellDelegate: class {
+protocol ContactViewCellDelegate: class {
     func selected(from: UITableViewCell)
 }
 
-class GroupMemberViewCell: UITableViewCell {
+class ContactViewCell: UITableViewCell {
     private static let kSelectedBackgroundColor = UIColor(red: 0xC2/255, green: 0xC9/255, blue: 0xF9/255, alpha: 0.5)
     private static let kNormalBackgroundColor = UIColor.clear
 
-    public weak var delegate: GroupMemberViewCellDelegate?
+    public weak var delegate: ContactViewCellDelegate?
 
     @IBOutlet weak var avatar: RoundImageView!
     @IBOutlet weak var title: UILabel!
@@ -32,9 +31,9 @@ class GroupMemberViewCell: UITableViewCell {
         if selected {
             delegate?.selected(from: self)
 
-            self.contentView.backgroundColor = GroupMemberViewCell.kSelectedBackgroundColor
+            self.contentView.backgroundColor = ContactViewCell.kSelectedBackgroundColor
         } else {
-            self.contentView.backgroundColor = GroupMemberViewCell.kNormalBackgroundColor
+            self.contentView.backgroundColor = ContactViewCell.kNormalBackgroundColor
         }
     }
 }

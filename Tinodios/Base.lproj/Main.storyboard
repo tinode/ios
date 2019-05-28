@@ -721,8 +721,22 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="tUT-r9-WMo" userLabel="Selected Members">
+                                <rect key="frame" x="8" y="376.66666666666669" width="359" height="48"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="48" id="nRV-Wf-pZp"/>
+                                </constraints>
+                                <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="QsC-TG-MnK">
+                                    <size key="itemSize" width="36" height="36"/>
+                                    <size key="headerReferenceSize" width="0.0" height="0.0"/>
+                                    <size key="footerReferenceSize" width="0.0" height="0.0"/>
+                                    <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                </collectionViewFlowLayout>
+                                <cells/>
+                            </collectionView>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="60" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="eRo-gC-LR2">
-                                <rect key="frame" x="5" y="376.66666666666674" width="365" height="308.33333333333326"/>
+                                <rect key="frame" x="5" y="428.66666666666674" width="365" height="256.33333333333326"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <view key="tableFooterView" contentMode="scaleToFill" id="HQx-zw-7f8" userLabel="Footer to hide separators for empty rows">
                                     <rect key="frame" x="0.0" y="0.0" width="365" height="128"/>
@@ -788,15 +802,18 @@
                             <constraint firstItem="eRo-gC-LR2" firstAttribute="leading" secondItem="NQz-eu-3qO" secondAttribute="leading" constant="5" id="Rcw-sO-Yop"/>
                             <constraint firstItem="ze2-zK-J52" firstAttribute="top" secondItem="fmG-2Z-xAN" secondAttribute="top" id="XfW-lq-BfE"/>
                             <constraint firstItem="NQz-eu-3qO" firstAttribute="trailing" secondItem="ze2-zK-J52" secondAttribute="trailing" constant="8" id="c08-DG-ufh"/>
+                            <constraint firstItem="tUT-r9-WMo" firstAttribute="leading" secondItem="NQz-eu-3qO" secondAttribute="leading" constant="8" id="cFl-Hd-w7a"/>
                             <constraint firstItem="fmG-2Z-xAN" firstAttribute="top" secondItem="NQz-eu-3qO" secondAttribute="top" constant="8" id="cmr-y2-ukC"/>
                             <constraint firstItem="z2J-Il-Xy6" firstAttribute="leading" secondItem="NQz-eu-3qO" secondAttribute="leading" constant="8" id="eou-xs-dyR"/>
                             <constraint firstItem="NQz-eu-3qO" firstAttribute="trailing" secondItem="eRo-gC-LR2" secondAttribute="trailing" constant="5" id="fvd-JE-uEc"/>
+                            <constraint firstItem="NQz-eu-3qO" firstAttribute="trailing" secondItem="tUT-r9-WMo" secondAttribute="trailing" constant="8" id="g3u-oa-0ra"/>
                             <constraint firstItem="fmG-2Z-xAN" firstAttribute="leading" secondItem="NQz-eu-3qO" secondAttribute="leading" constant="8" id="hh4-aE-LlH"/>
                             <constraint firstItem="ze2-zK-J52" firstAttribute="height" secondItem="fmG-2Z-xAN" secondAttribute="height" id="lpe-Du-d8J"/>
                             <constraint firstItem="z2J-Il-Xy6" firstAttribute="top" secondItem="YQ6-fM-V3P" secondAttribute="bottom" constant="8" id="r2D-P8-Hpg"/>
                             <constraint firstItem="YQ6-fM-V3P" firstAttribute="top" secondItem="dyB-UR-kBk" secondAttribute="bottom" constant="8" symbolic="YES" id="rMw-a4-7yJ"/>
+                            <constraint firstItem="tUT-r9-WMo" firstAttribute="top" secondItem="z2J-Il-Xy6" secondAttribute="bottom" constant="4" id="uoI-Jt-ZVN"/>
                             <constraint firstItem="YQ6-fM-V3P" firstAttribute="leading" secondItem="NQz-eu-3qO" secondAttribute="leading" constant="8" id="val-lw-wjV"/>
-                            <constraint firstItem="eRo-gC-LR2" firstAttribute="top" secondItem="z2J-Il-Xy6" secondAttribute="bottom" constant="4" id="xt2-Ql-Ckz"/>
+                            <constraint firstItem="eRo-gC-LR2" firstAttribute="top" secondItem="tUT-r9-WMo" secondAttribute="bottom" constant="4" id="xt2-Ql-Ckz"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="NQz-eu-3qO"/>
                     </view>
@@ -815,6 +832,7 @@
                         <outlet property="membersTableView" destination="eRo-gC-LR2" id="QeK-tr-m7P"/>
                         <outlet property="privateTextField" destination="z0Q-rh-DzF" id="yb0-PQ-PHS"/>
                         <outlet property="saveButtonItem" destination="18D-3K-VJ1" id="CrK-I0-AhG"/>
+                        <outlet property="selectedCollectionView" destination="tUT-r9-WMo" id="xRe-zv-dWz"/>
                         <outlet property="tagsTextField" destination="YQ6-fM-V3P" id="pie-if-Wvu"/>
                     </connections>
                 </viewController>

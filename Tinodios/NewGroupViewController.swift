@@ -20,8 +20,11 @@ class NewGroupViewController: UIViewController, UITableViewDataSource {
     @IBOutlet weak var privateTextField: UITextField!
     @IBOutlet weak var tagsTextField: UITextField!
     @IBOutlet weak var avatarView: RoundImageView!
+    @IBOutlet weak var selectedCollectionView: UICollectionView!
 
-    private var contacts = [ContactHolder]()
+    private var contacts: [ContactHolder] = []
+    private var selectedContacts: [IndexPath] = []
+
     private var interactor: NewGroupBusinessLogic?
 
     private var imagePicker: ImagePicker!
@@ -39,7 +42,10 @@ class NewGroupViewController: UIViewController, UITableViewDataSource {
         self.membersTableView.dataSource = self
         self.membersTableView.allowsMultipleSelection = true
         self.membersTableView.delegate = self
-        self.membersTableView.register(UINib(nibName: "GroupMemberViewCell", bundle: nil), forCellReuseIdentifier: "GroupMemberViewCell")
+        self.membersTableView.register(UINib(nibName: "ContactViewCell", bundle: nil), forCellReuseIdentifier: "ContactViewCell")
+
+        self.selectedCollectionView.dataSource = self
+        self.selectedCollectionView.register(UINib(nibName: "SelectedMemberViewCell", bundle: nil), forCellWithReuseIdentifier: "SelectedMemberViewCell")
 
         self.groupNameTextField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: UIControl.Event.editingChanged)
         self.privateTextField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: UIControl.Event.editingChanged)
@@ -64,7 +70,7 @@ class NewGroupViewController: UIViewController, UITableViewDataSource {
         return contacts.count
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "GroupMemberViewCell", for: indexPath) as! GroupMemberViewCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: "ContactViewCell", for: indexPath) as! ContactViewCell
 
         // Configure the cell...
         let contact = contacts[indexPath.row]
@@ -103,6 +109,23 @@ class NewGroupViewController: UIViewController, UITableViewDataSource {
         let tagsList = Utils.parseTags(from: tags)
         self.interactor?.createGroupTopic(titled: groupName, subtitled: privateInfo, with: tagsList, consistingOf: members, withAvatar: avatar)
     }
+
+    /// Show message that no members are selected.
+    public func toggleNoSelectedMembersNote(on show: Bool) {
+        if show {
+            let messageLabel = UILabel(frame: CGRect(x: 0, y: 0, width: selectedCollectionView.bounds.size.width, height: selectedCollectionView.bounds.size.height))
+            messageLabel.text = "No members selected"
+            messageLabel.textColor = .gray
+            messageLabel.numberOfLines = 0;
+            messageLabel.textAlignment = .center;
+            messageLabel.font = .preferredFont(forTextStyle: .body)
+            messageLabel.sizeToFit()
+
+            selectedCollectionView.backgroundView = messageLabel
+        } else {
+            selectedCollectionView.backgroundView = nil
+        }
+    }
 }
 
 extension NewGroupViewController: NewGroupDisplayLogic {
@@ -122,6 +145,8 @@ extension NewGroupViewController: UITableViewDelegate {
         let contact = contacts[indexPath.row]
         if let uniqueId = contact.uniqueId {
             self.interactor?.addUser(with: uniqueId)
+            selectedContacts.append(indexPath)
+            selectedCollectionView.insertItems(at: [IndexPath(item: selectedContacts.count - 1, section: 0)])
         } else {
             print("no unique id for user \(contact.displayName ?? "No name")")
         }
@@ -133,11 +158,30 @@ extension NewGroupViewController: UITableViewDelegate {
         let contact = contacts[indexPath.row]
         if let uniqueId = contact.uniqueId {
             self.interactor?.removeUser(with: uniqueId)
+            if let removeAt = selectedContacts.firstIndex(of: indexPath) {
+                selectedContacts.remove(at: removeAt)
+                selectedCollectionView.deleteItems(at: [IndexPath(item: removeAt, section: 0)])
+            }
         } else {
             print("no unique id for user \(contact.displayName ?? "No name")")
         }
         print("- selected rows: \(self.interactor?.selectedMembers ?? [])")
     }
+}
+
+extension NewGroupViewController : UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        toggleNoSelectedMembersNote(on: selectedContacts.isEmpty)
+        return selectedContacts.count
+    }
+
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SelectedMemberViewCell", for: indexPath) as! SelectedMemberViewCell
+        let contact = contacts[selectedContacts[indexPath.item].item]
+        cell.avatarImageView.set(icon: contact.image, title: contact.displayName, id: contact.uniqueId)
+        return cell
+    }
+
 }
 
 extension NewGroupViewController: ImagePickerDelegate {
