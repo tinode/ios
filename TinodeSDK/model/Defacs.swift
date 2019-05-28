@@ -28,14 +28,14 @@ public class Defacs: Codable {
         }
     }
     
-    func getAuth() -> String? {
+    public func getAuth() -> String? {
         return auth != nil ? auth!.description : nil
     }
     func setAuth(a: String) {
         auth = AcsHelper(str: a)
     }
     
-    func getAnon() -> String? {
+    public func getAnon() -> String? {
         return anon != nil ? anon!.description : nil
     }
     func setAnon(a: String) {

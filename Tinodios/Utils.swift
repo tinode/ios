@@ -11,6 +11,8 @@ import TinodeSDK
 
 class Utils {
     static let kTinodeHasRunBefore = "tinodeHasRunBefore"
+    static let kTinodePrefReadReceipts = "tinodePrefSendReadReceipts"
+    static let kTinodePrefTypingNotifications = "tinodePrefTypingNoficications"
 
     public static func getAuthToken() -> String? {
         let userDefaults = UserDefaults.standard
@@ -23,7 +25,13 @@ class Utils {
         return KeychainWrapper.standard.string(
             forKey: LoginViewController.kTokenKey)
     }
-
+    public static func registerUserDefaults() {
+        /// Here you can give default values to your UserDefault keys
+        UserDefaults.standard.register(defaults: [
+            Utils.kTinodePrefReadReceipts: true,
+            Utils.kTinodePrefTypingNotifications: true
+        ])
+    }
     // Calculate difference between two arrays of messages. Returns a tuple of insertion indexes and deletion indexes.
     // The indexes are for respective arrays.
     public static func diffMessageArray(old: [Message], new: [Message]) -> (inserted: [Int], removed: [Int]) {

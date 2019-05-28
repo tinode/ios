@@ -16,6 +16,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        Utils.registerUserDefaults()
         if let token = Utils.getAuthToken(), !token.isEmpty {
             let tinode = Cache.getTinode()
             var success = false
