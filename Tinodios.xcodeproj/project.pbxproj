@@ -48,7 +48,10 @@
 		7DDADC5221D5C219009733B5 /* Validate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DDADC5121D5C219009733B5 /* Validate.swift */; };
 		7DDADC5421D5C2E6009733B5 /* CredentialsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DDADC5321D5C2E6009733B5 /* CredentialsViewController.swift */; };
 		B008593C22741B8A002C5168 /* AttributedStringFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B008593B22741B89002C5168 /* AttributedStringFormatter.swift */; };
-		B026EB5A229593320067A264 /* FindTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B026EB59229593320067A264 /* FindTableViewCell.swift */; };
+		B0125998229C982900688FCE /* ContactViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0125996229C982900688FCE /* ContactViewCell.swift */; };
+		B0125999229C982900688FCE /* ContactViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B0125997229C982900688FCE /* ContactViewCell.xib */; };
+		B012599C229CEBE600688FCE /* SelectedMemberViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B012599A229CEBE600688FCE /* SelectedMemberViewCell.swift */; };
+		B012599D229CEBE600688FCE /* SelectedMemberViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B012599B229CEBE600688FCE /* SelectedMemberViewCell.xib */; };
 		B02F5C8B22679BC80079A97E /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = B02F5C8A22679BC80079A97E /* ImagePicker.swift */; };
 		B031BE552263075E004160AE /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = B031BE542263075E004160AE /* Settings.bundle */; };
 		B031BE5722631304004160AE /* SettingsHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = B031BE5622631304004160AE /* SettingsHelper.swift */; };
@@ -126,7 +129,10 @@
 		7DDADC5121D5C219009733B5 /* Validate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Validate.swift; sourceTree = "<group>"; };
 		7DDADC5321D5C2E6009733B5 /* CredentialsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CredentialsViewController.swift; sourceTree = "<group>"; };
 		B008593B22741B89002C5168 /* AttributedStringFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttributedStringFormatter.swift; sourceTree = "<group>"; };
-		B026EB59229593320067A264 /* FindTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FindTableViewCell.swift; sourceTree = "<group>"; };
+		B0125996229C982900688FCE /* ContactViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactViewCell.swift; sourceTree = "<group>"; };
+		B0125997229C982900688FCE /* ContactViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ContactViewCell.xib; sourceTree = "<group>"; };
+		B012599A229CEBE600688FCE /* SelectedMemberViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectedMemberViewCell.swift; sourceTree = "<group>"; };
+		B012599B229CEBE600688FCE /* SelectedMemberViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SelectedMemberViewCell.xib; sourceTree = "<group>"; };
 		B02F5C8A22679BC80079A97E /* ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
 		B031BE542263075E004160AE /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		B031BE5622631304004160AE /* SettingsHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsHelper.swift; sourceTree = "<group>"; };
@@ -198,7 +204,6 @@
 				0AE50D4722156A5B0021F7B7 /* FindPresenter.swift */,
 				0AE50D4922156A6C0021F7B7 /* FindRouter.swift */,
 				0AE50D4322156A250021F7B7 /* FindViewController.swift */,
-				B026EB59229593320067A264 /* FindTableViewCell.swift */,
 				0A6F260921BE51D800B9726E /* LoginViewController.swift */,
 				B0A612B4229132CC00569DFE /* MessageBubbleDecorator.swift */,
 				B0DF031C227C604C000F9492 /* MessageCell.swift */,
@@ -285,6 +290,10 @@
 				B0DF032C2282EE8A000F9492 /* SendMessageBar.xib */,
 				B0DF032E2282FF46000F9492 /* SendMessageBar.swift */,
 				B0A612B2228EDC7B00569DFE /* DraftyButtonAttachment.swift */,
+				B0125996229C982900688FCE /* ContactViewCell.swift */,
+				B0125997229C982900688FCE /* ContactViewCell.xib */,
+				B012599A229CEBE600688FCE /* SelectedMemberViewCell.swift */,
+				B012599B229CEBE600688FCE /* SelectedMemberViewCell.xib */,
 			);
 			path = widgets;
 			sourceTree = "<group>";
@@ -350,9 +359,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B0125999229C982900688FCE /* ContactViewCell.xib in Resources */,
 				B031BE552263075E004160AE /* Settings.bundle in Resources */,
 				B0DF032D2282EE8A000F9492 /* SendMessageBar.xib in Resources */,
 				0A0380E221B3CC8200A3FA0E /* LaunchScreen.storyboard in Resources */,
+				B012599D229CEBE600688FCE /* SelectedMemberViewCell.xib in Resources */,
 				0A0380DF21B3CC8200A3FA0E /* Assets.xcassets in Resources */,
 				0A0380DD21B3CC8100A3FA0E /* Main.storyboard in Resources */,
 			);
@@ -426,6 +437,7 @@
 				B0DF03312283FFD8000F9492 /* PlaceholderTextView.swift in Sources */,
 				0A35BA9E22836CCF00AA5E2F /* ContactsSynchronizer.swift in Sources */,
 				0A0016E721E7236900088188 /* MessageInteractor.swift in Sources */,
+				B0125998229C982900688FCE /* ContactViewCell.swift in Sources */,
 				0ACB5F1022097665008FE740 /* ChatListRouter.swift in Sources */,
 				0A6F260A21BE51D800B9726E /* LoginViewController.swift in Sources */,
 				0A09810C21CCB80400600013 /* StoredMessage.swift in Sources */,
@@ -436,7 +448,6 @@
 				0A37D6F521DA075100A124CA /* AccountDb.swift in Sources */,
 				0A0380D821B3CC8100A3FA0E /* AppDelegate.swift in Sources */,
 				0A484E5121E359A800FE9AFE /* MessageDb.swift in Sources */,
-				B026EB5A229593320067A264 /* FindTableViewCell.swift in Sources */,
 				7DDADC5021D5C156009733B5 /* RegisterViewController.swift in Sources */,
 				B0DF031F227C6898000F9492 /* PaddedLabel.swift in Sources */,
 				0AE50D4A22156A6C0021F7B7 /* FindRouter.swift in Sources */,
@@ -456,6 +467,7 @@
 				0A8A108321D4C78C00B90D73 /* TopicDb.swift in Sources */,
 				0A0016E921E736CD00088188 /* MessagePresenter.swift in Sources */,
 				B0A612B1228C85C300569DFE /* MessageViewLayout.swift in Sources */,
+				B012599C229CEBE600688FCE /* SelectedMemberViewCell.swift in Sources */,
 				0AEE8BEE226456080022EC3F /* UiUtils.swift in Sources */,
 				0AC33D032293C7A00060D263 /* NewGroupViewController.swift in Sources */,
 				0A15739421DB53130070C31F /* SubscriberDb.swift in Sources */,

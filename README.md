@@ -12,6 +12,7 @@ The immediate goal is to have a basic end-to-end working application prototype t
 
 * Login
 * Register new accounts.
+* Start new chats.
 * View the list of active chats
 * Send and receive plain text messages one-on-one or in group chats.
 * In-app presence notifications.
@@ -24,7 +25,6 @@ The immediate goal is to have a basic end-to-end working application prototype t
 
 ### Does not work yet
 
-* Start new chats.
 * Edit chat parameters.
 * Typing indicators.
 * Delivery and received/read indicators for messages (little check marks in messages).

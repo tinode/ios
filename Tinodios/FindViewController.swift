@@ -25,7 +25,7 @@ class FindViewController: UITableViewController, FindDisplayLogic {
         let interactor = FindInteractor()
         let presenter = FindPresenter()
         let router = FindRouter()
-        
+
         viewController.interactor = interactor
         viewController.router = router
         interactor.presenter = presenter
@@ -41,6 +41,7 @@ class FindViewController: UITableViewController, FindDisplayLogic {
         // Make it a-la Telegram UI instead of placing the search bar
         // in the navigation item.
         self.tableView.tableHeaderView = searchController.searchBar
+        self.tableView.register(UINib(nibName: "ContactViewCell", bundle: nil), forCellReuseIdentifier: "ContactViewCell")
 
         searchController.delegate = self
         // The default is true.
@@ -101,15 +102,17 @@ class FindViewController: UITableViewController, FindDisplayLogic {
         if isSectionEmpty(section: indexPath.section) {
             return tableView.dequeueReusableCell(withIdentifier: "FindTableViewCellEmpty", for: indexPath)
         } else {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "FindTableViewCell", for: indexPath) as! FindTableViewCell
+            let cell = tableView.dequeueReusableCell(withIdentifier: "ContactViewCell", for: indexPath) as! ContactViewCell
+            cell.delegate = self
 
             // Configure the cell...
             let contact = indexPath.section == 0 ? localContacts[indexPath.row] : remoteContacts[indexPath.row]
-            cell.icon.set(icon: contact.image, title: contact.displayName, id: contact.uniqueId)
+            cell.avatar.set(icon: contact.image, title: contact.displayName, id: contact.uniqueId)
             cell.title.text = contact.displayName
             cell.title.sizeToFit()
             cell.subtitle.text = contact.subtitle ?? contact.uniqueId
             cell.subtitle.sizeToFit()
+
             return cell
         }
     }
@@ -121,20 +124,7 @@ class FindViewController: UITableViewController, FindDisplayLogic {
         default: return true
         }
     }
-}
 
-extension FindViewController {
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "Find2Messages" {
-            // If the search bar is active, deactivate it.
-            if searchController.isActive {
-                DispatchQueue.main.async {
-                    self.searchController.isActive = false
-                }
-            }
-            router?.routeToChat(segue: segue)
-        }
-    }
     func getUniqueId(for path: IndexPath) -> String? {
         switch path.section {
         case 0: return self.localContacts[path.row].uniqueId
@@ -179,5 +169,24 @@ extension FindViewController: UISearchResultsUpdating, UISearchControllerDelegat
         pendingSearchRequest?.cancel()
         pendingSearchRequest = nil
         self.interactor?.loadAndPresentContacts(searchQuery: nil)
+    }
+}
+
+extension FindViewController: ContactViewCellDelegate {
+    func selected(from cell: UITableViewCell) {
+        guard let indexPath = tableView.indexPathForSelectedRow else { return }
+        guard let id = getUniqueId(for: indexPath) else { return }
+        // If the search bar is active, deactivate it.
+        if searchController.isActive {
+            // Disable the animation as we are going straight to another view
+            UIView.performWithoutAnimation {
+                searchController.isActive = false
+            }
+        }
+
+        // Have to do it with a delay because it takes time to dismiss searchController and
+        // navbar won't swap controllers while in transition:
+        // pushViewController:animated: called on <UINavigationController 0x7ff2cf80e400> while an existing transition or presentation is occurring; the navigation stack will not be updated.
+        presentChatReplacingCurrentVC(with: id, afterDelay: .milliseconds(30))
     }
 }

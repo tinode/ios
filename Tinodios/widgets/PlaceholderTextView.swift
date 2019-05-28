@@ -2,7 +2,6 @@
 //  PlaceholderTextView.swift
 //  Tinodios
 //
-//  Created by Gene Sokolov on 09/05/2019.
 //  Copyright © 2019 Tinode. All rights reserved.
 //
 

@@ -32,9 +32,11 @@ class Utils {
             Utils.kTinodePrefTypingNotifications: true
         ])
     }
+
     // Calculate difference between two arrays of messages. Returns a tuple of insertion indexes and deletion indexes.
-    // The indexes are for respective arrays.
-    public static func diffMessageArray(old: [Message], new: [Message]) -> (inserted: [Int], removed: [Int]) {
+    // First the deletion indexes are applied to the old array. Then insertions are applied to the remaining array.
+    // Indexes are applied in high to low order.
+    public static func diffMessageArray(sortedOld old: [Message], sortedNew new: [Message]) -> (removed: [Int], inserted: [Int]) {
         if old.isEmpty && new.isEmpty {
             return (inserted: [], removed: [])
         }
@@ -72,8 +74,8 @@ class Utils {
             }
         }
 
-        print("old: \(old.map({ $0.seqId }))")
-        print("new: \(new.map({ $0.seqId }))")
+        // At this point 'inserted' and 'removed' contain indexes relative the new and old array respectively.
+        // Indexes are sorted in ascending order.
 
         return (inserted: inserted, removed: removed)
     }
