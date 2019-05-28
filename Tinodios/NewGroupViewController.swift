@@ -39,6 +39,7 @@ class NewGroupViewController: UIViewController, UITableViewDataSource {
         self.membersTableView.dataSource = self
         self.membersTableView.allowsMultipleSelection = true
         self.membersTableView.delegate = self
+        self.membersTableView.register(UINib(nibName: "GroupMemberViewCell", bundle: nil), forCellReuseIdentifier: "GroupMemberViewCell")
 
         self.groupNameTextField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: UIControl.Event.editingChanged)
         self.privateTextField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: UIControl.Event.editingChanged)
@@ -63,12 +64,16 @@ class NewGroupViewController: UIViewController, UITableViewDataSource {
         return contacts.count
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "NewGroupTableViewCell", for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: "GroupMemberViewCell", for: indexPath) as! GroupMemberViewCell
 
         // Configure the cell...
         let contact = contacts[indexPath.row]
-        cell.textLabel?.text = contact.displayName
-        cell.detailTextLabel?.text = contact.uniqueId
+
+        cell.avatar.set(icon: contact.image, title: contact.displayName, id: contact.uniqueId)
+        cell.title.text = contact.displayName
+        cell.title.sizeToFit()
+        cell.subtitle.text = contact.subtitle ?? contact.uniqueId
+        cell.subtitle.sizeToFit()
 
         // Data reload clears selection. If we already have any selected users,
         // select the corresponding rows in the table.
@@ -105,6 +110,7 @@ extension NewGroupViewController: NewGroupDisplayLogic {
         self.contacts = contacts
         self.membersTableView.reloadData()
     }
+
     func presentChat(with topicName: String) {
         self.presentChatReplacingCurrentVC(with: topicName)
     }
@@ -121,6 +127,7 @@ extension NewGroupViewController: UITableViewDelegate {
         }
         print("+ selected rows: \(self.interactor?.selectedMembers ?? [])")
     }
+
     func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
         print("deselected index path = \(indexPath)")
         let contact = contacts[indexPath.row]
