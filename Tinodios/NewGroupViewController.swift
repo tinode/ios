@@ -111,13 +111,13 @@ class NewGroupViewController: UIViewController, UITableViewDataSource {
     }
 
     /// Show message that no members are selected.
-    public func toggleNoSelectedMembersNote(on show: Bool) {
+    private func toggleNoSelectedMembersNote(on show: Bool) {
         if show {
             let messageLabel = UILabel(frame: CGRect(x: 0, y: 0, width: selectedCollectionView.bounds.size.width, height: selectedCollectionView.bounds.size.height))
             messageLabel.text = "No members selected"
             messageLabel.textColor = .gray
-            messageLabel.numberOfLines = 0;
-            messageLabel.textAlignment = .center;
+            messageLabel.numberOfLines = 0
+            messageLabel.textAlignment = .center
             messageLabel.font = .preferredFont(forTextStyle: .body)
             messageLabel.sizeToFit()
 

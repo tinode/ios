@@ -36,7 +36,6 @@ import UIKit
         didSet {
             guard let tp = defaultType else { return }
             iconType = IconType(from: tp)
-            print("set icon type to \(iconType) from \(tp)")
         }
     }
 
@@ -103,7 +102,7 @@ import UIKit
             // Avatar image provided.
             self.image = icon
         } else {
-            if id != nil && !id!.isEmpty {
+            if let id = id, !id.isEmpty {
                 switch Tinode.topicTypeByName(name: id) {
                 case .p2p: iconType = .p2p
                 case .grp: iconType = .grp
