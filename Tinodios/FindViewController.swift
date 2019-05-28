@@ -182,6 +182,7 @@ extension FindViewController: ContactViewCellDelegate {
                 self.searchController.isActive = false
             }
         }
-        presentChatReplacingCurrentVC(with: id)
+
+        presentChatReplacingCurrentVC(with: id, delay: .milliseconds(300))
     }
 }

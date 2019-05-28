@@ -151,8 +151,8 @@ class UiUtils {
 }
 
 extension UIViewController {
-    public func presentChatReplacingCurrentVC(with topicName: String) {
-        DispatchQueue.main.async {
+    public func presentChatReplacingCurrentVC(with topicName: String, delay: DispatchTimeInterval = .seconds(0)) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
             if let navController = self.navigationController {
                 let messageVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "MessageViewController") as! MessageViewController
                 messageVC.topicName = topicName
