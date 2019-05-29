@@ -19,6 +19,7 @@ class AccountSettingsViewController: UIViewController {
     @IBOutlet weak var authUsersPermissionsLabel: UILabel!
     @IBOutlet weak var anonUsersPermissionsLabel: UILabel!
     weak var tinode: Tinode!
+    private var imagePicker: ImagePicker!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -28,31 +29,32 @@ class AccountSettingsViewController: UIViewController {
     }
 
     private func setUpAndloadData() {
-        if let me = self.tinode.getMeTopic() {
-            self.topicTitleTextView.text = me.pub?.fn ?? "Unknown"
-            let tap = UITapGestureRecognizer(target: self, action: #selector(AccountSettingsViewController.topicTitleTapped))
-            topicTitleTextView.isUserInteractionEnabled = true
-            topicTitleTextView.addGestureRecognizer(tap)
+        guard let me = self.tinode.getMeTopic() else { return }
+        self.topicTitleTextView.text = me.pub?.fn ?? "Unknown"
+        let tap = UITapGestureRecognizer(target: self, action: #selector(AccountSettingsViewController.topicTitleTapped))
+        topicTitleTextView.isUserInteractionEnabled = true
+        topicTitleTextView.addGestureRecognizer(tap)
 
-            let userDefaults = UserDefaults.standard
-            self.sendReadReceiptsSwitch.setOn(
-                userDefaults.bool(forKey: Utils.kTinodePrefReadReceipts),
-                animated: false)
-            self.sendTypingNotificationsSwitch.setOn(
-                userDefaults.bool(forKey: Utils.kTinodePrefTypingNotifications),
-                animated: false)
-            self.myUIDLabel.text = self.tinode.myUid
-            self.myUIDLabel.sizeToFit()
+        let userDefaults = UserDefaults.standard
+        self.sendReadReceiptsSwitch.setOn(
+            userDefaults.bool(forKey: Utils.kTinodePrefReadReceipts),
+            animated: false)
+        self.sendTypingNotificationsSwitch.setOn(
+            userDefaults.bool(forKey: Utils.kTinodePrefTypingNotifications),
+            animated: false)
+        self.myUIDLabel.text = self.tinode.myUid
+        self.myUIDLabel.sizeToFit()
 
-            if let avatar = me.pub?.photo?.image() {
-                self.avatarImage.image = avatar
-            }
-
-            self.authUsersPermissionsLabel.text = me.defacs?.getAuth() ?? ""
-            self.authUsersPermissionsLabel.sizeToFit()
-            self.anonUsersPermissionsLabel.text = me.defacs?.getAnon() ?? ""
-            self.anonUsersPermissionsLabel.sizeToFit()
+        if let avatar = me.pub?.photo?.image() {
+            self.avatarImage.image = avatar
         }
+
+        self.authUsersPermissionsLabel.text = me.defacs?.getAuth() ?? ""
+        self.authUsersPermissionsLabel.sizeToFit()
+        self.anonUsersPermissionsLabel.text = me.defacs?.getAnon() ?? ""
+        self.anonUsersPermissionsLabel.sizeToFit()
+        self.imagePicker = ImagePicker(
+            presentationController: self, delegate: self)
     }
     @objc
     func topicTitleTapped(sender:UITapGestureRecognizer) {
@@ -76,5 +78,38 @@ class AccountSettingsViewController: UIViewController {
     }
     @IBAction func typingNotificationsClicked(_ sender: Any) {
         UserDefaults.standard.set(self.sendTypingNotificationsSwitch.isOn, forKey: Utils.kTinodePrefTypingNotifications)
+    }
+    @IBAction func loadAvatarClicked(_ sender: Any) {
+        imagePicker.present(from: self.view)
+    }
+    private func updateAvatar(me: DefaultMeTopic, image: UIImage) {
+        let pub = me.pub == nil ? VCard(fn: nil, avatar: image) : me.pub!.copy()
+        pub.photo = Photo(image: image)
+
+        do {
+            try me.setMeta(
+                meta: MsgSetMeta<VCard, PrivateType>(
+                    desc: MetaSetDesc<VCard, PrivateType>(pub: pub, priv: nil), sub: nil, tags: nil))?.then(
+                        onSuccess: nil,
+                        onFailure: { err in
+                            DispatchQueue.main.async {
+                                UiUtils.showToast(message: "Error changing avatar \(err)")
+                            }
+                            return nil
+                        })
+        } catch {
+            UiUtils.showToast(message: "Error changing avatar \(error)")
+        }
+    }
+}
+
+extension AccountSettingsViewController: ImagePickerDelegate {
+    func didSelect(image: UIImage?) {
+        guard let me = tinode.getMeTopic(), let image = image else {
+            print("No ME topic - can't update avatar")
+            return
+        }
+        self.updateAvatar(me: me, image: image)
+        self.avatarImage.image = image
     }
 }
