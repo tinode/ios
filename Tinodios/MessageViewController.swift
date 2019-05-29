@@ -269,17 +269,26 @@ extension MessageViewController: MessageDisplayLogic {
 
     func displayChatMessages(messages: [StoredMessage]) {
         let oldData = self.messages
-        self.messages = messages.reversed()
+        let newData: [StoredMessage] = messages.reversed()
 
-        let diff = Utils.diffMessageArray(sortedOld: oldData, sortedNew: self.messages)
-        print("inserted: \(diff.inserted); removed: \(diff.removed)")
+        if oldData.isEmpty || newData.isEmpty {
+            self.messages = newData
+            collectionView.reloadData()
+            collectionView.layoutIfNeeded()
+            collectionView.scrollToBottom()
+        } else {
+            let diff = Utils.diffMessageArray(sortedOld: oldData, sortedNew: newData)
+            let toDelete = diff.removed.map { IndexPath(item: $0, section: 0) }
+            let toInsert = diff.inserted.map { IndexPath(item: $0, section: 0) }
 
-        collectionView.reloadData()
-        collectionView.layoutIfNeeded()
+            collectionView.performBatchUpdates({ () -> Void in
+                self.messages = newData
+                collectionView.deleteItems(at: toDelete)
+                collectionView.insertItems(at: toInsert)
+                }, completion: nil)
 
-        // FIXME: don't scroll to bottom in response to loading the next page.
-        // Maybe don't scroll to bottom if the view is not at the bottom already.
-        collectionView.scrollToBottom()
+            collectionView.layoutIfNeeded()
+        }
     }
 
     func endRefresh() {

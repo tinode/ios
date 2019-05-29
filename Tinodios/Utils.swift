@@ -50,7 +50,7 @@ class Utils {
         var inserted: [Int] = []
         var removed: [Int] = []
 
-        // Match old array against the new array and separate removed items from inserted.
+        // Match old array against the new array to separate removed items from inserted.
         var o = 0, n = 0
         while o < old.count || n < new.count {
             if o == old.count || (n < new.count && old[o].seqId > new[n].seqId) {
@@ -73,9 +73,6 @@ class Utils {
                 }
             }
         }
-
-        // At this point 'inserted' and 'removed' contain indexes relative the new and old array respectively.
-        // Indexes are sorted in ascending order.
 
         return (inserted: inserted, removed: removed)
     }
