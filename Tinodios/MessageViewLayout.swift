@@ -68,24 +68,6 @@ class MessageViewLayout: UICollectionViewLayout {
         }
     }
 
-    override func prepare(forCollectionViewUpdates items: [UICollectionViewUpdateItem]) {
-        for item in items {
-            switch item.updateAction {
-            case .insert:
-                if let indexPath = item.indexPathAfterUpdate {
-                    print("Prepare to insert item at=\(indexPath.item), was=\(item.indexPathBeforeUpdate?.item ?? -1)")
-                }
-            case .delete:
-                if let indexPath = item.indexPathBeforeUpdate {
-                    print("Prepare to delete item at=\(indexPath.item), will_be=\(item.indexPathAfterUpdate?.item ?? -1)")
-                }
-            default: // .none, .reload, .move: ignoring these chanegs for now.
-                print("prepare.forCollectionViewUpdates other update=\(item)")
-                break
-            }
-        }
-    }
-
     override func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
         var visibleAttributes = [UICollectionViewLayoutAttributes]()
         // Loop through the cache and look for items in the rect
