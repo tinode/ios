@@ -53,11 +53,7 @@ class ChatListViewController: UITableViewController, ChatListDisplayLogic {
     }
 
     func displayLoginView() {
-        DispatchQueue.main.async {
-            let storyboard = UIStoryboard(name: "Main", bundle: nil)
-            let destinationVC = storyboard.instantiateViewController(withIdentifier: "StartNavigator") as! UINavigationController
-            self.show(destinationVC, sender: nil)
-        }
+        UiUtils.routeToLoginVC()
     }
 
     func displayChats(_ topics: [DefaultComTopic]) {

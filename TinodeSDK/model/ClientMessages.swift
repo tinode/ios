@@ -56,16 +56,16 @@ public class MsgClientAcc<Pu: Encodable,Pr: Encodable>: Encodable {
     var login: Bool?
     var tags: [String]?
     var cred: [Credential]?
-    var desc: MetaSetDesc<Pu,Pr>
+    var desc: MetaSetDesc<Pu,Pr>?
     
     init(id: String?,
          uid: String?,
          scheme: String?,
          secret: String?,
          doLogin: Bool,
-         desc: MetaSetDesc<Pu,Pr>) {
+         desc: MetaSetDesc<Pu,Pr>?) {
         self.id = id
-        self.user = uid == nil ? "new" : uid
+        self.user = uid
         self.scheme = scheme
         self.login = doLogin
         self.desc = desc

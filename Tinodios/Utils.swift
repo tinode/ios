@@ -13,6 +13,7 @@ class Utils {
     static let kTinodeHasRunBefore = "tinodeHasRunBefore"
     static let kTinodePrefReadReceipts = "tinodePrefSendReadReceipts"
     static let kTinodePrefTypingNotifications = "tinodePrefTypingNoficications"
+    static let kTinodePrefLastLogin = "tinodeLastLogin"
 
     public static func getAuthToken() -> String? {
         let userDefaults = UserDefaults.standard

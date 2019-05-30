@@ -80,6 +80,7 @@ class LoginViewController: UIViewController {
                 .then(
                     onSuccess: { [weak self] pkt in
                         print("login successful for: \(tinode.myUid!)")
+                        UserDefaults.standard.set(userName, forKey: Utils.kTinodePrefLastLogin)
                         if let token = tinode.authToken, !token.isEmpty {
                             let tokenSaveSuccessful = KeychainWrapper.standard.set(
                                 token, forKey: LoginViewController.kTokenKey)

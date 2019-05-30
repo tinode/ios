@@ -474,11 +474,17 @@
                                 <rect key="frame" x="16" y="439" width="142" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Change password"/>
+                                <connections>
+                                    <action selector="changePasswordClicked:" destination="Pnk-9m-ZVg" eventType="touchUpInside" id="tkU-W7-Cfc"/>
+                                </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="XQ9-ka-ZcC">
-                                <rect key="frame" x="205" y="439" width="142" height="30"/>
+                                <rect key="frame" x="205" y="438" width="142" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Log out"/>
+                                <connections>
+                                    <action selector="logoutClicked:" destination="Pnk-9m-ZVg" eventType="touchUpInside" id="ic8-eD-hBM"/>
+                                </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Default permissions" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Tfn-S0-Od5">
                                 <rect key="frame" x="16" y="490" width="152" height="21"/>

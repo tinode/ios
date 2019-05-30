@@ -873,6 +873,12 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
             return nil
         }
     }
+    public func setDescription(desc: MetaSetDesc<DP, DR>) -> PromisedReply<ServerMessage>? {
+        return setMeta(meta: MsgSetMeta<DP, DR>(desc: desc, sub: nil, tags: nil))
+    }
+    public func setDescription(pub: DP?, priv: DR?) -> PromisedReply<ServerMessage>? {
+        return setDescription(desc: MetaSetDesc<DP, DR>(pub: pub, priv: priv))
+    }
 
     public func updateAccessMode(ac: AccessChange?) -> Bool {
         if description!.acs == nil {
