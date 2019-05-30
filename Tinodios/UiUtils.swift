@@ -56,6 +56,14 @@ class UiUtils {
             PromisedReply<ServerMessage>(value: ServerMessage())
     }
 
+    public static func routeToLoginVC() {
+        DispatchQueue.main.async {
+            let storyboard = UIStoryboard(name: "Main", bundle: nil)
+            let destinationVC = storyboard.instantiateViewController(withIdentifier: "StartNavigator") as! UINavigationController
+            let appDelegate = UIApplication.shared.delegate as! AppDelegate
+            appDelegate.window!.rootViewController = destinationVC
+        }
+    }
     // Get text from UITextField or mark the field red if the field is blank
     public static func ensureDataInTextField(_ field: UITextField) -> String {
         let text = (field.text ?? "").trimmingCharacters(in: .whitespacesAndNewlines)

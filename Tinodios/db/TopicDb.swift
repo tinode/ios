@@ -29,7 +29,7 @@ public class TopicDb {
     private static let kTableName = "topics"
     private static let kUnsentIdStart = 2000000000
     private let db: SQLite.Connection
-    
+
     public var table: Table
 
     public let id: Expression<Int64>
@@ -54,7 +54,7 @@ public class TopicDb {
     public let tags: Expression<String?>
     public let pub: Expression<String?>
     public let priv: Expression<String?>
-    
+
     init(_ database: SQLite.Connection) {
         self.db = database
         self.table = Table(TopicDb.kTableName)
@@ -170,7 +170,11 @@ public class TopicDb {
         return -1
     }
     func query() -> AnySequence<Row>? {
-        return try? self.db.prepare(self.table)
+        guard let accountId = BaseDb.getInstance().account?.id else {
+            return nil
+        }
+        let topics = self.table.filter(self.accountId == accountId)
+        return try? self.db.prepare(topics)
     }
     func readOne(for tinode: Tinode?, row: Row) -> TopicProto? {
         guard let tn = tinode, let topicName = row[self.topic] else {

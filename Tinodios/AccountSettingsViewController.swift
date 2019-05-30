@@ -102,6 +102,16 @@ class AccountSettingsViewController: UIViewController {
             }))
         self.present(alert, animated: true)
     }
+    @IBAction func logoutClicked(_ sender: Any) {
+        let alert = UIAlertController(title: nil, message: "Are you sure you want to log out?", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(
+            title: "OK", style: .default,
+            handler: { action in
+                self.logout()
+            }))
+        self.present(alert, animated: true)
+    }
     private func updatePassword(with newPassword: String) {
         guard newPassword.count >= 4 else {
             DispatchQueue.main.async {
@@ -161,6 +171,12 @@ class AccountSettingsViewController: UIViewController {
             pub.fn = newTitle
         }
         setPublicData(pub: pub)
+    }
+    private func logout() {
+        print("logging out")
+        BaseDb.getInstance().logout()
+        Cache.invalidate()
+        UiUtils.routeToLoginVC()
     }
 }
 
