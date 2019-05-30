@@ -102,6 +102,7 @@ public protocol TinodeEventListener: class {
 
 public class Tinode {
     public static let kTopicNew = "new"
+    public static let kUserNew = "new"
     public static let kTopicMe = "me"
     public static let kTopicFnd = "fnd"
     public static let kTopicGrpPrefix = "grp"
@@ -583,7 +584,7 @@ public class Tinode {
             return nil
         }
         return account(
-            uid: nil,
+            uid: Tinode.kUserNew,
             scheme: AuthScheme.kLoginBasic,
             secret: encodedSecret,
             loginNow: login,
@@ -609,7 +610,7 @@ public class Tinode {
         secret: String,
         loginNow: Bool,
         tags: [String]?,
-        desc: MetaSetDesc<Pu, Pr>,
+        desc: MetaSetDesc<Pu, Pr>?,
         creds: [Credential]?) -> PromisedReply<ServerMessage>? {
         let msgId = getNextMsgId()
         let msga = MsgClientAcc(id: msgId, uid: uid, scheme: scheme, secret: secret, doLogin: loginNow, desc: desc)
@@ -748,6 +749,19 @@ public class Tinode {
                 setAutoLoginWithToken(token: t)
             }
             listener?.onLogin(code: ctrl.code, text: ctrl.text)
+        }
+    }
+    private func updateAccountSecret(uid: String?, scheme: String, secret: String) -> PromisedReply<ServerMessage>? {
+        return account(uid: uid, scheme: scheme, secret: secret, loginNow: false, tags: nil, desc: nil as MetaSetDesc<Int, Int>?, creds: nil)
+    }
+    @discardableResult
+    public func updateAccountBasic(uid: String?, username: String, password: String) -> PromisedReply<ServerMessage>? {
+        do {
+            return try updateAccountSecret(
+                uid: uid, scheme: AuthScheme.kLoginBasic,
+                secret: AuthScheme.encodeBasicToken(uname: username, password: password))
+        } catch {
+            return nil
         }
     }
     public func disconnect() {

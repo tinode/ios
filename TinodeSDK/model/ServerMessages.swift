@@ -98,6 +98,18 @@ public class DelValues: Decodable {
 
 public typealias PrivateType = Dictionary<String, JSONValue>
 
+extension PrivateType {
+    var comment: String? {
+        get {
+            if case let .string(v)? = self["comment"] {
+                return v
+            }
+            return nil
+        }
+        set { self["comment"] = .string(newValue ?? Tinode.kNullValue) }
+    }
+}
+
 // VCard
 public typealias DefaultDescription = Description<VCard, PrivateType>
 public typealias DefaultSubscription = Subscription<VCard, PrivateType>
