@@ -7,30 +7,30 @@
 
 import Foundation
 
-class AcsHelper: Codable, Equatable {
+public class AcsHelper: Codable, Equatable {
     enum AcsError: Error {
         case invalidValue
     }
     // J - join topic.
-    private static let kModeJoin = 0x01
+    public static let kModeJoin = 0x01
     // R - read broadcasts
-    private static let kModeRead = 0x02
+    public static let kModeRead = 0x02
     // W - publish
-    private static let kModeWrite = 0x04
+    public static let kModeWrite = 0x04
     // P - receive presence notifications
-    private static let kModePres = 0x08
+    public static let kModePres = 0x08
     // A - approve requests
-    private static let kModeApprove = 0x10
+    public static let kModeApprove = 0x10
     // S - user can invite other people to join (S)
-    private static let kModeShare = 0x20
+    public static let kModeShare = 0x20
     // D - user can hard-delete messages (D), only owner can completely delete
-    private static let kModeDelete = 0x40
+    public static let kModeDelete = 0x40
     // O - user is the owner (O) - full access
-    private static let kModeOwner = 0x80
+    public static let kModeOwner = 0x80
     // No access, requests to gain access are processed normally (N)
-    private static let kModeNone = 0
+    public static let kModeNone = 0
     // Invalid mode to indicate an error
-    private static let kModeInvalid = 0x100000
+    public static let kModeInvalid = 0x100000
     
     private static let kModes = ["J", "R", "W", "P", "A", "S", "D", "O"]
     
@@ -63,6 +63,10 @@ class AcsHelper: Codable, Equatable {
     }
     public func isInvalid() -> Bool {
         return (a ?? 0) == AcsHelper.kModeInvalid
+    }
+    public func hasPermissions(forMode mode: Int) -> Bool {
+        guard !isInvalid() else { return false }
+        return (a! & mode) != 0
     }
     private static func decode(from modeStr: String?) -> Int? {
         guard let mode = modeStr, mode.count > 0 else {
@@ -178,7 +182,7 @@ class AcsHelper: Codable, Equatable {
         }
         return nil
     }
-    static func == (lhs: AcsHelper, rhs: AcsHelper) -> Bool {
+    public static func == (lhs: AcsHelper, rhs: AcsHelper) -> Bool {
         return lhs.a == rhs.a
     }
 }

@@ -25,6 +25,8 @@
 		0A431C042244A26200A837F7 /* TinodeSDK.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0A431C022244A26200A837F7 /* TinodeSDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		0A484E5121E359A800FE9AFE /* MessageDb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A484E5021E359A800FE9AFE /* MessageDb.swift */; };
 		0A4E1D3022829C46006C0912 /* ContactsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4E1D2F22829C46006C0912 /* ContactsManager.swift */; };
+		0A6AC322229FAA130025A4EC /* PermissionsEditView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0A6AC321229FAA130025A4EC /* PermissionsEditView.xib */; };
+		0A6AC324229FB0EE0025A4EC /* PermissionsEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A6AC323229FB0ED0025A4EC /* PermissionsEditViewController.swift */; };
 		0A6F260A21BE51D800B9726E /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A6F260921BE51D800B9726E /* LoginViewController.swift */; };
 		0A8A108121D4C78000B90D73 /* BaseDb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8A108021D4C78000B90D73 /* BaseDb.swift */; };
 		0A8A108321D4C78C00B90D73 /* TopicDb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8A108221D4C78C00B90D73 /* TopicDb.swift */; };
@@ -105,6 +107,8 @@
 		0A431C022244A26200A837F7 /* TinodeSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = TinodeSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		0A484E5021E359A800FE9AFE /* MessageDb.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageDb.swift; sourceTree = "<group>"; };
 		0A4E1D2F22829C46006C0912 /* ContactsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsManager.swift; sourceTree = "<group>"; };
+		0A6AC321229FAA130025A4EC /* PermissionsEditView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PermissionsEditView.xib; sourceTree = "<group>"; };
+		0A6AC323229FB0ED0025A4EC /* PermissionsEditViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionsEditViewController.swift; sourceTree = "<group>"; };
 		0A6F260921BE51D800B9726E /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		0A8A108021D4C78000B90D73 /* BaseDb.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseDb.swift; sourceTree = "<group>"; };
 		0A8A108221D4C78C00B90D73 /* TopicDb.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopicDb.swift; sourceTree = "<group>"; };
@@ -297,6 +301,8 @@
 				B0125997229C982900688FCE /* ContactViewCell.xib */,
 				B012599A229CEBE600688FCE /* SelectedMemberViewCell.swift */,
 				B012599B229CEBE600688FCE /* SelectedMemberViewCell.xib */,
+				0A6AC321229FAA130025A4EC /* PermissionsEditView.xib */,
+				0A6AC323229FB0ED0025A4EC /* PermissionsEditViewController.swift */,
 			);
 			path = widgets;
 			sourceTree = "<group>";
@@ -367,6 +373,7 @@
 				B0DF032D2282EE8A000F9492 /* SendMessageBar.xib in Resources */,
 				0A0380E221B3CC8200A3FA0E /* LaunchScreen.storyboard in Resources */,
 				B012599D229CEBE600688FCE /* SelectedMemberViewCell.xib in Resources */,
+				0A6AC322229FAA130025A4EC /* PermissionsEditView.xib in Resources */,
 				0A0380DF21B3CC8200A3FA0E /* Assets.xcassets in Resources */,
 				0A0380DD21B3CC8100A3FA0E /* Main.storyboard in Resources */,
 			);
@@ -456,6 +463,7 @@
 				0AE50D4A22156A6C0021F7B7 /* FindRouter.swift in Sources */,
 				B0C6A3C2229EDF14009B0B5D /* ImagePreviewController.swift in Sources */,
 				B0DF032F2282FF46000F9492 /* SendMessageBar.swift in Sources */,
+				0A6AC324229FB0EE0025A4EC /* PermissionsEditViewController.swift in Sources */,
 				B02F5C8B22679BC80079A97E /* ImagePicker.swift in Sources */,
 				7DDADC5221D5C219009733B5 /* Validate.swift in Sources */,
 				B0A612B5229132CC00569DFE /* MessageBubbleDecorator.swift in Sources */,

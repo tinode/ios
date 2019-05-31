@@ -35,6 +35,10 @@ class AccountSettingsViewController: UIViewController {
         let tap = UITapGestureRecognizer(target: self, action: #selector(AccountSettingsViewController.topicTitleTapped))
         topicTitleTextView.isUserInteractionEnabled = true
         topicTitleTextView.addGestureRecognizer(tap)
+
+        let tap2 = UITapGestureRecognizer(target: self, action: #selector(AccountSettingsViewController.permissionsTapped))
+        authUsersPermissionsLabel.isUserInteractionEnabled = true
+        authUsersPermissionsLabel.addGestureRecognizer(tap2)
         self.imagePicker = ImagePicker(
             presentationController: self, delegate: self)
     }
@@ -63,7 +67,7 @@ class AccountSettingsViewController: UIViewController {
         self.anonUsersPermissionsLabel.sizeToFit()
     }
     @objc
-    func topicTitleTapped(sender:UITapGestureRecognizer) {
+    func topicTitleTapped(sender: UITapGestureRecognizer) {
         let alert = UIAlertController(title: "Edit account name", message: nil, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
         alert.addTextField(configurationHandler: { textField in
@@ -77,6 +81,23 @@ class AccountSettingsViewController: UIViewController {
             }
         }))
         self.present(alert, animated: true)
+    }
+    @objc
+    func permissionsTapped(sender: UITapGestureRecognizer) {
+        guard let auth = me.defacs?.auth else {
+            print("could not get acs")
+            return
+        }
+        let alertVC = PermissionsEditViewController(
+            joinState: auth.hasPermissions(forMode: AcsHelper.kModeJoin),
+            readState: auth.hasPermissions(forMode: AcsHelper.kModeRead),
+            writeState: auth.hasPermissions(forMode: AcsHelper.kModeWrite),
+            notificationsState: auth.hasPermissions(forMode: AcsHelper.kModePres),
+            approveState: auth.hasPermissions(forMode: AcsHelper.kModeApprove),
+            inviteState: auth.hasPermissions(forMode: AcsHelper.kModeShare),
+            deleteState: auth.hasPermissions(forMode: AcsHelper.kModeDelete),
+            delegate: self)
+        alertVC.show(over: self)
     }
     @IBAction func readReceiptsClicked(_ sender: Any) {
         UserDefaults.standard.set(self.sendReadReceiptsSwitch.isOn, forKey: Utils.kTinodePrefReadReceipts)
@@ -92,6 +113,7 @@ class AccountSettingsViewController: UIViewController {
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
         alert.addTextField(configurationHandler: { textField in
             textField.placeholder = "Enter new password"
+            textField.isSecureTextEntry = true
         })
         alert.addAction(UIAlertAction(
             title: "OK", style: .default,
@@ -187,5 +209,43 @@ extension AccountSettingsViewController: ImagePickerDelegate {
             return
         }
         self.updateAvatar(image: image)
+    }
+}
+
+extension AccountSettingsViewController: PermissionsEditViewDelegate {
+    func didChangePermissions(joinState: Bool, readState: Bool, writeState: Bool, notificationsState: Bool, approveState: Bool, inviteState: Bool, deleteState: Bool) {
+        //var permissionsStr: String = ""
+        var permissionsStr = ""
+        if joinState { permissionsStr += "J" }
+        if readState { permissionsStr += "R" }
+        if writeState { permissionsStr += "W" }
+        if notificationsState { permissionsStr += "P" }
+        if approveState { permissionsStr += "A" }
+        if inviteState { permissionsStr += "S" }
+        if deleteState { permissionsStr += "D" }
+        print("permissionsStr = \(permissionsStr)")
+        do {
+            try me?.updateDefacs(auth: permissionsStr, anon: nil)?.then(
+                onSuccess: { msg in
+                    if let ctrl = msg.ctrl, ctrl.code >= 300 {
+                        DispatchQueue.main.async {
+                            UiUtils.showToast(message: "Couldn't update auth permissions: \(ctrl.code) - \(ctrl.text)")
+                        }
+                    } else {
+                        DispatchQueue.main.async {
+                            self.reloadData()
+                        }
+                    }
+                    return nil
+                },
+                onFailure: { err in
+                    DispatchQueue.main.async {
+                        UiUtils.showToast(message: "Error changing auth permissions \(err)")
+                    }
+                    return nil
+                })
+        } catch {
+            print("Error changing auth permissions \(error)")
+        }
     }
 }
