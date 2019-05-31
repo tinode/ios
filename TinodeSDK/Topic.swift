@@ -879,7 +879,9 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
     public func setDescription(pub: DP?, priv: DR?) -> PromisedReply<ServerMessage>? {
         return setDescription(desc: MetaSetDesc<DP, DR>(pub: pub, priv: priv))
     }
-
+    public func updateDefacs(auth: String?, anon: String?) -> PromisedReply<ServerMessage>? {
+        return setDescription(desc: MetaSetDesc<DP, DR>(da: Defacs(auth: auth, anon: anon)))
+    }
     public func updateAccessMode(ac: AccessChange?) -> Bool {
         if description!.acs == nil {
             description!.acs = Acs(from: nil as Acs?)
