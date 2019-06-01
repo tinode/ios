@@ -7,17 +7,15 @@
 
 import UIKit
 
-protocol PermissionsEditViewDelegate: class {
-    func didChangePermissions(joinState: Bool,
-                              readState: Bool,
-                              writeState: Bool,
-                              notificationsState: Bool,
-                              approveState: Bool,
-                              inviteState: Bool,
-                              deleteState: Bool)
-}
-
 class PermissionsEditViewController: UIViewController {
+    public typealias OnChangeHandler = ((
+        _ joinState: Bool,
+        _ readState: Bool,
+        _ writeState: Bool,
+        _ notificationsState: Bool,
+        _ approveState: Bool,
+        _ inviteState: Bool,
+        _ deleteState: Bool)->())
 
     @IBOutlet weak var alertView: UIView!
     @IBOutlet weak var joinSwitch: UISwitch!
@@ -36,7 +34,7 @@ class PermissionsEditViewController: UIViewController {
     private var inviteState: Bool
     private var deleteState: Bool
 
-    private var delegate: PermissionsEditViewDelegate?
+    private var onChange: OnChangeHandler?
 
     init(joinState: Bool,
          readState: Bool,
@@ -45,7 +43,7 @@ class PermissionsEditViewController: UIViewController {
          approveState: Bool,
          inviteState: Bool,
          deleteState: Bool,
-         delegate: PermissionsEditViewDelegate?) {
+         onChangeHandler: PermissionsEditViewController.OnChangeHandler?) {
         self.joinState = joinState
         self.readState = readState
         self.writeState = writeState
@@ -56,7 +54,7 @@ class PermissionsEditViewController: UIViewController {
         super.init(nibName: nil, bundle: nil)
         self.modalTransitionStyle = .crossDissolve
         self.modalPresentationStyle = .overCurrentContext
-        self.delegate = delegate
+        self.onChange = onChangeHandler
     }
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -94,14 +92,13 @@ class PermissionsEditViewController: UIViewController {
            self.approveSwitch.isOn != self.approveState ||
            self.inviteSwitch.isOn != self.inviteState ||
            self.deleteSwitch.isOn != self.deleteState {
-            self.delegate?.didChangePermissions(
-                joinState: self.joinSwitch.isOn,
-                readState: self.readSwitch.isOn,
-                writeState: self.writeSwitch.isOn,
-                notificationsState: self.notificationsSwitch.isOn,
-                approveState: self.approveSwitch.isOn,
-                inviteState: self.inviteSwitch.isOn,
-                deleteState: self.deleteSwitch.isOn)
+            self.onChange?(self.joinSwitch.isOn,
+                           self.readSwitch.isOn,
+                           self.writeSwitch.isOn,
+                           self.notificationsSwitch.isOn,
+                           self.approveSwitch.isOn,
+                           self.inviteSwitch.isOn,
+                           self.deleteSwitch.isOn)
         }
         self.dismiss(animated: false, completion: nil)
     }
