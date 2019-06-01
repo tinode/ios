@@ -29,16 +29,21 @@ class AccountSettingsViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         reloadData()
     }
+    private func setupTapRecognizer(forView view: UIView, action: Selector?) {
+        let tap = UITapGestureRecognizer(target: self, action: action)
+        view.isUserInteractionEnabled = true
+        view.addGestureRecognizer(tap)
+    }
     private func setup() {
         self.tinode = Cache.getTinode()
         self.me = self.tinode.getMeTopic()!
-        let tap = UITapGestureRecognizer(target: self, action: #selector(AccountSettingsViewController.topicTitleTapped))
-        topicTitleTextView.isUserInteractionEnabled = true
-        topicTitleTextView.addGestureRecognizer(tap)
 
-        let tap2 = UITapGestureRecognizer(target: self, action: #selector(AccountSettingsViewController.permissionsTapped))
-        authUsersPermissionsLabel.isUserInteractionEnabled = true
-        authUsersPermissionsLabel.addGestureRecognizer(tap2)
+        setupTapRecognizer(forView: topicTitleTextView,
+                           action: #selector(AccountSettingsViewController.topicTitleTapped))
+        setupTapRecognizer(forView: authUsersPermissionsLabel,
+                           action: #selector(AccountSettingsViewController.permissionsTapped))
+        setupTapRecognizer(forView: anonUsersPermissionsLabel,
+                           action: #selector(AccountSettingsViewController.permissionsTapped))
         self.imagePicker = ImagePicker(
             presentationController: self, delegate: self)
     }
@@ -84,19 +89,46 @@ class AccountSettingsViewController: UIViewController {
     }
     @objc
     func permissionsTapped(sender: UITapGestureRecognizer) {
-        guard let auth = me.defacs?.auth else {
+        guard let v = sender.view else {
+            print("Tap from no sender view... quitting")
+            return
+        }
+        var acs: AcsHelper? = nil
+        if v === authUsersPermissionsLabel {
+            acs = me.defacs?.auth
+        } else if v === anonUsersPermissionsLabel {
+            acs = me.defacs?.anon
+        }
+        guard let acsUnwrapped = acs else {
             print("could not get acs")
             return
         }
         let alertVC = PermissionsEditViewController(
-            joinState: auth.hasPermissions(forMode: AcsHelper.kModeJoin),
-            readState: auth.hasPermissions(forMode: AcsHelper.kModeRead),
-            writeState: auth.hasPermissions(forMode: AcsHelper.kModeWrite),
-            notificationsState: auth.hasPermissions(forMode: AcsHelper.kModePres),
-            approveState: auth.hasPermissions(forMode: AcsHelper.kModeApprove),
-            inviteState: auth.hasPermissions(forMode: AcsHelper.kModeShare),
-            deleteState: auth.hasPermissions(forMode: AcsHelper.kModeDelete),
-            delegate: self)
+            joinState: acsUnwrapped.hasPermissions(forMode: AcsHelper.kModeJoin),
+            readState: acsUnwrapped.hasPermissions(forMode: AcsHelper.kModeRead),
+            writeState: acsUnwrapped.hasPermissions(forMode: AcsHelper.kModeWrite),
+            notificationsState: acsUnwrapped.hasPermissions(forMode: AcsHelper.kModePres),
+            approveState: acsUnwrapped.hasPermissions(forMode: AcsHelper.kModeApprove),
+            inviteState: acsUnwrapped.hasPermissions(forMode: AcsHelper.kModeShare),
+            deleteState: acsUnwrapped.hasPermissions(forMode: AcsHelper.kModeDelete),
+            onChangeHandler: { [v]
+                joinState,
+                readState,
+                writeState,
+                notificationsState,
+                approveState,
+                inviteState,
+                deleteState in
+                self.didChangePermissions(
+                    forLabel: v,
+                    joinState: joinState,
+                    readState: readState,
+                    writeState: writeState,
+                    notificationsState: notificationsState,
+                    approveState: approveState,
+                    inviteState: inviteState,
+                    deleteState: deleteState)
+            })
         alertVC.show(over: self)
     }
     @IBAction func readReceiptsClicked(_ sender: Any) {
@@ -212,9 +244,15 @@ extension AccountSettingsViewController: ImagePickerDelegate {
     }
 }
 
-extension AccountSettingsViewController: PermissionsEditViewDelegate {
-    func didChangePermissions(joinState: Bool, readState: Bool, writeState: Bool, notificationsState: Bool, approveState: Bool, inviteState: Bool, deleteState: Bool) {
-        //var permissionsStr: String = ""
+extension AccountSettingsViewController {
+    func didChangePermissions(forLabel l: UIView,
+                              joinState: Bool,
+                              readState: Bool,
+                              writeState: Bool,
+                              notificationsState: Bool,
+                              approveState: Bool,
+                              inviteState: Bool,
+                              deleteState: Bool) {
         var permissionsStr = ""
         if joinState { permissionsStr += "J" }
         if readState { permissionsStr += "R" }
@@ -224,8 +262,10 @@ extension AccountSettingsViewController: PermissionsEditViewDelegate {
         if inviteState { permissionsStr += "S" }
         if deleteState { permissionsStr += "D" }
         print("permissionsStr = \(permissionsStr)")
+        let authStr = l === authUsersPermissionsLabel ? permissionsStr : nil
+        let anonStr = l === anonUsersPermissionsLabel ? permissionsStr : nil
         do {
-            try me?.updateDefacs(auth: permissionsStr, anon: nil)?.then(
+            try me?.updateDefacs(auth: authStr, anon: anonStr)?.then(
                 onSuccess: { msg in
                     if let ctrl = msg.ctrl, ctrl.code >= 300 {
                         DispatchQueue.main.async {
