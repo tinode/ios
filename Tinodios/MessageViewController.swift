@@ -250,6 +250,12 @@ class MessageViewController: UIViewController {
     @objc func loadNextPage() {
         self.interactor?.loadNextPage()
     }
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "Messages2TopicInfo" {
+            let destinationVC = segue.destination as! TopicInfoViewController
+            destinationVC.topicName = self.topicName ?? ""
+        }
+    }
 }
 
 // Methods for updating title area and refreshing messages.
