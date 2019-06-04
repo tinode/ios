@@ -250,6 +250,12 @@ class MessageViewController: UIViewController {
     @objc func loadNextPage() {
         self.interactor?.loadNextPage()
     }
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "Messages2TopicInfo" {
+            let destinationVC = segue.destination as! TopicInfoViewController
+            destinationVC.topicName = self.topicName ?? ""
+        }
+    }
 }
 
 // Methods for updating title area and refreshing messages.
@@ -264,8 +270,10 @@ extension MessageViewController: MessageDisplayLogic {
                 navBarAvatarView.heightAnchor.constraint(equalToConstant: Constants.kNavBarAvatarSmallState),
                 navBarAvatarView.widthAnchor.constraint(equalTo: navBarAvatarView.heightAnchor)
             ])
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: navBarAvatarView)
-   }
+        if self.navigationItem.rightBarButtonItems!.count <= 1 {
+            self.navigationItem.rightBarButtonItems!.insert(UIBarButtonItem(customView: navBarAvatarView), at: 0)
+        }
+    }
 
     func displayChatMessages(messages: [StoredMessage]) {
         let oldData = self.messages
