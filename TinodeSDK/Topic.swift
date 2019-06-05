@@ -332,6 +332,16 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
             return topicType == .grp
         }
     }
+    public var isManager: Bool {
+        get {
+            return description?.acs?.isManager ?? false
+        }
+    }
+    public var isMuted: Bool {
+        get {
+            return description?.acs?.isMuted ?? false
+        }
+    }
 
     // Storage is owned by Tinode.
     weak public var store: Storage? = nil
