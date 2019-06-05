@@ -17,6 +17,32 @@ public class Acs: Codable, Equatable {
             return mode?.isDefined ?? false
         }
     }
+    var isManager: Bool {
+        get {
+            guard let m = mode else { return false }
+            return m.isAdmin || m.isOwner
+        }
+    }
+    var isMuted: Bool {
+        get {
+            return mode?.isMuted ?? false
+        }
+    }
+    public var modeString: String {
+        get {
+            return mode?.description ?? ""
+        }
+    }
+    public var wantString: String {
+        get {
+            return want?.description ?? ""
+        }
+    }
+    public var givenString: String {
+        get {
+            return given?.description ?? ""
+        }
+    }
     private enum CodingKeys : String, CodingKey  {
         case given, want, mode
     }

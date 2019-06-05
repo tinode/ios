@@ -50,6 +50,21 @@ public class AcsHelper: Codable, Equatable {
             return b != AcsHelper.kModeNone && b != AcsHelper.kModeInvalid
         }
     }
+    var isAdmin: Bool {
+        get {
+            return ((a ?? 0) & AcsHelper.kModeApprove) != 0
+        }
+    }
+    var isOwner: Bool {
+        get {
+            return ((a ?? 0) & AcsHelper.kModeOwner) != 0
+        }
+    }
+    var isMuted: Bool {
+        get {
+            return ((a ?? 0) & AcsHelper.kModePres) == 0
+        }
+    }
     init(str: String?) {
         a = AcsHelper.decode(from: str)
     }
