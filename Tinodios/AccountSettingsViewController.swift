@@ -188,43 +188,13 @@ class AccountSettingsViewController: UIViewController {
                 return nil
             })
     }
-    private func setPublicData(pub: VCard) {
-        do {
-            try me.setDescription(pub: pub, priv: nil)?.then(
-                onSuccess: { msg in
-                    if let ctrl = msg.ctrl, ctrl.code >= 300 {
-                        DispatchQueue.main.async {
-                            UiUtils.showToast(message: "Something went wrong: \(ctrl.code) - \(ctrl.text)")
-                        }
-                    } else {
-                        DispatchQueue.main.async {
-                            self.reloadData()
-                        }
-                    }
-                    return nil
-                },
-                onFailure: { err in
-                    DispatchQueue.main.async {
-                        UiUtils.showToast(message: "Error changing public data \(err)")
-                    }
-                    return nil
-            })
-        } catch {
-            UiUtils.showToast(message: "Error changing public data \(error)")
-        }
-    }
-    private func updateAvatar(image: UIImage) {
-        let pub = me.pub == nil ? VCard(fn: nil, avatar: image) : me.pub!.copy()
-        pub.photo = Photo(image: image)
-        setPublicData(pub: pub)
-    }
     private func updateTitle(newTitle: String?) {
         guard let newTitle = newTitle else { return }
         let pub = me.pub == nil ? VCard(fn: nil, avatar: nil as Data?) : me.pub!.copy()
         if pub.fn != newTitle {
             pub.fn = newTitle
         }
-        setPublicData(pub: pub)
+        UiUtils.setPublicData(forTopic: self.me, pub: pub)
     }
     private func logout() {
         print("logging out")
@@ -240,7 +210,13 @@ extension AccountSettingsViewController: ImagePickerDelegate {
             print("No image specified - skipping")
             return
         }
-        self.updateAvatar(image: image)
+        _ = try? UiUtils.updateAvatar(forTopic: self.me, image: image)?.then(
+            onSuccess: { msg in
+                DispatchQueue.main.async {
+                    self.reloadData()
+                }
+                return nil
+            })
     }
 }
 

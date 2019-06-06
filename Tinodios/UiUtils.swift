@@ -156,6 +156,43 @@ class UiUtils {
             })
         })
     }
+    public static func ToastFailureHandler(err: Error) throws -> PromisedReply<ServerMessage>? {
+        DispatchQueue.main.async {
+            if let e = err as? TinodeError, case .notConnected = e {
+                UiUtils.showToast(message: "You are offline.")
+            } else {
+                UiUtils.showToast(message: "Action failed: \(err)")
+            }
+        }
+        return nil
+    }
+    public static func ToastSuccessHandler(msg: ServerMessage) throws -> PromisedReply<ServerMessage>? {
+        if let ctrl = msg.ctrl, ctrl.code >= 300 {
+            DispatchQueue.main.async {
+                UiUtils.showToast(message: "Something went wrong: \(ctrl.code) - \(ctrl.text)")
+            }
+        }
+        return nil
+    }
+    @discardableResult
+    public static func updateAvatar(
+        forTopic topic: DefaultTopic, image: UIImage) -> PromisedReply<ServerMessage>? {
+        let pub = topic.pub == nil ? VCard(fn: nil, avatar: image) : topic.pub!.copy()
+        pub.photo = Photo(image: image)
+        return UiUtils.setPublicData(forTopic: topic, pub: pub)
+    }
+    @discardableResult
+    public static func setPublicData(
+        forTopic topic: DefaultTopic, pub: VCard) -> PromisedReply<ServerMessage>? {
+        do {
+            return try topic.setDescription(pub: pub, priv: nil)?.then(
+                onSuccess: UiUtils.ToastSuccessHandler,
+                onFailure: UiUtils.ToastFailureHandler)
+        } catch {
+            UiUtils.showToast(message: "Error changing public data \(error)")
+            return nil
+        }
+    }
 }
 
 extension UIViewController {
