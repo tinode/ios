@@ -28,8 +28,9 @@ class TopicInfoViewController: UIViewController {
     @IBOutlet weak var membersTableView: UITableView!
 
     var topicName = ""
-    var topic: DefaultComTopic!
-    var tinode: Tinode!
+    private var topic: DefaultComTopic!
+    private var tinode: Tinode!
+    private var imagePicker: ImagePicker!
 
     private var subscriptions: [Subscription<VCard, PrivateType>]?
 
@@ -57,6 +58,8 @@ class TopicInfoViewController: UIViewController {
             self.groupView.isHidden = true
             self.defaultPermissionsView.isHidden = true
         }
+        self.imagePicker = ImagePicker(
+            presentationController: self, delegate: self)
     }
     private func reloadData() {
         self.topicTitleTextView.text = self.topic.pub?.fn ?? "Unknown"
@@ -82,6 +85,9 @@ class TopicInfoViewController: UIViewController {
             self.peerPermissionsLabel.text = self.topic.accessMode?.givenString
         }
     }
+    @IBAction func loadAvatarClicked(_ sender: Any) {
+        imagePicker.present(from: self.view)
+    }
 }
 
 extension TopicInfoViewController: UITableViewDataSource, UITableViewDelegate {
@@ -106,5 +112,22 @@ extension TopicInfoViewController: UITableViewDataSource, UITableViewDelegate {
         cell.title.sizeToFit()
 
         return cell
+    }
+}
+
+extension TopicInfoViewController: ImagePickerDelegate {
+    func didSelect(image: UIImage?) {
+        guard let image = image else {
+            print("No image specified - skipping")
+            return
+        }
+        _ = try? UiUtils.updateAvatar(forTopic: self.topic, image: image)?.then(
+            onSuccess: { msg in
+                DispatchQueue.main.async {
+                    self.reloadData()
+                }
+                return nil
+            }
+        )
     }
 }
