@@ -99,7 +99,7 @@ public class DelValues: Decodable {
 public typealias PrivateType = Dictionary<String, JSONValue>
 
 extension PrivateType {
-    var comment: String? {
+    public var comment: String? {
         get {
             if case let .string(v)? = self["comment"] {
                 return v

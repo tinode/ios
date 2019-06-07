@@ -8,9 +8,9 @@
 import Foundation
 
 public class Acs: Codable, Equatable {
-    var given: AcsHelper?
-    var want: AcsHelper?
-    var mode: AcsHelper?
+    public var given: AcsHelper?
+    public var want: AcsHelper?
+    public var mode: AcsHelper?
 
     var isModeDefined: Bool {
         get {
@@ -21,6 +21,11 @@ public class Acs: Codable, Equatable {
         get {
             guard let m = mode else { return false }
             return m.isAdmin || m.isOwner
+        }
+    }
+    var isOwner: Bool {
+        get {
+            return mode?.isOwner ?? false
         }
     }
     var isMuted: Bool {

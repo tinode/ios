@@ -342,6 +342,11 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
             return description?.acs?.isMuted ?? false
         }
     }
+    public var isOwner: Bool {
+        get {
+            return description?.acs?.isOwner ?? false
+        }
+    }
 
     // Storage is owned by Tinode.
     weak public var store: Storage? = nil
@@ -1318,14 +1323,6 @@ public class ComTopic<DP: Codable>: Topic<DP, PrivateType, DP, PrivateType> {
     }
 
     public var comment: String? {
-        get {
-            guard let comment = priv?["comment"] else { return nil }
-            switch comment {
-            case .string(let x):
-                return x
-            default:
-                return nil
-            }
-        }
+        get { return priv?.comment }
     }
 }

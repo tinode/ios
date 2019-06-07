@@ -156,6 +156,11 @@ class UiUtils {
             })
         })
     }
+    public static func setupTapRecognizer(forView view: UIView, action: Selector?, actionTarget: UIViewController) {
+        let tap = UITapGestureRecognizer(target: actionTarget, action: action)
+        view.isUserInteractionEnabled = true
+        view.addGestureRecognizer(tap)
+    }
     public static func ToastFailureHandler(err: Error) throws -> PromisedReply<ServerMessage>? {
         DispatchQueue.main.async {
             if let e = err as? TinodeError, case .notConnected = e {
@@ -179,13 +184,13 @@ class UiUtils {
         forTopic topic: DefaultTopic, image: UIImage) -> PromisedReply<ServerMessage>? {
         let pub = topic.pub == nil ? VCard(fn: nil, avatar: image) : topic.pub!.copy()
         pub.photo = Photo(image: image)
-        return UiUtils.setPublicData(forTopic: topic, pub: pub)
+        return UiUtils.setTopicData(forTopic: topic, pub: pub, priv: nil)
     }
     @discardableResult
-    public static func setPublicData(
-        forTopic topic: DefaultTopic, pub: VCard) -> PromisedReply<ServerMessage>? {
+    public static func setTopicData(
+        forTopic topic: DefaultTopic, pub: VCard?, priv: PrivateType?) -> PromisedReply<ServerMessage>? {
         do {
-            return try topic.setDescription(pub: pub, priv: nil)?.then(
+            return try topic.setDescription(pub: pub, priv: priv)?.then(
                 onSuccess: UiUtils.ToastSuccessHandler,
                 onFailure: UiUtils.ToastFailureHandler)
         } catch {
