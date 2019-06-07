@@ -58,6 +58,24 @@ class TopicInfoViewController: UIViewController {
             self.groupView.isHidden = true
             self.defaultPermissionsView.isHidden = true
         }
+        UiUtils.setupTapRecognizer(
+            forView: topicSubtitleTextView,
+            action: #selector(TopicInfoViewController.topicTitleTapped),
+            actionTarget: self)
+        if topic.isOwner {
+            UiUtils.setupTapRecognizer(
+                forView: topicTitleTextView,
+                action: #selector(TopicInfoViewController.topicTitleTapped),
+                actionTarget: self)
+        }
+        UiUtils.setupTapRecognizer(
+            forView: myPermissionsLabel,
+            action: #selector(TopicInfoViewController.permissionsTapped),
+            actionTarget: self)
+        UiUtils.setupTapRecognizer(
+            forView: peerPermissionsLabel,
+            action: #selector(TopicInfoViewController.permissionsTapped),
+            actionTarget: self)
         self.imagePicker = ImagePicker(
             presentationController: self, delegate: self)
     }
@@ -87,6 +105,94 @@ class TopicInfoViewController: UIViewController {
     }
     @IBAction func loadAvatarClicked(_ sender: Any) {
         imagePicker.present(from: self.view)
+    }
+    @objc
+    func topicTitleTapped(sender: UITapGestureRecognizer) {
+        let alert = UIAlertController(title: "Edit Topic", message: nil, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        if topic.isOwner {
+            alert.addTextField(configurationHandler: { textField in
+                textField.placeholder = "Name of the group"
+                textField.text = self.topic?.pub?.fn ?? ""
+            })
+        }
+        alert.addTextField(configurationHandler: { textField in
+            textField.placeholder = "Additional info (private)"
+            textField.text = self.topic?.comment ?? ""
+        })
+        alert.addAction(UIAlertAction(
+            title: "OK", style: .default,
+            handler: { action in
+                let textFields = alert.textFields!
+                let newTitle = self.topic.isOwner ? textFields[0].text : nil
+                let newSubtitle = textFields[self.topic.isOwner ? 1 : 0].text
+                self.updateTitles(newTitle: newTitle, newSubtitle: newSubtitle)
+        }))
+        self.present(alert, animated: true)
+    }
+    private func updateTitles(newTitle: String?, newSubtitle: String?) {
+        var pub: VCard? = nil
+        if let nt = newTitle {
+            if let oldPub = topic.pub, oldPub.fn != nt {
+                pub = VCard(fn: nt, avatar: nil as Data?)
+            }
+        }
+        var priv: PrivateType? = nil
+        if let ns = newSubtitle {
+            if let oldComment = topic.comment, oldComment != ns {
+                priv = PrivateType()
+                priv!.comment = ns
+            }
+        }
+        if pub != nil || priv != nil {
+            UiUtils.setTopicData(forTopic: topic, pub: pub, priv: priv)
+        }
+    }
+    // TODO: Fold it down to UiUtils.
+    @objc
+    func permissionsTapped(sender: UITapGestureRecognizer) {
+        guard let v = sender.view else {
+            print("Tap from no sender view... quitting")
+            return
+        }
+        var acs: AcsHelper? = nil
+        if v === myPermissionsLabel {
+            acs = topic.accessMode?.want
+        } else if v == peerPermissionsLabel {
+            acs = topic.accessMode?.given
+        }
+        guard let acsUnwrapped = acs else {
+            print("could not get acs")
+            return
+        }
+        let alertVC = PermissionsEditViewController(
+            joinState: acsUnwrapped.hasPermissions(forMode: AcsHelper.kModeJoin),
+            readState: acsUnwrapped.hasPermissions(forMode: AcsHelper.kModeRead),
+            writeState: acsUnwrapped.hasPermissions(forMode: AcsHelper.kModeWrite),
+            notificationsState: acsUnwrapped.hasPermissions(forMode: AcsHelper.kModePres),
+            approveState: acsUnwrapped.hasPermissions(forMode: AcsHelper.kModeApprove),
+            inviteState: acsUnwrapped.hasPermissions(forMode: AcsHelper.kModeShare),
+            deleteState: acsUnwrapped.hasPermissions(forMode: AcsHelper.kModeDelete),
+            disabledPermissions: [.approve, .invite, .delete],
+            onChangeHandler: { [v]
+                joinState,
+                readState,
+                writeState,
+                notificationsState,
+                approveState,
+                inviteState,
+                deleteState in
+                self.didChangePermissions(
+                    forLabel: v,
+                    joinState: joinState,
+                    readState: readState,
+                    writeState: writeState,
+                    notificationsState: notificationsState,
+                    approveState: approveState,
+                    inviteState: inviteState,
+                    deleteState: deleteState)
+        })
+        alertVC.show(over: self)
     }
 }
 
@@ -129,5 +235,16 @@ extension TopicInfoViewController: ImagePickerDelegate {
                 return nil
             }
         )
+    }
+}
+extension TopicInfoViewController {
+    func didChangePermissions(forLabel l: UIView,
+                              joinState: Bool,
+                              readState: Bool,
+                              writeState: Bool,
+                              notificationsState: Bool,
+                              approveState: Bool,
+                              inviteState: Bool,
+                              deleteState: Bool) {
     }
 }

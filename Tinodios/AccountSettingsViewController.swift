@@ -29,21 +29,22 @@ class AccountSettingsViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         reloadData()
     }
-    private func setupTapRecognizer(forView view: UIView, action: Selector?) {
-        let tap = UITapGestureRecognizer(target: self, action: action)
-        view.isUserInteractionEnabled = true
-        view.addGestureRecognizer(tap)
-    }
     private func setup() {
         self.tinode = Cache.getTinode()
         self.me = self.tinode.getMeTopic()!
 
-        setupTapRecognizer(forView: topicTitleTextView,
-                           action: #selector(AccountSettingsViewController.topicTitleTapped))
-        setupTapRecognizer(forView: authUsersPermissionsLabel,
-                           action: #selector(AccountSettingsViewController.permissionsTapped))
-        setupTapRecognizer(forView: anonUsersPermissionsLabel,
-                           action: #selector(AccountSettingsViewController.permissionsTapped))
+        UiUtils.setupTapRecognizer(
+            forView: topicTitleTextView,
+            action: #selector(AccountSettingsViewController.topicTitleTapped),
+            actionTarget: self)
+        UiUtils.setupTapRecognizer(
+            forView: authUsersPermissionsLabel,
+            action: #selector(AccountSettingsViewController.permissionsTapped),
+            actionTarget: self)
+        UiUtils.setupTapRecognizer(
+            forView: anonUsersPermissionsLabel,
+            action: #selector(AccountSettingsViewController.permissionsTapped),
+            actionTarget: self)
         self.imagePicker = ImagePicker(
             presentationController: self, delegate: self)
     }
@@ -111,6 +112,7 @@ class AccountSettingsViewController: UIViewController {
             approveState: acsUnwrapped.hasPermissions(forMode: AcsHelper.kModeApprove),
             inviteState: acsUnwrapped.hasPermissions(forMode: AcsHelper.kModeShare),
             deleteState: acsUnwrapped.hasPermissions(forMode: AcsHelper.kModeDelete),
+            disabledPermissions: nil,
             onChangeHandler: { [v]
                 joinState,
                 readState,
@@ -194,7 +196,7 @@ class AccountSettingsViewController: UIViewController {
         if pub.fn != newTitle {
             pub.fn = newTitle
         }
-        UiUtils.setPublicData(forTopic: self.me, pub: pub)
+        UiUtils.setTopicData(forTopic: self.me, pub: pub, priv: nil)
     }
     private func logout() {
         print("logging out")

@@ -8,6 +8,9 @@
 import UIKit
 
 class PermissionsEditViewController: UIViewController {
+    public enum PermissionType {
+        case join, read, write, notifications, approve, invite, delete
+    }
     public typealias OnChangeHandler = ((
         _ joinState: Bool,
         _ readState: Bool,
@@ -33,6 +36,7 @@ class PermissionsEditViewController: UIViewController {
     private var approveState: Bool
     private var inviteState: Bool
     private var deleteState: Bool
+    private var disabledPermissions: [PermissionType]?
 
     private var onChange: OnChangeHandler?
 
@@ -43,6 +47,7 @@ class PermissionsEditViewController: UIViewController {
          approveState: Bool,
          inviteState: Bool,
          deleteState: Bool,
+         disabledPermissions: [PermissionType]?,
          onChangeHandler: PermissionsEditViewController.OnChangeHandler?) {
         self.joinState = joinState
         self.readState = readState
@@ -55,6 +60,7 @@ class PermissionsEditViewController: UIViewController {
         self.modalTransitionStyle = .crossDissolve
         self.modalPresentationStyle = .overCurrentContext
         self.onChange = onChangeHandler
+        self.disabledPermissions = disabledPermissions
     }
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -75,6 +81,19 @@ class PermissionsEditViewController: UIViewController {
         self.approveSwitch.isOn = approveState
         self.inviteSwitch.isOn = inviteState
         self.deleteSwitch.isOn = deleteState
+        if let disablePermissions = self.disabledPermissions {
+            for p in disablePermissions {
+                switch p {
+                case .join: self.joinSwitch.isEnabled = false
+                case .read: self.readSwitch.isEnabled = false
+                case .write: self.writeSwitch.isEnabled = false
+                case .notifications: self.notificationsSwitch.isEnabled = false
+                case .approve: self.approveSwitch.isEnabled = false
+                case .invite: self.inviteSwitch.isEnabled = false
+                case .delete: self.deleteSwitch.isEnabled = false
+                }
+            }
+        }
     }
     func show(over viewController: UIViewController?) {
         guard let viewController = viewController else { return }

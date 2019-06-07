@@ -117,6 +117,7 @@
                     </subviews>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     <constraints>
+                        <constraint firstAttribute="width" constant="282" id="1sG-6A-Tcd"/>
                         <constraint firstItem="P0V-3H-Axo" firstAttribute="top" secondItem="yd6-73-Tb3" secondAttribute="bottom" constant="7" id="2Ib-Xt-B7e"/>
                         <constraint firstItem="snA-jI-Q4g" firstAttribute="top" secondItem="zog-3U-aso" secondAttribute="bottom" constant="3" id="2WS-qy-4ip"/>
                         <constraint firstItem="P0V-3H-Axo" firstAttribute="leading" secondItem="1BK-6h-zLk" secondAttribute="leading" id="3Ll-UE-xyA"/>
@@ -161,7 +162,6 @@
             <constraints>
                 <constraint firstItem="CjA-KL-BBV" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="U7M-zv-hHd"/>
                 <constraint firstItem="CjA-KL-BBV" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="XU4-g5-2ei"/>
-                <constraint firstItem="CjA-KL-BBV" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="66" id="dgI-ds-M7a"/>
             </constraints>
             <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
             <point key="canvasLocation" x="92.753623188405811" y="31.473214285714285"/>
