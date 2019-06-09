@@ -11,14 +11,11 @@ class PermissionsEditViewController: UIViewController {
     public enum PermissionType {
         case join, read, write, notifications, approve, invite, delete
     }
+    public typealias PermissionsTuple = (
+        join: Bool, read: Bool, write: Bool, notifications: Bool,
+        approve: Bool, invite: Bool, delete: Bool)
     public typealias OnChangeHandler = ((
-        _ joinState: Bool,
-        _ readState: Bool,
-        _ writeState: Bool,
-        _ notificationsState: Bool,
-        _ approveState: Bool,
-        _ inviteState: Bool,
-        _ deleteState: Bool)->())
+        _ permissions: PermissionsTuple) -> ())
 
     @IBOutlet weak var alertView: UIView!
     @IBOutlet weak var joinSwitch: UISwitch!
@@ -40,22 +37,16 @@ class PermissionsEditViewController: UIViewController {
 
     private var onChange: OnChangeHandler?
 
-    init(joinState: Bool,
-         readState: Bool,
-         writeState: Bool,
-         notificationsState: Bool,
-         approveState: Bool,
-         inviteState: Bool,
-         deleteState: Bool,
+    init(permissionsTuple: PermissionsTuple,
          disabledPermissions: [PermissionType]?,
          onChangeHandler: PermissionsEditViewController.OnChangeHandler?) {
-        self.joinState = joinState
-        self.readState = readState
-        self.writeState = writeState
-        self.notificationsState = notificationsState
-        self.approveState = approveState
-        self.inviteState = inviteState
-        self.deleteState = deleteState
+        self.joinState = permissionsTuple.join
+        self.readState = permissionsTuple.read
+        self.writeState = permissionsTuple.write
+        self.notificationsState = permissionsTuple.notifications
+        self.approveState = permissionsTuple.approve
+        self.inviteState = permissionsTuple.invite
+        self.deleteState = permissionsTuple.delete
         super.init(nibName: nil, bundle: nil)
         self.modalTransitionStyle = .crossDissolve
         self.modalPresentationStyle = .overCurrentContext
@@ -99,7 +90,6 @@ class PermissionsEditViewController: UIViewController {
         guard let viewController = viewController else { return }
         viewController.present(self, animated: false, completion: nil)
     }
-    
     @IBAction func cancelClicked(_ sender: Any) {
         self.dismiss(animated: false, completion: nil)
     }
@@ -111,13 +101,13 @@ class PermissionsEditViewController: UIViewController {
            self.approveSwitch.isOn != self.approveState ||
            self.inviteSwitch.isOn != self.inviteState ||
            self.deleteSwitch.isOn != self.deleteState {
-            self.onChange?(self.joinSwitch.isOn,
-                           self.readSwitch.isOn,
-                           self.writeSwitch.isOn,
-                           self.notificationsSwitch.isOn,
-                           self.approveSwitch.isOn,
-                           self.inviteSwitch.isOn,
-                           self.deleteSwitch.isOn)
+            self.onChange?((self.joinSwitch.isOn,
+                            self.readSwitch.isOn,
+                            self.writeSwitch.isOn,
+                            self.notificationsSwitch.isOn,
+                            self.approveSwitch.isOn,
+                            self.inviteSwitch.isOn,
+                            self.deleteSwitch.isOn))
         }
         self.dismiss(animated: false, completion: nil)
     }

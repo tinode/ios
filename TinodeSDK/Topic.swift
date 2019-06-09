@@ -903,6 +903,28 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
         }
         return description!.acs!.update(from: ac)
     }
+    public func setSubscription(sub: MetaSetSub) -> PromisedReply<ServerMessage>? {
+        return setMeta(meta: MsgSetMeta(desc: nil, sub: sub, tags: nil))
+    }
+    public func updateMode(uid: String?, update: String) -> PromisedReply<ServerMessage>? {
+        var uid = uid
+        let sub = getSubscription(for: uid ?? tinode?.myUid)
+        if uid == tinode?.myUid {
+            uid = nil
+        }
+        let uidIsSelf = uid == nil || sub == nil
+        if description!.acs == nil {
+            description!.acs = Acs()
+        }
+        let mode = uidIsSelf ? description!.acs!.want : description!.acs!.given
+        if mode?.update(from: update) ?? false {
+            return setSubscription(sub: MetaSetSub(user: uid, mode: mode?.description))
+        }
+        return PromisedReply<ServerMessage>(value: ServerMessage())
+    }
+    public func updateMuted(muted: Bool) -> PromisedReply<ServerMessage>? {
+        return updateMode(uid: nil, update: muted ? "-P" : "+P")
+    }
     @discardableResult
     public func invite(user uid: String, in mode: String?) -> PromisedReply<ServerMessage>? {
         var sub = getSubscription(for: uid)

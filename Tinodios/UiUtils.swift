@@ -179,6 +179,73 @@ class UiUtils {
         }
         return nil
     }
+    public static func showPermissionsEditDialog(
+        over viewController: UIViewController?,
+        acs: AcsHelper, callback: PermissionsEditViewController.OnChangeHandler?,
+        disabledPermissions: [PermissionsEditViewController.PermissionType]?) {
+        let alertVC = PermissionsEditViewController(
+            permissionsTuple: (
+                acs.hasPermissions(forMode: AcsHelper.kModeJoin),
+                acs.hasPermissions(forMode: AcsHelper.kModeRead),
+                acs.hasPermissions(forMode: AcsHelper.kModeWrite),
+                acs.hasPermissions(forMode: AcsHelper.kModePres),
+                acs.hasPermissions(forMode: AcsHelper.kModeApprove),
+                acs.hasPermissions(forMode: AcsHelper.kModeShare),
+                acs.hasPermissions(forMode: AcsHelper.kModeDelete)
+            ),
+            disabledPermissions: disabledPermissions,
+            onChangeHandler: callback)
+        alertVC.show(over: viewController)
+    }
+    public enum PermissionsChangeType {
+        case updateSelfSub, updateSub, updateAuth, updateAnon
+    }
+    @discardableResult
+    public static func handlePermissionsChange(onTopic topic: DefaultTopic,
+                                               forUid uid: String?,
+                                               changeType: PermissionsChangeType,
+                                               permissions: PermissionsEditViewController.PermissionsTuple)
+        -> PromisedReply<ServerMessage>? {
+        var permissionsStr = ""
+        if permissions.join { permissionsStr += "J" }
+        if permissions.read { permissionsStr += "R" }
+        if permissions.write { permissionsStr += "W" }
+        if permissions.notifications { permissionsStr += "P" }
+        if permissions.approve { permissionsStr += "A" }
+        if permissions.invite { permissionsStr += "S" }
+        if permissions.delete { permissionsStr += "D" }
+        do {
+            var reply: PromisedReply<ServerMessage>? = nil
+            switch changeType {
+            case .updateSelfSub:
+                reply = topic.updateMode(uid: nil, update: permissionsStr)
+            case .updateSub:
+                reply = topic.updateMode(uid: uid, update: permissionsStr)
+            case .updateAuth:
+                reply = topic.updateDefacs(auth: permissionsStr, anon: nil)
+            case .updateAnon:
+                reply = topic.updateDefacs(auth: nil, anon: permissionsStr)
+            }
+            return try reply?.then(
+                onSuccess: { msg in
+                    if let ctrl = msg.ctrl, ctrl.code >= 300 {
+                        DispatchQueue.main.async {
+                            UiUtils.showToast(message: "Couldn't update permissions: \(ctrl.code) - \(ctrl.text)")
+                        }
+                    }
+                    return nil
+                },
+                onFailure: { err in
+                    DispatchQueue.main.async {
+                        UiUtils.showToast(message: "Error changing permissions \(err)")
+                    }
+                    return nil
+                })
+        } catch {
+            print("Error changing permissions \(error)")
+            return nil
+        }
+    }
     @discardableResult
     public static func updateAvatar(
         forTopic topic: DefaultTopic, image: UIImage) -> PromisedReply<ServerMessage>? {

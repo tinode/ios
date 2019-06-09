@@ -57,6 +57,7 @@ class TopicInfoViewController: UIViewController {
             self.loadAvatarButton.isHidden = true
             self.groupView.isHidden = true
             self.defaultPermissionsView.isHidden = true
+            self.permissionsLabel.isHidden = true
         }
         UiUtils.setupTapRecognizer(
             forView: topicSubtitleTextView,
@@ -74,6 +75,18 @@ class TopicInfoViewController: UIViewController {
             actionTarget: self)
         UiUtils.setupTapRecognizer(
             forView: peerPermissionsLabel,
+            action: #selector(TopicInfoViewController.permissionsTapped),
+            actionTarget: self)
+        UiUtils.setupTapRecognizer(
+            forView: authUsersPermissionsLabel,
+            action: #selector(TopicInfoViewController.permissionsTapped),
+            actionTarget: self)
+        UiUtils.setupTapRecognizer(
+            forView: anonUsersPermissionsLabel,
+            action: #selector(TopicInfoViewController.permissionsTapped),
+            actionTarget: self)
+        UiUtils.setupTapRecognizer(
+            forView: permissionsLabel,
             action: #selector(TopicInfoViewController.permissionsTapped),
             actionTarget: self)
         self.imagePicker = ImagePicker(
@@ -105,6 +118,25 @@ class TopicInfoViewController: UIViewController {
     }
     @IBAction func loadAvatarClicked(_ sender: Any) {
         imagePicker.present(from: self.view)
+    }
+    @IBAction func mutedSwitched(_ sender: Any) {
+        let isChecked = mutedSwitch.isOn
+        do {
+            try topic.updateMuted(muted: isChecked)?.then(
+                onSuccess: UiUtils.ToastSuccessHandler,
+                onFailure: { err in
+                    self.mutedSwitch.isOn = !isChecked
+                    return nil
+                })?.thenFinally(finally: {
+                    DispatchQueue.main.async { self.reloadData() }
+                    return nil
+                })
+        } catch TinodeError.notConnected(_) {
+            mutedSwitch.isOn = !isChecked
+            UiUtils.showToast(message: "You are offline.")
+        } catch {
+            mutedSwitch.isOn = !isChecked
+        }
     }
     @objc
     func topicTitleTapped(sender: UITapGestureRecognizer) {
@@ -148,51 +180,49 @@ class TopicInfoViewController: UIViewController {
             UiUtils.setTopicData(forTopic: topic, pub: pub, priv: priv)
         }
     }
-    // TODO: Fold it down to UiUtils.
+    private func getAcsAndPermissionsChangeType(for sender: UIView)
+        -> (AcsHelper?, String?, UiUtils.PermissionsChangeType?, [PermissionsEditViewController.PermissionType]?) {
+        if sender === myPermissionsLabel {
+            return (topic.accessMode?.want, nil, .updateSelfSub, [.approve, .invite, .delete])
+        }
+        if sender === peerPermissionsLabel {
+            return (topic.accessMode?.given, topic.name, .updateSub, [.approve, .invite, .delete])
+        }
+        if sender === authUsersPermissionsLabel {
+            return (topic.defacs?.auth, nil, .updateAuth, nil)  // Should be O?
+        }
+        if sender == anonUsersPermissionsLabel {
+            return (topic.defacs?.anon, nil, .updateAnon, nil)  // Should be O?
+        }
+        if sender == permissionsLabel {
+            return (topic.accessMode?.want, nil, .updateSelfSub, nil)  // Should be O?
+        }
+        return (nil, nil, nil, nil)
+    }
     @objc
     func permissionsTapped(sender: UITapGestureRecognizer) {
         guard let v = sender.view else {
             print("Tap from no sender view... quitting")
             return
         }
-        var acs: AcsHelper? = nil
-        if v === myPermissionsLabel {
-            acs = topic.accessMode?.want
-        } else if v == peerPermissionsLabel {
-            acs = topic.accessMode?.given
-        }
-        guard let acsUnwrapped = acs else {
+        let (acs, uid, changeTypeOptional, disablePermissions) = getAcsAndPermissionsChangeType(for: v)
+        guard let acsUnwrapped = acs, let changeType = changeTypeOptional else {
             print("could not get acs")
             return
         }
-        let alertVC = PermissionsEditViewController(
-            joinState: acsUnwrapped.hasPermissions(forMode: AcsHelper.kModeJoin),
-            readState: acsUnwrapped.hasPermissions(forMode: AcsHelper.kModeRead),
-            writeState: acsUnwrapped.hasPermissions(forMode: AcsHelper.kModeWrite),
-            notificationsState: acsUnwrapped.hasPermissions(forMode: AcsHelper.kModePres),
-            approveState: acsUnwrapped.hasPermissions(forMode: AcsHelper.kModeApprove),
-            inviteState: acsUnwrapped.hasPermissions(forMode: AcsHelper.kModeShare),
-            deleteState: acsUnwrapped.hasPermissions(forMode: AcsHelper.kModeDelete),
-            disabledPermissions: [.approve, .invite, .delete],
-            onChangeHandler: { [v]
-                joinState,
-                readState,
-                writeState,
-                notificationsState,
-                approveState,
-                inviteState,
-                deleteState in
-                self.didChangePermissions(
-                    forLabel: v,
-                    joinState: joinState,
-                    readState: readState,
-                    writeState: writeState,
-                    notificationsState: notificationsState,
-                    approveState: approveState,
-                    inviteState: inviteState,
-                    deleteState: deleteState)
-        })
-        alertVC.show(over: self)
+        UiUtils.showPermissionsEditDialog(
+            over: self, acs: acsUnwrapped,
+            callback: {
+                permissionsTuple in
+                _ = try? UiUtils.handlePermissionsChange(
+                    onTopic: self.topic, forUid: uid, changeType: changeType,
+                    permissions: permissionsTuple)?.then(
+                        onSuccess: { msg in
+                            DispatchQueue.main.async { self.reloadData() }
+                            return nil
+                    }
+                )},
+            disabledPermissions: disablePermissions)
     }
 }
 
@@ -229,22 +259,9 @@ extension TopicInfoViewController: ImagePickerDelegate {
         }
         _ = try? UiUtils.updateAvatar(forTopic: self.topic, image: image)?.then(
             onSuccess: { msg in
-                DispatchQueue.main.async {
-                    self.reloadData()
-                }
+                DispatchQueue.main.async { self.reloadData() }
                 return nil
             }
         )
-    }
-}
-extension TopicInfoViewController {
-    func didChangePermissions(forLabel l: UIView,
-                              joinState: Bool,
-                              readState: Bool,
-                              writeState: Bool,
-                              notificationsState: Bool,
-                              approveState: Bool,
-                              inviteState: Bool,
-                              deleteState: Bool) {
     }
 }
