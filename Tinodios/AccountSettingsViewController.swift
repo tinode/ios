@@ -88,50 +88,39 @@ class AccountSettingsViewController: UIViewController {
         }))
         self.present(alert, animated: true)
     }
+    private func getAcsAndPermissionsChangeType(for sender: UIView) -> (AcsHelper?, UiUtils.PermissionsChangeType?) {
+        if sender === authUsersPermissionsLabel {
+            return (me.defacs?.auth, .updateAuth)
+        }
+        if sender === anonUsersPermissionsLabel {
+            return (me.defacs?.anon, .updateAnon)
+        }
+        return (nil, nil)
+    }
     @objc
     func permissionsTapped(sender: UITapGestureRecognizer) {
         guard let v = sender.view else {
             print("Tap from no sender view... quitting")
             return
         }
-        var acs: AcsHelper? = nil
-        if v === authUsersPermissionsLabel {
-            acs = me.defacs?.auth
-        } else if v === anonUsersPermissionsLabel {
-            acs = me.defacs?.anon
-        }
-        guard let acsUnwrapped = acs else {
+        let (acs, changeTypeOptional) = getAcsAndPermissionsChangeType(for: v)
+        guard let acsUnwrapped = acs, let changeType = changeTypeOptional else {
             print("could not get acs")
             return
         }
-        let alertVC = PermissionsEditViewController(
-            joinState: acsUnwrapped.hasPermissions(forMode: AcsHelper.kModeJoin),
-            readState: acsUnwrapped.hasPermissions(forMode: AcsHelper.kModeRead),
-            writeState: acsUnwrapped.hasPermissions(forMode: AcsHelper.kModeWrite),
-            notificationsState: acsUnwrapped.hasPermissions(forMode: AcsHelper.kModePres),
-            approveState: acsUnwrapped.hasPermissions(forMode: AcsHelper.kModeApprove),
-            inviteState: acsUnwrapped.hasPermissions(forMode: AcsHelper.kModeShare),
-            deleteState: acsUnwrapped.hasPermissions(forMode: AcsHelper.kModeDelete),
-            disabledPermissions: nil,
-            onChangeHandler: { [v]
-                joinState,
-                readState,
-                writeState,
-                notificationsState,
-                approveState,
-                inviteState,
-                deleteState in
-                self.didChangePermissions(
-                    forLabel: v,
-                    joinState: joinState,
-                    readState: readState,
-                    writeState: writeState,
-                    notificationsState: notificationsState,
-                    approveState: approveState,
-                    inviteState: inviteState,
-                    deleteState: deleteState)
-            })
-        alertVC.show(over: self)
+        UiUtils.showPermissionsEditDialog(
+            over: self, acs: acsUnwrapped,
+            callback: {
+                permissionsTuple in
+                _ = try? UiUtils.handlePermissionsChange(
+                    onTopic: self.me, forUid: nil, changeType: changeType,
+                    permissions: permissionsTuple)?.then(
+                        onSuccess: { msg in
+                            DispatchQueue.main.async { self.reloadData() }
+                            return nil
+                        }
+                    )},
+            disabledPermissions: nil)
     }
     @IBAction func readReceiptsClicked(_ sender: Any) {
         UserDefaults.standard.set(self.sendReadReceiptsSwitch.isOn, forKey: Utils.kTinodePrefReadReceipts)
@@ -219,51 +208,5 @@ extension AccountSettingsViewController: ImagePickerDelegate {
                 }
                 return nil
             })
-    }
-}
-
-extension AccountSettingsViewController {
-    func didChangePermissions(forLabel l: UIView,
-                              joinState: Bool,
-                              readState: Bool,
-                              writeState: Bool,
-                              notificationsState: Bool,
-                              approveState: Bool,
-                              inviteState: Bool,
-                              deleteState: Bool) {
-        var permissionsStr = ""
-        if joinState { permissionsStr += "J" }
-        if readState { permissionsStr += "R" }
-        if writeState { permissionsStr += "W" }
-        if notificationsState { permissionsStr += "P" }
-        if approveState { permissionsStr += "A" }
-        if inviteState { permissionsStr += "S" }
-        if deleteState { permissionsStr += "D" }
-        print("permissionsStr = \(permissionsStr)")
-        let authStr = l === authUsersPermissionsLabel ? permissionsStr : nil
-        let anonStr = l === anonUsersPermissionsLabel ? permissionsStr : nil
-        do {
-            try me?.updateDefacs(auth: authStr, anon: anonStr)?.then(
-                onSuccess: { msg in
-                    if let ctrl = msg.ctrl, ctrl.code >= 300 {
-                        DispatchQueue.main.async {
-                            UiUtils.showToast(message: "Couldn't update auth permissions: \(ctrl.code) - \(ctrl.text)")
-                        }
-                    } else {
-                        DispatchQueue.main.async {
-                            self.reloadData()
-                        }
-                    }
-                    return nil
-                },
-                onFailure: { err in
-                    DispatchQueue.main.async {
-                        UiUtils.showToast(message: "Error changing auth permissions \(err)")
-                    }
-                    return nil
-                })
-        } catch {
-            print("Error changing auth permissions \(error)")
-        }
     }
 }
