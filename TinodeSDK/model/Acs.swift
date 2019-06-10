@@ -12,23 +12,23 @@ public class Acs: Codable, Equatable {
     public var want: AcsHelper?
     public var mode: AcsHelper?
 
-    var isModeDefined: Bool {
+    public var isModeDefined: Bool {
         get {
             return mode?.isDefined ?? false
         }
     }
-    var isManager: Bool {
+    public var isManager: Bool {
         get {
             guard let m = mode else { return false }
             return m.isAdmin || m.isOwner
         }
     }
-    var isOwner: Bool {
+    public var isOwner: Bool {
         get {
             return mode?.isOwner ?? false
         }
     }
-    var isMuted: Bool {
+    public var isMuted: Bool {
         get {
             return mode?.isMuted ?? false
         }

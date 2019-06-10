@@ -39,25 +39,39 @@ class TopicInfoViewController: UIViewController {
         setup()
         reloadData()
     }
+    // Hides view and sets its height to 0.
+    private static func collapseView(view: UIView) {
+        view.isHidden = true
+        view.subviews.forEach({ $0.removeFromSuperview() })
+        view.frame = CGRect(x: 0 , y: 0, width: view.frame.width, height: 0)
+    }
     private func setup() {
         self.tinode = Cache.getTinode()
         self.topic = tinode.getTopic(topicName: topicName) as? DefaultComTopic
 
+        var p2pPermissionsViewActive = true
+        var defaultPermissionsViewActive = true
         if self.topic.isGrpType {
             self.loadAvatarButton.isHidden = !topic.isManager
-            self.defaultPermissionsView.isHidden = !topic.isManager
-            self.p2pPermissionsView.isHidden = true
+            defaultPermissionsViewActive = topic.isManager
+            self.defaultPermissionsView.isHidden = !defaultPermissionsViewActive
+            if !defaultPermissionsViewActive {
+                TopicInfoViewController.collapseView(view: self.defaultPermissionsView)
+            }
+            p2pPermissionsViewActive = false
+            TopicInfoViewController.collapseView(view: self.p2pPermissionsView)
 
             self.membersTableView.dataSource = self
             self.membersTableView.allowsMultipleSelection = true
             self.membersTableView.delegate = self
             self.membersTableView.register(UINib(nibName: "ContactViewCell", bundle: nil), forCellReuseIdentifier: "ContactViewCell")
-
         } else {
             self.loadAvatarButton.isHidden = true
             self.groupView.isHidden = true
             self.defaultPermissionsView.isHidden = true
             self.permissionsLabel.isHidden = true
+            defaultPermissionsViewActive = false
+            TopicInfoViewController.collapseView(view: self.defaultPermissionsView)
         }
         UiUtils.setupTapRecognizer(
             forView: topicSubtitleTextView,
@@ -69,22 +83,26 @@ class TopicInfoViewController: UIViewController {
                 action: #selector(TopicInfoViewController.topicTitleTapped),
                 actionTarget: self)
         }
-        UiUtils.setupTapRecognizer(
-            forView: myPermissionsLabel,
-            action: #selector(TopicInfoViewController.permissionsTapped),
-            actionTarget: self)
-        UiUtils.setupTapRecognizer(
-            forView: peerPermissionsLabel,
-            action: #selector(TopicInfoViewController.permissionsTapped),
-            actionTarget: self)
-        UiUtils.setupTapRecognizer(
-            forView: authUsersPermissionsLabel,
-            action: #selector(TopicInfoViewController.permissionsTapped),
-            actionTarget: self)
-        UiUtils.setupTapRecognizer(
-            forView: anonUsersPermissionsLabel,
-            action: #selector(TopicInfoViewController.permissionsTapped),
-            actionTarget: self)
+        if p2pPermissionsViewActive {
+            UiUtils.setupTapRecognizer(
+                forView: myPermissionsLabel,
+                action: #selector(TopicInfoViewController.permissionsTapped),
+                actionTarget: self)
+            UiUtils.setupTapRecognizer(
+                forView: peerPermissionsLabel,
+                action: #selector(TopicInfoViewController.permissionsTapped),
+                actionTarget: self)
+        }
+        if defaultPermissionsViewActive {
+            UiUtils.setupTapRecognizer(
+                forView: authUsersPermissionsLabel,
+                action: #selector(TopicInfoViewController.permissionsTapped),
+                actionTarget: self)
+            UiUtils.setupTapRecognizer(
+                forView: anonUsersPermissionsLabel,
+                action: #selector(TopicInfoViewController.permissionsTapped),
+                actionTarget: self)
+        }
         UiUtils.setupTapRecognizer(
             forView: permissionsLabel,
             action: #selector(TopicInfoViewController.permissionsTapped),
@@ -246,6 +264,19 @@ extension TopicInfoViewController: UITableViewDataSource, UITableViewDelegate {
         cell.avatar.set(icon: pub?.photo?.image(), title: displayName, id: uid)
         cell.title.text = displayName
         cell.title.sizeToFit()
+        if let acs = sub.acs {
+            if acs.isModeDefined && acs.isOwner {
+                cell.status.isHidden = false
+                cell.status.text = "owner"
+                cell.status.sizeToFit()
+                cell.status.textInsets = UIEdgeInsets(top: CGFloat(7), left: CGFloat(7), bottom: CGFloat(5), right: CGFloat(5))
+                //0xFF4CAF50
+                let green = UIColor(red: 0x4c / 255.0, green: 0xaf / 255.0, blue: 0x50 / 255.0, alpha: 1.0)
+                cell.status.textColor = green
+                cell.status.layer.borderWidth = 1
+                cell.status.layer.borderColor = green.cgColor
+            }
+        }
 
         return cell
     }
