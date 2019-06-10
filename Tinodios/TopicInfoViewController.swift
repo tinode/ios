@@ -264,6 +264,19 @@ extension TopicInfoViewController: UITableViewDataSource, UITableViewDelegate {
         cell.avatar.set(icon: pub?.photo?.image(), title: displayName, id: uid)
         cell.title.text = displayName
         cell.title.sizeToFit()
+        if let acs = sub.acs {
+            if acs.isModeDefined && acs.isOwner {
+                cell.status.isHidden = false
+                cell.status.text = "owner"
+                cell.status.sizeToFit()
+                cell.status.textInsets = UIEdgeInsets(top: CGFloat(7), left: CGFloat(7), bottom: CGFloat(5), right: CGFloat(5))
+                //0xFF4CAF50
+                let green = UIColor(red: 0x4c / 255.0, green: 0xaf / 255.0, blue: 0x50 / 255.0, alpha: 1.0)
+                cell.status.textColor = green
+                cell.status.layer.borderWidth = 1
+                cell.status.layer.borderColor = green.cgColor
+            }
+        }
 
         return cell
     }

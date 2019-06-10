@@ -38,23 +38,47 @@
                         <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <nil key="highlightedColor"/>
                     </label>
+                    <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Status" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="isK-pI-KKL" userLabel="Status" customClass="ContactViewCellStatusLabel" customModule="Tinodios" customModuleProvider="target">
+                        <rect key="frame" x="281" y="16" width="31" height="12"/>
+                        <fontDescription key="fontDescription" type="system" pointSize="10"/>
+                        <nil key="textColor"/>
+                        <nil key="highlightedColor"/>
+                        <userDefinedRuntimeAttributes>
+                            <userDefinedRuntimeAttribute type="number" keyPath="topInset">
+                                <real key="value" value="5"/>
+                            </userDefinedRuntimeAttribute>
+                            <userDefinedRuntimeAttribute type="number" keyPath="bottomInset">
+                                <real key="value" value="5"/>
+                            </userDefinedRuntimeAttribute>
+                            <userDefinedRuntimeAttribute type="number" keyPath="leftInset">
+                                <real key="value" value="7"/>
+                            </userDefinedRuntimeAttribute>
+                            <userDefinedRuntimeAttribute type="number" keyPath="rightInset">
+                                <real key="value" value="7"/>
+                            </userDefinedRuntimeAttribute>
+                        </userDefinedRuntimeAttributes>
+                    </label>
                 </subviews>
                 <constraints>
                     <constraint firstItem="b8m-mK-FB9" firstAttribute="leading" secondItem="rmr-5k-Uo5" secondAttribute="trailing" constant="8" symbolic="YES" id="4uJ-e8-BT2"/>
+                    <constraint firstItem="isK-pI-KKL" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="AfM-BZ-qHp"/>
                     <constraint firstItem="72g-K8-4PE" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="4" id="CTj-7w-I3F"/>
                     <constraint firstItem="b8m-mK-FB9" firstAttribute="top" secondItem="72g-K8-4PE" secondAttribute="bottom" id="MIC-yF-z4S"/>
                     <constraint firstItem="rmr-5k-Uo5" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="dWY-BE-geh"/>
                     <constraint firstItem="72g-K8-4PE" firstAttribute="leading" secondItem="rmr-5k-Uo5" secondAttribute="trailing" constant="8" symbolic="YES" id="lEC-vX-igW"/>
+                    <constraint firstItem="isK-pI-KKL" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="72g-K8-4PE" secondAttribute="trailing" constant="20" id="mvg-tH-PlH"/>
+                    <constraint firstAttribute="trailing" secondItem="isK-pI-KKL" secondAttribute="trailing" constant="8" id="pCl-31-1I6"/>
                     <constraint firstItem="rmr-5k-Uo5" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="8" id="vet-ib-mUY"/>
                 </constraints>
             </tableViewCellContentView>
             <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
             <connections>
                 <outlet property="avatar" destination="rmr-5k-Uo5" id="O1t-1g-rdn"/>
+                <outlet property="status" destination="isK-pI-KKL" id="uOi-rI-LAv"/>
                 <outlet property="subtitle" destination="b8m-mK-FB9" id="X8M-DA-3fA"/>
                 <outlet property="title" destination="72g-K8-4PE" id="AJg-88-MfF"/>
             </connections>
-            <point key="canvasLocation" x="-386" y="66"/>
+            <point key="canvasLocation" x="-386.95652173913044" y="65.625"/>
         </tableViewCell>
     </objects>
 </document>
