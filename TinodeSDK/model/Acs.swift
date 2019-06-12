@@ -28,6 +28,11 @@ public class Acs: Codable, Equatable {
             return mode?.isOwner ?? false
         }
     }
+    public var isAdmin: Bool {
+        get {
+            return mode?.isAdmin ?? false
+        }
+    }
     public var isMuted: Bool {
         get {
             return mode?.isMuted ?? false

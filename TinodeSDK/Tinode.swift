@@ -19,6 +19,7 @@ public enum TinodeError: Error, CustomStringConvertible {
     case notConnected(String)
     case serverResponseError(Int, String, String?)
     case notSubscribed(String)
+    case notSynchronized
 
     public var description: String {
         get {
@@ -33,6 +34,8 @@ public enum TinodeError: Error, CustomStringConvertible {
                 return "\(text) (\(code))"
             case .notSubscribed(let message):
                 return "Not subscribed: \(message)"
+            case .notSynchronized:
+                return "Not synchronized"
             }
         }
     }
@@ -945,6 +948,12 @@ public class Tinode {
             msg: ClientMessage<Int, Int>(
                 del: MsgClientDel(id: getNextMsgId(),
                                   topic: topicName, list: list, hard: hard)))
+    }
+    func delSubscription(topicName: String?, user: String?) -> PromisedReply<ServerMessage>? {
+        return sendDeleteMessage(
+            msg: ClientMessage<Int, Int>(
+                del: MsgClientDel(id: getNextMsgId(),
+                                  topic: topicName, user: user)))
     }
 
     /// Low-level request to delete topic. Use {@link Topic#delete()} instead.

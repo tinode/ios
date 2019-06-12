@@ -20,6 +20,7 @@
 		0A2F81C6229677DD007E562C /* AddByIDViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2F81C5229677DD007E562C /* AddByIDViewController.swift */; };
 		0A35BA9E22836CCF00AA5E2F /* ContactsSynchronizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A35BA9D22836CCF00AA5E2F /* ContactsSynchronizer.swift */; };
 		0A35BAA02283A37500AA5E2F /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A35BA9F2283A37500AA5E2F /* Utils.swift */; };
+		0A36776922B09C1900724873 /* EditMembersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A36776822B09C1900724873 /* EditMembersViewController.swift */; };
 		0A37D6F521DA075100A124CA /* AccountDb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A37D6F421DA075100A124CA /* AccountDb.swift */; };
 		0A431C032244A26200A837F7 /* TinodeSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A431C022244A26200A837F7 /* TinodeSDK.framework */; };
 		0A431C042244A26200A837F7 /* TinodeSDK.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0A431C022244A26200A837F7 /* TinodeSDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -104,6 +105,7 @@
 		0A2F81C5229677DD007E562C /* AddByIDViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddByIDViewController.swift; sourceTree = "<group>"; };
 		0A35BA9D22836CCF00AA5E2F /* ContactsSynchronizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsSynchronizer.swift; sourceTree = "<group>"; };
 		0A35BA9F2283A37500AA5E2F /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
+		0A36776822B09C1900724873 /* EditMembersViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditMembersViewController.swift; sourceTree = "<group>"; };
 		0A37D6F421DA075100A124CA /* AccountDb.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountDb.swift; sourceTree = "<group>"; };
 		0A431C022244A26200A837F7 /* TinodeSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = TinodeSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		0A484E5021E359A800FE9AFE /* MessageDb.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageDb.swift; sourceTree = "<group>"; };
@@ -208,6 +210,7 @@
 				0ADDBC8A2249F617000BD00D /* ChatListTableViewCell.swift */,
 				0A0380D921B3CC8100A3FA0E /* ChatListViewController.swift */,
 				7DDADC5321D5C2E6009733B5 /* CredentialsViewController.swift */,
+				0A36776822B09C1900724873 /* EditMembersViewController.swift */,
 				0AE50D4522156A4B0021F7B7 /* FindInteractor.swift */,
 				0AE50D4722156A5B0021F7B7 /* FindPresenter.swift */,
 				0AE50D4922156A6C0021F7B7 /* FindRouter.swift */,
@@ -450,6 +453,7 @@
 				B0DF03312283FFD8000F9492 /* PlaceholderTextView.swift in Sources */,
 				0A35BA9E22836CCF00AA5E2F /* ContactsSynchronizer.swift in Sources */,
 				0A0016E721E7236900088188 /* MessageInteractor.swift in Sources */,
+				0A36776922B09C1900724873 /* EditMembersViewController.swift in Sources */,
 				B0125998229C982900688FCE /* ContactViewCell.swift in Sources */,
 				0ACB5F1022097665008FE740 /* ChatListRouter.swift in Sources */,
 				0A6F260A21BE51D800B9726E /* LoginViewController.swift in Sources */,
