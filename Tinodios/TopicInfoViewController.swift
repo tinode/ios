@@ -242,6 +242,12 @@ class TopicInfoViewController: UIViewController {
                 )},
             disabledPermissions: disablePermissions)
     }
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "TopicInfo2EditMembers" {
+            let destinationVC = segue.destination as! EditMembersViewController
+            destinationVC.topicName = self.topicName
+        }
+    }
 }
 
 extension TopicInfoViewController: UITableViewDataSource, UITableViewDelegate {

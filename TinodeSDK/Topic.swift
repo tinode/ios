@@ -347,6 +347,11 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
             return description?.acs?.isOwner ?? false
         }
     }
+    public var isAdmin: Bool {
+        get {
+            return description?.acs?.isAdmin ?? false
+        }
+    }
 
     // Storage is owned by Tinode.
     weak public var store: Storage? = nil
@@ -968,7 +973,32 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
                     error.localizedDescription))
         }
     }
-
+    @discardableResult
+    public func eject(user uid: String, ban: Bool) -> PromisedReply<ServerMessage>? {
+        guard let sub = getSubscription(for: uid) else {
+            return PromisedReply(error:
+                TinodeError.notSubscribed(
+                    "Can't eject user from topic \(name)"))
+        }
+        if ban {
+            return invite(user: uid, in: "N")
+        }
+        if isNew {
+            store?.subDelete(topic: self, sub: sub)
+            listener?.onSubsUpdated()
+            return PromisedReply(error: TinodeError.notSynchronized)
+        }
+        do {
+            return try tinode!.delSubscription(topicName: name, user: uid)?.then(
+                onSuccess: { msg in
+                    self.store?.subDelete(topic: self, sub: sub)
+                    self.removeSubFromCache(sub: sub)
+                    self.listener?.onSubsUpdated()
+                    return nil
+                },
+                onFailure: nil)
+        } catch { return nil }
+    }
     public func routeInfo(info: MsgServerInfo) {
         if info.what != Tinode.kNoteKp {
             if let sub = getSubscription(for: info.from) {
@@ -1062,7 +1092,7 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
         return PromisedReply(
             error: TinodeError.notConnected("Leaving topic when Tinode is not connected."))
     }
-    
+
     private func processDelivery(ctrl: MsgServerCtrl?, id: Int64) {
         guard let ctrl = ctrl else {
             return

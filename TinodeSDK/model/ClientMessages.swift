@@ -423,6 +423,12 @@ public class MsgClientDel: Encodable {
         self.init(id: id, topic: topic, what: MsgClientDel.kStrTopic,
                   ranges: nil, user: nil, hard: nil)
     }
+
+    /// Delete subscription
+    convenience init(id: String?, topic: String?, user: String?) {
+        self.init(id: id, topic: topic, what: MsgClientDel.kStrSub,
+                  ranges: nil, user: user, hard: false)
+    }
 }
 
 public class ClientMessage<Pu: Encodable, Pr: Encodable> : Encodable {
