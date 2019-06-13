@@ -37,6 +37,8 @@ class TopicInfoViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setup()
+    }
+    override func viewDidAppear(_ animated: Bool) {
         reloadData()
     }
     // Hides view and sets its height to 0.
@@ -124,14 +126,15 @@ class TopicInfoViewController: UIViewController {
         let acs = self.topic.accessMode
         self.permissionsLabel.text = acs?.modeString
         if self.topic.isGrpType {
-            self.authUsersPermissionsLabel.text = self.topic.defacs?.getAuth()
-            self.anonUsersPermissionsLabel.text = self.topic.defacs?.getAnon()
+            self.authUsersPermissionsLabel?.text = self.topic.defacs?.getAuth()
+            self.anonUsersPermissionsLabel?.text = self.topic.defacs?.getAnon()
 
             self.subscriptions = self.topic.getSubscriptions()
+            self.membersTableView.reloadData()
         } else {
-            self.peerNameLabel.text = self.topic.pub?.fn ?? "Unknown"
-            self.myPermissionsLabel.text = self.topic.accessMode?.wantString
-            self.peerPermissionsLabel.text = self.topic.accessMode?.givenString
+            self.peerNameLabel?.text = self.topic.pub?.fn ?? "Unknown"
+            self.myPermissionsLabel?.text = self.topic.accessMode?.wantString
+            self.peerPermissionsLabel?.text = self.topic.accessMode?.givenString
         }
     }
     @IBAction func loadAvatarClicked(_ sender: Any) {

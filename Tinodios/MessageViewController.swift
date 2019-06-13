@@ -239,11 +239,18 @@ class MessageViewController: UIViewController {
                 self.interactor?.sendReadNotification()
             })
     }
+    override func viewWillDisappear(_ animated: Bool) {
+        if let viewControllers = self.navigationController?.viewControllers, viewControllers.count > 1, viewControllers[viewControllers.count - 2] === self {
+            // It's a push. No need to detach.
+            print("keeping topic attached")
+        } else {
+            self.interactor?.cleanup()
+        }
+    }
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
 
-        self.interactor?.cleanup()
         self.noteTimer?.invalidate()
     }
 
