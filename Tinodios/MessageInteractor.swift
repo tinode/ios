@@ -80,6 +80,9 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         Cache.getTinode().listener = nil
     }
     func attachToTopic() -> Bool {
+        guard !(self.topic?.attached ?? false) else {
+            return true
+        }
         do {
             try self.topic?.subscribe(
                 set: nil,

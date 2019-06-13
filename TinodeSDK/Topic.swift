@@ -600,9 +600,7 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
         listener?.onMetaDesc(desc: (meta.desc as! Description<DP, DR>))
     }
     private func removeSubFromCache(sub: Subscription<SP, SR>) {
-        if var allsubs = subs {
-            allsubs.removeValue(forKey: sub.user!)
-        }
+        subs?.removeValue(forKey: sub.user!)
     }
 
     fileprivate func update(sub: Subscription<SP, SR>) {
@@ -717,9 +715,9 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
         var sub: Subscription<SP, SR>?
         if (newsub.deleted != nil) {
             store?.subDelete(topic: self, sub: newsub)
-            removeSubFromCache(sub: newsub);
+            removeSubFromCache(sub: newsub)
             
-            sub = newsub;
+            sub = newsub
         } else {
             sub = getSubscription(for: newsub.user)
             if sub != nil {

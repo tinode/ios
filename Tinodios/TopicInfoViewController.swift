@@ -37,6 +37,8 @@ class TopicInfoViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setup()
+    }
+    override func viewDidAppear(_ animated: Bool) {
         reloadData()
     }
     // Hides view and sets its height to 0.
@@ -48,6 +50,9 @@ class TopicInfoViewController: UIViewController {
     private func setup() {
         self.tinode = Cache.getTinode()
         self.topic = tinode.getTopic(topicName: topicName) as? DefaultComTopic
+        guard self.topic != nil else {
+            return
+        }
 
         var p2pPermissionsViewActive = true
         var defaultPermissionsViewActive = true
@@ -124,14 +129,15 @@ class TopicInfoViewController: UIViewController {
         let acs = self.topic.accessMode
         self.permissionsLabel.text = acs?.modeString
         if self.topic.isGrpType {
-            self.authUsersPermissionsLabel.text = self.topic.defacs?.getAuth()
-            self.anonUsersPermissionsLabel.text = self.topic.defacs?.getAnon()
+            self.authUsersPermissionsLabel?.text = self.topic.defacs?.getAuth()
+            self.anonUsersPermissionsLabel?.text = self.topic.defacs?.getAnon()
 
             self.subscriptions = self.topic.getSubscriptions()
+            self.membersTableView.reloadData()
         } else {
-            self.peerNameLabel.text = self.topic.pub?.fn ?? "Unknown"
-            self.myPermissionsLabel.text = self.topic.accessMode?.wantString
-            self.peerPermissionsLabel.text = self.topic.accessMode?.givenString
+            self.peerNameLabel?.text = self.topic.pub?.fn ?? "Unknown"
+            self.myPermissionsLabel?.text = self.topic.accessMode?.wantString
+            self.peerPermissionsLabel?.text = self.topic.accessMode?.givenString
         }
     }
     @IBAction func loadAvatarClicked(_ sender: Any) {
@@ -242,11 +248,45 @@ class TopicInfoViewController: UIViewController {
                 )},
             disabledPermissions: disablePermissions)
     }
+    @IBAction func leaveGroupClicked(_ sender: Any) {
+        if topic.isOwner {
+            UiUtils.showToast(message: "Owner cannot unsubscribe")
+        } else {
+            do {
+                try topic.delete()?.then(
+                    onSuccess: { msg in
+                        DispatchQueue.main.async {
+                            self.navigationController?.popViewController(animated: true)
+                            self.dismiss(animated: true, completion: nil)
+                        }
+                        return nil
+                    },
+                    onFailure: UiUtils.ToastFailureHandler)
+            } catch TinodeError.notConnected(let e) {
+                UiUtils.showToast(message: "You are offline \(e)")
+            } catch {
+                UiUtils.showToast(message: "Action failed \(error)")
+            }
+        }
+    }
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "TopicInfo2EditMembers" {
             let destinationVC = segue.destination as! EditMembersViewController
             destinationVC.topicName = self.topicName
         }
+    }
+}
+
+extension UIColor {
+    convenience init(fromHexCode code: Int) {
+        let blue = code & 0xff
+        let green = (code >> 8) & 0xff
+        let red = (code >> 16) & 0xff
+        let alpha = (code >> 24) & 0xff
+        self.init(red: CGFloat(Float(red) / 255.0),
+                  green: CGFloat(green) / 255.0,
+                  blue: CGFloat(blue) / 255.0,
+                  alpha: CGFloat(alpha) / 255.0)
     }
 }
 
@@ -257,6 +297,46 @@ extension TopicInfoViewController: UITableViewDataSource, UITableViewDelegate {
     }
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return subscriptions?.count ?? 0
+    }
+    struct AccessModeLabel {
+        public static let kColorGrayBorder = UIColor(fromHexCode: 0xff9e9e9e)
+        public static let kColorGreenBorder = UIColor(fromHexCode: 0xff4caf50)
+        public static let kColorRedBorder = UIColor(fromHexCode: 0xffe57373)
+        public static let kColorYellowBorder = UIColor(fromHexCode: 0xffffca28)
+        let color: UIColor
+        let text: String
+    }
+    static func getAccessModeLabels(acs: Acs?, status: Int?) -> [AccessModeLabel]? {
+        var result = [AccessModeLabel]()
+        if let acs = acs {
+            if acs.isModeDefined {
+                if !acs.isJoiner || (!acs.isWriter && !acs.isReader) {
+                    result.append(AccessModeLabel(color: AccessModeLabel.kColorRedBorder, text: "blocked"))
+                } else if acs.isOwner {
+                    result.append(AccessModeLabel(color: AccessModeLabel.kColorGreenBorder, text: "owner"))
+                } else if acs.isAdmin {
+                    result.append(AccessModeLabel(color: AccessModeLabel.kColorGreenBorder, text: "admin"))
+                } else if !acs.isWriter {
+                    result.append(AccessModeLabel(color: AccessModeLabel.kColorYellowBorder, text: "read-only"))
+                } else if !acs.isReader {
+                    result.append(AccessModeLabel(color: AccessModeLabel.kColorYellowBorder, text: "write-only"))
+                }
+            } else if !acs.isInvalid {
+                // The mode is undefined (NONE)
+                if acs.isGivenDefined || !acs.isWantDefined {
+                    result.append(AccessModeLabel(color: AccessModeLabel.kColorGrayBorder, text: "invited"))
+                } else if !acs.isGivenDefined && acs.isWantDefined {
+                    result.append(AccessModeLabel(color: AccessModeLabel.kColorGrayBorder, text: "requested"))
+                } else {
+                    // Undefined state.
+                    result.append(AccessModeLabel(color: AccessModeLabel.kColorGrayBorder, text: "undefined"))
+                }
+            }
+        }
+        if let status = status, status == BaseDb.kStatusQueued {
+            result.append(AccessModeLabel(color: AccessModeLabel.kColorGrayBorder, text: "pending"))
+        }
+        return !result.isEmpty ? result : nil
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ContactViewCell", for: indexPath) as! ContactViewCell
@@ -270,17 +350,15 @@ extension TopicInfoViewController: UITableViewDataSource, UITableViewDelegate {
         cell.avatar.set(icon: pub?.photo?.image(), title: displayName, id: uid)
         cell.title.text = displayName
         cell.title.sizeToFit()
-        if let acs = sub.acs {
-            if acs.isModeDefined && acs.isOwner {
-                cell.status.isHidden = false
-                cell.status.text = "owner"
-                cell.status.sizeToFit()
-                cell.status.textInsets = UIEdgeInsets(top: CGFloat(7), left: CGFloat(7), bottom: CGFloat(5), right: CGFloat(5))
-                //0xFF4CAF50
-                let green = UIColor(red: 0x4c / 255.0, green: 0xaf / 255.0, blue: 0x50 / 255.0, alpha: 1.0)
-                cell.status.textColor = green
-                cell.status.layer.borderWidth = 1
-                cell.status.layer.borderColor = green.cgColor
+        if let accessLabels = TopicInfoViewController.getAccessModeLabels(acs: sub.acs, status: (sub.payload as? StoredSubscription)?.status) {
+            for i in 0..<accessLabels.count {
+                cell.statusLabels[i].isHidden = false
+                cell.statusLabels[i].text = accessLabels[i].text
+                cell.statusLabels[i].sizeToFit()
+                cell.statusLabels[i].textInsets = UIEdgeInsets(top: CGFloat(7), left: CGFloat(7), bottom: CGFloat(5), right: CGFloat(5))
+                cell.statusLabels[i].textColor = accessLabels[i].color
+                cell.statusLabels[i].layer.borderWidth = 1
+                cell.statusLabels[i].layer.borderColor = accessLabels[i].color.cgColor
             }
         }
 
