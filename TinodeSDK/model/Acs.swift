@@ -38,6 +38,36 @@ public class Acs: Codable, Equatable {
             return mode?.isMuted ?? false
         }
     }
+    public var isInvalid: Bool {
+        get {
+            return mode?.isInvalid ?? false
+        }
+    }
+    public var isJoiner: Bool {
+        get {
+            return mode?.isJoiner ?? false
+        }
+    }
+    public var isWriter: Bool {
+        get {
+            return mode?.isWriter ?? false
+        }
+    }
+    public var isReader: Bool {
+        get {
+            return mode?.isReader ?? false
+        }
+    }
+    public var isGivenDefined: Bool {
+        get {
+            return given?.isDefined ?? false
+        }
+    }
+    public var isWantDefined: Bool {
+        get {
+            return want?.isDefined ?? false
+        }
+    }
     public var modeString: String {
         get {
             return mode?.description ?? ""

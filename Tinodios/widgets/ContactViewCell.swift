@@ -20,7 +20,7 @@ class ContactViewCell: UITableViewCell {
     @IBOutlet weak var avatar: RoundImageView!
     @IBOutlet weak var title: UILabel!
     @IBOutlet weak var subtitle: UILabel!
-    @IBOutlet weak var status: ContactViewCellStatusLabel!
+    @IBOutlet var statusLabels: [ContactViewCellStatusLabel]!
 
     override func awakeFromNib() {
         super.awakeFromNib()

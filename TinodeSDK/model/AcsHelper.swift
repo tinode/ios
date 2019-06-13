@@ -65,6 +65,26 @@ public class AcsHelper: Codable, Equatable {
             return ((a ?? 0) & AcsHelper.kModePres) == 0
         }
     }
+    var isInvalid: Bool {
+        get {
+            return (a ?? 0) == AcsHelper.kModeInvalid
+        }
+    }
+    var isJoiner: Bool {
+        get {
+            return ((a ?? 0) & AcsHelper.kModeJoin) != 0
+        }
+    }
+    var isReader: Bool {
+        get {
+            return ((a ?? 0) & AcsHelper.kModeRead) != 0
+        }
+    }
+    var isWriter: Bool {
+        get {
+            return ((a ?? 0) & AcsHelper.kModeWrite) != 0
+        }
+    }
     init(str: String?) {
         a = AcsHelper.decode(from: str)
     }
@@ -76,11 +96,8 @@ public class AcsHelper: Codable, Equatable {
     init(a: Int?) {
         self.a = a
     }
-    public func isInvalid() -> Bool {
-        return (a ?? 0) == AcsHelper.kModeInvalid
-    }
     public func hasPermissions(forMode mode: Int) -> Bool {
-        guard !isInvalid() else { return false }
+        guard !isInvalid else { return false }
         return (a! & mode) != 0
     }
     private static func decode(from modeStr: String?) -> Int? {
@@ -192,7 +209,7 @@ public class AcsHelper: Codable, Equatable {
         return false
     }
     public static func and(a1: AcsHelper? , a2: AcsHelper?) -> AcsHelper? {
-        if let ah1 = a1, let ah2 = a2, !ah1.isInvalid(), !ah2.isInvalid() {
+        if let ah1 = a1, let ah2 = a2, !ah1.isInvalid, !ah2.isInvalid {
             return AcsHelper(a: ah1.a! & ah2.a!)
         }
         return nil
