@@ -63,9 +63,8 @@ class AccountSettingsViewController: UIViewController {
         self.myUIDLabel.text = self.tinode.myUid
         self.myUIDLabel.sizeToFit()
         // Avatar.
-        if let avatar = me.pub?.photo?.image() {
-            self.avatarImage.image = avatar
-        }
+        self.avatarImage.set(icon: me.pub?.photo?.image(), title: me.pub?.fn, id: self.tinode.myUid)
+        self.avatarImage.letterTileFont = self.avatarImage.letterTileFont.withSize(CGFloat(50))
         // Permissions.
         self.authUsersPermissionsLabel.text = me.defacs?.getAuth() ?? ""
         self.authUsersPermissionsLabel.sizeToFit()
@@ -170,7 +169,7 @@ class AccountSettingsViewController: UIViewController {
             }
             return
         }
-        try? tinode.updateAccountBasic(uid: nil, username: userName, password: newPassword)?.then(
+        _ = try? tinode.updateAccountBasic(uid: nil, username: userName, password: newPassword)?.then(
             onSuccess: nil,
             onFailure: { err in
                 DispatchQueue.main.async {
