@@ -12,6 +12,7 @@ import TinodeSDK
 protocol ChatListBusinessLogic: class {
     func loadAndPresentTopics()
     func attachToMeTopic()
+    func leaveMeTopic()
     func updateChat(_ name: String)
     func setup()
     func cleanup()
@@ -81,6 +82,9 @@ class ChatListInteractor: ChatListBusinessLogic, ChatListDataStore {
 
     func attachToMeTopic() {
         let tinode = Cache.getTinode()
+        guard meTopic == nil || !meTopic!.attached else {
+            return
+        }
         do {
             try UiUtils.attachToMeTopic(meListener: self.meListener)?.then(
                 onSuccess: { [weak self] msg in
@@ -102,6 +106,11 @@ class ChatListInteractor: ChatListBusinessLogic, ChatListDataStore {
             self.router?.routeToLogin()
         }
     }
+    func leaveMeTopic() {
+        if self.meTopic?.attached ?? false {
+            self.meTopic?.leave()
+        }
+    }
     func setup() {
         meListener = MeListener()
         self.meListener?.interactor = self
@@ -113,9 +122,6 @@ class ChatListInteractor: ChatListBusinessLogic, ChatListDataStore {
     func cleanup() {
         self.meTopic?.listener = nil
         Cache.getTinode().listener = nil
-        if self.meTopic?.attached ?? false {
-            self.meTopic?.leave()
-        }
     }
     func loadAndPresentTopics() {
         self.topics = Cache.getTinode().getFilteredTopics(filter: {(topic: TopicProto) in

@@ -184,7 +184,12 @@ class AccountSettingsViewController: UIViewController {
         if pub.fn != newTitle {
             pub.fn = newTitle
         }
-        UiUtils.setTopicData(forTopic: self.me, pub: pub, priv: nil)
+        _ = try? UiUtils.setTopicData(forTopic: self.me, pub: pub, priv: nil)?.then(
+            onSuccess: { msg in
+                DispatchQueue.main.async { self.reloadData() }
+                return nil
+            },
+            onFailure: UiUtils.ToastFailureHandler)
     }
     private func logout() {
         print("logging out")

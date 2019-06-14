@@ -41,6 +41,34 @@ class ChatListViewController: UITableViewController, ChatListDisplayLogic {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         setup()
+
+        NotificationCenter.default.addObserver(
+            self, selector: #selector(self.appGoingInactive),
+            name: UIApplication.willResignActiveNotification,
+            object: nil)
+        NotificationCenter.default.addObserver(
+            self, selector: #selector(self.appBecameActive),
+            name: UIApplication.didBecomeActiveNotification,
+            object: nil)
+    }
+    deinit {
+        NotificationCenter.default.removeObserver(
+            self,
+            name: UIApplication.willResignActiveNotification,
+            object: nil)
+        NotificationCenter.default.removeObserver(
+            self,
+            name: UIApplication.didBecomeActiveNotification,
+            object: nil)
+    }
+    @objc
+    func appBecameActive() {
+        self.interactor?.attachToMeTopic()
+    }
+    @objc
+    func appGoingInactive() {
+        self.interactor?.cleanup()
+        self.interactor?.leaveMeTopic()
     }
 
     override func viewDidAppear(_ animated: Bool) {
