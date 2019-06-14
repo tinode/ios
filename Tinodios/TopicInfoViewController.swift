@@ -121,10 +121,8 @@ class TopicInfoViewController: UIViewController {
         self.topicIDLabel.sizeToFit()
         let subtitle = self.topic.comment ?? ""
         self.topicSubtitleTextView.text = !subtitle.isEmpty ? subtitle : "Private info: not set"
-        // TODO: use a letter avatar when no image is available.
-        if let avatar = topic.pub?.photo?.image() {
-            self.avatarImage.image = avatar
-        }
+        self.avatarImage.set(icon: topic.pub?.photo?.image(), title: topic.pub?.fn, id: topic?.name)
+        self.avatarImage.letterTileFont = self.avatarImage.letterTileFont.withSize(CGFloat(50))
         self.mutedSwitch.isOn = self.topic.isMuted
         let acs = self.topic.accessMode
         self.permissionsLabel.text = acs?.modeString
