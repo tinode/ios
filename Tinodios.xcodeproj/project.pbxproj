@@ -47,6 +47,7 @@
 		0AE50D4822156A5B0021F7B7 /* FindPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AE50D4722156A5B0021F7B7 /* FindPresenter.swift */; };
 		0AE50D4A22156A6C0021F7B7 /* FindRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AE50D4922156A6C0021F7B7 /* FindRouter.swift */; };
 		0AEE8BEE226456080022EC3F /* UiUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AEE8BED226456080022EC3F /* UiUtils.swift */; };
+		0AEF602322B611D80060426C /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0AEF602222B611D80060426C /* GoogleService-Info.plist */; };
 		58CBE6CE018029121E923407 /* Pods_Tinodios.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B787A84CD010EF920890105 /* Pods_Tinodios.framework */; };
 		7DDADC5021D5C156009733B5 /* RegisterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DDADC4F21D5C156009733B5 /* RegisterViewController.swift */; };
 		7DDADC5221D5C219009733B5 /* Validate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DDADC5121D5C219009733B5 /* Validate.swift */; };
@@ -131,6 +132,7 @@
 		0AE50D4722156A5B0021F7B7 /* FindPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FindPresenter.swift; sourceTree = "<group>"; };
 		0AE50D4922156A6C0021F7B7 /* FindRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FindRouter.swift; sourceTree = "<group>"; };
 		0AEE8BED226456080022EC3F /* UiUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UiUtils.swift; sourceTree = "<group>"; };
+		0AEF602222B611D80060426C /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		3B787A84CD010EF920890105 /* Pods_Tinodios.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Tinodios.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5900B7863CDFB018A86DD3AC /* Pods-Tinodios.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Tinodios.release.xcconfig"; path = "Pods/Target Support Files/Pods-Tinodios/Pods-Tinodios.release.xcconfig"; sourceTree = "<group>"; };
 		75BC852198885F22E865D563 /* Pods-Tinodios.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Tinodios.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Tinodios/Pods-Tinodios.debug.xcconfig"; sourceTree = "<group>"; };
@@ -238,6 +240,7 @@
 				B031BE542263075E004160AE /* Settings.bundle */,
 				0A0380E921B3CCB000A3FA0E /* Supporting Files */,
 				0A0380E321B3CC8200A3FA0E /* Info.plist */,
+				0AEF602222B611D80060426C /* GoogleService-Info.plist */,
 			);
 			path = Tinodios;
 			sourceTree = "<group>";
@@ -376,6 +379,7 @@
 			files = (
 				B0125999229C982900688FCE /* ContactViewCell.xib in Resources */,
 				B031BE552263075E004160AE /* Settings.bundle in Resources */,
+				0AEF602322B611D80060426C /* GoogleService-Info.plist in Resources */,
 				B0DF032D2282EE8A000F9492 /* SendMessageBar.xib in Resources */,
 				0A0380E221B3CC8200A3FA0E /* LaunchScreen.storyboard in Resources */,
 				B012599D229CEBE600688FCE /* SelectedMemberViewCell.xib in Resources */,
@@ -416,6 +420,8 @@
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Tinodios/Pods-Tinodios-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/SwiftWebSocket-iOS10.0/SwiftWebSocket.framework",
+				"${BUILT_PRODUCTS_DIR}/GoogleUtilities/GoogleUtilities.framework",
+				"${BUILT_PRODUCTS_DIR}/Protobuf/Protobuf.framework",
 				"${BUILT_PRODUCTS_DIR}/SQLite.swift/SQLite.framework",
 				"${BUILT_PRODUCTS_DIR}/SwiftKeychainWrapper/SwiftKeychainWrapper.framework",
 			);
@@ -424,6 +430,8 @@
 			);
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftWebSocket.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleUtilities.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Protobuf.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SQLite.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftKeychainWrapper.framework",
 			);
