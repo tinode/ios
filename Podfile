@@ -18,6 +18,7 @@ end
 def ui_pods
     pod 'SQLite.swift', '~> 0.12.0'
     pod 'SwiftKeychainWrapper', '~> 3.2'
+    pod 'Firebase/Messaging'
 end
 
 target 'TinodeSDK' do
