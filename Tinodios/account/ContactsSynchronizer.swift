@@ -69,7 +69,7 @@ class ContactsSynchronizer {
             CNContactEmailAddressesKey as CNKeyDescriptor,
             CNContactInstantMessageAddressesKey as CNKeyDescriptor,
             CNContactImageDataAvailableKey as CNKeyDescriptor,
-            CNContactImageDataKey as CNKeyDescriptor
+            CNContactThumbnailImageDataKey as CNKeyDescriptor
         ]
         var contacts = [CNContact]()
         let request = CNContactFetchRequest(keysToFetch: keysToFetch)
