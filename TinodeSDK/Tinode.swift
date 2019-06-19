@@ -918,7 +918,9 @@ public class Tinode {
                        head: data.isPlain ? nil : ["mime": JSONValue.string(Drafty.kMimeType)],
                        content: data)
     }
-
+    public func getTopics() -> Array<TopicProto>? {
+        return Array(topics.values)
+    }
     public func getFilteredTopics(filter: ((TopicProto) -> Bool)?) -> Array<TopicProto>? {
         var result: Array<TopicProto>
         if filter == nil {

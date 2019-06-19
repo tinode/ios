@@ -1207,7 +1207,14 @@ open class MeTopic<DP: Codable>: Topic<DP, PrivateType, DP, PrivateType> {
         // Don't attempt to load subscriptions: 'me' subscriptions are stored as topics.
         return 0
     }
-
+    override public func topicLeft(unsub: Bool?, code: Int?, reason: String?) {
+        super.topicLeft(unsub: unsub, code: code, reason: reason)
+        if let topics = tinode?.getTopics() {
+            for t in topics {
+                t.online = false
+            }
+        }
+    }
     override public func routePres(pres: MsgServerPres) {
         let what = MsgServerPres.parseWhat(what: pres.what)
         if let topic = tinode!.getTopic(topicName: pres.src!) {

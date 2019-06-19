@@ -69,7 +69,9 @@ class ChatListInteractor: ChatListBusinessLogic, ChatListDataStore {
             self.interactor?.attachToMeTopic()
         }
         override func onDisconnect(byServer: Bool, code: Int, reason: String) {
-            // TODO: update presence, etc.
+            super.onDisconnect(byServer: byServer, code: code, reason: reason)
+            // Update presence indicators (all should be off).
+            self.interactor?.loadAndPresentTopics()
         }
     }
 
@@ -112,8 +114,11 @@ class ChatListInteractor: ChatListBusinessLogic, ChatListDataStore {
         }
     }
     func setup() {
-        meListener = MeListener()
+        if self.meListener == nil {
+            self.meListener = MeListener()
+        }
         self.meListener?.interactor = self
+        self.meTopic?.listener = meListener
         let tinode = Cache.getTinode()
         self.tinodeEventListener = ChatEventListener(
             interactor: self, connected: tinode.isConnected)
