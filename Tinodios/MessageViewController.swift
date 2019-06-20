@@ -719,6 +719,10 @@ extension MessageViewController : MessageCellDelegate {
         print("didTapAvatar")
     }
 
+    func didTapOutsideContent(in cell: MessageCell) {
+        self.sendMessageBar.inputField.resignFirstResponder()
+    }
+
     private func handleButtonPost(in cell: MessageCell, data url: URL) {
         let parts = URLComponents(url: url, resolvingAgainstBaseURL: false)
         var query: [String : String]?

@@ -161,6 +161,11 @@ class UiUtils {
         view.isUserInteractionEnabled = true
         view.addGestureRecognizer(tap)
     }
+    public static func dismissKeyboardForTaps(onView view: UIView) {
+        let tap = UITapGestureRecognizer(target: view, action: #selector(UIView.endEditing(_:)))
+        tap.cancelsTouchesInView = false
+        view.addGestureRecognizer(tap)
+    }
     public static func ToastFailureHandler(err: Error) throws -> PromisedReply<ServerMessage>? {
         DispatchQueue.main.async {
             if let e = err as? TinodeError, case .notConnected = e {
