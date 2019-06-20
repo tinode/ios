@@ -50,6 +50,7 @@ class NewGroupViewController: UIViewController, UITableViewDataSource {
         self.groupNameTextField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: UIControl.Event.editingChanged)
         self.privateTextField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: UIControl.Event.editingChanged)
         self.tagsTextField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: UIControl.Event.editingChanged)
+        UiUtils.dismissKeyboardForTaps(onView: self.view)
         setup()
     }
     override func viewDidAppear(_ animated: Bool) {

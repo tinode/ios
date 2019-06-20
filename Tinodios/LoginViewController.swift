@@ -28,6 +28,13 @@ class LoginViewController: UIViewController {
         // This is needed in order to adjust the height of the scroll view when the keyboard appears.
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIControl.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: UIControl.keyboardWillHideNotification, object: nil)
+
+        UiUtils.dismissKeyboardForTaps(onView: self.view)
+/*
+        let tap = UITapGestureRecognizer(target: self.view, action: #selector(UIView.endEditing(_:)))
+        tap.cancelsTouchesInView = false
+        self.view.addGestureRecognizer(tap)
+ */
     }
 
     @objc func keyboardWillShow(_ notification: Notification) {

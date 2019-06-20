@@ -31,6 +31,7 @@ class RegisterViewController: UIViewController {
         pwdText.addTarget(self, action: #selector(textFieldDidChange(_:)), for: UIControl.Event.editingChanged)
         nameText.addTarget(self, action: #selector(textFieldDidChange(_:)), for: UIControl.Event.editingChanged)
         credentialText.addTarget(self, action: #selector(textFieldDidChange(_:)), for: UIControl.Event.editingChanged)
+        UiUtils.dismissKeyboardForTaps(onView: self.view)
     }
 
     @objc func textFieldDidChange(_ textField: UITextField) {

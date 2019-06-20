@@ -20,6 +20,7 @@ class AddByIDViewController: UIViewController {
         // Do any additional setup after loading the view.
         self.idTextField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: UIControl.Event.editingChanged)
         self.tinode = Cache.getTinode()
+        UiUtils.dismissKeyboardForTaps(onView: self.view)
     }
     @objc func textFieldDidChange(_ textField: UITextField) {
         UiUtils.clearTextFieldError(textField)
