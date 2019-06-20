@@ -289,8 +289,6 @@ extension MessageViewController: MessageDisplayLogic {
         if oldData.isEmpty || newData.isEmpty {
             self.messages = newData
             collectionView.reloadData()
-            collectionView.layoutIfNeeded()
-            collectionView.scrollToBottom()
         } else {
             let diff = Utils.diffMessageArray(sortedOld: oldData, sortedNew: newData)
             let toDelete = diff.removed.map { IndexPath(item: $0, section: 0) }
@@ -301,9 +299,9 @@ extension MessageViewController: MessageDisplayLogic {
                 collectionView.deleteItems(at: toDelete)
                 collectionView.insertItems(at: toInsert)
                 }, completion: nil)
-
-            collectionView.layoutIfNeeded()
         }
+        collectionView.layoutIfNeeded()
+        collectionView.scrollToBottom()
     }
 
     func endRefresh() {
