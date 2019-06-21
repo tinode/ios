@@ -263,6 +263,10 @@ class MessageViewController: UIViewController {
             destinationVC.topicName = self.topicName ?? ""
         }
     }
+
+    @IBAction func clearMessagesClicked(_ sender: Any) {
+        self.interactor?.clearAllMessages()
+    }
 }
 
 // Methods for updating title area and refreshing messages.
@@ -277,7 +281,7 @@ extension MessageViewController: MessageDisplayLogic {
                 navBarAvatarView.heightAnchor.constraint(equalToConstant: Constants.kNavBarAvatarSmallState),
                 navBarAvatarView.widthAnchor.constraint(equalTo: navBarAvatarView.heightAnchor)
             ])
-        if self.navigationItem.rightBarButtonItems!.count <= 1 {
+        if self.navigationItem.rightBarButtonItems!.count <= 2 {
             self.navigationItem.rightBarButtonItems!.insert(UIBarButtonItem(customView: navBarAvatarView), at: 0)
         }
     }

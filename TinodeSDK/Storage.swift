@@ -155,6 +155,7 @@ public protocol Storage: class {
     func msgDelivered(topic: TopicProto, dbMessageId: Int64,
                       timestamp: Date, seq: Int) -> Bool
     // Mark messages for deletion by range.
+    @discardableResult
     func msgMarkToDelete(topic: TopicProto,
                          from idLo: Int, to idHi: Int, markAsHard: Bool) -> Bool
     // Mark messages for deletion by seq ID list.
