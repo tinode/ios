@@ -735,7 +735,8 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
     private func routeMetaDel(clear: Int, delseq: [MsgDelRange]) {
         if let s = store {
             for range in delseq {
-                s.msgDelete(topic: self, delete: clear, deleteFrom: range.low!, deleteTo: range.hi ?? (range.low! + 1))
+                let lo = range.low ?? 0
+                s.msgDelete(topic: self, delete: clear, deleteFrom: lo, deleteTo: range.hi ?? (lo + 1))
             }
         }
         self.maxDel = clear
@@ -1151,6 +1152,29 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
                     }, onFailure: nil)
         }
         return nil
+    }
+    private func delMessages(from fromId: Int, to toId: Int, hard: Bool) -> PromisedReply<ServerMessage>? {
+        store?.msgMarkToDelete(topic: self, from: fromId, to: toId, markAsHard: hard)
+        if attached {
+            do {
+                return try tinode?.delMessage(topicName: self.name, fromId: fromId, toId: toId, hard: hard)?.then(
+                    onSuccess: { [weak self] msg in
+                        if let delId = msg.ctrl?.getIntParam(for: "del"), delId > 0 {
+                            self?.store?.msgDelete(topic: self!, delete: delId, deleteFrom: fromId, deleteTo: toId)
+                        }
+                        return nil
+                    })
+            } catch {
+                return PromisedReply<ServerMessage>(error: error)
+            }
+        }
+        if tinode?.isConnected ?? false {
+            return PromisedReply<ServerMessage>(error: TinodeError.notSubscribed("Not subscribed to topic."))
+        }
+        return PromisedReply<ServerMessage>(error: TinodeError.notConnected("Tinode not connected."))
+    }
+    public func delMessages(hard: Bool) -> PromisedReply<ServerMessage>? {
+        return delMessages(from: 0, to: (self.seq ?? 0) + 1, hard: hard)
     }
     public func syncAll() -> PromisedReply<ServerMessage>? {
         var result: PromisedReply<ServerMessage>? = PromisedReply<ServerMessage>(value: ServerMessage())

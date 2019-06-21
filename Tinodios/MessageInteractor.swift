@@ -18,6 +18,7 @@ protocol MessageBusinessLogic: class {
     func sendMessage(content: Drafty) -> Bool
     func sendReadNotification()
     func sendTypingNotification()
+    func clearAllMessages()
 }
 
 protocol MessageDataStore {
@@ -146,6 +147,18 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
     }
     func sendTypingNotification() {
         topic?.noteKeyPress()
+    }
+    func clearAllMessages() {
+        do {
+            try topic?.delMessages(hard: false)?.then(
+                onSuccess: { [weak self] msg in
+                    self?.loadMessages()
+                    return nil
+                },
+                onFailure: UiUtils.ToastFailureHandler)
+        } catch {
+            UiUtils.showToast(message: "Failed to delete messages: \(error)")
+        }
     }
     func loadMessages() {
         DispatchQueue.global(qos: .userInteractive).async {

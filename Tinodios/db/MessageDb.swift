@@ -153,6 +153,28 @@ class MessageDb {
             return false
         }
     }
+    @discardableResult
+    func markDeleted(topicId: Int64, from loId: Int?, to hiId: Int?, hard: Bool) -> Bool {
+        let startId = loId ?? 0
+        let endId = hiId ?? Int.max
+        do {
+            var updateResult = false
+            var deleteResult = false
+            try db.savepoint("MessageDb.markDeleted") {
+                let rowsToMarkDeleted = self.table.filter(
+                    self.topicId == topicId && startId...endId ~= self.seq && self.status == BaseDb.kStatusSynced)
+                updateResult = try self.db.run(rowsToMarkDeleted.update(
+                    self.status <- hard ? BaseDb.kStatusDeletedHard : BaseDb.kStatusDeletedSoft)) > 0
+                let rowsToDelete = self.table.filter(
+                    self.topicId == topicId && startId...endId ~= self.seq && self.status <= BaseDb.kStatusQueued)
+                deleteResult = try self.db.run(rowsToDelete.delete()) > 0
+            }
+            return updateResult && deleteResult
+        } catch {
+            print("Failed to mark messages deleted: \(error)")
+            return false
+        }
+    }
     func delete(msgId: Int64) -> Bool {
         let record = self.table.filter(self.id == msgId)
         do {
