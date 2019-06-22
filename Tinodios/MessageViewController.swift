@@ -265,7 +265,14 @@ class MessageViewController: UIViewController {
     }
 
     @IBAction func clearMessagesClicked(_ sender: Any) {
-        self.interactor?.clearAllMessages()
+        let alert = UIAlertController(title: "Clear all messages?", message: nil, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(
+            title: "OK", style: .default,
+            handler: { action in
+                self.interactor?.clearAllMessages()
+            }))
+        self.present(alert, animated: true)
     }
 }
 
