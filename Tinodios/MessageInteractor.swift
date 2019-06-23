@@ -65,7 +65,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
 
         if let pub = self.topic?.pub {
             DispatchQueue.main.async {
-                self.presenter?.updateTitleBar(icon: pub.photo?.image(), title: pub.fn)
+                self.presenter?.updateTitleBar(icon: pub.photo?.image(), title: pub.fn, online: self.topic?.online ?? false)
             }
         }
         self.topic?.listener = self

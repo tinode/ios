@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="AvatarWithOnlineIndicator" customModule="Tinodios" customModuleProvider="target">
+            <connections>
+                <outlet property="avatar" destination="j32-bi-fOF" id="SyN-NK-f8H"/>
+                <outlet property="contentView" destination="iN0-l3-epB" id="I36-2h-YnZ"/>
+                <outlet property="online" destination="uzW-WL-QDg" id="n2T-gV-KET"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view opaque="NO" contentMode="scaleToFill" id="iN0-l3-epB">
+            <rect key="frame" x="0.0" y="0.0" width="40" height="40"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="j32-bi-fOF" userLabel="Avatar" customClass="RoundImageView" customModule="Tinodios" customModuleProvider="target">
+                    <rect key="frame" x="0.0" y="5" width="40" height="40"/>
+                    <accessibility key="accessibilityConfiguration">
+                        <accessibilityTraits key="traits" notEnabled="YES"/>
+                    </accessibility>
+                </imageView>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="uzW-WL-QDg" userLabel="Online">
+                    <rect key="frame" x="28" y="-6" width="12" height="12"/>
+                    <color key="backgroundColor" red="0.25098039215686274" green="0.75294117647058822" blue="0.25098039215686274" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    <accessibility key="accessibilityConfiguration">
+                        <accessibilityTraits key="traits" notEnabled="YES"/>
+                    </accessibility>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="12" id="OAb-VM-ggb"/>
+                        <constraint firstAttribute="height" constant="12" id="z8U-JW-0M1"/>
+                    </constraints>
+                    <userDefinedRuntimeAttributes>
+                        <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                            <integer key="value" value="6"/>
+                        </userDefinedRuntimeAttribute>
+                        <userDefinedRuntimeAttribute type="boolean" keyPath="layer.masksToBounds" value="YES"/>
+                    </userDefinedRuntimeAttributes>
+                </view>
+            </subviews>
+            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+            <accessibility key="accessibilityConfiguration">
+                <accessibilityTraits key="traits" notEnabled="YES"/>
+            </accessibility>
+            <constraints>
+                <constraint firstItem="j32-bi-fOF" firstAttribute="height" secondItem="iN0-l3-epB" secondAttribute="height" id="4J8-79-1Oe"/>
+                <constraint firstItem="rc9-et-Ant" firstAttribute="bottom" secondItem="uzW-WL-QDg" secondAttribute="bottom" id="73d-an-Lo8"/>
+                <constraint firstItem="j32-bi-fOF" firstAttribute="width" secondItem="iN0-l3-epB" secondAttribute="width" id="8aJ-J2-jVm"/>
+                <constraint firstItem="j32-bi-fOF" firstAttribute="centerY" secondItem="rc9-et-Ant" secondAttribute="centerY" id="8yj-Ae-apK"/>
+                <constraint firstItem="rc9-et-Ant" firstAttribute="trailing" secondItem="uzW-WL-QDg" secondAttribute="trailing" id="d8E-jw-VzL"/>
+                <constraint firstItem="j32-bi-fOF" firstAttribute="centerX" secondItem="rc9-et-Ant" secondAttribute="centerX" id="xdH-88-6B2"/>
+            </constraints>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <viewLayoutGuide key="safeArea" id="rc9-et-Ant"/>
+            <point key="canvasLocation" x="21.739130434782609" y="424.21875"/>
+        </view>
+    </objects>
+</document>
