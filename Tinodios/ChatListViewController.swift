@@ -140,13 +140,8 @@ extension ChatListViewController {
             cell.unreadCount.isHidden = true
         }
 
-        // Online/offline indicator
-        cell.online.backgroundColor = topic.online ?
-            UIColor.init(red: 0x40/255, green: 0xC0/255, blue: 0x40/255, alpha: 1.0) :
-            UIColor.init(red: 0xE0/255, green: 0xE0/255, blue: 0xE0/255, alpha: 1.0)
-
         // Avatar image
-        cell.icon.set(icon: topic.pub?.photo?.image(), title: topic.pub?.fn, id: topic.name)
+        cell.icon.set(icon: topic.pub?.photo?.image(), title: topic.pub?.fn, id: topic.name, online: topic.online)
 
         return cell
     }

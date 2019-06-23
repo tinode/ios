@@ -634,7 +634,7 @@
                                     <rect key="frame" x="0.0" y="0.0" width="375" height="59.666666666666664"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
-                                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="q2G-eT-jLv" customClass="RoundImageView" customModule="Tinodios" customModuleProvider="target">
+                                        <view userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="q2G-eT-jLv" userLabel="Icon" customClass="AvatarWithOnlineIndicator" customModule="Tinodios" customModuleProvider="target">
                                             <rect key="frame" x="20" y="9" width="40" height="40"/>
                                             <accessibility key="accessibilityConfiguration" identifier="icon">
                                                 <accessibilityTraits key="traits" image="YES"/>
@@ -643,7 +643,7 @@
                                                 <constraint firstAttribute="height" constant="40" id="EQd-1A-XTK"/>
                                                 <constraint firstAttribute="width" constant="40" id="g3P-zG-ZGa"/>
                                             </constraints>
-                                        </imageView>
+                                        </view>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1hO-ml-L3W">
                                             <rect key="frame" x="68" y="8" width="34" height="21"/>
                                             <accessibility key="accessibilityConfiguration" identifier="name"/>
@@ -678,44 +678,24 @@
                                                 </userDefinedRuntimeAttribute>
                                             </userDefinedRuntimeAttributes>
                                         </label>
-                                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="KAE-Qx-Orj" userLabel="Online">
-                                            <rect key="frame" x="48" y="37" width="12" height="12"/>
-                                            <color key="backgroundColor" red="0.25098039215686274" green="0.75294117647058822" blue="0.25098039215686274" alpha="1" colorSpace="calibratedRGB"/>
-                                            <accessibility key="accessibilityConfiguration" identifier="online">
-                                                <accessibilityTraits key="traits" notEnabled="YES"/>
-                                            </accessibility>
-                                            <constraints>
-                                                <constraint firstAttribute="width" constant="12" id="vFy-qJ-cgr"/>
-                                                <constraint firstAttribute="height" constant="12" id="y8h-Qt-N2u"/>
-                                            </constraints>
-                                            <userDefinedRuntimeAttributes>
-                                                <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
-                                                    <integer key="value" value="6"/>
-                                                </userDefinedRuntimeAttribute>
-                                                <userDefinedRuntimeAttribute type="boolean" keyPath="layer.masksToBounds" value="YES"/>
-                                            </userDefinedRuntimeAttributes>
-                                        </view>
                                     </subviews>
                                     <constraints>
                                         <constraint firstItem="F2M-3t-pxL" firstAttribute="top" secondItem="1hO-ml-L3W" secondAttribute="bottomMargin" constant="8" id="1vL-wv-B5h"/>
                                         <constraint firstItem="F2M-3t-pxL" firstAttribute="leading" secondItem="q2G-eT-jLv" secondAttribute="trailing" constant="8" id="FLh-I2-yvT"/>
                                         <constraint firstItem="1hO-ml-L3W" firstAttribute="leading" secondItem="q2G-eT-jLv" secondAttribute="trailing" constant="8" id="IEE-gz-1tf"/>
                                         <constraint firstItem="kmj-2h-Tgk" firstAttribute="leading" secondItem="1hO-ml-L3W" secondAttribute="trailing" constant="8" id="Nc9-1f-AkF"/>
-                                        <constraint firstItem="q2G-eT-jLv" firstAttribute="trailing" secondItem="KAE-Qx-Orj" secondAttribute="trailing" id="SMT-Ry-7sT"/>
                                         <constraint firstItem="q2G-eT-jLv" firstAttribute="leading" secondItem="V99-tq-Yul" secondAttribute="leading" constant="20" symbolic="YES" id="b9y-6Y-i34"/>
                                         <constraint firstItem="q2G-eT-jLv" firstAttribute="top" secondItem="V99-tq-Yul" secondAttribute="top" constant="9" id="gLT-s8-2L5"/>
                                         <constraint firstItem="1hO-ml-L3W" firstAttribute="top" secondItem="V99-tq-Yul" secondAttribute="top" constant="8" id="pT4-xx-J1W"/>
                                         <constraint firstAttribute="trailingMargin" secondItem="F2M-3t-pxL" secondAttribute="trailing" constant="8" id="rFy-6A-fTA"/>
                                         <constraint firstItem="kmj-2h-Tgk" firstAttribute="top" secondItem="V99-tq-Yul" secondAttribute="top" constant="10" id="tnh-BW-ltF"/>
-                                        <constraint firstItem="KAE-Qx-Orj" firstAttribute="bottom" secondItem="q2G-eT-jLv" secondAttribute="bottomMargin" constant="8" id="ugU-DT-y87"/>
                                         <constraint firstItem="kmj-2h-Tgk" firstAttribute="leading" secondItem="1hO-ml-L3W" secondAttribute="trailing" constant="8" id="ych-jO-cGa"/>
                                     </constraints>
                                     <edgeInsets key="layoutMargins" top="8" left="8" bottom="8" right="8"/>
                                 </tableViewCellContentView>
                                 <edgeInsets key="layoutMargins" top="8" left="8" bottom="8" right="8"/>
                                 <connections>
-                                    <outlet property="icon" destination="q2G-eT-jLv" id="D6k-BX-gnc"/>
-                                    <outlet property="online" destination="KAE-Qx-Orj" id="XUj-lF-B3G"/>
+                                    <outlet property="icon" destination="q2G-eT-jLv" id="8DU-Gd-bxZ"/>
                                     <outlet property="subtitle" destination="F2M-3t-pxL" id="WhW-d7-zQ0"/>
                                     <outlet property="title" destination="1hO-ml-L3W" id="50u-Sh-0ZN"/>
                                     <outlet property="unreadCount" destination="kmj-2h-Tgk" id="oOD-bo-XId"/>
@@ -744,7 +724,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="W26-TM-kGB" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1710" y="125"/>
+            <point key="canvasLocation" x="1709.5999999999999" y="124.8768472906404"/>
         </scene>
         <!--MessageViewController-->
         <scene sceneID="ICk-IN-bpa">
