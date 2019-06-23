@@ -9,7 +9,9 @@ import UIKit
 import TinodeSDK
 
 protocol MessageDisplayLogic: class {
-    func updateTitleBar(icon: UIImage?, title: String?)
+    func updateTitleBar(icon: UIImage?, title: String?, online: Bool)
+    func setOnline(online: Bool)
+    func runTypingAnimation()
     func displayChatMessages(messages: [StoredMessage])
     func endRefresh()
 }
@@ -89,8 +91,13 @@ class MessageViewController: UIViewController {
     }()
 
     /// Avatar in the NavBar
+    /*
     private lazy var navBarAvatarView: UIImageView = {
         return UIImageView()
+    }()
+    */
+    private lazy var navBarAvatarView: AvatarWithOnlineIndicator = {
+        return AvatarWithOnlineIndicator()
     }()
 
     /// Pointer to the view holding messages.
@@ -265,18 +272,26 @@ class MessageViewController: UIViewController {
     }
 
     @IBAction func clearMessagesClicked(_ sender: Any) {
-        self.interactor?.clearAllMessages()
+        let alert = UIAlertController(title: "Clear all messages?", message: nil, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(
+            title: "OK", style: .default,
+            handler: { action in
+                self.interactor?.clearAllMessages()
+            }))
+        self.present(alert, animated: true)
     }
 }
 
 // Methods for updating title area and refreshing messages.
 extension MessageViewController: MessageDisplayLogic {
 
-    func updateTitleBar(icon: UIImage?, title: String?) {
+    func updateTitleBar(icon: UIImage?, title: String?, online: Bool) {
         self.navigationItem.title = title ?? "Undefined"
 
-        navBarAvatarView = RoundImageView(icon: icon, title: title, id: topicName)
+        navBarAvatarView.set(icon: icon, title: title, id: topicName, online: online)
         navBarAvatarView.translatesAutoresizingMaskIntoConstraints = false
+        navBarAvatarView.bounds = CGRect(x: 0, y: 0, width: Constants.kNavBarAvatarSmallState, height: Constants.kNavBarAvatarSmallState)
         NSLayoutConstraint.activate([
                 navBarAvatarView.heightAnchor.constraint(equalToConstant: Constants.kNavBarAvatarSmallState),
                 navBarAvatarView.widthAnchor.constraint(equalTo: navBarAvatarView.heightAnchor)
@@ -285,7 +300,12 @@ extension MessageViewController: MessageDisplayLogic {
             self.navigationItem.rightBarButtonItems!.insert(UIBarButtonItem(customView: navBarAvatarView), at: 0)
         }
     }
-
+    func setOnline(online: Bool) {
+        navBarAvatarView.setOnline(online: online)
+    }
+    func runTypingAnimation() {
+        navBarAvatarView.presentTypingAnimation(steps: 30)
+    }
     func displayChatMessages(messages: [StoredMessage]) {
         let oldData = self.messages
         let newData: [StoredMessage] = messages.reversed()

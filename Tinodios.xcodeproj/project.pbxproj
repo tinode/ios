@@ -35,6 +35,9 @@
 		0A8A108521D4C79700B90D73 /* SqlStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8A108421D4C79700B90D73 /* SqlStore.swift */; };
 		0A8A8BDA21C380E80090BCBA /* Cache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8A8BD921C380E80090BCBA /* Cache.swift */; };
 		0A8C8A4621E5E72D00D8751E /* MessageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8C8A4521E5E72D00D8751E /* MessageViewController.swift */; };
+		0A8D945822BEED3700DC154E /* AvatarWithOnlineIndicator.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0A8D945722BEED3700DC154E /* AvatarWithOnlineIndicator.xib */; };
+		0A8D945A22BEF08100DC154E /* AvatarWithOnlineIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8D945922BEF08100DC154E /* AvatarWithOnlineIndicator.swift */; };
+		0A8D945C22BF5B7F00DC154E /* AvatarWithOnlineIndicator+TypingAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8D945B22BF5B7F00DC154E /* AvatarWithOnlineIndicator+TypingAnimation.swift */; };
 		0A95F4D4229BD95900AEF7D3 /* AccountSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A95F4D3229BD95900AEF7D3 /* AccountSettingsViewController.swift */; };
 		0A9F621A2295169A0087CCF5 /* NewGroupInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A9F62192295169A0087CCF5 /* NewGroupInteractor.swift */; };
 		0AC33D032293C7A00060D263 /* NewGroupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC33D022293C7A00060D263 /* NewGroupViewController.swift */; };
@@ -120,6 +123,9 @@
 		0A8A108421D4C79700B90D73 /* SqlStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SqlStore.swift; sourceTree = "<group>"; };
 		0A8A8BD921C380E80090BCBA /* Cache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cache.swift; sourceTree = "<group>"; };
 		0A8C8A4521E5E72D00D8751E /* MessageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageViewController.swift; sourceTree = "<group>"; };
+		0A8D945722BEED3700DC154E /* AvatarWithOnlineIndicator.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AvatarWithOnlineIndicator.xib; sourceTree = "<group>"; };
+		0A8D945922BEF08100DC154E /* AvatarWithOnlineIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvatarWithOnlineIndicator.swift; sourceTree = "<group>"; };
+		0A8D945B22BF5B7F00DC154E /* AvatarWithOnlineIndicator+TypingAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AvatarWithOnlineIndicator+TypingAnimation.swift"; sourceTree = "<group>"; };
 		0A95F4D3229BD95900AEF7D3 /* AccountSettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountSettingsViewController.swift; sourceTree = "<group>"; };
 		0A9F62192295169A0087CCF5 /* NewGroupInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewGroupInteractor.swift; sourceTree = "<group>"; };
 		0AC33D022293C7A00060D263 /* NewGroupViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewGroupViewController.swift; sourceTree = "<group>"; };
@@ -298,6 +304,9 @@
 		B0C496B022787C020084FA0D /* widgets */ = {
 			isa = PBXGroup;
 			children = (
+				0A8D945722BEED3700DC154E /* AvatarWithOnlineIndicator.xib */,
+				0A8D945922BEF08100DC154E /* AvatarWithOnlineIndicator.swift */,
+				0A8D945B22BF5B7F00DC154E /* AvatarWithOnlineIndicator+TypingAnimation.swift */,
 				B02F5C8A22679BC80079A97E /* ImagePicker.swift */,
 				B0DF031E227C6898000F9492 /* PaddedLabel.swift */,
 				B0DF03302283FFD8000F9492 /* PlaceholderTextView.swift */,
@@ -386,6 +395,7 @@
 				0A6AC322229FAA130025A4EC /* PermissionsEditView.xib in Resources */,
 				0A0380DF21B3CC8200A3FA0E /* Assets.xcassets in Resources */,
 				0A0380DD21B3CC8100A3FA0E /* Main.storyboard in Resources */,
+				0A8D945822BEED3700DC154E /* AvatarWithOnlineIndicator.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -460,6 +470,7 @@
 				0AE50D4822156A5B0021F7B7 /* FindPresenter.swift in Sources */,
 				B0DF03312283FFD8000F9492 /* PlaceholderTextView.swift in Sources */,
 				0A35BA9E22836CCF00AA5E2F /* ContactsSynchronizer.swift in Sources */,
+				0A8D945A22BEF08100DC154E /* AvatarWithOnlineIndicator.swift in Sources */,
 				0A0016E721E7236900088188 /* MessageInteractor.swift in Sources */,
 				0A36776922B09C1900724873 /* EditMembersViewController.swift in Sources */,
 				B0125998229C982900688FCE /* ContactViewCell.swift in Sources */,
@@ -475,6 +486,7 @@
 				0A484E5121E359A800FE9AFE /* MessageDb.swift in Sources */,
 				7DDADC5021D5C156009733B5 /* RegisterViewController.swift in Sources */,
 				B0DF031F227C6898000F9492 /* PaddedLabel.swift in Sources */,
+				0A8D945C22BF5B7F00DC154E /* AvatarWithOnlineIndicator+TypingAnimation.swift in Sources */,
 				0AE50D4A22156A6C0021F7B7 /* FindRouter.swift in Sources */,
 				B0C6A3C2229EDF14009B0B5D /* ImagePreviewController.swift in Sources */,
 				B0DF032F2282FF46000F9492 /* SendMessageBar.swift in Sources */,

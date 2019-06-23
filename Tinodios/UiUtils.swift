@@ -390,3 +390,16 @@ class RelativeDateFormatter {
         return formatter.string(from: date)
     }
 }
+
+extension UIColor {
+    convenience init(fromHexCode code: Int) {
+        let blue = code & 0xff
+        let green = (code >> 8) & 0xff
+        let red = (code >> 16) & 0xff
+        let alpha = (code >> 24) & 0xff
+        self.init(red: CGFloat(Float(red) / 255.0),
+                  green: CGFloat(green) / 255.0,
+                  blue: CGFloat(blue) / 255.0,
+                  alpha: CGFloat(alpha) / 255.0)
+    }
+}

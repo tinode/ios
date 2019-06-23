@@ -65,7 +65,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
 
         if let pub = self.topic?.pub {
             DispatchQueue.main.async {
-                self.presenter?.updateTitleBar(icon: pub.photo?.image(), title: pub.fn)
+                self.presenter?.updateTitleBar(icon: pub.photo?.image(), title: pub.fn, online: self.topic?.online ?? false)
             }
         }
         self.topic?.listener = self
@@ -213,5 +213,20 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
 
     override func onData(data: MsgServerData?) {
         self.loadMessages()
+    }
+    override func onOnline(online: Bool) {
+        DispatchQueue.main.async {
+            self.presenter?.setOnline(online: online)
+        }
+    }
+    override func onInfo(info: MsgServerInfo) {
+        switch info.what {
+        case "kp":
+            DispatchQueue.main.async {
+                self.presenter?.runTypingAnimation()
+            }
+        default:
+            break
+        }
     }
 }
