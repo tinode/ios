@@ -10,6 +10,7 @@ import UIKit
 
 protocol MessagePresentationLogic {
     func updateTitleBar(icon: UIImage?, title: String?, online: Bool)
+    func setOnline(online: Bool)
     func presentMessages(messages: [StoredMessage])
     func endRefresh()
 }
@@ -19,6 +20,9 @@ class MessagePresenter: MessagePresentationLogic {
 
     func updateTitleBar(icon: UIImage?, title: String?, online: Bool) {
         self.viewController?.updateTitleBar(icon: icon, title: title, online: online)
+    }
+    func setOnline(online: Bool) {
+        self.viewController?.setOnline(online: online)
     }
     func presentMessages(messages: [StoredMessage]) {
         self.viewController?.displayChatMessages(messages: messages)

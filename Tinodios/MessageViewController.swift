@@ -10,6 +10,7 @@ import TinodeSDK
 
 protocol MessageDisplayLogic: class {
     func updateTitleBar(icon: UIImage?, title: String?, online: Bool)
+    func setOnline(online: Bool)
     func displayChatMessages(messages: [StoredMessage])
     func endRefresh()
 }
@@ -298,7 +299,9 @@ extension MessageViewController: MessageDisplayLogic {
             self.navigationItem.rightBarButtonItems!.insert(UIBarButtonItem(customView: navBarAvatarView), at: 0)
         }
     }
-
+    func setOnline(online: Bool) {
+        navBarAvatarView.setOnline(online: online)
+    }
     func displayChatMessages(messages: [StoredMessage]) {
         let oldData = self.messages
         let newData: [StoredMessage] = messages.reversed()
