@@ -219,4 +219,14 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
             self.presenter?.setOnline(online: online)
         }
     }
+    override func onInfo(info: MsgServerInfo) {
+        switch info.what {
+        case "kp":
+            DispatchQueue.main.async {
+                self.presenter?.runTypingAnimation()
+            }
+        default:
+            break
+        }
+    }
 }

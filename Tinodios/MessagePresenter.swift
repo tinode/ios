@@ -11,6 +11,7 @@ import UIKit
 protocol MessagePresentationLogic {
     func updateTitleBar(icon: UIImage?, title: String?, online: Bool)
     func setOnline(online: Bool)
+    func runTypingAnimation()
     func presentMessages(messages: [StoredMessage])
     func endRefresh()
 }
@@ -29,5 +30,8 @@ class MessagePresenter: MessagePresentationLogic {
     }
     func endRefresh() {
         self.viewController?.endRefresh()
+    }
+    func runTypingAnimation() {
+        self.viewController?.runTypingAnimation()
     }
 }

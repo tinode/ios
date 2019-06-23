@@ -11,6 +11,7 @@ import TinodeSDK
 protocol MessageDisplayLogic: class {
     func updateTitleBar(icon: UIImage?, title: String?, online: Bool)
     func setOnline(online: Bool)
+    func runTypingAnimation()
     func displayChatMessages(messages: [StoredMessage])
     func endRefresh()
 }
@@ -301,6 +302,9 @@ extension MessageViewController: MessageDisplayLogic {
     }
     func setOnline(online: Bool) {
         navBarAvatarView.setOnline(online: online)
+    }
+    func runTypingAnimation() {
+        navBarAvatarView.presentTypingAnimation(steps: 30)
     }
     func displayChatMessages(messages: [StoredMessage]) {
         let oldData = self.messages
