@@ -10,6 +10,12 @@ import UIKit
 
 extension AvatarWithOnlineIndicator {
     static let kTypingAnimationSize = 4
+    static let kAnimationColorSequence = [
+        UIColor(fromHexCode: 0xFF40C040),
+        UIColor(fromHexCode: 0xFF30D030),
+        UIColor(fromHexCode: 0xFF10EE10),
+        UIColor(fromHexCode: 0xFF00FF00)
+    ]
     // Runs typing animation over the online indicator
     // every 1/20th of a second |steps| times.
     func presentTypingAnimation(steps: Int) {
@@ -54,13 +60,9 @@ extension AvatarWithOnlineIndicator {
             return
         }
         let animationView = self.online.subviews[0]
-        let cls = [
-            UIColor(fromHexCode: 0xFF40C040),
-            UIColor(fromHexCode: 0xFF30D030),
-            UIColor(fromHexCode: 0xFF10EE10),
-            UIColor(fromHexCode: 0xFF00FF00)
-        ]
-        animationView.backgroundColor = cls[self.tag & 3]
+        animationView.backgroundColor =
+            AvatarWithOnlineIndicator.kAnimationColorSequence[
+                self.tag % AvatarWithOnlineIndicator.kAnimationColorSequence.count]
         self.tag -= 1
         if self.tag <= 0 {
             timer.invalidate()
