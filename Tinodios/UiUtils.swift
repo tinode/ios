@@ -327,8 +327,8 @@ extension UIImage {
         // Sanity check
         assert(maxWidth > 0 && maxHeight > 0, "Maxumum dimensions must be positive")
 
-        let originalWidth = CGFloat(self.size.width)
-        let originalHeight = CGFloat(self.size.height)
+        let originalWidth = CGFloat(self.size.width * self.scale)
+        let originalHeight = CGFloat(self.size.height * self.scale)
 
         // scale is [0,1): 0 - very large original, 1: under the limits already.
         let scaleX = min(originalWidth, maxWidth) / originalWidth
