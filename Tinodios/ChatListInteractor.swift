@@ -17,6 +17,7 @@ protocol ChatListBusinessLogic: class {
     func setup()
     func cleanup()
     func deleteTopic(_ name: String)
+    func changeArchivedStatus(forTopic name: String, archived: Bool)
 }
 
 protocol ChatListDataStore: class {
@@ -129,6 +130,7 @@ class ChatListInteractor: ChatListBusinessLogic, ChatListDataStore {
         Cache.getTinode().listener = nil
     }
     func loadAndPresentTopics() {
+        //  TODO: use topic.isArchived to filter archived topics.
         self.topics = Cache.getTinode().getFilteredTopics(filter: {(topic: TopicProto) in
             return topic.topicType.matches(TopicType.user)
         })?.map {
@@ -146,6 +148,18 @@ class ChatListInteractor: ChatListBusinessLogic, ChatListDataStore {
         let topic = Cache.getTinode().getTopic(topicName: name) as! DefaultComTopic
         do {
             try topic.delete()?.then(onSuccess: { [weak self] msg in
+                self?.loadAndPresentTopics()
+                return nil
+            })
+        } catch {
+            print(error)
+        }
+    }
+
+    func changeArchivedStatus(forTopic name: String, archived: Bool) {
+        let topic = Cache.getTinode().getTopic(topicName: name) as! DefaultComTopic
+        do {
+            try topic.updateArchived(archived: archived)?.then(onSuccess: { [weak self] msg in
                 self?.loadAndPresentTopics()
                 return nil
             })

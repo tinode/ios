@@ -152,8 +152,14 @@ extension ChatListViewController {
             let topic = self.topics[indexPath.row]
             self.interactor?.deleteTopic(topic.name)
         }
+        let archive = UITableViewRowAction(style: .normal, title: "Archive") { (action, indexPath) in
+            print("archiving at index path")
+            let topic = self.topics[indexPath.row]
+            self.interactor?.changeArchivedStatus(
+                forTopic: topic.name, archived: !topic.isArchived)
+        }
 
-        return [delete]
+        return [delete, archive]
     }
 }
 
