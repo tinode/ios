@@ -32,7 +32,9 @@ class ChatListInteractor: ChatListBusinessLogic, ChatListDataStore {
             print("Contacts got onInfo update \(String(describing: info.what))")
         }
         override func onPres(pres: MsgServerPres) {
-            if pres.what == "msg" || pres.what == "off" || pres.what == "on" {
+            if pres.what == "msg" {
+                interactor?.loadAndPresentTopics()
+            } else if pres.what == "off" || pres.what == "on" {
                 if let name = pres.src {
                     interactor?.updateChat(name)
                 }
