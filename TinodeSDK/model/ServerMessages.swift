@@ -108,6 +108,15 @@ extension PrivateType {
         }
         set { self["comment"] = .string(newValue ?? Tinode.kNullValue) }
     }
+    public var archived: Bool? {
+        get {
+            if case let .bool(v)? = self["arch"] {
+                return v
+            }
+            return nil
+        }
+        set { self["arch"] = newValue != nil ? .bool(newValue!) : nil }
+    }
 }
 
 // VCard

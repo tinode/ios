@@ -31,6 +31,7 @@ public protocol TopicProto: class {
     var lastSeen: LastSeen? { get set }
     var online: Bool { get set }
     var cachedMessageRange: Storage.Range? { get }
+    var isArchived: Bool { get }
 
     func serializePub() -> String?
     func serializePriv() -> String?
@@ -351,6 +352,9 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
         get {
             return description?.acs?.isAdmin ?? false
         }
+    }
+    public var isArchived: Bool {
+        get { return false }
     }
 
     // Storage is owned by Tinode.
@@ -1391,7 +1395,7 @@ public class ComTopic<DP: Codable>: Topic<DP, PrivateType, DP, PrivateType> {
         self.init(tinode: tinode!, name: Tinode.kTopicNew + tinode!.nextUniqueString(), l: l)
     }
 
-    public var isArchived: Bool {
+    public override var isArchived: Bool {
         get {
             guard let archived = priv?["arch"] else { return false }
             switch archived {
@@ -1405,5 +1409,15 @@ public class ComTopic<DP: Codable>: Topic<DP, PrivateType, DP, PrivateType> {
 
     public var comment: String? {
         get { return priv?.comment }
+    }
+
+    public func updateArchived(archived: Bool) -> PromisedReply<ServerMessage>? {
+        var priv = PrivateType()
+        priv.archived = archived
+        let meta = MsgSetMeta<DP, PrivateType>(
+            desc: MetaSetDesc(pub: nil, priv: priv),
+            sub: nil,
+            tags: nil)
+        return setMeta(meta: meta)
     }
 }
