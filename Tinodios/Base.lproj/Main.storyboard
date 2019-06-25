@@ -608,7 +608,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="6Ca-WU-bxc" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2972" y="-211.33004926108376"/>
+            <point key="canvasLocation" x="2972" y="-751"/>
         </scene>
         <!--Chats-->
         <scene sceneID="Dyz-uQ-9eq">
@@ -699,7 +699,6 @@
                                     <outlet property="subtitle" destination="F2M-3t-pxL" id="WhW-d7-zQ0"/>
                                     <outlet property="title" destination="1hO-ml-L3W" id="50u-Sh-0ZN"/>
                                     <outlet property="unreadCount" destination="kmj-2h-Tgk" id="oOD-bo-XId"/>
-                                    <segue destination="l6T-LK-IbJ" kind="show" identifier="Chats2Messages" id="ANE-DH-PdS"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>
@@ -721,6 +720,10 @@
                             </connections>
                         </barButtonItem>
                     </navigationItem>
+                    <connections>
+                        <segue destination="l6T-LK-IbJ" kind="show" identifier="Chats2Messages" id="11u-RR-BAc"/>
+                        <segue destination="B0l-J0-jm9" kind="show" identifier="Chats2Archive" id="c7r-o7-8Aw"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="W26-TM-kGB" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -753,7 +756,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="hJE-4j-6S3" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2972" y="467"/>
+            <point key="canvasLocation" x="2972" y="143"/>
         </scene>
         <!--TopicInfoViewController-->
         <scene sceneID="mxu-ZQ-Gyc">
@@ -1111,7 +1114,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="2Ct-oM-2pn" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3909.5999999999999" y="466.99507389162562"/>
+            <point key="canvasLocation" x="3905" y="143"/>
         </scene>
         <!--Edit Members-->
         <scene sceneID="T9P-Ei-xRE">
@@ -1200,7 +1203,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="b4U-eA-COt" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="4840.8000000000002" y="466.99507389162562"/>
+            <point key="canvasLocation" x="4814" y="143"/>
         </scene>
         <!--Confirm credentials-->
         <scene sceneID="Fsr-7A-t2q">
@@ -1275,7 +1278,38 @@
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="nPd-RP-hhi" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1710" y="818"/>
+            <point key="canvasLocation" x="1665" y="1020"/>
+        </scene>
+        <!--ArchivedChats-->
+        <scene sceneID="1Qp-ui-CDn">
+            <objects>
+                <tableViewController id="B0l-J0-jm9" userLabel="ArchivedChats" customClass="ArchivedChatsTableViewController" customModule="Tinodios" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="Cq0-Zq-kcv">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <prototypes>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="ArchivedChatsTableViewCell" id="fKl-ZX-01c" userLabel="ChatsTableViewCell">
+                                <rect key="frame" x="0.0" y="28" width="375" height="44"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="fKl-ZX-01c" id="RBK-SW-gAF">
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="43.666666666666664"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </tableViewCellContentView>
+                                <connections>
+                                    <segue destination="l6T-LK-IbJ" kind="show" identifier="ArchivedChats2Messages" id="3Az-8e-Em0"/>
+                                </connections>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="B0l-J0-jm9" id="HSV-Mw-azD"/>
+                            <outlet property="delegate" destination="B0l-J0-jm9" id="2At-1c-ez4"/>
+                        </connections>
+                    </tableView>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="hjG-K0-Ksm" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2972" y="1019"/>
         </scene>
         <!--Find Controller-->
         <scene sceneID="G8F-we-dvp">
@@ -1323,7 +1357,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="QKh-Hs-4aI" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="836" y="1585.7142857142858"/>
+            <point key="canvasLocation" x="791" y="1787"/>
         </scene>
         <!--New Group Controller-->
         <scene sceneID="H36-1e-dDP">
@@ -1510,7 +1544,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="bTN-HH-J8a" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1709.5999999999999" y="1585.7142857142858"/>
+            <point key="canvasLocation" x="1665" y="1787"/>
         </scene>
         <!--By ID Controller-->
         <scene sceneID="AtY-x1-ZN9">
@@ -1561,7 +1595,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ICE-Ms-S7M" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2429.5999999999999" y="1592.3645320197045"/>
+            <point key="canvasLocation" x="2385" y="1794"/>
         </scene>
     </scenes>
     <resources>
@@ -1572,4 +1606,7 @@
         <image name="new-group-25" width="25" height="25"/>
         <image name="search-25" width="25" height="25"/>
     </resources>
+    <inferredMetricsTieBreakers>
+        <segue reference="3Az-8e-Em0"/>
+    </inferredMetricsTieBreakers>
 </document>

@@ -81,6 +81,7 @@ class ChatListInteractor: ChatListBusinessLogic, ChatListDataStore {
     var presenter: ChatListPresentationLogic?
     var router: ChatListRoutingLogic?
     var topics: [DefaultComTopic]?
+    private var archivedTopics: [DefaultComTopic]?
     private var meListener: MeListener? = nil
     private var meTopic: DefaultMeTopic? = nil
     private var tinodeEventListener: ChatEventListener? = nil
@@ -131,15 +132,19 @@ class ChatListInteractor: ChatListBusinessLogic, ChatListDataStore {
         self.meTopic?.listener = nil
         Cache.getTinode().listener = nil
     }
-    func loadAndPresentTopics() {
-        //  TODO: use topic.isArchived to filter archived topics.
-        self.topics = Cache.getTinode().getFilteredTopics(filter: {(topic: TopicProto) in
-            return topic.topicType.matches(TopicType.user)
+    private func getTopics(archived: Bool) -> [DefaultComTopic]? {
+        return Cache.getTinode().getFilteredTopics(filter: {(topic: TopicProto) in
+            return topic.topicType.matches(TopicType.user) && topic.isArchived == archived
         })?.map {
             // Must succeed.
             $0 as! DefaultComTopic
         }
-        self.presenter?.presentTopics(self.topics ?? [])
+    }
+    func loadAndPresentTopics() {
+        self.topics = self.getTopics(archived: false)
+        self.archivedTopics = self.getTopics(archived: true)
+        self.presenter?.presentTopics(
+            self.topics ?? [], archivedTopics: self.archivedTopics)
     }
 
     func updateChat(_ name: String) {
