@@ -17,6 +17,8 @@ protocol ChatListDisplayLogic: class {
 
 class ChatListViewController: UITableViewController, ChatListDisplayLogic {
 
+    @IBOutlet var chatListTableView: UITableView!
+
     var interactor: ChatListBusinessLogic?
     var topics: [DefaultComTopic] = []
     var archivedTopics: [DefaultComTopic]? = nil
@@ -42,6 +44,8 @@ class ChatListViewController: UITableViewController, ChatListDisplayLogic {
         interactor.router = router
         presenter.viewController = viewController
         router.viewController = viewController
+
+        self.chatListTableView.register(UINib(nibName: "ChatListViewCell", bundle: nil), forCellReuseIdentifier: "ChatListViewCell")
     }
 
     override func viewDidLoad() {
@@ -135,7 +139,7 @@ extension ChatListViewController {
         }
         return topics.count
     }
-    private func fillInArchivedChatsCell(cell: ChatListTableViewCell) {
+    private func fillInArchivedChatsCell(cell: ChatListViewCell) {
         cell.title.text = "Archived Chats"
         cell.title.sizeToFit()
         cell.subtitle.text = self.archivedTopics!.map { $0.pub?.fn ?? "Unknown" }.joined(separator: ", ")
@@ -145,27 +149,13 @@ extension ChatListViewController {
         cell.icon.online.isHidden = true
     }
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "ChatsTableViewCell") as! ChatListTableViewCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: "ChatListViewCell") as! ChatListViewCell
         if self.numArchivedTopics > 0 && indexPath.section == 0 {
             fillInArchivedChatsCell(cell: cell)
             return cell
         }
         let topic = self.topics[indexPath.row]
-        cell.title.text = topic.pub?.fn ?? "Unknown or unnamed"
-        cell.title.sizeToFit()
-        cell.subtitle.text = topic.comment
-        cell.subtitle.sizeToFit()
-        let unread = topic.unread
-        if unread > 0 {
-            cell.unreadCount.text = unread > 9 ? "9+" : String(unread)
-            cell.unreadCount.isHidden = false
-        } else {
-            cell.unreadCount.isHidden = true
-        }
-
-        // Avatar image
-        cell.icon.set(icon: topic.pub?.photo?.image(), title: topic.pub?.fn, id: topic.name, online: topic.online)
-
+        cell.fillFromTopic(topic: topic)
         return cell
     }
 

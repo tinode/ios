@@ -10,9 +10,11 @@ import TinodeSDK
 
 class ArchivedChatsTableViewController: UITableViewController {
 
+    @IBOutlet var chatListTableView: UITableView!
     private var topics: [DefaultComTopic] = []
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.chatListTableView.register(UINib(nibName: "ChatListViewCell", bundle: nil), forCellReuseIdentifier: "ChatListViewCell")
         self.reloadData()
     }
 
@@ -35,39 +37,55 @@ class ArchivedChatsTableViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "ArchivedChatsTableViewCell")!
+        let cell = tableView.dequeueReusableCell(withIdentifier: "ChatListViewCell") as! ChatListViewCell
 
         let topic = self.topics[indexPath.row]
-        cell.textLabel?.text = topic.pub?.fn ?? "Unknown"
+        //cell.textLabel?.text = topic.pub?.fn ?? "Unknown"
+        cell.fillFromTopic(topic: topic)
         return cell
+    }
+    private func unarchiveTopic(topic: DefaultComTopic) {
+        do {
+            try topic.updateArchived(archived: false)?.then(
+                onSuccess: { [weak self] msg in
+                    DispatchQueue.main.async {
+                        if let vc = self {
+                            vc.reloadData()
+                            vc.tableView.reloadData()
+                            // If there are no more archived topics, close the view.
+                            if vc.topics.isEmpty {
+                                vc.navigationController?.popViewController(animated: true)
+                                vc.dismiss(animated: true, completion: nil)
+                            }
+                        }
+                    }
+                    return nil
+                },
+                onFailure: UiUtils.ToastFailureHandler)
+        } catch {
+            UiUtils.showToast(message: "Failed to unarchive topic: \(error)")
+        }
     }
     override func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
         let unarchive = UITableViewRowAction(style: .normal, title: "Unarchive") { (action, indexPath) in
             print("archiving at index path")
             let topic = self.topics[indexPath.row]
-            do {
-                try topic.updateArchived(archived: false)?.then(onSuccess: { [weak self] msg in
-                    DispatchQueue.main.async {
-                        self?.reloadData()
-                        self?.tableView.reloadData()
-                    }
-                    return nil
-                })
-            } catch {
-                print(error)
-            }
+            self.unarchiveTopic(topic: topic)
         }
 
         return [unarchive]
     }
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated:  true)
+        self.performSegue(withIdentifier: "ArchivedChats2Messages",
+                          sender: self.topics[indexPath.row].name)
+    }
 
     // MARK: - Navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-        if let indexPath = self.tableView.indexPathForSelectedRow {
+        if segue.identifier == "ArchivedChats2Messages", let topicName = sender as? String {
             let messageController = segue.destination as! MessageViewController
-            messageController.topicName = self.topics[indexPath.row].name
+            messageController.topicName = topicName
         }
     }
 }
