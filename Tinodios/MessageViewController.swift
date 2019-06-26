@@ -239,6 +239,7 @@ class MessageViewController: UIViewController {
         }
         self.interactor?.attachToTopic()
         self.interactor?.loadMessages()
+        self.interactor?.sendReadNotification()
         self.noteTimer = Timer.scheduledTimer(
             withTimeInterval: 1,
             repeats: true,
