@@ -91,11 +91,6 @@ class MessageViewController: UIViewController {
     }()
 
     /// Avatar in the NavBar
-    /*
-    private lazy var navBarAvatarView: UIImageView = {
-        return UIImageView()
-    }()
-    */
     private lazy var navBarAvatarView: AvatarWithOnlineIndicator = {
         return AvatarWithOnlineIndicator()
     }()
