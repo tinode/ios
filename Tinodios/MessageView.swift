@@ -93,4 +93,42 @@ extension MessageView {
             self.backgroundView = nil
         }
     }
+    //
+    public func showNoAccessOverlay() {
+        // Blurring layer over the messages.
+        let blurEffect = UIBlurEffect(style: .extraLight)
+        let blurEffectView = UIVisualEffectView(effect: blurEffect)
+        blurEffectView.alpha = 0.8
+        blurEffectView.translatesAutoresizingMaskIntoConstraints = false
+        self.addSubview(blurEffectView)
+        // Pin the edges to the superview edges.
+        if #available(iOS 11.0, *) {
+            NSLayoutConstraint.activate([
+                blurEffectView.topAnchor.constraint(equalTo: self.safeAreaLayoutGuide.topAnchor),
+                blurEffectView.bottomAnchor.constraint(equalTo: self.safeAreaLayoutGuide.bottomAnchor),
+                blurEffectView.leadingAnchor.constraint(equalTo: self.safeAreaLayoutGuide.leadingAnchor),
+                blurEffectView.trailingAnchor.constraint(equalTo: self.safeAreaLayoutGuide.trailingAnchor)])
+        } else {
+            NSLayoutConstraint.activate([
+                blurEffectView.topAnchor.constraint(equalTo: self.topAnchor),
+                blurEffectView.bottomAnchor.constraint(equalTo: self.bottomAnchor),
+                blurEffectView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
+                blurEffectView.trailingAnchor.constraint(equalTo: self.trailingAnchor)])
+        }
+        // "No access to messages" text.
+        let noAccessLabel = UILabel()//frame: view.bounds)
+        noAccessLabel.text = "No access to messages"
+        noAccessLabel.sizeToFit()
+        noAccessLabel.numberOfLines = 0
+        noAccessLabel.textAlignment = .center
+        noAccessLabel.font = UIFont.boldSystemFont(ofSize: 18)
+        noAccessLabel.translatesAutoresizingMaskIntoConstraints = false
+        blurEffectView.contentView.addSubview(noAccessLabel)
+        // Pin it to the superview center.
+        NSLayoutConstraint.activate([
+            noAccessLabel.centerXAnchor.constraint(equalTo: blurEffectView.centerXAnchor),
+            noAccessLabel.centerYAnchor.constraint(equalTo: blurEffectView.centerYAnchor)])
+        // Disable user interaction for the message view.
+        self.isUserInteractionEnabled = false
+    }
 }

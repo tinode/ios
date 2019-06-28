@@ -201,6 +201,10 @@ class MessageViewController: UIViewController {
             trailing = collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
         }
         NSLayoutConstraint.activate([top, bottom, trailing, leading])
+        // TODO: honor topic permissions.
+        // if !topic.isReader {
+        //     self.collectionView.showNoAccessOverlay()
+        // }
     }
 
     override func viewDidLoad() {

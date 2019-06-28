@@ -353,6 +353,21 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
             return description?.acs?.isAdmin ?? false
         }
     }
+    public var isReader: Bool {
+        get {
+            return description?.acs?.isReader ?? false
+        }
+    }
+    public var isWriter: Bool {
+        get {
+            return description?.acs?.isWriter ?? false
+        }
+    }
+    public var isJoiner: Bool {
+        get {
+            return description?.acs?.isJoiner ?? false
+        }
+    }
     public var isArchived: Bool {
         get { return false }
     }
