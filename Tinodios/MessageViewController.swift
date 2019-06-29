@@ -13,6 +13,7 @@ protocol MessageDisplayLogic: class {
     func setOnline(online: Bool)
     func runTypingAnimation()
     func displayChatMessages(messages: [StoredMessage])
+    func applyTopicPermissions()
     func endRefresh()
 }
 
@@ -201,10 +202,22 @@ class MessageViewController: UIViewController {
             trailing = collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
         }
         NSLayoutConstraint.activate([top, bottom, trailing, leading])
-        // TODO: honor topic permissions.
-        // if !topic.isReader {
-        //     self.collectionView.showNoAccessOverlay()
-        // }
+    }
+
+    public func applyTopicPermissions() {
+        if !(topic?.isReader ?? false) {
+            self.collectionView.showNoAccessOverlay()
+        } else {
+            self.collectionView.removeNoAccessOverlay()
+        }
+        if topic?.isWriter ?? false {
+            self.sendMessageBar.removeNotAvailableOverlay()
+            //if let acs = self.topic?.peer?.acs,
+            //    acs.isJoiner(for: .want) && (acs.missing?.description?.contains("RW") ?? false) {  
+            //}
+        } else {
+            self.sendMessageBar.showNotAvailableOverlay()
+        }
     }
 
     override func viewDidLoad() {
@@ -245,6 +258,7 @@ class MessageViewController: UIViewController {
             block: { _ in
                 self.interactor?.sendReadNotification()
             })
+        self.applyTopicPermissions()
     }
     override func viewWillDisappear(_ animated: Bool) {
         if let viewControllers = self.navigationController?.viewControllers, viewControllers.count > 1, viewControllers[viewControllers.count - 2] === self {

@@ -939,7 +939,7 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
         if description!.acs == nil {
             description!.acs = Acs()
         }
-        let mode = uidIsSelf ? description!.acs!.want : description!.acs!.given
+        let mode = uidIsSelf ? description!.acs!.want : sub!.acs!.given
         if mode?.update(from: update) ?? false {
             return setSubscription(sub: MetaSetSub(user: uid, mode: mode?.description))
         }
@@ -1424,6 +1424,13 @@ public class ComTopic<DP: Codable>: Topic<DP, PrivateType, DP, PrivateType> {
 
     public var comment: String? {
         get { return priv?.comment }
+    }
+
+    public var peer: Subscription<DP, PrivateType>? {
+        get {
+            guard isP2PType else { return nil }
+            return self.getSubscription(for: self.name)
+        }
     }
 
     public func updateArchived(archived: Bool) -> PromisedReply<ServerMessage>? {

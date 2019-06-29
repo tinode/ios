@@ -8,6 +8,9 @@
 import Foundation
 
 public class Acs: Codable, Equatable {
+    public enum Side {
+        case mode, want, given
+    }
     public var given: AcsHelper?
     public var want: AcsHelper?
     public var mode: AcsHelper?
@@ -56,6 +59,11 @@ public class Acs: Codable, Equatable {
     public var isReader: Bool {
         get {
             return mode?.isReader ?? false
+        }
+    }
+    public var missing: AcsHelper? {
+        get {
+            return AcsHelper.diff(a1: self.want, a2: self.given)
         }
     }
     public var isGivenDefined: Bool {
@@ -118,6 +126,13 @@ public class Acs: Codable, Equatable {
         }
         if let modeStr = try? container.decode(String.self, forKey: .mode) {
             self.mode = AcsHelper(str: modeStr)
+        }
+    }
+    public func isJoiner(for side: Acs.Side) -> Bool {
+        switch side {
+        case .mode: return mode?.isJoiner ?? false
+        case .want: return want?.isJoiner ?? false
+        case .given: return given?.isJoiner ?? false
         }
     }
     @discardableResult

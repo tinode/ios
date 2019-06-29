@@ -28,6 +28,9 @@ class SendMessageBar: UIView {
     @IBOutlet weak var inputField: UITextView!
     @IBOutlet weak var inputFieldHeight: NSLayoutConstraint!
 
+    // MARK: Properties
+    weak var foregroundView: UIView?
+
     // MARK: IBActions
 
     @IBAction func attach(_ sender: UIButton) {
@@ -129,3 +132,49 @@ extension SendMessageBar: UITextViewDelegate {
     }
 }
 
+extension SendMessageBar {
+    public func showNotAvailableOverlay() {
+        guard self.foregroundView == nil else { return }
+        // Blurring layer over the messages.
+        let overlay = UIView()
+        overlay.alpha = 0.8
+        overlay.backgroundColor = UIColor.white
+        overlay.translatesAutoresizingMaskIntoConstraints = false
+        self.addSubview(overlay)
+        if #available(iOS 11.0, *) {
+            NSLayoutConstraint.activate([
+                overlay.topAnchor.constraint(equalTo: self.safeAreaLayoutGuide.topAnchor),
+                overlay.bottomAnchor.constraint(equalTo: self.safeAreaLayoutGuide.bottomAnchor),
+                overlay.leadingAnchor.constraint(equalTo: self.safeAreaLayoutGuide.leadingAnchor),
+                overlay.trailingAnchor.constraint(equalTo: self.safeAreaLayoutGuide.trailingAnchor)])
+        } else {
+            NSLayoutConstraint.activate([
+                overlay.topAnchor.constraint(equalTo: self.topAnchor),
+                overlay.bottomAnchor.constraint(equalTo: self.bottomAnchor),
+                overlay.leadingAnchor.constraint(equalTo: self.leadingAnchor),
+                overlay.trailingAnchor.constraint(equalTo: self.trailingAnchor)])
+        }
+
+        let notAvailableLabel = UILabel()
+        notAvailableLabel.text = "Not available"
+        notAvailableLabel.sizeToFit()
+        notAvailableLabel.numberOfLines = 0
+        notAvailableLabel.textAlignment = .center
+        notAvailableLabel.font = UIFont.boldSystemFont(ofSize: 18)
+        notAvailableLabel.translatesAutoresizingMaskIntoConstraints = false
+        overlay.addSubview(notAvailableLabel)
+        // Pin it to the superview center.
+        NSLayoutConstraint.activate([
+            notAvailableLabel.centerXAnchor.constraint(equalTo: overlay.centerXAnchor),
+            notAvailableLabel.centerYAnchor.constraint(equalTo: overlay.centerYAnchor)])
+        // Disable user interaction for the message view.
+        self.isUserInteractionEnabled = false
+        self.foregroundView = overlay
+    }
+    public func removeNotAvailableOverlay() {
+        guard self.foregroundView != nil else { return }
+        self.foregroundView!.removeFromSuperview()
+        self.foregroundView = nil
+        self.isUserInteractionEnabled = true
+    }
+}
