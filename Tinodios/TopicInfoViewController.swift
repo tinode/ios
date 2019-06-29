@@ -134,8 +134,9 @@ class TopicInfoViewController: UIViewController {
             self.membersTableView.reloadData()
         } else {
             self.peerNameLabel?.text = self.topic.pub?.fn ?? "Unknown"
-            self.myPermissionsLabel?.text = self.topic.accessMode?.wantString
-            self.peerPermissionsLabel?.text = self.topic.accessMode?.givenString
+            self.myPermissionsLabel?.text = acs?.wantString
+            let sub = self.topic.getSubscription(for: self.topic.name)
+            self.peerPermissionsLabel?.text = sub?.acs?.givenString
         }
     }
     @IBAction func loadAvatarClicked(_ sender: Any) {
@@ -208,7 +209,8 @@ class TopicInfoViewController: UIViewController {
             return (topic.accessMode?.want, nil, .updateSelfSub, [.approve, .invite, .delete])
         }
         if sender === peerPermissionsLabel {
-            return (topic.accessMode?.given, topic.name, .updateSub, [.approve, .invite, .delete])
+            return (self.topic.getSubscription(for: self.topic.name)?.acs?.given,
+                    topic.name, .updateSub, [.approve, .invite, .delete])
         }
         if sender === authUsersPermissionsLabel {
             return (topic.defacs?.auth, nil, .updateAuth, nil)  // Should be O?

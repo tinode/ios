@@ -12,6 +12,7 @@ class MessageView: UICollectionView {
     // MARK: - Properties
 
     weak var cellDelegate: MessageCellDelegate?
+    weak var foregroundView: UIView?
 
     // MARK: - Initializers
 
@@ -93,8 +94,12 @@ extension MessageView {
             self.backgroundView = nil
         }
     }
-    //
+
+    /// Adds a blurring overlay over the messages
+    /// with "No access to messages" label in the center.
     public func showNoAccessOverlay() {
+        // Make sure there's no foreground overlay yet.
+        guard self.foregroundView == nil else { return }
         // Blurring layer over the messages.
         let blurEffect = UIBlurEffect(style: .extraLight)
         let blurEffectView = UIVisualEffectView(effect: blurEffect)
@@ -130,5 +135,14 @@ extension MessageView {
             noAccessLabel.centerYAnchor.constraint(equalTo: blurEffectView.centerYAnchor)])
         // Disable user interaction for the message view.
         self.isUserInteractionEnabled = false
+
+        self.foregroundView = blurEffectView
+    }
+
+    public func removeNoAccessOverlay() {
+        guard self.foregroundView != nil else { return }
+        self.foregroundView!.removeFromSuperview()
+        self.foregroundView = nil
+        self.isUserInteractionEnabled = true
     }
 }

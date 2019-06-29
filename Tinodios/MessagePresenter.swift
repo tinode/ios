@@ -13,6 +13,7 @@ protocol MessagePresentationLogic {
     func setOnline(online: Bool)
     func runTypingAnimation()
     func presentMessages(messages: [StoredMessage])
+    func applyTopicPermissions()
     func endRefresh()
 }
 
@@ -33,5 +34,8 @@ class MessagePresenter: MessagePresentationLogic {
     }
     func runTypingAnimation() {
         self.viewController?.runTypingAnimation()
+    }
+    func applyTopicPermissions() {
+        self.viewController?.applyTopicPermissions()
     }
 }

@@ -82,6 +82,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
     }
     func attachToTopic() -> Bool {
         guard !(self.topic?.attached ?? false) else {
+            DispatchQueue.main.async { self.presenter?.applyTopicPermissions() }
             return true
         }
         do {
@@ -101,6 +102,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                         if self?.topicId == -1 {
                             self?.topicId = BaseDb.getInstance().topicDb?.getId(topic: self?.topicName)
                         }
+                        DispatchQueue.main.async { self?.presenter?.applyTopicPermissions() }
                         return nil
                     },
                     onFailure: { err in
@@ -228,5 +230,11 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         default:
             break
         }
+    }
+    override func onSubsUpdated() {
+        DispatchQueue.main.async { self.presenter?.applyTopicPermissions() }
+    }
+    override func onMetaDesc(desc: Description<VCard, PrivateType>) {
+        DispatchQueue.main.async { self.presenter?.applyTopicPermissions() }
     }
 }

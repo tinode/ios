@@ -36,7 +36,7 @@ public class AcsHelper: Codable, Equatable {
     
     private var a: Int?
 
-    var description: String {
+    public var description: String {
         guard a != nil else {
             return ""
         }
@@ -213,6 +213,10 @@ public class AcsHelper: Codable, Equatable {
             return AcsHelper(a: ah1.a! & ah2.a!)
         }
         return nil
+    }
+    public static func diff(a1: AcsHelper?, a2: AcsHelper?) -> AcsHelper? {
+        guard let a1a = a1?.a, let a2a = a2?.a, !a1!.isInvalid, !a2!.isInvalid else { return nil }
+        return AcsHelper(a: a1a & ~a2a)
     }
     public static func == (lhs: AcsHelper, rhs: AcsHelper) -> Bool {
         return lhs.a == rhs.a
