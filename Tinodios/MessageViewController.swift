@@ -15,6 +15,7 @@ protocol MessageDisplayLogic: class {
     func displayChatMessages(messages: [StoredMessage])
     func applyTopicPermissions()
     func endRefresh()
+    func dismiss()
 }
 
 class MessageViewController: UIViewController {
@@ -205,6 +206,8 @@ class MessageViewController: UIViewController {
     }
 
     public func applyTopicPermissions() {
+        // Make sure the view is visible.
+        guard self.isViewLoaded && ((self.view?.window) != nil) else { return }
         if !(topic?.isReader ?? false) {
             self.collectionView.showNoAccessOverlay()
         } else {
@@ -212,11 +215,16 @@ class MessageViewController: UIViewController {
         }
         if topic?.isWriter ?? false {
             self.sendMessageBar.removeNotAvailableOverlay()
-            //if let acs = self.topic?.peer?.acs,
-            //    acs.isJoiner(for: .want) && (acs.missing?.description?.contains("RW") ?? false) {  
-            //}
+            if let acs = self.topic?.peer?.acs,
+                acs.isJoiner(for: .want) && (acs.missing?.description.contains("RW") ?? false) {
+                self.sendMessageBar.showPeersMessagingDisabledOverlay()
+            }
         } else {
             self.sendMessageBar.showNotAvailableOverlay()
+        }
+        // We are offered to join a chat.
+        if let acs = topic?.accessMode, acs.isJoiner(for: Acs.Side.given) && (acs.excessive?.description.contains("RW") ?? false) {
+            showInvitationDialog()
         }
     }
 
@@ -299,7 +307,35 @@ class MessageViewController: UIViewController {
 
 // Methods for updating title area and refreshing messages.
 extension MessageViewController: MessageDisplayLogic {
-
+    private func showInvitationDialog() {
+        guard self.presentedViewController == nil else { return }
+        let attrs = [ NSAttributedString.Key.font: UIFont.systemFont(ofSize: 20.0) ]
+        let title = NSAttributedString(string: "New Chat", attributes: attrs)
+        let alert = UIAlertController(
+            title: nil,
+            message: "You are invited to start a new chat. What would you like?",
+            preferredStyle: .actionSheet)
+        alert.setValue(title, forKey: "attributedTitle")
+        alert.addAction(UIAlertAction(
+            title: "Accept", style: .default,
+            handler: { action in
+                print("ok clicked")
+                self.interactor?.acceptInvitation()
+        }))
+        alert.addAction(UIAlertAction(
+            title: "Ignore", style: .default,
+            handler: { action in
+                print("ignore clicked")
+                self.interactor?.ignoreInvitation()
+        }))
+        alert.addAction(UIAlertAction(
+            title: "Block", style: .default,
+            handler: { action in
+                print("block clicked")
+                self.interactor?.blockTopic()
+        }))
+        self.present(alert, animated: true)
+    }
     func updateTitleBar(icon: UIImage?, title: String?, online: Bool) {
         self.navigationItem.title = title ?? "Undefined"
 
@@ -345,6 +381,12 @@ extension MessageViewController: MessageDisplayLogic {
     func endRefresh() {
         DispatchQueue.main.async {
             self.refreshControl.endRefreshing()
+        }
+    }
+    func dismiss() {
+        DispatchQueue.main.async {
+            self.navigationController?.popViewController(animated: false)
+            self.dismiss()
         }
     }
 }

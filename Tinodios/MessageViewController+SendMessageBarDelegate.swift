@@ -25,6 +25,12 @@ extension MessageViewController : SendMessageBarDelegate {
     func sendMessageBar(textChangedTo text: String) {
         interactor?.sendTypingNotification()
     }
+
+    func sendMessageBar(enablePeersMessaging: Bool) {
+        if enablePeersMessaging {
+            interactor?.enablePeersMessaging()
+        }
+    }
 }
 
 extension MessageViewController : UIDocumentPickerDelegate {

@@ -278,6 +278,10 @@ public class MetaSetSub: Encodable {
         self.user = nil
         self.mode = nil
     }
+    public init(mode: String?) {
+        self.user = nil
+        self.mode = mode
+    }
     public init(user: String?, mode: String?) {
         self.user = user
         self.mode = mode

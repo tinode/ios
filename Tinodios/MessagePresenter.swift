@@ -15,6 +15,7 @@ protocol MessagePresentationLogic {
     func presentMessages(messages: [StoredMessage])
     func applyTopicPermissions()
     func endRefresh()
+    func dismiss()
 }
 
 class MessagePresenter: MessagePresentationLogic {
@@ -37,5 +38,8 @@ class MessagePresenter: MessagePresentationLogic {
     }
     func applyTopicPermissions() {
         self.viewController?.applyTopicPermissions()
+    }
+    func dismiss() {
+        self.viewController?.dismiss()
     }
 }

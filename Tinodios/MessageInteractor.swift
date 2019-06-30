@@ -19,6 +19,10 @@ protocol MessageBusinessLogic: class {
     func sendReadNotification()
     func sendTypingNotification()
     func clearAllMessages()
+    func enablePeersMessaging()
+    func acceptInvitation()
+    func ignoreInvitation()
+    func blockTopic()
 }
 
 protocol MessageDataStore {
@@ -210,6 +214,78 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
             }
         } else {
             self.presenter?.endRefresh()
+        }
+    }
+
+    func enablePeersMessaging() {
+        // Enable peer.
+        guard let origAm = self.topic?.getSubscription(for: self.topic?.name)?.acs else { return }
+        let am = Acs(from: origAm)
+        guard am.given?.update(from: "+RW") ?? false else {
+            return
+        }
+        do {
+            try topic?.setMeta(meta: MsgSetMeta(
+                desc: nil,
+                sub: MetaSetSub(user: topic?.name, mode: am.givenString),
+                tags: nil))?.thenCatch(onFailure: UiUtils.ToastFailureHandler)
+        } catch TinodeError.notConnected(_) {
+            UiUtils.showToast(message: "You are offline")
+        } catch {
+            UiUtils.showToast(message: "Action failed: \(error)")
+        }
+    }
+    func acceptInvitation() {
+        guard let topic = self.topic, let mode = self.topic?.accessMode?.givenString else { return }
+        var response = topic.setMeta(meta: MsgSetMeta(desc: nil, sub: MetaSetSub(mode: mode), tags: nil))
+        if topic.isP2PType {
+            // For P2P topics change 'given' permission of the peer too.
+            // In p2p topics the other user has the same name as the topic.
+            do {
+                response = try response?.thenApply(onSuccess: { msg in
+                    _ = topic.setMeta(meta: MsgSetMeta(
+                        desc: nil,
+                        sub: MetaSetSub(user: topic.name, mode: mode),
+                        tags: nil))
+                    return nil
+                })
+            } catch TinodeError.notConnected(_) {
+                UiUtils.showToast(message: "You are offline")
+            } catch {
+                UiUtils.showToast(message: "Operation failed \(error)")
+            }
+        }
+        _ = try? response?.thenApply(onSuccess: { msg in
+            self.presenter?.applyTopicPermissions()
+            return nil
+        })
+    }
+    func ignoreInvitation() {
+        _ = try? self.topic?.delete()?.thenFinally(
+            finally: {
+                self.presenter?.dismiss()
+                return nil
+            })
+    }
+    func blockTopic() {
+        /*
+        Acs am = new Acs(mTopic.getAccessMode());
+        am.update(AccessChange.asWant("-JP"));
+        response = mTopic.setMeta(new MsgSetMeta<VxCard, PrivateType>(new MetaSetSub(am.getWant())));
+        */
+        guard let origAm = self.topic?.accessMode else { return }
+        let am = Acs(from: origAm)
+        guard am.want?.update(from: "-JP") ?? false else { return }
+        do {
+            try self.topic?.setMeta(meta: MsgSetMeta(desc: nil, sub: MetaSetSub(mode: am.wantString), tags: nil))?.thenFinally(
+                finally: {
+                    self.presenter?.dismiss()
+                    return nil
+                })
+        } catch TinodeError.notConnected(_) {
+            UiUtils.showToast(message: "You are offline")
+        } catch {
+            UiUtils.showToast(message: "Operation failed \(error)")
         }
     }
 
