@@ -66,6 +66,11 @@ public class Acs: Codable, Equatable {
             return AcsHelper.diff(a1: self.want, a2: self.given)
         }
     }
+    public var excessive: AcsHelper? {
+        get {
+            return AcsHelper.diff(a1: self.given, a2: self.want)
+        }
+    }
     public var isGivenDefined: Bool {
         get {
             return given?.isDefined ?? false
@@ -104,7 +109,7 @@ public class Acs: Codable, Equatable {
     init(given: String?, want: String?, mode: String?) {
         self.assign(given: given, want: want, mode: mode)
     }
-    init(from am: Acs?) {
+    public init(from am: Acs?) {
         if (am != nil) {
             given = AcsHelper(ah: am!.given)
             want = AcsHelper(ah: am!.want)

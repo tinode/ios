@@ -13,6 +13,8 @@ protocol SendMessageBarDelegate: class {
     func sendMessageBar(attachment: Bool)
 
     func sendMessageBar(textChangedTo text: String)
+
+    func sendMessageBar(enablePeersMessaging: Bool)
 }
 
 class SendMessageBar: UIView {
@@ -133,9 +135,7 @@ extension SendMessageBar: UITextViewDelegate {
 }
 
 extension SendMessageBar {
-    public func showNotAvailableOverlay() {
-        guard self.foregroundView == nil else { return }
-        // Blurring layer over the messages.
+    private func makeOverlayView() -> UIView {
         let overlay = UIView()
         overlay.alpha = 0.8
         overlay.backgroundColor = UIColor.white
@@ -154,6 +154,12 @@ extension SendMessageBar {
                 overlay.leadingAnchor.constraint(equalTo: self.leadingAnchor),
                 overlay.trailingAnchor.constraint(equalTo: self.trailingAnchor)])
         }
+        return overlay
+    }
+    public func showNotAvailableOverlay() {
+        guard self.foregroundView == nil else { return }
+        // Blurring layer over the messages.
+        let overlay = makeOverlayView()
 
         let notAvailableLabel = UILabel()
         notAvailableLabel.text = "Not available"
@@ -170,6 +176,42 @@ extension SendMessageBar {
         // Disable user interaction for the message view.
         self.isUserInteractionEnabled = false
         self.foregroundView = overlay
+    }
+    public func showPeersMessagingDisabledOverlay() {
+        guard self.foregroundView == nil else { return }
+        // Blurring layer over the messages.
+        let overlay = makeOverlayView()
+
+        let notAvailableLabel = UILabel()
+        notAvailableLabel.text = "Peer's messaging is disabled"
+        notAvailableLabel.sizeToFit()
+        notAvailableLabel.numberOfLines = 0
+        notAvailableLabel.textAlignment = .center
+        notAvailableLabel.font = UIFont.boldSystemFont(ofSize: 16)
+        notAvailableLabel.translatesAutoresizingMaskIntoConstraints = false
+        overlay.addSubview(notAvailableLabel)
+        // Pin it to the superview center.
+        NSLayoutConstraint.activate([
+            notAvailableLabel.leadingAnchor.constraint(equalTo: overlay.leadingAnchor, constant: 10),
+            notAvailableLabel.centerYAnchor.constraint(equalTo: overlay.centerYAnchor)])
+
+        let enableButton = UIButton()//frame: CGRect(x: 0, y: 0, width: 150, height: 50))
+        enableButton.setTitle("Enable", for: .normal)
+        enableButton.setTitleColor(UIColor.blue, for: .normal)
+
+        enableButton.sizeToFit()
+        //enableButton.backgroundColor = UIColor.red
+        enableButton.addTarget(self, action: #selector(self.enablePeersMessagingClicked), for: .touchUpInside)
+        enableButton.isUserInteractionEnabled = true
+        enableButton.translatesAutoresizingMaskIntoConstraints = false
+        overlay.addSubview(enableButton)
+        NSLayoutConstraint.activate([
+            enableButton.trailingAnchor.constraint(equalTo: overlay.trailingAnchor, constant: -10),
+            enableButton.centerYAnchor.constraint(equalTo: overlay.centerYAnchor)])
+        self.foregroundView = overlay
+    }
+    @objc private func enablePeersMessagingClicked(sender: UIButton!) {
+        self.delegate?.sendMessageBar(enablePeersMessaging: true)
     }
     public func removeNotAvailableOverlay() {
         guard self.foregroundView != nil else { return }
