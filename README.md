@@ -44,7 +44,7 @@ The immediate goal is to have a basic end-to-end working application prototype t
 
 * https://github.com/stephencelis/SQLite.swift for local persistence
 * https://github.com/jrendel/SwiftKeychainWrapper
-* [GoogleService-Info.plist](hhttps://firebase.google.com/docs/cloud-messaging/ios/client) for push notifications.
+* [GoogleService-Info.plist](https://firebase.google.com/docs/cloud-messaging/ios/client) for push notifications.
 In order to compile the app, app you need to download your own GoogleService-Info.plist and place it in ./Tinodios folder.
 
 
