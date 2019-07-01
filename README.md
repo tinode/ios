@@ -21,12 +21,11 @@ The immediate goal is to have a basic end-to-end working application prototype t
 * Transport Level Security - https/wss.
 * Drafty: Markdown-style formatting of text, e.g. \*style\* → **style**.
 * Viewing attachments and inline images.
+* Typing indicators.
 
 
 ### Does not work yet
-
 * Edit chat parameters.
-* Typing indicators.
 * Delivery and received/read indicators for messages (little check marks in messages).
 * Muting/un-muting conversations and other permission management.
 * Invite contacts to the app by SMS or email.
@@ -37,9 +36,17 @@ The immediate goal is to have a basic end-to-end working application prototype t
 
 ## Dependencies
 
-* https://github.com/stephencelis/SQLite.swift
+### SDK
+
+* https://github.com/tidwall/SwiftWebSocket for websocket support
+
+### Application
+
+* https://github.com/stephencelis/SQLite.swift for local persistence
 * https://github.com/jrendel/SwiftKeychainWrapper
-* https://github.com/tidwall/SwiftWebSocket
+* [GoogleService-Info.plist](hhttps://firebase.google.com/docs/cloud-messaging/ios/client) for push notifications.
+In order to compile the app, app you need to download your own GoogleService-Info.plist and place it in ./Tinodios folder.
+
 
 ## Other
 
