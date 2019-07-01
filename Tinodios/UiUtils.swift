@@ -276,9 +276,13 @@ extension UIViewController {
     public func presentChatReplacingCurrentVC(with topicName: String, afterDelay delay: DispatchTimeInterval = .seconds(0)) {
         DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
             if let navController = self.navigationController {
+                // Descend to the chat list controller in the navigation stack.
+                while navController.topViewController?.restorationIdentifier != "ChatListViewController" {
+                    let v = navController.popViewController(animated: false)
+                    v?.dismiss(animated: false, completion: nil)
+                }
                 let messageVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "MessageViewController") as! MessageViewController
                 messageVC.topicName = topicName
-                navController.popViewController(animated: false)
                 navController.pushViewController(messageVC, animated: true)
             }
         }

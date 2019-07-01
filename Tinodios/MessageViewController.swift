@@ -206,25 +206,27 @@ class MessageViewController: UIViewController {
     }
 
     public func applyTopicPermissions() {
-        // Make sure the view is visible.
-        guard self.isViewLoaded && ((self.view?.window) != nil) else { return }
-        if !(topic?.isReader ?? false) {
-            self.collectionView.showNoAccessOverlay()
-        } else {
-            self.collectionView.removeNoAccessOverlay()
-        }
-        if topic?.isWriter ?? false {
-            self.sendMessageBar.removeNotAvailableOverlay()
-            if let acs = self.topic?.peer?.acs,
-                acs.isJoiner(for: .want) && (acs.missing?.description.contains("RW") ?? false) {
-                self.sendMessageBar.showPeersMessagingDisabledOverlay()
+        DispatchQueue.main.async {
+            // Make sure the view is visible.
+            guard self.isViewLoaded && ((self.view?.window) != nil) else { return }
+            if !(self.topic?.isReader ?? false) {
+                self.collectionView.showNoAccessOverlay()
+            } else {
+                self.collectionView.removeNoAccessOverlay()
             }
-        } else {
-            self.sendMessageBar.showNotAvailableOverlay()
-        }
-        // We are offered to join a chat.
-        if let acs = topic?.accessMode, acs.isJoiner(for: Acs.Side.given) && (acs.excessive?.description.contains("RW") ?? false) {
-            showInvitationDialog()
+            if self.topic?.isWriter ?? false {
+                self.sendMessageBar.removeNotAvailableOverlay()
+                if let acs = self.topic?.peer?.acs,
+                    acs.isJoiner(for: .want) && (acs.missing?.description.contains("RW") ?? false) {
+                    self.sendMessageBar.showPeersMessagingDisabledOverlay()
+                }
+            } else {
+                self.sendMessageBar.showNotAvailableOverlay()
+            }
+            // We are offered to join a chat.
+            if let acs = self.topic?.accessMode, acs.isJoiner(for: Acs.Side.given) && (acs.excessive?.description.contains("RW") ?? false) {
+                self.showInvitationDialog()
+            }
         }
     }
 
@@ -385,7 +387,7 @@ extension MessageViewController: MessageDisplayLogic {
     }
     func dismiss() {
         DispatchQueue.main.async {
-            self.navigationController?.popViewController(animated: false)
+            self.navigationController?.popViewController(animated: true)
             self.dismiss()
         }
     }

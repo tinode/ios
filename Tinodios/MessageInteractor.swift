@@ -268,11 +268,6 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
             })
     }
     func blockTopic() {
-        /*
-        Acs am = new Acs(mTopic.getAccessMode());
-        am.update(AccessChange.asWant("-JP"));
-        response = mTopic.setMeta(new MsgSetMeta<VxCard, PrivateType>(new MetaSetSub(am.getWant())));
-        */
         guard let origAm = self.topic?.accessMode else { return }
         let am = Acs(from: origAm)
         guard am.want?.update(from: "-JP") ?? false else { return }
