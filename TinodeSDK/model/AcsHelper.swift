@@ -42,7 +42,7 @@ public class AcsHelper: Codable, Equatable {
         }
         return AcsHelper.encode(mode: a!)!
     }
-    var isDefined: Bool {
+    public var isDefined: Bool {
         get {
             guard let b = a else {
                 return false

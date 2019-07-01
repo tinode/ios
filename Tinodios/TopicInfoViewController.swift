@@ -70,6 +70,7 @@ class TopicInfoViewController: UIViewController {
             self.membersTableView.allowsMultipleSelection = true
             self.membersTableView.delegate = self
             self.membersTableView.register(UINib(nibName: "ContactViewCell", bundle: nil), forCellReuseIdentifier: "ContactViewCell")
+            self.membersTableView.allowsSelection = false
         } else {
             self.loadAvatarButton.isHidden = true
             self.groupView.isHidden = true
@@ -223,6 +224,20 @@ class TopicInfoViewController: UIViewController {
         }
         return (nil, nil, nil, nil)
     }
+    private func changePermissions(
+        acs: AcsHelper, uid: String?,
+        changeType: UiUtils.PermissionsChangeType,
+        disabledPermissions: [PermissionsEditViewController.PermissionType]?) {
+        UiUtils.showPermissionsEditDialog(
+            over: self, acs: acs,
+            callback: {
+                permissionsTuple in
+                _ = try? UiUtils.handlePermissionsChange(
+                    onTopic: self.topic, forUid: uid, changeType: changeType,
+                    permissions: permissionsTuple)?.then(
+                        onSuccess: self.promiseSuccessHandler)},
+            disabledPermissions: disabledPermissions)
+    }
     @objc
     func permissionsTapped(sender: UITapGestureRecognizer) {
         guard let v = sender.view else {
@@ -234,19 +249,8 @@ class TopicInfoViewController: UIViewController {
             print("could not get acs")
             return
         }
-        UiUtils.showPermissionsEditDialog(
-            over: self, acs: acsUnwrapped,
-            callback: {
-                permissionsTuple in
-                _ = try? UiUtils.handlePermissionsChange(
-                    onTopic: self.topic, forUid: uid, changeType: changeType,
-                    permissions: permissionsTuple)?.then(
-                        onSuccess: { msg in
-                            DispatchQueue.main.async { self.reloadData() }
-                            return nil
-                    }
-                )},
-            disabledPermissions: disablePermissions)
+        self.changePermissions(acs: acsUnwrapped, uid: uid,
+                               changeType: changeType, disabledPermissions: disablePermissions)
     }
     @IBAction func leaveGroupClicked(_ sender: Any) {
         if topic.isOwner {
@@ -274,6 +278,10 @@ class TopicInfoViewController: UIViewController {
             let destinationVC = segue.destination as! EditMembersViewController
             destinationVC.topicName = self.topicName
         }
+    }
+    private func promiseSuccessHandler(msg: ServerMessage) throws -> PromisedReply<ServerMessage>? {
+        DispatchQueue.main.async { self.reloadData() }
+        return nil
     }
 }
 
@@ -330,13 +338,18 @@ extension TopicInfoViewController: UITableViewDataSource, UITableViewDelegate {
 
         // Configure the cell...
         let sub = subscriptions![indexPath.row]
-
+        let uid = sub.user
+        let isMe = self.tinode.isMe(uid: uid)
         let pub = sub.pub
-        let displayName = pub?.fn ?? "Unknown"
-        let uid = sub.uniqueId
+        let displayName = isMe ? "You" : (pub?.fn ?? "Unknown")
+
         cell.avatar.set(icon: pub?.photo?.image(), title: displayName, id: uid)
         cell.title.text = displayName
         cell.title.sizeToFit()
+        cell.subtitle.text = sub.acs?.givenString
+        for l in cell.statusLabels {
+            l.isHidden = true
+        }
         if let accessLabels = TopicInfoViewController.getAccessModeLabels(acs: sub.acs, status: (sub.payload as? StoredSubscription)?.status) {
             for i in 0..<accessLabels.count {
                 cell.statusLabels[i].isHidden = false
@@ -348,8 +361,78 @@ extension TopicInfoViewController: UITableViewDataSource, UITableViewDelegate {
                 cell.statusLabels[i].layer.borderColor = accessLabels[i].color.cgColor
             }
         }
+        cell.accessoryType = isMe ? .none : .detailDisclosureButton
 
         return cell
+    }
+    enum MemberActinos {
+        case remove, ban
+    }
+    private func showConfirmationDialog(forAction memberAction: MemberActinos, withUid uid: String?,
+                                        message: String) {
+        guard let uid = uid else { return }
+        let alert = UIAlertController(title: nil, message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { action in
+            var ban: Bool
+            switch memberAction {
+            case .remove:
+                ban = false
+            case .ban:
+                ban = true
+            }
+            _ = try? self.topic.eject(user: uid, ban: ban)?.then(
+                onSuccess: self.promiseSuccessHandler,
+                onFailure: UiUtils.ToastFailureHandler)
+        }))
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        self.present(alert, animated: true)
+    }
+    func tableView(_ tableView: UITableView, accessoryButtonTappedForRowWith indexPath: IndexPath) {
+        let sub = subscriptions![indexPath.row]
+        let alert = UIAlertController(title: sub.pub?.fn ?? "Unknown", message: nil, preferredStyle: .actionSheet)
+        alert.addAction(UIAlertAction(title: "Send message", style: .default, handler: { action in
+            if let topic = sub.user {
+                self.presentChatReplacingCurrentVC(with: topic)
+            } else {
+                UiUtils.showToast(message: "Topic name missing")
+            }
+        }))
+        alert.addAction(UIAlertAction(title: "Change permissions", style: .default, handler: { action in
+            guard let acsUnwrapped = sub.acs?.given, acsUnwrapped.isDefined else {
+                UiUtils.showToast(message: "Can't change permissions for this user.")
+                return
+            }
+            self.changePermissions(acs: acsUnwrapped, uid: sub.user,
+                                   changeType: .updateSub, disabledPermissions: [])
+
+        }))
+        alert.addAction(UIAlertAction(title: "Make owner", style: .default, handler: { action in
+            guard let uid = sub.user else {
+                UiUtils.showToast(message: "Can't make this user owner.")
+                return
+            }
+            do {
+                try self.topic.updateMode(uid: uid, update: "+O")?.then(
+                    onSuccess: self.promiseSuccessHandler,
+                    onFailure: UiUtils.ToastFailureHandler)
+            } catch {
+                UiUtils.showToast(message: "Operation failed \(error).")
+            }
+        }))
+        let topicTitle = self.topic.pub?.fn ?? "Unknown"
+        let title = sub.pub?.fn ?? "Unknown"
+        alert.addAction(UIAlertAction(title: "Remove", style: .default, handler: { action in
+            self.showConfirmationDialog(
+                forAction: .remove, withUid: sub.user,
+                message: "Remove \(title) from \(topicTitle)?")
+        }))
+        alert.addAction(UIAlertAction(title: "Block", style: .default, handler: { action in
+            self.showConfirmationDialog(
+                forAction: .ban, withUid: sub.user,
+                message: "Remove and ban \(title) from \(topicTitle)?")
+        }))
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        self.present(alert, animated: true)
     }
 }
 
@@ -360,10 +443,6 @@ extension TopicInfoViewController: ImagePickerDelegate {
             return
         }
         _ = try? UiUtils.updateAvatar(forTopic: self.topic, image: image)?.then(
-            onSuccess: { msg in
-                DispatchQueue.main.async { self.reloadData() }
-                return nil
-            }
-        )
+            onSuccess: self.promiseSuccessHandler)
     }
 }
