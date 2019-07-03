@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import MessageUI
 
 protocol FindDisplayLogic: class {
     func displayLocalContacts(contacts: [ContactHolder])
@@ -13,6 +14,7 @@ protocol FindDisplayLogic: class {
 }
 
 class FindViewController: UITableViewController, FindDisplayLogic {
+    @IBOutlet weak var inviteActionButtonItem: UIBarButtonItem!
     var interactor: FindBusinessLogic?
     var localContacts: [ContactHolder] = []
     var remoteContacts: [ContactHolder] = []
@@ -72,9 +74,49 @@ class FindViewController: UITableViewController, FindDisplayLogic {
         self.interactor?.setup()
         self.interactor?.attachToFndTopic()
         self.interactor?.loadAndPresentContacts(searchQuery: nil)
+        self.tabBarController?.navigationItem.rightBarButtonItem = inviteActionButtonItem
     }
     override func viewDidDisappear(_ animated: Bool) {
         self.interactor?.cleanup()
+        self.tabBarController?.navigationItem.rightBarButtonItem = nil
+    }
+
+    @IBAction func inviteActionClicked(_ sender: Any) {
+        let inviteSubject = "Check out Tindroid Messenger"
+        let inviteBody = "Check out Tindroid Messenger. Download it from https://github.com/tinode/"
+        let attrs = [ NSAttributedString.Key.font: UIFont.systemFont(ofSize: 20.0) ]
+        let dialogTitle = NSAttributedString(string: "Invite", attributes: attrs)
+        let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        alert.setValue(dialogTitle, forKey: "attributedTitle")
+        alert.addAction(UIAlertAction(title: "Copy to clipboard", style: .default, handler: { action in
+            let pasteboard = UIPasteboard.general
+            pasteboard.string = inviteBody
+        }))
+        alert.addAction(UIAlertAction(title: "Email", style: .default, handler: { action in
+            if MFMailComposeViewController.canSendMail() {
+                let mailVC = MFMailComposeViewController()
+                mailVC.mailComposeDelegate = self
+                mailVC.setSubject(inviteSubject)
+                mailVC.setMessageBody(inviteBody, isHTML: false)
+
+                self.present(mailVC, animated: true)
+            } else {
+                UiUtils.showToast(message: "No access to email")
+            }
+        }))
+        alert.addAction(UIAlertAction(title: "Messages", style: .default, handler: { action in
+            if MFMessageComposeViewController.canSendText() {
+                let messageVC = MFMessageComposeViewController()
+                messageVC.messageComposeDelegate = self
+                messageVC.body = inviteBody
+
+                self.present(messageVC, animated: true)
+            } else {
+                UiUtils.showToast(message: "No access to messages")
+            }
+        }))
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        self.present(alert, animated: true)
     }
 
     // MARK: - Table view data source
@@ -188,5 +230,17 @@ extension FindViewController: ContactViewCellDelegate {
         // navbar won't swap controllers while in transition:
         // pushViewController:animated: called on <UINavigationController 0x7ff2cf80e400> while an existing transition or presentation is occurring; the navigation stack will not be updated.
         presentChatReplacingCurrentVC(with: id, afterDelay: .milliseconds(30))
+    }
+}
+
+extension FindViewController: MFMailComposeViewControllerDelegate {
+    func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
+        controller.dismiss(animated: true)
+    }
+}
+
+extension FindViewController: MFMessageComposeViewControllerDelegate {
+    func messageComposeViewController(_ controller: MFMessageComposeViewController, didFinishWith result: MessageComposeResult) {
+        controller.dismiss(animated: true)
     }
 }

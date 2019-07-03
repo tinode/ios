@@ -13,6 +13,7 @@ protocol MessageDisplayLogic: class {
     func setOnline(online: Bool)
     func runTypingAnimation()
     func displayChatMessages(messages: [StoredMessage])
+    func reloadMessage(withSeqId seqId: Int)
     func applyTopicPermissions()
     func endRefresh()
     func dismiss()
@@ -124,6 +125,7 @@ class MessageViewController: UIViewController {
 
     // Messages to be displayed
     var messages: [Message] = []
+    var messageSeqIdIndex: [Int:Int] = [:]
 
     // Cache of message cell sizes. Calculation of cell sizes is heavy. Caching the result to improve scrolling performance.
     // var cellSizeCache: [CGSize?] = []
@@ -361,6 +363,11 @@ extension MessageViewController: MessageDisplayLogic {
     func displayChatMessages(messages: [StoredMessage]) {
         let oldData = self.messages
         let newData: [StoredMessage] = messages.reversed()
+        self.messageSeqIdIndex = newData.enumerated().reduce([Int:Int]()) { (dict, item) -> [Int:Int] in
+            var dict = dict
+            dict[item.element.seqId] = item.offset
+            return dict
+        }
 
         if oldData.isEmpty || newData.isEmpty {
             self.messages = newData
@@ -379,7 +386,11 @@ extension MessageViewController: MessageDisplayLogic {
         collectionView.layoutIfNeeded()
         collectionView.scrollToBottom()
     }
-
+    func reloadMessage(withSeqId seqId: Int) {
+        if let index = self.messageSeqIdIndex[seqId] {
+            self.collectionView.reloadItems(at: [IndexPath(row: index, section: 0)])
+        }
+    }
     func endRefresh() {
         DispatchQueue.main.async {
             self.refreshControl.endRefreshing()

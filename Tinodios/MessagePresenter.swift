@@ -13,6 +13,7 @@ protocol MessagePresentationLogic {
     func setOnline(online: Bool)
     func runTypingAnimation()
     func presentMessages(messages: [StoredMessage])
+    func reloadMessage(withSeqId seqId: Int)
     func applyTopicPermissions()
     func endRefresh()
     func dismiss()
@@ -29,6 +30,9 @@ class MessagePresenter: MessagePresentationLogic {
     }
     func presentMessages(messages: [StoredMessage]) {
         self.viewController?.displayChatMessages(messages: messages)
+    }
+    func reloadMessage(withSeqId seqId: Int) {
+        self.viewController?.reloadMessage(withSeqId: seqId)
     }
     func endRefresh() {
         self.viewController?.endRefresh()

@@ -106,6 +106,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                         if self?.topicId == -1 {
                             self?.topicId = BaseDb.getInstance().topicDb?.getId(topic: self?.topicName)
                         }
+                        self?.loadMessages()
                         DispatchQueue.main.async { self?.presenter?.applyTopicPermissions() }
                         return nil
                     },
@@ -297,6 +298,14 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         case "kp":
             DispatchQueue.main.async {
                 self.presenter?.runTypingAnimation()
+            }
+        case "recv":
+            fallthrough
+        case "read":
+            if let seqId = info.seq {
+                DispatchQueue.main.async {
+                    self.presenter?.reloadMessage(withSeqId: seqId)
+                }
             }
         default:
             break
