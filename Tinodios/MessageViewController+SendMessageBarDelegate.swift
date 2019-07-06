@@ -15,6 +15,13 @@ extension MessageViewController : SendMessageBarDelegate {
     }
 
     func sendMessageBar(attachment: Bool) {
+        if attachment {
+            attachFile()
+        } else {
+            attachImage()
+        }
+    }
+    private func attachFile() {
         let types: [String] = [kUTTypeItem, kUTTypeImage] as [String]
         let documentPicker = UIDocumentPickerViewController(documentTypes: types, in: .import)
         documentPicker.delegate = self
@@ -22,6 +29,9 @@ extension MessageViewController : SendMessageBarDelegate {
         self.present(documentPicker, animated: true, completion: nil)
     }
 
+    private func attachImage() {
+        imagePicker?.present(from: self.view)
+    }
     func sendMessageBar(textChangedTo text: String) {
         interactor?.sendTypingNotification()
     }
@@ -54,5 +64,17 @@ extension MessageViewController : UIDocumentPickerDelegate {
         } catch {
             print("Failed to read file \(error)")
         }
+    }
+}
+
+extension MessageViewController : ImagePickerDelegate {
+    func didSelect(image: UIImage?) {
+        guard let image = image, let bits = image.pngData() else { return }
+        let mimeType = "image/png"
+        let width = Int(image.size.width)
+        let height = Int(image.size.height)
+        let fname = "fn.png"
+        let content = Drafty.parse(content: " ")
+        _ = interactor?.sendMessage(content: content.insertImage(at: 0, mime: mimeType, bits: bits, width: width, height: height, fname: fname))
     }
 }

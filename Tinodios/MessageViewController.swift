@@ -120,6 +120,8 @@ class MessageViewController: UIViewController {
     var topicType: TopicType?
     var myUID: String?
     var topic: DefaultComTopic?
+    // TODO: this is ugly. Move this to MVC+SendMessageBarDelegate.swift
+    var imagePicker: ImagePicker?
 
     private var noteTimer: Timer? = nil
 
@@ -146,6 +148,8 @@ class MessageViewController: UIViewController {
 
     private func setup() {
         myUID = Cache.getTinode().myUid
+        self.imagePicker = ImagePicker(
+            presentationController: self, delegate: self)
 
         let interactor = MessageInteractor()
         let presenter = MessagePresenter()
