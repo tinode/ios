@@ -36,7 +36,15 @@ class SendMessageBar: UIView {
     // MARK: IBActions
 
     @IBAction func attach(_ sender: UIButton) {
-        delegate?.sendMessageBar(attachment: true)
+        let alert = UIAlertController(title: "Attachment", message: nil, preferredStyle: .actionSheet)
+        alert.addAction(UIAlertAction(title: "Image", style: .default, handler: { action in
+            self.delegate?.sendMessageBar(attachment: false)
+        }))
+        alert.addAction(UIAlertAction(title: "File", style: .default, handler: { action in
+            self.delegate?.sendMessageBar(attachment: true)
+        }))
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        self.window?.rootViewController?.present(alert, animated: true, completion: nil)
     }
 
     @IBAction func send(_ sender: UIButton) {
