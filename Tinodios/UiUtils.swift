@@ -396,7 +396,7 @@ class RelativeDateFormatter {
 }
 
 extension UIColor {
-    convenience init(fromHexCode code: Int) {
+    convenience init(fromHexCode code: UInt) {
         let blue = code & 0xff
         let green = (code >> 8) & 0xff
         let red = (code >> 16) & 0xff
