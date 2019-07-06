@@ -858,7 +858,8 @@ public class Tinode {
             Tinode.log.error("Tinode is already connected")
             return PromisedReply<ServerMessage>(value: ServerMessage())
         }
-        let urlString = "\(hostName)/v\(kProtocolVersion)/channels"
+        let protocolString = useTLS ? "wss://" : "ws://"
+        let urlString = "\(protocolString)\(hostName)/v\(kProtocolVersion)/channels"
         let endpointURL: URL = URL(string: urlString)!
         connection = Connection(open: endpointURL,
                                 with: apiKey,

@@ -77,9 +77,10 @@ class LoginViewController: UIViewController {
         }
 
         let tinode = Cache.getTinode()
-        // TODO: implement TLS.
+        let (hostName, useTLS, _) = SettingsHelper.getConnectionSettings()
+        print("connecting to \(hostName), useTLS = \(useTLS)")
         do {
-            try tinode.connect(to: Cache.kHostName, useTLS: false)?
+            try tinode.connect(to: (hostName ?? Cache.kHostName), useTLS: (useTLS ?? false))?
                 .then(
                     onSuccess: { pkt in
                         return tinode.loginBasic(uname: userName, password: password)

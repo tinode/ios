@@ -254,7 +254,9 @@ class MessageViewController: UIViewController {
             addKeyboardObservers()
         }
     }
-
+    @objc private func processNotifications() {
+        self.interactor?.sendReadNotification()
+    }
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
@@ -264,12 +266,21 @@ class MessageViewController: UIViewController {
         self.interactor?.attachToTopic()
         self.interactor?.loadMessages()
         self.interactor?.sendReadNotification()
-        self.noteTimer = Timer.scheduledTimer(
-            withTimeInterval: 1,
-            repeats: true,
-            block: { _ in
-                self.interactor?.sendReadNotification()
-            })
+        if #available(iOS 10.0, *) {
+            self.noteTimer = Timer.scheduledTimer(
+                withTimeInterval: 1,
+                repeats: true,
+                block: { _ in
+                    //self.interactor?.sendReadNotification()
+                    self.processNotifications()
+                })
+        } else {
+            // Fallback on earlier versions
+            self.noteTimer = Timer.scheduledTimer(
+                timeInterval: 1,
+                target: self,
+                selector: #selector(self.processNotifications), userInfo: nil, repeats: true)
+        }
         self.applyTopicPermissions()
     }
     override func viewWillDisappear(_ animated: Bool) {

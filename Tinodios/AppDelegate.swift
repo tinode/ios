@@ -41,7 +41,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             var success = false
             do {
                 let (hostName, useTLS, _) = SettingsHelper.getConnectionSettings()
-                // TODO: implement TLS.
                 tinode.setAutoLoginWithToken(token: token)
                 _ = try tinode.connect(to: (hostName ?? Cache.kHostName), useTLS: (useTLS ?? false))?.getResult()
                 let msg = try tinode.loginToken(token: token, creds: nil)?.getResult()
@@ -87,7 +86,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
 }
-
+@available(iOS 10.0, *)
 extension AppDelegate: UNUserNotificationCenterDelegate {
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
         print(response)
