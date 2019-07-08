@@ -91,6 +91,10 @@ extension ImagePicker: UIImagePickerControllerDelegate, UINavigationControllerDe
         guard let image = info[.editedImage] as? UIImage else {
             return self.pickerController(picker, didSelect: nil)
         }
+        // Should we also pass these?
+        // May be useful for file name and mime type.
+        // let mediaType = info[.mediaType] as? String
+        // let mediaUrl = info[.mediaURL] as? String
         self.pickerController(picker, didSelect: image)
     }
 }
