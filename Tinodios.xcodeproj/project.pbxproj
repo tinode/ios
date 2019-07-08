@@ -15,6 +15,7 @@
 		0A0380DF21B3CC8200A3FA0E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0A0380DE21B3CC8200A3FA0E /* Assets.xcassets */; };
 		0A0380E221B3CC8200A3FA0E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0A0380E021B3CC8200A3FA0E /* LaunchScreen.storyboard */; };
 		0A09810C21CCB80400600013 /* StoredMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A09810B21CCB80400600013 /* StoredMessage.swift */; };
+		0A0E940322D324F1006416F8 /* LargeFileHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A0E940222D324F1006416F8 /* LargeFileHelper.swift */; };
 		0A15739421DB53130070C31F /* SubscriberDb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A15739321DB53130070C31F /* SubscriberDb.swift */; };
 		0A15739621DB531E0070C31F /* UserDb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A15739521DB531E0070C31F /* UserDb.swift */; };
 		0A2F81C6229677DD007E562C /* AddByIDViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2F81C5229677DD007E562C /* AddByIDViewController.swift */; };
@@ -105,6 +106,7 @@
 		0A0380E121B3CC8200A3FA0E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		0A0380E321B3CC8200A3FA0E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0A09810B21CCB80400600013 /* StoredMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoredMessage.swift; sourceTree = "<group>"; };
+		0A0E940222D324F1006416F8 /* LargeFileHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LargeFileHelper.swift; sourceTree = "<group>"; };
 		0A15739321DB53130070C31F /* SubscriberDb.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriberDb.swift; sourceTree = "<group>"; };
 		0A15739521DB531E0070C31F /* UserDb.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDb.swift; sourceTree = "<group>"; };
 		0A2F81C5229677DD007E562C /* AddByIDViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddByIDViewController.swift; sourceTree = "<group>"; };
@@ -225,6 +227,7 @@
 				0AE50D4722156A5B0021F7B7 /* FindPresenter.swift */,
 				0AE50D4922156A6C0021F7B7 /* FindRouter.swift */,
 				0AE50D4322156A250021F7B7 /* FindViewController.swift */,
+				0A0E940222D324F1006416F8 /* LargeFileHelper.swift */,
 				0A6F260921BE51D800B9726E /* LoginViewController.swift */,
 				B0A612B4229132CC00569DFE /* MessageBubbleDecorator.swift */,
 				B0DF031C227C604C000F9492 /* MessageCell.swift */,
@@ -516,6 +519,7 @@
 				0AC33D032293C7A00060D263 /* NewGroupViewController.swift in Sources */,
 				0A15739421DB53130070C31F /* SubscriberDb.swift in Sources */,
 				0A8A108521D4C79700B90D73 /* SqlStore.swift in Sources */,
+				0A0E940322D324F1006416F8 /* LargeFileHelper.swift in Sources */,
 				0AE50D4622156A4B0021F7B7 /* FindInteractor.swift in Sources */,
 				0A8C8A4621E5E72D00D8751E /* MessageViewController.swift in Sources */,
 			);

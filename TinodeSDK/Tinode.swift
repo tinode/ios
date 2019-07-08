@@ -183,6 +183,8 @@ public class Tinode {
     }
     public var appName: String
     public var apiKey: String
+    public var useTLS: Bool
+    public var hostName: String
     public var connection: Connection?
     public var nextMsgId = 1
     private var futures = ConcurrentFuturesMap()
@@ -212,6 +214,17 @@ public class Tinode {
     private var autoLogin: Bool = false
     private var loginInProgress: Bool = false
 
+    public func baseURL(useWebsocketProtocol: Bool) -> URL? {
+        guard !hostName.isEmpty else { return nil }
+        let protocolString = useTLS ? (useWebsocketProtocol ? "wss://" : "https://") : (useWebsocketProtocol ? "ws://" : "http://")
+        let urlString = "\(protocolString)\(hostName)/v\(kProtocolVersion)"
+        return URL(string: urlString)
+    }
+    public func channelsURL(useWebsocketProtocol: Bool) -> URL? {
+        guard var b = baseURL(useWebsocketProtocol: useWebsocketProtocol) else { return nil }
+        b.appendPathComponent("/channels")
+        return b
+    }
     public var isConnected: Bool {
         get {
             if let c = connection, c.isConnected {
@@ -247,6 +260,8 @@ public class Tinode {
         self.listener = l
         self.myUid = self.store?.myUid
         self.deviceToken = self.store?.deviceToken
+        self.useTLS = false
+        self.hostName = ""
         //self.osVersoin
 
         // osVersion
@@ -321,9 +336,16 @@ public class Tinode {
         return String(q, radix: 32)
     }
 
+    public var userAgent: String {
+        get {
+            return "\(appName) (iOS \(OsVersion); \(kLocale)); tinode-swift/\(kLibVersion)"
+        }
+    }
+    /*
     private func getUserAgent() -> String {
         return "\(appName) (iOS \(OsVersion); \(kLocale)); tinode-swift/\(kLibVersion)"
     }
+    */
 
     private func getNextMsgId() -> String {
         nextMsgId += 1
@@ -451,7 +473,7 @@ public class Tinode {
         let msgId = getNextMsgId()
         let msg = ClientMessage<Int, Int>(
             hi: MsgClientHi(id: msgId, ver: kVersion,
-                            ua: getUserAgent(), dev: deviceId,
+                            ua: userAgent, dev: deviceId,
                             lang: kLocale))
         return try! sendWithPromise(payload: msg, with: msgId).thenApply(
             onSuccess: { [weak self] pkt in
@@ -858,9 +880,11 @@ public class Tinode {
             Tinode.log.error("Tinode is already connected")
             return PromisedReply<ServerMessage>(value: ServerMessage())
         }
-        let protocolString = useTLS ? "wss://" : "ws://"
-        let urlString = "\(protocolString)\(hostName)/v\(kProtocolVersion)/channels"
-        let endpointURL: URL = URL(string: urlString)!
+        self.useTLS = useTLS
+        self.hostName = hostName
+        guard let endpointURL = self.channelsURL(useWebsocketProtocol: true) else {
+            throw TinodeError.invalidState("Could not form server url.")
+        }
         connection = Connection(open: endpointURL,
                                 with: apiKey,
                                 notify: TinodeConnectionListener(tinode: self))

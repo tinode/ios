@@ -60,9 +60,12 @@ extension MessageViewController : UIDocumentPickerDelegate {
                 let unmanaged = UTTypeCopyPreferredTagWithClass(uti as CFString, kUTTagClassMIMEType)
                 mimeType = unmanaged?.takeRetainedValue() as String?
             }
-
-            print("Got data count=\(bits.count), fname='\(fname)', mime: \(mimeType ?? "nil")")
-            _ = interactor?.sendMessage(content: Drafty().attachFile(mime: mimeType, bits: bits, fname: fname))
+            if bits.count > MessageViewController.kMaxInbandAttachmentSize {
+                self.interactor?.uploadFile(filename: fname, mimeType: mimeType, data: bits)
+            } else {
+                print("Got data count=\(bits.count), fname='\(fname)', mime: \(mimeType ?? "nil")")
+                _ = interactor?.sendMessage(content: Drafty().attachFile(mime: mimeType, bits: bits, fname: fname))
+            }
         } catch {
             print("Failed to read file \(error)")
         }
