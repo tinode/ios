@@ -17,9 +17,13 @@ class Cache {
 
     private var tinode: Tinode? = nil
     private var timer = RepeatingTimer(timeInterval: 60 * 60 * 4) // Once every 4 hours.
+    private var largeFileHelper: LargeFileHelper? = nil
 
     public static func getTinode() -> Tinode {
         return Cache.default.getTinode()
+    }
+    public static func getLargeFileHelper(withIdentifier identifier: String? = nil) -> LargeFileHelper {
+        return Cache.default.getLargeFileHelper(withIdentifier: identifier)
     }
     public static func invalidate() {
         if let tinode = Cache.default.tinode {
@@ -49,5 +53,16 @@ class Cache {
             tinode!.deviceId = UIDevice.current.identifierForVendor!.uuidString
         }
         return tinode!
+    }
+    private func getLargeFileHelper(withIdentifier identifier: String?) -> LargeFileHelper {
+        if largeFileHelper == nil {
+            if let id = identifier {
+                let config = URLSessionConfiguration.background(withIdentifier: id)
+                largeFileHelper = LargeFileHelper(config: config)
+            } else {
+                largeFileHelper = LargeFileHelper()
+            }
+        }
+        return largeFileHelper!
     }
 }

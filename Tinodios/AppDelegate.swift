@@ -12,6 +12,7 @@ import Firebase
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
+    var backgroundSessionCompletionHandler: (() -> Void)?
     
     func setupPushNotifications(for application: UIApplication) {
         FirebaseApp.configure()
@@ -62,6 +63,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         Cache.synchronizeContactsPeriodically()
         return true
+    }
+
+    func application(_ application: UIApplication, handleEventsForBackgroundURLSession identifier: String, completionHandler: @escaping () -> Void) {
+        backgroundSessionCompletionHandler = completionHandler
+        // Instantiate large file helper.
+        let _ = Cache.getLargeFileHelper(withIdentifier: identifier)
     }
 
     func applicationWillResignActive(_ application: UIApplication) {

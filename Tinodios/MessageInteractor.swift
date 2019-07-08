@@ -23,6 +23,7 @@ protocol MessageBusinessLogic: class {
     func acceptInvitation()
     func ignoreInvitation()
     func blockTopic()
+    func uploadFile(filename: String?, mimeType: String?, data: Data?)
 }
 
 protocol MessageDataStore {
@@ -284,7 +285,13 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
             UiUtils.showToast(message: "Operation failed \(error)")
         }
     }
-
+    func uploadFile(filename: String?, mimeType: String?, data: Data?) {
+        guard let filename = filename, let mimeType = mimeType, let data = data else { return }
+        // guard let topic = topic else { return }
+        // topic.store?.msgDraftUpdate(topic: topic, dbMessageId: , data: )
+        let helper = Cache.getLargeFileHelper()
+        helper.startUpload(filename: filename, mimetype: mimeType, d: data)
+    }
     override func onData(data: MsgServerData?) {
         self.loadMessages()
     }
