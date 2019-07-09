@@ -238,13 +238,13 @@ public class Tinode {
     var topics: [String: TopicProto] = [:]
     var users: [String: UserProto] = [:]
 
-    static let jsonEncoder: JSONEncoder = {
+    public static let jsonEncoder: JSONEncoder = {
         let encoder = JSONEncoder()
         encoder.dataEncodingStrategy = .base64
         encoder.dateEncodingStrategy = .customRFC3339
         return encoder
     }()
-    static let jsonDecoder: JSONDecoder = {
+    public static let jsonDecoder: JSONDecoder = {
         let decoder = JSONDecoder()
         decoder.dataDecodingStrategy = .base64
         decoder.dateDecodingStrategy = .customRFC3339
@@ -975,6 +975,12 @@ public class Tinode {
             msg: ClientMessage<Int, Int>(
                 del: MsgClientDel(id: getNextMsgId(),
                                   topic: topicName, list: list, hard: hard)))
+    }
+    func delMessage(topicName: String?, msgId: Int, hard: Bool) -> PromisedReply<ServerMessage>? {
+        return sendDeleteMessage(
+            msg: ClientMessage<Int, Int>(
+                del: MsgClientDel(id: getNextMsgId(),
+                                  topic: topicName, msgId: msgId, hard: hard)))
     }
     func delSubscription(topicName: String?, user: String?) -> PromisedReply<ServerMessage>? {
         return sendDeleteMessage(

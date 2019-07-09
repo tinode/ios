@@ -7,13 +7,16 @@
 
 import Foundation
 import UIKit
+import TinodeSDK
 
 class Upload {
     var url: URL
     var topicId: String
-    var msgId: Int = 0
+    var msgId: Int64 = 0
     var isUploading = false
     var progress: Float = 0
+    var responseData: Data = Data()
+    var callback: ((ServerMessage) -> Void)?
 
     var task: URLSessionUploadTask?
 
@@ -38,17 +41,19 @@ class LargeFileHelper: NSObject {
         let config = URLSessionConfiguration.background(withIdentifier: Bundle.main.bundleIdentifier!)
         self.init(config: config)
     }
-    func startUpload(filename: String, mimetype: String, d: Data) {
+    func startUpload(filename: String, mimetype: String, d: Data, topicId: String, msgId: Int64,
+                     completionCallback: ((ServerMessage) -> Void)?) {
         let tinode = Cache.getTinode()
         guard var url = tinode.baseURL(useWebsocketProtocol: false) else { return }
         url.appendPathComponent("file/u/")
         let upload = Upload(url: url)
         var request = URLRequest(url: url)
 
+        request.httpMethod = "POST"
         request.addValue("Keep-Alive", forHTTPHeaderField: "Connection")
         request.addValue(tinode.userAgent, forHTTPHeaderField: "User-Agent")
         request.addValue("multipart/form-data; boundary=\(LargeFileHelper.kBoundary)", forHTTPHeaderField: "Content-Type")
-        request.addValue(tinode.apiKey, forHTTPHeaderField: "Content-Type")
+        request.addValue(tinode.apiKey, forHTTPHeaderField: "X-Tinode-APIKey")
         request.addValue("Token \(tinode.authToken!)", forHTTPHeaderField: "Authorization")
 
         var newData = Data()
@@ -68,13 +73,18 @@ class LargeFileHelper: NSObject {
             // Fallback on earlier versions
             tempDir = URL(string: NSTemporaryDirectory().appending("/dummy"))!
         }
-        let localURL = tempDir.appendingPathComponent("throwaway-\(UUID().uuidString)")
+        let localFileName = UUID().uuidString
+        let localURL = tempDir.appendingPathComponent("throwaway-\(localFileName)")
         try? newData.write(to: localURL)
 
         upload.task = uploadSession.uploadTask(with: request, fromFile: localURL)
-        upload.task!.resume()
+        upload.task!.taskDescription = localFileName
         upload.isUploading = true
-        activeUploads[upload.url.absoluteString] = upload
+        upload.topicId = topicId
+        upload.msgId = msgId
+        upload.callback = completionCallback
+        upload.task!.resume()
+        activeUploads[localFileName] = upload
     }
 }
 
@@ -89,14 +99,46 @@ extension LargeFileHelper: URLSessionDelegate {
         }
     }
 }
+extension LargeFileHelper: URLSessionDataDelegate {
+    func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive: Data) {
+        if let taskId = dataTask.taskDescription, let upload = activeUploads[taskId] {
+            print("working with task \(taskId) - \(upload.topicId)")
+            upload.responseData.append(didReceive)
+        }
+    }
+}
 extension LargeFileHelper: URLSessionTaskDelegate {
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError: Error?) {
         print("We're done here")
+        if let error = didCompleteWithError {
+            print("Quit with \(error) - \(task.taskDescription)")
+            return
+        }
         // activeUploads.removeValue(forKey: )
+        if let taskId = task.taskDescription, let upload = activeUploads[taskId] {
+            activeUploads.removeValue(forKey: taskId)
+            print("done with task \(taskId) - \(upload.topicId)")
+            let tinode = Cache.getTinode()
+            let topic = tinode.getTopic(topicName: upload.topicId) as! DefaultComTopic
+
+            if let response = task.response as? HTTPURLResponse {
+                //
+                if response.statusCode == 200 && !upload.responseData.isEmpty {
+                    print("response \(response)")
+                    if let serverMsg = try? Tinode.jsonDecoder.decode(ServerMessage.self, from: upload.responseData) {
+                        upload.callback?(serverMsg)
+                    }
+                } else {
+                    print("failed - \(response.statusCode) \(response.allHeaderFields) \(upload.responseData.count)")
+                }
+                print("mime type = \(response.mimeType)")
+            }
+        }
     }
     func urlSession(_ session: URLSession, task: URLSessionTask, didSendBodyData: Int64, totalBytesSent: Int64, totalBytesExpectedToSend: Int64) {
-        if let t = task.originalRequest?.url {
-            print("\(t): sent = \(totalBytesSent), expected = \(totalBytesExpectedToSend)")
+        Thread.sleep(forTimeInterval: 0.1)
+        if let t = task.taskDescription, let upload = activeUploads[t] {
+            print("\(upload.topicId): sent = \(totalBytesSent), expected = \(totalBytesExpectedToSend)")
         }
     }
 }

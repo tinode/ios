@@ -422,6 +422,13 @@ public class MsgClientDel: Encodable {
                   user: nil, hard: hard)
     }
 
+    /// Delete message by id
+    convenience init(id: String?, topic: String?, msgId: Int, hard: Bool?) {
+        self.init(id: id, topic: topic, what: MsgClientDel.kStrMsg,
+                  ranges: [MsgDelRange(id: msgId)],
+                  user: nil, hard: hard)
+    }
+
     /// Delete topic
     convenience init(id: String?, topic: String?) {
         self.init(id: id, topic: topic, what: MsgClientDel.kStrTopic,

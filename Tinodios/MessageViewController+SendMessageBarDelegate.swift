@@ -61,7 +61,7 @@ extension MessageViewController : UIDocumentPickerDelegate {
                 mimeType = unmanaged?.takeRetainedValue() as String?
             }
             if bits.count > MessageViewController.kMaxInbandAttachmentSize {
-                self.interactor?.uploadFile(filename: fname, mimeType: mimeType, data: bits)
+                self.interactor?.uploadFile(filename: fname, refurl: urls[0], mimeType: mimeType, data: bits)
             } else {
                 print("Got data count=\(bits.count), fname='\(fname)', mime: \(mimeType ?? "nil")")
                 _ = interactor?.sendMessage(content: Drafty().attachFile(mime: mimeType, bits: bits, fname: fname))
