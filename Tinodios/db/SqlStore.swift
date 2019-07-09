@@ -279,7 +279,7 @@ class SqlStore : Storage {
     }
     
     func getMessageById(topic: TopicProto, dbMessageId: Int64) -> Message? {
-        return nil
+        return BaseDb.getInstance().messageDb?.query(msgId: dbMessageId)
     }
     
     func getQueuedMessages(topic: TopicProto) -> [Message]? {

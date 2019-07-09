@@ -1195,6 +1195,19 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
     public func delMessages(hard: Bool) -> PromisedReply<ServerMessage>? {
         return delMessages(from: 0, to: (self.seq ?? 0) + 1, hard: hard)
     }
+    public func syncOne(msgId: Int64) -> PromisedReply<ServerMessage>? {
+        guard let m = store?.getMessageById(topic: self, dbMessageId: msgId) else {
+            return PromisedReply<ServerMessage>(value: ServerMessage())
+        }
+        if m.isDeleted {
+            return tinode?.delMessage(topicName: name, msgId: m.seqId, hard: m.isDeleted(hard: true))
+        }
+        if m.isReady, let content = m.content {
+            store?.msgSyncing(topic: self, dbMessageId: msgId, sync: true)
+            return self.publish(content: content, msgId: msgId)
+        }
+        return nil
+    }
     public func syncAll() -> PromisedReply<ServerMessage>? {
         var result: PromisedReply<ServerMessage>? = PromisedReply<ServerMessage>(value: ServerMessage())
         // Soft deletes.

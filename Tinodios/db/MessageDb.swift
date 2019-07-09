@@ -215,6 +215,14 @@ class MessageDb {
             return nil
         }
     }
+    func query(msgId: Int64?) -> StoredMessage? {
+        guard let msgId = msgId else { return nil }
+        let record = self.table.filter(self.id == msgId)
+        if let row = try? db.pluck(record), row != nil {
+            return self.readOne(r: row!)
+        }
+        return nil
+    }
     func queryDeleted(topicId: Int64?, hard: Bool) -> [Int]? {
         guard let topicId = topicId else { return nil }
         let status = hard ? BaseDb.kStatusDeletedHard : BaseDb.kStatusDeletedSoft

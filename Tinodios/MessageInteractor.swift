@@ -23,7 +23,7 @@ protocol MessageBusinessLogic: class {
     func acceptInvitation()
     func ignoreInvitation()
     func blockTopic()
-    func uploadFile(filename: String?, mimeType: String?, data: Data?)
+    func uploadFile(filename: String?, refurl: URL?, mimeType: String?, data: Data?)
 }
 
 protocol MessageDataStore {
@@ -285,12 +285,32 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
             UiUtils.showToast(message: "Operation failed \(error)")
         }
     }
-    func uploadFile(filename: String?, mimeType: String?, data: Data?) {
-        guard let filename = filename, let mimeType = mimeType, let data = data else { return }
-        // guard let topic = topic else { return }
-        // topic.store?.msgDraftUpdate(topic: topic, dbMessageId: , data: )
-        let helper = Cache.getLargeFileHelper()
-        helper.startUpload(filename: filename, mimetype: mimeType, d: data)
+    func uploadFile(filename: String?, refurl: URL?, mimeType: String?, data: Data?) {
+        guard let filename = filename, let mimeType = mimeType, let data = data, let topic = topic else { return }
+        guard let content = try? Drafty().attachFile(mime: mimeType,
+                                                bits: nil,
+                                                fname: filename,
+                                                refurl: refurl,
+                                                size: data.count) else { return }
+        if let msgId = topic.store?.msgDraft(topic: topic, data: content) {
+            let helper = Cache.getLargeFileHelper()
+            helper.startUpload(
+                filename: filename, mimetype: mimeType, d: data,
+                topicId: self.topicName!, msgId: msgId,
+                completionCallback: { serverMessage in
+                    if let ctrl = serverMessage.ctrl, ctrl.code == 200, let serverUrl = ctrl.getStringParam(for: "url") {
+                        let serverUrl2 = URL(string: serverUrl)!
+                        if let content = try? Drafty().attachFile(
+                            mime: mimeType, fname: filename,
+                            refurl: serverUrl2, size: data.count) {
+                            _ = topic.store?.msgReady(topic: topic, dbMessageId: msgId, data: content)
+                            _ = topic.syncOne(msgId: msgId)
+                        }
+                    } else {
+                        _ = topic.store?.msgDiscard(topic: topic, dbMessageId: msgId)
+                    }
+                })
+        }
     }
     override func onData(data: MsgServerData?) {
         self.loadMessages()

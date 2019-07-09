@@ -540,7 +540,7 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
     ///     - refurl: reference to content location. If URL is relative, assume current server.
     ///     - size: size of the attachment (treated by client as an untrusted hint).
     /// - Returns: 'self' Drafty object.
-    internal func attachFile(mime: String?, bits: Data?, fname: String?, refurl: URL?, size: Int) throws -> Drafty {
+    public func attachFile(mime: String?, bits: Data?, fname: String?, refurl: URL?, size: Int) throws -> Drafty {
         guard bits != nil || refurl != nil else {
             throw DraftyError.illegalArgument("Either file bits or reference URL must not be nil.")
         }
