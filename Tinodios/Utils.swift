@@ -36,20 +36,21 @@ class Utils {
 
     // Calculate difference between two arrays of messages. Returns a tuple of insertion indexes and deletion indexes.
     // First the deletion indexes are applied to the old array. Then insertions are applied to the remaining array.
-    // Indexes are applied in high to low order.
-    public static func diffMessageArray(sortedOld old: [Message], sortedNew new: [Message]) -> (removed: [Int], inserted: [Int]) {
+    // Indexes should be applied in descending order.
+    public static func diffMessageArray(sortedOld old: [Message], sortedNew new: [Message]) -> (removed: [Int], inserted: [Int], mutated: [Int]) {
         if old.isEmpty && new.isEmpty {
-            return (inserted: [], removed: [])
+            return (inserted: [], removed: [], mutated: [])
         }
         if old.isEmpty {
-            return (inserted: Array(0 ..< new.count), removed: [])
+            return (inserted: Array(0 ..< new.count), removed: [], mutated: Array(0 ..< new.count))
         }
         if new.isEmpty {
-            return (inserted: [], removed: Array(0 ..< old.count))
+            return (inserted: [], removed: Array(0 ..< old.count), mutated: [])
         }
 
         var inserted: [Int] = []
         var removed: [Int] = []
+        var mutated: [Int] = []
 
         // Match old array against the new array to separate removed items from inserted.
         var o = 0, n = 0
@@ -57,11 +58,18 @@ class Utils {
             if o == old.count || (n < new.count && old[o].seqId > new[n].seqId) {
                 // Present in new, missing in old: added
                 inserted.append(n)
+                if mutated.count == 0 || mutated[mutated.count - 1] != n {
+                    mutated.append(n)
+                }
                 n += 1
 
             } else if n == new.count || old[o].seqId < new[n].seqId {
                 // Present in old, missing in new: removed
                 removed.append(o)
+                if mutated.count == 0 || mutated[mutated.count - 1] != n {
+                    // Appending n, not o because mutated is an index agaist the new data.
+                    mutated.append(n)
+                }
                 o += 1
 
             } else {
@@ -75,7 +83,7 @@ class Utils {
             }
         }
 
-        return (inserted: inserted, removed: removed)
+        return (inserted: inserted, removed: removed, mutated: mutated)
     }
 
     public static func parseTags(from tagsString: String?) -> [String]? {

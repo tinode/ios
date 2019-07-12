@@ -388,14 +388,36 @@ extension MessageViewController: MessageDisplayLogic {
             self.messages = newData
             collectionView.reloadData()
         } else {
+            // Get indexes of inserted and deleted items.
             let diff = Utils.diffMessageArray(sortedOld: oldData, sortedNew: newData)
-            let toDelete = diff.removed.map { IndexPath(item: $0, section: 0) }
-            let toInsert = diff.inserted.map { IndexPath(item: $0, section: 0) }
+
+            // Each insertion or deletion may change the appearance of the preceeding and following messages.
+            // Calculate indexes of all items which need to be updated.
+            var refresh: [Int] = []
+            for index in diff.mutated {
+                if index > 0 {
+                    // Refresh the preceeding item.
+                    refresh.append(index - 1)
+                }
+                if index < newData.count - 1 {
+                    // Refresh the following item.
+                    refresh.append(index + 1)
+                }
+            }
+            // Ensure uniqueness of values. No need to reload newly inserted values.
+            refresh = Array(Set(refresh).subtracting(Set(diff.inserted)))
 
             collectionView.performBatchUpdates({ () -> Void in
                 self.messages = newData
-                collectionView.deleteItems(at: toDelete)
-                collectionView.insertItems(at: toInsert)
+                if diff.removed.count > 0 {
+                    collectionView.deleteItems(at: diff.removed.map { IndexPath(item: $0, section: 0) })
+                }
+                if diff.inserted.count > 0 {
+                    collectionView.insertItems(at: diff.inserted.map { IndexPath(item: $0, section: 0) })
+                }
+                if refresh.count > 0 {
+                    collectionView.reloadItems(at: refresh.map { IndexPath(item: $0, section: 0) })
+                }
                 }, completion: nil)
         }
         collectionView.layoutIfNeeded()
