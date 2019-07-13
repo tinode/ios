@@ -14,6 +14,7 @@ protocol MessageDisplayLogic: class {
     func runTypingAnimation()
     func displayChatMessages(messages: [StoredMessage])
     func reloadMessage(withSeqId seqId: Int)
+    func reloadMessage(withMsgId msgId: Int64)
     func applyTopicPermissions()
     func endRefresh()
     func dismiss()
@@ -127,7 +128,11 @@ class MessageViewController: UIViewController {
 
     // Messages to be displayed
     var messages: [Message] = []
+    // For updating individual messages, we need:
+    // * Tinode sequence id -> message offset.
     var messageSeqIdIndex: [Int:Int] = [:]
+    // * Database message id -> message offset.
+    var messageDbIdIndex: [Int64:Int] = [:]
 
     // Cache of message cell sizes. Calculation of cell sizes is heavy. Caching the result to improve scrolling performance.
     // var cellSizeCache: [CGSize?] = []
@@ -383,6 +388,11 @@ extension MessageViewController: MessageDisplayLogic {
             dict[item.element.seqId] = item.offset
             return dict
         }
+        self.messageDbIdIndex = newData.enumerated().reduce([Int64:Int]()) { (dict, item) -> [Int64:Int] in
+            var dict = dict
+            dict[item.element.msgId] = item.offset
+            return dict
+        }
 
         if oldData.isEmpty || newData.isEmpty {
             self.messages = newData
@@ -403,6 +413,11 @@ extension MessageViewController: MessageDisplayLogic {
     }
     func reloadMessage(withSeqId seqId: Int) {
         if let index = self.messageSeqIdIndex[seqId] {
+            self.collectionView.reloadItems(at: [IndexPath(row: index, section: 0)])
+        }
+    }
+    func reloadMessage(withMsgId msgId: Int64) {
+        if let index = self.messageDbIdIndex[msgId] {
             self.collectionView.reloadItems(at: [IndexPath(row: index, section: 0)])
         }
     }
