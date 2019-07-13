@@ -8,7 +8,7 @@
 import UIKit
 import TinodeSDK
 
-class AccountSettingsViewController: UIViewController {
+class AccountSettingsViewController: UITableViewController {
 
     @IBOutlet weak var topicTitleTextView: UITextView!
     @IBOutlet weak var avatarImage: RoundImageView!
