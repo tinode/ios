@@ -16,13 +16,19 @@ class Upload {
     var isUploading = false
     var progress: Float = 0
     var responseData: Data = Data()
-    var callback: ((ServerMessage) -> Void)?
+    var progressCb: (() -> Void)?
+    var finalCb: ((ServerMessage?, Error?) -> Void)?
 
     var task: URLSessionUploadTask?
 
     init(url: URL) {
         self.url = url
         self.topicId = ""
+    }
+    deinit {
+        if let cb = finalCb {
+            cb(nil, TinodeError.invalidState("Topic \(topicId), msg id \(msgId): Could not finish upload. Cancelling."))
+        }
     }
 }
 
@@ -41,8 +47,9 @@ class LargeFileHelper: NSObject {
         let config = URLSessionConfiguration.background(withIdentifier: Bundle.main.bundleIdentifier!)
         self.init(config: config)
     }
+    // TODO: make background uploads work.
     func startUpload(filename: String, mimetype: String, d: Data, topicId: String, msgId: Int64,
-                     completionCallback: ((ServerMessage) -> Void)?) {
+                     completionCallback: ((ServerMessage?, Error?) -> Void)?) {
         let tinode = Cache.getTinode()
         guard var url = tinode.baseURL(useWebsocketProtocol: false) else { return }
         url.appendPathComponent("file/u/")
@@ -82,9 +89,9 @@ class LargeFileHelper: NSObject {
         upload.isUploading = true
         upload.topicId = topicId
         upload.msgId = msgId
-        upload.callback = completionCallback
-        upload.task!.resume()
+        upload.finalCb = completionCallback
         activeUploads[localFileName] = upload
+        upload.task!.resume()
     }
 }
 
@@ -109,30 +116,38 @@ extension LargeFileHelper: URLSessionDataDelegate {
 }
 extension LargeFileHelper: URLSessionTaskDelegate {
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError: Error?) {
-        print("We're done here")
-        if let error = didCompleteWithError {
-            print("Quit with \(error) - \(task.taskDescription)")
+        guard let taskId = task.taskDescription, let upload = activeUploads[taskId] else {
+            print("Unknown upload. Discarding.")
             return
         }
-        // activeUploads.removeValue(forKey: )
-        if let taskId = task.taskDescription, let upload = activeUploads[taskId] {
-            activeUploads.removeValue(forKey: taskId)
-            print("done with task \(taskId) - \(upload.topicId)")
-            let tinode = Cache.getTinode()
-            let topic = tinode.getTopic(topicName: upload.topicId) as! DefaultComTopic
-
-            if let response = task.response as? HTTPURLResponse {
-                //
-                if response.statusCode == 200 && !upload.responseData.isEmpty {
-                    print("response \(response)")
-                    if let serverMsg = try? Tinode.jsonDecoder.decode(ServerMessage.self, from: upload.responseData) {
-                        upload.callback?(serverMsg)
-                    }
-                } else {
-                    print("failed - \(response.statusCode) \(response.allHeaderFields) \(upload.responseData.count)")
-                }
-                print("mime type = \(response.mimeType)")
-            }
+        activeUploads.removeValue(forKey: taskId)
+        var serverMsg: ServerMessage? = nil
+        var uploadError: Error? = didCompleteWithError
+        defer {
+            upload.finalCb?(serverMsg, uploadError)
+            upload.finalCb = nil
+        }
+        guard uploadError == nil else {
+            return
+        }
+        print("done with task \(taskId) - \(upload.topicId)")
+        guard let response = task.response as? HTTPURLResponse else {
+            uploadError = TinodeError.invalidState("Upload failed (\(upload.topicId)). No server response.")
+            return
+        }
+        guard response.statusCode == 200 else {
+            uploadError = TinodeError.invalidState("Upload failed (\(upload.topicId)): response code \(response.statusCode).")
+            return
+        }
+        guard !upload.responseData.isEmpty else {
+            uploadError = TinodeError.invalidState("Upload failed (\(upload.topicId)): empty response body.")
+            return
+        }
+        do {
+            serverMsg = try Tinode.jsonDecoder.decode(ServerMessage.self, from: upload.responseData)
+        } catch {
+            uploadError = error
+            return
         }
     }
     func urlSession(_ session: URLSession, task: URLSessionTask, didSendBodyData: Int64, totalBytesSent: Int64, totalBytesExpectedToSend: Int64) {

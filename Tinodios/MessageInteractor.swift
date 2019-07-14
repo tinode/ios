@@ -297,17 +297,31 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
             helper.startUpload(
                 filename: filename, mimetype: mimeType, d: data,
                 topicId: self.topicName!, msgId: msgId,
-                completionCallback: { serverMessage in
-                    if let ctrl = serverMessage.ctrl, ctrl.code == 200, let serverUrl = ctrl.getStringParam(for: "url") {
-                        let serverUrl2 = URL(string: serverUrl)!
-                        if let content = try? Drafty().attachFile(
-                            mime: mimeType, fname: filename,
-                            refurl: serverUrl2, size: data.count) {
-                            _ = topic.store?.msgReady(topic: topic, dbMessageId: msgId, data: content)
-                            _ = topic.syncOne(msgId: msgId)
+                completionCallback: { (serverMessage, error) in
+                    var success = false
+                    defer {
+                        if !success {
+                            _ = topic.store?.msgDiscard(topic: topic, dbMessageId: msgId)
                         }
-                    } else {
-                        _ = topic.store?.msgDiscard(topic: topic, dbMessageId: msgId)
+                    }
+                    guard error == nil else {
+                        DispatchQueue.main.async {
+                            UiUtils.showToast(message: error!.localizedDescription)
+                        }
+                        return
+                    }
+                    guard let ctrl = serverMessage?.ctrl, ctrl.code == 200, let serverUrl = ctrl.getStringParam(for: "url") else {
+                        return
+                    }
+                    if let srvUrl = URL(string: serverUrl), let content = try? Drafty().attachFile(
+                        mime: mimeType, fname: filename,
+                        refurl: srvUrl, size: data.count) {
+                        _ = topic.store?.msgReady(topic: topic, dbMessageId: msgId, data: content)
+                        _ = topic.syncOne(msgId: msgId)
+                        DispatchQueue.main.async {
+                            self.presenter?.reloadMessage(withMsgId: msgId)
+                        }
+                        success = true
                     }
                 })
         }
