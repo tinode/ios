@@ -15,6 +15,10 @@ class CredentialsViewController : UIViewController {
     
     var meth: String?
     
+    override func viewDidLoad() {
+        UiUtils.dismissKeyboardForTaps(onView: self.view)
+    }
+
     @IBAction func onConfirm(_ sender: UIButton) {
         guard let code = codeText.text else {
             return

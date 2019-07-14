@@ -9,7 +9,7 @@ import UIKit
 import TinodeSDK
 
 protocol ChatListDisplayLogic: class {
-    func displayChats(_ topics: [DefaultComTopic])
+    func displayChats(_ topics: [DefaultComTopic], archivedTopics: [DefaultComTopic]?)
     func displayLoginView()
     func updateChat(_ name: String)
     func deleteChat(_ name: String)
@@ -17,8 +17,17 @@ protocol ChatListDisplayLogic: class {
 
 class ChatListViewController: UITableViewController, ChatListDisplayLogic {
 
+    @IBOutlet var chatListTableView: UITableView!
+
     var interactor: ChatListBusinessLogic?
     var topics: [DefaultComTopic] = []
+    var archivedTopics: [DefaultComTopic]? = nil
+    var numArchivedTopics: Int {
+        get { return archivedTopics?.count ?? 0 }
+    }
+    var topicsSection: Int {
+        get { return numArchivedTopics > 0 ? 1 : 0 }
+    }
     // Index of contacts: name => position in topics
     var rowIndex: [String : Int] = [:]
     var router: ChatListRoutingLogic?
@@ -35,12 +44,42 @@ class ChatListViewController: UITableViewController, ChatListDisplayLogic {
         interactor.router = router
         presenter.viewController = viewController
         router.viewController = viewController
+
+        self.chatListTableView.register(UINib(nibName: "ChatListViewCell", bundle: nil), forCellReuseIdentifier: "ChatListViewCell")
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         setup()
+
+        NotificationCenter.default.addObserver(
+            self, selector: #selector(self.appGoingInactive),
+            name: UIApplication.willResignActiveNotification,
+            object: nil)
+        NotificationCenter.default.addObserver(
+            self, selector: #selector(self.appBecameActive),
+            name: UIApplication.didBecomeActiveNotification,
+            object: nil)
+    }
+    deinit {
+        NotificationCenter.default.removeObserver(
+            self,
+            name: UIApplication.willResignActiveNotification,
+            object: nil)
+        NotificationCenter.default.removeObserver(
+            self,
+            name: UIApplication.didBecomeActiveNotification,
+            object: nil)
+    }
+    @objc
+    func appBecameActive() {
+        self.interactor?.attachToMeTopic()
+    }
+    @objc
+    func appGoingInactive() {
+        self.interactor?.cleanup()
+        self.interactor?.leaveMeTopic()
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -53,15 +92,12 @@ class ChatListViewController: UITableViewController, ChatListDisplayLogic {
     }
 
     func displayLoginView() {
-        DispatchQueue.main.async {
-            let storyboard = UIStoryboard(name: "Main", bundle: nil)
-            let destinationVC = storyboard.instantiateViewController(withIdentifier: "StartNavigator") as! UINavigationController
-            self.show(destinationVC, sender: nil)
-        }
+        UiUtils.routeToLoginVC()
     }
 
-    func displayChats(_ topics: [DefaultComTopic]) {
+    func displayChats(_ topics: [DefaultComTopic], archivedTopics: [DefaultComTopic]?) {
         self.topics = topics
+        self.archivedTopics = archivedTopics
         self.rowIndex = Dictionary(uniqueKeysWithValues: topics.enumerated().map { (index, topic) in (topic.name, index) })
         DispatchQueue.main.async {
             self.tableView!.reloadData()
@@ -71,7 +107,7 @@ class ChatListViewController: UITableViewController, ChatListDisplayLogic {
     func updateChat(_ name: String) {
         guard let position = rowIndex[name] else { return }
         DispatchQueue.main.async {
-            self.tableView!.reloadRows(at: [IndexPath(item: position, section: 0)], with: .none)
+            self.tableView!.reloadRows(at: [IndexPath(item: position, section: self.topicsSection)], with: .none)
         }
     }
 
@@ -79,7 +115,7 @@ class ChatListViewController: UITableViewController, ChatListDisplayLogic {
         guard let position = rowIndex[name] else { return }
         DispatchQueue.main.async {
             self.topics.remove(at: position)
-            self.tableView!.deleteRows(at: [IndexPath(item: position, section: 0)], with: .fade)
+            self.tableView!.deleteRows(at: [IndexPath(item: position, section: self.topicsSection)], with: .fade)
         }
     }
 }
@@ -87,43 +123,39 @@ class ChatListViewController: UITableViewController, ChatListDisplayLogic {
 // UITableViewController
 extension ChatListViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "Chats2Messages" {
-            router?.routeToChat(segue: segue)
+        if segue.identifier == "Chats2Messages", let topicName = sender as? String {
+            router?.routeToChat(withName: topicName, for: segue)
         }
     }
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
+        return 1 + (self.numArchivedTopics > 0 ? 1 : 0)
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         toggleNoChatsNote(on: topics.isEmpty)
+        if self.numArchivedTopics > 0 && section == 0 {
+            return 1
+        }
         return topics.count
     }
-
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "ChatsTableViewCell") as! ChatListTableViewCell
-        let topic = self.topics[indexPath.row]
-        cell.title.text = topic.pub?.fn ?? "Unknown or unnamed"
+    private func fillInArchivedChatsCell(cell: ChatListViewCell) {
+        cell.title.text = "Archived Chats"
         cell.title.sizeToFit()
-        cell.subtitle.text = topic.comment
+        cell.subtitle.text = self.archivedTopics!.map { $0.pub?.fn ?? "Unknown" }.joined(separator: ", ")
         cell.subtitle.sizeToFit()
-        let unread = topic.unread
-        if unread > 0 {
-            cell.unreadCount.text = unread > 9 ? "9+" : String(unread)
-            cell.unreadCount.isHidden = false
-        } else {
-            cell.unreadCount.isHidden = true
+        cell.unreadCount.text = self.numArchivedTopics > 9 ? "9+" : String(self.numArchivedTopics)
+        cell.icon.avatar.image = nil
+        cell.icon.online.isHidden = true
+    }
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "ChatListViewCell") as! ChatListViewCell
+        if self.numArchivedTopics > 0 && indexPath.section == 0 {
+            fillInArchivedChatsCell(cell: cell)
+            return cell
         }
-
-        // Online/offline indicator
-        cell.online.backgroundColor = topic.online ?
-            UIColor.init(red: 0x40/255, green: 0xC0/255, blue: 0x40/255, alpha: 1.0) :
-            UIColor.init(red: 0xE0/255, green: 0xE0/255, blue: 0xE0/255, alpha: 1.0)
-
-        // Avatar image
-        cell.icon.set(icon: topic.pub?.photo?.image(), title: topic.pub?.fn, id: topic.name)
-
+        let topic = self.topics[indexPath.row]
+        cell.fillFromTopic(topic: topic)
         return cell
     }
 
@@ -133,8 +165,24 @@ extension ChatListViewController {
             let topic = self.topics[indexPath.row]
             self.interactor?.deleteTopic(topic.name)
         }
+        let archive = UITableViewRowAction(style: .normal, title: "Archive") { (action, indexPath) in
+            print("archiving at index path")
+            let topic = self.topics[indexPath.row]
+            self.interactor?.changeArchivedStatus(
+                forTopic: topic.name, archived: !topic.isArchived)
+        }
 
-        return [delete]
+        return [delete, archive]
+    }
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated:  true)
+        let section = indexPath.section
+        if self.numArchivedTopics > 0 && section == 0 {
+            self.performSegue(withIdentifier: "Chats2Archive", sender: nil)
+        } else {
+            self.performSegue(withIdentifier: "Chats2Messages",
+                              sender: self.topics[indexPath.row].name)
+        }
     }
 }
 

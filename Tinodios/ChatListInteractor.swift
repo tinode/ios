@@ -12,10 +12,12 @@ import TinodeSDK
 protocol ChatListBusinessLogic: class {
     func loadAndPresentTopics()
     func attachToMeTopic()
+    func leaveMeTopic()
     func updateChat(_ name: String)
     func setup()
     func cleanup()
     func deleteTopic(_ name: String)
+    func changeArchivedStatus(forTopic name: String, archived: Bool)
 }
 
 protocol ChatListDataStore: class {
@@ -30,7 +32,9 @@ class ChatListInteractor: ChatListBusinessLogic, ChatListDataStore {
             print("Contacts got onInfo update \(String(describing: info.what))")
         }
         override func onPres(pres: MsgServerPres) {
-            if pres.what == "msg" || pres.what == "off" || pres.what == "on" {
+            if pres.what == "msg" {
+                interactor?.loadAndPresentTopics()
+            } else if pres.what == "off" || pres.what == "on" {
                 if let name = pres.src {
                     interactor?.updateChat(name)
                 }
@@ -68,19 +72,25 @@ class ChatListInteractor: ChatListBusinessLogic, ChatListDataStore {
             self.interactor?.attachToMeTopic()
         }
         override func onDisconnect(byServer: Bool, code: Int, reason: String) {
-            // TODO: update presence, etc.
+            super.onDisconnect(byServer: byServer, code: code, reason: reason)
+            // Update presence indicators (all should be off).
+            self.interactor?.loadAndPresentTopics()
         }
     }
 
     var presenter: ChatListPresentationLogic?
     var router: ChatListRoutingLogic?
     var topics: [DefaultComTopic]?
+    private var archivedTopics: [DefaultComTopic]?
     private var meListener: MeListener? = nil
     private var meTopic: DefaultMeTopic? = nil
     private var tinodeEventListener: ChatEventListener? = nil
 
     func attachToMeTopic() {
         let tinode = Cache.getTinode()
+        guard meTopic == nil || !meTopic!.attached else {
+            return
+        }
         do {
             try UiUtils.attachToMeTopic(meListener: self.meListener)?.then(
                 onSuccess: { [weak self] msg in
@@ -102,9 +112,17 @@ class ChatListInteractor: ChatListBusinessLogic, ChatListDataStore {
             self.router?.routeToLogin()
         }
     }
+    func leaveMeTopic() {
+        if self.meTopic?.attached ?? false {
+            self.meTopic?.leave()
+        }
+    }
     func setup() {
-        meListener = MeListener()
+        if self.meListener == nil {
+            self.meListener = MeListener()
+        }
         self.meListener?.interactor = self
+        self.meTopic?.listener = meListener
         let tinode = Cache.getTinode()
         self.tinodeEventListener = ChatEventListener(
             interactor: self, connected: tinode.isConnected)
@@ -113,18 +131,20 @@ class ChatListInteractor: ChatListBusinessLogic, ChatListDataStore {
     func cleanup() {
         self.meTopic?.listener = nil
         Cache.getTinode().listener = nil
-        if self.meTopic?.attached ?? false {
-            self.meTopic?.leave()
-        }
     }
-    func loadAndPresentTopics() {
-        self.topics = Cache.getTinode().getFilteredTopics(filter: {(topic: TopicProto) in
-            return topic.topicType.matches(TopicType.user)
+    private func getTopics(archived: Bool) -> [DefaultComTopic]? {
+        return Cache.getTinode().getFilteredTopics(filter: {(topic: TopicProto) in
+            return topic.topicType.matches(TopicType.user) && topic.isArchived == archived
         })?.map {
             // Must succeed.
             $0 as! DefaultComTopic
         }
-        self.presenter?.presentTopics(self.topics ?? [])
+    }
+    func loadAndPresentTopics() {
+        self.topics = self.getTopics(archived: false)
+        self.archivedTopics = self.getTopics(archived: true)
+        self.presenter?.presentTopics(
+            self.topics ?? [], archivedTopics: self.archivedTopics)
     }
 
     func updateChat(_ name: String) {
@@ -135,7 +155,19 @@ class ChatListInteractor: ChatListBusinessLogic, ChatListDataStore {
         let topic = Cache.getTinode().getTopic(topicName: name) as! DefaultComTopic
         do {
             try topic.delete()?.then(onSuccess: { [weak self] msg in
-                self?.presenter?.topicDeleted(name)
+                self?.loadAndPresentTopics()
+                return nil
+            })
+        } catch {
+            print(error)
+        }
+    }
+
+    func changeArchivedStatus(forTopic name: String, archived: Bool) {
+        let topic = Cache.getTinode().getTopic(topicName: name) as! DefaultComTopic
+        do {
+            try topic.updateArchived(archived: archived)?.then(onSuccess: { [weak self] msg in
+                self?.loadAndPresentTopics()
                 return nil
             })
         } catch {

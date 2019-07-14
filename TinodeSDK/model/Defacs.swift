@@ -8,12 +8,16 @@
 import Foundation
 
 public class Defacs: Codable {
-    var auth: AcsHelper?
-    var anon: AcsHelper?
+    public var auth: AcsHelper?
+    public var anon: AcsHelper?
     
-    init(auth: String, anon: String) {
-        setAuth(a: auth)
-        setAnon(a: anon)
+    init(auth: String?, anon: String?) {
+        if let auth = auth {
+            setAuth(a: auth)
+        }
+        if let anon = anon {
+            setAnon(a: anon)
+        }
     }
     private enum CodingKeys : String, CodingKey  {
         case auth, anon
@@ -27,7 +31,16 @@ public class Defacs: Codable {
             setAnon(a: anonStr)
         }
     }
-    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        if let auth = auth {
+            try container.encode(auth.description, forKey: .auth)
+        }
+        if let anon = anon {
+            try container.encode(anon.description, forKey: .anon)
+        }
+    }
+
     public func getAuth() -> String? {
         return auth != nil ? auth!.description : nil
     }

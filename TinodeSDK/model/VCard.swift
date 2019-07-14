@@ -40,19 +40,39 @@ public class Photo: Codable {
         }
         return cachedImage
     }
+    public func copy() -> Photo {
+        return Photo(type: self.type, data: self.data)
+    }
 }
 
 public class Contact: Codable {
-    let type: String?
-    let uri: String?
+    var type: String? = nil
+    var uri: String? = nil
+    init() {}
+    public func copy() -> Contact {
+        let contactCopy = Contact()
+        contactCopy.type = self.type
+        contactCopy.uri = self.uri
+        return contactCopy
+    }
 }
 
 public class Name: Codable {
-    let surname: String?
-    let given: String?
-    let additional: String?
-    let prefix: String?
-    let suffix: String?
+    var surname: String? = nil
+    var given: String? = nil
+    var additional: String? = nil
+    var prefix: String? = nil
+    var suffix: String? = nil
+    init() {}
+    public func copy() -> Name {
+        let nameCopy = Name()
+        nameCopy.surname = self.surname
+        nameCopy.given = self.given
+        nameCopy.additional = self.additional
+        nameCopy.prefix = self.prefix
+        nameCopy.suffix = self.suffix
+        return nameCopy
+    }
 }
 
 public class VCard: Codable {
@@ -67,7 +87,7 @@ public class VCard: Codable {
     public var impp: [Contact]?
     // Avatar photo.
     public var photo: Photo?
-    
+
     public init(fn: String?, avatar: Photo?) {
         self.fn = fn
         self.photo = avatar
@@ -84,5 +104,17 @@ public class VCard: Codable {
 
         guard let avatar = avatar else { return }
         self.photo = Photo(image: avatar)
+    }
+    public func copy() -> VCard {
+        let vcardCopy = VCard(
+            fn: fn,
+            avatar: self.photo?.copy())
+        vcardCopy.n = self.n
+        vcardCopy.org = self.org
+        vcardCopy.title = self.title
+        vcardCopy.tel = self.tel?.map { $0 }
+        vcardCopy.email = self.email?.map { $0 }
+        vcardCopy.impp = self.impp?.map { $0 }
+        return vcardCopy
     }
 }

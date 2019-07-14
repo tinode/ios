@@ -31,6 +31,7 @@ public protocol TopicProto: class {
     var lastSeen: LastSeen? { get set }
     var online: Bool { get set }
     var cachedMessageRange: Storage.Range? { get }
+    var isArchived: Bool { get }
 
     func serializePub() -> String?
     func serializePriv() -> String?
@@ -332,6 +333,44 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
             return topicType == .grp
         }
     }
+    public var isManager: Bool {
+        get {
+            return description?.acs?.isManager ?? false
+        }
+    }
+    public var isMuted: Bool {
+        get {
+            return description?.acs?.isMuted ?? false
+        }
+    }
+    public var isOwner: Bool {
+        get {
+            return description?.acs?.isOwner ?? false
+        }
+    }
+    public var isAdmin: Bool {
+        get {
+            return description?.acs?.isAdmin ?? false
+        }
+    }
+    public var isReader: Bool {
+        get {
+            return description?.acs?.isReader ?? false
+        }
+    }
+    public var isWriter: Bool {
+        get {
+            return description?.acs?.isWriter ?? false
+        }
+    }
+    public var isJoiner: Bool {
+        get {
+            return description?.acs?.isJoiner ?? false
+        }
+    }
+    public var isArchived: Bool {
+        get { return false }
+    }
 
     // Storage is owned by Tinode.
     weak public var store: Storage? = nil
@@ -580,9 +619,7 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
         listener?.onMetaDesc(desc: (meta.desc as! Description<DP, DR>))
     }
     private func removeSubFromCache(sub: Subscription<SP, SR>) {
-        if var allsubs = subs {
-            allsubs.removeValue(forKey: sub.user!)
-        }
+        subs?.removeValue(forKey: sub.user!)
     }
 
     fileprivate func update(sub: Subscription<SP, SR>) {
@@ -697,9 +734,9 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
         var sub: Subscription<SP, SR>?
         if (newsub.deleted != nil) {
             store?.subDelete(topic: self, sub: newsub)
-            removeSubFromCache(sub: newsub);
+            removeSubFromCache(sub: newsub)
             
-            sub = newsub;
+            sub = newsub
         } else {
             sub = getSubscription(for: newsub.user)
             if sub != nil {
@@ -717,7 +754,8 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
     private func routeMetaDel(clear: Int, delseq: [MsgDelRange]) {
         if let s = store {
             for range in delseq {
-                s.msgDelete(topic: self, delete: clear, deleteFrom: range.low!, deleteTo: range.hi ?? (range.low! + 1))
+                let lo = range.low ?? 0
+                s.msgDelete(topic: self, delete: clear, deleteFrom: lo, deleteTo: range.hi ?? (lo + 1))
             }
         }
         self.maxDel = clear
@@ -873,12 +911,42 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
             return nil
         }
     }
-
+    public func setDescription(desc: MetaSetDesc<DP, DR>) -> PromisedReply<ServerMessage>? {
+        return setMeta(meta: MsgSetMeta<DP, DR>(desc: desc, sub: nil, tags: nil))
+    }
+    public func setDescription(pub: DP?, priv: DR?) -> PromisedReply<ServerMessage>? {
+        return setDescription(desc: MetaSetDesc<DP, DR>(pub: pub, priv: priv))
+    }
+    public func updateDefacs(auth: String?, anon: String?) -> PromisedReply<ServerMessage>? {
+        return setDescription(desc: MetaSetDesc<DP, DR>(da: Defacs(auth: auth, anon: anon)))
+    }
     public func updateAccessMode(ac: AccessChange?) -> Bool {
         if description!.acs == nil {
             description!.acs = Acs(from: nil as Acs?)
         }
         return description!.acs!.update(from: ac)
+    }
+    public func setSubscription(sub: MetaSetSub) -> PromisedReply<ServerMessage>? {
+        return setMeta(meta: MsgSetMeta(desc: nil, sub: sub, tags: nil))
+    }
+    public func updateMode(uid: String?, update: String) -> PromisedReply<ServerMessage>? {
+        var uid = uid
+        let sub = getSubscription(for: uid ?? tinode?.myUid)
+        if uid == tinode?.myUid {
+            uid = nil
+        }
+        let uidIsSelf = uid == nil || sub == nil
+        if description!.acs == nil {
+            description!.acs = Acs()
+        }
+        let mode = uidIsSelf ? description!.acs!.want : sub!.acs!.given
+        if mode?.update(from: update) ?? false {
+            return setSubscription(sub: MetaSetSub(user: uid, mode: mode?.description))
+        }
+        return PromisedReply<ServerMessage>(value: ServerMessage())
+    }
+    public func updateMuted(muted: Bool) -> PromisedReply<ServerMessage>? {
+        return updateMode(uid: nil, update: muted ? "-P" : "+P")
     }
     @discardableResult
     public func invite(user uid: String, in mode: String?) -> PromisedReply<ServerMessage>? {
@@ -923,7 +991,32 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
                     error.localizedDescription))
         }
     }
-
+    @discardableResult
+    public func eject(user uid: String, ban: Bool) -> PromisedReply<ServerMessage>? {
+        guard let sub = getSubscription(for: uid) else {
+            return PromisedReply(error:
+                TinodeError.notSubscribed(
+                    "Can't eject user from topic \(name)"))
+        }
+        if ban {
+            return invite(user: uid, in: "N")
+        }
+        if isNew {
+            store?.subDelete(topic: self, sub: sub)
+            listener?.onSubsUpdated()
+            return PromisedReply(error: TinodeError.notSynchronized)
+        }
+        do {
+            return try tinode!.delSubscription(topicName: name, user: uid)?.then(
+                onSuccess: { msg in
+                    self.store?.subDelete(topic: self, sub: sub)
+                    self.removeSubFromCache(sub: sub)
+                    self.listener?.onSubsUpdated()
+                    return nil
+                },
+                onFailure: nil)
+        } catch { return nil }
+    }
     public func routeInfo(info: MsgServerInfo) {
         if info.what != Tinode.kNoteKp {
             if let sub = getSubscription(for: info.from) {
@@ -1017,7 +1110,7 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
         return PromisedReply(
             error: TinodeError.notConnected("Leaving topic when Tinode is not connected."))
     }
-    
+
     private func processDelivery(ctrl: MsgServerCtrl?, id: Int64) {
         guard let ctrl = ctrl else {
             return
@@ -1079,6 +1172,42 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
         }
         return nil
     }
+    private func delMessages(from fromId: Int, to toId: Int, hard: Bool) -> PromisedReply<ServerMessage>? {
+        store?.msgMarkToDelete(topic: self, from: fromId, to: toId, markAsHard: hard)
+        if attached {
+            do {
+                return try tinode?.delMessage(topicName: self.name, fromId: fromId, toId: toId, hard: hard)?.then(
+                    onSuccess: { [weak self] msg in
+                        if let delId = msg.ctrl?.getIntParam(for: "del"), delId > 0 {
+                            self?.store?.msgDelete(topic: self!, delete: delId, deleteFrom: fromId, deleteTo: toId)
+                        }
+                        return nil
+                    })
+            } catch {
+                return PromisedReply<ServerMessage>(error: error)
+            }
+        }
+        if tinode?.isConnected ?? false {
+            return PromisedReply<ServerMessage>(error: TinodeError.notSubscribed("Not subscribed to topic."))
+        }
+        return PromisedReply<ServerMessage>(error: TinodeError.notConnected("Tinode not connected."))
+    }
+    public func delMessages(hard: Bool) -> PromisedReply<ServerMessage>? {
+        return delMessages(from: 0, to: (self.seq ?? 0) + 1, hard: hard)
+    }
+    public func syncOne(msgId: Int64) -> PromisedReply<ServerMessage>? {
+        guard let m = store?.getMessageById(topic: self, dbMessageId: msgId) else {
+            return PromisedReply<ServerMessage>(value: ServerMessage())
+        }
+        if m.isDeleted {
+            return tinode?.delMessage(topicName: name, msgId: m.seqId, hard: m.isDeleted(hard: true))
+        }
+        if m.isReady, let content = m.content {
+            store?.msgSyncing(topic: self, dbMessageId: msgId, sync: true)
+            return self.publish(content: content, msgId: msgId)
+        }
+        return nil
+    }
     public func syncAll() -> PromisedReply<ServerMessage>? {
         var result: PromisedReply<ServerMessage>? = PromisedReply<ServerMessage>(value: ServerMessage())
         // Soft deletes.
@@ -1134,7 +1263,14 @@ open class MeTopic<DP: Codable>: Topic<DP, PrivateType, DP, PrivateType> {
         // Don't attempt to load subscriptions: 'me' subscriptions are stored as topics.
         return 0
     }
-
+    override public func topicLeft(unsub: Bool?, code: Int?, reason: String?) {
+        super.topicLeft(unsub: unsub, code: code, reason: reason)
+        if let topics = tinode?.getTopics() {
+            for t in topics {
+                t.online = false
+            }
+        }
+    }
     override public func routePres(pres: MsgServerPres) {
         let what = MsgServerPres.parseWhat(what: pres.what)
         if let topic = tinode!.getTopic(topicName: pres.src!) {
@@ -1287,7 +1423,7 @@ public class ComTopic<DP: Codable>: Topic<DP, PrivateType, DP, PrivateType> {
         self.init(tinode: tinode!, name: Tinode.kTopicNew + tinode!.nextUniqueString(), l: l)
     }
 
-    public var isArchived: Bool {
+    public override var isArchived: Bool {
         get {
             guard let archived = priv?["arch"] else { return false }
             switch archived {
@@ -1300,14 +1436,23 @@ public class ComTopic<DP: Codable>: Topic<DP, PrivateType, DP, PrivateType> {
     }
 
     public var comment: String? {
+        get { return priv?.comment }
+    }
+
+    public var peer: Subscription<DP, PrivateType>? {
         get {
-            guard let comment = priv?["comment"] else { return nil }
-            switch comment {
-            case .string(let x):
-                return x
-            default:
-                return nil
-            }
+            guard isP2PType else { return nil }
+            return self.getSubscription(for: self.name)
         }
+    }
+
+    public func updateArchived(archived: Bool) -> PromisedReply<ServerMessage>? {
+        var priv = PrivateType()
+        priv.archived = archived
+        let meta = MsgSetMeta<DP, PrivateType>(
+            desc: MetaSetDesc(pub: nil, priv: priv),
+            sub: nil,
+            tags: nil)
+        return setMeta(meta: meta)
     }
 }

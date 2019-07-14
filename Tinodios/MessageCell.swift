@@ -16,6 +16,8 @@ protocol MessageCellDelegate: class {
     func didTapContent(in cell: MessageCell, url: URL?)
     /// Tap on avatar
     func didTapAvatar(in cell: MessageCell)
+    /// Tap outside of message
+    func didTapOutsideContent(in cell: MessageCell)
 }
 
 // Optional date, avatar, sender name, message bubble: content, delivery marker, timestamp.
@@ -132,6 +134,7 @@ class MessageCell: UICollectionViewCell {
         case avatarView.frame.contains(touchLocation):
             delegate?.didTapAvatar(in: self)
         default:
+            delegate?.didTapOutsideContent(in: self)
             break
         }
     }

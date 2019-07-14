@@ -18,6 +18,12 @@ protocol MessageBusinessLogic: class {
     func sendMessage(content: Drafty) -> Bool
     func sendReadNotification()
     func sendTypingNotification()
+    func clearAllMessages()
+    func enablePeersMessaging()
+    func acceptInvitation()
+    func ignoreInvitation()
+    func blockTopic()
+    func uploadFile(filename: String?, refurl: URL?, mimeType: String?, data: Data?)
 }
 
 protocol MessageDataStore {
@@ -64,7 +70,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
 
         if let pub = self.topic?.pub {
             DispatchQueue.main.async {
-                self.presenter?.updateTitleBar(icon: pub.photo?.image(), title: pub.fn)
+                self.presenter?.updateTitleBar(icon: pub.photo?.image(), title: pub.fn, online: self.topic?.online ?? false)
             }
         }
         self.topic?.listener = self
@@ -80,6 +86,10 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         Cache.getTinode().listener = nil
     }
     func attachToTopic() -> Bool {
+        guard !(self.topic?.attached ?? false) else {
+            DispatchQueue.main.async { self.presenter?.applyTopicPermissions() }
+            return true
+        }
         do {
             try self.topic?.subscribe(
                 set: nil,
@@ -97,6 +107,8 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                         if self?.topicId == -1 {
                             self?.topicId = BaseDb.getInstance().topicDb?.getId(topic: self?.topicName)
                         }
+                        self?.loadMessages()
+                        DispatchQueue.main.async { self?.presenter?.applyTopicPermissions() }
                         return nil
                     },
                     onFailure: { err in
@@ -139,9 +151,22 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
     }
     func sendReadNotification() {
         topic?.noteRecv()
+        topic?.noteRead()
     }
     func sendTypingNotification() {
         topic?.noteKeyPress()
+    }
+    func clearAllMessages() {
+        do {
+            try topic?.delMessages(hard: false)?.then(
+                onSuccess: { [weak self] msg in
+                    self?.loadMessages()
+                    return nil
+                },
+                onFailure: UiUtils.ToastFailureHandler)
+        } catch {
+            UiUtils.showToast(message: "Failed to delete messages: \(error)")
+        }
     }
     func loadMessages() {
         DispatchQueue.global(qos: .userInteractive).async {
@@ -194,7 +219,143 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         }
     }
 
+    func enablePeersMessaging() {
+        // Enable peer.
+        guard let origAm = self.topic?.getSubscription(for: self.topic?.name)?.acs else { return }
+        let am = Acs(from: origAm)
+        guard am.given?.update(from: "+RW") ?? false else {
+            return
+        }
+        do {
+            try topic?.setMeta(meta: MsgSetMeta(
+                desc: nil,
+                sub: MetaSetSub(user: topic?.name, mode: am.givenString),
+                tags: nil))?.thenCatch(onFailure: UiUtils.ToastFailureHandler)
+        } catch TinodeError.notConnected(_) {
+            UiUtils.showToast(message: "You are offline")
+        } catch {
+            UiUtils.showToast(message: "Action failed: \(error)")
+        }
+    }
+    func acceptInvitation() {
+        guard let topic = self.topic, let mode = self.topic?.accessMode?.givenString else { return }
+        var response = topic.setMeta(meta: MsgSetMeta(desc: nil, sub: MetaSetSub(mode: mode), tags: nil))
+        if topic.isP2PType {
+            // For P2P topics change 'given' permission of the peer too.
+            // In p2p topics the other user has the same name as the topic.
+            do {
+                response = try response?.thenApply(onSuccess: { msg in
+                    _ = topic.setMeta(meta: MsgSetMeta(
+                        desc: nil,
+                        sub: MetaSetSub(user: topic.name, mode: mode),
+                        tags: nil))
+                    return nil
+                })
+            } catch TinodeError.notConnected(_) {
+                UiUtils.showToast(message: "You are offline")
+            } catch {
+                UiUtils.showToast(message: "Operation failed \(error)")
+            }
+        }
+        _ = try? response?.thenApply(onSuccess: { msg in
+            self.presenter?.applyTopicPermissions()
+            return nil
+        })
+    }
+    func ignoreInvitation() {
+        _ = try? self.topic?.delete()?.thenFinally(
+            finally: {
+                self.presenter?.dismiss()
+                return nil
+            })
+    }
+    func blockTopic() {
+        guard let origAm = self.topic?.accessMode else { return }
+        let am = Acs(from: origAm)
+        guard am.want?.update(from: "-JP") ?? false else { return }
+        do {
+            try self.topic?.setMeta(meta: MsgSetMeta(desc: nil, sub: MetaSetSub(mode: am.wantString), tags: nil))?.thenFinally(
+                finally: {
+                    self.presenter?.dismiss()
+                    return nil
+                })
+        } catch TinodeError.notConnected(_) {
+            UiUtils.showToast(message: "You are offline")
+        } catch {
+            UiUtils.showToast(message: "Operation failed \(error)")
+        }
+    }
+    func uploadFile(filename: String?, refurl: URL?, mimeType: String?, data: Data?) {
+        guard let filename = filename, let mimeType = mimeType, let data = data, let topic = topic else { return }
+        guard let content = try? Drafty().attachFile(mime: mimeType,
+                                                bits: nil,
+                                                fname: filename,
+                                                refurl: refurl,
+                                                size: data.count) else { return }
+        if let msgId = topic.store?.msgDraft(topic: topic, data: content) {
+            let helper = Cache.getLargeFileHelper()
+            helper.startUpload(
+                filename: filename, mimetype: mimeType, d: data,
+                topicId: self.topicName!, msgId: msgId,
+                completionCallback: { (serverMessage, error) in
+                    var success = false
+                    defer {
+                        if !success {
+                            _ = topic.store?.msgDiscard(topic: topic, dbMessageId: msgId)
+                        }
+                    }
+                    guard error == nil else {
+                        DispatchQueue.main.async {
+                            UiUtils.showToast(message: error!.localizedDescription)
+                        }
+                        return
+                    }
+                    guard let ctrl = serverMessage?.ctrl, ctrl.code == 200, let serverUrl = ctrl.getStringParam(for: "url") else {
+                        return
+                    }
+                    if let srvUrl = URL(string: serverUrl), let content = try? Drafty().attachFile(
+                        mime: mimeType, fname: filename,
+                        refurl: srvUrl, size: data.count) {
+                        _ = topic.store?.msgReady(topic: topic, dbMessageId: msgId, data: content)
+                        _ = topic.syncOne(msgId: msgId)
+                        DispatchQueue.main.async {
+                            self.presenter?.reloadMessage(withMsgId: msgId)
+                        }
+                        success = true
+                    }
+                })
+        }
+    }
     override func onData(data: MsgServerData?) {
         self.loadMessages()
+    }
+    override func onOnline(online: Bool) {
+        DispatchQueue.main.async {
+            self.presenter?.setOnline(online: online)
+        }
+    }
+    override func onInfo(info: MsgServerInfo) {
+        switch info.what {
+        case "kp":
+            DispatchQueue.main.async {
+                self.presenter?.runTypingAnimation()
+            }
+        case "recv":
+            fallthrough
+        case "read":
+            if let seqId = info.seq {
+                DispatchQueue.main.async {
+                    self.presenter?.reloadMessage(withSeqId: seqId)
+                }
+            }
+        default:
+            break
+        }
+    }
+    override func onSubsUpdated() {
+        DispatchQueue.main.async { self.presenter?.applyTopicPermissions() }
+    }
+    override func onMetaDesc(desc: Description<VCard, PrivateType>) {
+        DispatchQueue.main.async { self.presenter?.applyTopicPermissions() }
     }
 }

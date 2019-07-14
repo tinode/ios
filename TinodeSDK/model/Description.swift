@@ -103,6 +103,18 @@ public class Description<DP: Codable, DR: Codable>: DescriptionProto {
             updated = sub.updated
             changed += 1
         }
+        if sub.touched != nil && (touched == nil || touched! < sub.touched!) {
+            touched = sub.touched
+            changed += 1
+        }
+        if let newAcs = sub.acs {
+            if acs == nil {
+                acs = newAcs
+                changed += 1
+            } else {
+                changed += acs!.merge(from: newAcs) ? 1 : 0
+            }
+        }
         if getSeq < sub.getSeq {
             seq = sub.getSeq
             changed += 1

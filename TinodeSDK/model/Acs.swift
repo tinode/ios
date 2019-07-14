@@ -8,13 +8,92 @@
 import Foundation
 
 public class Acs: Codable, Equatable {
-    var given: AcsHelper?
-    var want: AcsHelper?
-    var mode: AcsHelper?
+    public enum Side {
+        case mode, want, given
+    }
+    public var given: AcsHelper?
+    public var want: AcsHelper?
+    public var mode: AcsHelper?
 
-    var isModeDefined: Bool {
+    public var isModeDefined: Bool {
         get {
             return mode?.isDefined ?? false
+        }
+    }
+    public var isManager: Bool {
+        get {
+            guard let m = mode else { return false }
+            return m.isAdmin || m.isOwner
+        }
+    }
+    public var isOwner: Bool {
+        get {
+            return mode?.isOwner ?? false
+        }
+    }
+    public var isAdmin: Bool {
+        get {
+            return mode?.isAdmin ?? false
+        }
+    }
+    public var isMuted: Bool {
+        get {
+            return mode?.isMuted ?? false
+        }
+    }
+    public var isInvalid: Bool {
+        get {
+            return mode?.isInvalid ?? false
+        }
+    }
+    public var isJoiner: Bool {
+        get {
+            return mode?.isJoiner ?? false
+        }
+    }
+    public var isWriter: Bool {
+        get {
+            return mode?.isWriter ?? false
+        }
+    }
+    public var isReader: Bool {
+        get {
+            return mode?.isReader ?? false
+        }
+    }
+    public var missing: AcsHelper? {
+        get {
+            return AcsHelper.diff(a1: self.want, a2: self.given)
+        }
+    }
+    public var excessive: AcsHelper? {
+        get {
+            return AcsHelper.diff(a1: self.given, a2: self.want)
+        }
+    }
+    public var isGivenDefined: Bool {
+        get {
+            return given?.isDefined ?? false
+        }
+    }
+    public var isWantDefined: Bool {
+        get {
+            return want?.isDefined ?? false
+        }
+    }
+    public var modeString: String {
+        get {
+            return mode?.description ?? ""
+        }
+    }
+    public var wantString: String {
+        get {
+            return want?.description ?? ""
+        }
+    }
+    public var givenString: String {
+        get {
+            return given?.description ?? ""
         }
     }
     private enum CodingKeys : String, CodingKey  {
@@ -30,7 +109,7 @@ public class Acs: Codable, Equatable {
     init(given: String?, want: String?, mode: String?) {
         self.assign(given: given, want: want, mode: mode)
     }
-    init(from am: Acs?) {
+    public init(from am: Acs?) {
         if (am != nil) {
             given = AcsHelper(ah: am!.given)
             want = AcsHelper(ah: am!.want)
@@ -52,6 +131,13 @@ public class Acs: Codable, Equatable {
         }
         if let modeStr = try? container.decode(String.self, forKey: .mode) {
             self.mode = AcsHelper(str: modeStr)
+        }
+    }
+    public func isJoiner(for side: Acs.Side) -> Bool {
+        switch side {
+        case .mode: return mode?.isJoiner ?? false
+        case .want: return want?.isJoiner ?? false
+        case .given: return given?.isJoiner ?? false
         }
     }
     @discardableResult

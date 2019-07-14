@@ -13,6 +13,7 @@ The immediate goal is to have a basic end-to-end working application prototype t
 * Login
 * Register new accounts.
 * Start new chats.
+* Edit personal details.
 * View the list of active chats
 * Send and receive plain text messages one-on-one or in group chats.
 * In-app presence notifications.
@@ -21,25 +22,31 @@ The immediate goal is to have a basic end-to-end working application prototype t
 * Transport Level Security - https/wss.
 * Drafty: Markdown-style formatting of text, e.g. \*style\* → **style**.
 * Viewing attachments and inline images.
+* Typing indicators.
 
 
 ### Does not work yet
-
 * Edit chat parameters.
-* Typing indicators.
 * Delivery and received/read indicators for messages (little check marks in messages).
 * Muting/un-muting conversations and other permission management.
 * Invite contacts to the app by SMS or email.
-* Editing of personal details.
 * Push notifications.
 * Attachments and inline images cannot be created yet.
 
 
 ## Dependencies
 
-* https://github.com/stephencelis/SQLite.swift
+### SDK
+
+* https://github.com/tidwall/SwiftWebSocket for websocket support
+
+### Application
+
+* https://github.com/stephencelis/SQLite.swift for local persistence
 * https://github.com/jrendel/SwiftKeychainWrapper
-* https://github.com/tidwall/SwiftWebSocket
+* [GoogleService-Info.plist](https://firebase.google.com/docs/cloud-messaging/ios/client) for push notifications.
+In order to compile the app, app you need to download your own GoogleService-Info.plist and place it in ./Tinodios folder.
+
 
 ## Other
 
@@ -47,4 +54,4 @@ The immediate goal is to have a basic end-to-end working application prototype t
 * Some iOS icons are from https://icons8.com/ under [CC BY-ND 3.0](https://icons8.com/license) license.
 
 ## Screenshots
-<img src="ios-chats.png" alt="App screenshot - chat list" width="207" /> <img src="ios-chat.png" alt="App screenshot - conversation" width="207" /> <img src="ios-find-people.png" alt="App screenshot - find people" width="207" />
+<img src="ios-chats.png" alt="App screenshot - chat list" width="207" /> <img src="ios-chat.png" alt="App screenshot - conversation" width="207" /> <img src="ios-account.png" alt="App screenshot - account settings" width="207" /> <img src="ios-find-people.png" alt="App screenshot - find people" width="207" />

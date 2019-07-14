@@ -243,7 +243,8 @@ class SqlStore : Storage {
     }
     
     func msgMarkToDelete(topic: TopicProto, from idLo: Int, to idHi: Int, markAsHard: Bool) -> Bool {
-        return false
+        guard let st = topic.payload as? StoredTopic, let topicId = st.id else { return false }
+        return self.dbh?.messageDb?.markDeleted(topicId: topicId, from: idLo, to: idHi, hard: markAsHard) ?? false
     }
     
     func msgMarkToDelete(topic: TopicProto, list: [Int], markAsHard: Bool) -> Bool {
@@ -251,7 +252,18 @@ class SqlStore : Storage {
     }
     
     func msgDelete(topic: TopicProto, delete id: Int, deleteFrom idLo: Int, deleteTo idHi: Int) -> Bool {
-        return false
+        guard let st = topic.payload as? StoredTopic, let topicId = st.id else { return false }
+        do {
+            var result = false
+            try dbh?.db?.savepoint("SqlStore.msgDelete") {
+                result = (dbh?.topicDb?.msgDeleted(topic: topic, delId: id) ?? false) &&
+                    (dbh?.messageDb?.delete(topicId: topicId, from: idLo, to: idHi) ?? false)
+            }
+            return result
+        } catch {
+            print("Failed to delete messages: \(error)")
+            return false
+        }
     }
     
     func msgDelete(topic: TopicProto, delete id: Int, deleteAll list: [Int]?) -> Bool {
@@ -267,7 +279,7 @@ class SqlStore : Storage {
     }
     
     func getMessageById(topic: TopicProto, dbMessageId: Int64) -> Message? {
-        return nil
+        return BaseDb.getInstance().messageDb?.query(msgId: dbMessageId)
     }
     
     func getQueuedMessages(topic: TopicProto) -> [Message]? {

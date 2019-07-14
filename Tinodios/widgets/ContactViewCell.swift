@@ -20,6 +20,7 @@ class ContactViewCell: UITableViewCell {
     @IBOutlet weak var avatar: RoundImageView!
     @IBOutlet weak var title: UILabel!
     @IBOutlet weak var subtitle: UILabel!
+    @IBOutlet var statusLabels: [ContactViewCellStatusLabel]!
 
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -35,5 +36,14 @@ class ContactViewCell: UITableViewCell {
         } else {
             self.contentView.backgroundColor = ContactViewCell.kNormalBackgroundColor
         }
+    }
+}
+
+class ContactViewCellStatusLabel: PaddedLabel {
+    override var intrinsicContentSize: CGSize {
+        let size = super.intrinsicContentSize
+        let insets = super.textInsets
+        return CGSize(width: size.width + insets.left + insets.right,
+                      height: size.height + insets.top + insets.bottom)
     }
 }

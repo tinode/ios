@@ -9,9 +9,15 @@ import UIKit
 import TinodeSDK
 
 protocol MessageDisplayLogic: class {
-    func updateTitleBar(icon: UIImage?, title: String?)
+    func updateTitleBar(icon: UIImage?, title: String?, online: Bool)
+    func setOnline(online: Bool)
+    func runTypingAnimation()
     func displayChatMessages(messages: [StoredMessage])
+    func reloadMessage(withSeqId seqId: Int)
+    func reloadMessage(withMsgId msgId: Int64)
+    func applyTopicPermissions()
     func endRefresh()
+    func dismiss()
 }
 
 class MessageViewController: UIViewController {
@@ -89,8 +95,8 @@ class MessageViewController: UIViewController {
     }()
 
     /// Avatar in the NavBar
-    private lazy var navBarAvatarView: UIImageView = {
-        return UIImageView()
+    private lazy var navBarAvatarView: AvatarWithOnlineIndicator = {
+        return AvatarWithOnlineIndicator()
     }()
 
     /// Pointer to the view holding messages.
@@ -115,11 +121,18 @@ class MessageViewController: UIViewController {
     var topicType: TopicType?
     var myUID: String?
     var topic: DefaultComTopic?
+    // TODO: this is ugly. Move this to MVC+SendMessageBarDelegate.swift
+    var imagePicker: ImagePicker?
 
     private var noteTimer: Timer? = nil
 
     // Messages to be displayed
     var messages: [Message] = []
+    // For updating individual messages, we need:
+    // * Tinode sequence id -> message offset.
+    var messageSeqIdIndex: [Int:Int] = [:]
+    // * Database message id -> message offset.
+    var messageDbIdIndex: [Int64:Int] = [:]
 
     // Cache of message cell sizes. Calculation of cell sizes is heavy. Caching the result to improve scrolling performance.
     // var cellSizeCache: [CGSize?] = []
@@ -140,6 +153,8 @@ class MessageViewController: UIViewController {
 
     private func setup() {
         myUID = Cache.getTinode().myUid
+        self.imagePicker = ImagePicker(
+            presentationController: self, delegate: self)
 
         let interactor = MessageInteractor()
         let presenter = MessagePresenter()
@@ -201,6 +216,31 @@ class MessageViewController: UIViewController {
         NSLayoutConstraint.activate([top, bottom, trailing, leading])
     }
 
+    public func applyTopicPermissions() {
+        DispatchQueue.main.async {
+            // Make sure the view is visible.
+            guard self.isViewLoaded && ((self.view?.window) != nil) else { return }
+            if !(self.topic?.isReader ?? false) {
+                self.collectionView.showNoAccessOverlay()
+            } else {
+                self.collectionView.removeNoAccessOverlay()
+            }
+            if self.topic?.isWriter ?? false {
+                self.sendMessageBar.removeNotAvailableOverlay()
+                if let acs = self.topic?.peer?.acs,
+                    acs.isJoiner(for: .want) && (acs.missing?.description.contains("RW") ?? false) {
+                    self.sendMessageBar.showPeersMessagingDisabledOverlay()
+                }
+            } else {
+                self.sendMessageBar.showNotAvailableOverlay()
+            }
+            // We are offered to join a chat.
+            if let acs = self.topic?.accessMode, acs.isJoiner(for: Acs.Side.given) && (acs.excessive?.description.contains("RW") ?? false) {
+                self.showInvitationDialog()
+            }
+        }
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -223,7 +263,9 @@ class MessageViewController: UIViewController {
             addKeyboardObservers()
         }
     }
-
+    @objc private func processNotifications() {
+        self.interactor?.sendReadNotification()
+    }
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
@@ -232,59 +274,184 @@ class MessageViewController: UIViewController {
         }
         self.interactor?.attachToTopic()
         self.interactor?.loadMessages()
-        self.noteTimer = Timer.scheduledTimer(
-            withTimeInterval: 1,
-            repeats: true,
-            block: { _ in
-                self.interactor?.sendReadNotification()
-            })
+        self.interactor?.sendReadNotification()
+        if #available(iOS 10.0, *) {
+            self.noteTimer = Timer.scheduledTimer(
+                withTimeInterval: 1,
+                repeats: true,
+                block: { _ in
+                    //self.interactor?.sendReadNotification()
+                    self.processNotifications()
+                })
+        } else {
+            // Fallback on earlier versions
+            self.noteTimer = Timer.scheduledTimer(
+                timeInterval: 1,
+                target: self,
+                selector: #selector(self.processNotifications), userInfo: nil, repeats: true)
+        }
+        self.applyTopicPermissions()
+    }
+    override func viewWillDisappear(_ animated: Bool) {
+        if let viewControllers = self.navigationController?.viewControllers, viewControllers.count > 1, viewControllers[viewControllers.count - 2] === self {
+            // It's a push. No need to detach.
+            print("keeping topic attached")
+        } else {
+            self.interactor?.cleanup()
+        }
     }
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
 
-        self.interactor?.cleanup()
         self.noteTimer?.invalidate()
     }
 
     @objc func loadNextPage() {
         self.interactor?.loadNextPage()
     }
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "Messages2TopicInfo" {
+            let destinationVC = segue.destination as! TopicInfoViewController
+            destinationVC.topicName = self.topicName ?? ""
+        }
+    }
+
+    @IBAction func clearMessagesClicked(_ sender: Any) {
+        let alert = UIAlertController(title: "Clear all messages?", message: nil, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(
+            title: "OK", style: .default,
+            handler: { action in
+                self.interactor?.clearAllMessages()
+            }))
+        self.present(alert, animated: true)
+    }
 }
 
 // Methods for updating title area and refreshing messages.
 extension MessageViewController: MessageDisplayLogic {
-
-    func updateTitleBar(icon: UIImage?, title: String?) {
+    private func showInvitationDialog() {
+        guard self.presentedViewController == nil else { return }
+        let attrs = [ NSAttributedString.Key.font: UIFont.systemFont(ofSize: 20.0) ]
+        let title = NSAttributedString(string: "New Chat", attributes: attrs)
+        let alert = UIAlertController(
+            title: nil,
+            message: "You are invited to start a new chat. What would you like?",
+            preferredStyle: .actionSheet)
+        alert.setValue(title, forKey: "attributedTitle")
+        alert.addAction(UIAlertAction(
+            title: "Accept", style: .default,
+            handler: { action in
+                print("ok clicked")
+                self.interactor?.acceptInvitation()
+        }))
+        alert.addAction(UIAlertAction(
+            title: "Ignore", style: .default,
+            handler: { action in
+                print("ignore clicked")
+                self.interactor?.ignoreInvitation()
+        }))
+        alert.addAction(UIAlertAction(
+            title: "Block", style: .default,
+            handler: { action in
+                print("block clicked")
+                self.interactor?.blockTopic()
+        }))
+        self.present(alert, animated: true)
+    }
+    func updateTitleBar(icon: UIImage?, title: String?, online: Bool) {
         self.navigationItem.title = title ?? "Undefined"
 
-        navBarAvatarView = RoundImageView(icon: icon, title: title, id: topicName)
+        navBarAvatarView.set(icon: icon, title: title, id: topicName, online: online)
         navBarAvatarView.translatesAutoresizingMaskIntoConstraints = false
+        navBarAvatarView.bounds = CGRect(x: 0, y: 0, width: Constants.kNavBarAvatarSmallState, height: Constants.kNavBarAvatarSmallState)
         NSLayoutConstraint.activate([
                 navBarAvatarView.heightAnchor.constraint(equalToConstant: Constants.kNavBarAvatarSmallState),
                 navBarAvatarView.widthAnchor.constraint(equalTo: navBarAvatarView.heightAnchor)
             ])
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: navBarAvatarView)
-   }
-
+        if self.navigationItem.rightBarButtonItems!.count <= 2 {
+            self.navigationItem.rightBarButtonItems!.insert(UIBarButtonItem(customView: navBarAvatarView), at: 0)
+        }
+    }
+    func setOnline(online: Bool) {
+        navBarAvatarView.setOnline(online: online)
+    }
+    func runTypingAnimation() {
+        navBarAvatarView.presentTypingAnimation(steps: 30)
+    }
     func displayChatMessages(messages: [StoredMessage]) {
         let oldData = self.messages
-        self.messages = messages.reversed()
+        let newData: [StoredMessage] = messages.reversed()
+        self.messageSeqIdIndex = newData.enumerated().reduce([Int:Int]()) { (dict, item) -> [Int:Int] in
+            var dict = dict
+            dict[item.element.seqId] = item.offset
+            return dict
+        }
+        self.messageDbIdIndex = newData.enumerated().reduce([Int64:Int]()) { (dict, item) -> [Int64:Int] in
+            var dict = dict
+            dict[item.element.msgId] = item.offset
+            return dict
+        }
 
-        let diff = Utils.diffMessageArray(sortedOld: oldData, sortedNew: self.messages)
-        print("inserted: \(diff.inserted); removed: \(diff.removed)")
+        if oldData.isEmpty || newData.isEmpty {
+            self.messages = newData
+            collectionView.reloadData()
+        } else {
+            // Get indexes of inserted and deleted items.
+            let diff = Utils.diffMessageArray(sortedOld: oldData, sortedNew: newData)
 
-        collectionView.reloadData()
+            // Each insertion or deletion may change the appearance of the preceeding and following messages.
+            // Calculate indexes of all items which need to be updated.
+            var refresh: [Int] = []
+            for index in diff.mutated {
+                if index > 0 {
+                    // Refresh the preceeding item.
+                    refresh.append(index - 1)
+                }
+                if index < newData.count - 1 {
+                    // Refresh the following item.
+                    refresh.append(index + 1)
+                }
+            }
+            // Ensure uniqueness of values. No need to reload newly inserted values.
+            refresh = Array(Set(refresh).subtracting(Set(diff.inserted)))
+
+            collectionView.performBatchUpdates({ () -> Void in
+                self.messages = newData
+                if diff.removed.count > 0 {
+                    collectionView.deleteItems(at: diff.removed.map { IndexPath(item: $0, section: 0) })
+                }
+                if diff.inserted.count > 0 {
+                    collectionView.insertItems(at: diff.inserted.map { IndexPath(item: $0, section: 0) })
+                }
+                if refresh.count > 0 {
+                    collectionView.reloadItems(at: refresh.map { IndexPath(item: $0, section: 0) })
+                }
+                }, completion: nil)
+        }
         collectionView.layoutIfNeeded()
-
-        // FIXME: don't scroll to bottom in response to loading the next page.
-        // Maybe don't scroll to bottom if the view is not at the bottom already.
         collectionView.scrollToBottom()
     }
-
+    func reloadMessage(withSeqId seqId: Int) {
+        if let index = self.messageSeqIdIndex[seqId] {
+            self.collectionView.reloadItems(at: [IndexPath(row: index, section: 0)])
+        }
+    }
+    func reloadMessage(withMsgId msgId: Int64) {
+        if let index = self.messageDbIdIndex[msgId] {
+            self.collectionView.reloadItems(at: [IndexPath(row: index, section: 0)])
+        }
+    }
     func endRefresh() {
         DispatchQueue.main.async {
             self.refreshControl.endRefreshing()
+        }
+    }
+    func dismiss() {
+        DispatchQueue.main.async {
+            self.navigationController?.popViewController(animated: true)
+            self.dismiss()
         }
     }
 }
@@ -695,6 +862,10 @@ extension MessageViewController : MessageCellDelegate {
 
     func didTapAvatar(in cell: MessageCell) {
         print("didTapAvatar")
+    }
+
+    func didTapOutsideContent(in cell: MessageCell) {
+        self.sendMessageBar.inputField.resignFirstResponder()
     }
 
     private func handleButtonPost(in cell: MessageCell, data url: URL) {

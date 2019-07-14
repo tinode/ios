@@ -28,6 +28,13 @@ class LoginViewController: UIViewController {
         // This is needed in order to adjust the height of the scroll view when the keyboard appears.
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIControl.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: UIControl.keyboardWillHideNotification, object: nil)
+
+        UiUtils.dismissKeyboardForTaps(onView: self.view)
+/*
+        let tap = UITapGestureRecognizer(target: self.view, action: #selector(UIView.endEditing(_:)))
+        tap.cancelsTouchesInView = false
+        self.view.addGestureRecognizer(tap)
+ */
     }
 
     @objc func keyboardWillShow(_ notification: Notification) {
@@ -70,9 +77,10 @@ class LoginViewController: UIViewController {
         }
 
         let tinode = Cache.getTinode()
-        // TODO: implement TLS.
+        let (hostName, useTLS, _) = SettingsHelper.getConnectionSettings()
+        print("connecting to \(hostName), useTLS = \(useTLS)")
         do {
-            try tinode.connect(to: Cache.kHostName, useTLS: false)?
+            try tinode.connect(to: (hostName ?? Cache.kHostName), useTLS: (useTLS ?? false))?
                 .then(
                     onSuccess: { pkt in
                         return tinode.loginBasic(uname: userName, password: password)
@@ -80,6 +88,7 @@ class LoginViewController: UIViewController {
                 .then(
                     onSuccess: { [weak self] pkt in
                         print("login successful for: \(tinode.myUid!)")
+                        UserDefaults.standard.set(userName, forKey: Utils.kTinodePrefLastLogin)
                         if let token = tinode.authToken, !token.isEmpty {
                             let tokenSaveSuccessful = KeychainWrapper.standard.set(
                                 token, forKey: LoginViewController.kTokenKey)

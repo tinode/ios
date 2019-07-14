@@ -19,6 +19,7 @@ public enum TinodeError: Error, CustomStringConvertible {
     case notConnected(String)
     case serverResponseError(Int, String, String?)
     case notSubscribed(String)
+    case notSynchronized
 
     public var description: String {
         get {
@@ -33,6 +34,8 @@ public enum TinodeError: Error, CustomStringConvertible {
                 return "\(text) (\(code))"
             case .notSubscribed(let message):
                 return "Not subscribed: \(message)"
+            case .notSynchronized:
+                return "Not synchronized"
             }
         }
     }
@@ -102,6 +105,7 @@ public protocol TinodeEventListener: class {
 
 public class Tinode {
     public static let kTopicNew = "new"
+    public static let kUserNew = "new"
     public static let kTopicMe = "me"
     public static let kTopicFnd = "fnd"
     public static let kTopicGrpPrefix = "grp"
@@ -179,6 +183,8 @@ public class Tinode {
     }
     public var appName: String
     public var apiKey: String
+    public var useTLS: Bool
+    public var hostName: String
     public var connection: Connection?
     public var nextMsgId = 1
     private var futures = ConcurrentFuturesMap()
@@ -208,6 +214,17 @@ public class Tinode {
     private var autoLogin: Bool = false
     private var loginInProgress: Bool = false
 
+    public func baseURL(useWebsocketProtocol: Bool) -> URL? {
+        guard !hostName.isEmpty else { return nil }
+        let protocolString = useTLS ? (useWebsocketProtocol ? "wss://" : "https://") : (useWebsocketProtocol ? "ws://" : "http://")
+        let urlString = "\(protocolString)\(hostName)/v\(kProtocolVersion)"
+        return URL(string: urlString)
+    }
+    public func channelsURL(useWebsocketProtocol: Bool) -> URL? {
+        guard var b = baseURL(useWebsocketProtocol: useWebsocketProtocol) else { return nil }
+        b.appendPathComponent("/channels")
+        return b
+    }
     public var isConnected: Bool {
         get {
             if let c = connection, c.isConnected {
@@ -221,13 +238,13 @@ public class Tinode {
     var topics: [String: TopicProto] = [:]
     var users: [String: UserProto] = [:]
 
-    static let jsonEncoder: JSONEncoder = {
+    public static let jsonEncoder: JSONEncoder = {
         let encoder = JSONEncoder()
         encoder.dataEncodingStrategy = .base64
         encoder.dateEncodingStrategy = .customRFC3339
         return encoder
     }()
-    static let jsonDecoder: JSONDecoder = {
+    public static let jsonDecoder: JSONDecoder = {
         let decoder = JSONDecoder()
         decoder.dataDecodingStrategy = .base64
         decoder.dateDecodingStrategy = .customRFC3339
@@ -243,6 +260,8 @@ public class Tinode {
         self.listener = l
         self.myUid = self.store?.myUid
         self.deviceToken = self.store?.deviceToken
+        self.useTLS = false
+        self.hostName = ""
         //self.osVersoin
 
         // osVersion
@@ -317,9 +336,16 @@ public class Tinode {
         return String(q, radix: 32)
     }
 
+    public var userAgent: String {
+        get {
+            return "\(appName) (iOS \(OsVersion); \(kLocale)); tinode-swift/\(kLibVersion)"
+        }
+    }
+    /*
     private func getUserAgent() -> String {
         return "\(appName) (iOS \(OsVersion); \(kLocale)); tinode-swift/\(kLibVersion)"
     }
+    */
 
     private func getNextMsgId() -> String {
         nextMsgId += 1
@@ -447,7 +473,7 @@ public class Tinode {
         let msgId = getNextMsgId()
         let msg = ClientMessage<Int, Int>(
             hi: MsgClientHi(id: msgId, ver: kVersion,
-                            ua: getUserAgent(), dev: deviceId,
+                            ua: userAgent, dev: deviceId,
                             lang: kLocale))
         return try! sendWithPromise(payload: msg, with: msgId).thenApply(
             onSuccess: { [weak self] pkt in
@@ -583,7 +609,7 @@ public class Tinode {
             return nil
         }
         return account(
-            uid: nil,
+            uid: Tinode.kUserNew,
             scheme: AuthScheme.kLoginBasic,
             secret: encodedSecret,
             loginNow: login,
@@ -609,7 +635,7 @@ public class Tinode {
         secret: String,
         loginNow: Bool,
         tags: [String]?,
-        desc: MetaSetDesc<Pu, Pr>,
+        desc: MetaSetDesc<Pu, Pr>?,
         creds: [Credential]?) -> PromisedReply<ServerMessage>? {
         let msgId = getNextMsgId()
         let msga = MsgClientAcc(id: msgId, uid: uid, scheme: scheme, secret: secret, doLogin: loginNow, desc: desc)
@@ -750,6 +776,19 @@ public class Tinode {
             listener?.onLogin(code: ctrl.code, text: ctrl.text)
         }
     }
+    private func updateAccountSecret(uid: String?, scheme: String, secret: String) -> PromisedReply<ServerMessage>? {
+        return account(uid: uid, scheme: scheme, secret: secret, loginNow: false, tags: nil, desc: nil as MetaSetDesc<Int, Int>?, creds: nil)
+    }
+    @discardableResult
+    public func updateAccountBasic(uid: String?, username: String, password: String) -> PromisedReply<ServerMessage>? {
+        do {
+            return try updateAccountSecret(
+                uid: uid, scheme: AuthScheme.kLoginBasic,
+                secret: AuthScheme.encodeBasicToken(uname: username, password: password))
+        } catch {
+            return nil
+        }
+    }
     public func disconnect() {
         // Remove auto-login data.
         setAutoLogin(using: nil, authenticateWith: nil)
@@ -841,8 +880,11 @@ public class Tinode {
             Tinode.log.error("Tinode is already connected")
             return PromisedReply<ServerMessage>(value: ServerMessage())
         }
-        let urlString = "\(hostName)/v\(kProtocolVersion)/channels"
-        let endpointURL: URL = URL(string: urlString)!
+        self.useTLS = useTLS
+        self.hostName = hostName
+        guard let endpointURL = self.channelsURL(useWebsocketProtocol: true) else {
+            throw TinodeError.invalidState("Could not form server url.")
+        }
         connection = Connection(open: endpointURL,
                                 with: apiKey,
                                 notify: TinodeConnectionListener(tinode: self))
@@ -901,7 +943,9 @@ public class Tinode {
                        head: data.isPlain ? nil : ["mime": JSONValue.string(Drafty.kMimeType)],
                        content: data)
     }
-
+    public func getTopics() -> Array<TopicProto>? {
+        return Array(topics.values)
+    }
     public func getFilteredTopics(filter: ((TopicProto) -> Bool)?) -> Array<TopicProto>? {
         var result: Array<TopicProto>
         if filter == nil {
@@ -931,6 +975,18 @@ public class Tinode {
             msg: ClientMessage<Int, Int>(
                 del: MsgClientDel(id: getNextMsgId(),
                                   topic: topicName, list: list, hard: hard)))
+    }
+    func delMessage(topicName: String?, msgId: Int, hard: Bool) -> PromisedReply<ServerMessage>? {
+        return sendDeleteMessage(
+            msg: ClientMessage<Int, Int>(
+                del: MsgClientDel(id: getNextMsgId(),
+                                  topic: topicName, msgId: msgId, hard: hard)))
+    }
+    func delSubscription(topicName: String?, user: String?) -> PromisedReply<ServerMessage>? {
+        return sendDeleteMessage(
+            msg: ClientMessage<Int, Int>(
+                del: MsgClientDel(id: getNextMsgId(),
+                                  topic: topicName, user: user)))
     }
 
     /// Low-level request to delete topic. Use {@link Topic#delete()} instead.

@@ -56,6 +56,14 @@ class UiUtils {
             PromisedReply<ServerMessage>(value: ServerMessage())
     }
 
+    public static func routeToLoginVC() {
+        DispatchQueue.main.async {
+            let storyboard = UIStoryboard(name: "Main", bundle: nil)
+            let destinationVC = storyboard.instantiateViewController(withIdentifier: "StartNavigator") as! UINavigationController
+            let appDelegate = UIApplication.shared.delegate as! AppDelegate
+            appDelegate.window!.rootViewController = destinationVC
+        }
+    }
     // Get text from UITextField or mark the field red if the field is blank
     public static func ensureDataInTextField(_ field: UITextField) -> String {
         let text = (field.text ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
@@ -148,15 +156,133 @@ class UiUtils {
             })
         })
     }
+    public static func setupTapRecognizer(forView view: UIView, action: Selector?, actionTarget: UIViewController) {
+        let tap = UITapGestureRecognizer(target: actionTarget, action: action)
+        view.isUserInteractionEnabled = true
+        view.addGestureRecognizer(tap)
+    }
+    public static func dismissKeyboardForTaps(onView view: UIView) {
+        let tap = UITapGestureRecognizer(target: view, action: #selector(UIView.endEditing(_:)))
+        tap.cancelsTouchesInView = false
+        view.addGestureRecognizer(tap)
+    }
+    public static func ToastFailureHandler(err: Error) throws -> PromisedReply<ServerMessage>? {
+        DispatchQueue.main.async {
+            if let e = err as? TinodeError, case .notConnected = e {
+                UiUtils.showToast(message: "You are offline.")
+            } else {
+                UiUtils.showToast(message: "Action failed: \(err)")
+            }
+        }
+        return nil
+    }
+    public static func ToastSuccessHandler(msg: ServerMessage) throws -> PromisedReply<ServerMessage>? {
+        if let ctrl = msg.ctrl, ctrl.code >= 300 {
+            DispatchQueue.main.async {
+                UiUtils.showToast(message: "Something went wrong: \(ctrl.code) - \(ctrl.text)")
+            }
+        }
+        return nil
+    }
+    public static func showPermissionsEditDialog(
+        over viewController: UIViewController?,
+        acs: AcsHelper, callback: PermissionsEditViewController.OnChangeHandler?,
+        disabledPermissions: [PermissionsEditViewController.PermissionType]?) {
+        let alertVC = PermissionsEditViewController(
+            permissionsTuple: (
+                acs.hasPermissions(forMode: AcsHelper.kModeJoin),
+                acs.hasPermissions(forMode: AcsHelper.kModeRead),
+                acs.hasPermissions(forMode: AcsHelper.kModeWrite),
+                acs.hasPermissions(forMode: AcsHelper.kModePres),
+                acs.hasPermissions(forMode: AcsHelper.kModeApprove),
+                acs.hasPermissions(forMode: AcsHelper.kModeShare),
+                acs.hasPermissions(forMode: AcsHelper.kModeDelete)
+            ),
+            disabledPermissions: disabledPermissions,
+            onChangeHandler: callback)
+        alertVC.show(over: viewController)
+    }
+    public enum PermissionsChangeType {
+        case updateSelfSub, updateSub, updateAuth, updateAnon
+    }
+    @discardableResult
+    public static func handlePermissionsChange(onTopic topic: DefaultTopic,
+                                               forUid uid: String?,
+                                               changeType: PermissionsChangeType,
+                                               permissions: PermissionsEditViewController.PermissionsTuple)
+        -> PromisedReply<ServerMessage>? {
+        var permissionsStr = ""
+        if permissions.join { permissionsStr += "J" }
+        if permissions.read { permissionsStr += "R" }
+        if permissions.write { permissionsStr += "W" }
+        if permissions.notifications { permissionsStr += "P" }
+        if permissions.approve { permissionsStr += "A" }
+        if permissions.invite { permissionsStr += "S" }
+        if permissions.delete { permissionsStr += "D" }
+        do {
+            var reply: PromisedReply<ServerMessage>? = nil
+            switch changeType {
+            case .updateSelfSub:
+                reply = topic.updateMode(uid: nil, update: permissionsStr)
+            case .updateSub:
+                reply = topic.updateMode(uid: uid, update: permissionsStr)
+            case .updateAuth:
+                reply = topic.updateDefacs(auth: permissionsStr, anon: nil)
+            case .updateAnon:
+                reply = topic.updateDefacs(auth: nil, anon: permissionsStr)
+            }
+            return try reply?.then(
+                onSuccess: { msg in
+                    if let ctrl = msg.ctrl, ctrl.code >= 300 {
+                        DispatchQueue.main.async {
+                            UiUtils.showToast(message: "Couldn't update permissions: \(ctrl.code) - \(ctrl.text)")
+                        }
+                    }
+                    return nil
+                },
+                onFailure: { err in
+                    DispatchQueue.main.async {
+                        UiUtils.showToast(message: "Error changing permissions \(err)")
+                    }
+                    return nil
+                })
+        } catch {
+            print("Error changing permissions \(error)")
+            return nil
+        }
+    }
+    @discardableResult
+    public static func updateAvatar(
+        forTopic topic: DefaultTopic, image: UIImage) -> PromisedReply<ServerMessage>? {
+        let pub = topic.pub == nil ? VCard(fn: nil, avatar: image) : topic.pub!.copy()
+        pub.photo = Photo(image: image)
+        return UiUtils.setTopicData(forTopic: topic, pub: pub, priv: nil)
+    }
+    @discardableResult
+    public static func setTopicData(
+        forTopic topic: DefaultTopic, pub: VCard?, priv: PrivateType?) -> PromisedReply<ServerMessage>? {
+        do {
+            return try topic.setDescription(pub: pub, priv: priv)?.then(
+                onSuccess: UiUtils.ToastSuccessHandler,
+                onFailure: UiUtils.ToastFailureHandler)
+        } catch {
+            UiUtils.showToast(message: "Error changing public data \(error)")
+            return nil
+        }
+    }
 }
 
 extension UIViewController {
     public func presentChatReplacingCurrentVC(with topicName: String, afterDelay delay: DispatchTimeInterval = .seconds(0)) {
         DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
             if let navController = self.navigationController {
+                // Descend to the chat list controller in the navigation stack.
+                while navController.topViewController?.restorationIdentifier != "ChatListViewController" {
+                    let v = navController.popViewController(animated: false)
+                    v?.dismiss(animated: false, completion: nil)
+                }
                 let messageVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "MessageViewController") as! MessageViewController
                 messageVC.topicName = topicName
-                navController.popViewController(animated: false)
                 navController.pushViewController(messageVC, animated: true)
             }
         }
@@ -205,8 +331,8 @@ extension UIImage {
         // Sanity check
         assert(maxWidth > 0 && maxHeight > 0, "Maxumum dimensions must be positive")
 
-        let originalWidth = CGFloat(self.size.width)
-        let originalHeight = CGFloat(self.size.height)
+        let originalWidth = CGFloat(self.size.width * self.scale)
+        let originalHeight = CGFloat(self.size.height * self.scale)
 
         // scale is [0,1): 0 - very large original, 1: under the limits already.
         let scaleX = min(originalWidth, maxWidth) / originalWidth
@@ -266,5 +392,18 @@ class RelativeDateFormatter {
         formatter.timeStyle = style
         formatter.dateStyle = .none
         return formatter.string(from: date)
+    }
+}
+
+extension UIColor {
+    convenience init(fromHexCode code: UInt) {
+        let blue = code & 0xff
+        let green = (code >> 8) & 0xff
+        let red = (code >> 16) & 0xff
+        let alpha = (code >> 24) & 0xff
+        self.init(red: CGFloat(Float(red) / 255.0),
+                  green: CGFloat(green) / 255.0,
+                  blue: CGFloat(blue) / 255.0,
+                  alpha: CGFloat(alpha) / 255.0)
     }
 }

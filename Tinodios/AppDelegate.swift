@@ -6,23 +6,42 @@
 //
 
 import UIKit
-//import SwiftKeychainWrapper
+import Firebase
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
-    //static let kTinodeHasRunBefore = "tinodeHasRunBefore"
+    var backgroundSessionCompletionHandler: (() -> Void)?
+    
+    func setupPushNotifications(for application: UIApplication) {
+        FirebaseApp.configure()
+        Messaging.messaging().delegate = self
+        if #available(iOS 10.0, *) {
+            // For iOS 10 display notification (sent via APNS)
+            UNUserNotificationCenter.current().delegate = self
+
+            let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
+            UNUserNotificationCenter.current().requestAuthorization(
+                options: authOptions,
+                completionHandler: {_, _ in })
+        } else {
+            let settings: UIUserNotificationSettings =
+                UIUserNotificationSettings(types: [.alert, .badge, .sound], categories: nil)
+            application.registerUserNotificationSettings(settings)
+        }
+
+        application.registerForRemoteNotifications()
+    }
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+        setupPushNotifications(for: application)
         Utils.registerUserDefaults()
         if let token = Utils.getAuthToken(), !token.isEmpty {
             let tinode = Cache.getTinode()
             var success = false
             do {
                 let (hostName, useTLS, _) = SettingsHelper.getConnectionSettings()
-                // TODO: implement TLS.
                 tinode.setAutoLoginWithToken(token: token)
                 _ = try tinode.connect(to: (hostName ?? Cache.kHostName), useTLS: (useTLS ?? false))?.getResult()
                 let msg = try tinode.loginToken(token: token, creds: nil)?.getResult()
@@ -46,6 +65,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
 
+    func application(_ application: UIApplication, handleEventsForBackgroundURLSession identifier: String, completionHandler: @escaping () -> Void) {
+        backgroundSessionCompletionHandler = completionHandler
+        // Instantiate large file helper.
+        let _ = Cache.getLargeFileHelper(withIdentifier: identifier)
+    }
+
     func applicationWillResignActive(_ application: UIApplication) {
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
         // Use this method to pause ongoing tasks, disable timers, and invalidate graphics rendering callbacks. Games should use this method to pause the game.
@@ -67,7 +92,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationWillTerminate(_ application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
+}
+@available(iOS 10.0, *)
+extension AppDelegate: UNUserNotificationCenterDelegate {
+    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        print(response)
+    }
+}
 
-
+extension AppDelegate: MessagingDelegate {
+    func messaging(_ messaging: Messaging, didReceive remoteMessage: MessagingRemoteMessage) {
+        print("Received data message: \(remoteMessage.appData)")
+    }
+    func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String) {
+        // Update token. Send to the app server.
+    }
 }
 

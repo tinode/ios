@@ -56,16 +56,16 @@ public class MsgClientAcc<Pu: Encodable,Pr: Encodable>: Encodable {
     var login: Bool?
     var tags: [String]?
     var cred: [Credential]?
-    var desc: MetaSetDesc<Pu,Pr>
+    var desc: MetaSetDesc<Pu,Pr>?
     
     init(id: String?,
          uid: String?,
          scheme: String?,
          secret: String?,
          doLogin: Bool,
-         desc: MetaSetDesc<Pu,Pr>) {
+         desc: MetaSetDesc<Pu,Pr>?) {
         self.id = id
-        self.user = uid == nil ? "new" : uid
+        self.user = uid
         self.scheme = scheme
         self.login = doLogin
         self.desc = desc
@@ -278,6 +278,10 @@ public class MetaSetSub: Encodable {
         self.user = nil
         self.mode = nil
     }
+    public init(mode: String?) {
+        self.user = nil
+        self.mode = mode
+    }
     public init(user: String?, mode: String?) {
         self.user = user
         self.mode = mode
@@ -418,10 +422,23 @@ public class MsgClientDel: Encodable {
                   user: nil, hard: hard)
     }
 
+    /// Delete message by id
+    convenience init(id: String?, topic: String?, msgId: Int, hard: Bool?) {
+        self.init(id: id, topic: topic, what: MsgClientDel.kStrMsg,
+                  ranges: [MsgDelRange(id: msgId)],
+                  user: nil, hard: hard)
+    }
+
     /// Delete topic
     convenience init(id: String?, topic: String?) {
         self.init(id: id, topic: topic, what: MsgClientDel.kStrTopic,
                   ranges: nil, user: nil, hard: nil)
+    }
+
+    /// Delete subscription
+    convenience init(id: String?, topic: String?, user: String?) {
+        self.init(id: id, topic: topic, what: MsgClientDel.kStrSub,
+                  ranges: nil, user: user, hard: false)
     }
 }
 

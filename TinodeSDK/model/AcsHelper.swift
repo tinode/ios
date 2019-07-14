@@ -7,47 +7,82 @@
 
 import Foundation
 
-class AcsHelper: Codable, Equatable {
+public class AcsHelper: Codable, Equatable {
     enum AcsError: Error {
         case invalidValue
     }
     // J - join topic.
-    private static let kModeJoin = 0x01
+    public static let kModeJoin = 0x01
     // R - read broadcasts
-    private static let kModeRead = 0x02
+    public static let kModeRead = 0x02
     // W - publish
-    private static let kModeWrite = 0x04
+    public static let kModeWrite = 0x04
     // P - receive presence notifications
-    private static let kModePres = 0x08
+    public static let kModePres = 0x08
     // A - approve requests
-    private static let kModeApprove = 0x10
+    public static let kModeApprove = 0x10
     // S - user can invite other people to join (S)
-    private static let kModeShare = 0x20
+    public static let kModeShare = 0x20
     // D - user can hard-delete messages (D), only owner can completely delete
-    private static let kModeDelete = 0x40
+    public static let kModeDelete = 0x40
     // O - user is the owner (O) - full access
-    private static let kModeOwner = 0x80
+    public static let kModeOwner = 0x80
     // No access, requests to gain access are processed normally (N)
-    private static let kModeNone = 0
+    public static let kModeNone = 0
     // Invalid mode to indicate an error
-    private static let kModeInvalid = 0x100000
+    public static let kModeInvalid = 0x100000
     
     private static let kModes = ["J", "R", "W", "P", "A", "S", "D", "O"]
     
     private var a: Int?
 
-    var description: String {
+    public var description: String {
         guard a != nil else {
             return ""
         }
         return AcsHelper.encode(mode: a!)!
     }
-    var isDefined: Bool {
+    public var isDefined: Bool {
         get {
             guard let b = a else {
                 return false
             }
             return b != AcsHelper.kModeNone && b != AcsHelper.kModeInvalid
+        }
+    }
+    var isAdmin: Bool {
+        get {
+            return ((a ?? 0) & AcsHelper.kModeApprove) != 0
+        }
+    }
+    var isOwner: Bool {
+        get {
+            return ((a ?? 0) & AcsHelper.kModeOwner) != 0
+        }
+    }
+    var isMuted: Bool {
+        get {
+            return ((a ?? 0) & AcsHelper.kModePres) == 0
+        }
+    }
+    var isInvalid: Bool {
+        get {
+            return (a ?? 0) == AcsHelper.kModeInvalid
+        }
+    }
+    var isJoiner: Bool {
+        get {
+            return ((a ?? 0) & AcsHelper.kModeJoin) != 0
+        }
+    }
+    var isReader: Bool {
+        get {
+            return ((a ?? 0) & AcsHelper.kModeRead) != 0
+        }
+    }
+    var isWriter: Bool {
+        get {
+            return ((a ?? 0) & AcsHelper.kModeWrite) != 0
         }
     }
     init(str: String?) {
@@ -61,8 +96,9 @@ class AcsHelper: Codable, Equatable {
     init(a: Int?) {
         self.a = a
     }
-    public func isInvalid() -> Bool {
-        return (a ?? 0) == AcsHelper.kModeInvalid
+    public func hasPermissions(forMode mode: Int) -> Bool {
+        guard !isInvalid else { return false }
+        return (a! & mode) != 0
     }
     private static func decode(from modeStr: String?) -> Int? {
         guard let mode = modeStr, mode.count > 0 else {
@@ -173,12 +209,16 @@ class AcsHelper: Codable, Equatable {
         return false
     }
     public static func and(a1: AcsHelper? , a2: AcsHelper?) -> AcsHelper? {
-        if let ah1 = a1, let ah2 = a2, !ah1.isInvalid(), !ah2.isInvalid() {
+        if let ah1 = a1, let ah2 = a2, !ah1.isInvalid, !ah2.isInvalid {
             return AcsHelper(a: ah1.a! & ah2.a!)
         }
         return nil
     }
-    static func == (lhs: AcsHelper, rhs: AcsHelper) -> Bool {
+    public static func diff(a1: AcsHelper?, a2: AcsHelper?) -> AcsHelper? {
+        guard let a1a = a1?.a, let a2a = a2?.a, !a1!.isInvalid, !a2!.isInvalid else { return nil }
+        return AcsHelper(a: a1a & ~a2a)
+    }
+    public static func == (lhs: AcsHelper, rhs: AcsHelper) -> Bool {
         return lhs.a == rhs.a
     }
 }
