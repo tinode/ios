@@ -53,7 +53,6 @@
 		0AE50D4A22156A6C0021F7B7 /* FindRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AE50D4922156A6C0021F7B7 /* FindRouter.swift */; };
 		0AE7339C22C33FEF0089C8D8 /* ChatListViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0AE7339B22C33FEF0089C8D8 /* ChatListViewCell.xib */; };
 		0AEE8BEE226456080022EC3F /* UiUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AEE8BED226456080022EC3F /* UiUtils.swift */; };
-		0AEF602322B611D80060426C /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0AEF602222B611D80060426C /* GoogleService-Info.plist */; };
 		58CBE6CE018029121E923407 /* Pods_Tinodios.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B787A84CD010EF920890105 /* Pods_Tinodios.framework */; };
 		7DDADC5021D5C156009733B5 /* RegisterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DDADC4F21D5C156009733B5 /* RegisterViewController.swift */; };
 		7DDADC5221D5C219009733B5 /* Validate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DDADC5121D5C219009733B5 /* Validate.swift */; };
@@ -66,11 +65,13 @@
 		B02F5C8B22679BC80079A97E /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = B02F5C8A22679BC80079A97E /* ImagePicker.swift */; };
 		B031BE552263075E004160AE /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = B031BE542263075E004160AE /* Settings.bundle */; };
 		B031BE5722631304004160AE /* SettingsHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = B031BE5622631304004160AE /* SettingsHelper.swift */; };
+		B08DA7DA22CAF40A00FE5FAF /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B08DA7D922CAF40A00FE5FAF /* GoogleService-Info.plist */; };
 		B0A612AF228B08EC00569DFE /* RichTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0A612AE228B08EC00569DFE /* RichTextView.swift */; };
 		B0A612B1228C85C300569DFE /* MessageViewLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0A612B0228C85C300569DFE /* MessageViewLayout.swift */; };
 		B0A612B3228EDC7B00569DFE /* DraftyButtonAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0A612B2228EDC7B00569DFE /* DraftyButtonAttachment.swift */; };
 		B0A612B5229132CC00569DFE /* MessageBubbleDecorator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0A612B4229132CC00569DFE /* MessageBubbleDecorator.swift */; };
 		B0A612B72294289000569DFE /* MessageViewController+SendMessageBarDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0A612B62294288F00569DFE /* MessageViewController+SendMessageBarDelegate.swift */; };
+		B0C6A3C2229EDF14009B0B5D /* ImagePreviewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0C6A3C1229EDF14009B0B5D /* ImagePreviewController.swift */; };
 		B0DF03172279F027000F9492 /* RoundImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0DF03162279F027000F9492 /* RoundImageView.swift */; };
 		B0DF0319227C2517000F9492 /* MessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0DF0318227C2517000F9492 /* MessageView.swift */; };
 		B0DF031D227C604C000F9492 /* MessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0DF031C227C604C000F9492 /* MessageCell.swift */; };
@@ -143,7 +144,6 @@
 		0AE50D4922156A6C0021F7B7 /* FindRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FindRouter.swift; sourceTree = "<group>"; };
 		0AE7339B22C33FEF0089C8D8 /* ChatListViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ChatListViewCell.xib; sourceTree = "<group>"; };
 		0AEE8BED226456080022EC3F /* UiUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UiUtils.swift; sourceTree = "<group>"; };
-		0AEF602222B611D80060426C /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		3B787A84CD010EF920890105 /* Pods_Tinodios.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Tinodios.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5900B7863CDFB018A86DD3AC /* Pods-Tinodios.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Tinodios.release.xcconfig"; path = "Pods/Target Support Files/Pods-Tinodios/Pods-Tinodios.release.xcconfig"; sourceTree = "<group>"; };
 		75BC852198885F22E865D563 /* Pods-Tinodios.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Tinodios.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Tinodios/Pods-Tinodios.debug.xcconfig"; sourceTree = "<group>"; };
@@ -158,11 +158,13 @@
 		B02F5C8A22679BC80079A97E /* ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
 		B031BE542263075E004160AE /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		B031BE5622631304004160AE /* SettingsHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsHelper.swift; sourceTree = "<group>"; };
+		B08DA7D922CAF40A00FE5FAF /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		B0A612AE228B08EC00569DFE /* RichTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RichTextView.swift; sourceTree = "<group>"; };
 		B0A612B0228C85C300569DFE /* MessageViewLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageViewLayout.swift; sourceTree = "<group>"; };
 		B0A612B2228EDC7B00569DFE /* DraftyButtonAttachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DraftyButtonAttachment.swift; sourceTree = "<group>"; };
 		B0A612B4229132CC00569DFE /* MessageBubbleDecorator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageBubbleDecorator.swift; sourceTree = "<group>"; };
 		B0A612B62294288F00569DFE /* MessageViewController+SendMessageBarDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MessageViewController+SendMessageBarDelegate.swift"; sourceTree = "<group>"; };
+		B0C6A3C1229EDF14009B0B5D /* ImagePreviewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePreviewController.swift; sourceTree = "<group>"; };
 		B0DF03162279F027000F9492 /* RoundImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundImageView.swift; sourceTree = "<group>"; };
 		B0DF0318227C2517000F9492 /* MessageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageView.swift; sourceTree = "<group>"; };
 		B0DF031C227C604C000F9492 /* MessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageCell.swift; sourceTree = "<group>"; };
@@ -227,6 +229,7 @@
 				0AE50D4722156A5B0021F7B7 /* FindPresenter.swift */,
 				0AE50D4922156A6C0021F7B7 /* FindRouter.swift */,
 				0AE50D4322156A250021F7B7 /* FindViewController.swift */,
+				B0C6A3C1229EDF14009B0B5D /* ImagePreviewController.swift */,
 				0A0E940222D324F1006416F8 /* LargeFileHelper.swift */,
 				0A6F260921BE51D800B9726E /* LoginViewController.swift */,
 				B0A612B4229132CC00569DFE /* MessageBubbleDecorator.swift */,
@@ -250,7 +253,7 @@
 				B031BE542263075E004160AE /* Settings.bundle */,
 				0A0380E921B3CCB000A3FA0E /* Supporting Files */,
 				0A0380E321B3CC8200A3FA0E /* Info.plist */,
-				0AEF602222B611D80060426C /* GoogleService-Info.plist */,
+				B08DA7D922CAF40A00FE5FAF /* GoogleService-Info.plist */,
 			);
 			path = Tinodios;
 			sourceTree = "<group>";
@@ -395,12 +398,12 @@
 				B0125999229C982900688FCE /* ContactViewCell.xib in Resources */,
 				B031BE552263075E004160AE /* Settings.bundle in Resources */,
 				0AE7339C22C33FEF0089C8D8 /* ChatListViewCell.xib in Resources */,
-				0AEF602322B611D80060426C /* GoogleService-Info.plist in Resources */,
 				B0DF032D2282EE8A000F9492 /* SendMessageBar.xib in Resources */,
 				0A0380E221B3CC8200A3FA0E /* LaunchScreen.storyboard in Resources */,
 				B012599D229CEBE600688FCE /* SelectedMemberViewCell.xib in Resources */,
 				0A6AC322229FAA130025A4EC /* PermissionsEditView.xib in Resources */,
 				0A0380DF21B3CC8200A3FA0E /* Assets.xcassets in Resources */,
+				B08DA7DA22CAF40A00FE5FAF /* GoogleService-Info.plist in Resources */,
 				0A0380DD21B3CC8100A3FA0E /* Main.storyboard in Resources */,
 				0A8D945822BEED3700DC154E /* AvatarWithOnlineIndicator.xib in Resources */,
 			);
@@ -495,6 +498,7 @@
 				B0DF031F227C6898000F9492 /* PaddedLabel.swift in Sources */,
 				0A8D945C22BF5B7F00DC154E /* AvatarWithOnlineIndicator+TypingAnimation.swift in Sources */,
 				0AE50D4A22156A6C0021F7B7 /* FindRouter.swift in Sources */,
+				B0C6A3C2229EDF14009B0B5D /* ImagePreviewController.swift in Sources */,
 				B0DF032F2282FF46000F9492 /* SendMessageBar.swift in Sources */,
 				0A6AC324229FB0EE0025A4EC /* PermissionsEditViewController.swift in Sources */,
 				B02F5C8B22679BC80079A97E /* ImagePicker.swift in Sources */,
