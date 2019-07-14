@@ -913,7 +913,7 @@
                                                             <accessibility key="accessibilityConfiguration">
                                                                 <accessibilityTraits key="traits" notEnabled="YES"/>
                                                             </accessibility>
-                                                            <color key="textColor" white="0.66666666669999997" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                            <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                             <fontDescription key="fontDescription" type="system" pointSize="16"/>
                                                             <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                                                         </textView>
@@ -928,7 +928,7 @@
                                                                     <nil key="highlightedColor"/>
                                                                 </label>
                                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Address" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="N3q-Dh-zPR" userLabel="TopicID">
-                                                                    <rect key="frame" x="80" y="14" width="140" height="20"/>
+                                                                    <rect key="frame" x="80" y="14" width="123" height="20"/>
                                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                                     <fontDescription key="fontDescription" name="CourierNewPSMT" family="Courier New" pointSize="17"/>
                                                                     <nil key="textColor"/>
@@ -1145,6 +1145,19 @@
                             </tableViewSection>
                         </sections>
                     </tableView>
+                    <connections>
+                        <outlet property="anonUsersPermissionsLabel" destination="Qbl-Fh-HdA" id="wbh-bb-7JR"/>
+                        <outlet property="authUsersPermissionsLabel" destination="fXn-Kq-NJh" id="E4n-X1-Wne"/>
+                        <outlet property="avatarImage" destination="dWX-X1-W59" id="zBA-Vl-9IM"/>
+                        <outlet property="loadAvatarButton" destination="7o2-7q-da3" id="s1W-UQ-lq4"/>
+                        <outlet property="mutedSwitch" destination="7XQ-NW-5pM" id="PPf-3f-hwt"/>
+                        <outlet property="myPermissionsLabel" destination="vQg-ZG-0wj" id="eBT-FV-bvr"/>
+                        <outlet property="peerNameLabel" destination="KwK-kt-7TH" id="W0f-Rk-EVY"/>
+                        <outlet property="peerPermissionsLabel" destination="kD2-bs-q9L" id="VGh-tA-lec"/>
+                        <outlet property="topicIDLabel" destination="N3q-Dh-zPR" id="nWf-FM-8cb"/>
+                        <outlet property="topicSubtitleTextView" destination="D3z-yf-zJA" id="et0-1y-udY"/>
+                        <outlet property="topicTitleTextView" destination="ity-bg-zqr" id="wM9-xY-iHL"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="2Ct-oM-2pn" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
