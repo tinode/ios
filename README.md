@@ -13,6 +13,7 @@ The immediate goal is to have a basic end-to-end working application prototype t
 * Login
 * Register new accounts.
 * Start new chats.
+* Edit personal details.
 * View the list of active chats
 * Send and receive plain text messages one-on-one or in group chats.
 * In-app presence notifications.
@@ -29,7 +30,6 @@ The immediate goal is to have a basic end-to-end working application prototype t
 * Delivery and received/read indicators for messages (little check marks in messages).
 * Muting/un-muting conversations and other permission management.
 * Invite contacts to the app by SMS or email.
-* Editing of personal details.
 * Push notifications.
 * Attachments and inline images cannot be created yet.
 
