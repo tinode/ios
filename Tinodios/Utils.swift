@@ -58,7 +58,7 @@ class Utils {
             if o == old.count || (n < new.count && old[o].seqId > new[n].seqId) {
                 // Present in new, missing in old: added
                 inserted.append(n)
-                if mutated.count == 0 || mutated[mutated.count - 1] != n {
+                if mutated.last ?? -1 != n {
                     mutated.append(n)
                 }
                 n += 1
@@ -66,7 +66,7 @@ class Utils {
             } else if n == new.count || old[o].seqId < new[n].seqId {
                 // Present in old, missing in new: removed
                 removed.append(o)
-                if mutated.count == 0 || mutated[mutated.count - 1] != n {
+                if mutated.last ?? -1 != n {
                     // Appending n, not o because mutated is an index agaist the new data.
                     mutated.append(n)
                 }
