@@ -939,8 +939,26 @@
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="MXD-lQ-qMa" id="GhK-qo-uk3">
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="43.666666666666664"/>
                                             <autoresizingMask key="autoresizingMask"/>
-
-                                            
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Muted" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="AoI-xo-VbS">
+                                                    <rect key="frame" x="16" y="11" width="49.333333333333329" height="20.333333333333332"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7XQ-NW-5pM" userLabel="Muted Switch">
+                                                    <rect key="frame" x="306" y="6.3333333333333321" width="51" height="30.999999999999996"/>
+                                                    <connections>
+                                                        <action selector="mutedSwitched:" destination="ZxW-bT-ZdQ" eventType="valueChanged" id="Jw6-V7-85s"/>
+                                                        <action selector="readReceiptsClicked:" destination="Pnk-9m-ZVg" eventType="valueChanged" id="n3c-Xm-48g"/>
+                                                    </connections>
+                                                </switch>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="7XQ-NW-5pM" firstAttribute="centerY" secondItem="GhK-qo-uk3" secondAttribute="centerY" id="Wnq-xT-PFL"/>
+                                                <constraint firstAttribute="trailing" secondItem="7XQ-NW-5pM" secondAttribute="trailing" constant="20" symbolic="YES" id="fcV-0e-pJ1"/>
+                                            </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                 </cells>
