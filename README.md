@@ -54,4 +54,4 @@ In order to compile the app, app you need to download your own GoogleService-Inf
 * Some iOS icons are from https://icons8.com/ under [CC BY-ND 3.0](https://icons8.com/license) license.
 
 ## Screenshots
-<img src="ios-chats.png" alt="App screenshot - chat list" width="207" /> <img src="ios-chat.png" alt="App screenshot - conversation" width="207" /> <img src="ios-find-people.png" alt="App screenshot - find people" width="207" />
+<img src="ios-chats.png" alt="App screenshot - chat list" width="207" /> <img src="ios-chat.png" alt="App screenshot - conversation" width="207" /> <img src="ios-account.png" alt="App screenshot - account settings" width="207" /> <img src="ios-find-people.png" alt="App screenshot - find people" width="207" />
