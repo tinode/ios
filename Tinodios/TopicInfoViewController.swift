@@ -285,14 +285,14 @@ class TopicInfoViewController: UITableViewController {
     }
 }
 
-extension TopicInfoViewController: UITableViewDataSource, UITableViewDelegate {
+extension TopicInfoViewController {
 
     // MARK: - Table view data source
-    func numberOfSections(in tableView: UITableView) -> Int {
+    override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
 
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return subscriptions?.count ?? 0
     }
     struct AccessModeLabel {
@@ -336,7 +336,7 @@ extension TopicInfoViewController: UITableViewDataSource, UITableViewDelegate {
         return !result.isEmpty ? result : nil
     }
 
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ContactViewCell", for: indexPath) as! ContactViewCell
 
         // Configure the cell...
@@ -391,7 +391,7 @@ extension TopicInfoViewController: UITableViewDataSource, UITableViewDelegate {
         self.present(alert, animated: true)
     }
 
-    func tableView(_ tableView: UITableView, accessoryButtonTappedForRowWith indexPath: IndexPath) {
+    override func tableView(_ tableView: UITableView, accessoryButtonTappedForRowWith indexPath: IndexPath) {
         let sub = subscriptions![indexPath.row]
         let alert = UIAlertController(title: sub.pub?.fn ?? "Unknown", message: nil, preferredStyle: .actionSheet)
         alert.addAction(UIAlertAction(title: "Send message", style: .default, handler: { action in
