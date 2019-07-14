@@ -8,7 +8,7 @@
 import UIKit
 import TinodeSDK
 
-class TopicInfoViewController: UIViewController {
+class TopicInfoViewController: UITableViewController {
 
     @IBOutlet weak var topicTitleTextView: UITextView!
     @IBOutlet weak var topicSubtitleTextView: UITextView!
@@ -286,10 +286,12 @@ class TopicInfoViewController: UIViewController {
 }
 
 extension TopicInfoViewController: UITableViewDataSource, UITableViewDelegate {
+
     // MARK: - Table view data source
     func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
+
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return subscriptions?.count ?? 0
     }
@@ -333,6 +335,7 @@ extension TopicInfoViewController: UITableViewDataSource, UITableViewDelegate {
         }
         return !result.isEmpty ? result : nil
     }
+
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ContactViewCell", for: indexPath) as! ContactViewCell
 
@@ -387,6 +390,7 @@ extension TopicInfoViewController: UITableViewDataSource, UITableViewDelegate {
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
         self.present(alert, animated: true)
     }
+
     func tableView(_ tableView: UITableView, accessoryButtonTappedForRowWith indexPath: IndexPath) {
         let sub = subscriptions![indexPath.row]
         let alert = UIAlertController(title: sub.pub?.fn ?? "Unknown", message: nil, preferredStyle: .actionSheet)
