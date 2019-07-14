@@ -46,10 +46,15 @@ class AttributedStringFormatter: DraftyFormatter {
     }
 
     private func handleAttachment(from node: TreeNode, with attr: [String : JSONValue]?) {
-        guard let attr = attr, let bits = attr["val"]?.asData() else { return }
-
-        let attachment = Attachment(content: .data(bits), mime: attr["mime"]?.asString(), name: attr["name"]?.asString(), ref: nil, size: bits.count, width: nil, height: nil)
-        node.attachment(attachment)
+        guard let attr = attr else { return }
+        if let bits = attr["val"]?.asData() {  // Inline attachments.
+            let attachment = Attachment(content: .data(bits), mime: attr["mime"]?.asString(), name: attr["name"]?.asString(), ref: nil, size: bits.count, width: nil, height: nil)
+            node.attachment(attachment)
+        } else if let ref = attr["ref"]?.asString() {  // Large file attachments.
+            print("ref = \(ref)")
+            let attachment = Attachment(content: .dataref(ref), mime: attr["mime"]?.asString(), name: attr["name"]?.asString(), ref: ref, size: nil, width: nil, height: nil)
+            node.attachment(attachment)
+        }
     }
 
     private func handleButton(from node: TreeNode, with attr: [String : JSONValue]?) {
@@ -186,6 +191,7 @@ class AttributedStringFormatter: DraftyFormatter {
     struct Attachment {
         enum AttachmentType {
             case data(Data)
+            case dataref(String)
             case image(UIImage)
             case button(URL)
         }
@@ -305,6 +311,8 @@ class AttributedStringFormatter: DraftyFormatter {
                     return "[btn \(faceText)]"
                 }
                 return "[button]"
+            case .dataref:
+                fallthrough
             case .data:
                 var fname = attachment.name ?? "unnamed"
                 if fname.count > 32 {
@@ -312,6 +320,67 @@ class AttributedStringFormatter: DraftyFormatter {
                 }
                 return "[att \(fname)]"
             }
+        }
+
+        private func makeFileAttachmentString(_ attachment: Attachment, withData bits: Data?, withRef ref: String?, defaultAttrs attributes: [NSAttributedString.Key : Any]) -> NSAttributedString {
+            let attributed = NSMutableAttributedString()
+            attributed.beginEditing()
+            /*
+             TODO: use provided mime type to show custom icons for different types.
+             let unmanagedUti = UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, (attachment.mime ?? "application/octet-stream") as CFString, nil)
+             var uti = unmanagedUti?.takeRetainedValue() ?? kUTTypeData
+             uti = kUTTypeData
+             */
+            // Using basic kUTTypeData to prevent iOS from displaying distorted previews.
+            // TODO: make it work for large file attachments (ref != nil).
+            let wrapper = NSTextAttachment(data: bits ?? Data(ref!.utf8), ofType: kUTTypeData as String)
+            let baseFont = attributes[.font] as! UIFont
+            wrapper.bounds = CGRect(origin: CGPoint(x: 0, y: baseFont.capHeight - Constants.kAttachmentIconSize.height), size: Constants.kAttachmentIconSize)
+            attributed.append(NSAttributedString(attachment: wrapper))
+
+            // Append document's file name.
+            var fname = attachment.name ?? "tinode_file_attachment"
+            if fname.count > 32 {
+                fname = fname.prefix(14) + "…" + fname.suffix(14)
+            }
+            attributed.append(NSAttributedString(string: " "))
+            attributed.append(NSAttributedString(string: fname, attributes: [NSAttributedString.Key.font : UIFont(name: "Courier", size: baseFont.pointSize)!]))
+
+            // Append file size.
+            if let size = attachment.size {
+                attributed.append(NSAttributedString(string: " (" + UiUtils.bytesToHumanSize(Int64(size)) + ")", attributes: attributes))
+            }
+
+            // Insert linebreak then a clickable [↓ save] line
+            attributed.append(NSAttributedString(string: "\u{2009}\n", attributes: [NSAttributedString.Key.font : baseFont]))
+
+            // \u{2009} because iOS is buggy and bugs go unfixed for years.
+            // https://stackoverflow.com/questions/29041458/how-to-set-color-of-templated-image-in-nstextattachment
+            let second = NSMutableAttributedString(string: "\u{2009}")
+            second.beginEditing()
+
+            // Add 'download file' icon
+            let icon = NSTextAttachment()
+            icon.image = UIImage(named: "download-24")?.withRenderingMode(.alwaysTemplate)
+            icon.bounds = CGRect(origin: CGPoint(x: 0, y: -2), size: CGSize(width: baseFont.lineHeight * 0.8, height: baseFont.lineHeight * 0.8))
+            second.append(NSAttributedString(attachment: icon))
+
+            // Add "save" text.
+            // TODO: make it clickable
+            second.append(NSAttributedString(string: " save", attributes: [NSAttributedString.Key.font : baseFont]))
+
+            // Add paragraph style and coloring
+            let paragraph = NSMutableParagraphStyle()
+            paragraph.firstLineHeadIndent = Constants.kAttachmentIconSize.width + baseFont.capHeight * 0.25
+            paragraph.lineSpacing = 0
+            paragraph.maximumLineHeight = 4
+            second.addAttributes([NSAttributedString.Key.paragraphStyle : paragraph, NSAttributedString.Key.foregroundColor : Constants.kLinkColor], range: NSRange(location: 0, length: second.length))
+
+            second.endEditing()
+            attributed.append(second)
+
+            attributed.endEditing()
+            return attributed
         }
 
         /// Create custom layout for attachments.
@@ -344,65 +413,10 @@ class AttributedStringFormatter: DraftyFormatter {
 
             // File attachment is harder: construct attributed string fr showing an attachment.
             case .data(let bits):
+                return makeFileAttachmentString(attachment, withData: bits, withRef: nil, defaultAttrs: attributes)
 
-                let attributed = NSMutableAttributedString()
-                attributed.beginEditing()
-                /*
-                 TODO: use provided mime type to show custom icons for different types.
-                 let unmanagedUti = UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, (attachment.mime ?? "application/octet-stream") as CFString, nil)
-                 var uti = unmanagedUti?.takeRetainedValue() ?? kUTTypeData
-                 uti = kUTTypeData
-                 */
-                // Using basic kUTTypeData to prevent iOS from displaying distorted previews.
-
-                let wrapper = NSTextAttachment(data: bits, ofType: kUTTypeData as String)
-                let baseFont = attributes[.font] as! UIFont
-                wrapper.bounds = CGRect(origin: CGPoint(x: 0, y: baseFont.capHeight - Constants.kAttachmentIconSize.height), size: Constants.kAttachmentIconSize)
-                attributed.append(NSAttributedString(attachment: wrapper))
-
-                // Append document's file name.
-                var fname = attachment.name ?? "tinode_file_attachment"
-                if fname.count > 32 {
-                    fname = fname.prefix(14) + "…" + fname.suffix(14)
-                }
-                attributed.append(NSAttributedString(string: " "))
-                attributed.append(NSAttributedString(string: fname, attributes: [NSAttributedString.Key.font : UIFont(name: "Courier", size: baseFont.pointSize)!]))
-
-                // Append file size.
-                if let size = attachment.size {
-                    attributed.append(NSAttributedString(string: " (" + UiUtils.bytesToHumanSize(Int64(size)) + ")", attributes: attributes))
-                }
-
-                // Insert linebreak then a clickable [↓ save] line
-                attributed.append(NSAttributedString(string: "\u{2009}\n", attributes: [NSAttributedString.Key.font : baseFont]))
-
-                // \u{2009} because iOS is buggy and bugs go unfixed for years.
-                // https://stackoverflow.com/questions/29041458/how-to-set-color-of-templated-image-in-nstextattachment
-                let second = NSMutableAttributedString(string: "\u{2009}")
-                second.beginEditing()
-
-                // Add 'download file' icon
-                let icon = NSTextAttachment()
-                icon.image = UIImage(named: "download-24")?.withRenderingMode(.alwaysTemplate)
-                icon.bounds = CGRect(origin: CGPoint(x: 0, y: -2), size: CGSize(width: baseFont.lineHeight * 0.8, height: baseFont.lineHeight * 0.8))
-                second.append(NSAttributedString(attachment: icon))
-
-                // Add "save" text.
-                // TODO: make it clickable
-                second.append(NSAttributedString(string: " save", attributes: [NSAttributedString.Key.font : baseFont]))
-
-                // Add paragraph style and coloring
-                let paragraph = NSMutableParagraphStyle()
-                paragraph.firstLineHeadIndent = Constants.kAttachmentIconSize.width + baseFont.capHeight * 0.25
-                paragraph.lineSpacing = 0
-                paragraph.maximumLineHeight = 4
-                second.addAttributes([NSAttributedString.Key.paragraphStyle : paragraph, NSAttributedString.Key.foregroundColor : Constants.kLinkColor], range: NSRange(location: 0, length: second.length))
-
-                second.endEditing()
-                attributed.append(second)
-
-                attributed.endEditing()
-                return attributed
+            case .dataref(let ref):
+                return makeFileAttachmentString(attachment, withData: nil, withRef: ref, defaultAttrs: attributes)
             }
         }
 
