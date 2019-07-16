@@ -142,6 +142,7 @@ extension NewGroupViewController: NewGroupDisplayLogic {
 
 extension NewGroupViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
         print("selected index path = \(indexPath)")
         let contact = contacts[indexPath.row]
         if let uniqueId = contact.uniqueId {
@@ -155,6 +156,7 @@ extension NewGroupViewController: UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
+        tableView.cellForRow(at: indexPath)?.accessoryType = .none
         print("deselected index path = \(indexPath)")
         let contact = contacts[indexPath.row]
         if let uniqueId = contact.uniqueId {
