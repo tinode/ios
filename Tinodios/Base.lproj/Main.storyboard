@@ -721,20 +721,14 @@
                         <viewLayoutGuide key="safeArea" id="p4H-5P-q7k"/>
                     </view>
                     <navigationItem key="navigationItem" id="gE0-cY-Jyn" userLabel="Topic name">
-                        <rightBarButtonItems>
-                            <barButtonItem title="Info" id="1lt-ET-oLA">
-                                <connections>
-                                    <segue destination="ZxW-bT-ZdQ" kind="show" identifier="Messages2TopicInfo" id="IuA-m3-U07"/>
-                                </connections>
-                            </barButtonItem>
-                            <barButtonItem systemItem="trash" id="UKA-n4-ZtQ">
-                                <connections>
-                                    <action selector="clearMessagesClicked:" destination="l6T-LK-IbJ" id="cf3-ip-VaO"/>
-                                </connections>
-                            </barButtonItem>
-                        </rightBarButtonItems>
+                        <barButtonItem key="rightBarButtonItem" systemItem="trash" id="UKA-n4-ZtQ">
+                            <connections>
+                                <action selector="clearMessagesClicked:" destination="l6T-LK-IbJ" id="cf3-ip-VaO"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                     <connections>
+                        <segue destination="ZxW-bT-ZdQ" kind="show" identifier="Messages2TopicInfo" id="IuA-m3-U07"/>
                         <segue destination="a2m-CR-0Zc" kind="show" identifier="ShowImagePreview" id="je5-0n-CJ3"/>
                     </connections>
                 </viewController>
@@ -1713,6 +1707,6 @@
         <image name="sign-out-25" width="25" height="25"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="Fnn-wi-PrS"/>
+        <segue reference="11u-RR-BAc"/>
     </inferredMetricsTieBreakers>
 </document>
