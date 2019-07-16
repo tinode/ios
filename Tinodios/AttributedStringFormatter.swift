@@ -332,14 +332,16 @@ class AttributedStringFormatter: DraftyFormatter {
              uti = kUTTypeData
              */
             // Using basic kUTTypeData to prevent iOS from displaying distorted previews.
-            // TODO: make it work for large file attachments (ref != nil).
-            let wrapper = NSTextAttachment(data: bits ?? Data(ref!.utf8), ofType: kUTTypeData as String)
+            let tinode = Cache.getTinode()
+            let data = bits ?? Data(tinode.hostURL(useWebsocketProtocol: false)!.appendingPathComponent(ref!).absoluteString.utf8)
+            let wrapper = NSTextAttachment(data: data, ofType: kUTTypeData as String)
             let baseFont = attributes[.font] as! UIFont
             wrapper.bounds = CGRect(origin: CGPoint(x: 0, y: baseFont.capHeight - Constants.kAttachmentIconSize.height), size: Constants.kAttachmentIconSize)
             attributed.append(NSAttributedString(attachment: wrapper))
 
             // Append document's file name.
-            var fname = attachment.name ?? "tinode_file_attachment"
+            let originalFileName = attachment.name ?? "tinode_file_attachment"
+            var fname = originalFileName
             if fname.count > 32 {
                 fname = fname.prefix(14) + "…" + fname.suffix(14)
             }
@@ -366,7 +368,6 @@ class AttributedStringFormatter: DraftyFormatter {
             second.append(NSAttributedString(attachment: icon))
 
             // Add "save" text.
-            // TODO: make it clickable
             second.append(NSAttributedString(string: " save", attributes: [NSAttributedString.Key.font : baseFont]))
 
             // Add paragraph style and coloring
@@ -374,8 +375,14 @@ class AttributedStringFormatter: DraftyFormatter {
             paragraph.firstLineHeadIndent = Constants.kAttachmentIconSize.width + baseFont.capHeight * 0.25
             paragraph.lineSpacing = 0
             paragraph.maximumLineHeight = 4
-            second.addAttributes([NSAttributedString.Key.paragraphStyle : paragraph, NSAttributedString.Key.foregroundColor : Constants.kLinkColor], range: NSRange(location: 0, length: second.length))
+            second.addAttributes([NSAttributedString.Key.paragraphStyle : paragraph, NSAttributedString.Key.foregroundColor : Constants.kLinkColor,
+                ], range: NSRange(location: 0, length: second.length))
 
+            var baseUrl = URLComponents(string: "tinode://" + tinode.hostName)!
+            baseUrl.path = ref != nil ? "/large-attachment" : "/small-attachment"
+            baseUrl.queryItems = [URLQueryItem(name: "filename", value: originalFileName)]
+
+            second.addAttribute(.link, value: baseUrl.url! as Any, range: NSRange(location: 0, length: second.length))
             second.endEditing()
             attributed.append(second)
 
