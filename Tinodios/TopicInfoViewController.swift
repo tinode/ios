@@ -375,12 +375,8 @@ extension TopicInfoViewController {
             // Row with [Add members] and [Leave] buttons.
             return super.tableView(tableView, cellForRowAt: indexPath)
         }
-        
-        print("dequeueReusableCell for \(indexPath)")
 
         let cell = tableView.dequeueReusableCell(withIdentifier: "ContactViewCell", for: indexPath) as! ContactViewCell
-
-        print("dequeueReusableCell done")
 
         // Configure the cell...
         let sub = subscriptions![indexPath.row - 1]
@@ -408,8 +404,6 @@ extension TopicInfoViewController {
             }
         }
         cell.accessoryType = isMe ? .none : .detailDisclosureButton
-
-        print("dequeueReusableCell finished all")
 
         return cell
     }
