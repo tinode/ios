@@ -10,22 +10,30 @@ import TinodeSDK
 
 class TopicInfoViewController: UITableViewController {
 
+    // Number of rows in every section. '-1' means variable number of items
+    private static let kSections: [Int] = [1, 1, 2, 2, -1]
+    private static let kSectionBasic = 0
+    private static let kSectionMute = 1
+    private static let kSectionPermissions = 2
+    private static let kSectionPermissionsMine = 0
+    private static let kSectionPermissionsPeer = 1
+    private static let kSectionDefaultPermissions = 3
+    private static let kSectionDefaultPermissionsAuth = 0
+    private static let kSectionDefaultPermissionsAnon = 1
+    private static let kSectionMembers = 4
+    private static let kSectionMembersButtons = 0
+
     @IBOutlet weak var topicTitleTextView: UITextView!
     @IBOutlet weak var topicSubtitleTextView: UITextView!
     @IBOutlet weak var avatarImage: RoundImageView!
     @IBOutlet weak var loadAvatarButton: UIButton!
     @IBOutlet weak var mutedSwitch: UISwitch!
     @IBOutlet weak var topicIDLabel: UILabel!
-    @IBOutlet weak var permissionsLabel: UILabel!
     @IBOutlet weak var myPermissionsLabel: UILabel!
     @IBOutlet weak var peerNameLabel: UILabel!
     @IBOutlet weak var peerPermissionsLabel: UILabel!
     @IBOutlet weak var authUsersPermissionsLabel: UILabel!
     @IBOutlet weak var anonUsersPermissionsLabel: UILabel!
-    @IBOutlet weak var groupView: UIView!
-    @IBOutlet weak var p2pPermissionsView: UIView!
-    @IBOutlet weak var defaultPermissionsView: UIView!
-    @IBOutlet weak var membersTableView: UITableView!
 
     var topicName = ""
     private var topic: DefaultComTopic!
@@ -34,6 +42,13 @@ class TopicInfoViewController: UITableViewController {
 
     private var subscriptions: [Subscription<VCard, PrivateType>]?
 
+    // Show row with Peer's permissions (p2p topic)
+    private var showPeerPermissions: Bool = false
+    // Show section with default topic permissions (manager of a grp topic)
+    private var showDefaultPermissions: Bool = false
+    // Show section with group members
+    private var showGroupMembers: Bool = false
+
     override func viewDidLoad() {
         super.viewDidLoad()
         setup()
@@ -41,12 +56,7 @@ class TopicInfoViewController: UITableViewController {
     override func viewDidAppear(_ animated: Bool) {
         reloadData()
     }
-    // Hides view and sets its height to 0.
-    private static func collapseView(view: UIView) {
-        view.isHidden = true
-        view.subviews.forEach({ $0.removeFromSuperview() })
-        view.frame = CGRect(x: 0 , y: 0, width: view.frame.width, height: 0)
-    }
+
     private func setup() {
         self.tinode = Cache.getTinode()
         self.topic = tinode.getTopic(topicName: topicName) as? DefaultComTopic
@@ -54,30 +64,17 @@ class TopicInfoViewController: UITableViewController {
             return
         }
 
-        var p2pPermissionsViewActive = true
-        var defaultPermissionsViewActive = true
         if self.topic.isGrpType {
-            self.loadAvatarButton.isHidden = !topic.isManager
-            defaultPermissionsViewActive = topic.isManager
-            self.defaultPermissionsView.isHidden = !defaultPermissionsViewActive
-            if !defaultPermissionsViewActive {
-                TopicInfoViewController.collapseView(view: self.defaultPermissionsView)
-            }
-            p2pPermissionsViewActive = false
-            TopicInfoViewController.collapseView(view: self.p2pPermissionsView)
-
-            self.membersTableView.dataSource = self
-            self.membersTableView.allowsMultipleSelection = true
-            self.membersTableView.delegate = self
-            self.membersTableView.register(UINib(nibName: "ContactViewCell", bundle: nil), forCellReuseIdentifier: "ContactViewCell")
-            self.membersTableView.allowsSelection = false
+            loadAvatarButton.isHidden = !topic.isManager
+            showDefaultPermissions = topic.isManager
+            showPeerPermissions = false
+            showGroupMembers = true
+            tableView.register(UINib(nibName: "ContactViewCell", bundle: nil), forCellReuseIdentifier: "ContactViewCell")
         } else {
-            self.loadAvatarButton.isHidden = true
-            self.groupView.isHidden = true
-            self.defaultPermissionsView.isHidden = true
-            self.permissionsLabel.isHidden = true
-            defaultPermissionsViewActive = false
-            TopicInfoViewController.collapseView(view: self.defaultPermissionsView)
+            loadAvatarButton.isHidden = true
+            showDefaultPermissions = false
+            showGroupMembers = false
+            showPeerPermissions = true
         }
         UiUtils.setupTapRecognizer(
             forView: topicSubtitleTextView,
@@ -89,17 +86,20 @@ class TopicInfoViewController: UITableViewController {
                 action: #selector(TopicInfoViewController.topicTitleTapped),
                 actionTarget: self)
         }
-        if p2pPermissionsViewActive {
-            UiUtils.setupTapRecognizer(
-                forView: myPermissionsLabel,
-                action: #selector(TopicInfoViewController.permissionsTapped),
-                actionTarget: self)
+
+        UiUtils.setupTapRecognizer(
+            forView: myPermissionsLabel,
+            action: #selector(TopicInfoViewController.permissionsTapped),
+            actionTarget: self)
+
+        if showPeerPermissions {
             UiUtils.setupTapRecognizer(
                 forView: peerPermissionsLabel,
                 action: #selector(TopicInfoViewController.permissionsTapped),
                 actionTarget: self)
         }
-        if defaultPermissionsViewActive {
+
+        if showDefaultPermissions {
             UiUtils.setupTapRecognizer(
                 forView: authUsersPermissionsLabel,
                 action: #selector(TopicInfoViewController.permissionsTapped),
@@ -109,40 +109,40 @@ class TopicInfoViewController: UITableViewController {
                 action: #selector(TopicInfoViewController.permissionsTapped),
                 actionTarget: self)
         }
-        UiUtils.setupTapRecognizer(
-            forView: permissionsLabel,
-            action: #selector(TopicInfoViewController.permissionsTapped),
-            actionTarget: self)
+
         self.imagePicker = ImagePicker(
             presentationController: self, delegate: self)
     }
-    private func reloadData() {
-        self.topicTitleTextView.text = self.topic.pub?.fn ?? "Unknown"
-        self.topicIDLabel.text = self.topic?.name
-        self.topicIDLabel.sizeToFit()
-        let subtitle = self.topic.comment ?? ""
-        self.topicSubtitleTextView.text = !subtitle.isEmpty ? subtitle : "Private info: not set"
-        self.avatarImage.set(icon: topic.pub?.photo?.image(), title: topic.pub?.fn, id: topic?.name)
-        self.avatarImage.letterTileFont = self.avatarImage.letterTileFont.withSize(CGFloat(50))
-        self.mutedSwitch.isOn = self.topic.isMuted
-        let acs = self.topic.accessMode
-        self.permissionsLabel.text = acs?.modeString
-        if self.topic.isGrpType {
-            self.authUsersPermissionsLabel?.text = self.topic.defacs?.getAuth()
-            self.anonUsersPermissionsLabel?.text = self.topic.defacs?.getAnon()
 
-            self.subscriptions = self.topic.getSubscriptions()
-            self.membersTableView.reloadData()
+    private func reloadData() {
+        topicTitleTextView.text = topic.pub?.fn ?? "Unknown"
+        topicIDLabel.text = topic?.name
+        topicIDLabel.sizeToFit()
+        let subtitle = topic.comment ?? ""
+        topicSubtitleTextView.text = !subtitle.isEmpty ? subtitle : "Private info: not set"
+        avatarImage.set(icon: topic.pub?.photo?.image(), title: topic.pub?.fn, id: topic?.name)
+        avatarImage.letterTileFont = self.avatarImage.letterTileFont.withSize(CGFloat(50))
+        mutedSwitch.isOn = topic.isMuted
+        let acs = topic.accessMode
+
+        if self.topic.isGrpType {
+            authUsersPermissionsLabel?.text = topic.defacs?.getAuth()
+            anonUsersPermissionsLabel?.text = topic.defacs?.getAnon()
+            myPermissionsLabel?.text = acs?.modeString
+            subscriptions = topic.getSubscriptions()
+            tableView.reloadData()
         } else {
-            self.peerNameLabel?.text = self.topic.pub?.fn ?? "Unknown"
-            self.myPermissionsLabel?.text = acs?.wantString
-            let sub = self.topic.getSubscription(for: self.topic.name)
-            self.peerPermissionsLabel?.text = sub?.acs?.givenString
+            peerNameLabel?.text = topic.pub?.fn ?? "Unknown"
+            myPermissionsLabel?.text = acs?.wantString
+            let sub = topic.getSubscription(for: self.topic.name)
+            peerPermissionsLabel?.text = sub?.acs?.givenString
         }
     }
+
     @IBAction func loadAvatarClicked(_ sender: Any) {
         imagePicker.present(from: self.view)
     }
+
     @IBAction func mutedSwitched(_ sender: Any) {
         let isChecked = mutedSwitch.isOn
         do {
@@ -162,6 +162,7 @@ class TopicInfoViewController: UITableViewController {
             mutedSwitch.isOn = !isChecked
         }
     }
+
     @objc
     func topicTitleTapped(sender: UITapGestureRecognizer) {
         let alert = UIAlertController(title: "Edit Topic", message: nil, preferredStyle: .alert)
@@ -186,6 +187,7 @@ class TopicInfoViewController: UITableViewController {
         }))
         self.present(alert, animated: true)
     }
+
     private func updateTitles(newTitle: String?, newSubtitle: String?) {
         var pub: VCard? = nil
         if let nt = newTitle {
@@ -204,6 +206,7 @@ class TopicInfoViewController: UITableViewController {
             UiUtils.setTopicData(forTopic: topic, pub: pub, priv: priv)
         }
     }
+
     private func getAcsAndPermissionsChangeType(for sender: UIView)
         -> (AcsHelper?, String?, UiUtils.PermissionsChangeType?, [PermissionsEditViewController.PermissionType]?) {
         if sender === myPermissionsLabel {
@@ -219,11 +222,9 @@ class TopicInfoViewController: UITableViewController {
         if sender == anonUsersPermissionsLabel {
             return (topic.defacs?.anon, nil, .updateAnon, nil)  // Should be O?
         }
-        if sender == permissionsLabel {
-            return (topic.accessMode?.want, nil, .updateSelfSub, nil)  // Should be O?
-        }
         return (nil, nil, nil, nil)
     }
+
     private func changePermissions(
         acs: AcsHelper, uid: String?,
         changeType: UiUtils.PermissionsChangeType,
@@ -289,12 +290,40 @@ extension TopicInfoViewController {
 
     // MARK: - Table view data source
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
+        return TopicInfoViewController.kSections.count
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return subscriptions?.count ?? 0
+        if section == TopicInfoViewController.kSectionMembers {
+            return showGroupMembers ? 1 /* (subscriptions?.count ?? 0) + 1 */ : 0
+        }
+        if section == TopicInfoViewController.kSectionDefaultPermissions && !showDefaultPermissions {
+            return 0
+        }
+        if section == TopicInfoViewController.kSectionPermissions && !showPeerPermissions {
+            return 1
+        }
+        return super.tableView(tableView, numberOfRowsInSection: section)
     }
+
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        if indexPath.section == TopicInfoViewController.kSectionMembers && indexPath.row != 0 {
+            return 44
+        }
+        return super.tableView(tableView, heightForRowAt: indexPath)
+    }
+
+    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        if section == TopicInfoViewController.kSectionMembers && !showGroupMembers {
+            return nil
+        }
+        if section == TopicInfoViewController.kSectionDefaultPermissions && !showDefaultPermissions {
+            return nil
+        }
+
+        return super.tableView(tableView, titleForHeaderInSection: section)
+    }
+
     struct AccessModeLabel {
         public static let kColorGrayBorder = UIColor(fromHexCode: 0xff9e9e9e)
         public static let kColorGreenBorder = UIColor(fromHexCode: 0xff4caf50)
@@ -303,6 +332,7 @@ extension TopicInfoViewController {
         let color: UIColor
         let text: String
     }
+
     static func getAccessModeLabels(acs: Acs?, status: Int?) -> [AccessModeLabel]? {
         var result = [AccessModeLabel]()
         if let acs = acs {
@@ -337,6 +367,15 @@ extension TopicInfoViewController {
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        if indexPath.section != TopicInfoViewController.kSectionMembers {
+            return super.tableView(tableView, cellForRowAt: indexPath)
+        }
+
+        if indexPath.row == 0 {
+            // Row with [Add members] and [Leave] buttons.
+            return super.tableView(tableView, cellForRowAt: indexPath)
+        }
+
         let cell = tableView.dequeueReusableCell(withIdentifier: "ContactViewCell", for: indexPath) as! ContactViewCell
 
         // Configure the cell...
@@ -368,6 +407,7 @@ extension TopicInfoViewController {
 
         return cell
     }
+
     enum MemberActinos {
         case remove, ban
     }

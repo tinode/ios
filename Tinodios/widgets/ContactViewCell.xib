@@ -101,7 +101,7 @@
                 <outletCollection property="statusLabels" destination="isK-pI-KKL" collectionClass="NSMutableArray" id="rYV-pJ-YvN"/>
                 <outletCollection property="statusLabels" destination="718-by-n9x" collectionClass="NSMutableArray" id="dQU-N3-0QH"/>
             </connections>
-            <point key="canvasLocation" x="-386.95652173913044" y="65.625"/>
+            <point key="canvasLocation" x="-522" y="60"/>
         </tableViewCell>
     </objects>
 </document>
