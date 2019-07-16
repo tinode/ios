@@ -290,7 +290,6 @@ extension TopicInfoViewController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if section == TopicInfoViewController.kSectionMembers {
-            print("Section Members is \(showGroupMembers ? (subscriptions?.count ?? 0) + 1 : 0) items")
             return showGroupMembers ? (subscriptions?.count ?? 0) + 1 : 0
         }
         if section == TopicInfoViewController.kSectionDefaultPermissions && !showDefaultPermissions {
@@ -403,7 +402,7 @@ extension TopicInfoViewController {
                 cell.statusLabels[i].layer.borderColor = accessLabels[i].color.cgColor
             }
         }
-        cell.accessoryType = isMe ? .none : .detailDisclosureButton
+        cell.accessoryType = isMe ? .none : .disclosureIndicator
 
         return cell
     }
@@ -431,12 +430,18 @@ extension TopicInfoViewController {
         self.present(alert, animated: true)
     }
 
-    override func tableView(_ tableView: UITableView, accessoryButtonTappedForRowWith indexPath: IndexPath) {
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated:  true)
+
         if indexPath.section != TopicInfoViewController.kSectionMembers || indexPath.row == 0 {
             return
         }
 
         let sub = subscriptions![indexPath.row - 1]
+        if self.tinode.isMe(uid: sub.user) {
+            return
+        }
+
         let alert = UIAlertController(title: sub.pub?.fn ?? "Unknown", message: nil, preferredStyle: .actionSheet)
         alert.addAction(UIAlertAction(title: "Send message", style: .default, handler: { action in
             if let topic = sub.user {
