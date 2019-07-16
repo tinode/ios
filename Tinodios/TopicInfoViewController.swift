@@ -288,14 +288,10 @@ class TopicInfoViewController: UITableViewController {
 
 extension TopicInfoViewController {
 
-    // MARK: - Table view data source
-    override func numberOfSections(in tableView: UITableView) -> Int {
-        return TopicInfoViewController.kSections.count
-    }
-
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if section == TopicInfoViewController.kSectionMembers {
-            return showGroupMembers ? 1 /* (subscriptions?.count ?? 0) + 1 */ : 0
+            print("Section Members is \(showGroupMembers ? (subscriptions?.count ?? 0) + 1 : 0) items")
+            return showGroupMembers ? (subscriptions?.count ?? 0) + 1 : 0
         }
         if section == TopicInfoViewController.kSectionDefaultPermissions && !showDefaultPermissions {
             return 0
@@ -322,6 +318,10 @@ extension TopicInfoViewController {
         }
 
         return super.tableView(tableView, titleForHeaderInSection: section)
+    }
+
+    override func tableView(_ tableView: UITableView, indentationLevelForRowAt indexPath: IndexPath) -> Int {
+        return 0
     }
 
     struct AccessModeLabel {
@@ -375,11 +375,15 @@ extension TopicInfoViewController {
             // Row with [Add members] and [Leave] buttons.
             return super.tableView(tableView, cellForRowAt: indexPath)
         }
+        
+        print("dequeueReusableCell for \(indexPath)")
 
         let cell = tableView.dequeueReusableCell(withIdentifier: "ContactViewCell", for: indexPath) as! ContactViewCell
 
+        print("dequeueReusableCell done")
+
         // Configure the cell...
-        let sub = subscriptions![indexPath.row]
+        let sub = subscriptions![indexPath.row - 1]
         let uid = sub.user
         let isMe = self.tinode.isMe(uid: uid)
         let pub = sub.pub
@@ -404,6 +408,8 @@ extension TopicInfoViewController {
             }
         }
         cell.accessoryType = isMe ? .none : .detailDisclosureButton
+
+        print("dequeueReusableCell finished all")
 
         return cell
     }
@@ -432,7 +438,11 @@ extension TopicInfoViewController {
     }
 
     override func tableView(_ tableView: UITableView, accessoryButtonTappedForRowWith indexPath: IndexPath) {
-        let sub = subscriptions![indexPath.row]
+        if indexPath.section != TopicInfoViewController.kSectionMembers || indexPath.row == 0 {
+            return
+        }
+
+        let sub = subscriptions![indexPath.row - 1]
         let alert = UIAlertController(title: sub.pub?.fn ?? "Unknown", message: nil, preferredStyle: .actionSheet)
         alert.addAction(UIAlertAction(title: "Send message", style: .default, handler: { action in
             if let topic = sub.user {

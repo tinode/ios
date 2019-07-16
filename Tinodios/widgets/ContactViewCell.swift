@@ -40,10 +40,13 @@ class ContactViewCell: UITableViewCell {
 }
 
 class ContactViewCellStatusLabel: PaddedLabel {
+    /*
     override var intrinsicContentSize: CGSize {
+        print()
         let size = super.intrinsicContentSize
         let insets = super.textInsets
         return CGSize(width: size.width + insets.left + insets.right,
                       height: size.height + insets.top + insets.bottom)
     }
+     */
 }
