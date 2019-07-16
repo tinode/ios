@@ -8,6 +8,10 @@
 import UIKit
 
 public class PaddedLabel: UILabel {
+    @IBInspectable var topInset: CGFloat = 0.0
+    @IBInspectable var bottomInset: CGFloat = 0.0
+    @IBInspectable var leftInset: CGFloat = 0.0
+    @IBInspectable var rightInset: CGFloat = 0.0
 
     public var textInsets: UIEdgeInsets = .zero {
         didSet { setNeedsDisplay() }
