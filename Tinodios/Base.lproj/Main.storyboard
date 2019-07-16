@@ -1145,6 +1145,7 @@
                             </tableViewSection>
                         </sections>
                     </tableView>
+                    <navigationItem key="navigationItem" title="Settings" id="9mf-og-8Hl"/>
                     <connections>
                         <outlet property="anonUsersPermissionsLabel" destination="Qbl-Fh-HdA" id="wbh-bb-7JR"/>
                         <outlet property="authUsersPermissionsLabel" destination="fXn-Kq-NJh" id="E4n-X1-Wne"/>
@@ -1177,43 +1178,88 @@
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="X9H-Bp-dMj" userLabel="ContentView">
                                         <rect key="frame" x="0.0" y="0.0" width="375" height="638"/>
                                         <subviews>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Group Members" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="a45-p0-44d">
-                                                <rect key="frame" x="8" y="8" width="124" height="21"/>
-                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                <nil key="textColor"/>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="GROUP MEMBERS" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="a45-p0-44d" customClass="PaddedLabel" customModule="Tinodios" customModuleProvider="target">
+                                                <rect key="frame" x="0.0" y="0.0" width="375" height="40"/>
+                                                <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="40" id="0pp-87-zkL"/>
+                                                </constraints>
+                                                <fontDescription key="fontDescription" name=".AppleSystemUIFont" family=".AppleSystemUIFont" pointSize="13"/>
+                                                <color key="textColor" cocoaTouchSystemColor="scrollViewTexturedBackgroundColor"/>
                                                 <nil key="highlightedColor"/>
+                                                <userDefinedRuntimeAttributes>
+                                                    <userDefinedRuntimeAttribute type="number" keyPath="leftInset">
+                                                        <real key="value" value="16"/>
+                                                    </userDefinedRuntimeAttribute>
+                                                    <userDefinedRuntimeAttribute type="number" keyPath="topInset">
+                                                        <real key="value" value="8"/>
+                                                    </userDefinedRuntimeAttribute>
+                                                    <userDefinedRuntimeAttribute type="number" keyPath="bottomInset">
+                                                        <real key="value" value="0.0"/>
+                                                    </userDefinedRuntimeAttribute>
+                                                </userDefinedRuntimeAttributes>
                                             </label>
-                                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="Bzn-Pa-JP8">
-                                                <rect key="frame" x="0.0" y="137" width="375" height="501"/>
-                                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                            </tableView>
                                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="S8Z-r1-Nrh">
-                                                <rect key="frame" x="0.0" y="37" width="375" height="92"/>
+                                                <rect key="frame" x="8" y="40" width="359" height="92"/>
                                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="92" id="Kiw-Gi-Y0t"/>
                                                 </constraints>
-                                                <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="d1z-vA-xPg">
-                                                    <size key="itemSize" width="50" height="50"/>
+                                                <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="8" minimumInteritemSpacing="8" id="d1z-vA-xPg">
+                                                    <size key="itemSize" width="40" height="40"/>
                                                     <size key="headerReferenceSize" width="0.0" height="0.0"/>
                                                     <size key="footerReferenceSize" width="0.0" height="0.0"/>
-                                                    <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                                    <inset key="sectionInset" minX="0.0" minY="8" maxX="0.0" maxY="8"/>
                                                 </collectionViewFlowLayout>
                                                 <cells/>
                                             </collectionView>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="ALL USERS" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ftJ-J6-tqx" customClass="PaddedLabel" customModule="Tinodios" customModuleProvider="target">
+                                                <rect key="frame" x="0.0" y="132" width="375" height="40"/>
+                                                <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="40" id="MXu-p5-uP4"/>
+                                                </constraints>
+                                                <fontDescription key="fontDescription" name=".AppleSystemUIFont" family=".AppleSystemUIFont" pointSize="13"/>
+                                                <color key="textColor" cocoaTouchSystemColor="scrollViewTexturedBackgroundColor"/>
+                                                <nil key="highlightedColor"/>
+                                                <userDefinedRuntimeAttributes>
+                                                    <userDefinedRuntimeAttribute type="number" keyPath="leftInset">
+                                                        <real key="value" value="16"/>
+                                                    </userDefinedRuntimeAttribute>
+                                                    <userDefinedRuntimeAttribute type="number" keyPath="topInset">
+                                                        <real key="value" value="8"/>
+                                                    </userDefinedRuntimeAttribute>
+                                                    <userDefinedRuntimeAttribute type="number" keyPath="bottomInset">
+                                                        <real key="value" value="0.0"/>
+                                                    </userDefinedRuntimeAttribute>
+                                                </userDefinedRuntimeAttributes>
+                                            </label>
+                                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="60" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="Bzn-Pa-JP8">
+                                                <rect key="frame" x="0.0" y="172" width="375" height="466"/>
+                                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                <view key="tableFooterView" contentMode="scaleToFill" id="te7-Jx-ztq" userLabel="Footer to hide separators">
+                                                    <rect key="frame" x="0.0" y="0.0" width="375" height="0.0"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                    <accessibility key="accessibilityConfiguration" label="Footer"/>
+                                                </view>
+                                            </tableView>
                                         </subviews>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="bottom" secondItem="Bzn-Pa-JP8" secondAttribute="bottom" id="62E-bj-Weq"/>
                                             <constraint firstItem="Bzn-Pa-JP8" firstAttribute="leading" secondItem="X9H-Bp-dMj" secondAttribute="leading" id="Al2-Xn-iMb"/>
-                                            <constraint firstAttribute="trailing" secondItem="S8Z-r1-Nrh" secondAttribute="trailing" id="HVq-PD-xUR"/>
-                                            <constraint firstItem="a45-p0-44d" firstAttribute="leading" secondItem="X9H-Bp-dMj" secondAttribute="leading" constant="8" id="JLU-hb-DTk"/>
-                                            <constraint firstItem="a45-p0-44d" firstAttribute="top" secondItem="X9H-Bp-dMj" secondAttribute="top" constant="8" id="NCd-1I-9he"/>
-                                            <constraint firstItem="S8Z-r1-Nrh" firstAttribute="leading" secondItem="X9H-Bp-dMj" secondAttribute="leading" id="XCH-OO-fTc"/>
+                                            <constraint firstAttribute="trailing" secondItem="S8Z-r1-Nrh" secondAttribute="trailing" constant="8" id="HVq-PD-xUR"/>
+                                            <constraint firstItem="a45-p0-44d" firstAttribute="leading" secondItem="X9H-Bp-dMj" secondAttribute="leading" id="JLU-hb-DTk"/>
+                                            <constraint firstItem="ftJ-J6-tqx" firstAttribute="top" secondItem="S8Z-r1-Nrh" secondAttribute="bottom" id="LJR-Rc-Bw9"/>
+                                            <constraint firstItem="a45-p0-44d" firstAttribute="top" secondItem="X9H-Bp-dMj" secondAttribute="top" id="NCd-1I-9he"/>
+                                            <constraint firstAttribute="trailing" secondItem="ftJ-J6-tqx" secondAttribute="trailing" id="NSJ-UV-DRj"/>
+                                            <constraint firstItem="ftJ-J6-tqx" firstAttribute="leading" secondItem="X9H-Bp-dMj" secondAttribute="leading" id="Sxc-Yu-vzw"/>
+                                            <constraint firstItem="S8Z-r1-Nrh" firstAttribute="leading" secondItem="X9H-Bp-dMj" secondAttribute="leading" constant="8" id="XCH-OO-fTc"/>
                                             <constraint firstAttribute="trailing" secondItem="Bzn-Pa-JP8" secondAttribute="trailing" id="dRe-pC-lBR"/>
-                                            <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="a45-p0-44d" secondAttribute="trailing" constant="20" id="mZs-QV-vcQ"/>
-                                            <constraint firstItem="S8Z-r1-Nrh" firstAttribute="top" secondItem="a45-p0-44d" secondAttribute="bottom" constant="8" id="ox7-ic-Ty8"/>
-                                            <constraint firstItem="Bzn-Pa-JP8" firstAttribute="top" secondItem="S8Z-r1-Nrh" secondAttribute="bottom" constant="8" id="q1Y-js-9ay"/>
+                                            <constraint firstAttribute="trailing" secondItem="a45-p0-44d" secondAttribute="trailing" id="mZs-QV-vcQ"/>
+                                            <constraint firstItem="S8Z-r1-Nrh" firstAttribute="top" secondItem="a45-p0-44d" secondAttribute="bottom" id="ox7-ic-Ty8"/>
+                                            <constraint firstItem="Bzn-Pa-JP8" firstAttribute="top" secondItem="ftJ-J6-tqx" secondAttribute="bottom" id="q1Y-js-9ay"/>
                                         </constraints>
                                     </view>
                                 </subviews>
@@ -1250,7 +1296,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="b4U-eA-COt" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="4814" y="125"/>
+            <point key="canvasLocation" x="4813.6000000000004" y="124.8768472906404"/>
         </scene>
         <!--Confirm credentials-->
         <scene sceneID="Fsr-7A-t2q">

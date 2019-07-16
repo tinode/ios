@@ -8,10 +8,32 @@
 import UIKit
 
 public class PaddedLabel: UILabel {
-    @IBInspectable var topInset: CGFloat = 0.0
-    @IBInspectable var bottomInset: CGFloat = 0.0
-    @IBInspectable var leftInset: CGFloat = 0.0
-    @IBInspectable var rightInset: CGFloat = 0.0
+    @IBInspectable var topInset: CGFloat = 0.0 {
+        didSet { updateInsets() }
+    }
+    @IBInspectable var bottomInset: CGFloat = 0.0 {
+        didSet { updateInsets() }
+    }
+    @IBInspectable var leftInset: CGFloat = 0.0 {
+        didSet { updateInsets() }
+    }
+    @IBInspectable var rightInset: CGFloat = 0.0 {
+        didSet { updateInsets() }
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+        updateInsets()
+    }
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        updateInsets()
+    }
+
+    private func updateInsets() {
+        textInsets = UIEdgeInsets(top: topInset, left: leftInset, bottom: bottomInset, right: rightInset)
+    }
 
     public var textInsets: UIEdgeInsets = .zero {
         didSet { setNeedsDisplay() }

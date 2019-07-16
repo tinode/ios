@@ -31,10 +31,6 @@ class ContactViewCell: UITableViewCell {
 
         if selected {
             delegate?.selected(from: self)
-
-            self.contentView.backgroundColor = ContactViewCell.kSelectedBackgroundColor
-        } else {
-            self.contentView.backgroundColor = ContactViewCell.kNormalBackgroundColor
         }
     }
 }
