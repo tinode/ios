@@ -37,15 +37,19 @@ class LargeFileHelper: NSObject {
     static let kTwoHyphens = "--"
     static let kLineEnd = "\r\n"
 
-    var uploadSession: URLSession!
+    var urlSession: URLSession!
     var activeUploads: [String : Upload] = [:]
     init(config: URLSessionConfiguration) {
         super.init()
-        self.uploadSession = URLSession(configuration: config, delegate: self, delegateQueue: nil)
+        self.urlSession = URLSession(configuration: config, delegate: self, delegateQueue: nil)
     }
     convenience override init() {
         let config = URLSessionConfiguration.background(withIdentifier: Bundle.main.bundleIdentifier!)
         self.init(config: config)
+    }
+    private static func addCommonHeaders(to request: inout URLRequest, using tinode: Tinode) {
+        request.addValue(tinode.apiKey, forHTTPHeaderField: "X-Tinode-APIKey")
+        request.addValue("Token \(tinode.authToken!)", forHTTPHeaderField: "Authorization")
     }
     // TODO: make background uploads work.
     func startUpload(filename: String, mimetype: String, d: Data, topicId: String, msgId: Int64,
@@ -60,8 +64,11 @@ class LargeFileHelper: NSObject {
         request.addValue("Keep-Alive", forHTTPHeaderField: "Connection")
         request.addValue(tinode.userAgent, forHTTPHeaderField: "User-Agent")
         request.addValue("multipart/form-data; boundary=\(LargeFileHelper.kBoundary)", forHTTPHeaderField: "Content-Type")
+        /*
         request.addValue(tinode.apiKey, forHTTPHeaderField: "X-Tinode-APIKey")
         request.addValue("Token \(tinode.authToken!)", forHTTPHeaderField: "Authorization")
+        */
+        LargeFileHelper.addCommonHeaders(to: &request, using: tinode)
 
         var newData = Data()
         let header = LargeFileHelper.kTwoHyphens + LargeFileHelper.kBoundary + LargeFileHelper.kLineEnd +
@@ -84,7 +91,7 @@ class LargeFileHelper: NSObject {
         let localURL = tempDir.appendingPathComponent("throwaway-\(localFileName)")
         try? newData.write(to: localURL)
 
-        upload.task = uploadSession.uploadTask(with: request, fromFile: localURL)
+        upload.task = urlSession.uploadTask(with: request, fromFile: localURL)
         upload.task!.taskDescription = localFileName
         upload.isUploading = true
         upload.topicId = topicId
@@ -92,6 +99,17 @@ class LargeFileHelper: NSObject {
         upload.finalCb = completionCallback
         activeUploads[localFileName] = upload
         upload.task!.resume()
+    }
+    func startDownload(from url: URL) {
+        //guard var url = tinode.baseURL(useWebsocketProtocol: false) else { return }
+        //url.appendPathComponent("file/u/")
+        //let upload = Do(url: url)
+        let tinode = Cache.getTinode()
+        var request = URLRequest(url: url)
+        LargeFileHelper.addCommonHeaders(to: &request, using: tinode)
+
+        let task = urlSession.downloadTask(with: request)
+        task.resume()
     }
 }
 
@@ -154,6 +172,34 @@ extension LargeFileHelper: URLSessionTaskDelegate {
         Thread.sleep(forTimeInterval: 0.1)
         if let t = task.taskDescription, let upload = activeUploads[t] {
             print("\(upload.topicId): sent = \(totalBytesSent), expected = \(totalBytesExpectedToSend)")
+        }
+    }
+}
+// Downloads.
+extension LargeFileHelper: URLSessionDownloadDelegate {
+    func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask,
+                    didFinishDownloadingTo location: URL) {
+        guard downloadTask.error == nil else {
+            print("download failed: \(downloadTask.error!)")
+            return
+        }
+        print("Finished downloading to \(location).")
+
+        let documentsUrl: URL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+        let destinationURL = documentsUrl.appendingPathComponent(
+            downloadTask.originalRequest!.url!.lastPathComponent)
+
+        let fileManager = FileManager.default
+        do {
+            try fileManager.removeItem(at: destinationURL)
+        } catch {
+            // Non-fatal: file probably doesn't exist
+        }
+        do {
+            try fileManager.moveItem(at: location, to: destinationURL)
+            // TODO: show file preview.
+        } catch {
+            print("Could not copy file to disk: \(error.localizedDescription)")
         }
     }
 }
