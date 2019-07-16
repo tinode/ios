@@ -304,7 +304,7 @@ extension TopicInfoViewController {
 
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if indexPath.section == TopicInfoViewController.kSectionMembers && indexPath.row != 0 {
-            return 44
+            return 60
         }
         return super.tableView(tableView, heightForRowAt: indexPath)
     }

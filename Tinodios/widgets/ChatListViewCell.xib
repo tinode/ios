@@ -19,7 +19,7 @@
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <view userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="epv-Q0-yKc" userLabel="Icon" customClass="AvatarWithOnlineIndicator" customModule="Tinodios" customModuleProvider="target">
-                        <rect key="frame" x="20" y="9" width="40" height="40"/>
+                        <rect key="frame" x="20" y="10" width="40" height="40"/>
                         <accessibility key="accessibilityConfiguration" identifier="icon">
                             <accessibilityTraits key="traits" image="YES"/>
                         </accessibility>
@@ -71,7 +71,7 @@
                     <constraint firstItem="FaT-ra-R9w" firstAttribute="top" secondItem="R21-i3-9ML" secondAttribute="top" constant="10" id="SRZ-zr-jmr"/>
                     <constraint firstItem="g5B-Iw-vLQ" firstAttribute="top" secondItem="wDJ-YF-7hy" secondAttribute="bottom" id="YVh-qW-ktp"/>
                     <constraint firstItem="wDJ-YF-7hy" firstAttribute="leading" secondItem="epv-Q0-yKc" secondAttribute="trailing" constant="8" id="dyh-36-jCx"/>
-                    <constraint firstItem="epv-Q0-yKc" firstAttribute="top" secondItem="R21-i3-9ML" secondAttribute="top" constant="9" id="uDa-gI-7Ff"/>
+                    <constraint firstItem="epv-Q0-yKc" firstAttribute="centerY" secondItem="R21-i3-9ML" secondAttribute="centerY" id="uhs-iR-WDD"/>
                 </constraints>
                 <edgeInsets key="layoutMargins" top="8" left="8" bottom="8" right="8"/>
             </tableViewCellContentView>
