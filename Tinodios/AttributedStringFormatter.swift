@@ -322,7 +322,7 @@ class AttributedStringFormatter: DraftyFormatter {
             }
         }
 
-        private func makeFileAttachmentString(_ attachment: Attachment, withData bits: Data?, withRef ref: String?, defaultAttrs attributes: [NSAttributedString.Key : Any]) -> NSAttributedString {
+        private func makeFileAttachmentString(_ attachment: Attachment, withData bits: Data?, withRef ref: String?, defaultAttrs attributes: [NSAttributedString.Key : Any], maxSize size: CGSize) -> NSAttributedString {
             let attributed = NSMutableAttributedString()
             attributed.beginEditing()
             /*
@@ -342,8 +342,11 @@ class AttributedStringFormatter: DraftyFormatter {
             // Append document's file name.
             let originalFileName = attachment.name ?? "tinode_file_attachment"
             var fname = originalFileName
-            if fname.count > 32 {
-                fname = fname.prefix(14) + "…" + fname.suffix(14)
+            // Heuristic for fitting file name in one line.
+            let maxLen = Int(size.width) / 11
+            if fname.count > maxLen {
+                let visibleLen = (maxLen - 3) / 2
+                fname = fname.prefix(visibleLen) + "…" + fname.suffix(visibleLen)
             }
             attributed.append(NSAttributedString(string: " "))
             attributed.append(NSAttributedString(string: fname, attributes: [NSAttributedString.Key.font : UIFont(name: "Courier", size: baseFont.pointSize)!]))
@@ -420,10 +423,10 @@ class AttributedStringFormatter: DraftyFormatter {
 
             // File attachment is harder: construct attributed string fr showing an attachment.
             case .data(let bits):
-                return makeFileAttachmentString(attachment, withData: bits, withRef: nil, defaultAttrs: attributes)
+                return makeFileAttachmentString(attachment, withData: bits, withRef: nil, defaultAttrs: attributes, maxSize: size)
 
             case .dataref(let ref):
-                return makeFileAttachmentString(attachment, withData: nil, withRef: ref, defaultAttrs: attributes)
+                return makeFileAttachmentString(attachment, withData: nil, withRef: ref, defaultAttrs: attributes, maxSize: size)
             }
         }
 
