@@ -31,15 +31,12 @@ class ContactViewCell: UITableViewCell {
 
         if selected {
             delegate?.selected(from: self)
-
-            self.contentView.backgroundColor = ContactViewCell.kSelectedBackgroundColor
-        } else {
-            self.contentView.backgroundColor = ContactViewCell.kNormalBackgroundColor
         }
     }
 }
 
 class ContactViewCellStatusLabel: PaddedLabel {
+
     override var intrinsicContentSize: CGSize {
         let size = super.intrinsicContentSize
         let insets = super.textInsets

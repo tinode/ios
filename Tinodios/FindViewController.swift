@@ -140,6 +140,10 @@ class FindViewController: UITableViewController, FindDisplayLogic {
         }
     }
 
+    override func tableView(_: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 40.0
+    }
+
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if isSectionEmpty(section: indexPath.section) {
             return tableView.dequeueReusableCell(withIdentifier: "FindTableViewCellEmpty", for: indexPath)
