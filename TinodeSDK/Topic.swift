@@ -724,10 +724,12 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
         }
     }
     fileprivate func addSubToCache(sub: Subscription<SP, SR>) {
+        guard let user = sub.user else { return }
+
         if subs == nil {
             subs = [:]
         }
-        subs![sub.user!] = sub
+        subs![user] = sub
     }
 
     private func processSub(newsub: Subscription<SP, SR>) {

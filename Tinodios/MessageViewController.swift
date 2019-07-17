@@ -96,7 +96,11 @@ class MessageViewController: UIViewController {
 
     /// Avatar in the NavBar
     private lazy var navBarAvatarView: AvatarWithOnlineIndicator = {
-        return AvatarWithOnlineIndicator()
+        let avatarIcon = AvatarWithOnlineIndicator()
+        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(navBarAvatarTapped(tapGestureRecognizer:)))
+        avatarIcon.isUserInteractionEnabled = true
+        avatarIcon.addGestureRecognizer(tapGestureRecognizer)
+        return avatarIcon
     }()
 
     /// Pointer to the view holding messages.
@@ -153,8 +157,7 @@ class MessageViewController: UIViewController {
 
     private func setup() {
         myUID = Cache.getTinode().myUid
-        self.imagePicker = ImagePicker(
-            presentationController: self, delegate: self)
+        self.imagePicker = ImagePicker(presentationController: self, delegate: self)
 
         let interactor = MessageInteractor()
         let presenter = MessagePresenter()
@@ -327,6 +330,10 @@ class MessageViewController: UIViewController {
             }))
         self.present(alert, animated: true)
     }
+
+    @objc func navBarAvatarTapped(tapGestureRecognizer: UITapGestureRecognizer) {
+        performSegue(withIdentifier: "Messages2TopicInfo", sender: nil)
+    }
 }
 
 // Methods for updating title area and refreshing messages.
@@ -360,12 +367,14 @@ extension MessageViewController: MessageDisplayLogic {
         }))
         self.present(alert, animated: true)
     }
+
     func updateTitleBar(icon: UIImage?, title: String?, online: Bool) {
         self.navigationItem.title = title ?? "Undefined"
 
         navBarAvatarView.set(icon: icon, title: title, id: topicName, online: online)
         navBarAvatarView.translatesAutoresizingMaskIntoConstraints = false
         navBarAvatarView.bounds = CGRect(x: 0, y: 0, width: Constants.kNavBarAvatarSmallState, height: Constants.kNavBarAvatarSmallState)
+
         NSLayoutConstraint.activate([
                 navBarAvatarView.heightAnchor.constraint(equalToConstant: Constants.kNavBarAvatarSmallState),
                 navBarAvatarView.widthAnchor.constraint(equalTo: navBarAvatarView.heightAnchor)

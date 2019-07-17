@@ -36,6 +36,7 @@ class EditMembersViewController: UIViewController, UITableViewDataSource {
 
         setup()
     }
+
     private func setup() {
         tinode = Cache.getTinode()
         topic = tinode.getTopic(topicName: topicName) as? DefaultComTopic
@@ -79,11 +80,13 @@ class EditMembersViewController: UIViewController, UITableViewDataSource {
         cell.title.sizeToFit()
         cell.subtitle.text = contact.subtitle ?? contact.uniqueId
         cell.subtitle.sizeToFit()
+        cell.accessoryType = cell.isSelected ? .checkmark : .none
 
         // Data reload clears selection. If we already have any selected users,
         // select the corresponding rows in the table.
         if let uniqueId = contact.uniqueId, self.userSelected(with: uniqueId) {
             tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none)
+            cell.accessoryType = .checkmark
         }
 
         return cell
@@ -118,6 +121,7 @@ class EditMembersViewController: UIViewController, UITableViewDataSource {
 
 extension EditMembersViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
         print("selected index path = \(indexPath)")
         let contact = contacts[indexPath.row]
         if let uniqueId = contact.uniqueId {
@@ -131,6 +135,7 @@ extension EditMembersViewController: UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
+        tableView.cellForRow(at: indexPath)?.accessoryType = .none
         print("deselected index path = \(indexPath)")
         let contact = contacts[indexPath.row]
         if let uniqueId = contact.uniqueId {
