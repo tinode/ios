@@ -14,7 +14,7 @@ protocol MessageDisplayLogic: class {
     func runTypingAnimation()
     func displayChatMessages(messages: [StoredMessage])
     func reloadMessage(withSeqId seqId: Int)
-    func reloadMessage(withMsgId msgId: Int64)
+    func updateProcess(forMsgId msgId: Int64, progress: Float)
     func applyTopicPermissions()
     func endRefresh()
     func dismiss()
@@ -39,6 +39,9 @@ class MessageViewController: UIViewController {
         static let kTimestampPadding: CGFloat = 0
         // Approximate width of the timestamp
         static let kTimestampWidth: CGFloat = 48
+        // Progress bar paddings.
+        static let kProgressBarLeftPadding: CGFloat = 10
+        static let kProgressBarRightPadding: CGFloat = 25
 
         // Color of "read" delivery marker.
         static let kDeliveryMarkerTint = UIColor(red: 19/255, green: 144/255, blue:255/255, alpha: 0.8)
@@ -447,9 +450,11 @@ extension MessageViewController: MessageDisplayLogic {
             self.collectionView.reloadItems(at: [IndexPath(row: index, section: 0)])
         }
     }
-    func reloadMessage(withMsgId msgId: Int64) {
-        if let index = self.messageDbIdIndex[msgId] {
-            self.collectionView.reloadItems(at: [IndexPath(row: index, section: 0)])
+    func updateProcess(forMsgId msgId: Int64, progress: Float) {
+        if let index = self.messageDbIdIndex[msgId],
+            let cell = self.collectionView.cellForItem(at: IndexPath(row: index, section: 0)) as? MessageCell {
+            cell.progressBar.progress = progress
+            //self.collectionView.reloadItems(at: [IndexPath(row: index, section: 0)])
         }
     }
     func endRefresh() {
@@ -519,6 +524,8 @@ extension MessageViewController: UICollectionViewDataSource {
         // Draw the bubble
         bubbleDecorator(for: message, at: indexPath)(cell.containerView)
 
+        cell.progressBar.frame = attributes.progressBarFrame
+
         return cell
     }
 
@@ -555,6 +562,10 @@ extension MessageViewController: UICollectionViewDataSource {
         }
         cell.newDateLabel.attributedText = newDateLabel(for: message, at: indexPath)
         cell.senderNameLabel.attributedText = senderFullName(for: message, at: indexPath)
+
+        if shouldShowProgressBar(for: message) {
+            cell.showProgressBar()
+        }
     }
 
     func newDateLabel(for message: Message, at indexPath: IndexPath) -> NSAttributedString? {
@@ -670,6 +681,11 @@ extension MessageViewController {
         return avatarsVisible(message: message) && (!isNextMessageSameSender(at: indexPath) || !isNextMessageSameDate(at: indexPath))
     }
 
+    // Should we show upload progress bar for reference attachment messages?
+    func shouldShowProgressBar(for message: Message) -> Bool {
+        return message.isPending && (message.content?.isReferenceAttachment ?? false)
+    }
+
     func isNewDateLabelVisible(at indexPath: IndexPath) -> Bool {
         return !isPreviousMessageSameDate(at: indexPath)
     }
@@ -739,6 +755,17 @@ extension MessageViewController : MessageViewLayoutDelegate {
         }
 
         attr.timestampFrame = CGRect(x: rightEdge.x - Constants.kTimestampWidth - Constants.kTimestampPadding, y: rightEdge.y, width: Constants.kTimestampWidth, height: Constants.kDeliveryMarkerSize)
+
+        if shouldShowProgressBar(for: message) {
+            let leftEdge = CGPoint(x: attr.containerFrame.origin.x + Constants.kProgressBarLeftPadding,
+                                   y: rightEdge.y + Constants.kDeliveryMarkerSize / 2)
+            attr.progressBarFrame =
+                CGRect(x: leftEdge.x, y: leftEdge.y,
+                       width: attr.containerFrame.width - attr.timestampFrame.width - attr.deliveryMarkerFrame.width - Constants.kProgressBarRightPadding,
+                       height: attr.timestampFrame.height)
+        } else {
+            attr.progressBarFrame = .zero
+        }
 
         // New date label
         if newDateLabelHeight > 0 {

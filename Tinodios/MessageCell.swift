@@ -95,6 +95,12 @@ class MessageCell: UICollectionViewCell {
         return label
     }()
 
+    var progressBar: UIProgressView = {
+        let bar = UIProgressView()
+        bar.transform = bar.transform.scaledBy(x: 1, y: 20)
+        return bar
+    }()
+
     /// The `MessageCellDelegate` for the cell.
     weak var delegate: MessageCellDelegate?
 
@@ -108,6 +114,12 @@ class MessageCell: UICollectionViewCell {
         containerView.addSubview(timestampLabel)
         containerView.addSubview(deliveryMarker)
         contentView.addSubview(avatarView)
+    }
+
+    func showProgressBar() {
+        contentView.addSubview(progressBar)
+        progressBar.isHidden = false
+        contentView.bringSubviewToFront(progressBar)
     }
 
     override func prepareForReuse() {
