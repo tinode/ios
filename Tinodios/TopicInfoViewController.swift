@@ -219,7 +219,7 @@ class TopicInfoViewController: UITableViewController {
         if sender === authUsersPermissionsLabel {
             return (topic.defacs?.auth, nil, .updateAuth, nil)  // Should be O?
         }
-        if sender == anonUsersPermissionsLabel {
+        if sender === anonUsersPermissionsLabel {
             return (topic.defacs?.anon, nil, .updateAnon, nil)  // Should be O?
         }
         return (nil, nil, nil, nil)
@@ -433,7 +433,7 @@ extension TopicInfoViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated:  true)
 
-        if indexPath.section != TopicInfoViewController.kSectionMembers || indexPath.row == 0 {
+        guard indexPath.section == TopicInfoViewController.kSectionMembers && indexPath.row != 0 else {
             return
         }
 
