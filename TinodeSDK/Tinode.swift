@@ -216,8 +216,12 @@ public class Tinode {
 
     public func baseURL(useWebsocketProtocol: Bool) -> URL? {
         guard !hostName.isEmpty else { return nil }
+        return hostURL(useWebsocketProtocol: useWebsocketProtocol)?.appendingPathComponent("v\(kProtocolVersion)")
+    }
+    public func hostURL(useWebsocketProtocol: Bool) -> URL? {
+        guard !hostName.isEmpty else { return nil }
         let protocolString = useTLS ? (useWebsocketProtocol ? "wss://" : "https://") : (useWebsocketProtocol ? "ws://" : "http://")
-        let urlString = "\(protocolString)\(hostName)/v\(kProtocolVersion)"
+        let urlString = "\(protocolString)\(hostName)/"
         return URL(string: urlString)
     }
     public func channelsURL(useWebsocketProtocol: Bool) -> URL? {

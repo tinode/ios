@@ -96,7 +96,11 @@ class MessageViewController: UIViewController {
 
     /// Avatar in the NavBar
     private lazy var navBarAvatarView: AvatarWithOnlineIndicator = {
-        return AvatarWithOnlineIndicator()
+        let avatarIcon = AvatarWithOnlineIndicator()
+        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(navBarAvatarTapped(tapGestureRecognizer:)))
+        avatarIcon.isUserInteractionEnabled = true
+        avatarIcon.addGestureRecognizer(tapGestureRecognizer)
+        return avatarIcon
     }()
 
     /// Pointer to the view holding messages.
@@ -153,8 +157,7 @@ class MessageViewController: UIViewController {
 
     private func setup() {
         myUID = Cache.getTinode().myUid
-        self.imagePicker = ImagePicker(
-            presentationController: self, delegate: self)
+        self.imagePicker = ImagePicker(presentationController: self, delegate: self)
 
         let interactor = MessageInteractor()
         let presenter = MessagePresenter()
@@ -327,6 +330,10 @@ class MessageViewController: UIViewController {
             }))
         self.present(alert, animated: true)
     }
+
+    @objc func navBarAvatarTapped(tapGestureRecognizer: UITapGestureRecognizer) {
+        performSegue(withIdentifier: "Messages2TopicInfo", sender: nil)
+    }
 }
 
 // Methods for updating title area and refreshing messages.
@@ -360,12 +367,14 @@ extension MessageViewController: MessageDisplayLogic {
         }))
         self.present(alert, animated: true)
     }
+
     func updateTitleBar(icon: UIImage?, title: String?, online: Bool) {
         self.navigationItem.title = title ?? "Undefined"
 
         navBarAvatarView.set(icon: icon, title: title, id: topicName, online: online)
         navBarAvatarView.translatesAutoresizingMaskIntoConstraints = false
         navBarAvatarView.bounds = CGRect(x: 0, y: 0, width: Constants.kNavBarAvatarSmallState, height: Constants.kNavBarAvatarSmallState)
+
         NSLayoutConstraint.activate([
                 navBarAvatarView.heightAnchor.constraint(equalToConstant: Constants.kNavBarAvatarSmallState),
                 navBarAvatarView.widthAnchor.constraint(equalTo: navBarAvatarView.heightAnchor)
@@ -841,6 +850,12 @@ extension MessageViewController : MessageCellDelegate {
             switch url.path {
             case "/post":
                 handleButtonPost(in: cell, data: url)
+            case "/small-attachment":
+                handleSmallAttachment(in: cell, using: url)
+                print("small attachment - \(url)")
+            case "/large-attachment":
+                handleLargeAttachment(in: cell, using: url)
+                print("large attachment - \(url)")
             default:
                 print("Unknown tinode:// action '\(url.path)'")
                 break
@@ -888,5 +903,49 @@ extension MessageViewController : MessageCellDelegate {
         json["seq"] = JSONValue.int(cell.seqId)
 
         _ = interactor?.sendMessage(content: newMsg.attachJSON(json))
+    }
+    static func extractAttachment(from cell: MessageCell) -> [Data]? {
+        guard let text = cell.content.attributedText else { return nil }
+        var parts = [Data]()
+
+        let range = NSMakeRange(0, text.length)
+        text.enumerateAttributes(in: range, options: NSAttributedString.EnumerationOptions(rawValue: 0)) { (object, range, stop) in
+            if object.keys.contains(.attachment) {
+                if let attachment = object[.attachment] as? NSTextAttachment, let data = attachment.contents {
+                    parts.append(data)
+                }
+            }
+        }
+        return parts
+    }
+    private func handleLargeAttachment(in cell: MessageCell, using url: URL) {
+        guard let data = MessageViewController.extractAttachment(from: cell), !data.isEmpty else { return }
+        let downloadFrom = String(decoding: data[0], as: UTF8.self)
+        guard let url = URL(string: downloadFrom) else { return }
+        Cache.getLargeFileHelper().startDownload(from: url)
+    }
+    private func handleSmallAttachment(in cell: MessageCell, using url: URL) {
+        // TODO: move logic to MessageInteractor.
+        guard let data = MessageViewController.extractAttachment(from: cell), !data.isEmpty else { return }
+        let d = data[0]
+        let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
+        var filename: String?
+        if let queryItems = components?.queryItems {
+            for queryItem in queryItems {
+                if queryItem.name == "filename" {
+                    filename = queryItem.value
+                    break
+                }
+            }
+        }
+        guard filename != nil else { return }
+        let documentsUrl: URL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+        let destinationURL = documentsUrl.appendingPathComponent(filename!)
+        do {
+            try d.write(to: destinationURL)
+            // TODO: show preview.
+        } catch {
+            print("failed to save \(filename!)")
+        }
     }
 }
