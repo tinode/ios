@@ -541,6 +541,10 @@
                                             <rect key="frame" x="0.0" y="0.0" width="341" height="43.666666666666664"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
+                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="password-22" translatesAutoresizingMaskIntoConstraints="NO" id="9Nt-Fi-EiW">
+                                                    <rect key="frame" x="16" y="6" width="32" height="32"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                </imageView>
                                                 <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bE6-Jo-Pfg">
                                                     <rect key="frame" x="48" y="5" width="138" height="33"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -552,10 +556,6 @@
                                                         <action selector="changePasswordClicked:" destination="Pnk-9m-ZVg" eventType="touchUpInside" id="8sN-WO-rPl"/>
                                                     </connections>
                                                 </button>
-                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="password-22" translatesAutoresizingMaskIntoConstraints="NO" id="9Nt-Fi-EiW">
-                                                    <rect key="frame" x="16" y="6" width="32" height="32"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                </imageView>
                                             </subviews>
                                         </tableViewCellContentView>
                                     </tableViewCell>
@@ -720,13 +720,7 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <viewLayoutGuide key="safeArea" id="p4H-5P-q7k"/>
                     </view>
-                    <navigationItem key="navigationItem" id="gE0-cY-Jyn" userLabel="Topic name">
-                        <barButtonItem key="rightBarButtonItem" systemItem="trash" id="UKA-n4-ZtQ">
-                            <connections>
-                                <action selector="clearMessagesClicked:" destination="l6T-LK-IbJ" id="cf3-ip-VaO"/>
-                            </connections>
-                        </barButtonItem>
-                    </navigationItem>
+                    <navigationItem key="navigationItem" id="gE0-cY-Jyn" userLabel="Topic name"/>
                     <connections>
                         <segue destination="ZxW-bT-ZdQ" kind="show" identifier="Messages2TopicInfo" id="IuA-m3-U07"/>
                         <segue destination="a2m-CR-0Zc" kind="show" identifier="ShowImagePreview" id="je5-0n-CJ3"/>
@@ -979,10 +973,90 @@
                                     </tableViewCell>
                                 </cells>
                             </tableViewSection>
+                            <tableViewSection headerTitle="Actions" id="HwV-ri-EBc">
+                                <cells>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="aeC-vH-df4" userLabel="Delete messages">
+                                        <rect key="frame" x="0.0" y="301" width="375" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="aeC-vH-df4" id="FzN-v8-gIa">
+                                            <rect key="frame" x="0.0" y="0.0" width="341" height="43.666666666666664"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cn7-BJ-fga">
+                                                    <rect key="frame" x="48" y="6" width="175.66666666666666" height="30"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <state key="normal" title="Delete Messages"/>
+                                                    <connections>
+                                                        <action selector="deleteMessagesClicked:" destination="ZxW-bT-ZdQ" eventType="touchUpInside" id="b8b-ng-UY6"/>
+                                                    </connections>
+                                                </button>
+                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="delete-message-22" translatesAutoresizingMaskIntoConstraints="NO" id="GR9-Zb-1nI">
+                                                    <rect key="frame" x="16" y="6" width="32" height="32"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <color key="tintColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                </imageView>
+                                            </subviews>
+                                            <color key="tintColor" cocoaTouchSystemColor="darkTextColor"/>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="1AG-gj-xlY" userLabel="Leave">
+                                        <rect key="frame" x="0.0" y="345" width="375" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="1AG-gj-xlY" id="wPK-66-hHe">
+                                            <rect key="frame" x="0.0" y="0.0" width="341" height="43.666666666666664"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="sign-out-25" translatesAutoresizingMaskIntoConstraints="NO" id="r7R-MJ-Fyx">
+                                                    <rect key="frame" x="16" y="6" width="32" height="32"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                </imageView>
+                                                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cnh-zX-z3k" userLabel="Leave Group">
+                                                    <rect key="frame" x="48" y="6" width="175.66666666666666" height="30"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <state key="normal" title="Leave Group">
+                                                        <color key="titleColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                    </state>
+                                                    <connections>
+                                                        <action selector="leaveGroupClicked:" destination="ZxW-bT-ZdQ" eventType="touchUpInside" id="hP5-wJ-Iy4"/>
+                                                    </connections>
+                                                </button>
+                                            </subviews>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="M9o-Ox-EGA" userLabel="Delete group">
+                                        <rect key="frame" x="0.0" y="389" width="375" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="M9o-Ox-EGA" id="xVf-qv-JHz">
+                                            <rect key="frame" x="0.0" y="0.0" width="341" height="43.666666666666664"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="HuB-xP-Ix1">
+                                                    <rect key="frame" x="48" y="6" width="175.66666666666666" height="30"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <state key="normal" title="Delete Group">
+                                                        <color key="titleColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                    </state>
+                                                    <connections>
+                                                        <action selector="deleteGroupClicked:" destination="ZxW-bT-ZdQ" eventType="touchUpInside" id="tAu-FI-MM9"/>
+                                                    </connections>
+                                                </button>
+                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="delete-bin-22" translatesAutoresizingMaskIntoConstraints="NO" id="SmS-96-Crn">
+                                                    <rect key="frame" x="16" y="6" width="32" height="32"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <color key="tintColor" red="1" green="0.14913141730000001" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                </imageView>
+                                            </subviews>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </cells>
+                            </tableViewSection>
                             <tableViewSection headerTitle="Permissions" id="kJw-Pr-jNc">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="33v-dw-wEh">
-                                        <rect key="frame" x="0.0" y="301" width="375" height="44"/>
+                                        <rect key="frame" x="0.0" y="472" width="375" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="33v-dw-wEh" id="Czx-aH-i0b">
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="43.666666666666664"/>
@@ -1009,7 +1083,7 @@
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="Wef-5D-RVz">
-                                        <rect key="frame" x="0.0" y="345" width="375" height="44"/>
+                                        <rect key="frame" x="0.0" y="516" width="375" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Wef-5D-RVz" id="w5M-HM-k9o">
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="43.666666666666664"/>
@@ -1040,7 +1114,7 @@
                             <tableViewSection headerTitle="Default Permissions" id="zW8-KF-N8J">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="Avu-fi-WbO">
-                                        <rect key="frame" x="0.0" y="428" width="375" height="44"/>
+                                        <rect key="frame" x="0.0" y="599" width="375" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Avu-fi-WbO" id="7OB-vn-ecn">
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="43.666666666666664"/>
@@ -1067,7 +1141,7 @@
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="NdF-hP-fjs">
-                                        <rect key="frame" x="0.0" y="472" width="375" height="44"/>
+                                        <rect key="frame" x="0.0" y="643" width="375" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="NdF-hP-fjs" id="jx8-ms-fuJ">
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="43.666666666666664"/>
@@ -1098,41 +1172,22 @@
                             <tableViewSection headerTitle="Group Members" id="lJB-qW-1zX">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="RAc-oN-OKR">
-                                        <rect key="frame" x="0.0" y="555" width="375" height="44"/>
+                                        <rect key="frame" x="0.0" y="726" width="375" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="RAc-oN-OKR" id="uia-TQ-EDN">
                                             <rect key="frame" x="0.0" y="0.0" width="375" height="43.666666666666664"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <stackView opaque="NO" contentMode="scaleToFill" distribution="fillProportionally" translatesAutoresizingMaskIntoConstraints="NO" id="IQ1-hL-Slz">
-                                                    <rect key="frame" x="20" y="7" width="335" height="30"/>
-                                                    <subviews>
-                                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bOD-eG-8OB">
-                                                            <rect key="frame" x="0.0" y="0.0" width="175.66666666666666" height="30"/>
-                                                            <fontDescription key="fontDescription" type="system" pointSize="15"/>
-                                                            <state key="normal" title="Add Members"/>
-                                                            <connections>
-                                                                <segue destination="buX-Ye-w3b" kind="show" identifier="TopicInfo2EditMembers" id="Xzb-U6-Fj8"/>
-                                                            </connections>
-                                                        </button>
-                                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="szp-va-YZ5">
-                                                            <rect key="frame" x="175.66666666666663" y="0.0" width="159.33333333333337" height="30"/>
-                                                            <fontDescription key="fontDescription" type="system" pointSize="15"/>
-                                                            <state key="normal" title="Leave Group">
-                                                                <color key="titleColor" red="1" green="0.14913141730000001" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                            </state>
-                                                            <connections>
-                                                                <action selector="leaveGroupClicked:" destination="ZxW-bT-ZdQ" eventType="touchUpInside" id="2CZ-gG-97b"/>
-                                                            </connections>
-                                                        </button>
-                                                    </subviews>
-                                                </stackView>
+                                                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bOD-eG-8OB">
+                                                    <rect key="frame" x="20" y="6" width="335" height="30"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <state key="normal" title="+ Add Members"/>
+                                                    <connections>
+                                                        <segue destination="buX-Ye-w3b" kind="show" identifier="TopicInfo2EditMembers" id="Xzb-U6-Fj8"/>
+                                                    </connections>
+                                                </button>
                                             </subviews>
-                                            <constraints>
-                                                <constraint firstItem="IQ1-hL-Slz" firstAttribute="centerY" secondItem="uia-TQ-EDN" secondAttribute="centerY" id="Gkg-Wt-Ffp"/>
-                                                <constraint firstItem="IQ1-hL-Slz" firstAttribute="leading" secondItem="uia-TQ-EDN" secondAttribute="leading" constant="20" symbolic="YES" id="eJF-sI-74J"/>
-                                                <constraint firstAttribute="trailing" secondItem="IQ1-hL-Slz" secondAttribute="trailing" constant="20" symbolic="YES" id="h4W-9R-cWT"/>
-                                            </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                 </cells>
@@ -1737,6 +1792,8 @@
     </scenes>
     <resources>
         <image name="data-25" width="25" height="25"/>
+        <image name="delete-bin-22" width="22.333333969116211" height="22.333333969116211"/>
+        <image name="delete-message-22" width="22.333333969116211" height="22.333333969116211"/>
         <image name="edit-48" width="48" height="48"/>
         <image name="logo-ios" width="288" height="288"/>
         <image name="new-chat-24" width="24" height="24"/>
