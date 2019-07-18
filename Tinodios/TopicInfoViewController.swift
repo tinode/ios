@@ -471,10 +471,9 @@ extension TopicInfoViewController {
         let uid = sub.user
         let isMe = self.tinode.isMe(uid: uid)
         let pub = sub.pub
-        let displayName = isMe ? "You" : (pub?.fn ?? "Unknown")
 
-        cell.avatar.set(icon: pub?.photo?.image(), title: displayName, id: uid)
-        cell.title.text = displayName
+        cell.avatar.set(icon: pub?.photo?.image(), title: pub?.fn, id: uid)
+        cell.title.text = isMe ? "You" : (pub?.fn ?? "Unknown")
         cell.title.sizeToFit()
         cell.subtitle.text = sub.acs?.givenString
         for l in cell.statusLabels {
