@@ -18,6 +18,8 @@ protocol MessageCellDelegate: class {
     func didTapAvatar(in cell: MessageCell)
     /// Tap outside of message
     func didTapOutsideContent(in cell: MessageCell)
+    /// Clicked on cancel upload
+    func didTapCancelUpload(in cell: MessageCell)
 }
 
 // Optional date, avatar, sender name, message bubble: content, delivery marker, timestamp.
@@ -101,6 +103,14 @@ class MessageCell: UICollectionViewCell {
         return bar
     }()
 
+    var cancelUploadButton: UIButton = {
+        let button = UIButton()
+        button.setTitle("X", for: .normal)
+        button.setTitleColor(UIColor.blue, for: .normal)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 10)
+        return button
+    }()
+
     /// The `MessageCellDelegate` for the cell.
     weak var delegate: MessageCellDelegate?
 
@@ -118,8 +128,16 @@ class MessageCell: UICollectionViewCell {
 
     func showProgressBar() {
         contentView.addSubview(progressBar)
+        contentView.addSubview(cancelUploadButton)
         progressBar.isHidden = false
+        cancelUploadButton.isHidden = false
         contentView.bringSubviewToFront(progressBar)
+        contentView.bringSubviewToFront(cancelUploadButton)
+
+        cancelUploadButton.addTarget(
+            self,
+            action: #selector(MessageCell.cancelUploadClicked(sender:)),
+            for: .touchUpInside)
     }
 
     override func prepareForReuse() {
@@ -157,6 +175,10 @@ class MessageCell: UICollectionViewCell {
         let touchPoint = gestureRecognizer.location(in: self)
         guard gestureRecognizer.isKind(of: UILongPressGestureRecognizer.self) else { return false }
         return containerView.frame.contains(touchPoint)
+    }
+
+    @objc func cancelUploadClicked(sender: UIButton!) {
+        delegate?.didTapCancelUpload(in: self)
     }
 }
 
