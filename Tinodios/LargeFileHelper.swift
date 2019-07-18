@@ -16,7 +16,7 @@ class Upload {
     var isUploading = false
     var progress: Float = 0
     var responseData: Data = Data()
-    var progressCb: (() -> Void)?
+    var progressCb: ((Float) -> Void)?
     var finalCb: ((ServerMessage?, Error?) -> Void)?
 
     var task: URLSessionUploadTask?
@@ -53,6 +53,7 @@ class LargeFileHelper: NSObject {
     }
     // TODO: make background uploads work.
     func startUpload(filename: String, mimetype: String, d: Data, topicId: String, msgId: Int64,
+                     progressCallback: ((Float) -> Void)?,
                      completionCallback: ((ServerMessage?, Error?) -> Void)?) {
         let tinode = Cache.getTinode()
         guard var url = tinode.baseURL(useWebsocketProtocol: false) else { return }
@@ -64,10 +65,7 @@ class LargeFileHelper: NSObject {
         request.addValue("Keep-Alive", forHTTPHeaderField: "Connection")
         request.addValue(tinode.userAgent, forHTTPHeaderField: "User-Agent")
         request.addValue("multipart/form-data; boundary=\(LargeFileHelper.kBoundary)", forHTTPHeaderField: "Content-Type")
-        /*
-        request.addValue(tinode.apiKey, forHTTPHeaderField: "X-Tinode-APIKey")
-        request.addValue("Token \(tinode.authToken!)", forHTTPHeaderField: "Authorization")
-        */
+
         LargeFileHelper.addCommonHeaders(to: &request, using: tinode)
 
         var newData = Data()
@@ -96,14 +94,12 @@ class LargeFileHelper: NSObject {
         upload.isUploading = true
         upload.topicId = topicId
         upload.msgId = msgId
+        upload.progressCb = progressCallback
         upload.finalCb = completionCallback
         activeUploads[localFileName] = upload
         upload.task!.resume()
     }
     func startDownload(from url: URL) {
-        //guard var url = tinode.baseURL(useWebsocketProtocol: false) else { return }
-        //url.appendPathComponent("file/u/")
-        //let upload = Do(url: url)
         let tinode = Cache.getTinode()
         var request = URLRequest(url: url)
         LargeFileHelper.addCommonHeaders(to: &request, using: tinode)
@@ -171,7 +167,9 @@ extension LargeFileHelper: URLSessionTaskDelegate {
     func urlSession(_ session: URLSession, task: URLSessionTask, didSendBodyData: Int64, totalBytesSent: Int64, totalBytesExpectedToSend: Int64) {
         Thread.sleep(forTimeInterval: 0.1)
         if let t = task.taskDescription, let upload = activeUploads[t] {
-            print("\(upload.topicId): sent = \(totalBytesSent), expected = \(totalBytesExpectedToSend)")
+            let progress: Float = totalBytesExpectedToSend > 0 ?
+                Float(totalBytesSent) / Float(totalBytesExpectedToSend) : 0
+            upload.progressCb?(progress)
         }
     }
 }

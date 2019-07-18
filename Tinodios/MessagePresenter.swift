@@ -14,7 +14,7 @@ protocol MessagePresentationLogic {
     func runTypingAnimation()
     func presentMessages(messages: [StoredMessage])
     func reloadMessage(withSeqId seqId: Int)
-    func reloadMessage(withMsgId msgId: Int64)
+    func updateProgress(forMsgId msgId: Int64, progress: Float)
     func applyTopicPermissions()
     func endRefresh()
     func dismiss()
@@ -35,8 +35,8 @@ class MessagePresenter: MessagePresentationLogic {
     func reloadMessage(withSeqId seqId: Int) {
         self.viewController?.reloadMessage(withSeqId: seqId)
     }
-    func reloadMessage(withMsgId msgId: Int64) {
-        self.viewController?.reloadMessage(withMsgId: msgId)
+    func updateProgress(forMsgId msgId: Int64, progress: Float) {
+        self.viewController?.updateProcess(forMsgId: msgId, progress: progress)
     }
     func endRefresh() {
         self.viewController?.endRefresh()

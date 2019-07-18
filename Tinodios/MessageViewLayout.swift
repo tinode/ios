@@ -117,6 +117,9 @@ class MessageViewLayoutAttributes: UICollectionViewLayoutAttributes {
     // Vertical spacing between cells
     var cellSpacing: CGFloat = 0
 
+    // Progress bar.
+    var progressBarFrame: CGRect = .zero
+
     override func copy(with zone: NSZone? = nil) -> Any {
         let copy = super.copy(with: zone) as! MessageViewLayoutAttributes
 
@@ -128,6 +131,7 @@ class MessageViewLayoutAttributes: UICollectionViewLayoutAttributes {
         copy.timestampFrame = timestampFrame
         copy.newDateFrame = newDateFrame
         copy.cellSpacing = cellSpacing
+        copy.progressBarFrame = progressBarFrame
         return copy
     }
 
@@ -141,6 +145,7 @@ class MessageViewLayoutAttributes: UICollectionViewLayoutAttributes {
             other.deliveryMarkerFrame == deliveryMarkerFrame &&
             other.timestampFrame == timestampFrame &&
             other.newDateFrame == newDateFrame &&
-            other.cellSpacing == cellSpacing
+            other.cellSpacing == cellSpacing &&
+            other.progressBarFrame == progressBarFrame
     }
 }
