@@ -99,13 +99,16 @@ class NewGroupViewController: UIViewController, UITableViewDataSource {
 
     @IBAction func saveButtonClicked(_ sender: Any) {
         let groupName = UiUtils.ensureDataInTextField(groupNameTextField)
-        let privateInfo = UiUtils.ensureDataInTextField(privateTextField)
-        let tags = UiUtils.ensureDataInTextField(tagsTextField)
+        // Optional
+        let privateInfo = (privateTextField.text ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+        // Optional
+        let tags = (tagsTextField.text ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
         guard let members = self.interactor?.selectedMembers else {
             print("members can't be empty")
             return
         }
-        guard !groupName.isEmpty && !privateInfo.isEmpty && !tags.isEmpty else { return }
+
+        guard !groupName.isEmpty else { return }
         let avatar = avatarView.image?.resize(width: CGFloat(Float(UiUtils.kAvatarSize)), height: CGFloat(Float(UiUtils.kAvatarSize)), clip: true)
         let tagsList = Utils.parseTags(from: tags)
         self.interactor?.createGroupTopic(titled: groupName, subtitled: privateInfo, with: tagsList, consistingOf: members, withAvatar: avatar)
