@@ -17,8 +17,9 @@ class TopicInfoViewController: UITableViewController {
 
     private static let kSectionActions = 2
     private static let kSectionActionsDelMessages = 0
-    private static let kSectionActionsLeave = 1
-    private static let kSectionActionsDelTopic = 2
+    private static let kSectionActionsLeaveGroup = 1
+    private static let kSectionActionsLeaveConversation = 2
+    private static let kSectionActionsDelTopic = 3
 
     private static let kSectionPermissions = 3
     private static let kSectionPermissionsMine = 0
@@ -317,6 +318,15 @@ class TopicInfoViewController: UITableViewController {
         present(alert, animated: true)
     }
 
+    @IBAction func leaveConversationClicked(_ sender: Any) {
+        let alert = UIAlertController(title: "Leave the conversation?", message: nil, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(
+            title: "Leave", style: .destructive,
+            handler: { action in self.deleteTopic() }))
+        present(alert, animated: true)
+    }
+
     @IBAction func leaveGroupClicked(_ sender: Any) {
         guard !topic.isOwner else {
             UiUtils.showToast(message: "Owner cannot leave the group")
@@ -365,8 +375,16 @@ extension TopicInfoViewController {
         }
 
         if indexPath.section == TopicInfoViewController.kSectionActions && indexPath.row > 0 {
+            if indexPath.row == TopicInfoViewController.kSectionActionsLeaveGroup && !(topic?.isGrpType ?? false) {
+                // P2P topic, hide [Leave Group]
+                return CGFloat.leastNonzeroMagnitude
+            }
+            if indexPath.row == TopicInfoViewController.kSectionActionsLeaveConversation && topic?.isGrpType ?? false {
+                // Group topic, hide [Leave Conversation]
+                return CGFloat.leastNonzeroMagnitude
+            }
             // Hide either [Leave] or [Delete Topic] actions.
-            if indexPath.row == TopicInfoViewController.kSectionActionsLeave && topic?.isOwner ?? false {
+            if indexPath.row == TopicInfoViewController.kSectionActionsLeaveGroup && topic?.isOwner ?? false {
                 // Owner, hide [Leave]
                 return CGFloat.leastNonzeroMagnitude
             }
