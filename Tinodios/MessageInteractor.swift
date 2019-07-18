@@ -308,6 +308,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                         if !success {
                             _ = topic.store?.msgDiscard(topic: topic, dbMessageId: msgId)
                         }
+                        self.loadMessages()
                     }
                     guard error == nil else {
                         DispatchQueue.main.async {
@@ -323,10 +324,6 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                         refurl: srvUrl, size: data.count) {
                         _ = topic.store?.msgReady(topic: topic, dbMessageId: msgId, data: content)
                         _ = topic.syncOne(msgId: msgId)
-                        // TODO: reload message.
-                        // DispatchQueue.main.async {
-                        //    self.presenter?.reloadMessage(withMsgId: msgId)
-                        // }
                         success = true
                     }
                 })
