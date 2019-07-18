@@ -25,6 +25,8 @@ class NewGroupViewController: UIViewController, UITableViewDataSource {
     private var contacts: [ContactHolder] = []
     private var selectedContacts: [IndexPath] = []
 
+    private var imageUploaded: Bool = false
+
     private var interactor: NewGroupBusinessLogic?
 
     private var imagePicker: ImagePicker!
@@ -109,7 +111,7 @@ class NewGroupViewController: UIViewController, UITableViewDataSource {
         }
 
         guard !groupName.isEmpty else { return }
-        let avatar = avatarView.image?.resize(width: CGFloat(Float(UiUtils.kAvatarSize)), height: CGFloat(Float(UiUtils.kAvatarSize)), clip: true)
+        let avatar = imageUploaded ? avatarView.image?.resize(width: CGFloat(Float(UiUtils.kAvatarSize)), height: CGFloat(Float(UiUtils.kAvatarSize)), clip: true) : nil
         let tagsList = Utils.parseTags(from: tags)
         self.interactor?.createGroupTopic(titled: groupName, subtitled: privateInfo, with: tagsList, consistingOf: members, withAvatar: avatar)
     }
@@ -193,5 +195,6 @@ extension NewGroupViewController : UICollectionViewDataSource {
 extension NewGroupViewController: ImagePickerDelegate {
     func didSelect(image: UIImage?) {
         self.avatarView.image = image
+        imageUploaded = image != nil
     }
 }
