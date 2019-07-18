@@ -279,6 +279,10 @@ extension UIViewController {
                 // Descend to the chat list controller in the navigation stack.
                 while navController.topViewController?.restorationIdentifier != "ChatListViewController" {
                     let v = navController.popViewController(animated: false)
+                    if v == nil {
+                        // FIXME: DEBUGGING ONLY. Otherwise an endless loop happens.
+                        break
+                    }
                     v?.dismiss(animated: false, completion: nil)
                 }
                 let messageVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "MessageViewController") as! MessageViewController

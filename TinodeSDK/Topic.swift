@@ -1384,6 +1384,7 @@ public class FndTopic<SP: Codable>: Topic<String, String, SP, Array<String>> {
     init(tinode: Tinode?) {
         super.init(tinode: tinode, name: Tinode.kTopicFnd)
     }
+
     @discardableResult
     override public func setMeta(meta: MsgSetMeta<String, String>) -> PromisedReply<ServerMessage>? {
         if self.subs != nil {
@@ -1394,6 +1395,7 @@ public class FndTopic<SP: Codable>: Topic<String, String, SP, Array<String>> {
         }
         return super.setMeta(meta: meta)
     }
+
     override func routeMetaSub(meta: MsgServerMeta) {
         if let subscriptions = meta.sub {
             for upd in subscriptions {
@@ -1409,8 +1411,8 @@ public class FndTopic<SP: Codable>: Topic<String, String, SP, Array<String>> {
         }
         self.listener?.onSubsUpdated()
     }
+
     override public func getSubscriptions() -> [Subscription<SP, Array<String>>]? {
-        //return mSubs != null ? mSubs.values() : null;
         guard let v = subs?.values else { return nil }
         return Array(v)
     }
