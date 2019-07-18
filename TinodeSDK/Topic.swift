@@ -1414,6 +1414,15 @@ public class FndTopic<SP: Codable>: Topic<String, String, SP, Array<String>> {
         guard let v = subs?.values else { return nil }
         return Array(v)
     }
+
+    override func addSubToCache(sub: Subscription<SP, [String]>) {
+        guard let unique = sub.user ?? sub.topic else { return }
+
+        if subs == nil {
+            subs = [:]
+        }
+        subs![unique] = sub
+    }
 }
 
 public class ComTopic<DP: Codable>: Topic<DP, PrivateType, DP, PrivateType> {
