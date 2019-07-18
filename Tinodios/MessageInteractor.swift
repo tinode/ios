@@ -18,7 +18,6 @@ protocol MessageBusinessLogic: class {
     func sendMessage(content: Drafty) -> Bool
     func sendReadNotification()
     func sendTypingNotification()
-    func clearAllMessages()
     func enablePeersMessaging()
     func acceptInvitation()
     func ignoreInvitation()
@@ -156,18 +155,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
     func sendTypingNotification() {
         topic?.noteKeyPress()
     }
-    func clearAllMessages() {
-        do {
-            try topic?.delMessages(hard: false)?.then(
-                onSuccess: { [weak self] msg in
-                    self?.loadMessages()
-                    return nil
-                },
-                onFailure: UiUtils.ToastFailureHandler)
-        } catch {
-            UiUtils.showToast(message: "Failed to delete messages: \(error)")
-        }
-    }
+
     func loadMessages() {
         DispatchQueue.global(qos: .userInteractive).async {
             if let messages = BaseDb.getInstance().messageDb?.query(

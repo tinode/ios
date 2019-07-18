@@ -61,6 +61,11 @@ public class Acs: Codable, Equatable {
             return mode?.isReader ?? false
         }
     }
+    public var isDeleter: Bool {
+        get {
+            return mode?.isDeleter ?? false
+        }
+    }
     public var missing: AcsHelper? {
         get {
             return AcsHelper.diff(a1: self.want, a2: self.given)

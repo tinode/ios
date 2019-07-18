@@ -323,17 +323,6 @@ class MessageViewController: UIViewController {
         }
     }
 
-    @IBAction func clearMessagesClicked(_ sender: Any) {
-        let alert = UIAlertController(title: "Clear all messages?", message: nil, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
-        alert.addAction(UIAlertAction(
-            title: "OK", style: .default,
-            handler: { action in
-                self.interactor?.clearAllMessages()
-            }))
-        self.present(alert, animated: true)
-    }
-
     @objc func navBarAvatarTapped(tapGestureRecognizer: UITapGestureRecognizer) {
         performSegue(withIdentifier: "Messages2TopicInfo", sender: nil)
     }
@@ -382,9 +371,8 @@ extension MessageViewController: MessageDisplayLogic {
                 navBarAvatarView.heightAnchor.constraint(equalToConstant: Constants.kNavBarAvatarSmallState),
                 navBarAvatarView.widthAnchor.constraint(equalTo: navBarAvatarView.heightAnchor)
             ])
-        if self.navigationItem.rightBarButtonItems!.count <= 2 {
-            self.navigationItem.rightBarButtonItems!.insert(UIBarButtonItem(customView: navBarAvatarView), at: 0)
-        }
+
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: navBarAvatarView)
     }
     func setOnline(online: Bool) {
         navBarAvatarView.setOnline(online: online)

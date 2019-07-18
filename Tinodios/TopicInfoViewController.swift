@@ -11,16 +11,25 @@ import TinodeSDK
 class TopicInfoViewController: UITableViewController {
 
     // Number of rows in every section. '-1' means variable number of items
-    private static let kSections: [Int] = [1, 1, 2, 2, -1]
     private static let kSectionBasic = 0
+
     private static let kSectionMute = 1
-    private static let kSectionPermissions = 2
+
+    private static let kSectionActions = 2
+    private static let kSectionActionsDelMessages = 0
+    private static let kSectionActionsLeaveGroup = 1
+    private static let kSectionActionsLeaveConversation = 2
+    private static let kSectionActionsDelTopic = 3
+
+    private static let kSectionPermissions = 3
     private static let kSectionPermissionsMine = 0
     private static let kSectionPermissionsPeer = 1
-    private static let kSectionDefaultPermissions = 3
+
+    private static let kSectionDefaultPermissions = 4
     private static let kSectionDefaultPermissionsAuth = 0
     private static let kSectionDefaultPermissionsAnon = 1
-    private static let kSectionMembers = 4
+
+    private static let kSectionMembers = 5
     private static let kSectionMembersButtons = 0
 
     @IBOutlet weak var topicTitleTextView: UITextView!
@@ -253,33 +262,92 @@ class TopicInfoViewController: UITableViewController {
         self.changePermissions(acs: acsUnwrapped, uid: uid,
                                changeType: changeType, disabledPermissions: disablePermissions)
     }
-    @IBAction func leaveGroupClicked(_ sender: Any) {
-        if topic.isOwner {
-            UiUtils.showToast(message: "Owner cannot unsubscribe")
-        } else {
-            do {
-                try topic.delete()?.then(
-                    onSuccess: { msg in
-                        DispatchQueue.main.async {
-                            self.navigationController?.popViewController(animated: true)
-                            self.dismiss(animated: true, completion: nil)
-                        }
-                        return nil
-                    },
-                    onFailure: UiUtils.ToastFailureHandler)
-            } catch TinodeError.notConnected(let e) {
-                UiUtils.showToast(message: "You are offline \(e)")
-            } catch {
-                UiUtils.showToast(message: "Action failed \(error)")
-            }
+
+    private func deleteTopic() {
+        do {
+            try topic.delete()?.then(
+                onSuccess: { msg in
+                    DispatchQueue.main.async {
+                        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+                        let destinationVC = storyboard.instantiateViewController(withIdentifier: "ChatsNavigator") as! UINavigationController
+
+                        self.show(destinationVC, sender: nil)
+                    }
+                    return nil
+                },
+                onFailure: UiUtils.ToastFailureHandler)
+        } catch TinodeError.notConnected(let e) {
+            UiUtils.showToast(message: "You are offline \(e)")
+        } catch {
+            UiUtils.showToast(message: "Action failed \(error)")
         }
     }
+
+    @IBAction func deleteGroupClicked(_ sender: Any) {
+        guard topic.isOwner else {
+            UiUtils.showToast(message: "Only Owner can delete group")
+            return
+        }
+        let alert = UIAlertController(title: "Delete the group?", message: nil, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(
+            title: "Delete", style: .destructive,
+            handler: { action in self.deleteTopic() }))
+        present(alert, animated: true)
+    }
+
+    @IBAction func deleteMessagesClicked(_ sender: Any) {
+        let handler: (Bool) -> Void = { (hard: Bool) -> Void in
+            do {
+                try self.topic?.delMessages(hard: hard)?.thenCatch(onFailure: UiUtils.ToastFailureHandler)
+            } catch {
+                UiUtils.showToast(message: "Failed to delete messages: \(error)")
+            }
+        }
+
+        let alert = UIAlertController(title: "Clear all messages?", message: nil, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        if topic.isDeleter {
+            alert.addAction(UIAlertAction(
+                title: "For all", style: .destructive,
+                handler: { action in handler(true) }))
+        }
+        alert.addAction(UIAlertAction(
+            title: topic.isDeleter ? "For me" : "OK", style: .destructive,
+            handler: { action in handler(false) }))
+        present(alert, animated: true)
+    }
+
+    @IBAction func leaveConversationClicked(_ sender: Any) {
+        let alert = UIAlertController(title: "Leave the conversation?", message: nil, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(
+            title: "Leave", style: .destructive,
+            handler: { action in self.deleteTopic() }))
+        present(alert, animated: true)
+    }
+
+    @IBAction func leaveGroupClicked(_ sender: Any) {
+        guard !topic.isOwner else {
+            UiUtils.showToast(message: "Owner cannot leave the group")
+            return
+        }
+
+        let alert = UIAlertController(title: "Leave the group?", message: nil, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(
+            title: "Leave", style: .destructive,
+            handler: { action in self.deleteTopic() }))
+        present(alert, animated: true)
+    }
+
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "TopicInfo2EditMembers" {
             let destinationVC = segue.destination as! EditMembersViewController
             destinationVC.topicName = self.topicName
         }
     }
+
     private func promiseSuccessHandler(msg: ServerMessage) throws -> PromisedReply<ServerMessage>? {
         DispatchQueue.main.async { self.reloadData() }
         return nil
@@ -305,6 +373,27 @@ extension TopicInfoViewController {
         if indexPath.section == TopicInfoViewController.kSectionMembers && indexPath.row != 0 {
             return 60
         }
+
+        if indexPath.section == TopicInfoViewController.kSectionActions && indexPath.row > 0 {
+            if indexPath.row == TopicInfoViewController.kSectionActionsLeaveGroup && !(topic?.isGrpType ?? false) {
+                // P2P topic, hide [Leave Group]
+                return CGFloat.leastNonzeroMagnitude
+            }
+            if indexPath.row == TopicInfoViewController.kSectionActionsLeaveConversation && topic?.isGrpType ?? false {
+                // Group topic, hide [Leave Conversation]
+                return CGFloat.leastNonzeroMagnitude
+            }
+            // Hide either [Leave] or [Delete Topic] actions.
+            if indexPath.row == TopicInfoViewController.kSectionActionsLeaveGroup && topic?.isOwner ?? false {
+                // Owner, hide [Leave]
+                return CGFloat.leastNonzeroMagnitude
+            }
+            if indexPath.row == TopicInfoViewController.kSectionActionsDelTopic && !(topic?.isOwner ?? false) {
+                // Not an owner, hide [Delete Topic]
+                return CGFloat.leastNonzeroMagnitude
+            }
+        }
+
         return super.tableView(tableView, heightForRowAt: indexPath)
     }
 

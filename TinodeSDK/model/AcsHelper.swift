@@ -85,6 +85,11 @@ public class AcsHelper: Codable, Equatable {
             return ((a ?? 0) & AcsHelper.kModeWrite) != 0
         }
     }
+    var isDeleter: Bool {
+        get {
+            return ((a ?? 0) & AcsHelper.kModeDelete) != 0
+        }
+    }
     init(str: String?) {
         a = AcsHelper.decode(from: str)
     }

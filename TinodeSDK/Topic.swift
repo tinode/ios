@@ -368,6 +368,11 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
             return description?.acs?.isJoiner ?? false
         }
     }
+    public var isDeleter: Bool {
+        get {
+            return description?.acs?.isDeleter ?? false
+        }
+    }
     public var isArchived: Bool {
         get { return false }
     }
