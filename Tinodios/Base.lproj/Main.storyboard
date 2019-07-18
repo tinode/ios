@@ -674,14 +674,6 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                        <view key="tableFooterView" contentMode="scaleToFill" id="5vl-f8-ZTQ" userLabel="Footer to hide separators for empty rows">
-                            <rect key="frame" x="0.0" y="0.0" width="375" height="0.0"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
-                            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                            <accessibility key="accessibilityConfiguration" label="Footer">
-                                <accessibilityTraits key="traits" notEnabled="YES"/>
-                            </accessibility>
-                        </view>
                         <connections>
                             <outlet property="dataSource" destination="n9d-hv-55K" id="oZ5-gs-f1y"/>
                             <outlet property="delegate" destination="n9d-hv-55K" id="db6-Zu-Bbz"/>
