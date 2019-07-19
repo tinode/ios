@@ -120,6 +120,9 @@ class MessageViewLayoutAttributes: UICollectionViewLayoutAttributes {
     // Progress bar.
     var progressBarFrame: CGRect = .zero
 
+    // Cancel upload button.
+    var cancelUploadButtonFrame: CGRect = .zero
+
     override func copy(with zone: NSZone? = nil) -> Any {
         let copy = super.copy(with: zone) as! MessageViewLayoutAttributes
 
@@ -132,6 +135,7 @@ class MessageViewLayoutAttributes: UICollectionViewLayoutAttributes {
         copy.newDateFrame = newDateFrame
         copy.cellSpacing = cellSpacing
         copy.progressBarFrame = progressBarFrame
+        copy.cancelUploadButtonFrame = cancelUploadButtonFrame
         return copy
     }
 
@@ -146,6 +150,7 @@ class MessageViewLayoutAttributes: UICollectionViewLayoutAttributes {
             other.timestampFrame == timestampFrame &&
             other.newDateFrame == newDateFrame &&
             other.cellSpacing == cellSpacing &&
-            other.progressBarFrame == progressBarFrame
+            other.progressBarFrame == progressBarFrame &&
+            other.cancelUploadButtonFrame == cancelUploadButtonFrame
     }
 }

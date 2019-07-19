@@ -51,6 +51,9 @@ class LargeFileHelper: NSObject {
         request.addValue(tinode.apiKey, forHTTPHeaderField: "X-Tinode-APIKey")
         request.addValue("Token \(tinode.authToken!)", forHTTPHeaderField: "Authorization")
     }
+    public static func createUploadKey(topicId: String, msgId: Int64) -> String {
+        return "\(topicId)-\(msgId)"
+    }
     // TODO: make background uploads work.
     func startUpload(filename: String, mimetype: String, d: Data, topicId: String, msgId: Int64,
                      progressCallback: ((Float) -> Void)?,
@@ -89,16 +92,28 @@ class LargeFileHelper: NSObject {
         let localURL = tempDir.appendingPathComponent("throwaway-\(localFileName)")
         try? newData.write(to: localURL)
 
+        let uploadKey = LargeFileHelper.createUploadKey(topicId: topicId, msgId: msgId)
         upload.task = urlSession.uploadTask(with: request, fromFile: localURL)
-        upload.task!.taskDescription = localFileName
+        upload.task!.taskDescription = uploadKey
         upload.isUploading = true
         upload.topicId = topicId
         upload.msgId = msgId
         upload.progressCb = progressCallback
         upload.finalCb = completionCallback
-        activeUploads[localFileName] = upload
+        activeUploads[uploadKey] = upload
         upload.task!.resume()
     }
+
+    func cancelUpload(topicId: String, msgId: Int64) -> Bool {
+        let uploadKey = LargeFileHelper.createUploadKey(topicId: topicId, msgId: msgId)
+        var upload = activeUploads[uploadKey]
+        guard upload != nil else { return false }
+        activeUploads.removeValue(forKey: uploadKey)
+        upload!.task?.cancel()
+        upload = nil
+        return true
+    }
+
     func startDownload(from url: URL) {
         let tinode = Cache.getTinode()
         var request = URLRequest(url: url)

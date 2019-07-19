@@ -80,7 +80,9 @@ class FindInteractor: FindBusinessLogic {
         }
         self.presenter?.presentRemoteContacts(contacts: self.remoteContacts!)
     }
+
     func loadAndPresentContacts(searchQuery: String? = nil) {
+        let changed = self.searchQuery != searchQuery
         self.searchQuery = searchQuery
         queue.async {
             if self.localContacts == nil {
@@ -97,9 +99,9 @@ class FindInteractor: FindBusinessLogic {
                         return r.contains(displayName.startIndex)
                     } :
                     self.localContacts!
-            self.fndTopic?.setMeta(
-                meta: MsgSetMeta(desc: MetaSetDesc(pub: searchQuery != nil ? searchQuery! : Tinode.kNullValue, priv: nil),
-                                 sub: nil, tags: nil))
+            if changed {
+                self.fndTopic?.setMeta(meta: MsgSetMeta(desc: MetaSetDesc(pub: searchQuery != nil ? searchQuery! : Tinode.kNullValue, priv: nil), sub: nil, tags: nil))
+            }
             self.remoteContacts?.removeAll()
             if let queryString = searchQuery, queryString.count >= UiUtils.kMinTagLength {
                 self.fndTopic?.getMeta(query: MsgGetMeta.sub())

@@ -513,6 +513,7 @@ extension MessageViewController: UICollectionViewDataSource {
         bubbleDecorator(for: message, at: indexPath)(cell.containerView)
 
         cell.progressBar.frame = attributes.progressBarFrame
+        cell.cancelUploadButton.frame = attributes.cancelUploadButtonFrame
 
         return cell
     }
@@ -671,7 +672,7 @@ extension MessageViewController {
 
     // Should we show upload progress bar for reference attachment messages?
     func shouldShowProgressBar(for message: Message) -> Bool {
-        return message.isPending && (message.content?.isReferenceAttachment ?? false)
+        return message.isDraft && (message.content?.isReferenceAttachment ?? false)
     }
 
     func isNewDateLabelVisible(at indexPath: IndexPath) -> Bool {
@@ -749,10 +750,13 @@ extension MessageViewController : MessageViewLayoutDelegate {
                                    y: rightEdge.y + Constants.kDeliveryMarkerSize / 2)
             attr.progressBarFrame =
                 CGRect(x: leftEdge.x, y: leftEdge.y,
-                       width: attr.containerFrame.width - attr.timestampFrame.width - attr.deliveryMarkerFrame.width - Constants.kProgressBarRightPadding,
+                       width: attr.containerFrame.width - attr.timestampFrame.width - attr.deliveryMarkerFrame.width - Constants.kProgressBarRightPadding - 20,
                        height: attr.timestampFrame.height)
+            attr.cancelUploadButtonFrame =
+                CGRect(x: leftEdge.x + attr.progressBarFrame.width + 4, y: leftEdge.y - 2, width: 8, height: 8)
         } else {
             attr.progressBarFrame = .zero
+            attr.cancelUploadButtonFrame = .zero
         }
 
         // New date label
@@ -896,6 +900,15 @@ extension MessageViewController : MessageCellDelegate {
 
     func didTapOutsideContent(in cell: MessageCell) {
         self.sendMessageBar.inputField.resignFirstResponder()
+    }
+
+    func didTapCancelUpload(in cell: MessageCell) {
+        guard let topicId = self.topicName,
+            let msgIdx = self.messageSeqIdIndex[cell.seqId] else { return }
+        if Cache.getLargeFileHelper().cancelUpload(
+            topicId: topicId, msgId: self.messages[msgIdx].msgId) {
+            print("cancelled upload")
+        }
     }
 
     private func handleButtonPost(in cell: MessageCell, data url: URL) {
