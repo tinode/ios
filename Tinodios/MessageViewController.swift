@@ -158,6 +158,28 @@ class MessageViewController: UIViewController {
         self.setup()
     }
 
+    private func addAppStateObservers() {
+        // App state observers.
+        NotificationCenter.default.addObserver(
+            self, selector: #selector(self.appGoingInactive),
+            name: UIApplication.willResignActiveNotification,
+            object: nil)
+        NotificationCenter.default.addObserver(
+            self, selector: #selector(self.appBecameActive),
+            name: UIApplication.didBecomeActiveNotification,
+            object: nil)
+    }
+    private func removeAppStateObservers() {
+        NotificationCenter.default.removeObserver(
+            self,
+            name: UIApplication.willResignActiveNotification,
+            object: nil)
+        NotificationCenter.default.removeObserver(
+            self,
+            name: UIApplication.didBecomeActiveNotification,
+            object: nil)
+    }
+
     private func setup() {
         myUID = Cache.getTinode().myUid
         self.imagePicker = ImagePicker(presentationController: self, delegate: self)
@@ -168,6 +190,17 @@ class MessageViewController: UIViewController {
         presenter.viewController = self
 
         self.interactor = interactor
+        addAppStateObservers()
+    }
+
+    @objc
+    func appBecameActive() {
+        self.interactor?.attachToTopic()
+    }
+    @objc
+    func appGoingInactive() {
+        self.interactor?.cleanup()
+        self.interactor?.leaveTopic()
     }
 
     // MARK: lifecycle
@@ -175,6 +208,9 @@ class MessageViewController: UIViewController {
     deinit {
         removeKeyboardObservers()
         // removeMenuControllerObservers()
+        removeAppStateObservers()
+        // Clean up.
+        appGoingInactive()
     }
 
     // This makes messageInputBar visible.
@@ -442,7 +478,6 @@ extension MessageViewController: MessageDisplayLogic {
         if let index = self.messageDbIdIndex[msgId],
             let cell = self.collectionView.cellForItem(at: IndexPath(row: index, section: 0)) as? MessageCell {
             cell.progressBar.progress = progress
-            //self.collectionView.reloadItems(at: [IndexPath(row: index, section: 0)])
         }
     }
     func endRefresh() {

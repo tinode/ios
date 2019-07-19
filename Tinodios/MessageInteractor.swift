@@ -14,6 +14,7 @@ protocol MessageBusinessLogic: class {
     @discardableResult
     func attachToTopic() -> Bool
     func cleanup()
+    func leaveTopic()
 
     func sendMessage(content: Drafty) -> Bool
     func sendReadNotification()
@@ -79,10 +80,12 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         // set listeners to nil
         print("cleaning up the topic \(String(describing: self.topicName))")
         self.topic?.listener = nil
+        Cache.getTinode().listener = nil
+    }
+    func leaveTopic() {
         if self.topic?.attached ?? false {
             self.topic?.leave()
         }
-        Cache.getTinode().listener = nil
     }
     func attachToTopic() -> Bool {
         guard !(self.topic?.attached ?? false) else {
