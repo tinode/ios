@@ -60,6 +60,7 @@ class UiUtils {
         DispatchQueue.main.async {
             let storyboard = UIStoryboard(name: "Main", bundle: nil)
             let destinationVC = storyboard.instantiateViewController(withIdentifier: "StartNavigator") as! UINavigationController
+
             let appDelegate = UIApplication.shared.delegate as! AppDelegate
             appDelegate.window!.rootViewController = destinationVC
         }
@@ -276,6 +277,7 @@ extension UIViewController {
     public func presentChatReplacingCurrentVC(with topicName: String, afterDelay delay: DispatchTimeInterval = .seconds(0)) {
         DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
             if let navController = self.navigationController {
+                /*
                 // Descend to the chat list controller in the navigation stack.
                 while navController.topViewController?.restorationIdentifier != "ChatListViewController" {
                     let v = navController.popViewController(animated: false)
@@ -285,6 +287,9 @@ extension UIViewController {
                     }
                     v?.dismiss(animated: false, completion: nil)
                 }
+                */
+                navController.popToRootViewController(animated: false)
+
                 let messageVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "MessageViewController") as! MessageViewController
                 messageVC.topicName = topicName
                 navController.pushViewController(messageVC, animated: true)

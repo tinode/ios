@@ -59,7 +59,12 @@ class LoginViewController: UIViewController {
             let storyboard = UIStoryboard(name: "Main", bundle: nil)
             let destinationVC = storyboard.instantiateViewController(withIdentifier: "ChatsNavigator") as! UINavigationController
 
-            self.show(destinationVC, sender: nil)
+            if let window = UIApplication.shared.keyWindow {
+                // Use ChatList as the new root view controller (used in navigation).
+                window.rootViewController = destinationVC
+             }
+
+            // self.show(destinationVC, sender: nil)
         }
     }
 
