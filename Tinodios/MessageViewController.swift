@@ -158,6 +158,28 @@ class MessageViewController: UIViewController {
         self.setup()
     }
 
+    private func addAppStateObservers() {
+        // App state observers.
+        NotificationCenter.default.addObserver(
+            self, selector: #selector(self.appGoingInactive),
+            name: UIApplication.willResignActiveNotification,
+            object: nil)
+        NotificationCenter.default.addObserver(
+            self, selector: #selector(self.appBecameActive),
+            name: UIApplication.didBecomeActiveNotification,
+            object: nil)
+    }
+    private func removeAppStateObservers() {
+        NotificationCenter.default.removeObserver(
+            self,
+            name: UIApplication.willResignActiveNotification,
+            object: nil)
+        NotificationCenter.default.removeObserver(
+            self,
+            name: UIApplication.didBecomeActiveNotification,
+            object: nil)
+    }
+
     private func setup() {
         myUID = Cache.getTinode().myUid
         self.imagePicker = ImagePicker(presentationController: self, delegate: self)
@@ -168,6 +190,17 @@ class MessageViewController: UIViewController {
         presenter.viewController = self
 
         self.interactor = interactor
+        addAppStateObservers()
+    }
+
+    @objc
+    func appBecameActive() {
+        self.interactor?.attachToTopic()
+    }
+    @objc
+    func appGoingInactive() {
+        self.interactor?.cleanup()
+        self.interactor?.leaveTopic()
     }
 
     // MARK: lifecycle
@@ -175,6 +208,9 @@ class MessageViewController: UIViewController {
     deinit {
         removeKeyboardObservers()
         // removeMenuControllerObservers()
+        removeAppStateObservers()
+        // Clean up.
+        appGoingInactive()
     }
 
     // This makes messageInputBar visible.
@@ -442,7 +478,6 @@ extension MessageViewController: MessageDisplayLogic {
         if let index = self.messageDbIdIndex[msgId],
             let cell = self.collectionView.cellForItem(at: IndexPath(row: index, section: 0)) as? MessageCell {
             cell.progressBar.progress = progress
-            //self.collectionView.reloadItems(at: [IndexPath(row: index, section: 0)])
         }
     }
     func endRefresh() {
@@ -745,9 +780,16 @@ extension MessageViewController : MessageViewLayoutDelegate {
 
         attr.timestampFrame = CGRect(x: rightEdge.x - Constants.kTimestampWidth - Constants.kTimestampPadding, y: rightEdge.y, width: Constants.kTimestampWidth, height: Constants.kDeliveryMarkerSize)
 
+        // New date label
+        if newDateLabelHeight > 0 {
+            attr.newDateFrame = CGRect(origin: CGPoint(x: 0, y: attr.containerFrame.minY - containerPadding.top - newDateLabelHeight), size: CGSize(width: cellSize.width, height: newDateLabelHeight))
+        } else {
+            attr.newDateFrame = .zero
+        }
+
         if shouldShowProgressBar(for: message) {
-            let leftEdge = CGPoint(x: attr.containerFrame.origin.x + Constants.kProgressBarLeftPadding,
-                                   y: rightEdge.y + Constants.kDeliveryMarkerSize / 2)
+            let leftEdge = CGPoint(x: attr.contentFrame.origin.x,
+                                   y: attr.contentFrame.height + Constants.kDeliveryMarkerSize / 2)
             attr.progressBarFrame =
                 CGRect(x: leftEdge.x, y: leftEdge.y,
                        width: attr.containerFrame.width - attr.timestampFrame.width - attr.deliveryMarkerFrame.width - Constants.kProgressBarRightPadding - 20,
@@ -757,13 +799,6 @@ extension MessageViewController : MessageViewLayoutDelegate {
         } else {
             attr.progressBarFrame = .zero
             attr.cancelUploadButtonFrame = .zero
-        }
-
-        // New date label
-        if newDateLabelHeight > 0 {
-            attr.newDateFrame = CGRect(origin: CGPoint(x: 0, y: attr.containerFrame.minY - containerPadding.top - newDateLabelHeight), size: CGSize(width: cellSize.width, height: newDateLabelHeight))
-        } else {
-            attr.newDateFrame = .zero
         }
 
         attr.frame = CGRect(origin: CGPoint(), size: cellSize)

@@ -11,6 +11,7 @@ import TinodeSDK
 
 extension MessageViewController : SendMessageBarDelegate {
     static let kMaxInbandAttachmentSize = 1 << 17
+    static let kMaxAttachmentSize = 1 << 23
 
     func sendMessageBar(sendText: String) -> Bool? {
         return interactor?.sendMessage(content: Drafty(content: sendText))
@@ -59,6 +60,10 @@ extension MessageViewController : UIDocumentPickerDelegate {
             if let uti = try urls[0].resourceValues(forKeys: [.typeIdentifierKey]).typeIdentifier {
                 let unmanaged = UTTypeCopyPreferredTagWithClass(uti as CFString, kUTTagClassMIMEType)
                 mimeType = unmanaged?.takeRetainedValue() as String?
+            }
+            guard bits.count <= MessageViewController.kMaxAttachmentSize else {
+                UiUtils.showToast(message: "The file size exceeds the limit \(UiUtils.bytesToHumanSize(Int64(MessageViewController.kMaxAttachmentSize)))")
+                return
             }
             if bits.count > MessageViewController.kMaxInbandAttachmentSize {
                 self.interactor?.uploadFile(filename: fname, refurl: urls[0], mimeType: mimeType, data: bits)

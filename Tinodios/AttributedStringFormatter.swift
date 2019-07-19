@@ -50,11 +50,16 @@ class AttributedStringFormatter: DraftyFormatter {
         if let bits = attr["val"]?.asData() {  // Inline attachments.
             let attachment = Attachment(content: .data(bits), mime: attr["mime"]?.asString(), name: attr["name"]?.asString(), ref: nil, size: bits.count, width: nil, height: nil)
             node.attachment(attachment)
-        } else if let ref = attr["ref"]?.asString() {  // Large file attachments.
+            return
+        }
+        if let ref = attr["ref"]?.asString() {  // Large file attachments.
             print("ref = \(ref)")
             let attachment = Attachment(content: .dataref(ref), mime: attr["mime"]?.asString(), name: attr["name"]?.asString(), ref: ref, size: nil, width: nil, height: nil)
             node.attachment(attachment)
+            return
         }
+        let attachment = Attachment(content: .empty, mime: attr["mime"]?.asString(), name: attr["name"]?.asString(), ref: nil, size: nil, width: nil, height: nil)
+        node.attachment(attachment)
     }
 
     private func handleButton(from node: TreeNode, with attr: [String : JSONValue]?) {
@@ -194,6 +199,7 @@ class AttributedStringFormatter: DraftyFormatter {
             case dataref(String)
             case image(UIImage)
             case button(URL)
+            case empty
         }
 
         var content: AttachmentType
@@ -311,6 +317,8 @@ class AttributedStringFormatter: DraftyFormatter {
                     return "[btn \(faceText)]"
                 }
                 return "[button]"
+            case .empty:
+                fallthrough
             case .dataref:
                 fallthrough
             case .data:
@@ -333,11 +341,15 @@ class AttributedStringFormatter: DraftyFormatter {
              */
             // Using basic kUTTypeData to prevent iOS from displaying distorted previews.
             let tinode = Cache.getTinode()
-            let data = bits ?? Data(tinode.hostURL(useWebsocketProtocol: false)!.appendingPathComponent(ref!).absoluteString.utf8)
-            let wrapper = NSTextAttachment(data: data, ofType: kUTTypeData as String)
             let baseFont = attributes[.font] as! UIFont
-            wrapper.bounds = CGRect(origin: CGPoint(x: 0, y: baseFont.capHeight - Constants.kAttachmentIconSize.height), size: Constants.kAttachmentIconSize)
-            attributed.append(NSAttributedString(attachment: wrapper))
+            // The attachment is valid if it contains either data or a link to download the data.
+            let isValid = bits != nil || ref != nil
+            if isValid {
+                let data = bits ?? Data(tinode.hostURL(useWebsocketProtocol: false)!.appendingPathComponent(ref!).absoluteString.utf8)
+                let wrapper = NSTextAttachment(data: data, ofType: kUTTypeData as String)
+                wrapper.bounds = CGRect(origin: CGPoint(x: 0, y: baseFont.capHeight - Constants.kAttachmentIconSize.height), size: Constants.kAttachmentIconSize)
+                attributed.append(NSAttributedString(attachment: wrapper))
+            }
 
             // Append document's file name.
             let originalFileName = attachment.name ?? "tinode_file_attachment"
@@ -356,38 +368,40 @@ class AttributedStringFormatter: DraftyFormatter {
                 attributed.append(NSAttributedString(string: " (" + UiUtils.bytesToHumanSize(Int64(size)) + ")", attributes: attributes))
             }
 
-            // Insert linebreak then a clickable [↓ save] line
-            attributed.append(NSAttributedString(string: "\u{2009}\n", attributes: [NSAttributedString.Key.font : baseFont]))
+            if isValid {
+                // Insert linebreak then a clickable [↓ save] line
+                attributed.append(NSAttributedString(string: "\u{2009}\n", attributes: [NSAttributedString.Key.font : baseFont]))
 
-            // \u{2009} because iOS is buggy and bugs go unfixed for years.
-            // https://stackoverflow.com/questions/29041458/how-to-set-color-of-templated-image-in-nstextattachment
-            let second = NSMutableAttributedString(string: "\u{2009}")
-            second.beginEditing()
+                // \u{2009} because iOS is buggy and bugs go unfixed for years.
+                // https://stackoverflow.com/questions/29041458/how-to-set-color-of-templated-image-in-nstextattachment
+                let second = NSMutableAttributedString(string: "\u{2009}")
+                second.beginEditing()
 
-            // Add 'download file' icon
-            let icon = NSTextAttachment()
-            icon.image = UIImage(named: "download-24")?.withRenderingMode(.alwaysTemplate)
-            icon.bounds = CGRect(origin: CGPoint(x: 0, y: -2), size: CGSize(width: baseFont.lineHeight * 0.8, height: baseFont.lineHeight * 0.8))
-            second.append(NSAttributedString(attachment: icon))
+                // Add 'download file' icon
+                let icon = NSTextAttachment()
+                icon.image = UIImage(named: "download-24")?.withRenderingMode(.alwaysTemplate)
+                icon.bounds = CGRect(origin: CGPoint(x: 0, y: -2), size: CGSize(width: baseFont.lineHeight * 0.8, height: baseFont.lineHeight * 0.8))
+                second.append(NSAttributedString(attachment: icon))
 
-            // Add "save" text.
-            second.append(NSAttributedString(string: " save", attributes: [NSAttributedString.Key.font : baseFont]))
+                // Add "save" text.
+                second.append(NSAttributedString(string: " save", attributes: [NSAttributedString.Key.font : baseFont]))
 
-            // Add paragraph style and coloring
-            let paragraph = NSMutableParagraphStyle()
-            paragraph.firstLineHeadIndent = Constants.kAttachmentIconSize.width + baseFont.capHeight * 0.25
-            paragraph.lineSpacing = 0
-            paragraph.maximumLineHeight = 4
-            second.addAttributes([NSAttributedString.Key.paragraphStyle : paragraph, NSAttributedString.Key.foregroundColor : Constants.kLinkColor,
-                ], range: NSRange(location: 0, length: second.length))
+                // Add paragraph style and coloring
+                let paragraph = NSMutableParagraphStyle()
+                paragraph.firstLineHeadIndent = Constants.kAttachmentIconSize.width + baseFont.capHeight * 0.25
+                paragraph.lineSpacing = 0
+                paragraph.maximumLineHeight = 4
+                second.addAttributes([NSAttributedString.Key.paragraphStyle : paragraph, NSAttributedString.Key.foregroundColor : Constants.kLinkColor,
+                    ], range: NSRange(location: 0, length: second.length))
 
-            var baseUrl = URLComponents(string: "tinode://" + tinode.hostName)!
-            baseUrl.path = ref != nil ? "/large-attachment" : "/small-attachment"
-            baseUrl.queryItems = [URLQueryItem(name: "filename", value: originalFileName)]
+                var baseUrl = URLComponents(string: "tinode://" + tinode.hostName)!
+                baseUrl.path = ref != nil ? "/large-attachment" : "/small-attachment"
+                baseUrl.queryItems = [URLQueryItem(name: "filename", value: originalFileName)]
 
-            second.addAttribute(.link, value: baseUrl.url! as Any, range: NSRange(location: 0, length: second.length))
-            second.endEditing()
-            attributed.append(second)
+                second.addAttribute(.link, value: baseUrl.url! as Any, range: NSRange(location: 0, length: second.length))
+                second.endEditing()
+                attributed.append(second)
+            }
 
             attributed.endEditing()
             return attributed
@@ -427,6 +441,8 @@ class AttributedStringFormatter: DraftyFormatter {
 
             case .dataref(let ref):
                 return makeFileAttachmentString(attachment, withData: nil, withRef: ref, defaultAttrs: attributes, maxSize: size)
+            case .empty:
+                return makeFileAttachmentString(attachment, withData: nil, withRef: nil, defaultAttrs: attributes, maxSize: size)
             }
         }
 
