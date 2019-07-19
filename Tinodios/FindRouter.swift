@@ -5,18 +5,18 @@
 //  Copyright © 2019 Tinode. All rights reserved.
 //
 
-import Foundation
-import UIKit
+//import Foundation
+//import UIKit
 
 // FIXME: this entire file seems to be unused
-
+/*
 protocol FindRoutingLogic {
     //func routeToChat(segue: UIStoryboardSegue)
 }
 
 class FindRouter: FindRoutingLogic {
     weak var viewController: FindViewController?
-    /*
+
     func routeToChat(segue: UIStoryboardSegue) {
         if let indexPath = viewController?.tableView.indexPathForSelectedRow,
             let uniqueId = viewController?.getUniqueId(for: indexPath), !uniqueId.isEmpty {
@@ -25,6 +25,6 @@ class FindRouter: FindRoutingLogic {
             messageController.topicName = uniqueId
         }
     }
- */
 
 }
+*/

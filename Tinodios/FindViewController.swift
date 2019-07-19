@@ -18,7 +18,7 @@ class FindViewController: UITableViewController, FindDisplayLogic {
     var interactor: FindBusinessLogic?
     var localContacts: [ContactHolder] = []
     var remoteContacts: [ContactHolder] = []
-    var router: FindRoutingLogic?
+    // var router: FindRoutingLogic?
     var searchController: UISearchController!
     var pendingSearchRequest: DispatchWorkItem? = nil
 
@@ -26,14 +26,14 @@ class FindViewController: UITableViewController, FindDisplayLogic {
         let viewController = self
         let interactor = FindInteractor()
         let presenter = FindPresenter()
-        let router = FindRouter()
+        // let router = FindRouter()
 
         viewController.interactor = interactor
-        viewController.router = router
+        //viewController.router = router
         interactor.presenter = presenter
-        interactor.router = router
+        // interactor.router = router
         presenter.viewController = viewController
-        router.viewController = viewController
+        // router.viewController = viewController
 
         searchController = UISearchController(searchResultsController: nil)
         searchController.searchResultsUpdater = self
