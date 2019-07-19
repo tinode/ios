@@ -20,6 +20,7 @@ class RegisterViewController: UIViewController {
     @IBOutlet weak var avatarView: RoundImageView!
 
     var imagePicker: ImagePicker!
+    var uploadedAvatar: Bool = false
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -67,7 +68,7 @@ class RegisterViewController: UIViewController {
         signUpBtn.isUserInteractionEnabled = false
         let tinode = Cache.getTinode()
 
-        let avatar = avatarView?.image?.resize(width: 128, height: 128, clip: true)
+        let avatar = uploadedAvatar ? avatarView?.image?.resize(width: 128, height: 128, clip: true) : nil
         let vcard = VCard(fn: name, avatar: avatar)
 
         let desc = MetaSetDesc<VCard, String>(pub: vcard, priv: nil)
@@ -131,5 +132,6 @@ class RegisterViewController: UIViewController {
 extension RegisterViewController: ImagePickerDelegate {
     func didSelect(image: UIImage?) {
         self.avatarView.image = image
+        uploadedAvatar = image != nil
     }
 }
