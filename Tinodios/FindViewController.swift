@@ -222,6 +222,7 @@ extension FindViewController: ContactViewCellDelegate {
     func selected(from cell: UITableViewCell) {
         guard let indexPath = tableView.indexPathForSelectedRow else { return }
         guard let id = getUniqueId(for: indexPath) else { return }
+
         // If the search bar is active, deactivate it.
         if searchController.isActive {
             // Disable the animation as we are going straight to another view
