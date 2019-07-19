@@ -127,12 +127,12 @@ class MessageCell: UICollectionViewCell {
     }
 
     func showProgressBar() {
-        contentView.addSubview(progressBar)
-        contentView.addSubview(cancelUploadButton)
+        containerView.addSubview(progressBar)
+        containerView.addSubview(cancelUploadButton)
         progressBar.isHidden = false
         cancelUploadButton.isHidden = false
-        contentView.bringSubviewToFront(progressBar)
-        contentView.bringSubviewToFront(cancelUploadButton)
+        containerView.bringSubviewToFront(progressBar)
+        containerView.bringSubviewToFront(cancelUploadButton)
 
         cancelUploadButton.addTarget(
             self,

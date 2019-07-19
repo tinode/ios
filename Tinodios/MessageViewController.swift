@@ -745,9 +745,16 @@ extension MessageViewController : MessageViewLayoutDelegate {
 
         attr.timestampFrame = CGRect(x: rightEdge.x - Constants.kTimestampWidth - Constants.kTimestampPadding, y: rightEdge.y, width: Constants.kTimestampWidth, height: Constants.kDeliveryMarkerSize)
 
+        // New date label
+        if newDateLabelHeight > 0 {
+            attr.newDateFrame = CGRect(origin: CGPoint(x: 0, y: attr.containerFrame.minY - containerPadding.top - newDateLabelHeight), size: CGSize(width: cellSize.width, height: newDateLabelHeight))
+        } else {
+            attr.newDateFrame = .zero
+        }
+
         if shouldShowProgressBar(for: message) {
-            let leftEdge = CGPoint(x: attr.containerFrame.origin.x + Constants.kProgressBarLeftPadding,
-                                   y: rightEdge.y + Constants.kDeliveryMarkerSize / 2)
+            let leftEdge = CGPoint(x: attr.contentFrame.origin.x,
+                                   y: attr.contentFrame.height + Constants.kDeliveryMarkerSize / 2)
             attr.progressBarFrame =
                 CGRect(x: leftEdge.x, y: leftEdge.y,
                        width: attr.containerFrame.width - attr.timestampFrame.width - attr.deliveryMarkerFrame.width - Constants.kProgressBarRightPadding - 20,
@@ -757,13 +764,6 @@ extension MessageViewController : MessageViewLayoutDelegate {
         } else {
             attr.progressBarFrame = .zero
             attr.cancelUploadButtonFrame = .zero
-        }
-
-        // New date label
-        if newDateLabelHeight > 0 {
-            attr.newDateFrame = CGRect(origin: CGPoint(x: 0, y: attr.containerFrame.minY - containerPadding.top - newDateLabelHeight), size: CGSize(width: cellSize.width, height: newDateLabelHeight))
-        } else {
-            attr.newDateFrame = .zero
         }
 
         attr.frame = CGRect(origin: CGPoint(), size: cellSize)
