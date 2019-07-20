@@ -927,10 +927,33 @@ extension MessageViewController : MessageCellDelegate {
 
     func didTapMessage(in cell: MessageCell) {
         print("didTapMessage")
+        createPopupMenu(in: cell)
     }
 
     func didTapAvatar(in cell: MessageCell) {
         print("didTapAvatar")
+        createPopupMenu(in: cell)
+    }
+
+    func createPopupMenu(in cell: MessageCell) {
+        // Set up the shared UIMenuController
+        let copyMenuItem = UIMenuItem(title: "Copy", action: #selector(copyTapped))
+        let deleteMenuItem = UIMenuItem(title: "Delete", action: #selector(deleteTapped))
+        UIMenuController.shared.menuItems = [copyMenuItem, deleteMenuItem]
+
+        // Tell the menu controller the first responder's frame and its super view
+        UIMenuController.shared.setTargetRect(cell.frame, in: self.collectionView)
+
+        // Animate the menu onto view
+        UIMenuController.shared.setMenuVisible(true, animated: true)
+    }
+
+    @objc func copyTapped() {
+        print("copy tapped")
+    }
+
+    @objc func deleteTapped() {
+        print("delete tapped")
     }
 
     func didTapOutsideContent(in cell: MessageCell) {
