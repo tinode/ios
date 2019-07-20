@@ -63,8 +63,6 @@ class LoginViewController: UIViewController {
                 // Use ChatList as the new root view controller (used in navigation).
                 window.rootViewController = destinationVC
              }
-
-            // self.show(destinationVC, sender: nil)
         }
     }
 

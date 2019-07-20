@@ -61,8 +61,9 @@ class UiUtils {
             let storyboard = UIStoryboard(name: "Main", bundle: nil)
             let destinationVC = storyboard.instantiateViewController(withIdentifier: "StartNavigator") as! UINavigationController
 
-            let appDelegate = UIApplication.shared.delegate as! AppDelegate
-            appDelegate.window!.rootViewController = destinationVC
+            if let window = UIApplication.shared.keyWindow {
+                window.rootViewController = destinationVC
+            }
         }
     }
     // Get text from UITextField or mark the field red if the field is blank
