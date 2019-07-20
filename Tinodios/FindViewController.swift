@@ -18,22 +18,20 @@ class FindViewController: UITableViewController, FindDisplayLogic {
     var interactor: FindBusinessLogic?
     var localContacts: [ContactHolder] = []
     var remoteContacts: [ContactHolder] = []
-    var router: FindRoutingLogic?
     var searchController: UISearchController!
     var pendingSearchRequest: DispatchWorkItem? = nil
+
+    // Flag which indicates that the user is leaving the view.
+    var transitioningOut: Bool = false
 
     private func setup() {
         let viewController = self
         let interactor = FindInteractor()
         let presenter = FindPresenter()
-        let router = FindRouter()
 
         viewController.interactor = interactor
-        viewController.router = router
         interactor.presenter = presenter
-        interactor.router = router
         presenter.viewController = viewController
-        router.viewController = viewController
 
         searchController = UISearchController(searchResultsController: nil)
         searchController.searchResultsUpdater = self
@@ -44,6 +42,8 @@ class FindViewController: UITableViewController, FindDisplayLogic {
         // in the navigation item.
         self.tableView.tableHeaderView = searchController.searchBar
         self.tableView.register(UINib(nibName: "ContactViewCell", bundle: nil), forCellReuseIdentifier: "ContactViewCell")
+
+        transitioningOut = false
 
         searchController.delegate = self
         // The default is true.
@@ -185,7 +185,7 @@ class FindViewController: UITableViewController, FindDisplayLogic {
 extension FindViewController: UISearchResultsUpdating, UISearchControllerDelegate, UISearchBarDelegate {
 
     private func doSearch(queryString: String?) {
-        //print("Searching contacts for: \(queryString)")
+        // print("Searching contacts for: [\(queryString ?? "nil")]")
         self.interactor?.loadAndPresentContacts(searchQuery: queryString)
     }
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
@@ -195,15 +195,21 @@ extension FindViewController: UISearchResultsUpdating, UISearchControllerDelegat
         guard let s = getQueryString() else { return }
         doSearch(queryString: s)
     }
+
     private func getQueryString() -> String? {
         let whitespaceCharacterSet = CharacterSet.whitespaces
         let queryString =
             searchController.searchBar.text!.trimmingCharacters(in: whitespaceCharacterSet)
         return !queryString.isEmpty ? queryString : nil
     }
+
     func updateSearchResults(for searchController: UISearchController) {
         pendingSearchRequest?.cancel()
         pendingSearchRequest = nil
+
+        if transitioningOut {
+            return
+        }
         let queryString = getQueryString()
         let currentSearchRequest = DispatchWorkItem() {
             self.doSearch(queryString: queryString)
@@ -211,10 +217,16 @@ extension FindViewController: UISearchResultsUpdating, UISearchControllerDelegat
         pendingSearchRequest = currentSearchRequest
         DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1), execute: currentSearchRequest)
     }
+
+    // Search controller is dismissed if user clears the query OR if the user clicked on an item
+    // and is moving to another view. In the second case no need to loadAndPresentContacts because
+    // fnd.leave() will be called anyway. Otherwise an update to content prevents notmal navigation.
     func didDismissSearchController(_ searchController: UISearchController) {
         pendingSearchRequest?.cancel()
         pendingSearchRequest = nil
-        self.interactor?.loadAndPresentContacts(searchQuery: nil)
+        if !transitioningOut {
+            self.interactor?.loadAndPresentContacts(searchQuery: nil)
+        }
     }
 }
 
@@ -223,18 +235,20 @@ extension FindViewController: ContactViewCellDelegate {
         guard let indexPath = tableView.indexPathForSelectedRow else { return }
         guard let id = getUniqueId(for: indexPath) else { return }
 
+        // Make sure there are no pending search requests.
+        pendingSearchRequest?.cancel()
+        pendingSearchRequest = nil
+
+        transitioningOut = true
+
         // If the search bar is active, deactivate it.
         if searchController.isActive {
-            // Disable the animation as we are going straight to another view
-            UIView.performWithoutAnimation {
-                searchController.isActive = false
-            }
+            // Disable the animation as we are going straight to another view.
+            // This call takes very long time to complete.
+            searchController.dismiss(animated: false, completion: { self.presentChatReplacingCurrentVC(with: id) })
+        } else {
+            presentChatReplacingCurrentVC(with: id)
         }
-
-        // Have to do it with a delay because it takes time to dismiss searchController and
-        // navbar won't swap controllers while in transition:
-        // pushViewController:animated: called on <UINavigationController 0x7ff2cf80e400> while an existing transition or presentation is occurring; the navigation stack will not be updated.
-        presentChatReplacingCurrentVC(with: id, afterDelay: .milliseconds(30))
     }
 }
 
