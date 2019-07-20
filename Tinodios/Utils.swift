@@ -74,6 +74,9 @@ class Utils {
 
             } else {
                 // present in both
+                if o < old.count && n < new.count && old[o].equals(new[n]) {
+                    mutated.append(n)
+                }
                 if o < old.count {
                     o += 1
                 }
