@@ -124,59 +124,59 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
             self.meta = MsgGetMeta()
         }
         
-        public func withGetData(since: Int?, before: Int?, limit: Int?) -> MetaGetBuilder {
+        public func withData(since: Int?, before: Int?, limit: Int?) -> MetaGetBuilder {
             meta.setData(since: since, before: before, limit: limit)
             return self
         }
-        public func withGetEarlierData(limit: Int?) -> MetaGetBuilder {
+        public func withEarlierData(limit: Int?) -> MetaGetBuilder {
             if let r = topic.cachedMessageRange {
-                return withGetData(since: nil, before: r.min > 0 ? r.min : nil, limit: limit)
+                return withData(since: nil, before: r.min > 0 ? r.min : nil, limit: limit)
             }
-            return withGetData(since: nil, before: nil, limit: limit)
+            return withData(since: nil, before: nil, limit: limit)
         }
-        public func withGetLaterData(limit: Int?) -> MetaGetBuilder {
+        public func withLaterData(limit: Int?) -> MetaGetBuilder {
             if let r = topic.cachedMessageRange {
-                return withGetData(since: r.max > 0 ? r.max + 1 : nil, before: nil, limit: limit)
+                return withData(since: r.max > 0 ? r.max + 1 : nil, before: nil, limit: limit)
             }
-            return withGetData(since: nil, before: nil, limit: limit)
+            return withData(since: nil, before: nil, limit: limit)
         }
-        public func withGetData() -> MetaGetBuilder {
-            return withGetLaterData(limit: nil)
+        public func withData() -> MetaGetBuilder {
+            return withLaterData(limit: nil)
         }
 
-        public func withGetDel(since: Int?, limit: Int?) -> MetaGetBuilder {
+        public func withDel(since: Int?, limit: Int?) -> MetaGetBuilder {
             meta.setDel(since: since, limit: limit)
             return self
         }
-        public func withGetLaterDel(limit: Int?) -> MetaGetBuilder {
-            return withGetDel(since: topic.maxDel + 1, limit: limit);
+        public func withLaterDel(limit: Int?) -> MetaGetBuilder {
+            return withDel(since: topic.maxDel + 1, limit: limit);
         }
-        public func withGetDel() -> MetaGetBuilder {
-            return withGetLaterDel(limit: nil)
+        public func withDel() -> MetaGetBuilder {
+            return withLaterDel(limit: nil)
         }
 
-        public func withGetDesc() -> MetaGetBuilder {
-            return withGetDesc(ims: topic.updated)
+        public func withDesc() -> MetaGetBuilder {
+            return withDesc(ims: topic.updated)
         }
-        public func withGetDesc(ims: Date?) -> MetaGetBuilder {
+        public func withDesc(ims: Date?) -> MetaGetBuilder {
             meta.setDesc(ims: ims)
             return self
         }
-        public func withGetSub(user: String?, ims: Date?, limit: Int?) -> MetaGetBuilder {
+        public func withSub(user: String?, ims: Date?, limit: Int?) -> MetaGetBuilder {
             meta.setSub(user: user, ims: ims, limit: limit)
             return self
         }
-        public func withGetSub(user: String?) -> MetaGetBuilder {
-            return withGetSub(user: user, ims: topic.subsUpdated, limit: nil)
+        public func withSub(user: String?) -> MetaGetBuilder {
+            return withSub(user: user, ims: topic.subsUpdated, limit: nil)
         }
 
-        public func withGetSub(ims: Date?, limit: Int?) -> MetaGetBuilder {
-            return withGetSub(user: nil, ims: ims, limit: limit)
+        public func withSub(ims: Date?, limit: Int?) -> MetaGetBuilder {
+            return withSub(user: nil, ims: ims, limit: limit)
         }
-        public func withGetSub() -> MetaGetBuilder {
-            return withGetSub(user: nil, ims: topic.subsUpdated, limit: nil)
+        public func withSub() -> MetaGetBuilder {
+            return withSub(user: nil, ims: topic.subsUpdated, limit: nil)
         }
-        public func withGetTags() -> MetaGetBuilder {
+        public func withTags() -> MetaGetBuilder {
             meta.setTags()
             return self
         }
@@ -525,7 +525,7 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
                 tags: self.tags)
         } else {
             getMsg = getMetaGetBuilder()
-                .withGetDesc().withGetData().withGetSub().withGetTags().build()
+                .withDesc().withData().withSub().withTags().build()
         }
         return subscribe(set: setMsg, get: getMsg)
     }
@@ -1075,7 +1075,7 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
                 let acs = Acs(from: nil as Acs?)
                 acs.update(from: pres.dacs)
                 if acs.isModeDefined {
-                    getMeta(query: getMetaGetBuilder().withGetSub(user: pres.src).build())
+                    getMeta(query: getMetaGetBuilder().withSub(user: pres.src).build())
                 }
             }
         default:
@@ -1292,7 +1292,7 @@ open class MeTopic<DP: Codable>: Topic<DP, PrivateType, DP, PrivateType> {
                 topic.seq = pres.seq
                 topic.touched = Date()
             case .kUpd: // pub/priv updated
-                getMeta(query: getMetaGetBuilder().withGetSub(user: pres.src).build())
+                getMeta(query: getMetaGetBuilder().withSub(user: pres.src).build())
             case .kAcs: // access mode changed
                 if topic.updateAccessMode(ac: pres.dacs) {
                     self.store?.topicUpdate(topic: topic)
@@ -1330,13 +1330,13 @@ open class MeTopic<DP: Codable>: Topic<DP, PrivateType, DP, PrivateType> {
                 let acs = Acs()
                 acs.update(from: pres.dacs)
                 if acs.isModeDefined {
-                    getMeta(query: getMetaGetBuilder().withGetSub(user: pres.src).build());
+                    getMeta(query: getMetaGetBuilder().withSub(user: pres.src).build());
                 } else {
                     print("Unexpected access mode in presence: \(String(describing: pres.dacs))")
                 }
             case .kTags:
                 // Account tags updated
-                getMeta(query: getMetaGetBuilder().withGetTags().build())
+                getMeta(query: getMetaGetBuilder().withTags().build())
             default:
                 print("Topic not found in me.routePres: " +
                     (pres.what ?? "nil") + " in " + (pres.src ?? "nil"));

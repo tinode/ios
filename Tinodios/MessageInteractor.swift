@@ -96,10 +96,10 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
             try self.topic?.subscribe(
                 set: nil,
                 get: self.topic?.getMetaGetBuilder()
-                    .withGetDesc()
-                    .withGetSub()
-                    .withGetData()
-                    .withGetDel()
+                    .withDesc()
+                    .withSub()
+                    .withData()
+                    .withDel()
                     .build())?.then(
                     onSuccess: { [weak self] msg in
                         print("subscribed to topic")
@@ -191,7 +191,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
             do {
                 try t.getMeta(query:
                     t.getMetaGetBuilder()
-                        .withGetEarlierData(
+                        .withEarlierData(
                             limit: MessageInteractor.kMessagesPerPage)
                         .build())?.then(
                             onSuccess: { [weak self] msg in
