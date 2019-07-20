@@ -1280,7 +1280,8 @@ open class MeTopic<DP: Codable>: Topic<DP, PrivateType, DP, PrivateType> {
     }
     override public func routePres(pres: MsgServerPres) {
         let what = MsgServerPres.parseWhat(what: pres.what)
-        if let topic = tinode!.getTopic(topicName: pres.src!) {
+        // "what":"tags" has src == nil
+        if let topic = pres.src != nil ? tinode!.getTopic(topicName: pres.src!) : nil {
             switch what {
             case .kOn: // topic came online
                 topic.online = true
@@ -1333,6 +1334,9 @@ open class MeTopic<DP: Codable>: Topic<DP, PrivateType, DP, PrivateType> {
                 } else {
                     print("Unexpected access mode in presence: \(String(describing: pres.dacs))")
                 }
+            case .kTags:
+                // Account tags updated
+                getMeta(query: getMetaGetBuilder().withGetTags().build())
             default:
                 print("Topic not found in me.routePres: " +
                     (pres.what ?? "nil") + " in " + (pres.src ?? "nil"));
