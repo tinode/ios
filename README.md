@@ -33,7 +33,6 @@ The immediate goal is to have a basic end-to-end working application prototype t
 * Push notifications.
 * Attachments and inline images cannot be created yet.
 
-
 ## Dependencies
 
 ### SDK
@@ -44,8 +43,16 @@ The immediate goal is to have a basic end-to-end working application prototype t
 
 * https://github.com/stephencelis/SQLite.swift for local persistence
 * https://github.com/jrendel/SwiftKeychainWrapper
-* [GoogleService-Info.plist](https://firebase.google.com/docs/cloud-messaging/ios/client) for push notifications.
-In order to compile the app, app you need to download your own GoogleService-Info.plist and place it in ./Tinodios folder.
+* [GoogleService-Info.plist](https://firebase.google.com/docs/cloud-messaging/ios/client) for push notifications. See below.
+
+
+## Push notifications
+
+If you want to use the app with your own server and want push notification to work you have to set them up:
+
+* Register at https://firebase.google.com/, [set up the project](https://firebase.google.com/docs/ios/setup) if you have not done so already.
+* [Download your own](https://firebase.google.com/docs/cloud-messaging/ios/client) config file `GoogleService-Info.plist` and place it to the `Tinodios/` folder of your copy of the project. The config file contains keys specific to your Firebase/FCM registration. The project will not compile without the `GoogleService-Info.plist`.
+* Copy Google-provided server key to `tinode.conf`, see details [here](https://github.com/tinode/chat/blob/master/docs/faq.md#q-how-to-setup-fcm-push-notifications).
 
 
 ## Other
