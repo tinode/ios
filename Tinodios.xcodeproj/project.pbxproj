@@ -79,6 +79,7 @@
 		B0DF032D2282EE8A000F9492 /* SendMessageBar.xib in Resources */ = {isa = PBXBuildFile; fileRef = B0DF032C2282EE8A000F9492 /* SendMessageBar.xib */; };
 		B0DF032F2282FF46000F9492 /* SendMessageBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0DF032E2282FF46000F9492 /* SendMessageBar.swift */; };
 		B0DF03312283FFD8000F9492 /* PlaceholderTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0DF03302283FFD8000F9492 /* PlaceholderTextView.swift */; };
+		B0F98C8322E381C300444121 /* MessageMenuItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0F98C8222E381C300444121 /* MessageMenuItem.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -171,6 +172,7 @@
 		B0DF032C2282EE8A000F9492 /* SendMessageBar.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SendMessageBar.xib; sourceTree = "<group>"; };
 		B0DF032E2282FF46000F9492 /* SendMessageBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendMessageBar.swift; sourceTree = "<group>"; };
 		B0DF03302283FFD8000F9492 /* PlaceholderTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceholderTextView.swift; sourceTree = "<group>"; };
+		B0F98C8222E381C300444121 /* MessageMenuItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageMenuItem.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -327,6 +329,7 @@
 				0A6AC323229FB0ED0025A4EC /* PermissionsEditViewController.swift */,
 				0ADDBC8A2249F617000BD00D /* ChatListViewCell.swift */,
 				0AE7339B22C33FEF0089C8D8 /* ChatListViewCell.xib */,
+				B0F98C8222E381C300444121 /* MessageMenuItem.swift */,
 			);
 			path = widgets;
 			sourceTree = "<group>";
@@ -513,6 +516,7 @@
 				0A8A108321D4C78C00B90D73 /* TopicDb.swift in Sources */,
 				0A69D47F22A6552300769426 /* TopicInfoViewController.swift in Sources */,
 				0A0016E921E736CD00088188 /* MessagePresenter.swift in Sources */,
+				B0F98C8322E381C300444121 /* MessageMenuItem.swift in Sources */,
 				B0A612B1228C85C300569DFE /* MessageViewLayout.swift in Sources */,
 				B012599C229CEBE600688FCE /* SelectedMemberViewCell.swift in Sources */,
 				0AEE8BEE226456080022EC3F /* UiUtils.swift in Sources */,

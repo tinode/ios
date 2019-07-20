@@ -23,10 +23,11 @@ class MessageView: UICollectionView {
         // Reusable message cells
         register(MessageCell.self, forCellWithReuseIdentifier: String(describing: MessageCell.self))
 
-        // Gesture recognizer
+        // Gesture recognizer: short tap, long tap.
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTapGesture(_:)))
         tapGesture.delaysTouchesBegan = true
         addGestureRecognizer(tapGesture)
+        addGestureRecognizer(UILongPressGestureRecognizer(target: self, action: #selector(handleTapGesture(_:))))
     }
 
     required public init?(coder aDecoder: NSCoder) {
@@ -77,6 +78,20 @@ class MessageView: UICollectionView {
 }
 
 extension MessageView {
+
+    /// Handle long press gesture, return true when gestureRecognizer's touch point in `containerView`'s frame
+    override func gestureRecognizerShouldBegin(_ gesture: UIGestureRecognizer) -> Bool {
+        let touchLocation = gesture.location(in: self)
+        guard let indexPath = indexPathForItem(at: touchLocation) else { return false }
+
+        if gesture.isKind(of: UILongPressGestureRecognizer.self) {
+            print("long press at \(indexPath)")
+        }
+
+        print("gestureRecognizerShouldBegin at \(indexPath)")
+
+        return true
+    }
 
     /// Show notification that the conversation is empty
     public func toggleNoMessagesNote(on show: Bool) {

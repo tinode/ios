@@ -895,6 +895,10 @@ extension MessageViewController : MessageViewLayoutDelegate {
 // Methods for handling taps in messages.
 
 extension MessageViewController : MessageCellDelegate {
+    func didLongTap(in cell: MessageCell) {
+        createPopupMenu(in: cell)
+    }
+
     func didTapContent(in cell: MessageCell, url: URL?) {
         guard let url = url else { return }
 
@@ -927,18 +931,16 @@ extension MessageViewController : MessageCellDelegate {
 
     func didTapMessage(in cell: MessageCell) {
         print("didTapMessage")
-        createPopupMenu(in: cell)
     }
 
     func didTapAvatar(in cell: MessageCell) {
         print("didTapAvatar")
-        createPopupMenu(in: cell)
     }
 
     func createPopupMenu(in cell: MessageCell) {
         // Set up the shared UIMenuController
-        let copyMenuItem = UIMenuItem(title: "Copy", action: #selector(copyTapped))
-        let deleteMenuItem = UIMenuItem(title: "Delete", action: #selector(deleteTapped))
+        let copyMenuItem = MessageMenuItem(title: "Copy", action: #selector(copyMessageContent(sender:)), seqId: cell.seqId)
+        let deleteMenuItem = MessageMenuItem(title: "Delete", action: #selector(deleteMessage(sender:)), seqId: cell.seqId)
         UIMenuController.shared.menuItems = [copyMenuItem, deleteMenuItem]
 
         // Tell the menu controller the first responder's frame and its super view
@@ -948,12 +950,16 @@ extension MessageViewController : MessageCellDelegate {
         UIMenuController.shared.setMenuVisible(true, animated: true)
     }
 
-    @objc func copyTapped() {
-        print("copy tapped")
+    @objc func copyMessageContent(sender: UIMenuController) {
+        guard let menuItem = sender.menuItems?.first as? MessageMenuItem, menuItem.seqId > 0 else { return }
+
+        print("copy content of seqId: \(menuItem.seqId)")
     }
 
-    @objc func deleteTapped() {
-        print("delete tapped")
+    @objc func deleteMessage(sender: UIMenuController) {
+        guard let menuItem = sender.menuItems?.first as? MessageMenuItem, menuItem.seqId > 0 else { return }
+
+        print("delete message seqId: \(menuItem.seqId)")
     }
 
     func didTapOutsideContent(in cell: MessageCell) {
