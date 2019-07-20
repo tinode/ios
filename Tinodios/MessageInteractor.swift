@@ -318,6 +318,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                         success = true
                     }
                 })
+            self.loadMessages()
         }
     }
     override func onData(data: MsgServerData?) {
