@@ -136,7 +136,7 @@ class MessageViewController: UIViewController {
     // Messages to be displayed
     var messages: [Message] = []
     // For updating individual messages, we need:
-    // * Tinode sequence id -> message offset.
+    // * Tinode sequence id -> messages offset.
     var messageSeqIdIndex: [Int:Int] = [:]
     // * Database message id -> message offset.
     var messageDbIdIndex: [Int64:Int] = [:]
@@ -951,9 +951,18 @@ extension MessageViewController : MessageCellDelegate {
     }
 
     @objc func copyMessageContent(sender: UIMenuController) {
-        guard let menuItem = sender.menuItems?.first as? MessageMenuItem, menuItem.seqId > 0 else { return }
+        guard let menuItem = sender.menuItems?.first as? MessageMenuItem, menuItem.seqId > 0, let msgIndex = messageSeqIdIndex[menuItem.seqId] else { return }
 
-        print("copy content of seqId: \(menuItem.seqId)")
+        let msg = messages[msgIndex]
+
+        var senderName: String?
+        if let sub = topic?.getSubscription(for: msg.from), let pub = sub.pub {
+            senderName = pub.fn
+        }
+        senderName = senderName ?? "Unknown \(msg.from ?? "none")"
+        UIPasteboard.general.string = "[\(senderName!)]: \(msg.content?.string ?? ""); \(RelativeDateFormatter.shared.shortDate(from: msg.ts))"
+
+        print("text copied: \(UIPasteboard.general.string ?? "nil")")
     }
 
     @objc func deleteMessage(sender: UIMenuController) {

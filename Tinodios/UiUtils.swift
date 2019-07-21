@@ -360,40 +360,6 @@ extension UIImage {
     }
 }
 
-class RelativeDateFormatter {
-    // DateFormatter is thread safe, OK to keep a copy.
-    static let shared = RelativeDateFormatter()
-
-    private let formatter = DateFormatter()
-
-    func dateOnly(from date: Date?, style: DateFormatter.Style = .medium) -> String {
-        guard let date = date else { return "Never ??:??" }
-
-        formatter.timeStyle = .none
-        formatter.dateStyle = style
-        switch true {
-        case Calendar.current.isDateInToday(date) || Calendar.current.isDateInYesterday(date):
-            // "today", "yesterday"
-            formatter.doesRelativeDateFormatting = true
-        case Calendar.current.isDate(date, equalTo: Date(), toGranularity: .weekOfYear):
-            // day of the week "Wednesday", "Friday" etc
-            formatter.dateFormat = "EEEE"
-        default:
-            // All other dates: "Mar 15, 2019"
-            break
-        }
-        return formatter.string(from: date)
-    }
-
-    func timeOnly(from date: Date?, style: DateFormatter.Style = .short) -> String {
-        guard let date = date else { return "??:??" }
-
-        formatter.timeStyle = style
-        formatter.dateStyle = .none
-        return formatter.string(from: date)
-    }
-}
-
 extension UIColor {
     convenience init(fromHexCode code: UInt) {
         let blue = code & 0xff
