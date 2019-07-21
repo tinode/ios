@@ -108,9 +108,12 @@ class ChatListViewController: UITableViewController, ChatListDisplayLogic {
         self.interactor?.attachToMeTopic()
         self.interactor?.loadAndPresentTopics()
     }
-    override func viewDidDisappear(_ animated: Bool) {
-        self.interactor?.cleanup()
-    }
+
+    // Continue listening on meTopic even when the VC isn't visible.
+    // TODO: remote this.
+    // override func viewDidDisappear(_ animated: Bool) {
+    //     self.interactor?.cleanup()
+    // }
 
     func displayLoginView() {
         UiUtils.routeToLoginVC()
