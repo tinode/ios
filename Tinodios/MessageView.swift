@@ -38,12 +38,13 @@ class MessageView: UICollectionView {
         self.init(frame: .zero, collectionViewLayout: MessageViewLayout())
     }
 
-    // MARK: - Methods
+    /// MARK: - Methods
 
     @objc
     func handleTapGesture(_ gesture: UIGestureRecognizer) {
         guard gesture.state == .ended else { return }
 
+        // FIXME: this check is probably redundant. It's already checked at gestureRecognizerShouldBegin.
         let touchLocation = gesture.location(in: self)
         guard let indexPath = indexPathForItem(at: touchLocation) else { return }
 
@@ -79,18 +80,9 @@ class MessageView: UICollectionView {
 
 extension MessageView {
 
-    /// Handle long press gesture, return true when gestureRecognizer's touch point in `containerView`'s frame
+    /// Handle gesture, return true when gestureRecognizer's touch point is in a cell.
     override func gestureRecognizerShouldBegin(_ gesture: UIGestureRecognizer) -> Bool {
-        let touchLocation = gesture.location(in: self)
-        guard let indexPath = indexPathForItem(at: touchLocation) else { return false }
-
-        if gesture.isKind(of: UILongPressGestureRecognizer.self) {
-            print("long press at \(indexPath)")
-        }
-
-        print("gestureRecognizerShouldBegin at \(indexPath)")
-
-        return true
+        return indexPathForItem(at: gesture.location(in: self)) != nil
     }
 
     /// Show notification that the conversation is empty

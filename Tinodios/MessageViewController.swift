@@ -961,14 +961,11 @@ extension MessageViewController : MessageCellDelegate {
         }
         senderName = senderName ?? "Unknown \(msg.from ?? "none")"
         UIPasteboard.general.string = "[\(senderName!)]: \(msg.content?.string ?? ""); \(RelativeDateFormatter.shared.shortDate(from: msg.ts))"
-
-        print("text copied: \(UIPasteboard.general.string ?? "nil")")
     }
 
     @objc func deleteMessage(sender: UIMenuController) {
         guard let menuItem = sender.menuItems?.first as? MessageMenuItem, menuItem.seqId > 0 else { return }
-
-        print("delete message seqId: \(menuItem.seqId)")
+        interactor?.deleteMessage(seqId: menuItem.seqId)
     }
 
     func didTapOutsideContent(in cell: MessageCell) {

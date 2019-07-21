@@ -32,6 +32,7 @@ protocol MessageDataStore {
     func setup(topicName: String?) -> Bool
     func loadMessages()
     func loadNextPage()
+    func deleteMessage(seqId: Int)
 } 
 
 class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, MessageDataStore {
@@ -207,6 +208,15 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
             }
         } else {
             self.presenter?.endRefresh()
+        }
+    }
+    func deleteMessage(seqId: Int) {
+        do {
+            try topic?.delMessage(id: seqId, hard: false)?.thenCatch(onFailure: UiUtils.ToastFailureHandler)
+        } catch TinodeError.notConnected(_) {
+            UiUtils.showToast(message: "You are offline")
+        } catch {
+            UiUtils.showToast(message: "Action failed: \(error)")
         }
     }
 

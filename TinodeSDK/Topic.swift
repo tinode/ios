@@ -1179,6 +1179,7 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
         }
         return nil
     }
+
     private func delMessages(from fromId: Int, to toId: Int, hard: Bool) -> PromisedReply<ServerMessage>? {
         store?.msgMarkToDelete(topic: self, from: fromId, to: toId, markAsHard: hard)
         if attached {
@@ -1199,9 +1200,15 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
         }
         return PromisedReply<ServerMessage>(error: TinodeError.notConnected("Tinode not connected."))
     }
+
     public func delMessages(hard: Bool) -> PromisedReply<ServerMessage>? {
         return delMessages(from: 0, to: (self.seq ?? 0) + 1, hard: hard)
     }
+
+    public func delMessage(id: Int, hard: Bool)  -> PromisedReply<ServerMessage>? {
+        return delMessages(from: id, to: 0, hard: hard)
+    }
+
     public func syncOne(msgId: Int64) -> PromisedReply<ServerMessage>? {
         guard let m = store?.getMessageById(topic: self, dbMessageId: msgId) else {
             return PromisedReply<ServerMessage>(value: ServerMessage())
