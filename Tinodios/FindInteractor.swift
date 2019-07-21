@@ -12,9 +12,14 @@ protocol FindBusinessLogic: class {
     var fndTopic: DefaultFndTopic? { get }
     func loadAndPresentContacts(searchQuery: String?)
     func updateAndPresentRemoteContacts()
+    func saveRemoteTopic(from remoteContact: RemoteContactHolder) -> Bool
     func setup()
     func cleanup()
     func attachToFndTopic()
+}
+
+class RemoteContactHolder: ContactHolder {
+    var sub: Subscription<VCard, Array<String>>? = nil
 }
 
 class FindInteractor: FindBusinessLogic {
@@ -40,7 +45,7 @@ class FindInteractor: FindBusinessLogic {
     private var fndListener: FindInteractor.FndListener?
     // Contacts returned by the server
     // in response to a search request.
-    private var remoteContacts: [ContactHolder]?
+    private var remoteContacts: [RemoteContactHolder]?
     private var contactsManager = ContactsManager()
 
     func setup() {
@@ -73,7 +78,9 @@ class FindInteractor: FindBusinessLogic {
     func updateAndPresentRemoteContacts() {
         if let subs = fndTopic?.getSubscriptions() {
             self.remoteContacts = subs.map { sub in
-                return ContactHolder(displayName: sub.pub?.fn, image: sub.pub?.photo?.image(), uniqueId: sub.uniqueId, subtitle: sub.priv?.joined(separator: ", "))
+                let contact = RemoteContactHolder(displayName: sub.pub?.fn, image: sub.pub?.photo?.image(), uniqueId: sub.uniqueId, subtitle: sub.priv?.joined(separator: ", "))
+                contact.sub = sub
+                return contact
             }
         } else {
             self.remoteContacts?.removeAll()
@@ -111,5 +118,23 @@ class FindInteractor: FindBusinessLogic {
             }
             self.presenter?.presentLocalContacts(contacts: contacts)
         }
+    }
+
+    func saveRemoteTopic(from remoteContact: RemoteContactHolder) -> Bool {
+        guard let topicName = remoteContact.uniqueId, let sub = remoteContact.sub else {
+            return false
+        }
+        let tinode = Cache.getTinode()
+        var topic: DefaultComTopic?
+        if !tinode.isTopicTracked(topicName: topicName) {
+            topic = tinode.newTopic(for: topicName, with: nil) as? DefaultComTopic
+            topic?.pub = sub.pub
+        } else {
+            topic = tinode.getTopic(topicName: topicName) as? DefaultComTopic
+        }
+        guard let topicUnwrapped = topic else { return false }
+        topicUnwrapped.persist(true)
+        contactsManager.processSubscription(sub: sub)
+        return true
     }
 }

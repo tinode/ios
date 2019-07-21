@@ -10,14 +10,17 @@ import MessageUI
 
 protocol FindDisplayLogic: class {
     func displayLocalContacts(contacts: [ContactHolder])
-    func displayRemoteContacts(contacts: [ContactHolder])
+    func displayRemoteContacts(contacts: [RemoteContactHolder])
 }
 
 class FindViewController: UITableViewController, FindDisplayLogic {
+    static let kLocalContactsSection = 0
+    static let kRemoteContactsSection = 1
+
     @IBOutlet weak var inviteActionButtonItem: UIBarButtonItem!
     var interactor: FindBusinessLogic?
     var localContacts: [ContactHolder] = []
-    var remoteContacts: [ContactHolder] = []
+    var remoteContacts: [RemoteContactHolder] = []
     var searchController: UISearchController!
     var pendingSearchRequest: DispatchWorkItem? = nil
 
@@ -59,7 +62,7 @@ class FindViewController: UITableViewController, FindDisplayLogic {
             self.tableView.reloadData()
         }
     }
-    func displayRemoteContacts(contacts newContacts: [ContactHolder]) {
+    func displayRemoteContacts(contacts newContacts: [RemoteContactHolder]) {
         DispatchQueue.main.async {
             self.remoteContacts = newContacts
             self.tableView.reloadData()
@@ -127,15 +130,15 @@ class FindViewController: UITableViewController, FindDisplayLogic {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
-        case 0: return localContacts.isEmpty ? 1 : localContacts.count
-        case 1: return remoteContacts.isEmpty ? 1 : remoteContacts.count
+        case FindViewController.kLocalContactsSection: return localContacts.isEmpty ? 1 : localContacts.count
+        case FindViewController.kRemoteContactsSection: return remoteContacts.isEmpty ? 1 : remoteContacts.count
         default: return 0
         }
     }
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch section {
-        case 0: return "Local Contacts"
-        case 1: return "Directory"
+        case FindViewController.kLocalContactsSection: return "Local Contacts"
+        case FindViewController.kRemoteContactsSection: return "Directory"
         default: return nil
         }
     }
@@ -152,7 +155,7 @@ class FindViewController: UITableViewController, FindDisplayLogic {
             cell.delegate = self
 
             // Configure the cell...
-            let contact = indexPath.section == 0 ? localContacts[indexPath.row] : remoteContacts[indexPath.row]
+            let contact = indexPath.section == FindViewController.kLocalContactsSection ? localContacts[indexPath.row] : remoteContacts[indexPath.row]
             cell.avatar.set(icon: contact.image, title: contact.displayName, id: contact.uniqueId)
             cell.title.text = contact.displayName
             cell.title.sizeToFit()
@@ -165,16 +168,16 @@ class FindViewController: UITableViewController, FindDisplayLogic {
 
     private func isSectionEmpty(section: Int) -> Bool {
         switch section {
-        case 0: return localContacts.isEmpty
-        case 1: return remoteContacts.isEmpty
+        case FindViewController.kLocalContactsSection: return localContacts.isEmpty
+        case FindViewController.kRemoteContactsSection: return remoteContacts.isEmpty
         default: return true
         }
     }
 
     func getUniqueId(for path: IndexPath) -> String? {
         switch path.section {
-        case 0: return self.localContacts[path.row].uniqueId
-        case 1: return self.remoteContacts[path.row].uniqueId
+        case FindViewController.kLocalContactsSection: return self.localContacts[path.row].uniqueId
+        case FindViewController.kRemoteContactsSection: return self.remoteContacts[path.row].uniqueId
         default: return nil
         }
     }
@@ -234,6 +237,13 @@ extension FindViewController: ContactViewCellDelegate {
     func selected(from cell: UITableViewCell) {
         guard let indexPath = tableView.indexPathForSelectedRow else { return }
         guard let id = getUniqueId(for: indexPath) else { return }
+        if indexPath.section == FindViewController.kRemoteContactsSection {
+            // Save topic and user.
+            guard interactor?.saveRemoteTopic(from: remoteContacts[indexPath.row]) ?? false else {
+                UiUtils.showToast(message: "Failed to save topic and contact info.")
+                return
+            }
+        }
 
         // Make sure there are no pending search requests.
         pendingSearchRequest?.cancel()

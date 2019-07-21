@@ -9,7 +9,7 @@ import Foundation
 
 protocol FindPresentationLogic {
     func presentLocalContacts(contacts: [ContactHolder])
-    func presentRemoteContacts(contacts: [ContactHolder])
+    func presentRemoteContacts(contacts: [RemoteContactHolder])
 }
 
 class FindPresenter: FindPresentationLogic {
@@ -18,7 +18,7 @@ class FindPresenter: FindPresentationLogic {
     func presentLocalContacts(contacts: [ContactHolder]) {
         viewController?.displayLocalContacts(contacts: contacts)
     }
-    func presentRemoteContacts(contacts: [ContactHolder]) {
+    func presentRemoteContacts(contacts: [RemoteContactHolder]) {
         viewController?.displayRemoteContacts(contacts: contacts)
     }
 }
