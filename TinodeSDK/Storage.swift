@@ -43,9 +43,7 @@ extension Message {
             self.msgId == other.msgId &&
             self.seqId == other.seqId &&
             self.ts == other.ts &&
-            self.from == other.from &&
-            self.status == other.status &&
-            self.content == other.content
+            self.status == other.status
     }
 }
 

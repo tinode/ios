@@ -449,6 +449,9 @@ extension MessageViewController: MessageDisplayLogic {
                     // Refresh the following item.
                     refresh.append(index + 1)
                 }
+                if index < newData.count {
+                    refresh.append(index)
+                }
             }
             // Ensure uniqueness of values. No need to reload newly inserted values.
             refresh = Array(Set(refresh).subtracting(Set(diff.inserted)))
