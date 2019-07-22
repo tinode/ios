@@ -138,10 +138,8 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                 onSuccess: { [weak self] msg in
                     self?.loadMessages()
                     return nil
-                }, onFailure: { err in
-                    // todo: display a UI toast.
-                    return nil
-                })
+                },
+                onFailure: UiUtils.ToastFailureHandler)
         } catch TinodeError.notConnected(let errMsg) {
             print("sendMessage -- not connected \(errMsg)")
             return false
@@ -212,7 +210,13 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
     }
     func deleteMessage(seqId: Int) {
         do {
-            try topic?.delMessage(id: seqId, hard: false)?.thenCatch(onFailure: UiUtils.ToastFailureHandler)
+            try topic?.delMessage(id: seqId, hard: false)?.then(
+                onSuccess: { [weak self] msg in
+                    self?.loadMessages()
+                    return nil
+                },
+                onFailure: UiUtils.ToastFailureHandler)
+            self.loadMessages()
         } catch TinodeError.notConnected(_) {
             UiUtils.showToast(message: "You are offline")
         } catch {

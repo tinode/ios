@@ -453,6 +453,8 @@ extension MessageViewController: MessageDisplayLogic {
             // Ensure uniqueness of values. No need to reload newly inserted values.
             refresh = Array(Set(refresh).subtracting(Set(diff.inserted)))
 
+            print("Message diff: \(diff); refresh: \(refresh)")
+
             collectionView.performBatchUpdates({ () -> Void in
                 self.messages = newData
                 if diff.removed.count > 0 {
@@ -461,9 +463,9 @@ extension MessageViewController: MessageDisplayLogic {
                 if diff.inserted.count > 0 {
                     collectionView.insertItems(at: diff.inserted.map { IndexPath(item: $0, section: 0) })
                 }
-                if refresh.count > 0 {
-                    collectionView.reloadItems(at: refresh.map { IndexPath(item: $0, section: 0) })
-                }
+                //if refresh.count > 0 {
+                    // collectionView.reloadItems(at: refresh.map { IndexPath(item: $0, section: 0) })
+                //}
                 }, completion: nil)
         }
         collectionView.layoutIfNeeded()
