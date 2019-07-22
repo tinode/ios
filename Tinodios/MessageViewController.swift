@@ -951,7 +951,7 @@ extension MessageViewController : MessageCellDelegate {
         UIMenuController.shared.menuItems = [copyMenuItem, deleteMenuItem]
 
         // Tell the menu controller the first responder's frame and its super view
-        UIMenuController.shared.setTargetRect(cell.frame, in: self.collectionView)
+        UIMenuController.shared.setTargetRect(cell.content.frame, in: cell.containerView)
 
         // Animate the menu onto view
         UIMenuController.shared.setMenuVisible(true, animated: true)
