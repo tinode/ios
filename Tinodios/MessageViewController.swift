@@ -454,9 +454,9 @@ extension MessageViewController: MessageDisplayLogic {
                 }
             }
             // Ensure uniqueness of values. No need to reload newly inserted values.
-            refresh = Array(Set(refresh).subtracting(Set(diff.inserted)))
-
-            print("Message diff: \(diff); refresh: \(refresh)")
+            // The app will crash if the same index is marked as removed and refreshed. Which seems
+            // to be an Apple bug because removed index is against the old array, refreshed against the new.
+            refresh = Array(Set(refresh).subtracting(Set(diff.inserted)).subtracting(Set(diff.removed)))
 
             collectionView.performBatchUpdates({ () -> Void in
                 self.messages = newData
@@ -466,9 +466,9 @@ extension MessageViewController: MessageDisplayLogic {
                 if diff.inserted.count > 0 {
                     collectionView.insertItems(at: diff.inserted.map { IndexPath(item: $0, section: 0) })
                 }
-                //if refresh.count > 0 {
-                    // collectionView.reloadItems(at: refresh.map { IndexPath(item: $0, section: 0) })
-                //}
+                if refresh.count > 0 {
+                    collectionView.reloadItems(at: refresh.map { IndexPath(item: $0, section: 0) })
+                }
                 }, completion: nil)
         }
         collectionView.layoutIfNeeded()
@@ -934,10 +934,12 @@ extension MessageViewController : MessageCellDelegate {
         }
     }
 
+    // TODO: remove as unused
     func didTapMessage(in cell: MessageCell) {
         print("didTapMessage")
     }
 
+    // TODO: remove as unused or go to user's profile (p2p topic?)
     func didTapAvatar(in cell: MessageCell) {
         print("didTapAvatar")
     }
