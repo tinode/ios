@@ -1320,13 +1320,13 @@ open class MeTopic<DP: Codable>: Topic<DP, PrivateType, DP, PrivateType> {
                         self.store?.setRecv(topic: topic, recv: topic.read!)
                     }
                 }
-            case .kDel: // messages deleted
-                // TODO(gene): add handling for del
-                print("TODO: handle deleted messages in 'me' topic")
             case .kGone:
                 // If topic is unknown (==nil), then we don't care to unregister it.
                 topic.persist(false);
                 tinode!.stopTrackingTopic(topicName: pres.src!);
+            case .kDel: // messages deleted
+                // Explicitly ignored: 'me' topic has no messages.
+                break
             default:
                 print("Unrecognized presence update " + (pres.what ?? "nil"))
             }

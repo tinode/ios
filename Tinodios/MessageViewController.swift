@@ -38,7 +38,7 @@ class MessageViewController: UIViewController {
         // Horizontal space between delivery marker and timestamp
         static let kTimestampPadding: CGFloat = 0
         // Approximate width of the timestamp
-        static let kTimestampWidth: CGFloat = 48
+        static let kTimestampWidth: CGFloat = 50
         // Progress bar paddings.
         static let kProgressBarLeftPadding: CGFloat = 10
         static let kProgressBarRightPadding: CGFloat = 25
@@ -68,7 +68,7 @@ class MessageViewController: UIViewController {
         static let kVerticalCellSpacing: CGFloat = 2
         // Additional vertical spacing between messages from different users in P2P topics.
         static let kAdditionalP2PVerticalCellSpacing: CGFloat = 4
-        static let kMinimumCellWidth: CGFloat = 90
+        static let kMinimumCellWidth: CGFloat = 94
         // This is the space between the other side of the message and the edge of screen.
         // I.e. for incoming messages the space between the message and the *right* edge, for
         // outfoing between the message and the left edge.
