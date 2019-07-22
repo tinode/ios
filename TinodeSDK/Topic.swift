@@ -762,7 +762,8 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
         if let s = store {
             for range in delseq {
                 let lo = range.low ?? 0
-                s.msgDelete(topic: self, delete: clear, deleteFrom: lo, deleteTo: range.hi ?? (lo + 1))
+                // This generates a 'BETWEEN lo AND hi' SQL query. BETWEEN in SQLite is inclusive-inclusive.
+                s.msgDelete(topic: self, delete: clear, deleteFrom: lo, deleteTo: range.hi ?? lo)
             }
         }
         self.maxDel = clear
