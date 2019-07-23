@@ -27,7 +27,7 @@ class SendMessageBar: UIView {
 
     @IBOutlet weak var attachButton: UIButton!
     @IBOutlet weak var sendButton: UIButton!
-    @IBOutlet weak var inputField: UITextView!
+    @IBOutlet weak var inputField: PlaceholderTextView!
     @IBOutlet weak var inputFieldHeight: NSLayoutConstraint!
 
     // MARK: Properties

@@ -456,7 +456,7 @@ extension MessageViewController: MessageDisplayLogic {
             // Ensure uniqueness of values. No need to reload newly inserted values.
             // The app will crash if the same index is marked as removed and refreshed. Which seems
             // to be an Apple bug because removed index is against the old array, refreshed against the new.
-            refresh = Array(Set(refresh).subtracting(Set(diff.inserted)).subtracting(Set(diff.removed)))
+            refresh = Array(Set(refresh).subtracting(Set(diff.inserted)))
 
             collectionView.performBatchUpdates({ () -> Void in
                 self.messages = newData
@@ -466,10 +466,9 @@ extension MessageViewController: MessageDisplayLogic {
                 if diff.inserted.count > 0 {
                     collectionView.insertItems(at: diff.inserted.map { IndexPath(item: $0, section: 0) })
                 }
-                if refresh.count > 0 {
-                    collectionView.reloadItems(at: refresh.map { IndexPath(item: $0, section: 0) })
-                }
-                }, completion: nil)
+            }, completion: { (Bool) -> Void in
+                self.collectionView.reloadItems(at: refresh.map { IndexPath(item: $0, section: 0) })
+            })
         }
         collectionView.layoutIfNeeded()
         collectionView.scrollToBottom()
@@ -945,6 +944,13 @@ extension MessageViewController : MessageCellDelegate {
     }
 
     func createPopupMenu(in cell: MessageCell) {
+        // Make cell the first responder otherwise menu will show wrong items.
+        if sendMessageBar.inputField.isFirstResponder {
+            sendMessageBar.inputField.nextResponderOverride = cell
+        } else {
+            cell.becomeFirstResponder()
+        }
+
         // Set up the shared UIMenuController
         let copyMenuItem = MessageMenuItem(title: "Copy", action: #selector(copyMessageContent(sender:)), seqId: cell.seqId)
         let deleteMenuItem = MessageMenuItem(title: "Delete", action: #selector(deleteMessage(sender:)), seqId: cell.seqId)
@@ -955,6 +961,15 @@ extension MessageViewController : MessageCellDelegate {
 
         // Animate the menu onto view
         UIMenuController.shared.setMenuVisible(true, animated: true)
+
+        // Capture menu dismissal
+        NotificationCenter.default.addObserver(self, selector: #selector(willHidePopupMenu), name: UIMenuController.willHideMenuNotification, object: nil)
+    }
+
+    @objc func willHidePopupMenu() {
+        sendMessageBar.inputField.nextResponderOverride = nil
+        UIMenuController.shared.menuItems = nil
+        NotificationCenter.default.removeObserver(self, name: UIMenuController.willHideMenuNotification, object: nil)
     }
 
     @objc func copyMessageContent(sender: UIMenuController) {
@@ -976,7 +991,7 @@ extension MessageViewController : MessageCellDelegate {
     }
 
     func didTapOutsideContent(in cell: MessageCell) {
-        self.sendMessageBar.inputField.resignFirstResponder()
+        _ = self.sendMessageBar.inputField.resignFirstResponder()
     }
 
     func didTapCancelUpload(in cell: MessageCell) {
