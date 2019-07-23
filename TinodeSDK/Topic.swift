@@ -149,7 +149,7 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
             return self
         }
         public func withLaterDel(limit: Int?) -> MetaGetBuilder {
-            return withDel(since: topic.maxDel + 1, limit: limit);
+            return withDel(since: topic.maxDel + 1, limit: limit)
         }
         public func withDel() -> MetaGetBuilder {
             return withLaterDel(limit: nil)
@@ -398,7 +398,7 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
         return  subs.reduce(0, { (count, tuple) -> Int in
             let (key, sub) = tuple
             if key != me && ((read ? sub.read : sub.recv) ?? Int.max) >= seq {
-                return count + 1;
+                return count + 1
             }
             return count
         } )
@@ -1315,7 +1315,7 @@ open class MeTopic<DP: Codable>: Topic<DP, PrivateType, DP, PrivateType> {
             case .kRead: // user's other session marked some messages as read
                 if (topic.read ?? -1) < (pres.seq ?? -1) {
                     topic.read = pres.seq
-                    self.store?.setRead(topic: topic, read: topic.read!);
+                    self.store?.setRead(topic: topic, read: topic.read!)
                     if (topic.recv ?? -1) < (topic.read ?? -1) {
                         topic.recv = topic.read
                         self.store?.setRecv(topic: topic, recv: topic.read!)
@@ -1323,8 +1323,8 @@ open class MeTopic<DP: Codable>: Topic<DP, PrivateType, DP, PrivateType> {
                 }
             case .kGone:
                 // If topic is unknown (==nil), then we don't care to unregister it.
-                topic.persist(false);
-                tinode!.stopTrackingTopic(topicName: pres.src!);
+                topic.persist(false)
+                tinode!.stopTrackingTopic(topicName: pres.src!)
             case .kDel: // messages deleted
                 // Explicitly ignored: 'me' topic has no messages.
                 break
@@ -1338,7 +1338,7 @@ open class MeTopic<DP: Codable>: Topic<DP, PrivateType, DP, PrivateType> {
                 let acs = Acs()
                 acs.update(from: pres.dacs)
                 if acs.isModeDefined {
-                    getMeta(query: getMetaGetBuilder().withSub(user: pres.src).build());
+                    getMeta(query: getMetaGetBuilder().withSub(user: pres.src).build())
                 } else {
                     print("Unexpected access mode in presence: \(String(describing: pres.dacs))")
                 }
@@ -1347,7 +1347,7 @@ open class MeTopic<DP: Codable>: Topic<DP, PrivateType, DP, PrivateType> {
                 getMeta(query: getMetaGetBuilder().withTags().build())
             default:
                 print("Topic not found in me.routePres: " +
-                    (pres.what ?? "nil") + " in " + (pres.src ?? "nil"));
+                    (pres.what ?? "nil") + " in " + (pres.src ?? "nil"))
             }
         }
 
