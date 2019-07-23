@@ -289,17 +289,17 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                 filename: filename, mimetype: mimeType, d: data,
                 topicId: self.topicName!, msgId: msgId,
                 progressCallback: { progress in
-                    DispatchQueue.main.async {
-                        self.presenter?.updateProgress(forMsgId: msgId, progress: progress)
+                    DispatchQueue.main.async { [weak self] in
+                        self?.presenter?.updateProgress(forMsgId: msgId, progress: progress)
                     }
                 },
-                completionCallback: { (serverMessage, error) in
+                completionCallback: { [weak self] (serverMessage, error) in
                     var success = false
                     defer {
                         if !success {
                             _ = topic.store?.msgDiscard(topic: topic, dbMessageId: msgId)
                         }
-                        self.loadMessages()
+                        self?.loadMessages()
                     }
                     guard error == nil else {
                         DispatchQueue.main.async {

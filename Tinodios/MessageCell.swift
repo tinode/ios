@@ -133,11 +133,6 @@ class MessageCell: UICollectionViewCell {
         cancelUploadButton.isHidden = false
         containerView.bringSubviewToFront(progressBar)
         containerView.bringSubviewToFront(cancelUploadButton)
-
-        cancelUploadButton.addTarget(
-            self,
-            action: #selector(MessageCell.cancelUploadClicked(sender:)),
-            for: .touchUpInside)
     }
 
     override func prepareForReuse() {
@@ -156,6 +151,8 @@ class MessageCell: UICollectionViewCell {
         let touchLocation = gesture.location(in: self)
 
         switch true {
+        case cancelUploadButton.frame.contains(convert(touchLocation, to: containerView)):
+            delegate?.didTapCancelUpload(in: self)
         case content.frame.contains(convert(touchLocation, to: content)):
             let url = content.getURLForTap(convert(touchLocation, to: content))
             delegate?.didTapContent(in: self, url: url)
@@ -175,10 +172,6 @@ class MessageCell: UICollectionViewCell {
         let touchPoint = gestureRecognizer.location(in: self)
         guard gestureRecognizer.isKind(of: UILongPressGestureRecognizer.self) else { return false }
         return containerView.frame.contains(touchPoint)
-    }
-
-    @objc func cancelUploadClicked(sender: UIButton!) {
-        delegate?.didTapCancelUpload(in: self)
     }
 }
 
