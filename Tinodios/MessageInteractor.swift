@@ -290,6 +290,19 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
             UiUtils.showToast(message: "Operation failed \(error)")
         }
     }
+    static private func existingInteractor(for topicName: String?) -> MessageInteractor? {
+        // Must be called on main thread.
+        guard let topicName = topicName else { return nil }
+        guard let window = UIApplication.shared.keyWindow, let navVC = window.rootViewController as? UINavigationController else {
+            return nil
+        }
+        for controller in navVC.viewControllers {
+            if let messageVC = controller as? MessageViewController, messageVC.topicName == topicName {
+                return messageVC.interactor as? MessageInteractor
+            }
+        }
+        return nil
+    }
     func uploadFile(filename: String?, refurl: URL?, mimeType: String?, data: Data?) {
         guard let filename = filename, let mimeType = mimeType, let data = data, let topic = topic else { return }
         guard let content = try? Drafty().attachFile(mime: mimeType,
@@ -304,35 +317,37 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                 topicId: self.topicName!, msgId: msgId,
                 progressCallback: { [weak self] progress in
                     DispatchQueue.main.async {
-                        self?.presenter?.updateProgress(forMsgId: msgId, progress: progress)
+                        let interactor = self ?? MessageInteractor.existingInteractor(for: topic.name)
+                        interactor?.presenter?.updateProgress(forMsgId: msgId, progress: progress)
                     }
                 },
                 completionCallback: { [weak self] (serverMessage, error) in
-                    var success = false
-                    defer {
-                        if !success {
-                            _ = topic.store?.msgDiscard(topic: topic, dbMessageId: msgId)
+                    DispatchQueue.main.async {
+                        let interactor = self ?? MessageInteractor.existingInteractor(for: topic.name)
+                        var success = false
+                        defer {
+                            if !success {
+                                _ = topic.store?.msgDiscard(topic: topic, dbMessageId: msgId)
+                            }
+                            interactor?.loadMessages()
                         }
-                        self?.loadMessages()
-                    }
-                    guard error == nil else {
-                        DispatchQueue.main.async {
+                        guard error == nil else {
                             UiUtils.showToast(message: error!.localizedDescription)
+                            return
                         }
-                        return
-                    }
-                    guard let ctrl = serverMessage?.ctrl, ctrl.code == 200, let serverUrl = ctrl.getStringParam(for: "url") else {
-                        return
-                    }
-                    if let srvUrl = URL(string: serverUrl), let content = try? Drafty().attachFile(
-                        mime: mimeType, fname: filename,
-                        refurl: srvUrl, size: data.count) {
-                        _ = topic.store?.msgReady(topic: topic, dbMessageId: msgId, data: content)
-                        _ = try? topic.syncOne(msgId: msgId)?.thenFinally(finally: {
-                            self?.loadMessages()
-                            return nil
-                        })
-                        success = true
+                        guard let ctrl = serverMessage?.ctrl, ctrl.code == 200, let serverUrl = ctrl.getStringParam(for: "url") else {
+                            return
+                        }
+                        if let srvUrl = URL(string: serverUrl), let content = try? Drafty().attachFile(
+                            mime: mimeType, fname: filename,
+                            refurl: srvUrl, size: data.count) {
+                            _ = topic.store?.msgReady(topic: topic, dbMessageId: msgId, data: content)
+                            _ = try? topic.syncOne(msgId: msgId)?.thenFinally(finally: {
+                                interactor?.loadMessages()
+                                return nil
+                            })
+                            success = true
+                        }
                     }
                 })
             self.loadMessages()
