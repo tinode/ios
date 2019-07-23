@@ -314,7 +314,10 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                         mime: mimeType, fname: filename,
                         refurl: srvUrl, size: data.count) {
                         _ = topic.store?.msgReady(topic: topic, dbMessageId: msgId, data: content)
-                        _ = topic.syncOne(msgId: msgId)
+                        _ = try? topic.syncOne(msgId: msgId)?.thenFinally(finally: {
+                            self?.loadMessages()
+                            return nil
+                        })
                         success = true
                     }
                 })
