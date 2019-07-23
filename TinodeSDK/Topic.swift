@@ -452,16 +452,6 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
     private func setName(name: String) {
         self.name = name
     }
-    /*
-    private func serializeObject<T: Codable>(t: T) -> String? {
-        guard let jsonData = try? Tinode.jsonEncoder.encode(t) else {
-            return nil
-        }
-        let typeName = String(describing: T.self)
-        let json = String(decoding: jsonData, as: UTF8.self)
-        return [typeName, json].joined(separator: ";")
-    }
-    */
     public func serializePub() -> String? {
         guard let p = pub else { return nil }
         return Tinode.serializeObject(p)
@@ -470,17 +460,6 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
         guard let p = priv else { return nil }
         return Tinode.serializeObject(p)
     }
-    /*
-    private func deserializeObject<T: Codable>(from data: String?) -> T? {
-        guard let parts = data?.split(separator: ";", maxSplits: 1, omittingEmptySubsequences: true), parts.count == 2 else {
-            return nil
-        }
-        guard parts[0] == String(describing: T.self), let d = String(parts[1]).data(using: .utf8) else {
-            return nil
-        }
-        return try? Tinode.jsonDecoder.decode(T.self, from: d)
-    }
-    */
     public func deserializePub(from data: String?) -> Bool {
         if let p: DP = Tinode.deserializeObject(from: data) {
             description?.pub = p
@@ -646,14 +625,6 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
         if description?.merge(desc: desc) ?? false {
             store?.topicUpdate(topic: self)
         }
-        /*
-        if description?.merge(sub: sub) ?? false {
-            store?.topicUpdate(topic: self)
-        }
-        if sub.online != nil {
-            self.online = sub.online!
-        }
-        */
     }
     fileprivate func update(tags: [String]) {
         self.tags = tags
@@ -1474,6 +1445,14 @@ public class ComTopic<DP: Codable>: Topic<DP, PrivateType, DP, PrivateType> {
             guard isP2PType else { return nil }
             return self.getSubscription(for: self.name)
         }
+    }
+
+    override public func getSubscription(for key: String?) -> Subscription<DP, PrivateType>? {
+        guard let sub = super.getSubscription(for: key) else { return nil }
+        if isP2PType && sub.pub == nil {
+            sub.pub = self.name == key ? self.pub : tinode?.getMeTopic()?.pub as? DP
+        }
+        return sub
     }
 
     public func updateArchived(archived: Bool) -> PromisedReply<ServerMessage>? {
