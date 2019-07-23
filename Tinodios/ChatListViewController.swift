@@ -27,9 +27,7 @@ class ChatListViewController: UITableViewController, ChatListDisplayLogic {
     var numArchivedTopics: Int {
         get { return archivedTopics?.count ?? 0 }
     }
-    var topicsSection: Int {
-        get { return numArchivedTopics > 0 ? 1 : 0 }
-    }
+
     // Index of contacts: name => position in topics
     var rowIndex: [String : Int] = [:]
     var router: ChatListRoutingLogic?
@@ -110,9 +108,12 @@ class ChatListViewController: UITableViewController, ChatListDisplayLogic {
         self.interactor?.attachToMeTopic()
         self.interactor?.loadAndPresentTopics()
     }
-    override func viewDidDisappear(_ animated: Bool) {
-        self.interactor?.cleanup()
-    }
+
+    // Continue listening on meTopic even when the VC isn't visible.
+    // TODO: remote this.
+    // override func viewDidDisappear(_ animated: Bool) {
+    //     self.interactor?.cleanup()
+    // }
 
     func displayLoginView() {
         UiUtils.routeToLoginVC()
@@ -131,7 +132,7 @@ class ChatListViewController: UITableViewController, ChatListDisplayLogic {
     func updateChat(_ name: String) {
         guard let position = rowIndex[name] else { return }
         DispatchQueue.main.async {
-            self.tableView!.reloadRows(at: [IndexPath(item: position, section: self.topicsSection)], with: .none)
+            self.tableView!.reloadRows(at: [IndexPath(item: position, section: 0)], with: .none)
             self.toggleFooter(visible: self.numArchivedTopics > 0)
         }
     }
@@ -140,7 +141,7 @@ class ChatListViewController: UITableViewController, ChatListDisplayLogic {
         guard let position = rowIndex[name] else { return }
         DispatchQueue.main.async {
             self.topics.remove(at: position)
-            self.tableView!.deleteRows(at: [IndexPath(item: position, section: self.topicsSection)], with: .fade)
+            self.tableView!.deleteRows(at: [IndexPath(item: position, section: 0)], with: .fade)
             self.toggleFooter(visible: self.numArchivedTopics > 0)
         }
     }

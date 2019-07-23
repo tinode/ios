@@ -34,6 +34,19 @@ public protocol Message {
     var isPending: Bool { get }
 }
 
+extension Message {
+    // Can't use Equatable because Swift wants both
+    // left and right side be the same *concrete* class,
+    // not a protocol.
+    public func equals(_ other: Message) -> Bool {
+        return
+            self.msgId == other.msgId &&
+            self.seqId == other.seqId &&
+            self.ts == other.ts &&
+            self.status == other.status
+    }
+}
+
 // Base protocol for implementing persistance.
 public protocol Storage: class {
     // Min and max values.

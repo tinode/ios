@@ -42,7 +42,7 @@ class UiUtils {
         } else {
             me!.listener = meListener
         }
-        let get = me!.getMetaGetBuilder().withGetDesc().withGetSub().build()
+        let get = me!.getMetaGetBuilder().withDesc().withSub().build()
         // TODO: logout on failure and route to login view.
         return me!.subscribe(set: nil, get: get)
     }
@@ -60,8 +60,10 @@ class UiUtils {
         DispatchQueue.main.async {
             let storyboard = UIStoryboard(name: "Main", bundle: nil)
             let destinationVC = storyboard.instantiateViewController(withIdentifier: "StartNavigator") as! UINavigationController
-            let appDelegate = UIApplication.shared.delegate as! AppDelegate
-            appDelegate.window!.rootViewController = destinationVC
+
+            if let window = UIApplication.shared.keyWindow {
+                window.rootViewController = destinationVC
+            }
         }
     }
     // Get text from UITextField or mark the field red if the field is blank
@@ -276,15 +278,8 @@ extension UIViewController {
     public func presentChatReplacingCurrentVC(with topicName: String, afterDelay delay: DispatchTimeInterval = .seconds(0)) {
         DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
             if let navController = self.navigationController {
-                // Descend to the chat list controller in the navigation stack.
-                while navController.topViewController?.restorationIdentifier != "ChatListViewController" {
-                    let v = navController.popViewController(animated: false)
-                    if v == nil {
-                        // FIXME: DEBUGGING ONLY. Otherwise an endless loop happens.
-                        break
-                    }
-                    v?.dismiss(animated: false, completion: nil)
-                }
+                navController.popToRootViewController(animated: false)
+
                 let messageVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "MessageViewController") as! MessageViewController
                 messageVC.topicName = topicName
                 navController.pushViewController(messageVC, animated: true)
@@ -362,40 +357,6 @@ extension UIImage {
                 height: srcHeight
             )
         )
-    }
-}
-
-class RelativeDateFormatter {
-    // DateFormatter is thread safe, OK to keep a copy.
-    static let shared = RelativeDateFormatter()
-
-    private let formatter = DateFormatter()
-
-    func dateOnly(from date: Date?, style: DateFormatter.Style = .medium) -> String {
-        guard let date = date else { return "Never ??:??" }
-
-        formatter.timeStyle = .none
-        formatter.dateStyle = style
-        switch true {
-        case Calendar.current.isDateInToday(date) || Calendar.current.isDateInYesterday(date):
-            // "today", "yesterday"
-            formatter.doesRelativeDateFormatting = true
-        case Calendar.current.isDate(date, equalTo: Date(), toGranularity: .weekOfYear):
-            // day of the week "Wednesday", "Friday" etc
-            formatter.dateFormat = "EEEE"
-        default:
-            // All other dates: "Mar 15, 2019"
-            break
-        }
-        return formatter.string(from: date)
-    }
-
-    func timeOnly(from date: Date?, style: DateFormatter.Style = .short) -> String {
-        guard let date = date else { return "??:??" }
-
-        formatter.timeStyle = style
-        formatter.dateStyle = .none
-        return formatter.string(from: date)
     }
 }
 

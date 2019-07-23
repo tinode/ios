@@ -14,6 +14,7 @@ protocol MessageBusinessLogic: class {
     @discardableResult
     func attachToTopic() -> Bool
     func cleanup()
+    func leaveTopic()
 
     func sendMessage(content: Drafty) -> Bool
     func sendReadNotification()
@@ -31,6 +32,7 @@ protocol MessageDataStore {
     func setup(topicName: String?) -> Bool
     func loadMessages()
     func loadNextPage()
+    func deleteMessage(seqId: Int)
 } 
 
 class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, MessageDataStore {
@@ -79,10 +81,12 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         // set listeners to nil
         print("cleaning up the topic \(String(describing: self.topicName))")
         self.topic?.listener = nil
+        Cache.getTinode().listener = nil
+    }
+    func leaveTopic() {
         if self.topic?.attached ?? false {
             self.topic?.leave()
         }
-        Cache.getTinode().listener = nil
     }
     func attachToTopic() -> Bool {
         guard !(self.topic?.attached ?? false) else {
@@ -93,10 +97,10 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
             try self.topic?.subscribe(
                 set: nil,
                 get: self.topic?.getMetaGetBuilder()
-                    .withGetDesc()
-                    .withGetSub()
-                    .withGetData()
-                    .withGetDel()
+                    .withDesc()
+                    .withSub()
+                    .withData()
+                    .withDel()
                     .build())?.then(
                     onSuccess: { [weak self] msg in
                         print("subscribed to topic")
@@ -134,10 +138,8 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                 onSuccess: { [weak self] msg in
                     self?.loadMessages()
                     return nil
-                }, onFailure: { err in
-                    // todo: display a UI toast.
-                    return nil
-                })
+                },
+                onFailure: UiUtils.ToastFailureHandler)
         } catch TinodeError.notConnected(let errMsg) {
             print("sendMessage -- not connected \(errMsg)")
             return false
@@ -188,7 +190,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
             do {
                 try t.getMeta(query:
                     t.getMetaGetBuilder()
-                        .withGetEarlierData(
+                        .withEarlierData(
                             limit: MessageInteractor.kMessagesPerPage)
                         .build())?.then(
                             onSuccess: { [weak self] msg in
@@ -204,6 +206,21 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
             }
         } else {
             self.presenter?.endRefresh()
+        }
+    }
+    func deleteMessage(seqId: Int) {
+        do {
+            try topic?.delMessage(id: seqId, hard: false)?.then(
+                onSuccess: { [weak self] msg in
+                    self?.loadMessages()
+                    return nil
+                },
+                onFailure: UiUtils.ToastFailureHandler)
+            self.loadMessages()
+        } catch TinodeError.notConnected(_) {
+            UiUtils.showToast(message: "You are offline")
+        } catch {
+            UiUtils.showToast(message: "Action failed: \(error)")
         }
     }
 
@@ -285,18 +302,18 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
             helper.startUpload(
                 filename: filename, mimetype: mimeType, d: data,
                 topicId: self.topicName!, msgId: msgId,
-                progressCallback: { progress in
+                progressCallback: { [weak self] progress in
                     DispatchQueue.main.async {
-                        self.presenter?.updateProgress(forMsgId: msgId, progress: progress)
+                        self?.presenter?.updateProgress(forMsgId: msgId, progress: progress)
                     }
                 },
-                completionCallback: { (serverMessage, error) in
+                completionCallback: { [weak self] (serverMessage, error) in
                     var success = false
                     defer {
                         if !success {
                             _ = topic.store?.msgDiscard(topic: topic, dbMessageId: msgId)
                         }
-                        self.loadMessages()
+                        self?.loadMessages()
                     }
                     guard error == nil else {
                         DispatchQueue.main.async {
@@ -311,10 +328,14 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                         mime: mimeType, fname: filename,
                         refurl: srvUrl, size: data.count) {
                         _ = topic.store?.msgReady(topic: topic, dbMessageId: msgId, data: content)
-                        _ = topic.syncOne(msgId: msgId)
+                        _ = try? topic.syncOne(msgId: msgId)?.thenFinally(finally: {
+                            self?.loadMessages()
+                            return nil
+                        })
                         success = true
                     }
                 })
+            self.loadMessages()
         }
     }
     override func onData(data: MsgServerData?) {

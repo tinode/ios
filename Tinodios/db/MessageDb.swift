@@ -143,7 +143,10 @@ class MessageDb {
     @discardableResult
     func delete(topicId: Int64, from loId: Int?, to hiId: Int?) -> Bool {
         let startId = loId ?? 0
-        let endId = hiId ?? Int.max
+        var endId = hiId ?? Int.max
+        if endId == 0 {
+            endId = startId
+        }
         // delete from messages where topic_id = topicId and seq between startId and endId.
         let rows = self.table.filter(self.topicId == topicId && startId...endId ~= self.seq)
         do {
@@ -156,7 +159,10 @@ class MessageDb {
     @discardableResult
     func markDeleted(topicId: Int64, from loId: Int?, to hiId: Int?, hard: Bool) -> Bool {
         let startId = loId ?? 0
-        let endId = hiId ?? Int.max
+        var endId = hiId ?? Int.max
+        if endId == 0 {
+            endId = startId
+        }
         do {
             var updateResult = false
             var deleteResult = false

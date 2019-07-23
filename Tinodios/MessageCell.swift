@@ -10,6 +10,8 @@ import TinodeSDK
 
 /// A protocol used to detect taps in the chat message.
 protocol MessageCellDelegate: class {
+    /// Long tap anywhere in massage cell
+    func didLongTap(in cell: MessageCell)
     /// Tap on the message bubble
     func didTapMessage(in cell: MessageCell)
     /// Tap on message content
@@ -127,17 +129,12 @@ class MessageCell: UICollectionViewCell {
     }
 
     func showProgressBar() {
-        contentView.addSubview(progressBar)
-        contentView.addSubview(cancelUploadButton)
+        containerView.addSubview(progressBar)
+        containerView.addSubview(cancelUploadButton)
         progressBar.isHidden = false
         cancelUploadButton.isHidden = false
-        contentView.bringSubviewToFront(progressBar)
-        contentView.bringSubviewToFront(cancelUploadButton)
-
-        cancelUploadButton.addTarget(
-            self,
-            action: #selector(MessageCell.cancelUploadClicked(sender:)),
-            for: .touchUpInside)
+        containerView.bringSubviewToFront(progressBar)
+        containerView.bringSubviewToFront(cancelUploadButton)
     }
 
     override func prepareForReuse() {
@@ -153,9 +150,16 @@ class MessageCell: UICollectionViewCell {
 
     /// Handle tap gesture on contentView and its subviews.
     func handleTapGesture(_ gesture: UIGestureRecognizer) {
+        if gesture.isKind(of: UILongPressGestureRecognizer.self) {
+            delegate?.didLongTap(in: self)
+            return
+        }
+
         let touchLocation = gesture.location(in: self)
 
         switch true {
+        case cancelUploadButton.frame.contains(convert(touchLocation, to: containerView)):
+            delegate?.didTapCancelUpload(in: self)
         case content.frame.contains(convert(touchLocation, to: content)):
             let url = content.getURLForTap(convert(touchLocation, to: content))
             delegate?.didTapContent(in: self, url: url)
@@ -169,16 +173,16 @@ class MessageCell: UICollectionViewCell {
         }
     }
 
+    @objc func cancelUploadClicked(sender: UIButton!) {
+        delegate?.didTapCancelUpload(in: self)
+    }
+
     /// Handle long press gesture, return true when gestureRecognizer's touch point in `containerView`'s frame
     override func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
         print("gesture recognizer should begin")
         let touchPoint = gestureRecognizer.location(in: self)
         guard gestureRecognizer.isKind(of: UILongPressGestureRecognizer.self) else { return false }
         return containerView.frame.contains(touchPoint)
-    }
-
-    @objc func cancelUploadClicked(sender: UIButton!) {
-        delegate?.didTapCancelUpload(in: self)
     }
 }
 

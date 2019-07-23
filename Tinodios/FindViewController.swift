@@ -10,30 +10,31 @@ import MessageUI
 
 protocol FindDisplayLogic: class {
     func displayLocalContacts(contacts: [ContactHolder])
-    func displayRemoteContacts(contacts: [ContactHolder])
+    func displayRemoteContacts(contacts: [RemoteContactHolder])
 }
 
 class FindViewController: UITableViewController, FindDisplayLogic {
+    static let kLocalContactsSection = 0
+    static let kRemoteContactsSection = 1
+
     @IBOutlet weak var inviteActionButtonItem: UIBarButtonItem!
     var interactor: FindBusinessLogic?
     var localContacts: [ContactHolder] = []
-    var remoteContacts: [ContactHolder] = []
-    var router: FindRoutingLogic?
+    var remoteContacts: [RemoteContactHolder] = []
     var searchController: UISearchController!
     var pendingSearchRequest: DispatchWorkItem? = nil
+
+    // Flag which indicates that the user is leaving the view.
+    var transitioningOut: Bool = false
 
     private func setup() {
         let viewController = self
         let interactor = FindInteractor()
         let presenter = FindPresenter()
-        let router = FindRouter()
 
         viewController.interactor = interactor
-        viewController.router = router
         interactor.presenter = presenter
-        interactor.router = router
         presenter.viewController = viewController
-        router.viewController = viewController
 
         searchController = UISearchController(searchResultsController: nil)
         searchController.searchResultsUpdater = self
@@ -44,6 +45,8 @@ class FindViewController: UITableViewController, FindDisplayLogic {
         // in the navigation item.
         self.tableView.tableHeaderView = searchController.searchBar
         self.tableView.register(UINib(nibName: "ContactViewCell", bundle: nil), forCellReuseIdentifier: "ContactViewCell")
+
+        transitioningOut = false
 
         searchController.delegate = self
         // The default is true.
@@ -59,7 +62,7 @@ class FindViewController: UITableViewController, FindDisplayLogic {
             self.tableView.reloadData()
         }
     }
-    func displayRemoteContacts(contacts newContacts: [ContactHolder]) {
+    func displayRemoteContacts(contacts newContacts: [RemoteContactHolder]) {
         DispatchQueue.main.async {
             self.remoteContacts = newContacts
             self.tableView.reloadData()
@@ -127,15 +130,15 @@ class FindViewController: UITableViewController, FindDisplayLogic {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
-        case 0: return localContacts.isEmpty ? 1 : localContacts.count
-        case 1: return remoteContacts.isEmpty ? 1 : remoteContacts.count
+        case FindViewController.kLocalContactsSection: return localContacts.isEmpty ? 1 : localContacts.count
+        case FindViewController.kRemoteContactsSection: return remoteContacts.isEmpty ? 1 : remoteContacts.count
         default: return 0
         }
     }
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch section {
-        case 0: return "Local Contacts"
-        case 1: return "Directory"
+        case FindViewController.kLocalContactsSection: return "Local Contacts"
+        case FindViewController.kRemoteContactsSection: return "Directory"
         default: return nil
         }
     }
@@ -152,7 +155,7 @@ class FindViewController: UITableViewController, FindDisplayLogic {
             cell.delegate = self
 
             // Configure the cell...
-            let contact = indexPath.section == 0 ? localContacts[indexPath.row] : remoteContacts[indexPath.row]
+            let contact = indexPath.section == FindViewController.kLocalContactsSection ? localContacts[indexPath.row] : remoteContacts[indexPath.row]
             cell.avatar.set(icon: contact.image, title: contact.displayName, id: contact.uniqueId)
             cell.title.text = contact.displayName
             cell.title.sizeToFit()
@@ -165,16 +168,16 @@ class FindViewController: UITableViewController, FindDisplayLogic {
 
     private func isSectionEmpty(section: Int) -> Bool {
         switch section {
-        case 0: return localContacts.isEmpty
-        case 1: return remoteContacts.isEmpty
+        case FindViewController.kLocalContactsSection: return localContacts.isEmpty
+        case FindViewController.kRemoteContactsSection: return remoteContacts.isEmpty
         default: return true
         }
     }
 
     func getUniqueId(for path: IndexPath) -> String? {
         switch path.section {
-        case 0: return self.localContacts[path.row].uniqueId
-        case 1: return self.remoteContacts[path.row].uniqueId
+        case FindViewController.kLocalContactsSection: return self.localContacts[path.row].uniqueId
+        case FindViewController.kRemoteContactsSection: return self.remoteContacts[path.row].uniqueId
         default: return nil
         }
     }
@@ -185,7 +188,7 @@ class FindViewController: UITableViewController, FindDisplayLogic {
 extension FindViewController: UISearchResultsUpdating, UISearchControllerDelegate, UISearchBarDelegate {
 
     private func doSearch(queryString: String?) {
-        //print("Searching contacts for: \(queryString)")
+        // print("Searching contacts for: [\(queryString ?? "nil")]")
         self.interactor?.loadAndPresentContacts(searchQuery: queryString)
     }
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
@@ -195,15 +198,21 @@ extension FindViewController: UISearchResultsUpdating, UISearchControllerDelegat
         guard let s = getQueryString() else { return }
         doSearch(queryString: s)
     }
+
     private func getQueryString() -> String? {
         let whitespaceCharacterSet = CharacterSet.whitespaces
         let queryString =
             searchController.searchBar.text!.trimmingCharacters(in: whitespaceCharacterSet)
         return !queryString.isEmpty ? queryString : nil
     }
+
     func updateSearchResults(for searchController: UISearchController) {
         pendingSearchRequest?.cancel()
         pendingSearchRequest = nil
+
+        if transitioningOut {
+            return
+        }
         let queryString = getQueryString()
         let currentSearchRequest = DispatchWorkItem() {
             self.doSearch(queryString: queryString)
@@ -211,10 +220,16 @@ extension FindViewController: UISearchResultsUpdating, UISearchControllerDelegat
         pendingSearchRequest = currentSearchRequest
         DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1), execute: currentSearchRequest)
     }
+
+    // Search controller is dismissed if user clears the query OR if the user clicked on an item
+    // and is moving to another view. In the second case no need to loadAndPresentContacts because
+    // fnd.leave() will be called anyway. Otherwise an update to content prevents notmal navigation.
     func didDismissSearchController(_ searchController: UISearchController) {
         pendingSearchRequest?.cancel()
         pendingSearchRequest = nil
-        self.interactor?.loadAndPresentContacts(searchQuery: nil)
+        if !transitioningOut {
+            self.interactor?.loadAndPresentContacts(searchQuery: nil)
+        }
     }
 }
 
@@ -222,19 +237,28 @@ extension FindViewController: ContactViewCellDelegate {
     func selected(from cell: UITableViewCell) {
         guard let indexPath = tableView.indexPathForSelectedRow else { return }
         guard let id = getUniqueId(for: indexPath) else { return }
-
-        // If the search bar is active, deactivate it.
-        if searchController.isActive {
-            // Disable the animation as we are going straight to another view
-            UIView.performWithoutAnimation {
-                searchController.isActive = false
+        if indexPath.section == FindViewController.kRemoteContactsSection {
+            // Save topic and user.
+            guard interactor?.saveRemoteTopic(from: remoteContacts[indexPath.row]) ?? false else {
+                UiUtils.showToast(message: "Failed to save topic and contact info.")
+                return
             }
         }
 
-        // Have to do it with a delay because it takes time to dismiss searchController and
-        // navbar won't swap controllers while in transition:
-        // pushViewController:animated: called on <UINavigationController 0x7ff2cf80e400> while an existing transition or presentation is occurring; the navigation stack will not be updated.
-        presentChatReplacingCurrentVC(with: id, afterDelay: .milliseconds(30))
+        // Make sure there are no pending search requests.
+        pendingSearchRequest?.cancel()
+        pendingSearchRequest = nil
+
+        transitioningOut = true
+
+        // If the search bar is active, deactivate it.
+        if searchController.isActive {
+            // Disable the animation as we are going straight to another view.
+            // This call takes very long time to complete.
+            searchController.dismiss(animated: false, completion: { self.presentChatReplacingCurrentVC(with: id) })
+        } else {
+            presentChatReplacingCurrentVC(with: id)
+        }
     }
 }
 
