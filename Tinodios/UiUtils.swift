@@ -42,7 +42,7 @@ class UiUtils {
         } else {
             me!.listener = meListener
         }
-        let get = me!.getMetaGetBuilder().withGetDesc().withGetSub().build()
+        let get = me!.getMetaGetBuilder().withDesc().withSub().build()
         // TODO: logout on failure and route to login view.
         return me!.subscribe(set: nil, get: get)
     }
@@ -357,40 +357,6 @@ extension UIImage {
                 height: srcHeight
             )
         )
-    }
-}
-
-class RelativeDateFormatter {
-    // DateFormatter is thread safe, OK to keep a copy.
-    static let shared = RelativeDateFormatter()
-
-    private let formatter = DateFormatter()
-
-    func dateOnly(from date: Date?, style: DateFormatter.Style = .medium) -> String {
-        guard let date = date else { return "Never ??:??" }
-
-        formatter.timeStyle = .none
-        formatter.dateStyle = style
-        switch true {
-        case Calendar.current.isDateInToday(date) || Calendar.current.isDateInYesterday(date):
-            // "today", "yesterday"
-            formatter.doesRelativeDateFormatting = true
-        case Calendar.current.isDate(date, equalTo: Date(), toGranularity: .weekOfYear):
-            // day of the week "Wednesday", "Friday" etc
-            formatter.dateFormat = "EEEE"
-        default:
-            // All other dates: "Mar 15, 2019"
-            break
-        }
-        return formatter.string(from: date)
-    }
-
-    func timeOnly(from date: Date?, style: DateFormatter.Style = .short) -> String {
-        guard let date = date else { return "??:??" }
-
-        formatter.timeStyle = style
-        formatter.dateStyle = .none
-        return formatter.string(from: date)
     }
 }
 

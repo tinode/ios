@@ -143,3 +143,59 @@ class RepeatingTimer {
         timer.suspend()
     }
 }
+
+class RelativeDateFormatter {
+    // DateFormatter is thread safe, OK to keep a copy.
+    static let shared = RelativeDateFormatter()
+
+    private let formatter = DateFormatter()
+
+    func dateOnly(from date: Date?, style: DateFormatter.Style = .medium) -> String {
+        guard let date = date else { return "Never ??:??" }
+
+        formatter.timeStyle = .none
+        formatter.dateStyle = style
+        switch true {
+        case Calendar.current.isDateInToday(date) || Calendar.current.isDateInYesterday(date):
+            // "today", "yesterday"
+            formatter.doesRelativeDateFormatting = true
+        case Calendar.current.isDate(date, equalTo: Date(), toGranularity: .weekOfYear):
+            // day of the week "Wednesday", "Friday" etc
+            formatter.dateFormat = "EEEE"
+        default:
+            // All other dates: "Mar 15, 2019"
+            break
+        }
+        return formatter.string(from: date)
+    }
+
+    func timeOnly(from date: Date?, style: DateFormatter.Style = .short) -> String {
+        guard let date = date else { return "??:??" }
+
+        formatter.timeStyle = style
+        formatter.dateStyle = .none
+        return formatter.string(from: date)
+    }
+
+    // Incrementally longer formatting of a date.
+    func shortDate(from date: Date?) -> String {
+        guard let date = date else { return "Never ??:??" }
+
+        let now = Date()
+        if Calendar.current.isDate(date, equalTo: now, toGranularity: .year) {
+            if Calendar.current.isDate(date, equalTo: now, toGranularity: .day) {
+                formatter.timeStyle = .short
+                formatter.dateStyle = .none
+                return formatter.string(from: date)
+            } else {
+                formatter.timeStyle = .short
+                formatter.dateStyle = .short
+                return formatter.string(from: date)
+            }
+        }
+
+        formatter.timeStyle = .medium
+        formatter.dateStyle = .medium
+        return formatter.string(from: date)
+    }
+}

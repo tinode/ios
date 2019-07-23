@@ -179,7 +179,7 @@ public class AccessChange : Decodable {
 
 public class MsgServerPres : Decodable {
     enum What {
-        case kOn, kOff, kUpd, kGone, kAcs, kMsg, kUa, kRecv, kRead, kDel, kUnknown
+        case kOn, kOff, kUpd, kGone, kAcs, kMsg, kUa, kRecv, kRead, kDel, kTags, kUnknown
     }
     public var topic: String?
     public var src: String?
@@ -217,6 +217,8 @@ public class MsgServerPres : Decodable {
             return .kRead
         case "del":
             return .kDel
+        case "tags":
+            return .kTags
         default:
             return .kUnknown
         }

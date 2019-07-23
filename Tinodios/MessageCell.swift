@@ -10,6 +10,8 @@ import TinodeSDK
 
 /// A protocol used to detect taps in the chat message.
 protocol MessageCellDelegate: class {
+    /// Long tap anywhere in massage cell
+    func didLongTap(in cell: MessageCell)
     /// Tap on the message bubble
     func didTapMessage(in cell: MessageCell)
     /// Tap on message content
@@ -148,6 +150,11 @@ class MessageCell: UICollectionViewCell {
 
     /// Handle tap gesture on contentView and its subviews.
     func handleTapGesture(_ gesture: UIGestureRecognizer) {
+        if gesture.isKind(of: UILongPressGestureRecognizer.self) {
+            delegate?.didLongTap(in: self)
+            return
+        }
+
         let touchLocation = gesture.location(in: self)
 
         switch true {
@@ -164,6 +171,10 @@ class MessageCell: UICollectionViewCell {
             delegate?.didTapOutsideContent(in: self)
             break
         }
+    }
+
+    @objc func cancelUploadClicked(sender: UIButton!) {
+        delegate?.didTapCancelUpload(in: self)
     }
 
     /// Handle long press gesture, return true when gestureRecognizer's touch point in `containerView`'s frame

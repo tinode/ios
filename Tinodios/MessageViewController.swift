@@ -38,7 +38,7 @@ class MessageViewController: UIViewController {
         // Horizontal space between delivery marker and timestamp
         static let kTimestampPadding: CGFloat = 0
         // Approximate width of the timestamp
-        static let kTimestampWidth: CGFloat = 48
+        static let kTimestampWidth: CGFloat = 50
         // Progress bar paddings.
         static let kProgressBarLeftPadding: CGFloat = 10
         static let kProgressBarRightPadding: CGFloat = 25
@@ -68,7 +68,7 @@ class MessageViewController: UIViewController {
         static let kVerticalCellSpacing: CGFloat = 2
         // Additional vertical spacing between messages from different users in P2P topics.
         static let kAdditionalP2PVerticalCellSpacing: CGFloat = 4
-        static let kMinimumCellWidth: CGFloat = 90
+        static let kMinimumCellWidth: CGFloat = 94
         // This is the space between the other side of the message and the edge of screen.
         // I.e. for incoming messages the space between the message and the *right* edge, for
         // outfoing between the message and the left edge.
@@ -136,7 +136,7 @@ class MessageViewController: UIViewController {
     // Messages to be displayed
     var messages: [Message] = []
     // For updating individual messages, we need:
-    // * Tinode sequence id -> message offset.
+    // * Tinode sequence id -> messages offset.
     var messageSeqIdIndex: [Int:Int] = [:]
     // * Database message id -> message offset.
     var messageDbIdIndex: [Int64:Int] = [:]
@@ -454,7 +454,9 @@ extension MessageViewController: MessageDisplayLogic {
                 }
             }
             // Ensure uniqueness of values. No need to reload newly inserted values.
-            refresh = Array(Set(refresh).subtracting(Set(diff.inserted)))
+            // The app will crash if the same index is marked as removed and refreshed. Which seems
+            // to be an Apple bug because removed index is against the old array, refreshed against the new.
+            refresh = Array(Set(refresh).subtracting(Set(diff.inserted)).subtracting(Set(diff.removed)))
 
             collectionView.performBatchUpdates({ () -> Void in
                 self.messages = newData
@@ -898,6 +900,10 @@ extension MessageViewController : MessageViewLayoutDelegate {
 // Methods for handling taps in messages.
 
 extension MessageViewController : MessageCellDelegate {
+    func didLongTap(in cell: MessageCell) {
+        createPopupMenu(in: cell)
+    }
+
     func didTapContent(in cell: MessageCell, url: URL?) {
         guard let url = url else { return }
 
@@ -928,12 +934,45 @@ extension MessageViewController : MessageCellDelegate {
         }
     }
 
+    // TODO: remove as unused
     func didTapMessage(in cell: MessageCell) {
         print("didTapMessage")
     }
 
+    // TODO: remove as unused or go to user's profile (p2p topic?)
     func didTapAvatar(in cell: MessageCell) {
         print("didTapAvatar")
+    }
+
+    func createPopupMenu(in cell: MessageCell) {
+        // Set up the shared UIMenuController
+        let copyMenuItem = MessageMenuItem(title: "Copy", action: #selector(copyMessageContent(sender:)), seqId: cell.seqId)
+        let deleteMenuItem = MessageMenuItem(title: "Delete", action: #selector(deleteMessage(sender:)), seqId: cell.seqId)
+        UIMenuController.shared.menuItems = [copyMenuItem, deleteMenuItem]
+
+        // Tell the menu controller the first responder's frame and its super view
+        UIMenuController.shared.setTargetRect(cell.content.frame, in: cell.containerView)
+
+        // Animate the menu onto view
+        UIMenuController.shared.setMenuVisible(true, animated: true)
+    }
+
+    @objc func copyMessageContent(sender: UIMenuController) {
+        guard let menuItem = sender.menuItems?.first as? MessageMenuItem, menuItem.seqId > 0, let msgIndex = messageSeqIdIndex[menuItem.seqId] else { return }
+
+        let msg = messages[msgIndex]
+
+        var senderName: String?
+        if let sub = topic?.getSubscription(for: msg.from), let pub = sub.pub {
+            senderName = pub.fn
+        }
+        senderName = senderName ?? "Unknown \(msg.from ?? "none")"
+        UIPasteboard.general.string = "[\(senderName!)]: \(msg.content?.string ?? ""); \(RelativeDateFormatter.shared.shortDate(from: msg.ts))"
+    }
+
+    @objc func deleteMessage(sender: UIMenuController) {
+        guard let menuItem = sender.menuItems?.first as? MessageMenuItem, menuItem.seqId > 0 else { return }
+        interactor?.deleteMessage(seqId: menuItem.seqId)
     }
 
     func didTapOutsideContent(in cell: MessageCell) {
