@@ -302,18 +302,18 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
             helper.startUpload(
                 filename: filename, mimetype: mimeType, d: data,
                 topicId: self.topicName!, msgId: msgId,
-                progressCallback: { progress in
+                progressCallback: { [weak self] progress in
                     DispatchQueue.main.async {
-                        self.presenter?.updateProgress(forMsgId: msgId, progress: progress)
+                        self?.presenter?.updateProgress(forMsgId: msgId, progress: progress)
                     }
                 },
-                completionCallback: { (serverMessage, error) in
+                completionCallback: { [weak self] (serverMessage, error) in
                     var success = false
                     defer {
                         if !success {
                             _ = topic.store?.msgDiscard(topic: topic, dbMessageId: msgId)
                         }
-                        self.loadMessages()
+                        self?.loadMessages()
                     }
                     guard error == nil else {
                         DispatchQueue.main.async {
@@ -328,7 +328,10 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                         mime: mimeType, fname: filename,
                         refurl: srvUrl, size: data.count) {
                         _ = topic.store?.msgReady(topic: topic, dbMessageId: msgId, data: content)
-                        _ = topic.syncOne(msgId: msgId)
+                        _ = try? topic.syncOne(msgId: msgId)?.thenFinally(finally: {
+                            self?.loadMessages()
+                            return nil
+                        })
                         success = true
                     }
                 })

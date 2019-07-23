@@ -56,8 +56,8 @@ class LargeFileHelper: NSObject {
     }
     // TODO: make background uploads work.
     func startUpload(filename: String, mimetype: String, d: Data, topicId: String, msgId: Int64,
-                     progressCallback: ((Float) -> Void)?,
-                     completionCallback: ((ServerMessage?, Error?) -> Void)?) {
+                     progressCallback: @escaping (Float) -> Void,
+                     completionCallback: @escaping (ServerMessage?, Error?) -> Void) {
         let tinode = Cache.getTinode()
         guard var url = tinode.baseURL(useWebsocketProtocol: false) else { return }
         url.appendPathComponent("file/u/")
