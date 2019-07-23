@@ -184,5 +184,14 @@ class MessageCell: UICollectionViewCell {
         guard gestureRecognizer.isKind(of: UILongPressGestureRecognizer.self) else { return false }
         return containerView.frame.contains(touchPoint)
     }
+
+    /// This is needed for the context menu to work correctly.
+    override var canBecomeFirstResponder: Bool {
+        return true
+    }
+
+    override func resignFirstResponder() -> Bool {
+        return true
+    }
 }
 
