@@ -288,8 +288,8 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
             helper.startUpload(
                 filename: filename, mimetype: mimeType, d: data,
                 topicId: self.topicName!, msgId: msgId,
-                progressCallback: { progress in
-                    DispatchQueue.main.async { [weak self] in
+                progressCallback: { [weak self] progress in
+                    DispatchQueue.main.async {
                         self?.presenter?.updateProgress(forMsgId: msgId, progress: progress)
                     }
                 },
