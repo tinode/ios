@@ -7,6 +7,7 @@
 
 import UIKit
 import Firebase
+import SwiftWebSocket
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -47,13 +48,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 let msg = try tinode.loginToken(token: token, creds: nil)?.getResult()
                 if let code = msg?.ctrl?.code, code < 300 {
                     print("login successful for: \(tinode.myUid!)")
-                    let storyboard = UIStoryboard(name: "Main", bundle: nil)
-                    let initialViewController =
-                        storyboard.instantiateViewController(
-                            withIdentifier: "ChatsNavigator") as! UINavigationController
-                    self.window!.rootViewController = initialViewController
+                    UiUtils.routeToChatListVC()
                     success = true
                 }
+            } catch SwiftWebSocket.WebSocketError.network(_)  {
+                // No network connection.
+                UiUtils.routeToChatListVC()
+                success = true
             } catch {
                 print("Failed to automatically login to Tinode: \(error).")
             }
