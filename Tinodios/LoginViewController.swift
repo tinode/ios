@@ -9,6 +9,7 @@ import UIKit
 import os
 import SwiftKeychainWrapper
 import TinodeSDK
+import SwiftWebSocket
 
 class LoginViewController: UIViewController {
 
@@ -105,10 +106,16 @@ class LoginViewController: UIViewController {
                         return nil
                     }, onFailure: { err in
                         print("failed to login \(err)")
-                        if let err = err as? TinodeError {
-                            DispatchQueue.main.async {
-                                UiUtils.showToast(message: "Login failed: \(err.description)")
-                            }
+                        var toastMsg: String
+                        if let tinodeErr = err as? TinodeError {
+                            toastMsg = "Tinode: \(tinodeErr.description)"
+                        } else if let nwErr = err as? SwiftWebSocket.WebSocketError {
+                            toastMsg = "Couldn't connect to server: \(nwErr)"
+                        } else {
+                            toastMsg = err.localizedDescription
+                        }
+                        DispatchQueue.main.async {
+                            UiUtils.showToast(message: toastMsg)
                         }
                         _ = tinode.logout()
                         return nil
