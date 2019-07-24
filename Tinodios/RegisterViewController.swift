@@ -131,7 +131,12 @@ class RegisterViewController: UIViewController {
 
 extension RegisterViewController: ImagePickerDelegate {
     func didSelect(image: UIImage?) {
+        guard let image = image?.resize(width: CGFloat(UiUtils.kAvatarSize), height: CGFloat(UiUtils.kAvatarSize), clip: true) else {
+            print("No image specified or failed to resize - skipping")
+            return
+        }
+
         self.avatarView.image = image
-        uploadedAvatar = image != nil
+        uploadedAvatar = true
     }
 }

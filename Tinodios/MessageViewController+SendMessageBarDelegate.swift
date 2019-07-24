@@ -78,32 +78,12 @@ extension MessageViewController : UIDocumentPickerDelegate {
 }
 
 extension MessageViewController : ImagePickerDelegate {
-    private static let kMaxDimension = 512
-    private static func shrinkImage(orig: UIImage) -> UIImage? {
-        var width = Int(orig.size.width)
-        var height = Int(orig.size.height)
-        var changed = false
-        if width >= height {
-            if width > MessageViewController.kMaxDimension {
-                height = height * MessageViewController.kMaxDimension / width
-                width = MessageViewController.kMaxDimension
-                changed = true
-            }
-        } else {
-            if height > MessageViewController.kMaxDimension {
-                width = width * MessageViewController.kMaxDimension / height
-                height = MessageViewController.kMaxDimension
-                changed = true
-            }
-        }
-        return changed ? orig.resize(width: CGFloat(width), height: CGFloat(height), clip: false) : orig
-    }
     func didSelect(image: UIImage?) {
         guard var image = image, var bits = image.pngData() else { return }
         let imageSize = bits.count
 
         if imageSize > MessageViewController.kMaxInbandAttachmentSize {
-            guard let resizedImage = MessageViewController.shrinkImage(orig: image),
+            guard let resizedImage = image.resize(width: UiUtils.kMaxBitmapSize, height: UiUtils.kMaxBitmapSize, clip: false),
                 let resizedBits = resizedImage.pngData() else { return }
             image = resizedImage
             bits = resizedBits
