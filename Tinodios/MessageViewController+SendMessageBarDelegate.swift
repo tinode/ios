@@ -80,7 +80,11 @@ extension MessageViewController : UIDocumentPickerDelegate {
 extension MessageViewController : ImagePickerDelegate {
     func didSelect(image: UIImage?, mimeType mime: String?, fileName fname: String?) {
         let mimeType: String = mime == "image/png" ?  mime! : "image/jpeg"
-        guard let image = image?.resize(byteSize: MessageViewController.kMaxInbandAttachmentSize, asMimeType: mime), let bits = mimeType != "image/png" ? image.jpegData(compressionQuality: 0.8) : image.pngData() else { return }
+
+        // Ensure image size in bytes and liner dimensions are under the limits.
+        guard let image = image?.resize(byteSize: MessageViewController.kMaxInbandAttachmentSize, asMimeType: mimeType)?.resize(width: UiUtils.kMaxBitmapSize, height: UiUtils.kMaxBitmapSize, clip: false) else { return }
+
+        guard let bits = mimeType != "image/png" ? image.jpegData(compressionQuality: 0.8) : image.pngData() else { return }
 
         let width = Int(image.size.width * image.scale)
         let height = Int(image.size.height * image.scale)
