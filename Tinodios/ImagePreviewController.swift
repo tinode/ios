@@ -19,20 +19,39 @@ class ImagePreviewController : UIViewController {
     @IBOutlet weak var fileNameLabel: UILabel!
     @IBOutlet weak var sizeLabel: UILabel!
 
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "ShowImagePreview" {
-            let imageUrl = segue.value(forKey: "imageUrl")
+    var content: ImagePreviewContent? = nil
 
-            fileNameLabel.text = segue.value(forKey: "fileName") as? String ?? "undefined"
-            contentTypeLabel.text = segue.value(forKey: "contentType") as? String ?? "undefined"
-            var sizeString = "?? KB"
-            if let size = segue.value(forKey: "size") as? Int64 {
-                sizeString = UiUtils.bytesToHumanSize(size)
-            }
-            if let width = segue.value(forKey: "width") as? Int, let height = segue.value(forKey: "height") as? Int {
-                sizeString += "; \(width) \(height)"
-            }
-            sizeLabel.text = sizeString
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        setup()
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        setup()
+    }
+
+    private func setup() {
+        guard let content = self.content else { return }
+
+        imageView.image = content.imagePreview
+        fileNameLabel.text = content.fileName ?? "undefined"
+        contentTypeLabel.text = content.contentType ?? "undefined"
+        var sizeString = "?? KB"
+        if let size = content.size {
+            sizeString = UiUtils.bytesToHumanSize(size)
         }
+        if let width = content.width, let height = content.height {
+            sizeString += "; \(width) \(height)"
+        }
+        sizeLabel.text = sizeString
+    }
+
+    struct ImagePreviewContent {
+        let imagePreview: UIImage?
+        let fileName: String?
+        let contentType: String?
+        let size: Int64?
+        let width: Int?
+        let height: Int?
     }
 }

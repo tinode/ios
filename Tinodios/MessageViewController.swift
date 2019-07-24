@@ -131,6 +131,9 @@ class MessageViewController: UIViewController {
     // TODO: this is ugly. Move this to MVC+SendMessageBarDelegate.swift
     var imagePicker: ImagePicker?
 
+    // Image being previewed.
+    private var imagePreview: UIImage?
+
     private var noteTimer: Timer? = nil
 
     // Messages to be displayed
@@ -353,10 +356,18 @@ class MessageViewController: UIViewController {
     @objc func loadNextPage() {
         self.interactor?.loadNextPage()
     }
+
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "Messages2TopicInfo" {
+        switch segue.identifier {
+        case "Messages2TopicInfo":
             let destinationVC = segue.destination as! TopicInfoViewController
             destinationVC.topicName = self.topicName ?? ""
+        case "ShowImagePreview":
+            let destinationVC = segue.destination as! ImagePreviewController
+            destinationVC.imagePreview = self.imagePreview
+            self.imagePreview = nil
+        default:
+            break
         }
     }
 
@@ -1027,6 +1038,7 @@ extension MessageViewController : MessageCellDelegate {
 
         _ = interactor?.sendMessage(content: newMsg.attachJSON(json))
     }
+
     static func extractAttachment(from cell: MessageCell) -> [Data]? {
         guard let text = cell.content.attributedText else { return nil }
         var parts = [Data]()
@@ -1041,12 +1053,14 @@ extension MessageViewController : MessageCellDelegate {
         }
         return parts
     }
+
     private func handleLargeAttachment(in cell: MessageCell, using url: URL) {
         guard let data = MessageViewController.extractAttachment(from: cell), !data.isEmpty else { return }
         let downloadFrom = String(decoding: data[0], as: UTF8.self)
         guard let url = URL(string: downloadFrom) else { return }
         Cache.getLargeFileHelper().startDownload(from: url)
     }
+
     private func handleSmallAttachment(in cell: MessageCell, using url: URL) {
         // TODO: move logic to MessageInteractor.
         guard let data = MessageViewController.extractAttachment(from: cell), !data.isEmpty else { return }
@@ -1073,5 +1087,13 @@ extension MessageViewController : MessageCellDelegate {
     }
 
     private func showImagePreview(in cell: MessageCell) {
+        // FIXME: create and use "broken image" preview instead of returning.
+
+        guard let index = messageSeqIdIndex[cell.seqId] else { return }
+        let msg = messages[index]
+        guard let entity = msg.content?.entities?[0], let bits = entity.data?["val"]?.asData() else { return }
+
+        imagePreview = UIImage(data: bits) ?? UIImage()
+        performSegue(withIdentifier: "ShowImagePreview", sender: nil)
     }
 }
