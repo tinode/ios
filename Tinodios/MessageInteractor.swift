@@ -63,8 +63,10 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         self.topicName = topicName
         self.topicId = BaseDb.getInstance().topicDb?.getId(topic: topicName)
         let tinode = Cache.getTinode()
-        self.tinodeEventListener = MessageEventListener(
-            interactor: self, connected: tinode.isConnected)
+        if self.tinodeEventListener == nil {
+            self.tinodeEventListener = MessageEventListener(
+                interactor: self, connected: tinode.isConnected)
+        }
         tinode.listener = self.tinodeEventListener
         self.topic = tinode.getTopic(topicName: topicName) as? DefaultComTopic
         self.pagesToLoad = 1
@@ -114,11 +116,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                         DispatchQueue.main.async { self?.presenter?.applyTopicPermissions() }
                         return nil
                     },
-                    onFailure: { err in
-                        // failed
-                        print("failed \(err)")
-                        return nil
-                    })
+                    onFailure: UiUtils.ToastFailureHandler)
         } catch TinodeError.notConnected(let errorMsg) {
             // presenter --> show error message
             print("Tinode is not connected \(errorMsg)")

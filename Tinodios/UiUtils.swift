@@ -68,6 +68,19 @@ class UiUtils {
             }
         }
     }
+
+    public static func routeToChatListVC() {
+        DispatchQueue.main.async {
+            let storyboard = UIStoryboard(name: "Main", bundle: nil)
+            let initialViewController =
+                storyboard.instantiateViewController(
+                    withIdentifier: "ChatsNavigator") as! UINavigationController
+            if let window = UIApplication.shared.keyWindow {
+                window.rootViewController = initialViewController
+            }
+        }
+    }
+
     // Get text from UITextField or mark the field red if the field is blank
     public static func ensureDataInTextField(_ field: UITextField) -> String {
         let text = (field.text ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
