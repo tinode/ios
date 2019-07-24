@@ -294,6 +294,10 @@ class MessageViewController: UIViewController {
         sendMessageBar.delegate = self
 
         view.backgroundColor = .white
+
+        if (self.interactor?.setup(topicName: self.topicName) ?? false) {
+            self.interactor?.loadMessages()
+        }
     }
 
     override func viewDidLayoutSubviews() {
@@ -311,9 +315,6 @@ class MessageViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        if !(self.interactor?.setup(topicName: self.topicName) ?? false) {
-            print("error in interactor setup for \(String(describing: self.topicName))")
-        }
         self.interactor?.attachToTopic()
         self.interactor?.loadMessages()
         self.interactor?.sendReadNotification()
