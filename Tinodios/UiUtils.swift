@@ -34,6 +34,7 @@ class UiTinodeEventListener : TinodeEventListener {
 class UiUtils {
     static let kMinTagLength = 4
     static let kAvatarSize = 128
+
     public static func attachToMeTopic(meListener: DefaultMeTopic.Listener?) -> PromisedReply<ServerMessage>? {
         let tinode = Cache.getTinode()
         var me = tinode.getMeTopic()
@@ -254,8 +255,7 @@ class UiUtils {
         }
     }
     @discardableResult
-    public static func updateAvatar(
-        forTopic topic: DefaultTopic, image: UIImage) -> PromisedReply<ServerMessage>? {
+    public static func updateAvatar(forTopic topic: DefaultTopic, image: UIImage) -> PromisedReply<ServerMessage>? {
         let pub = topic.pub == nil ? VCard(fn: nil, avatar: image) : topic.pub!.copy()
         pub.photo = Photo(image: image)
         return UiUtils.setTopicData(forTopic: topic, pub: pub, priv: nil)

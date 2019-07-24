@@ -579,8 +579,8 @@ extension TopicInfoViewController {
 
 extension TopicInfoViewController: ImagePickerDelegate {
     func didSelect(image: UIImage?) {
-        guard let image = image else {
-            print("No image specified - skipping")
+        guard let image = image?.resize(width: CGFloat(UiUtils.kAvatarSize), height: CGFloat(UiUtils.kAvatarSize), clip: true) else {
+            print("No image specified or failed to resize - skipping")
             return
         }
         _ = try? UiUtils.updateAvatar(forTopic: self.topic, image: image)?.then(
