@@ -200,7 +200,7 @@ class AccountSettingsViewController: UITableViewController {
 }
 
 extension AccountSettingsViewController: ImagePickerDelegate {
-    func didSelect(image: UIImage?) {
+    func didSelect(image: UIImage?, mimeType: String?, fileName: String?) {
         guard let image = image?.resize(width: CGFloat(UiUtils.kAvatarSize), height: CGFloat(UiUtils.kAvatarSize), clip: true) else {
             print("No image specified or failed to resize - skipping")
             return

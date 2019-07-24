@@ -78,21 +78,13 @@ extension MessageViewController : UIDocumentPickerDelegate {
 }
 
 extension MessageViewController : ImagePickerDelegate {
-    func didSelect(image: UIImage?) {
-        guard var image = image, var bits = image.pngData() else { return }
-        let imageSize = bits.count
+    func didSelect(image: UIImage?, mimeType mime: String?, fileName fname: String?) {
+        let mimeType: String = mime == "image/png" ?  mime! : "image/jpeg"
+        guard let image = image?.resize(byteSize: MessageViewController.kMaxInbandAttachmentSize, asMimeType: mime), let bits = mimeType != "image/png" ? image.jpegData(compressionQuality: 0.8) : image.pngData() else { return }
 
-        if imageSize > MessageViewController.kMaxInbandAttachmentSize {
-            guard let resizedImage = image.resize(width: UiUtils.kMaxBitmapSize, height: UiUtils.kMaxBitmapSize, clip: false),
-                let resizedBits = resizedImage.pngData() else { return }
-            image = resizedImage
-            bits = resizedBits
-        }
-        let width = Int(image.size.width)
-        let height = Int(image.size.height)
-        let mimeType = "image/png"
-        let fname = "fn.png"
+        let width = Int(image.size.width * image.scale)
+        let height = Int(image.size.height * image.scale)
         let content = Drafty.parse(content: " ")
-        _ = interactor?.sendMessage(content: content.insertImage(at: 0, mime: mimeType, bits: bits, width: width, height: height, fname: fname))
+        _ = interactor?.sendMessage(content: content.insertImage(at: 0, mime: mimeType, bits: bits, width: width, height: height, fname: fname ?? "unnamed_image"))
     }
 }

@@ -414,7 +414,7 @@ class AttributedStringFormatter: DraftyFormatter {
             case .image(let image):
                 let wrapper = NSTextAttachment()
                 wrapper.image = image
-                let (scaledSize, _) = image.sizeUnder(maxWidth: size.width, maxHeight: size.height, clip: false)
+                let (scaledSize, _, _) = image.sizeUnder(maxWidth: size.width, maxHeight: size.height, clip: false)
                 wrapper.bounds = CGRect(origin: .zero, size: scaledSize)
                 return NSAttributedString(attachment: wrapper)
 

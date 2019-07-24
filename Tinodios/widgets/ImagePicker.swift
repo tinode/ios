@@ -9,7 +9,7 @@ import MobileCoreServices
 import UIKit
 
 public protocol ImagePickerDelegate: class {
-    func didSelect(image: UIImage?)
+    func didSelect(image: UIImage?, mimeType: String?, fileName: String?)
 }
 
 open class ImagePicker: NSObject {
@@ -73,28 +73,47 @@ open class ImagePicker: NSObject {
         self.presentationController?.present(alertController, animated: false)
     }
 
-    private func pickerController(_ controller: UIImagePickerController, didSelect image: UIImage?) {
+    private func pickerController(_ controller: UIImagePickerController, didSelect image: UIImage?, mimeType mime: String?, fileName fname: String?) {
         controller.dismiss(animated: true, completion: nil)
 
-        self.delegate?.didSelect(image: image)
+        self.delegate?.didSelect(image: image, mimeType: mime, fileName: fname)
     }
 }
 
 extension ImagePicker: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
 
     public func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
-        self.pickerController(picker, didSelect: nil)
+        self.pickerController(picker, didSelect: nil, mimeType: nil, fileName: nil)
     }
 
     public func imagePickerController(_ picker: UIImagePickerController,
                                       didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
         guard let image = info[.editedImage] as? UIImage else {
-            return self.pickerController(picker, didSelect: nil)
+            return self.pickerController(picker, didSelect: nil, mimeType: nil, fileName: nil)
         }
-        // Should we also pass these?
-        // May be useful for file name and mime type.
-        // let mediaType = info[.mediaType] as? String
-        // let mediaUrl = info[.mediaURL] as? String
-        self.pickerController(picker, didSelect: image)
+
+        let imageUrl: NSURL?
+        if #available(iOS 11.0, *) {
+            imageUrl = info[.imageURL] as? NSURL
+        } else {
+            // Fallback on earlier versions
+            imageUrl = info[.referenceURL] as? NSURL
+        }
+
+        // Get mime type and file name
+        let urlResourceValues = try? imageUrl?.resourceValues(forKeys: [.typeIdentifierKey, .nameKey])
+        let uti = urlResourceValues??[.typeIdentifierKey] as? NSString
+        let fname = urlResourceValues??[.nameKey] as? NSString
+
+        let mimeType: String?
+        if let uti = uti {
+            // Convert UTI string like 'public.jpeg' to MIME type like 'image/jpeg'
+            let unmanaged = UTTypeCopyPreferredTagWithClass(uti as CFString, kUTTagClassMIMEType)
+            mimeType = unmanaged?.takeRetainedValue() as String?
+        } else {
+            mimeType = nil
+        }
+
+        self.pickerController(picker, didSelect: image, mimeType: mimeType, fileName: fname as String?)
     }
 }

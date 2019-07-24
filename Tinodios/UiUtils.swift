@@ -290,8 +290,25 @@ extension UIViewController {
 }
 
 extension UIImage {
+    private static let kScaleFactor: CGFloat = 0.70710678118 // 1.0/SQRT(2)
 
-    /// Resize image to given dimentions.
+    private static func resizeImage(image: UIImage, newSize size: (dst: CGSize, src: CGRect, altered: Bool)) -> UIImage? {
+        // cropRect for cropping the original image to the required aspect ratio.
+        let cropRect = size.src
+        let scaleDown = CGAffineTransform(scaleX: size.dst.width / size.src.width, y: size.dst.width / size.src.width)
+
+        // Scale image to the requested dimentions
+        guard let imageOut = CIImage(image: image)?.cropped(to: cropRect).transformed(by: scaleDown) else { return nil }
+
+        // This 'UIGraphicsBeginImageContext' is some iOS weirdness. The image cannot be converted to png without it.
+        UIGraphicsBeginImageContext(imageOut.extent.size)
+        defer { UIGraphicsEndImageContext() }
+        UIImage(ciImage: imageOut).draw(in: CGRect(origin: .zero, size: imageOut.extent.size))
+        return UIGraphicsGetImageFromCurrentImageContext()
+    }
+
+    /// Resize the image to given physical (i.e. device pixels, not logical pixels) dimentions.
+    /// If the image does not need to be changed, return the original.
     ///
     /// - Parameters:
     ///     - maxWidth: maxumum width of the image
@@ -302,23 +319,35 @@ extension UIImage {
     public func resize(width: CGFloat, height: CGFloat, clip: Bool) -> UIImage? {
         let size = sizeUnder(maxWidth: width, maxHeight: height, clip: clip)
 
-        // cropRect for cropping the original image to the required aspect ratio.
-        let cropRect = size.src
-        let scaleDown = CGAffineTransform(scaleX: size.dst.width / size.src.width, y: size.dst.width / size.src.width)
+        // Don't mess with image if it does not need to be scaled.
+        guard size.altered else { return self }
 
-        // Scale image to the requested dimentions
-        guard let imageOut = CIImage(image: self)?.cropped(to: cropRect).transformed(by: scaleDown) else { return nil }
-
-        // This 'UIGraphicsBeginImageContext' is some iOS weirdness. The image cannot be converted to png without it.
-        UIGraphicsBeginImageContext(imageOut.extent.size)
-        defer { UIGraphicsEndImageContext() }
-        UIImage(ciImage: imageOut).draw(in: CGRect(origin: .zero, size: imageOut.extent.size))
-        return UIGraphicsGetImageFromCurrentImageContext()
+        return UIImage.resizeImage(image: self, newSize: size)
     }
 
-    /// Calculate linear dimensions for scaling image down to fit under a certain size.
-    /// Returns a tuple which contains destination image sizes, source sizes, and offsets
-    /// into source (when 'clip' is true).
+    /// Resize the image to the given bytesize keeping the original aspect ratio and format, of possible.
+    public func resize(byteSize: Int, asMimeType mime: String?) -> UIImage? {
+        // Sanity check
+        assert(byteSize > 100, "Maxumum byte size must be more than 100 bytes")
+
+        var image: UIImage = self
+        guard var bits = mime != "image/png" ? image.jpegData(compressionQuality: 0.8) : image.pngData() else { return nil }
+        while bits.count > byteSize {
+            let originalWidth = CGFloat(image.size.width * image.scale)
+            let originalHeight = CGFloat(image.size.height * image.scale)
+
+            guard let newImage = UIImage.resizeImage(image: image, newSize: image.sizeUnder(maxWidth: originalWidth * UIImage.kScaleFactor, maxHeight: originalHeight * UIImage.kScaleFactor, clip: false)) else { return nil }
+            image = newImage
+
+            guard let newBits = mime != "image/png" ? image.jpegData(compressionQuality: 0.8) : image.pngData()  else { return nil }
+            bits = newBits
+        }
+
+        return image
+    }
+
+    /// Calculate physical (not logical, i.e. UIImage.scale is factored in) linear dimensions
+    /// for scaling image down to fit under a certain size.
     ///
     /// - Parameters:
     ///     - maxWidth: maximum width of the image
@@ -326,7 +355,11 @@ extension UIImage {
     ///     - clip: first crops the image to the new aspect ratio then shrinks it; otherwise the
     ///       image keeps the original aspect ratio but is shrunk to be under the
     ///       maxWidth/maxHeight
-    public func sizeUnder(maxWidth: CGFloat, maxHeight: CGFloat, clip: Bool) -> (dst: CGSize, src: CGRect) {
+    /// - Returns:
+    ///     a tuple which contains destination image sizes, source sizes and offsets
+    ///     into source (when 'clip' is true), an indicator that the new dimensions are different
+    ///     from the original.
+    public func sizeUnder(maxWidth: CGFloat, maxHeight: CGFloat, clip: Bool) -> (dst: CGSize, src: CGRect, altered: Bool) {
 
         // Sanity check
         assert(maxWidth > 0 && maxHeight > 0, "Maxumum dimensions must be positive")
@@ -356,7 +389,8 @@ extension UIImage {
                 y: 0.5 * (originalHeight - srcHeight),
                 width: srcWidth,
                 height: srcHeight
-            )
+            ),
+            altered: originalWidth != dstSize.width || originalHeight != dstSize.height
         )
     }
 }
