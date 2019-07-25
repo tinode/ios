@@ -304,8 +304,9 @@ extension UIViewController {
 
 extension UIImage {
     private static let kScaleFactor: CGFloat = 0.70710678118 // 1.0/SQRT(2)
+    public typealias ScalingData = (dst: CGSize, src: CGRect, altered: Bool)
 
-    private static func resizeImage(image: UIImage, newSize size: (dst: CGSize, src: CGRect, altered: Bool)) -> UIImage? {
+    private static func resizeImage(image: UIImage, newSize size: ScalingData) -> UIImage? {
         // cropRect for cropping the original image to the required aspect ratio.
         let cropRect = size.src
         let scaleDown = CGAffineTransform(scaleX: size.dst.width / size.src.width, y: size.dst.width / size.src.width)
@@ -344,7 +345,7 @@ extension UIImage {
         assert(byteSize > 100, "Maxumum byte size must be more than 100 bytes")
 
         var image: UIImage = self
-        guard var bits = mime != "image/png" ? image.jpegData(compressionQuality: 0.8) : image.pngData() else { return nil }
+        guard var bits = image.pixelData(forMimeType: mime) else { return nil }
         while bits.count > byteSize {
             let originalWidth = CGFloat(image.size.width * image.scale)
             let originalHeight = CGFloat(image.size.height * image.scale)
@@ -352,7 +353,7 @@ extension UIImage {
             guard let newImage = UIImage.resizeImage(image: image, newSize: image.sizeUnder(maxWidth: originalWidth * UIImage.kScaleFactor, maxHeight: originalHeight * UIImage.kScaleFactor, clip: false)) else { return nil }
             image = newImage
 
-            guard let newBits = mime != "image/png" ? image.jpegData(compressionQuality: 0.8) : image.pngData()  else { return nil }
+            guard let newBits = image.pixelData(forMimeType: mime) else { return nil }
             bits = newBits
         }
 
@@ -372,7 +373,7 @@ extension UIImage {
     ///     a tuple which contains destination image sizes, source sizes and offsets
     ///     into source (when 'clip' is true), an indicator that the new dimensions are different
     ///     from the original.
-    public func sizeUnder(maxWidth: CGFloat, maxHeight: CGFloat, clip: Bool) -> (dst: CGSize, src: CGRect, altered: Bool) {
+    public func sizeUnder(maxWidth: CGFloat, maxHeight: CGFloat, clip: Bool) -> ScalingData {
 
         // Sanity check
         assert(maxWidth > 0 && maxHeight > 0, "Maxumum dimensions must be positive")
@@ -405,6 +406,10 @@ extension UIImage {
             ),
             altered: originalWidth != dstSize.width || originalHeight != dstSize.height
         )
+    }
+
+    public func pixelData(forMimeType mime: String?) -> Data? {
+        return mime != "image/png" ? jpegData(compressionQuality: 0.8) : pngData()
     }
 }
 
