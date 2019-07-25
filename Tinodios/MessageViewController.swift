@@ -912,13 +912,15 @@ extension MessageViewController : MessageCellDelegate {
         if url.scheme == "tinode" {
             switch url.path {
             case "/post":
-                handleButtonPost(in: cell, data: url)
+                handleButtonPost(in: cell, using: url)
             case "/small-attachment":
                 handleSmallAttachment(in: cell, using: url)
                 print("small attachment - \(url)")
             case "/large-attachment":
                 handleLargeAttachment(in: cell, using: url)
                 print("large attachment - \(url)")
+            case "/image-preview":
+                showImagePreview(in: cell)
             default:
                 print("Unknown tinode:// action '\(url.path)'")
                 break
@@ -1004,7 +1006,7 @@ extension MessageViewController : MessageCellDelegate {
         }
     }
 
-    private func handleButtonPost(in cell: MessageCell, data url: URL) {
+    private func handleButtonPost(in cell: MessageCell, using url: URL) {
         let parts = URLComponents(url: url, resolvingAgainstBaseURL: false)
         var query: [String : String]?
         if let queryItems = parts?.queryItems {
@@ -1068,5 +1070,8 @@ extension MessageViewController : MessageCellDelegate {
         } catch {
             print("failed to save \(filename!)")
         }
+    }
+
+    private func showImagePreview(in cell: MessageCell) {
     }
 }

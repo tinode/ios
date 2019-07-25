@@ -107,7 +107,7 @@ class MessageCell: UICollectionViewCell {
 
     var cancelUploadButton: UIButton = {
         let button = UIButton()
-        button.setTitle("X", for: .normal)
+        button.setTitle("×", for: .normal)
         button.setTitleColor(UIColor.blue, for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 10)
         return button

@@ -78,41 +78,17 @@ extension MessageViewController : UIDocumentPickerDelegate {
 }
 
 extension MessageViewController : ImagePickerDelegate {
-    private static let kMaxDimension = 512
-    private static func shrinkImage(orig: UIImage) -> UIImage? {
-        var width = Int(orig.size.width)
-        var height = Int(orig.size.height)
-        var changed = false
-        if width >= height {
-            if width > MessageViewController.kMaxDimension {
-                height = height * MessageViewController.kMaxDimension / width
-                width = MessageViewController.kMaxDimension
-                changed = true
-            }
-        } else {
-            if height > MessageViewController.kMaxDimension {
-                width = width * MessageViewController.kMaxDimension / height
-                height = MessageViewController.kMaxDimension
-                changed = true
-            }
-        }
-        return changed ? orig.resize(width: CGFloat(width), height: CGFloat(height), clip: false) : orig
-    }
-    func didSelect(image: UIImage?) {
-        guard var image = image, var bits = image.pngData() else { return }
-        let imageSize = bits.count
+    func didSelect(image: UIImage?, mimeType mime: String?, fileName fname: String?) {
+        let mimeType: String = mime == "image/png" ?  mime! : "image/jpeg"
 
-        if imageSize > MessageViewController.kMaxInbandAttachmentSize {
-            guard let resizedImage = MessageViewController.shrinkImage(orig: image),
-                let resizedBits = resizedImage.pngData() else { return }
-            image = resizedImage
-            bits = resizedBits
-        }
-        let width = Int(image.size.width)
-        let height = Int(image.size.height)
-        let mimeType = "image/png"
-        let fname = "fn.png"
+        // Ensure image size in bytes and liner dimensions are under the limits.
+        guard let image = image?.resize(byteSize: MessageViewController.kMaxInbandAttachmentSize, asMimeType: mimeType)?.resize(width: UiUtils.kMaxBitmapSize, height: UiUtils.kMaxBitmapSize, clip: false) else { return }
+
+        guard let bits = image.pixelData(forMimeType: mime) else { return }
+
+        let width = Int(image.size.width * image.scale)
+        let height = Int(image.size.height * image.scale)
         let content = Drafty.parse(content: " ")
-        _ = interactor?.sendMessage(content: content.insertImage(at: 0, mime: mimeType, bits: bits, width: width, height: height, fname: fname))
+        _ = interactor?.sendMessage(content: content.insertImage(at: 0, mime: mimeType, bits: bits, width: width, height: height, fname: fname ?? "unnamed_image"))
     }
 }
