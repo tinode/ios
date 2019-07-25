@@ -63,8 +63,8 @@ class ChatListInteractor: ChatListBusinessLogic, ChatListDataStore {
     }
     private class ChatEventListener: UiTinodeEventListener {
         private weak var interactor: ChatListBusinessLogic?
-        init(interactor: ChatListBusinessLogic?, connected: Bool) {
-            super.init(connected: connected)
+        init(interactor: ChatListBusinessLogic?, viewController: UIViewController?, connected: Bool) {
+            super.init(viewController: viewController, connected: connected)
             self.interactor = interactor
         }
         override func onLogin(code: Int, text: String) {
@@ -125,7 +125,9 @@ class ChatListInteractor: ChatListBusinessLogic, ChatListDataStore {
         self.meTopic?.listener = meListener
         let tinode = Cache.getTinode()
         self.tinodeEventListener = ChatEventListener(
-            interactor: self, connected: tinode.isConnected)
+            interactor: self,
+            viewController: self.presenter?.underlyingViewController,
+            connected: tinode.isConnected)
         tinode.listener = self.tinodeEventListener
     }
     func cleanup() {

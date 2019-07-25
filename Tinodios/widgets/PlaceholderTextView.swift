@@ -40,9 +40,24 @@ import UIKit
         }
     }
 
-    override func resignFirstResponder() -> Bool {
-        print("PlaceholderTextView got resignFirstResponder")
-        return super.resignFirstResponder()
+    // See explanation here https://stackoverflow.com/questions/13601643/uimenucontroller-hides-the-keyboard/23849955#23849955
+    // and here https://github.com/alexpersian/MenuItemTester/blob/master/MenuItemTester/InputTextField.swift
+    weak var nextResponderOverride: UIResponder?
+
+    override var next: UIResponder? {
+        if nextResponderOverride != nil {
+            return nextResponderOverride
+        } else {
+            return super.next
+        }
+    }
+
+    override func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
+        if nextResponderOverride != nil {
+            return false
+        } else {
+            return super.canPerformAction(action, withSender: sender)
+        }
     }
 
     // MARK: initializers

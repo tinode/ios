@@ -66,8 +66,10 @@ class RichTextView : UITextView {
             return button.payload
         }
 
-        print("Generic attachment \(attachment) tapped")
+        if attachment.image != nil {
+            return URL(string: "tinode:///preview-image")
+        }
 
-        return URL(string: "tinode://generic-attachment/")
+        return URL(string: "tinode:///generic-attachment")
     }
 }

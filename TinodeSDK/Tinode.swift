@@ -897,6 +897,16 @@ public class Tinode {
         return connectedPromise
     }
 
+    public func reconnectNow() -> Bool {
+        guard connection != nil && !isConnected else { return false }
+        do {
+            try connection!.connect(reconnectAutomatically: true)
+            return true
+        } catch {
+            return false
+        }
+    }
+
     public func subscribe<Pu: Codable, Pr: Codable>(
         to topicName: String,
         set: MsgSetMeta<Pu, Pr>?,

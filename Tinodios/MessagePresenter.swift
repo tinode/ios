@@ -9,6 +9,7 @@ import Foundation
 import UIKit
 
 protocol MessagePresentationLogic {
+    var underlyingViewController: UIViewController? { get }
     func updateTitleBar(icon: UIImage?, title: String?, online: Bool)
     func setOnline(online: Bool)
     func runTypingAnimation()
@@ -22,6 +23,10 @@ protocol MessagePresentationLogic {
 
 class MessagePresenter: MessagePresentationLogic {
     weak var viewController: MessageDisplayLogic?
+
+    var underlyingViewController: UIViewController? {
+        get { return viewController as? UIViewController }
+    }
 
     func updateTitleBar(icon: UIImage?, title: String?, online: Bool) {
         self.viewController?.updateTitleBar(icon: icon, title: title, online: online)
