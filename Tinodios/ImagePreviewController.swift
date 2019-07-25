@@ -8,18 +8,24 @@
 // Shows full-screen
 import UIKit
 
-protocol ImagePreviewLogic: class {
-
+struct ImagePreviewContent {
+    let imagePreview: UIImage?
+    let fileName: String?
+    let contentType: String?
+    let size: Int64?
+    let width: Int?
+    let height: Int?
 }
 
-class ImagePreviewController : UIViewController {
+class ImagePreviewController : UIViewController, UIScrollViewDelegate {
 
+    @IBOutlet weak var scrollView: UIScrollView!
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var contentTypeLabel: UILabel!
     @IBOutlet weak var fileNameLabel: UILabel!
     @IBOutlet weak var sizeLabel: UILabel!
 
-    var content: ImagePreviewContent? = nil
+    var previewContent: ImagePreviewContent? = nil
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -31,7 +37,10 @@ class ImagePreviewController : UIViewController {
     }
 
     private func setup() {
-        guard let content = self.content else { return }
+        guard let content = self.previewContent else { return }
+
+        scrollView.minimumZoomScale = 1.0
+        scrollView.maximumZoomScale = 8.0
 
         imageView.image = content.imagePreview
         fileNameLabel.text = content.fileName ?? "undefined"
@@ -41,17 +50,13 @@ class ImagePreviewController : UIViewController {
             sizeString = UiUtils.bytesToHumanSize(size)
         }
         if let width = content.width, let height = content.height {
-            sizeString += "; \(width) \(height)"
+            sizeString += "; \(width)×\(height)"
         }
         sizeLabel.text = sizeString
     }
 
-    struct ImagePreviewContent {
-        let imagePreview: UIImage?
-        let fileName: String?
-        let contentType: String?
-        let size: Int64?
-        let width: Int?
-        let height: Int?
+    func viewForZooming(in: UIScrollView) -> UIView? {
+        print("viewForZooming is called")
+        return imageView
     }
 }

@@ -131,9 +131,6 @@ class MessageViewController: UIViewController {
     // TODO: this is ugly. Move this to MVC+SendMessageBarDelegate.swift
     var imagePicker: ImagePicker?
 
-    // Image being previewed.
-    private var imagePreview: UIImage?
-
     private var noteTimer: Timer? = nil
 
     // Messages to be displayed
@@ -364,8 +361,7 @@ class MessageViewController: UIViewController {
             destinationVC.topicName = self.topicName ?? ""
         case "ShowImagePreview":
             let destinationVC = segue.destination as! ImagePreviewController
-            destinationVC.imagePreview = self.imagePreview
-            self.imagePreview = nil
+            destinationVC.previewContent = (sender as! ImagePreviewContent)
         default:
             break
         }
@@ -930,7 +926,7 @@ extension MessageViewController : MessageCellDelegate {
             case "/large-attachment":
                 handleLargeAttachment(in: cell, using: url)
                 print("large attachment - \(url)")
-            case "/image-preview":
+            case "/preview-image":
                 showImagePreview(in: cell)
             default:
                 print("Unknown tinode:// action '\(url.path)'")
@@ -1093,7 +1089,13 @@ extension MessageViewController : MessageCellDelegate {
         let msg = messages[index]
         guard let entity = msg.content?.entities?[0], let bits = entity.data?["val"]?.asData() else { return }
 
-        imagePreview = UIImage(data: bits) ?? UIImage()
-        performSegue(withIdentifier: "ShowImagePreview", sender: nil)
+        let content = ImagePreviewContent(
+            imagePreview: UIImage(data: bits) ?? UIImage(),
+            fileName: entity.data?["name"]?.asString(),
+            contentType: entity.data?["mime"]?.asString(),
+            size: Int64(bits.count),
+            width: entity.data?["width"]?.asInt(),
+            height: entity.data?["height"]?.asInt())
+        performSegue(withIdentifier: "ShowImagePreview", sender: content)
     }
 }
