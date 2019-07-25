@@ -9,6 +9,7 @@ import Foundation
 import TinodeSDK
 
 protocol ChatListPresentationLogic {
+    var underlyingViewController: UIViewController? { get }
     func presentTopics(_ topics: [DefaultComTopic], archivedTopics: [DefaultComTopic]?)
     func topicUpdated(_ name: String)
     func topicDeleted(_ name: String)
@@ -16,6 +17,9 @@ protocol ChatListPresentationLogic {
 
 class ChatListPresenter: ChatListPresentationLogic {
     weak var viewController: ChatListDisplayLogic?
+    var underlyingViewController: UIViewController? {
+        get { return viewController as? UIViewController }
+    }
 
     func presentTopics(_ topics: [DefaultComTopic], archivedTopics: [DefaultComTopic]?) {
         viewController?.displayChats(topics, archivedTopics: archivedTopics)

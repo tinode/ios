@@ -38,8 +38,8 @@ protocol MessageDataStore {
 class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, MessageDataStore {
     class MessageEventListener: UiTinodeEventListener {
         private weak var interactor: MessageBusinessLogic?
-        init(interactor: MessageBusinessLogic?, connected: Bool) {
-            super.init(connected: connected)
+        init(interactor: MessageBusinessLogic?, viewController: UIViewController?, connected: Bool) {
+            super.init(viewController: viewController, connected: connected)
             self.interactor = interactor
         }
         override func onLogin(code: Int, text: String) {
@@ -65,7 +65,9 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         let tinode = Cache.getTinode()
         if self.tinodeEventListener == nil {
             self.tinodeEventListener = MessageEventListener(
-                interactor: self, connected: tinode.isConnected)
+                interactor: self,
+                viewController: self.presenter?.underlyingViewController,
+                connected: tinode.isConnected)
         }
         tinode.listener = self.tinodeEventListener
         self.topic = tinode.getTopic(topicName: topicName) as? DefaultComTopic
