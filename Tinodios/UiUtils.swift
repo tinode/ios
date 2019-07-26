@@ -138,7 +138,7 @@ class UiUtils {
         // Prevent very short toasts
         guard duration > 0.5 else { return }
 
-        let icon = UIImageView(image: UIImage(named: "outline_error_outline_white_48pt"))
+        let icon = UIImageView(image: UIImage(named: "important-32"))
         icon.tintColor = UIColor.white
         icon.frame = CGRect(x: spacing, y: spacing, width: iconSize, height: iconSize)
 
