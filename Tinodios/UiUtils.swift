@@ -130,26 +130,32 @@ class UiUtils {
 
         let iconSize: CGFloat = 32
         let spacing: CGFloat = 8
-        let messageHeight = iconSize + spacing * 2
-        let toastHeight = max(min(parent.frame.height * 0.1, 100), messageHeight)
+        let minMessageHeight = iconSize + spacing * 2
+        let maxMessageHeight: CGFloat = 100
+
+        let toastHeight = max(min(parent.frame.height * 0.1, maxMessageHeight), minMessageHeight)
 
         // Prevent very short toasts
         guard duration > 0.5 else { return }
-        let label = UILabel()
-        label.textColor = UIColor.white
-        label.textAlignment = .left
-        label.font = UIFont.preferredFont(forTextStyle: .callout)
-        label.text = message
-        label.alpha = 1.0
-        label.sizeToFit()
 
         let icon = UIImageView(image: UIImage(named: "outline_error_outline_white_48pt"))
         icon.tintColor = UIColor.white
         icon.frame = CGRect(x: spacing, y: spacing, width: iconSize, height: iconSize)
 
+        let label = UILabel()
+        label.textColor = UIColor.white
+        label.textAlignment = .left
+        label.lineBreakMode = .byWordWrapping
+        label.numberOfLines = 3
+        label.font = UIFont.preferredFont(forTextStyle: .callout)
+        label.text = message
+        label.alpha = 1.0
+        let maxLabelWidth = parent.frame.width - spacing * 3 - iconSize
+
+        let labelBounds = label.textRect(forBounds: CGRect(x: 0, y: 0, width: maxLabelWidth, height: CGFloat.greatestFiniteMagnitude), limitedToNumberOfLines: label.numberOfLines)
         label.frame = CGRect(
-            x: iconSize + spacing * 2, y: (messageHeight - label.frame.height) / 2,
-            width: label.frame.width + spacing * 2, height: label.frame.height)
+            x: iconSize + spacing * 2, y: spacing + (iconSize - label.font.lineHeight) * 0.5,
+            width: labelBounds.width, height: labelBounds.height)
 
         let toastView = UIView()
         toastView.alpha = 0
@@ -158,6 +164,8 @@ class UiUtils {
         toastView.addSubview(label)
 
         parent.addSubview(toastView)
+        label.sizeToFit()
+
         toastView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             toastView.leadingAnchor.constraint(equalTo: parent.leadingAnchor, constant: 0),
