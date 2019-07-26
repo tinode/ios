@@ -21,7 +21,9 @@ class UiTinodeEventListener : TinodeEventListener {
     }
     func onDisconnect(byServer: Bool, code: Int, reason: String) {
         connected = false
-        UiUtils.showToast(message: "Connection to server lost.")
+        DispatchQueue.main.async {
+            UiUtils.showToast(message: "Connection to server lost.")
+        }
     }
     func onLogin(code: Int, text: String) {}
     func onMessage(msg: ServerMessage?) {}
@@ -124,7 +126,7 @@ class UiUtils {
     ///  - message: message to display
     ///  - duration: duration of display in seconds.
     public static func showToast(message: String, duration: TimeInterval = 3.0) {
-        guard let parent = UIApplication.shared.keyWindow else { return }
+        guard let parent = UIApplication.shared.windows.last else { return }
 
         let iconSize: CGFloat = 32
         let spacing: CGFloat = 8
