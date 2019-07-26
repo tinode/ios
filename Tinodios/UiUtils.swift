@@ -46,8 +46,7 @@ class UiTinodeEventListener : TinodeEventListener {
     }
 
     private func addReconnectButton() {
-        // TODO: use a proper icon here.
-        let reconnectButton = UIBarButtonItem(image: UIImage(named: "sign-out-25"), style: .plain, target: self, action: #selector(self.reconnect))
+        let reconnectButton = UIBarButtonItem(image: UIImage(named: "connect-48"), style: .plain, target: self, action: #selector(self.reconnect))
         self.viewController?.navigationItem.rightBarButtonItems?.append(reconnectButton)
         self.refreshNavBar()
     }
