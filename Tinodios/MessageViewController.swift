@@ -353,10 +353,17 @@ class MessageViewController: UIViewController {
     @objc func loadNextPage() {
         self.interactor?.loadNextPage()
     }
+
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "Messages2TopicInfo" {
+        switch segue.identifier {
+        case "Messages2TopicInfo":
             let destinationVC = segue.destination as! TopicInfoViewController
             destinationVC.topicName = self.topicName ?? ""
+        case "ShowImagePreview":
+            let destinationVC = segue.destination as! ImagePreviewController
+            destinationVC.previewContent = (sender as! ImagePreviewContent)
+        default:
+            break
         }
     }
 
@@ -912,13 +919,15 @@ extension MessageViewController : MessageCellDelegate {
         if url.scheme == "tinode" {
             switch url.path {
             case "/post":
-                handleButtonPost(in: cell, data: url)
+                handleButtonPost(in: cell, using: url)
             case "/small-attachment":
                 handleSmallAttachment(in: cell, using: url)
                 print("small attachment - \(url)")
             case "/large-attachment":
                 handleLargeAttachment(in: cell, using: url)
                 print("large attachment - \(url)")
+            case "/preview-image":
+                showImagePreview(in: cell)
             default:
                 print("Unknown tinode:// action '\(url.path)'")
                 break
@@ -1004,7 +1013,7 @@ extension MessageViewController : MessageCellDelegate {
         }
     }
 
-    private func handleButtonPost(in cell: MessageCell, data url: URL) {
+    private func handleButtonPost(in cell: MessageCell, using url: URL) {
         let parts = URLComponents(url: url, resolvingAgainstBaseURL: false)
         var query: [String : String]?
         if let queryItems = parts?.queryItems {
@@ -1025,6 +1034,7 @@ extension MessageViewController : MessageCellDelegate {
 
         _ = interactor?.sendMessage(content: newMsg.attachJSON(json))
     }
+
     static func extractAttachment(from cell: MessageCell) -> [Data]? {
         guard let text = cell.content.attributedText else { return nil }
         var parts = [Data]()
@@ -1039,12 +1049,14 @@ extension MessageViewController : MessageCellDelegate {
         }
         return parts
     }
+
     private func handleLargeAttachment(in cell: MessageCell, using url: URL) {
         guard let data = MessageViewController.extractAttachment(from: cell), !data.isEmpty else { return }
         let downloadFrom = String(decoding: data[0], as: UTF8.self)
         guard let url = URL(string: downloadFrom) else { return }
         Cache.getLargeFileHelper().startDownload(from: url)
     }
+
     private func handleSmallAttachment(in cell: MessageCell, using url: URL) {
         // TODO: move logic to MessageInteractor.
         guard let data = MessageViewController.extractAttachment(from: cell), !data.isEmpty else { return }
@@ -1068,5 +1080,22 @@ extension MessageViewController : MessageCellDelegate {
         } catch {
             print("failed to save \(filename!)")
         }
+    }
+
+    private func showImagePreview(in cell: MessageCell) {
+        // FIXME: create and use "broken image" preview instead of returning.
+
+        guard let index = messageSeqIdIndex[cell.seqId] else { return }
+        let msg = messages[index]
+        guard let entity = msg.content?.entities?[0], let bits = entity.data?["val"]?.asData() else { return }
+
+        let content = ImagePreviewContent(
+            imagePreview: UIImage(data: bits) ?? UIImage(),
+            fileName: entity.data?["name"]?.asString(),
+            contentType: entity.data?["mime"]?.asString(),
+            size: Int64(bits.count),
+            width: entity.data?["width"]?.asInt(),
+            height: entity.data?["height"]?.asInt())
+        performSegue(withIdentifier: "ShowImagePreview", sender: content)
     }
 }
