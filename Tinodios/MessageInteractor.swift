@@ -118,7 +118,15 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                         DispatchQueue.main.async { self?.presenter?.applyTopicPermissions() }
                         return nil
                     },
-                    onFailure: UiUtils.ToastFailureHandler)
+                    onFailure: { err in
+                        DispatchQueue.main.async {
+                            UiUtils.showToast(
+                                message: "Failed to subscribe to topic: \(err.localizedDescription)") }
+                        if case TinodeError.notConnected(_) = err {
+                            Cache.getTinode().reconnectNow()
+                        }
+                        return nil
+                    })
         } catch TinodeError.notConnected(let errorMsg) {
             // presenter --> show error message
             print("Tinode is not connected \(errorMsg)")
@@ -142,10 +150,12 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                 onFailure: UiUtils.ToastFailureHandler)
         } catch TinodeError.notConnected(let errMsg) {
             print("sendMessage -- not connected \(errMsg)")
+            DispatchQueue.main.async { UiUtils.showToast(message: "You are offline.") }
+            Cache.getTinode().reconnectNow()
             return false
         } catch {
             print("sendMessage failed \(error)")
-            // todo: display a UI toast.
+            DispatchQueue.main.async { UiUtils.showToast(message: "Message not sent.") }
             return false
         }
         return true

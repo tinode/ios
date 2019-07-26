@@ -15,15 +15,13 @@ class UiTinodeEventListener : TinodeEventListener {
     init(viewController: UIViewController?, connected: Bool) {
         self.viewController = viewController
         self.connected = connected
-        updateNavBar(when: connected)
     }
     func onConnect(code: Int, reason: String, params: [String : JSONValue]?) {
         connected = true
-        updateNavBar(when: connected)
     }
     func onDisconnect(byServer: Bool, code: Int, reason: String) {
         connected = false
-        updateNavBar(when: connected)
+        UiUtils.showToast(message: "Connection to server lost.")
     }
     func onLogin(code: Int, text: String) {}
     func onMessage(msg: ServerMessage?) {}
@@ -33,52 +31,6 @@ class UiTinodeEventListener : TinodeEventListener {
     func onInfoMessage(info: MsgServerInfo?) {}
     func onMetaMessage(meta: MsgServerMeta?) {}
     func onPresMessage(pres: MsgServerPres?) {}
-
-    private func refreshNavBar() {
-        if let bar = self.viewController?.navigationController?.navigationBar {
-            // Refresh the bar.
-            DispatchQueue.main.async {
-                bar.setNeedsLayout()
-                bar.layoutIfNeeded()
-                bar.setNeedsDisplay()
-            }
-        }
-    }
-
-    private func addReconnectButton() {
-        let reconnectButton = UIBarButtonItem(image: UIImage(named: "connect-48"), style: .plain, target: self, action: #selector(self.reconnect))
-        self.viewController?.navigationItem.rightBarButtonItems?.append(reconnectButton)
-        self.refreshNavBar()
-    }
-
-    private func removeReconnectButton() {
-        self.viewController?.navigationItem.rightBarButtonItems?.removeAll(where: {
-            return $0.action == #selector(self.reconnect)
-        })
-        self.refreshNavBar()
-    }
-
-    private func updateNavBar(when connected: Bool) {
-        var reconnectButtonVisible = false
-        if let navbarButtonItems = self.viewController?.navigationItem.rightBarButtonItems {
-            reconnectButtonVisible = navbarButtonItems.contains(where: {
-                return $0.action == #selector(self.reconnect)
-            })
-        }
-        if connected {
-            if reconnectButtonVisible {
-                removeReconnectButton()
-            }
-        } else {
-            if !reconnectButtonVisible {
-                addReconnectButton()
-            }
-        }
-    }
-
-    @objc func reconnect() {
-        _ = Cache.getTinode().reconnectNow()
-    }
 }
 
 class UiUtils {
