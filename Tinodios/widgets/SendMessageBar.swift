@@ -34,6 +34,7 @@ class SendMessageBar: UIView {
     @IBOutlet weak var allDisabledView: UIView!
     // Message "Peer's messaging is disabled. Enable". Not installed by default.
     @IBOutlet weak var peerMessagingDisabledView: UIStackView!
+    @IBOutlet weak var peerMessagingDisabledHeight: NSLayoutConstraint!
 
     // MARK: Properties
     weak var foregroundView: UIView?
@@ -144,7 +145,7 @@ class SendMessageBar: UIView {
     public func togglePeerMessagingDisabled(visible: Bool) {
         peerMessagingDisabledView.isHidden = !visible
         peerMessagingDisabledView.isUserInteractionEnabled = visible
-        peerMessagingDisabledView.bounds =  CGRect(x: 0, y: 0, width: peerMessagingDisabledView.bounds.width, height: visible ? Constants.peerMessagingDisabledHeight : 0)
+        peerMessagingDisabledHeight.constant = visible ? Constants.peerMessagingDisabledHeight : 0
     }
 }
 

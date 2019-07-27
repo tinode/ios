@@ -16,6 +16,7 @@
                 <outlet property="attachButton" destination="Sxl-U7-4Vy" id="Qpf-Oc-dWr"/>
                 <outlet property="inputField" destination="bxx-m5-ifU" id="wwU-HN-RWu"/>
                 <outlet property="inputFieldHeight" destination="gP4-QC-iyW" id="XbB-0g-jEE"/>
+                <outlet property="peerMessagingDisabledHeight" destination="MET-cJ-zIv" id="MsA-sq-Vgr"/>
                 <outlet property="peerMessagingDisabledView" destination="Awf-Rd-vTa" id="AMC-Tn-coA"/>
                 <outlet property="sendButton" destination="LQB-Eu-unW" id="PaC-Hi-AC5"/>
             </connections>
@@ -98,6 +99,9 @@
                             </connections>
                         </button>
                     </subviews>
+                    <constraints>
+                        <constraint firstAttribute="height" relation="lessThanOrEqual" constant="32" id="MET-cJ-zIv"/>
+                    </constraints>
                 </stackView>
                 <view hidden="YES" userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="yZd-O5-BVm" userLabel="Disabled">
                     <rect key="frame" x="0.0" y="0.0" width="414" height="180"/>
