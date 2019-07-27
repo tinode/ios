@@ -19,12 +19,19 @@ class PermissionsEditViewController: UIViewController {
 
     @IBOutlet weak var alertView: UIView!
     @IBOutlet weak var joinSwitch: UISwitch!
+    @IBOutlet weak var joinLabel: UILabel!
     @IBOutlet weak var readSwitch: UISwitch!
+    @IBOutlet weak var readLabel: UILabel!
     @IBOutlet weak var writeSwitch: UISwitch!
+    @IBOutlet weak var writeLabel: UILabel!
     @IBOutlet weak var notificationsSwitch: UISwitch!
+    @IBOutlet weak var notificationsLabel: UILabel!
     @IBOutlet weak var approveSwitch: UISwitch!
+    @IBOutlet weak var approveLabel: UILabel!
     @IBOutlet weak var inviteSwitch: UISwitch!
+    @IBOutlet weak var inviteLabel: UILabel!
     @IBOutlet weak var deleteSwitch: UISwitch!
+    @IBOutlet weak var deleteLabel: UILabel!
 
     private var joinState: Bool
     private var readState: Bool
