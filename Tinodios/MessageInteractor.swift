@@ -366,6 +366,9 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
     override func onData(data: MsgServerData?) {
         self.loadMessages()
     }
+    override func onPres(pres: MsgServerPres) {
+        DispatchQueue.main.async { self.presenter?.applyTopicPermissions() }
+    }
     override func onOnline(online: Bool) {
         DispatchQueue.main.async {
             self.presenter?.setOnline(online: online)

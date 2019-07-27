@@ -86,15 +86,16 @@
                     <rect key="frame" x="0.0" y="0.0" width="414" height="150"/>
                     <subviews>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Not Available" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Gvw-uT-5lm">
-                            <rect key="frame" x="122.5" y="57" width="169.5" height="36"/>
-                            <fontDescription key="fontDescription" style="UICTFontTextStyleTitle0"/>
+                            <rect key="frame" x="150" y="68" width="114.5" height="24"/>
+                            <fontDescription key="fontDescription" style="UICTFontTextStyleTitle2"/>
                             <nil key="textColor"/>
                             <nil key="highlightedColor"/>
                         </label>
                     </subviews>
+                    <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                     <constraints>
-                        <constraint firstItem="Gvw-uT-5lm" firstAttribute="centerX" secondItem="yZd-O5-BVm" secondAttribute="centerX" id="3dp-b5-0LR"/>
-                        <constraint firstItem="Gvw-uT-5lm" firstAttribute="centerY" secondItem="yZd-O5-BVm" secondAttribute="centerY" id="Qkt-cH-1bc"/>
+                        <constraint firstItem="Gvw-uT-5lm" firstAttribute="centerX" secondItem="GqD-9C-zYa" secondAttribute="centerX" id="3dp-b5-0LR"/>
+                        <constraint firstItem="Gvw-uT-5lm" firstAttribute="centerY" secondItem="GqD-9C-zYa" secondAttribute="centerY" id="Qkt-cH-1bc"/>
                     </constraints>
                     <viewLayoutGuide key="safeArea" id="GqD-9C-zYa"/>
                 </view>

@@ -125,6 +125,8 @@ class SendMessageBar: UIView {
         }
 
         sendButton.isEnabled = false
+        peerMessagingDisabledView.isHidden = true
+        allDisabledView.isHidden = true
     }
 }
 
@@ -169,27 +171,12 @@ extension SendMessageBar {
         }
         return overlay
     }
-    public func showNotAvailableOverlay() {
-        guard self.foregroundView == nil else { return }
-        // Blurring layer over the messages.
-        let overlay = makeOverlayView()
 
-        let notAvailableLabel = UILabel()
-        notAvailableLabel.text = "Not available"
-        notAvailableLabel.sizeToFit()
-        notAvailableLabel.numberOfLines = 0
-        notAvailableLabel.textAlignment = .center
-        notAvailableLabel.font = UIFont.boldSystemFont(ofSize: 18)
-        notAvailableLabel.translatesAutoresizingMaskIntoConstraints = false
-        overlay.addSubview(notAvailableLabel)
-        // Pin it to the superview center.
-        NSLayoutConstraint.activate([
-            notAvailableLabel.centerXAnchor.constraint(equalTo: overlay.centerXAnchor),
-            notAvailableLabel.centerYAnchor.constraint(equalTo: overlay.centerYAnchor)])
-        // Disable user interaction for the message view.
-        self.isUserInteractionEnabled = false
-        self.foregroundView = overlay
+    public func toggleNotAvailableOverlay(visible: Bool) {
+        self.allDisabledView.isHidden = !visible
+        self.isUserInteractionEnabled = !visible
     }
+
     public func showPeersMessagingDisabledOverlay() {
         guard self.foregroundView == nil else { return }
         // Blurring layer over the messages.
@@ -223,13 +210,8 @@ extension SendMessageBar {
             enableButton.centerYAnchor.constraint(equalTo: overlay.centerYAnchor)])
         self.foregroundView = overlay
     }
+
     @objc private func enablePeersMessagingClicked(sender: UIButton!) {
         self.delegate?.sendMessageBar(enablePeersMessaging: true)
-    }
-    public func removeNotAvailableOverlay() {
-        guard self.foregroundView != nil else { return }
-        self.foregroundView!.removeFromSuperview()
-        self.foregroundView = nil
-        self.isUserInteractionEnabled = true
     }
 }

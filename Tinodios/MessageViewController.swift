@@ -268,13 +268,13 @@ class MessageViewController: UIViewController {
                 self.collectionView.removeNoAccessOverlay()
             }
             if self.topic?.isWriter ?? false {
-                self.sendMessageBar.removeNotAvailableOverlay()
+                self.sendMessageBar.toggleNotAvailableOverlay(visible: false)
                 if let acs = self.topic?.peer?.acs,
                     acs.isJoiner(for: .want) && (acs.missing?.description.contains("RW") ?? false) {
                     self.sendMessageBar.showPeersMessagingDisabledOverlay()
                 }
             } else {
-                self.sendMessageBar.showNotAvailableOverlay()
+                self.sendMessageBar.toggleNotAvailableOverlay(visible: true)
             }
             // We are offered to join a chat.
             if let acs = self.topic?.accessMode, acs.isJoiner(for: Acs.Side.given) && (acs.excessive?.description.contains("RW") ?? false) {
