@@ -267,14 +267,11 @@ class MessageViewController: UIViewController {
             } else {
                 self.collectionView.removeNoAccessOverlay()
             }
-            if self.topic?.isWriter ?? false {
-                self.sendMessageBar.toggleNotAvailableOverlay(visible: false)
-                if let acs = self.topic?.peer?.acs,
-                    acs.isJoiner(for: .want) && (acs.missing?.description.contains("RW") ?? false) {
-                    self.sendMessageBar.showPeersMessagingDisabledOverlay()
-                }
-            } else {
-                self.sendMessageBar.toggleNotAvailableOverlay(visible: true)
+            // No "W" permission. Replace input field with a message "Not available".
+            self.sendMessageBar.toggleNotAvailableOverlay(visible: !(self.topic?.isWriter ?? false))
+            // The peer is missing either "W" or "R" permissions. Show "Peer's messaging is disabled" message.
+            if let acs = self.topic?.peer?.acs, acs.isJoiner(for: .want) && (acs.missing?.description.contains("RW") ?? false) {
+                self.sendMessageBar.togglePeerMessagingDisabledOverlay(visible: true)
             }
             // We are offered to join a chat.
             if let acs = self.topic?.accessMode, acs.isJoiner(for: Acs.Side.given) && (acs.excessive?.description.contains("RW") ?? false) {

@@ -75,13 +75,13 @@ class PermissionsEditViewController: UIViewController {
         if let disablePermissions = self.disabledPermissions {
             for p in disablePermissions {
                 switch p {
-                case .join: self.joinSwitch.isEnabled = false
-                case .read: self.readSwitch.isEnabled = false
-                case .write: self.writeSwitch.isEnabled = false
-                case .notifications: self.notificationsSwitch.isEnabled = false
-                case .approve: self.approveSwitch.isEnabled = false
-                case .invite: self.inviteSwitch.isEnabled = false
-                case .delete: self.deleteSwitch.isEnabled = false
+                case .join: self.joinSwitch.isHidden = true
+                case .read: self.readSwitch.isHidden = true
+                case .write: self.writeSwitch.isHidden = true
+                case .notifications: self.notificationsSwitch.isHidden = true
+                case .approve: self.approveSwitch.isHidden = true
+                case .invite: self.inviteSwitch.isHidden = true
+                case .delete: self.deleteSwitch.isHidden = true
                 }
             }
         }
