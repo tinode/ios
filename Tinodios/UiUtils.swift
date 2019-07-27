@@ -15,15 +15,15 @@ class UiTinodeEventListener : TinodeEventListener {
     init(viewController: UIViewController?, connected: Bool) {
         self.viewController = viewController
         self.connected = connected
-        updateNavBar(when: connected)
     }
     func onConnect(code: Int, reason: String, params: [String : JSONValue]?) {
         connected = true
-        updateNavBar(when: connected)
     }
     func onDisconnect(byServer: Bool, code: Int, reason: String) {
         connected = false
-        updateNavBar(when: connected)
+        DispatchQueue.main.async {
+            UiUtils.showToast(message: "Connection to server lost.")
+        }
     }
     func onLogin(code: Int, text: String) {}
     func onMessage(msg: ServerMessage?) {}
@@ -33,53 +33,6 @@ class UiTinodeEventListener : TinodeEventListener {
     func onInfoMessage(info: MsgServerInfo?) {}
     func onMetaMessage(meta: MsgServerMeta?) {}
     func onPresMessage(pres: MsgServerPres?) {}
-
-    private func refreshNavBar() {
-        if let bar = self.viewController?.navigationController?.navigationBar {
-            // Refresh the bar.
-            DispatchQueue.main.async {
-                bar.setNeedsLayout()
-                bar.layoutIfNeeded()
-                bar.setNeedsDisplay()
-            }
-        }
-    }
-
-    private func addReconnectButton() {
-        // TODO: use a proper icon here.
-        let reconnectButton = UIBarButtonItem(image: UIImage(named: "sign-out-25"), style: .plain, target: self, action: #selector(self.reconnect))
-        self.viewController?.navigationItem.rightBarButtonItems?.append(reconnectButton)
-        self.refreshNavBar()
-    }
-
-    private func removeReconnectButton() {
-        self.viewController?.navigationItem.rightBarButtonItems?.removeAll(where: {
-            return $0.action == #selector(self.reconnect)
-        })
-        self.refreshNavBar()
-    }
-
-    private func updateNavBar(when connected: Bool) {
-        var reconnectButtonVisible = false
-        if let navbarButtonItems = self.viewController?.navigationItem.rightBarButtonItems {
-            reconnectButtonVisible = navbarButtonItems.contains(where: {
-                return $0.action == #selector(self.reconnect)
-            })
-        }
-        if connected {
-            if reconnectButtonVisible {
-                removeReconnectButton()
-            }
-        } else {
-            if !reconnectButtonVisible {
-                addReconnectButton()
-            }
-        }
-    }
-
-    @objc func reconnect() {
-        _ = Cache.getTinode().reconnectNow()
-    }
 }
 
 class UiUtils {
@@ -173,30 +126,36 @@ class UiUtils {
     ///  - message: message to display
     ///  - duration: duration of display in seconds.
     public static func showToast(message: String, duration: TimeInterval = 3.0) {
-        guard let parent = UIApplication.shared.keyWindow else { return }
+        guard let parent = UIApplication.shared.windows.last else { return }
 
         let iconSize: CGFloat = 32
         let spacing: CGFloat = 8
-        let messageHeight = iconSize + spacing * 2
-        let toastHeight = max(min(parent.frame.height * 0.1, 100), messageHeight)
+        let minMessageHeight = iconSize + spacing * 2
+        let maxMessageHeight: CGFloat = 100
+
+        let toastHeight = max(min(parent.frame.height * 0.1, maxMessageHeight), minMessageHeight)
 
         // Prevent very short toasts
         guard duration > 0.5 else { return }
-        let label = UILabel()
-        label.textColor = UIColor.white
-        label.textAlignment = .left
-        label.font = UIFont.preferredFont(forTextStyle: .callout)
-        label.text = message
-        label.alpha = 1.0
-        label.sizeToFit()
 
-        let icon = UIImageView(image: UIImage(named: "outline_error_outline_white_48pt"))
+        let icon = UIImageView(image: UIImage(named: "important-32"))
         icon.tintColor = UIColor.white
         icon.frame = CGRect(x: spacing, y: spacing, width: iconSize, height: iconSize)
 
+        let label = UILabel()
+        label.textColor = UIColor.white
+        label.textAlignment = .left
+        label.lineBreakMode = .byWordWrapping
+        label.numberOfLines = 3
+        label.font = UIFont.preferredFont(forTextStyle: .callout)
+        label.text = message
+        label.alpha = 1.0
+        let maxLabelWidth = parent.frame.width - spacing * 3 - iconSize
+
+        let labelBounds = label.textRect(forBounds: CGRect(x: 0, y: 0, width: maxLabelWidth, height: CGFloat.greatestFiniteMagnitude), limitedToNumberOfLines: label.numberOfLines)
         label.frame = CGRect(
-            x: iconSize + spacing * 2, y: (messageHeight - label.frame.height) / 2,
-            width: label.frame.width + spacing * 2, height: label.frame.height)
+            x: iconSize + spacing * 2, y: spacing + (iconSize - label.font.lineHeight) * 0.5,
+            width: labelBounds.width, height: labelBounds.height)
 
         let toastView = UIView()
         toastView.alpha = 0
@@ -205,6 +164,8 @@ class UiUtils {
         toastView.addSubview(label)
 
         parent.addSubview(toastView)
+        label.sizeToFit()
+
         toastView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             toastView.leadingAnchor.constraint(equalTo: parent.leadingAnchor, constant: 0),

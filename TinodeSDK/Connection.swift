@@ -96,14 +96,20 @@ public class Connection {
                 self.connectWithBackoffAsync()
             }
         }
-        reconnectClosure = DispatchWorkItem() {
-            print("reconnecting now")
-            self.connectSocket()
-            if self.isConnected {
-                self.reconnecting = false
-                return
+        maybeInitReconnectClosure()
+    }
+
+    private func maybeInitReconnectClosure() {
+        if reconnectClosure?.isCancelled ?? true {
+            reconnectClosure = DispatchWorkItem() {
+                print("reconnecting now")
+                self.connectSocket()
+                if self.isConnected {
+                    self.reconnecting = false
+                    return
+                }
+                self.connectWithBackoffAsync()
             }
-            self.connectWithBackoffAsync()
         }
     }
 
@@ -124,6 +130,7 @@ public class Connection {
     private func connectWithBackoffAsync() {
         let delay = Double(self.backoffSteps.getNextDelay()) / 1000
         print("will reconnect run after \(delay) sec")
+        maybeInitReconnectClosure()
         self.connectQueue.asyncAfter(
             deadline: .now() + delay,
             execute: reconnectClosure!)

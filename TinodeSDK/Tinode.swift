@@ -897,6 +897,7 @@ public class Tinode {
         return connectedPromise
     }
 
+    @discardableResult
     public func reconnectNow() -> Bool {
         guard connection != nil && !isConnected else { return false }
         do {
