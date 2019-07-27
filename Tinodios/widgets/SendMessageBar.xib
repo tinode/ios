@@ -22,13 +22,13 @@
         </placeholder>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
         <view contentMode="scaleToFill" id="iN0-l3-epB">
-            <rect key="frame" x="0.0" y="0.0" width="414" height="150"/>
+            <rect key="frame" x="0.0" y="0.0" width="414" height="180"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <visualEffectView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Mh3-pG-tJg">
-                    <rect key="frame" x="0.0" y="0.0" width="414" height="150"/>
+                    <rect key="frame" x="0.0" y="0.0" width="414" height="180"/>
                     <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="CDd-rP-fsf">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="150"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="180"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                     </view>
                     <blurEffect style="light"/>
@@ -85,13 +85,13 @@
                     <rect key="frame" x="50" y="116" width="360" height="30"/>
                     <subviews>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Peer's messaging is disabled" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5la-4N-ZQw">
-                            <rect key="frame" x="0.0" y="3" width="250" height="24"/>
-                            <fontDescription key="fontDescription" style="UICTFontTextStyleTitle2"/>
+                            <rect key="frame" x="0.0" y="5" width="220.5" height="20.5"/>
+                            <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                             <nil key="textColor"/>
                             <nil key="highlightedColor"/>
                         </label>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="BZJ-FX-z6d">
-                            <rect key="frame" x="250" y="0.0" width="110" height="30"/>
+                            <rect key="frame" x="220.5" y="0.0" width="139.5" height="30"/>
                             <state key="normal" title="Enable"/>
                             <connections>
                                 <action selector="enablePeerMessagingClicked:" destination="-1" eventType="touchUpInside" id="Ksf-WP-PhF"/>
@@ -100,10 +100,10 @@
                     </subviews>
                 </stackView>
                 <view hidden="YES" userInteractionEnabled="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="yZd-O5-BVm" userLabel="Disabled">
-                    <rect key="frame" x="0.0" y="0.0" width="414" height="150"/>
+                    <rect key="frame" x="0.0" y="0.0" width="414" height="180"/>
                     <subviews>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Not Available" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Gvw-uT-5lm">
-                            <rect key="frame" x="150" y="68" width="114.5" height="24"/>
+                            <rect key="frame" x="150" y="83" width="114.5" height="24"/>
                             <fontDescription key="fontDescription" style="UICTFontTextStyleTitle2"/>
                             <nil key="textColor"/>
                             <nil key="highlightedColor"/>
@@ -122,10 +122,11 @@
                 <constraint firstItem="yZd-O5-BVm" firstAttribute="trailing" secondItem="UC5-i1-la2" secondAttribute="trailing" id="4wH-hZ-eCL"/>
                 <constraint firstItem="yZd-O5-BVm" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="94X-fH-5hi"/>
                 <constraint firstItem="LQB-Eu-unW" firstAttribute="trailing" secondItem="bxx-m5-ifU" secondAttribute="trailing" constant="-4" id="C9M-dY-tg9"/>
-                <constraint firstItem="bxx-m5-ifU" firstAttribute="leading" secondItem="Awf-Rd-vTa" secondAttribute="leading" id="CjK-lM-sVS"/>
+                <constraint firstAttribute="trailing" secondItem="Awf-Rd-vTa" secondAttribute="trailing" constant="4" id="D9y-3Z-SlW"/>
                 <constraint firstItem="Mh3-pG-tJg" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="FjB-HD-awt"/>
-                <constraint firstItem="bxx-m5-ifU" firstAttribute="trailing" secondItem="Awf-Rd-vTa" secondAttribute="trailing" id="Q3E-Zd-tr3"/>
+                <constraint firstItem="Awf-Rd-vTa" firstAttribute="top" secondItem="bxx-m5-ifU" secondAttribute="bottom" constant="4" id="SiQ-Ca-JnV"/>
                 <constraint firstAttribute="bottom" secondItem="yZd-O5-BVm" secondAttribute="bottom" id="UsF-vi-bMs"/>
+                <constraint firstItem="Awf-Rd-vTa" firstAttribute="leading" secondItem="bxx-m5-ifU" secondAttribute="leading" id="YWB-4j-4KG"/>
                 <constraint firstItem="bxx-m5-ifU" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="4" id="Zfs-dm-dD8"/>
                 <constraint firstItem="UC5-i1-la2" firstAttribute="trailing" secondItem="bxx-m5-ifU" secondAttribute="trailing" constant="4" id="bTB-yN-D6d"/>
                 <constraint firstItem="bxx-m5-ifU" firstAttribute="leading" secondItem="Sxl-U7-4Vy" secondAttribute="trailing" constant="10" id="cn1-M7-S72"/>
@@ -133,15 +134,14 @@
                 <constraint firstItem="Sxl-U7-4Vy" firstAttribute="bottom" secondItem="bxx-m5-ifU" secondAttribute="bottom" constant="-4" id="gBG-6N-LRx"/>
                 <constraint firstItem="Mh3-pG-tJg" firstAttribute="trailing" secondItem="UC5-i1-la2" secondAttribute="trailing" id="jxj-Dw-oTU"/>
                 <constraint firstAttribute="bottom" secondItem="Mh3-pG-tJg" secondAttribute="bottom" id="kbY-qT-wTJ"/>
-                <constraint firstItem="Awf-Rd-vTa" firstAttribute="top" secondItem="bxx-m5-ifU" secondAttribute="bottom" constant="4" id="qdj-ZX-avV"/>
                 <constraint firstItem="Sxl-U7-4Vy" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="8" id="rTM-U0-Opq"/>
                 <constraint firstItem="Mh3-pG-tJg" firstAttribute="leading" secondItem="UC5-i1-la2" secondAttribute="leading" id="xKs-M0-L34"/>
                 <constraint firstItem="yZd-O5-BVm" firstAttribute="leading" secondItem="UC5-i1-la2" secondAttribute="leading" id="xTu-Gw-Un1"/>
-                <constraint firstItem="UC5-i1-la2" firstAttribute="bottom" secondItem="bxx-m5-ifU" secondAttribute="bottom" constant="4" id="yZA-U6-QcI"/>
+                <constraint firstItem="UC5-i1-la2" firstAttribute="bottom" secondItem="Awf-Rd-vTa" secondAttribute="bottom" id="yZA-U6-QcI"/>
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <viewLayoutGuide key="safeArea" id="UC5-i1-la2"/>
-            <point key="canvasLocation" x="-959" y="134"/>
+            <point key="canvasLocation" x="-1407.2463768115942" y="165.06696428571428"/>
         </view>
     </objects>
     <resources>

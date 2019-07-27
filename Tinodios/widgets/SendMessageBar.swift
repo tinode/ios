@@ -73,6 +73,7 @@ class SendMessageBar: UIView {
         static let maxLines: CGFloat = 4
         static let inputFieldInsetLeading: CGFloat = 4
         static let inputFieldInsetTrailing: CGFloat = 40
+        static let peerMessagingDisabledHeight: CGFloat = 30
     }
 
     // MARK: - Private properties
@@ -129,24 +130,22 @@ class SendMessageBar: UIView {
         }
 
         sendButton.isEnabled = false
-        allDisabledView.isHidden = true
+        toggleNotAvailableOverlay(visible: false)
+        togglePeerMessagingDisabled(visible: false)
     }
 
     /// MARK: - Subviews handling
 
     public func toggleNotAvailableOverlay(visible: Bool) {
-        self.allDisabledView.isHidden = !visible
-        self.isUserInteractionEnabled = !visible
+        allDisabledView.isHidden = !visible
+        isUserInteractionEnabled = !visible
     }
 
-    public func togglePeerMessagingDisabledOverlay(visible: Bool) {
-        if visible {
-            addSubview(peerMessagingDisabledView)
-        } else {
-            peerMessagingDisabledView.removeFromSuperview()
-        }
+    public func togglePeerMessagingDisabled(visible: Bool) {
+        peerMessagingDisabledView.isHidden = !visible
+        peerMessagingDisabledView.isUserInteractionEnabled = visible
+        peerMessagingDisabledView.bounds =  CGRect(x: 0, y: 0, width: peerMessagingDisabledView.bounds.width, height: visible ? Constants.peerMessagingDisabledHeight : 0)
     }
-
 }
 
 extension SendMessageBar: UITextViewDelegate {

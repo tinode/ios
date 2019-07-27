@@ -50,42 +50,42 @@ public class AcsHelper: Codable, Equatable {
             return b != AcsHelper.kModeNone && b != AcsHelper.kModeInvalid
         }
     }
-    var isAdmin: Bool {
+    public var isAdmin: Bool {
         get {
             return ((a ?? 0) & AcsHelper.kModeApprove) != 0
         }
     }
-    var isOwner: Bool {
+    public var isOwner: Bool {
         get {
             return ((a ?? 0) & AcsHelper.kModeOwner) != 0
         }
     }
-    var isMuted: Bool {
+    public var isMuted: Bool {
         get {
             return ((a ?? 0) & AcsHelper.kModePres) == 0
         }
     }
-    var isInvalid: Bool {
+    public var isInvalid: Bool {
         get {
             return (a ?? 0) == AcsHelper.kModeInvalid
         }
     }
-    var isJoiner: Bool {
+    public var isJoiner: Bool {
         get {
             return ((a ?? 0) & AcsHelper.kModeJoin) != 0
         }
     }
-    var isReader: Bool {
+    public var isReader: Bool {
         get {
             return ((a ?? 0) & AcsHelper.kModeRead) != 0
         }
     }
-    var isWriter: Bool {
+    public var isWriter: Bool {
         get {
             return ((a ?? 0) & AcsHelper.kModeWrite) != 0
         }
     }
-    var isDeleter: Bool {
+    public var isDeleter: Bool {
         get {
             return ((a ?? 0) & AcsHelper.kModeDelete) != 0
         }
