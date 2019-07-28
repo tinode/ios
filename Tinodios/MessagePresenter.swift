@@ -9,7 +9,6 @@ import Foundation
 import UIKit
 
 protocol MessagePresentationLogic {
-    var underlyingViewController: UIViewController? { get }
     func updateTitleBar(icon: UIImage?, title: String?, online: Bool)
     func setOnline(online: Bool)
     func runTypingAnimation()
@@ -24,35 +23,49 @@ protocol MessagePresentationLogic {
 class MessagePresenter: MessagePresentationLogic {
     weak var viewController: MessageDisplayLogic?
 
-    var underlyingViewController: UIViewController? {
-        get { return viewController as? UIViewController }
-    }
-
     func updateTitleBar(icon: UIImage?, title: String?, online: Bool) {
-        self.viewController?.updateTitleBar(icon: icon, title: title, online: online)
+        DispatchQueue.main.async {
+            self.viewController?.updateTitleBar(icon: icon, title: title, online: online)
+        }
     }
     func setOnline(online: Bool) {
-        self.viewController?.setOnline(online: online)
+        DispatchQueue.main.async {
+            self.viewController?.setOnline(online: online)
+        }
     }
     func presentMessages(messages: [StoredMessage]) {
-        self.viewController?.displayChatMessages(messages: messages)
+        DispatchQueue.main.async {
+            self.viewController?.displayChatMessages(messages: messages)
+        }
     }
     func reloadMessage(withSeqId seqId: Int) {
-        self.viewController?.reloadMessage(withSeqId: seqId)
+        DispatchQueue.main.async {
+            self.viewController?.reloadMessage(withSeqId: seqId)
+        }
     }
     func updateProgress(forMsgId msgId: Int64, progress: Float) {
-        self.viewController?.updateProcess(forMsgId: msgId, progress: progress)
+        DispatchQueue.main.async {
+            self.viewController?.updateProcess(forMsgId: msgId, progress: progress)
+        }
     }
     func endRefresh() {
-        self.viewController?.endRefresh()
+        DispatchQueue.main.async {
+            self.viewController?.endRefresh()
+        }
     }
     func runTypingAnimation() {
-        self.viewController?.runTypingAnimation()
+        DispatchQueue.main.async {
+            self.viewController?.runTypingAnimation()
+        }
     }
     func applyTopicPermissions() {
-        self.viewController?.applyTopicPermissions()
+        DispatchQueue.main.async {
+            self.viewController?.applyTopicPermissions()
+        }
     }
     func dismiss() {
-        self.viewController?.dismiss()
+        DispatchQueue.main.async {
+            self.viewController?.dismissVC()
+        }
     }
 }

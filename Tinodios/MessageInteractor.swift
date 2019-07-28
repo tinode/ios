@@ -38,8 +38,8 @@ protocol MessageDataStore {
 class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, MessageDataStore {
     class MessageEventListener: UiTinodeEventListener {
         private weak var interactor: MessageBusinessLogic?
-        init(interactor: MessageBusinessLogic?, viewController: UIViewController?, connected: Bool) {
-            super.init(viewController: viewController, connected: connected)
+        init(interactor: MessageBusinessLogic?, connected: Bool) {
+            super.init(connected: connected)
             self.interactor = interactor
         }
         override func onLogin(code: Int, text: String) {
@@ -66,7 +66,6 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         if self.tinodeEventListener == nil {
             self.tinodeEventListener = MessageEventListener(
                 interactor: self,
-                viewController: self.presenter?.underlyingViewController,
                 connected: tinode.isConnected)
         }
         tinode.listener = self.tinodeEventListener
@@ -74,9 +73,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         self.pagesToLoad = 1
 
         if let pub = self.topic?.pub {
-            DispatchQueue.main.async {
-                self.presenter?.updateTitleBar(icon: pub.photo?.image(), title: pub.fn, online: self.topic?.online ?? false)
-            }
+            self.presenter?.updateTitleBar(icon: pub.photo?.image(), title: pub.fn, online: self.topic?.online ?? false)
         }
         self.topic?.listener = self
         return self.topic != nil
@@ -99,7 +96,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
     }
     func attachToTopic() -> Bool {
         guard !(self.topic?.attached ?? false) else {
-            DispatchQueue.main.async { self.presenter?.applyTopicPermissions() }
+            self.presenter?.applyTopicPermissions()
             return true
         }
         do {
@@ -120,7 +117,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                             self?.topicId = BaseDb.getInstance().topicDb?.getId(topic: self?.topicName)
                         }
                         self?.loadMessages()
-                        DispatchQueue.main.async { self?.presenter?.applyTopicPermissions() }
+                        self?.presenter?.applyTopicPermissions()
                         return nil
                     },
                     onFailure: { err in
@@ -176,13 +173,11 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
     func loadMessages() {
         DispatchQueue.global(qos: .userInteractive).async {
             if let messages = BaseDb.getInstance().messageDb?.query(
-                topicId: self.topicId,
-                pageCount: self.pagesToLoad,
-                pageSize: MessageInteractor.kMessagesPerPage) {
-                DispatchQueue.main.async {
-                    self.messages = messages
-                    self.presenter?.presentMessages(messages: messages)
-                }
+                    topicId: self.topicId,
+                    pageCount: self.pagesToLoad,
+                    pageSize: MessageInteractor.kMessagesPerPage) {
+                self.messages = messages
+                self.presenter?.presentMessages(messages: messages)
             }
         }
     }
@@ -331,38 +326,36 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                 filename: filename, mimetype: mimeType, d: data,
                 topicId: self.topicName!, msgId: msgId,
                 progressCallback: { [weak self] progress in
-                    DispatchQueue.main.async {
-                        let interactor = self ?? MessageInteractor.existingInteractor(for: topic.name)
-                        interactor?.presenter?.updateProgress(forMsgId: msgId, progress: progress)
-                    }
+                    let interactor = self ?? MessageInteractor.existingInteractor(for: topic.name)
+                    interactor?.presenter?.updateProgress(forMsgId: msgId, progress: progress)
                 },
                 completionCallback: { [weak self] (serverMessage, error) in
-                    DispatchQueue.main.async {
-                        let interactor = self ?? MessageInteractor.existingInteractor(for: topic.name)
-                        var success = false
-                        defer {
-                            if !success {
-                                _ = topic.store?.msgDiscard(topic: topic, dbMessageId: msgId)
-                            }
-                            interactor?.loadMessages()
+                    let interactor = self ?? MessageInteractor.existingInteractor(for: topic.name)
+                    var success = false
+                    defer {
+                        if !success {
+                            _ = topic.store?.msgDiscard(topic: topic, dbMessageId: msgId)
                         }
-                        guard error == nil else {
+                        interactor?.loadMessages()
+                    }
+                    guard error == nil else {
+                        DispatchQueue.main.async {
                             UiUtils.showToast(message: error!.localizedDescription)
-                            return
                         }
-                        guard let ctrl = serverMessage?.ctrl, ctrl.code == 200, let serverUrl = ctrl.getStringParam(for: "url") else {
-                            return
-                        }
-                        if let srvUrl = URL(string: serverUrl), let content = try? Drafty().attachFile(
-                            mime: mimeType, fname: filename,
-                            refurl: srvUrl, size: data.count) {
-                            _ = topic.store?.msgReady(topic: topic, dbMessageId: msgId, data: content)
-                            _ = try? topic.syncOne(msgId: msgId)?.thenFinally(finally: {
-                                interactor?.loadMessages()
-                                return nil
-                            })
-                            success = true
-                        }
+                        return
+                    }
+                    guard let ctrl = serverMessage?.ctrl, ctrl.code == 200, let serverUrl = ctrl.getStringParam(for: "url") else {
+                        return
+                    }
+                    if let srvUrl = URL(string: serverUrl), let content = try? Drafty().attachFile(
+                        mime: mimeType, fname: filename,
+                        refurl: srvUrl, size: data.count) {
+                        _ = topic.store?.msgReady(topic: topic, dbMessageId: msgId, data: content)
+                        _ = try? topic.syncOne(msgId: msgId)?.thenFinally(finally: {
+                            interactor?.loadMessages()
+                            return nil
+                        })
+                        success = true
                     }
                 })
             self.loadMessages()
@@ -372,32 +365,26 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         self.loadMessages()
     }
     override func onOnline(online: Bool) {
-        DispatchQueue.main.async {
-            self.presenter?.setOnline(online: online)
-        }
+        self.presenter?.setOnline(online: online)
     }
     override func onInfo(info: MsgServerInfo) {
         switch info.what {
         case "kp":
-            DispatchQueue.main.async {
-                self.presenter?.runTypingAnimation()
-            }
+            self.presenter?.runTypingAnimation()
         case "recv":
             fallthrough
         case "read":
             if let seqId = info.seq {
-                DispatchQueue.main.async {
-                    self.presenter?.reloadMessage(withSeqId: seqId)
-                }
+                self.presenter?.reloadMessage(withSeqId: seqId)
             }
         default:
             break
         }
     }
     override func onSubsUpdated() {
-        DispatchQueue.main.async { self.presenter?.applyTopicPermissions() }
+        self.presenter?.applyTopicPermissions()
     }
     override func onMetaDesc(desc: Description<VCard, PrivateType>) {
-        DispatchQueue.main.async { self.presenter?.applyTopicPermissions() }
+        self.presenter?.applyTopicPermissions()
     }
 }

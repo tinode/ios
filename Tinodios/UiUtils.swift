@@ -9,11 +9,9 @@ import Foundation
 import TinodeSDK
 
 class UiTinodeEventListener : TinodeEventListener {
-    private weak var viewController: UIViewController?
     private var connected: Bool = false
 
-    init(viewController: UIViewController?, connected: Bool) {
-        self.viewController = viewController
+    init(connected: Bool) {
         self.connected = connected
     }
     func onConnect(code: Int, reason: String, params: [String : JSONValue]?) {
