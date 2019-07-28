@@ -389,7 +389,7 @@ class AttributedStringFormatter: DraftyFormatter {
                 let paragraph = NSMutableParagraphStyle()
                 paragraph.firstLineHeadIndent = Constants.kAttachmentIconSize.width + baseFont.capHeight * 0.25
                 paragraph.lineSpacing = 0
-                paragraph.maximumLineHeight = 4
+                paragraph.lineHeightMultiple = 0.8
                 second.addAttributes([NSAttributedString.Key.paragraphStyle : paragraph, NSAttributedString.Key.foregroundColor : Constants.kLinkColor,
                     ], range: NSRange(location: 0, length: second.length))
 

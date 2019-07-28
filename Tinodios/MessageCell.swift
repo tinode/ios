@@ -160,7 +160,7 @@ class MessageCell: UICollectionViewCell {
         switch true {
         case cancelUploadButton.frame.contains(convert(touchLocation, to: containerView)):
             delegate?.didTapCancelUpload(in: self)
-        case content.frame.contains(convert(touchLocation, to: content)):
+        case content.frame.contains(convert(touchLocation, to: containerView)):
             let url = content.getURLForTap(convert(touchLocation, to: content))
             delegate?.didTapContent(in: self, url: url)
         case containerView.frame.contains(touchLocation):
