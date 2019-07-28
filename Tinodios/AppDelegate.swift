@@ -5,15 +5,18 @@
 //  Copyright © 2018 Tinode. All rights reserved.
 //
 
-import UIKit
 import Firebase
+import Network
 import SwiftWebSocket
+import UIKit
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
     var backgroundSessionCompletionHandler: (() -> Void)?
+    // Network reachability.
+    var nwReachability: Any!
     
     func setupPushNotifications(for application: UIApplication) {
         FirebaseApp.configure()
@@ -63,6 +66,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
         }
         Cache.synchronizeContactsPeriodically()
+        if #available(iOS 12.0, *) {
+            let reachability = NWPathMonitor()
+            reachability.start(queue: DispatchQueue.global(qos: .background))
+            reachability.pathUpdateHandler = { path in
+                print("connectivity status = \(path)")
+                let tinode = Cache.getTinode()
+                if path.status == .satisfied, !tinode.isConnected {
+                    tinode.reconnectNow()
+                }
+            }
+            self.nwReachability = reachability
+        }  // else TODO.
         return true
     }
 

@@ -20,10 +20,13 @@ class UiTinodeEventListener : TinodeEventListener {
         connected = true
     }
     func onDisconnect(byServer: Bool, code: Int, reason: String) {
-        connected = false
-        DispatchQueue.main.async {
-            UiUtils.showToast(message: "Connection to server lost.")
+        if connected {
+            // If we just got disconnected, display the connection lost message.
+            DispatchQueue.main.async {
+                UiUtils.showToast(message: "Connection to server lost.")
+            }
         }
+        connected = false
     }
     func onLogin(code: Int, text: String) {}
     func onMessage(msg: ServerMessage?) {}
@@ -296,6 +299,31 @@ class UiUtils {
         } catch {
             UiUtils.showToast(message: "Error changing public data \(error)")
             return nil
+        }
+    }
+
+    private static func topViewController(rootViewController: UIViewController?) -> UIViewController? {
+        guard let rootViewController = rootViewController else { return nil }
+        guard let presented = rootViewController.presentedViewController else {
+            return rootViewController
+        }
+        switch presented {
+        case let navigationController as UINavigationController:
+            return topViewController(rootViewController: navigationController.viewControllers.last)
+        case let tabBarController as UITabBarController:
+            return topViewController(rootViewController: tabBarController.selectedViewController)
+        default:
+            return topViewController(rootViewController: presented)
+        }
+    }
+
+    public static func presentFileSharingVC(for fileUrl: URL) {
+        DispatchQueue.main.async {
+            let filesToShare = [fileUrl]
+            let activityViewController = UIActivityViewController(activityItems: filesToShare, applicationActivities: nil)
+            let topVC = UiUtils.topViewController(
+                rootViewController: UIApplication.shared.keyWindow?.rootViewController)
+            topVC?.present(activityViewController, animated: true, completion: nil)
         }
     }
 }
