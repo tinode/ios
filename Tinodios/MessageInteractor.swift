@@ -84,8 +84,13 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
     func cleanup() {
         // set listeners to nil
         print("cleaning up the topic \(String(describing: self.topicName))")
-        self.topic?.listener = nil
-        Cache.getTinode().listener = nil
+        if self.topic?.listener === self {
+            self.topic?.listener = nil
+        }
+        let tinode = Cache.getTinode()
+        if tinode.listener === self.tinodeEventListener {
+            tinode.listener = nil
+        }
     }
     func leaveTopic() {
         if self.topic?.attached ?? false {
