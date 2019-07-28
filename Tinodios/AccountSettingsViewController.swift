@@ -107,13 +107,14 @@ class AccountSettingsViewController: UITableViewController {
             print("could not get acs")
             return
         }
-        UiUtils.showPermissionsEditDialog(over: self, acs: acsUnwrapped, callback: { changed in
-            _ = try? UiUtils.handlePermissionsChange(onTopic: self.me, forUid: nil, changeType: changeType, newPermissions: changed)?.then(
+        UiUtils.showPermissionsEditDialog(over: self, acs: acsUnwrapped, callback: { permissions in
+            _ = try? UiUtils.handlePermissionsChange(onTopic: self.me, forUid: nil, changeType: changeType, newPermissions: permissions)?.then(
                 onSuccess: { msg in
                     DispatchQueue.main.async { self.reloadData() }
                         return nil
                     }
-                )}, disabledPermissions: nil)
+            )
+        }, disabledPermissions: "OASD")
     }
     @IBAction func readReceiptsClicked(_ sender: Any) {
         UserDefaults.standard.set(self.sendReadReceiptsSwitch.isOn, forKey: Utils.kTinodePrefReadReceipts)

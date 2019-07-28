@@ -233,15 +233,10 @@ class TopicInfoViewController: UITableViewController {
     }
 
     private func changePermissions(acs: AcsHelper, uid: String?, changeType: UiUtils.PermissionsChangeType, disabledPermissions: String?) {
-        UiUtils.showPermissionsEditDialog(
-            over: self, acs: acs,
-            callback: {
-                permissionsTuple in
-                _ = try? UiUtils.handlePermissionsChange(
-                    onTopic: self.topic, forUid: uid, changeType: changeType,
-                    newPermissions: permissionsTuple)?.then(
-                        onSuccess: self.promiseSuccessHandler)},
-            disabledPermissions: disabledPermissions)
+        UiUtils.showPermissionsEditDialog(over: self, acs: acs, callback: {
+            permissions in
+            _ = try? UiUtils.handlePermissionsChange(onTopic: self.topic, forUid: uid, changeType: changeType, newPermissions: permissions)?.then(onSuccess: self.promiseSuccessHandler)
+        }, disabledPermissions: disabledPermissions)
     }
 
     @objc func permissionsTapped(sender: UITapGestureRecognizer) {
@@ -254,8 +249,7 @@ class TopicInfoViewController: UITableViewController {
             print("could not get acs")
             return
         }
-        self.changePermissions(acs: acsUnwrapped, uid: uid,
-                               changeType: changeType, disabledPermissions: disablePermissions)
+        self.changePermissions(acs: acsUnwrapped, uid: uid, changeType: changeType, disabledPermissions: disablePermissions)
     }
 
     private func deleteTopic() {

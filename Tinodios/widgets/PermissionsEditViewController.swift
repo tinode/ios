@@ -62,8 +62,6 @@ class PermissionsEditViewController: UIViewController, UITableViewDelegate, UITa
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         // Make table as tall as its content.
-        print("table intrisic size: \(tableView.contentSize)")
-
         tableViewHeight.constant = tableView.contentSize.height
     }
 
@@ -87,6 +85,7 @@ class PermissionsEditViewController: UIViewController, UITableViewDelegate, UITa
     // Tap on table Row
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: false)
+
         guard let cell = tableView.cellForRow(at: indexPath) else { return }
         let x = visiblePermissions[indexPath.row]
         if selectedPermissions!.contains(x) {
