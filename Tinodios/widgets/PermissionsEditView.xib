@@ -26,7 +26,7 @@
             <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
             <subviews>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="CjA-KL-BBV">
-                    <rect key="frame" x="66" y="282" width="282" height="332"/>
+                    <rect key="frame" x="66" y="286" width="282" height="324"/>
                     <subviews>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="751" text="Edit Permissions" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="yd6-73-Tb3">
                             <rect key="frame" x="74.5" y="18" width="133" height="21"/>
@@ -73,7 +73,7 @@
                         <constraint firstItem="FlO-cL-1C8" firstAttribute="leading" secondItem="CjA-KL-BBV" secondAttribute="leading" id="WKT-e0-odz"/>
                         <constraint firstItem="qWD-vf-7zm" firstAttribute="width" secondItem="CjA-KL-BBV" secondAttribute="width" multiplier="0.5" id="ZIW-h0-ls5"/>
                         <constraint firstItem="FlO-cL-1C8" firstAttribute="top" secondItem="yd6-73-Tb3" secondAttribute="bottom" constant="8" symbolic="YES" id="gFs-7c-ROm"/>
-                        <constraint firstItem="mRI-VT-hHU" firstAttribute="bottom" secondItem="CjA-KL-BBV" secondAttribute="bottomMargin" id="hp4-tS-gQg"/>
+                        <constraint firstItem="mRI-VT-hHU" firstAttribute="bottom" secondItem="CjA-KL-BBV" secondAttribute="bottom" id="hp4-tS-gQg"/>
                         <constraint firstAttribute="trailing" secondItem="FlO-cL-1C8" secondAttribute="trailing" id="kqi-OM-sBX"/>
                         <constraint firstItem="mRI-VT-hHU" firstAttribute="firstBaseline" secondItem="qWD-vf-7zm" secondAttribute="baseline" id="m4y-nM-h7C"/>
                         <constraint firstItem="qWD-vf-7zm" firstAttribute="top" secondItem="FlO-cL-1C8" secondAttribute="bottom" id="ofr-5u-Uuf"/>

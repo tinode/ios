@@ -9,7 +9,7 @@
 import UIKit
 
 struct ImagePreviewContent {
-    let imagePreview: UIImage?
+    let imageBits: Data?
     let fileName: String?
     let contentType: String?
     let size: Int64?
@@ -32,17 +32,14 @@ class ImagePreviewController : UIViewController, UIScrollViewDelegate {
         setup()
     }
 
-    override func viewDidAppear(_ animated: Bool) {
-        setup()
-    }
-
     private func setup() {
-        guard let content = self.previewContent else { return }
+        guard let content = self.previewContent, let imageBits = content.imageBits else { return }
 
         scrollView.minimumZoomScale = 1.0
         scrollView.maximumZoomScale = 8.0
 
-        imageView.image = content.imagePreview
+        imageView.image = UIImage(data: imageBits) ?? UIImage()
+
         fileNameLabel.text = content.fileName ?? "undefined"
         contentTypeLabel.text = content.contentType ?? "undefined"
         var sizeString = "?? KB"
@@ -56,7 +53,21 @@ class ImagePreviewController : UIViewController, UIScrollViewDelegate {
     }
 
     func viewForZooming(in: UIScrollView) -> UIView? {
-        print("viewForZooming is called")
         return imageView
+    }
+
+    @IBAction func saveImageButtonClicked(_ sender: Any) {
+        guard let content = previewContent, let imageBits = content.imageBits else { return }
+
+        let picturesUrl: URL = FileManager.default.urls(for: .picturesDirectory, in: .userDomainMask).first!
+        let destinationURL = picturesUrl.appendingPathComponent(content.fileName ?? Utils.uniqueFilename(forMime: content.contentType))
+        do {
+            try FileManager.default.createDirectory(at: picturesUrl, withIntermediateDirectories: true, attributes: nil)
+            try imageBits.write(to: destinationURL)
+            UiUtils.presentFileSharingVC(for: destinationURL)
+        } catch let err as NSError {
+            print("Failed to save image as \(destinationURL): \(err.localizedDescription)")
+        }
+
     }
 }

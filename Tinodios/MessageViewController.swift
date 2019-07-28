@@ -1067,10 +1067,12 @@ extension MessageViewController : MessageCellDelegate {
         // TODO: move logic to MessageInteractor.
         guard let data = MessageViewController.extractAttachment(from: cell), !data.isEmpty else { return }
         let d = data[0]
-        guard let filename = url.extractQueryParam(withName: "filename") else { return }
+        // FIXME: use actual mime instead of nil when generating file name.
+        let filename = url.extractQueryParam(withName: "filename") ?? Utils.uniqueFilename(forMime: nil)
         let documentsUrl: URL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
         let destinationURL = documentsUrl.appendingPathComponent(filename)
         do {
+            try FileManager.default.createDirectory(at: documentsUrl, withIntermediateDirectories: true, attributes: nil)
             try d.write(to: destinationURL)
             UiUtils.presentFileSharingVC(for: destinationURL)
         } catch {
@@ -1086,7 +1088,7 @@ extension MessageViewController : MessageCellDelegate {
         guard let entity = msg.content?.entities?[0], let bits = entity.data?["val"]?.asData() else { return }
 
         let content = ImagePreviewContent(
-            imagePreview: UIImage(data: bits) ?? UIImage(),
+            imageBits: bits,
             fileName: entity.data?["name"]?.asString(),
             contentType: entity.data?["mime"]?.asString(),
             size: Int64(bits.count),
