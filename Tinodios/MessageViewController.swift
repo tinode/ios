@@ -1054,32 +1054,27 @@ extension MessageViewController : MessageCellDelegate {
     private func handleLargeAttachment(in cell: MessageCell, using url: URL) {
         guard let data = MessageViewController.extractAttachment(from: cell), !data.isEmpty else { return }
         let downloadFrom = String(decoding: data[0], as: UTF8.self)
-        guard let url = URL(string: downloadFrom) else { return }
-        Cache.getLargeFileHelper().startDownload(from: url)
+        guard var urlComps = URLComponents(string: downloadFrom) else { return }
+        if let filename = url.extractQueryParam(withName: "filename") {
+            urlComps.queryItems = [URLQueryItem(name: "origfn", value: filename)]
+        }
+        if let targetUrl = urlComps.url {
+            Cache.getLargeFileHelper().startDownload(from: targetUrl)
+        }
     }
 
     private func handleSmallAttachment(in cell: MessageCell, using url: URL) {
         // TODO: move logic to MessageInteractor.
         guard let data = MessageViewController.extractAttachment(from: cell), !data.isEmpty else { return }
         let d = data[0]
-        let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
-        var filename: String?
-        if let queryItems = components?.queryItems {
-            for queryItem in queryItems {
-                if queryItem.name == "filename" {
-                    filename = queryItem.value
-                    break
-                }
-            }
-        }
-        guard filename != nil else { return }
+        guard let filename = url.extractQueryParam(withName: "filename") else { return }
         let documentsUrl: URL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-        let destinationURL = documentsUrl.appendingPathComponent(filename!)
+        let destinationURL = documentsUrl.appendingPathComponent(filename)
         do {
             try d.write(to: destinationURL)
-            // TODO: show preview.
+            UiUtils.presentFileSharingVC(for: destinationURL)
         } catch {
-            print("failed to save \(filename!)")
+            print("failed to save \(filename)")
         }
     }
 

@@ -199,3 +199,10 @@ class RelativeDateFormatter {
         return formatter.string(from: date)
     }
 }
+
+extension URL {
+    public func extractQueryParam(withName name: String) -> String? {
+        let components = URLComponents(url: self, resolvingAgainstBaseURL: false)
+        return components?.queryItems?.first(where: { $0.name == name })?.value
+    }
+}

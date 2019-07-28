@@ -49,7 +49,7 @@ class LargeFileHelper: NSObject {
     }
     private static func addCommonHeaders(to request: inout URLRequest, using tinode: Tinode) {
         request.addValue(tinode.apiKey, forHTTPHeaderField: "X-Tinode-APIKey")
-        request.addValue("Token \(tinode.authToken!)", forHTTPHeaderField: "Authorization")
+        request.addValue("Token \(tinode.authToken!)", forHTTPHeaderField: "X-Tinode-Auth")
     }
     public static func createUploadKey(topicId: String, msgId: Int64) -> String {
         return "\(topicId)-\(msgId)"
@@ -198,9 +198,11 @@ extension LargeFileHelper: URLSessionDownloadDelegate {
         }
         print("Finished downloading to \(location).")
 
+        guard let url = downloadTask.originalRequest?.url else { return }
+        let fn = url.extractQueryParam(withName: "origfn") ?? url.lastPathComponent
+
         let documentsUrl: URL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-        let destinationURL = documentsUrl.appendingPathComponent(
-            downloadTask.originalRequest!.url!.lastPathComponent)
+        let destinationURL = documentsUrl.appendingPathComponent(fn)
 
         let fileManager = FileManager.default
         do {
@@ -210,7 +212,7 @@ extension LargeFileHelper: URLSessionDownloadDelegate {
         }
         do {
             try fileManager.moveItem(at: location, to: destinationURL)
-            // TODO: show file preview.
+            UiUtils.presentFileSharingVC(for: destinationURL)
         } catch {
             print("Could not copy file to disk: \(error.localizedDescription)")
         }

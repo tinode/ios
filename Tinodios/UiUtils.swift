@@ -298,6 +298,31 @@ class UiUtils {
             return nil
         }
     }
+
+    private static func topViewController(rootViewController: UIViewController?) -> UIViewController? {
+        guard let rootViewController = rootViewController else { return nil }
+        guard let presented = rootViewController.presentedViewController else {
+            return rootViewController
+        }
+        switch presented {
+        case let navigationController as UINavigationController:
+            return topViewController(rootViewController: navigationController.viewControllers.last)
+        case let tabBarController as UITabBarController:
+            return topViewController(rootViewController: tabBarController.selectedViewController)
+        default:
+            return topViewController(rootViewController: presented)
+        }
+    }
+
+    public static func presentFileSharingVC(for fileUrl: URL) {
+        DispatchQueue.main.async {
+            let filesToShare = [fileUrl]
+            let activityViewController = UIActivityViewController(activityItems: filesToShare, applicationActivities: nil)
+            let topVC = UiUtils.topViewController(
+                rootViewController: UIApplication.shared.keyWindow?.rootViewController)
+            topVC?.present(activityViewController, animated: true, completion: nil)
+        }
+    }
 }
 
 extension UIViewController {
