@@ -16,9 +16,13 @@ class FindPresenter: FindPresentationLogic {
     weak var viewController: FindDisplayLogic?
     
     func presentLocalContacts(contacts: [ContactHolder]) {
-        viewController?.displayLocalContacts(contacts: contacts)
+        DispatchQueue.main.async {
+            self.viewController?.displayLocalContacts(contacts: contacts)
+        }
     }
     func presentRemoteContacts(contacts: [RemoteContactHolder]) {
-        viewController?.displayRemoteContacts(contacts: contacts)
+        DispatchQueue.main.async {
+            self.viewController?.displayRemoteContacts(contacts: contacts)
+        }
     }
 }
