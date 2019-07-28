@@ -195,6 +195,7 @@ class MessageViewController: UIViewController {
 
     @objc
     func appBecameActive() {
+        self.interactor?.setup(topicName: topicName)
         self.interactor?.attachToTopic()
     }
     @objc
@@ -335,14 +336,16 @@ class MessageViewController: UIViewController {
         }
         self.applyTopicPermissions()
     }
-    override func viewWillDisappear(_ animated: Bool) {
-        if let viewControllers = self.navigationController?.viewControllers, viewControllers.count > 1, viewControllers[viewControllers.count - 2] === self {
-            // It's a push. No need to detach.
-            print("keeping topic attached")
-        } else {
-            self.interactor?.cleanup()
-        }
-    }
+    // Continue listening for events even when the VC isn't visible.
+    // TODO: remote this.
+    // override func viewWillDisappear(_ animated: Bool) {
+    //    if let viewControllers = self.navigationController?.viewControllers, viewControllers.count > 1, viewControllers[viewControllers.count - 2] === self {
+    //        // It's a push. No need to detach.
+    //        print("keeping topic attached")
+    //    } else {
+    //        self.interactor?.cleanup()
+    //    }
+    // }
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)

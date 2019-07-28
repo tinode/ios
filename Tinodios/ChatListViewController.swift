@@ -95,6 +95,7 @@ class ChatListViewController: UITableViewController, ChatListDisplayLogic {
     }
     @objc
     func appBecameActive() {
+        self.interactor?.setup()
         self.interactor?.attachToMeTopic()
     }
     @objc

@@ -20,10 +20,13 @@ class UiTinodeEventListener : TinodeEventListener {
         connected = true
     }
     func onDisconnect(byServer: Bool, code: Int, reason: String) {
-        connected = false
-        DispatchQueue.main.async {
-            UiUtils.showToast(message: "Connection to server lost.")
+        if connected {
+            // If we just got disconnected, display the connection lost message.
+            DispatchQueue.main.async {
+                UiUtils.showToast(message: "Connection to server lost.")
+            }
         }
+        connected = false
     }
     func onLogin(code: Int, text: String) {}
     func onMessage(msg: ServerMessage?) {}
