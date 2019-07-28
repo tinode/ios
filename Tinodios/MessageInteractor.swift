@@ -58,6 +58,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
     private var messageSenderQueue = DispatchQueue(label: "co.tinode.messagesender")
     private var tinodeEventListener: MessageEventListener? = nil
 
+    @discardableResult
     func setup(topicName: String?) -> Bool {
         guard let topicName = topicName else { return false }
         self.topicName = topicName
