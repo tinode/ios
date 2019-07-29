@@ -63,8 +63,8 @@ class ChatListInteractor: ChatListBusinessLogic, ChatListDataStore {
     }
     private class ChatEventListener: UiTinodeEventListener {
         private weak var interactor: ChatListBusinessLogic?
-        init(interactor: ChatListBusinessLogic?, viewController: UIViewController?, connected: Bool) {
-            super.init(viewController: viewController, connected: connected)
+        init(interactor: ChatListBusinessLogic?, connected: Bool) {
+            super.init(connected: connected)
             self.interactor = interactor
         }
         override func onLogin(code: Int, text: String) {
@@ -124,15 +124,21 @@ class ChatListInteractor: ChatListBusinessLogic, ChatListDataStore {
         self.meListener?.interactor = self
         self.meTopic?.listener = meListener
         let tinode = Cache.getTinode()
-        self.tinodeEventListener = ChatEventListener(
-            interactor: self,
-            viewController: self.presenter?.underlyingViewController,
-            connected: tinode.isConnected)
+        if self.tinodeEventListener == nil {
+            self.tinodeEventListener = ChatEventListener(
+                interactor: self,
+                connected: tinode.isConnected)
+        }
         tinode.listener = self.tinodeEventListener
     }
     func cleanup() {
-        self.meTopic?.listener = nil
-        Cache.getTinode().listener = nil
+        if self.meTopic?.listener === self.meListener {
+            self.meTopic?.listener = nil
+        }
+        let tinode = Cache.getTinode()
+        if tinode.listener === self.tinodeEventListener {
+            tinode.listener = nil
+        }
     }
     private func getTopics(archived: Bool) -> [DefaultComTopic]? {
         return Cache.getTinode().getFilteredTopics(filter: {(topic: TopicProto) in

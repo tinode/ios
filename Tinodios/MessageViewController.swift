@@ -17,7 +17,7 @@ protocol MessageDisplayLogic: class {
     func updateProcess(forMsgId msgId: Int64, progress: Float)
     func applyTopicPermissions()
     func endRefresh()
-    func dismiss()
+    func dismissVC()
 }
 
 class MessageViewController: UIViewController {
@@ -195,6 +195,7 @@ class MessageViewController: UIViewController {
 
     @objc
     func appBecameActive() {
+        self.interactor?.setup(topicName: topicName)
         self.interactor?.attachToTopic()
     }
     @objc
@@ -258,31 +259,6 @@ class MessageViewController: UIViewController {
         NSLayoutConstraint.activate([top, bottom, trailing, leading])
     }
 
-    public func applyTopicPermissions() {
-        DispatchQueue.main.async {
-            // Make sure the view is visible.
-            guard self.isViewLoaded && ((self.view?.window) != nil) else { return }
-            if !(self.topic?.isReader ?? false) {
-                self.collectionView.showNoAccessOverlay()
-            } else {
-                self.collectionView.removeNoAccessOverlay()
-            }
-            if self.topic?.isWriter ?? false {
-                self.sendMessageBar.removeNotAvailableOverlay()
-                if let acs = self.topic?.peer?.acs,
-                    acs.isJoiner(for: .want) && (acs.missing?.description.contains("RW") ?? false) {
-                    self.sendMessageBar.showPeersMessagingDisabledOverlay()
-                }
-            } else {
-                self.sendMessageBar.showNotAvailableOverlay()
-            }
-            // We are offered to join a chat.
-            if let acs = self.topic?.accessMode, acs.isJoiner(for: Acs.Side.given) && (acs.excessive?.description.contains("RW") ?? false) {
-                self.showInvitationDialog()
-            }
-        }
-    }
-
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -335,14 +311,16 @@ class MessageViewController: UIViewController {
         }
         self.applyTopicPermissions()
     }
-    override func viewWillDisappear(_ animated: Bool) {
-        if let viewControllers = self.navigationController?.viewControllers, viewControllers.count > 1, viewControllers[viewControllers.count - 2] === self {
-            // It's a push. No need to detach.
-            print("keeping topic attached")
-        } else {
-            self.interactor?.cleanup()
-        }
-    }
+    // Continue listening for events even when the VC isn't visible.
+    // TODO: remote this.
+    // override func viewWillDisappear(_ animated: Bool) {
+    //    if let viewControllers = self.navigationController?.viewControllers, viewControllers.count > 1, viewControllers[viewControllers.count - 2] === self {
+    //        // It's a push. No need to detach.
+    //        print("keeping topic attached")
+    //    } else {
+    //        self.interactor?.cleanup()
+    //    }
+    // }
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
@@ -405,6 +383,7 @@ extension MessageViewController: MessageDisplayLogic {
     }
 
     func updateTitleBar(icon: UIImage?, title: String?, online: Bool) {
+        assert(Thread.isMainThread)
         self.navigationItem.title = title ?? "Undefined"
 
         navBarAvatarView.set(icon: icon, title: title, id: topicName, online: online)
@@ -418,13 +397,19 @@ extension MessageViewController: MessageDisplayLogic {
 
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: navBarAvatarView)
     }
+
     func setOnline(online: Bool) {
+        assert(Thread.isMainThread)
         navBarAvatarView.setOnline(online: online)
     }
+
     func runTypingAnimation() {
+        assert(Thread.isMainThread)
         navBarAvatarView.presentTypingAnimation(steps: 30)
     }
+
     func displayChatMessages(messages: [StoredMessage]) {
+        assert(Thread.isMainThread)
         let oldData = self.messages
         let newData: [StoredMessage] = messages.reversed()
         self.messageSeqIdIndex = newData.enumerated().reduce([Int:Int]()) { (dict, item) -> [Int:Int] in
@@ -481,27 +466,55 @@ extension MessageViewController: MessageDisplayLogic {
         collectionView.layoutIfNeeded()
         collectionView.scrollToBottom()
     }
+
     func reloadMessage(withSeqId seqId: Int) {
+        assert(Thread.isMainThread)
         if let index = self.messageSeqIdIndex[seqId] {
             self.collectionView.reloadItems(at: [IndexPath(row: index, section: 0)])
         }
     }
+
     func updateProcess(forMsgId msgId: Int64, progress: Float) {
+        assert(Thread.isMainThread)
         if let index = self.messageDbIdIndex[msgId],
             let cell = self.collectionView.cellForItem(at: IndexPath(row: index, section: 0)) as? MessageCell {
             cell.progressBar.progress = progress
         }
     }
-    func endRefresh() {
-        DispatchQueue.main.async {
-            self.refreshControl.endRefreshing()
+
+    func applyTopicPermissions() {
+        assert(Thread.isMainThread)
+        // Make sure the view is visible.
+        guard self.isViewLoaded && ((self.view?.window) != nil) else { return }
+        if !(self.topic?.isReader ?? false) {
+            self.collectionView.showNoAccessOverlay()
+        } else {
+            self.collectionView.removeNoAccessOverlay()
+        }
+        if self.topic?.isWriter ?? false {
+            self.sendMessageBar.removeNotAvailableOverlay()
+            if let acs = self.topic?.peer?.acs,
+                acs.isJoiner(for: .want) && (acs.missing?.description.contains("RW") ?? false) {
+                self.sendMessageBar.showPeersMessagingDisabledOverlay()
+            }
+        } else {
+            self.sendMessageBar.showNotAvailableOverlay()
+        }
+        // We are offered to join a chat.
+        if let acs = self.topic?.accessMode, acs.isJoiner(for: Acs.Side.given) && (acs.excessive?.description.contains("RW") ?? false) {
+            self.showInvitationDialog()
         }
     }
-    func dismiss() {
-        DispatchQueue.main.async {
-            self.navigationController?.popViewController(animated: true)
-            self.dismiss()
-        }
+
+    func endRefresh() {
+        assert(Thread.isMainThread)
+        self.refreshControl.endRefreshing()
+    }
+
+    func dismissVC() {
+        assert(Thread.isMainThread)
+        self.navigationController?.popViewController(animated: true)
+        self.dismiss(animated: true)
     }
 }
 
@@ -1054,32 +1067,27 @@ extension MessageViewController : MessageCellDelegate {
     private func handleLargeAttachment(in cell: MessageCell, using url: URL) {
         guard let data = MessageViewController.extractAttachment(from: cell), !data.isEmpty else { return }
         let downloadFrom = String(decoding: data[0], as: UTF8.self)
-        guard let url = URL(string: downloadFrom) else { return }
-        Cache.getLargeFileHelper().startDownload(from: url)
+        guard var urlComps = URLComponents(string: downloadFrom) else { return }
+        if let filename = url.extractQueryParam(withName: "filename") {
+            urlComps.queryItems = [URLQueryItem(name: "origfn", value: filename)]
+        }
+        if let targetUrl = urlComps.url {
+            Cache.getLargeFileHelper().startDownload(from: targetUrl)
+        }
     }
 
     private func handleSmallAttachment(in cell: MessageCell, using url: URL) {
         // TODO: move logic to MessageInteractor.
         guard let data = MessageViewController.extractAttachment(from: cell), !data.isEmpty else { return }
         let d = data[0]
-        let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
-        var filename: String?
-        if let queryItems = components?.queryItems {
-            for queryItem in queryItems {
-                if queryItem.name == "filename" {
-                    filename = queryItem.value
-                    break
-                }
-            }
-        }
-        guard filename != nil else { return }
+        guard let filename = url.extractQueryParam(withName: "filename") else { return }
         let documentsUrl: URL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-        let destinationURL = documentsUrl.appendingPathComponent(filename!)
+        let destinationURL = documentsUrl.appendingPathComponent(filename)
         do {
             try d.write(to: destinationURL)
-            // TODO: show preview.
+            UiUtils.presentFileSharingVC(for: destinationURL)
         } catch {
-            print("failed to save \(filename!)")
+            print("failed to save \(filename)")
         }
     }
 

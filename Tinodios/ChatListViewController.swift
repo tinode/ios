@@ -95,6 +95,7 @@ class ChatListViewController: UITableViewController, ChatListDisplayLogic {
     }
     @objc
     func appBecameActive() {
+        self.interactor?.setup()
         self.interactor?.attachToMeTopic()
     }
     @objc
@@ -120,30 +121,27 @@ class ChatListViewController: UITableViewController, ChatListDisplayLogic {
     }
 
     func displayChats(_ topics: [DefaultComTopic], archivedTopics: [DefaultComTopic]?) {
+        assert(Thread.isMainThread)
         self.topics = topics
         self.archivedTopics = archivedTopics
         self.rowIndex = Dictionary(uniqueKeysWithValues: topics.enumerated().map { (index, topic) in (topic.name, index) })
-        DispatchQueue.main.async {
-            self.tableView!.reloadData()
-            self.toggleFooter(visible: self.numArchivedTopics > 0)
-        }
+        self.tableView!.reloadData()
+        self.toggleFooter(visible: self.numArchivedTopics > 0)
     }
 
     func updateChat(_ name: String) {
+        assert(Thread.isMainThread)
         guard let position = rowIndex[name] else { return }
-        DispatchQueue.main.async {
-            self.tableView!.reloadRows(at: [IndexPath(item: position, section: 0)], with: .none)
-            self.toggleFooter(visible: self.numArchivedTopics > 0)
-        }
+        self.tableView!.reloadRows(at: [IndexPath(item: position, section: 0)], with: .none)
+        self.toggleFooter(visible: self.numArchivedTopics > 0)
     }
 
     func deleteChat(_ name: String) {
+        assert(Thread.isMainThread)
         guard let position = rowIndex[name] else { return }
-        DispatchQueue.main.async {
-            self.topics.remove(at: position)
-            self.tableView!.deleteRows(at: [IndexPath(item: position, section: 0)], with: .fade)
-            self.toggleFooter(visible: self.numArchivedTopics > 0)
-        }
+        self.topics.remove(at: position)
+        self.tableView!.deleteRows(at: [IndexPath(item: position, section: 0)], with: .fade)
+        self.toggleFooter(visible: self.numArchivedTopics > 0)
     }
 
     @objc private func navigateToArchive() {

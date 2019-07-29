@@ -53,8 +53,7 @@ class AttributedStringFormatter: DraftyFormatter {
             return
         }
         if let ref = attr["ref"]?.asString() {  // Large file attachments.
-            print("ref = \(ref)")
-            let attachment = Attachment(content: .dataref(ref), mime: attr["mime"]?.asString(), name: attr["name"]?.asString(), ref: ref, size: nil, width: nil, height: nil)
+            let attachment = Attachment(content: .dataref(ref), mime: attr["mime"]?.asString(), name: attr["name"]?.asString(), ref: ref, size: attr["size"]?.asInt(), width: nil, height: nil)
             node.attachment(attachment)
             return
         }

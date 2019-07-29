@@ -57,16 +57,14 @@ class FindViewController: UITableViewController, FindDisplayLogic {
     }
 
     func displayLocalContacts(contacts newContacts: [ContactHolder]) {
-        DispatchQueue.main.async {
-            self.localContacts = newContacts
-            self.tableView.reloadData()
-        }
+        assert(Thread.isMainThread)
+        self.localContacts = newContacts
+        self.tableView.reloadData()
     }
     func displayRemoteContacts(contacts newContacts: [RemoteContactHolder]) {
-        DispatchQueue.main.async {
-            self.remoteContacts = newContacts
-            self.tableView.reloadData()
-        }
+        assert(Thread.isMainThread)
+        self.remoteContacts = newContacts
+        self.tableView.reloadData()
     }
 
     override func viewDidLoad() {
