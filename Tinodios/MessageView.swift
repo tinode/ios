@@ -44,7 +44,6 @@ class MessageView: UICollectionView {
     func handleTapGesture(_ gesture: UIGestureRecognizer) {
         guard gesture.state == .ended else { return }
 
-        // FIXME: this check is probably redundant. It's already checked at gestureRecognizerShouldBegin.
         let touchLocation = gesture.location(in: self)
         guard let indexPath = indexPathForItem(at: touchLocation) else { return }
 

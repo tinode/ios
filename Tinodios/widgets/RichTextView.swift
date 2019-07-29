@@ -18,7 +18,7 @@ class RichTextView : UITextView {
     func setup() {
         // Apple is a steaming pile of buggy $#14
         // See https://stackoverflow.com/questions/746670/how-to-lose-margin-padding-in-uitextview
-        textContainerInset = .zero //UIEdgeInsets(top: 6, left: 0, bottom: 4, right: 0)
+        textContainerInset = .zero
         textContainer.lineFragmentPadding = 0
         contentInset = UIEdgeInsets.zero
 
@@ -28,11 +28,7 @@ class RichTextView : UITextView {
         isSelectable = true
 
         var b = bounds
-        let h = sizeThatFits(CGSize(
-            width: bounds.size.width,
-            height: CGFloat.greatestFiniteMagnitude)
-            ).height
-        b.size.height = h
+        b.size.height = sizeThatFits(CGSize(width: bounds.size.width, height: CGFloat.greatestFiniteMagnitude)).height
         bounds = b
     }
 

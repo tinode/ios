@@ -8,6 +8,7 @@
 import Foundation
 import SwiftKeychainWrapper
 import TinodeSDK
+import MobileCoreServices
 
 class Utils {
     static let kTinodeHasRunBefore = "tinodeHasRunBefore"
@@ -93,6 +94,15 @@ class Utils {
         guard let tagsString = tagsString else { return nil }
         let candidates = tagsString.split(separator: ",")
         return candidates.filter { $0.count >= UiUtils.kMinTagLength }.map { String($0) }
+    }
+
+    public static func uniqueFilename(forMime mime: String?) -> String {
+        let mimeType: CFString = (mime ?? "application/octet-stream") as CFString
+        var ext: String? = nil
+        if let uti = UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, mimeType, nil)?.takeUnretainedValue() {
+            ext = UTTypeCopyPreferredTagWithClass(uti, kUTTagClassFilenameExtension)?.takeUnretainedValue() as String?
+        }
+        return ProcessInfo.processInfo.globallyUniqueString + "." + (ext ?? "bin")
     }
 }
 

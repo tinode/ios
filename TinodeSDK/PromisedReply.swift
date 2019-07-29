@@ -67,8 +67,8 @@ public class PromisedReply<Value> {
     }
 
     private var state: State = .waiting
-    private var successHandler: SuccessHandler
-    private var failureHandler: FailureHandler
+    private var successHandler: SuccessHandler = nil
+    private var failureHandler: FailureHandler = nil
     private var nextPromise: PromisedReply<Value>?
     private var countDownLatch: CountDownLatch?
     private var queue = DispatchQueue(label: "co.tinode.promise")

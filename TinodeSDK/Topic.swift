@@ -662,17 +662,15 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
         var acs: Acs
         if let acsMap = acsMap {
             acs = Acs(from: acsMap)
-            print("mode from map \(acs)")
         } else {
             acs = Acs()
-            print("blank mode \(acs)")
             if user == nil {
                 acs.want = AcsHelper(str: sub.mode)
             } else {
                 acs.given = AcsHelper(str: sub.mode)
             }
         }
-        print("mode is \(acs)")
+
         if user == nil || (tinode?.isMe(uid: user) ?? false) {
             user = tinode?.myUid
             var changed = false

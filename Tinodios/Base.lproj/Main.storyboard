@@ -732,10 +732,11 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="nsH-Au-05U">
-                                <rect key="frame" x="0.0" y="44" width="374" height="687.66666666666663"/>
+                                <rect key="frame" x="0.0" y="140" width="374" height="591.66666666666663"/>
                                 <subviews>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="y5c-FK-NKi">
-                                        <rect key="frame" x="0.0" y="0.0" width="374" height="687.66666666666663"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="374" height="591.66666666666663"/>
+                                        <gestureRecognizers/>
                                     </imageView>
                                 </subviews>
                                 <constraints>
@@ -819,7 +820,14 @@
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="DG9-x8-YpK"/>
                     </view>
-                    <nil key="simulatedTopBarMetrics"/>
+                    <toolbarItems/>
+                    <navigationItem key="navigationItem" title="Image Preview" id="JpP-JB-AWY">
+                        <barButtonItem key="rightBarButtonItem" systemItem="action" id="GIP-Uu-4A0">
+                            <connections>
+                                <action selector="saveImageButtonClicked:" destination="a2m-CR-0Zc" id="faz-kk-dXQ"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <nil key="simulatedBottomBarMetrics"/>
                     <connections>
                         <outlet property="contentTypeLabel" destination="YLX-fZ-c26" id="zWK-Sk-I6s"/>
@@ -1560,13 +1568,13 @@
                                 <rect key="frame" x="8" y="148" width="223" height="128"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Name of the group" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="nxB-pE-V9k">
-                                        <rect key="frame" x="0.0" y="0.0" width="223" height="19.666666666666668"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="223" height="20.333333333333332"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="NCa-fb-bVK">
-                                        <rect key="frame" x="0.0" y="27.666666666666657" width="223" height="32"/>
+                                        <rect key="frame" x="0.0" y="28.333333333333343" width="223" height="32"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="32" id="vp5-va-1Ok"/>
                                         </constraints>
@@ -1575,7 +1583,7 @@
                                         <textInputTraits key="textInputTraits"/>
                                     </textField>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Additional info (private)" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Vnv-xv-Sxe" userLabel="Additional info (private)">
-                                        <rect key="frame" x="0.0" y="67.666666666666657" width="223" height="20.333333333333329"/>
+                                        <rect key="frame" x="0.0" y="68.333333333333343" width="223" height="19.666666666666671"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
