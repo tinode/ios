@@ -40,7 +40,7 @@ public class AcsHelper: Codable, Equatable {
         guard a != nil else {
             return ""
         }
-        return AcsHelper.encode(mode: a!)!
+        return AcsHelper.encode(mode: a!)
     }
     public var isDefined: Bool {
         get {
@@ -105,9 +105,9 @@ public class AcsHelper: Codable, Equatable {
         guard !isInvalid else { return false }
         return (a! & mode) != 0
     }
-    private static func decode(from modeStr: String?) -> Int? {
+    private static func decode(from modeStr: String?) -> Int {
         guard let mode = modeStr, mode.count > 0 else {
-            return nil
+            return kModeInvalid
         }
         var m0 = kModeNone
         let modeUpper = mode.uppercased()
@@ -120,9 +120,9 @@ public class AcsHelper: Codable, Equatable {
         }
         return m0
     }
-    private static func encode(mode: Int) -> String? {
+    private static func encode(mode: Int) -> String {
         if mode == kModeInvalid {
-            return nil
+            return ""
         }
         if mode == kModeNone {
             return "N"
@@ -136,7 +136,8 @@ public class AcsHelper: Codable, Equatable {
         }
         return result.joined()
     }
-    // Same as split() but retains the separators ["+", "-"].
+
+    // Same as split() but retains the separators ["+", "-"]: "+ABC-DEF" -> ["+ABC", "-DEF"]
     private static func tokenizeCommand(command str: String) -> [String] {
         var result: [String] = []
         var temp = ""
@@ -147,56 +148,52 @@ public class AcsHelper: Codable, Equatable {
                     // Clear temp.
                     temp.removeAll()
                 }
-                result.append(String(c))
-            } else {
-                temp.append(c)
             }
+            temp.append(c)
         }
         if !temp.isEmpty {
             result.append(temp)
         }
         return result
     }
+
     public func update(from umode: String) -> Bool {
         let olda = a
-        a = try! AcsHelper.update(original: a, updateWith: umode)
+        do {
+            // Invalid value may be recived from the network. Invalid network data should not crash the client.
+            try a = AcsHelper.update(original: a, updateWith: umode)
+        } catch {
+            print("Failed to parse access mode \(umode)")
+        }
         return a != olda
     }
+
     private static func update(original mode: Int?, updateWith command: String?) throws -> Int? {
         guard let command = command, command.count > 0 else {
             return mode
         }
-        var m0: Int
         var result: Int
-        let action = command[command.startIndex]
+        let action = command.first //[command.startIndex]
         if action == "+" || action == "-" {
             result = mode ?? 0
             let parts = tokenizeCommand(command: command)
-            let n = parts.count
-            var i = 0
-            while i < n {
-                let p0 = parts[i]
-                let action = p0[p0.startIndex]
-                i += 1
-                if i < n {
-                    m0 = decode(from: parts[i])!
-                } else {
-                    break
-                }
+            for p in parts {
+                // Skip command character and decode
+                let m0 = decode(from: String(p.dropFirst(1)))
                 if m0 == kModeInvalid {
                     throw AcsError.invalidValue
                 }
                 if m0 == kModeNone {
                     continue
                 }
-                if action == "+" {
+                if p.first == "+" { // p[p.startIndex]
                     result |= m0
                 } else {
                     result &= ~m0
                 }
             }
         } else {
-            result = AcsHelper.decode(from: command)!
+            result = AcsHelper.decode(from: command)
             if result == kModeInvalid {
                 throw AcsError.invalidValue
             }

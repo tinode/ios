@@ -23,16 +23,17 @@ class PermissionsEditViewController: UIViewController, UITableViewDelegate, UITa
 
     private var onChange: ChangeHandler?
     private var visiblePermissions: [Character] = []
+    private var initialState: Set<Character>?
     private var selectedPermissions: Set<Character>?
 
     init(set state: String, disabled: String?, changeHandler: PermissionsEditViewController.ChangeHandler?) {
-
         super.init(nibName: nil, bundle: nil)
         modalTransitionStyle = .crossDissolve
         modalPresentationStyle = .overCurrentContext
         onChange = changeHandler
 
         // Setup the tableView data source with one row = one permission.
+        initialState = Set(Array(state))
         selectedPermissions = Set(Array(state))
         if let disabled = disabled {
             visiblePermissions = PermissionsEditViewController.kAllPermissions.filter({ (char) -> Bool in
@@ -109,9 +110,18 @@ class PermissionsEditViewController: UIViewController, UITableViewDelegate, UITa
     }
 
     @IBAction func okayClicked(_ sender: Any) {
-        // TODO: Calculate added, removed. If there is a difference, call onChange.
-
-        self.onChange?(String(selectedPermissions!))
+        let removed = initialState!.subtracting(selectedPermissions!)
+        let added = selectedPermissions!.subtracting(initialState!)
+        var change = ""
+        if added.count > 0 {
+            change += "+\(String(added))"
+        }
+        if removed.count > 0 {
+            change += "-\(String(removed))"
+        }
+        if change.count > 0 {
+            self.onChange?(change)
+        }
         self.dismiss(animated: true, completion: nil)
     }
 }
