@@ -13,7 +13,7 @@ class PermissionsEditViewController: UIViewController, UITableViewDelegate, UITa
 
     public typealias ChangeHandler = ((_ permissions: String) -> ())
 
-    private static let buttonBorderColor = UIColor(red: 224.0/255.0, green: 224.0/255.0, blue: 224.0/255.0, alpha: 1)
+    private static let buttonBorderColor = UIColor(fromHexCode: 0xE0E0E0)
 
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var tableViewHeight: NSLayoutConstraint!
@@ -109,7 +109,8 @@ class PermissionsEditViewController: UIViewController, UITableViewDelegate, UITa
     }
 
     @IBAction func okayClicked(_ sender: Any) {
-        // Canculate added, removed. If there is a difference, call onChange.
+        // TODO: Calculate added, removed. If there is a difference, call onChange.
+
         self.onChange?(String(selectedPermissions!))
         self.dismiss(animated: true, completion: nil)
     }

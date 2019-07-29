@@ -65,8 +65,8 @@ class ImagePreviewController : UIViewController, UIScrollViewDelegate {
             try FileManager.default.createDirectory(at: picturesUrl, withIntermediateDirectories: true, attributes: nil)
             try imageBits.write(to: destinationURL)
             UiUtils.presentFileSharingVC(for: destinationURL)
-        } catch let err as NSError {
-            print("Failed to save image as \(destinationURL): \(err.localizedDescription)")
+        } catch {
+            print("Failed to save image as \(destinationURL): \(error.localizedDescription)")
         }
 
     }

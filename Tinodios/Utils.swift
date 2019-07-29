@@ -97,8 +97,7 @@ class Utils {
     }
 
     public static func uniqueFilename(forMime mime: String?) -> String {
-        // Default mime type
-        let mimeType: CFString = "application/octet-stream" as CFString
+        let mimeType: CFString = (mime ?? "application/octet-stream") as CFString
         var ext: String? = nil
         if let uti = UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, mimeType, nil)?.takeUnretainedValue() {
             ext = UTTypeCopyPreferredTagWithClass(uti, kUTTagClassFilenameExtension)?.takeUnretainedValue() as String?
