@@ -112,7 +112,6 @@ extension MessageView {
         blurEffectView.alpha = 1
         blurEffectView.translatesAutoresizingMaskIntoConstraints = false
         self.addSubview(blurEffectView)
-        //blurEffectView.bounds = CGRect(x: 0, y: 0, width: bounds.width, height: bounds.height)
 
         // Pin the edges to the superview edges.
         if #available(iOS 11.0, *) {
