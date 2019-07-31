@@ -106,16 +106,18 @@ extension MessageView {
     public func showNoAccessOverlay() {
         // Make sure there's no foreground overlay yet.
         guard self.foregroundView == nil else { return }
+
         // Blurring layer over the messages.
-        let blurEffect = UIBlurEffect(style: .extraLight)
-        let blurEffectView = UIVisualEffectView(effect: blurEffect)
-        blurEffectView.alpha = 0.8
+        let blurEffectView = UIVisualEffectView(effect: UIBlurEffect(style: .light))
+        blurEffectView.alpha = 1
         blurEffectView.translatesAutoresizingMaskIntoConstraints = false
         self.addSubview(blurEffectView)
+        //blurEffectView.bounds = CGRect(x: 0, y: 0, width: bounds.width, height: bounds.height)
+
         // Pin the edges to the superview edges.
         if #available(iOS 11.0, *) {
             NSLayoutConstraint.activate([
-                blurEffectView.topAnchor.constraint(equalTo: self.safeAreaLayoutGuide.topAnchor),
+                blurEffectView.topAnchor.constraint(equalTo: self.topAnchor),
                 blurEffectView.bottomAnchor.constraint(equalTo: self.safeAreaLayoutGuide.bottomAnchor),
                 blurEffectView.leadingAnchor.constraint(equalTo: self.safeAreaLayoutGuide.leadingAnchor),
                 blurEffectView.trailingAnchor.constraint(equalTo: self.safeAreaLayoutGuide.trailingAnchor)])
@@ -126,13 +128,14 @@ extension MessageView {
                 blurEffectView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
                 blurEffectView.trailingAnchor.constraint(equalTo: self.trailingAnchor)])
         }
+
         // "No access to messages" text.
         let noAccessLabel = UILabel()//frame: view.bounds)
         noAccessLabel.text = "No access to messages"
         noAccessLabel.sizeToFit()
         noAccessLabel.numberOfLines = 0
         noAccessLabel.textAlignment = .center
-        noAccessLabel.font = UIFont.boldSystemFont(ofSize: 18)
+        noAccessLabel.font = UIFont.preferredFont(forTextStyle: .headline)
         noAccessLabel.translatesAutoresizingMaskIntoConstraints = false
         blurEffectView.contentView.addSubview(noAccessLabel)
         // Pin it to the superview center.

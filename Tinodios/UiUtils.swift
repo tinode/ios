@@ -36,6 +36,10 @@ class UiTinodeEventListener : TinodeEventListener {
     func onPresMessage(pres: MsgServerPres?) {}
 }
 
+enum ToastLevel {
+    case error, warning, info
+}
+
 class UiUtils {
     static let kMinTagLength = 4
     static let kAvatarSize: CGFloat = 128
@@ -126,7 +130,7 @@ class UiUtils {
     /// - Parameters:
     ///  - message: message to display
     ///  - duration: duration of display in seconds.
-    public static func showToast(message: String, duration: TimeInterval = 3.0) {
+    public static func showToast(message: String, duration: TimeInterval = 3.0, level: ToastLevel = .error) {
         guard let parent = UIApplication.shared.windows.last else { return }
 
         let iconSize: CGFloat = 32
@@ -139,12 +143,18 @@ class UiUtils {
         // Prevent very short toasts
         guard duration > 0.5 else { return }
 
-        let icon = UIImageView(image: UIImage(named: "important-32"))
-        icon.tintColor = UIColor.white
+        var settings: (color: UInt, bgColor: UInt, icon: String)
+        switch level {
+        case .error: settings = (color: 0xFFFFFFFF, bgColor: 0xFFFF6666, icon: "important-32")
+        case .warning: settings = (color: 0xFF666633, bgColor: 0xFFFFFFCC, icon: "warning-32")
+        case .info: settings = (color: 0xFF333366, bgColor: 0xFFCCCCFF, icon: "info-32")
+        }
+        let icon = UIImageView(image: UIImage(named: settings.icon))
+        icon.tintColor = UIColor(fromHexCode: settings.color)
         icon.frame = CGRect(x: spacing, y: spacing, width: iconSize, height: iconSize)
 
         let label = UILabel()
-        label.textColor = UIColor.white
+        label.textColor = UIColor(fromHexCode: settings.color)
         label.textAlignment = .left
         label.lineBreakMode = .byWordWrapping
         label.numberOfLines = 3
@@ -160,7 +170,7 @@ class UiUtils {
 
         let toastView = UIView()
         toastView.alpha = 0
-        toastView.backgroundColor = UIColor(red: 1, green: 102/255, blue: 102/255, alpha: 1)
+        toastView.backgroundColor = UIColor(fromHexCode: settings.bgColor)
         toastView.addSubview(icon)
         toastView.addSubview(label)
 
@@ -209,7 +219,7 @@ class UiUtils {
     public static func ToastSuccessHandler(msg: ServerMessage) throws -> PromisedReply<ServerMessage>? {
         if let ctrl = msg.ctrl, ctrl.code >= 300 {
             DispatchQueue.main.async {
-                UiUtils.showToast(message: "Something went wrong: \(ctrl.code) - \(ctrl.text)")
+                UiUtils.showToast(message: "Something went wrong: \(ctrl.code) - \(ctrl.text)", level: .warning)
             }
         }
         return nil
@@ -242,7 +252,7 @@ class UiUtils {
                 onSuccess: { msg in
                     if let ctrl = msg.ctrl, ctrl.code >= 300 {
                         DispatchQueue.main.async {
-                            UiUtils.showToast(message: "Couldn't update permissions: \(ctrl.code) - \(ctrl.text)")
+                            UiUtils.showToast(message: "Couldn't update permissions: \(ctrl.code) - \(ctrl.text)", level: .warning)
                         }
                     }
                     return nil
