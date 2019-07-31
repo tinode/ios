@@ -472,7 +472,7 @@ public class Tinode {
             do {
                 try future.reject(error: error)
             } catch {
-                Tinode.log.error("Error rejecting promise: %{public}@", String(describing: error))
+                Tinode.log.error("Error rejecting promise: %{public}@", error.localizedDescription)
             }
         }
         return future
@@ -703,8 +703,7 @@ public class Tinode {
             encodedToken = try AuthScheme.encodeBasicToken(
                 uname: uname, password: password)
         } catch {
-            Tinode.log.error("Won't login - failed encoding token: %{public}@",
-                             String(describing: error))
+            Tinode.log.error("Won't login - failed encoding token: %{public}@", error.localizedDescription)
             return nil
         }
         return login(scheme: AuthScheme.kLoginBasic,
@@ -856,8 +855,7 @@ public class Tinode {
                         onFailure: nil)
                 }
             } catch {
-                Tinode.log.error("Connection error: %{public}@",
-                                 String(describing: error))
+                Tinode.log.error("Connection error: %{public}@", error.localizedDescription)
             }
         }
         func onMessage(with message: String) -> Void {
@@ -865,15 +863,15 @@ public class Tinode {
             do {
                 try tinode.dispatch(message)
             } catch {
-                Log.error("onMessage error: %{public}@", String(describing: error))
+                Log.error("onMessage error: %{public}@", error.localizedDescription)
             }
         }
         func onDisconnect(isServerOriginated: Bool, code: Int, reason: String) -> Void {
             tinode.handleDisconnect(isServerOriginated: isServerOriginated, code: code, reason: reason)
         }
         func onError(error: Error) -> Void {
-            tinode.handleDisconnect(isServerOriginated: true, code: 0, reason: String(describing: error))
-            Log.error("Tinode network error: %{public}@", String(describing: error))
+            tinode.handleDisconnect(isServerOriginated: true, code: 0, reason: error.localizedDescription)
+            Log.error("Tinode network error: %{public}@", error.localizedDescription)
             if let connected = tinode.connectedPromise, !connected.isDone {
                 do {
                     try connected.reject(error: error)

@@ -124,7 +124,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                     onFailure: { err in
                         DispatchQueue.main.async {
                             UiUtils.showToast(
-                                message: "Failed to subscribe to topic: \(String(describing: err))") }
+                                message: "Failed to subscribe to topic: \(err.localizedDescription)") }
                         if case TinodeError.notConnected(_) = err {
                             Cache.getTinode().reconnectNow()
                         }
