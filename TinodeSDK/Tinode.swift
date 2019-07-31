@@ -13,7 +13,7 @@ public enum TinodeJsonError: Error {
     case decode
 }
 
-public enum TinodeError: Error, CustomStringConvertible {
+public enum TinodeError: LocalizedError, CustomStringConvertible {
     case invalidReply(String)
     case invalidState(String)
     case notConnected(String)
@@ -38,6 +38,10 @@ public enum TinodeError: Error, CustomStringConvertible {
                 return "Not synchronized"
             }
         }
+    }
+
+    public var errorDescription: String? {
+        return description
     }
 }
 
@@ -868,7 +872,7 @@ public class Tinode {
             tinode.handleDisconnect(isServerOriginated: isServerOriginated, code: code, reason: reason)
         }
         func onError(error: Error) -> Void {
-            tinode.handleDisconnect(isServerOriginated: true, code: 0, reason: error.localizedDescription)
+            tinode.handleDisconnect(isServerOriginated: true, code: 0, reason: String(describing: error))
             Log.error("Tinode network error: %{public}@", String(describing: error))
             if let connected = tinode.connectedPromise, !connected.isDone {
                 do {
