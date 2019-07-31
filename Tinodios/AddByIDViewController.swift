@@ -29,6 +29,9 @@ class AddByIDViewController: UIViewController {
         let id = UiUtils.ensureDataInTextField(idTextField)
         guard !id.isEmpty else { return }
         okayButton.isEnabled = false
+        // FIXME: this generates an unnecessary network call which fetched topic description.
+        // the description is discarded and re-requested as a part of subsequent {sub} call.
+        // Either get rid of the {get} call or save the returned description.
         let getMeta = MsgGetMeta(desc: MetaGetDesc(), sub: nil, data: nil, del: nil, tags: false)
         _ = try? tinode.getMeta(topic: id, query: getMeta)?.then(
             onSuccess: { [weak self] msg in
@@ -41,7 +44,7 @@ class AddByIDViewController: UIViewController {
                 if let e = err as? TinodeError {
                     if case TinodeError.serverResponseError(let code, let text, _) = e {
                         DispatchQueue.main.async {
-                        UiUtils.showToast(message: "Invalid topic id: \(code) \(text)")
+                            UiUtils.showToast(message: "Invalid topic id: \(code) \(text)")
                         }
                     }
                 }
