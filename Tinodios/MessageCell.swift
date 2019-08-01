@@ -191,6 +191,7 @@ class MessageCell: UICollectionViewCell {
     }
 
     override func resignFirstResponder() -> Bool {
+        super.resignFirstResponder()
         return true
     }
 }

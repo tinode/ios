@@ -29,6 +29,7 @@ protocol MessageBusinessLogic: class {
 protocol MessageDataStore {
     var topicName: String? { get set }
     var topic: DefaultComTopic? { get set }
+    @discardableResult
     func setup(topicName: String?) -> Bool
     func loadMessages()
     func loadNextPage()
@@ -231,7 +232,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         } catch TinodeError.notConnected(_) {
             UiUtils.showToast(message: "You are offline")
         } catch {
-            UiUtils.showToast(message: "Action failed: \(error)")
+            UiUtils.showToast(message: "Action failed: \(error.localizedDescription)")
         }
     }
 
