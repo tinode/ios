@@ -216,8 +216,8 @@ class UiUtils {
         }
         return nil
     }
-    public static func ToastSuccessHandler(msg: ServerMessage) throws -> PromisedReply<ServerMessage>? {
-        if let ctrl = msg.ctrl, ctrl.code >= 300 {
+    public static func ToastSuccessHandler(msg: ServerMessage?) throws -> PromisedReply<ServerMessage>? {
+        if let ctrl = msg?.ctrl, ctrl.code >= 300 {
             DispatchQueue.main.async {
                 UiUtils.showToast(message: "Something went wrong: \(ctrl.code) - \(ctrl.text)", level: .warning)
             }
@@ -250,7 +250,7 @@ class UiUtils {
             }
             return try reply?.then(
                 onSuccess: { msg in
-                    if let ctrl = msg.ctrl, ctrl.code >= 300 {
+                    if let ctrl = msg?.ctrl, ctrl.code >= 300 {
                         DispatchQueue.main.async {
                             UiUtils.showToast(message: "Couldn't update permissions: \(ctrl.text) (\(ctrl.code))", level: .warning)
                         }

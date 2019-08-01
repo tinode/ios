@@ -111,7 +111,6 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                     .withDel()
                     .build())?.then(
                     onSuccess: { [weak self] msg in
-                        print("subscribed to topic")
                         self?.messageSenderQueue.async {
                             _ = self?.topic?.syncAll()
                         }
@@ -122,12 +121,15 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                         self?.presenter?.applyTopicPermissions()
                         return nil
                     },
-                    onFailure: { err in
+                    onFailure: { [weak self] err in
                         DispatchQueue.main.async {
-                            UiUtils.showToast(
-                                message: "Failed to subscribe to topic: \(err.localizedDescription)") }
-                        if case TinodeError.notConnected(_) = err {
+                            UiUtils.showToast(message: "Failed to subscribe to topic: \(err.localizedDescription)")
+                        }
+                        switch err {
+                        case TinodeError.notConnected(_):
                             Cache.getTinode().reconnectNow()
+                        default:
+                            self?.presenter?.applyTopicPermissions()
                         }
                         return nil
                     })
@@ -135,7 +137,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
             // presenter --> show error message
             print("Tinode is not connected \(errorMsg)")
         } catch {
-            print("Error subscribing to topic \(error)")
+            print("Error subscribing to topic \(error.localizedDescription)")
         }
         return false
     }

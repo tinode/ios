@@ -337,7 +337,7 @@ class TopicInfoViewController: UITableViewController {
         }
     }
 
-    private func promiseSuccessHandler(msg: ServerMessage) throws -> PromisedReply<ServerMessage>? {
+    private func promiseSuccessHandler(msg: ServerMessage?) throws -> PromisedReply<ServerMessage>? {
         DispatchQueue.main.async { self.reloadData() }
         return nil
     }

@@ -46,12 +46,12 @@ private class CountDownLatch {
 }
 
 public class PromisedReply<Value> {
-    public typealias SuccessHandler = ((Value) throws -> PromisedReply<Value>?)?
+    public typealias SuccessHandler = ((Value?) throws -> PromisedReply<Value>?)?
     public typealias FailureHandler = ((Error) throws -> PromisedReply<Value>?)?
     public typealias FinallyHandler = (() throws -> PromisedReply<Value>?)
     enum State {
         case waiting
-        case resolved(Value)
+        case resolved(Value?)
         case rejected(Error)
         
         var isDone: Bool {
@@ -103,7 +103,7 @@ public class PromisedReply<Value> {
         countDownLatch = CountDownLatch(count: 0)
     }
 
-    func resolve(result: Value) throws {
+    func resolve(result: Value?) throws {
         defer {
             countDownLatch?.countDown()
             // down the semaphore
@@ -112,7 +112,7 @@ public class PromisedReply<Value> {
         try queue.sync {
             // critical section
             guard case .waiting = state else {
-                throw PromisedReplyError.illegalStateError("Resolve: Promise already resolved.")
+                throw PromisedReplyError.illegalStateError("Resolve: Promise already completed.")
             }
             state = .resolved(result)
             try callOnSuccess(result: result)
@@ -131,7 +131,7 @@ public class PromisedReply<Value> {
 
             guard case .waiting = state else {
                 // down the semaphore
-                throw PromisedReplyError.illegalStateError("Promise already resolved/rejected")
+                throw PromisedReplyError.illegalStateError("Reject: promise already completed")
             }
             state = .rejected(error)
             try callOnFailure(err: error)
@@ -177,14 +177,14 @@ public class PromisedReply<Value> {
         try then(onSuccess: { msg in return try finally() }, onFailure: { err in return try finally() })
     }
 
-    private func callOnSuccess(result: Value) throws {
+    private func callOnSuccess(result: Value?) throws {
         var ret: PromisedReply<Value>? = nil
         do {
             if let sh = successHandler {
                 ret = try sh(result)
             }
         } catch {
-            // faiure handler
+            // failure handler
             try handleFailure(e: error)
             return
         }
@@ -213,8 +213,12 @@ public class PromisedReply<Value> {
             return
         }
         guard let r = ret else {
-            guard case let .resolved(value) = state else {
-                throw PromisedReplyError.illegalStateError("called handleSuccess on a non-resolved promise")
+            // 'ret' is nil when an attempt is made at recovering from a failure. If the current
+            // promise is rejected we should resolve the next in chain with the 'nil' value.
+            let value: Value?
+            switch state {
+            case .resolved(let v): value = v
+            default: value = nil
             }
             try np.resolve(result: value)
             return
@@ -245,7 +249,7 @@ public class PromisedReply<Value> {
         nextPromise = next
     }
 
-    public func getResult() throws -> Value {
+    public func getResult() throws -> Value? {
         countDownLatch?.await()
         switch state {
         case .resolved(let value):

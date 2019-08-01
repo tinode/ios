@@ -153,7 +153,7 @@ class ContactsSynchronizer {
                     if try future.waitResult() {
                         print("okay")
                         let pkt = try! future.getResult()
-                        guard let subs = pkt.meta?.sub else { return }
+                        guard let subs = pkt?.meta?.sub else { return }
                         print("got subs\nquery = \(contacts)\nsubs = \(subs)")
                         for sub in subs {
                             if Tinode.topicTypeByName(name: sub.user) == .p2p {
