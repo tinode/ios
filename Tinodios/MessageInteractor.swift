@@ -250,7 +250,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         } catch TinodeError.notConnected(_) {
             UiUtils.showToast(message: "You are offline")
         } catch {
-            UiUtils.showToast(message: "Action failed: \(error)")
+            UiUtils.showToast(message: "Action failed: \(error.localizedDescription)")
         }
     }
     func acceptInvitation() {
@@ -270,7 +270,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
             } catch TinodeError.notConnected(_) {
                 UiUtils.showToast(message: "You are offline")
             } catch {
-                UiUtils.showToast(message: "Operation failed \(error)")
+                UiUtils.showToast(message: "Operation failed \(error.localizedDescription)")
             }
         }
         _ = try? response?.thenApply(onSuccess: { msg in
@@ -298,7 +298,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         } catch TinodeError.notConnected(_) {
             UiUtils.showToast(message: "You are offline")
         } catch {
-            UiUtils.showToast(message: "Operation failed \(error)")
+            UiUtils.showToast(message: "Operation failed \(error.localizedDescription)")
         }
     }
     static private func existingInteractor(for topicName: String?) -> MessageInteractor? {

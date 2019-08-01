@@ -916,9 +916,9 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
         if description!.acs == nil {
             description!.acs = Acs()
         }
-        let mode = uidIsSelf ? description!.acs!.want : sub!.acs!.given
-        if mode?.update(from: update) ?? false {
-            return setSubscription(sub: MetaSetSub(user: uid, mode: mode?.description))
+        let mode = AcsHelper(ah: uidIsSelf ? description!.acs!.want : sub!.acs!.given)
+        if mode.update(from: update) {
+            return setSubscription(sub: MetaSetSub(user: uid, mode: mode.description))
         }
         return PromisedReply<ServerMessage>(value: ServerMessage())
     }
