@@ -13,7 +13,7 @@ class PermissionsEditViewController: UIViewController, UITableViewDelegate, UITa
 
     public typealias ChangeHandler = ((_ permissions: String) -> ())
 
-    private static let buttonBorderColor = UIColor(fromHexCode: 0xE0E0E0)
+    private static let buttonBorderColor = UIColor(fromHexCode: 0xFFE0E0E0)
 
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var tableViewHeight: NSLayoutConstraint!
