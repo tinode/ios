@@ -168,7 +168,7 @@ class AccountSettingsViewController: UITableViewController {
             onSuccess: nil,
             onFailure: { err in
                 DispatchQueue.main.async {
-                    UiUtils.showToast(message: "Could not change password: \(err.localizedDescription)")
+                    UiUtils.showToast(message: "Could not change password: \(err.localizedDescription))")
                 }
                 return nil
             })
