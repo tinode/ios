@@ -47,17 +47,23 @@ class AttributedStringFormatter: DraftyFormatter {
 
     private func handleAttachment(from node: TreeNode, with attr: [String : JSONValue]?) {
         guard let attr = attr else { return }
+        let mimeType =  attr["mime"]?.asString()
+        // Skip json attachments. They are not meant to be user-visible.
+        guard mimeType != "application/json" else { return }
+
+        let filename = attr["name"]?.asString()
+
         if let bits = attr["val"]?.asData() {  // Inline attachments.
-            let attachment = Attachment(content: .data(bits), mime: attr["mime"]?.asString(), name: attr["name"]?.asString(), ref: nil, size: bits.count, width: nil, height: nil)
+            let attachment = Attachment(content: .data(bits), mime: mimeType, name: filename, ref: nil, size: bits.count, width: nil, height: nil)
             node.attachment(attachment)
             return
         }
         if let ref = attr["ref"]?.asString() {  // Large file attachments.
-            let attachment = Attachment(content: .dataref(ref), mime: attr["mime"]?.asString(), name: attr["name"]?.asString(), ref: ref, size: attr["size"]?.asInt(), width: nil, height: nil)
+            let attachment = Attachment(content: .dataref(ref), mime: mimeType, name: filename, ref: ref, size: attr["size"]?.asInt(), width: nil, height: nil)
             node.attachment(attachment)
             return
         }
-        let attachment = Attachment(content: .empty, mime: attr["mime"]?.asString(), name: attr["name"]?.asString(), ref: nil, size: nil, width: nil, height: nil)
+        let attachment = Attachment(content: .empty, mime: mimeType, name: filename, ref: nil, size: nil, width: nil, height: nil)
         node.attachment(attachment)
     }
 
@@ -389,7 +395,7 @@ class AttributedStringFormatter: DraftyFormatter {
                 let paragraph = NSMutableParagraphStyle()
                 paragraph.firstLineHeadIndent = Constants.kAttachmentIconSize.width + baseFont.capHeight * 0.25
                 paragraph.lineSpacing = 0
-                paragraph.maximumLineHeight = 4
+                paragraph.lineHeightMultiple = 0.8
                 second.addAttributes([NSAttributedString.Key.paragraphStyle : paragraph, NSAttributedString.Key.foregroundColor : Constants.kLinkColor,
                     ], range: NSRange(location: 0, length: second.length))
 

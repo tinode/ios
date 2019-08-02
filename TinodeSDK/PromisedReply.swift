@@ -67,8 +67,8 @@ public class PromisedReply<Value> {
     }
 
     private var state: State = .waiting
-    private var successHandler: SuccessHandler
-    private var failureHandler: FailureHandler
+    private var successHandler: SuccessHandler = nil
+    private var failureHandler: FailureHandler = nil
     private var nextPromise: PromisedReply<Value>?
     private var countDownLatch: CountDownLatch?
     private var queue = DispatchQueue(label: "co.tinode.promise")
@@ -172,13 +172,11 @@ public class PromisedReply<Value> {
         throws -> PromisedReply<Value>? {
         return try then(onSuccess: nil, onFailure: failureHandler)
     }
-    @discardableResult
-    public func thenFinally(finally: @escaping FinallyHandler)
-        throws -> PromisedReply<Value>? {
-        return try then(
-            onSuccess: { msg in return try finally() },
-            onFailure: { err in return try finally() })
+
+    public func thenFinally(finally: @escaping FinallyHandler) throws {
+        try then(onSuccess: { msg in return try finally() }, onFailure: { err in return try finally() })
     }
+
     private func callOnSuccess(result: Value) throws {
         var ret: PromisedReply<Value>? = nil
         do {

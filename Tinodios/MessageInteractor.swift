@@ -58,6 +58,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
     private var messageSenderQueue = DispatchQueue(label: "co.tinode.messagesender")
     private var tinodeEventListener: MessageEventListener? = nil
 
+    @discardableResult
     func setup(topicName: String?) -> Bool {
         guard let topicName = topicName else { return false }
         self.topicName = topicName
@@ -363,6 +364,9 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
     }
     override func onData(data: MsgServerData?) {
         self.loadMessages()
+    }
+    override func onPres(pres: MsgServerPres) {
+        DispatchQueue.main.async { self.presenter?.applyTopicPermissions() }
     }
     override func onOnline(online: Bool) {
         self.presenter?.setOnline(online: online)

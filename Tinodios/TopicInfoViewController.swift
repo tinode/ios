@@ -216,40 +216,30 @@ class TopicInfoViewController: UITableViewController {
         }
     }
 
-    private func getAcsAndPermissionsChangeType(for sender: UIView)
-        -> (AcsHelper?, String?, UiUtils.PermissionsChangeType?, [PermissionsEditViewController.PermissionType]?) {
+    private func getAcsAndPermissionsChangeType(for sender: UIView) -> (AcsHelper?, String?, UiUtils.PermissionsChangeType?, String?) {
         if sender === myPermissionsLabel {
-            return (topic.accessMode?.want, nil, .updateSelfSub, [.approve, .invite, .delete])
+            return (topic.accessMode?.want, nil, .updateSelfSub, "ASDO")
         }
         if sender === peerPermissionsLabel {
-            return (self.topic.getSubscription(for: self.topic.name)?.acs?.given,
-                    topic.name, .updateSub, [.approve, .invite, .delete])
+            return (self.topic.getSubscription(for: self.topic.name)?.acs?.given, topic.name, .updateSub, "ASDO")
         }
         if sender === authUsersPermissionsLabel {
-            return (topic.defacs?.auth, nil, .updateAuth, nil)  // Should be O?
+            return (topic.defacs?.auth, nil, .updateAuth, "O")
         }
         if sender === anonUsersPermissionsLabel {
-            return (topic.defacs?.anon, nil, .updateAnon, nil)  // Should be O?
+            return (topic.defacs?.anon, nil, .updateAnon, "O")
         }
         return (nil, nil, nil, nil)
     }
 
-    private func changePermissions(
-        acs: AcsHelper, uid: String?,
-        changeType: UiUtils.PermissionsChangeType,
-        disabledPermissions: [PermissionsEditViewController.PermissionType]?) {
-        UiUtils.showPermissionsEditDialog(
-            over: self, acs: acs,
-            callback: {
-                permissionsTuple in
-                _ = try? UiUtils.handlePermissionsChange(
-                    onTopic: self.topic, forUid: uid, changeType: changeType,
-                    permissions: permissionsTuple)?.then(
-                        onSuccess: self.promiseSuccessHandler)},
-            disabledPermissions: disabledPermissions)
+    private func changePermissions(acs: AcsHelper, uid: String?, changeType: UiUtils.PermissionsChangeType, disabledPermissions: String?) {
+        UiUtils.showPermissionsEditDialog(over: self, acs: acs, callback: {
+            permissions in
+            _ = try? UiUtils.handlePermissionsChange(onTopic: self.topic, forUid: uid, changeType: changeType, newPermissions: permissions)?.then(onSuccess: self.promiseSuccessHandler)
+        }, disabledPermissions: disabledPermissions)
     }
-    @objc
-    func permissionsTapped(sender: UITapGestureRecognizer) {
+
+    @objc func permissionsTapped(sender: UITapGestureRecognizer) {
         guard let v = sender.view else {
             print("Tap from no sender view... quitting")
             return
@@ -259,8 +249,7 @@ class TopicInfoViewController: UITableViewController {
             print("could not get acs")
             return
         }
-        self.changePermissions(acs: acsUnwrapped, uid: uid,
-                               changeType: changeType, disabledPermissions: disablePermissions)
+        self.changePermissions(acs: acsUnwrapped, uid: uid, changeType: changeType, disabledPermissions: disablePermissions)
     }
 
     private func deleteTopic() {
@@ -543,8 +532,7 @@ extension TopicInfoViewController {
                 UiUtils.showToast(message: "Can't change permissions for this user.")
                 return
             }
-            self.changePermissions(acs: acsUnwrapped, uid: sub.user,
-                                   changeType: .updateSub, disabledPermissions: [])
+            self.changePermissions(acs: acsUnwrapped, uid: sub.user, changeType: .updateSub, disabledPermissions: nil)
 
         }))
         alert.addAction(UIAlertAction(title: "Make owner", style: .default, handler: { action in

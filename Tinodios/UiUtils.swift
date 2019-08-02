@@ -36,6 +36,10 @@ class UiTinodeEventListener : TinodeEventListener {
     func onPresMessage(pres: MsgServerPres?) {}
 }
 
+enum ToastLevel {
+    case error, warning, info
+}
+
 class UiUtils {
     static let kMinTagLength = 4
     static let kAvatarSize: CGFloat = 128
@@ -126,7 +130,7 @@ class UiUtils {
     /// - Parameters:
     ///  - message: message to display
     ///  - duration: duration of display in seconds.
-    public static func showToast(message: String, duration: TimeInterval = 3.0) {
+    public static func showToast(message: String, duration: TimeInterval = 3.0, level: ToastLevel = .error) {
         guard let parent = UIApplication.shared.windows.last else { return }
 
         let iconSize: CGFloat = 32
@@ -139,12 +143,18 @@ class UiUtils {
         // Prevent very short toasts
         guard duration > 0.5 else { return }
 
-        let icon = UIImageView(image: UIImage(named: "important-32"))
-        icon.tintColor = UIColor.white
+        var settings: (color: UInt, bgColor: UInt, icon: String)
+        switch level {
+        case .error: settings = (color: 0xFFFFFFFF, bgColor: 0xFFFF6666, icon: "important-32")
+        case .warning: settings = (color: 0xFF666633, bgColor: 0xFFFFFFCC, icon: "warning-32")
+        case .info: settings = (color: 0xFF333366, bgColor: 0xFFCCCCFF, icon: "info-32")
+        }
+        let icon = UIImageView(image: UIImage(named: settings.icon))
+        icon.tintColor = UIColor(fromHexCode: settings.color)
         icon.frame = CGRect(x: spacing, y: spacing, width: iconSize, height: iconSize)
 
         let label = UILabel()
-        label.textColor = UIColor.white
+        label.textColor = UIColor(fromHexCode: settings.color)
         label.textAlignment = .left
         label.lineBreakMode = .byWordWrapping
         label.numberOfLines = 3
@@ -160,7 +170,7 @@ class UiUtils {
 
         let toastView = UIView()
         toastView.alpha = 0
-        toastView.backgroundColor = UIColor(red: 1, green: 102/255, blue: 102/255, alpha: 1)
+        toastView.backgroundColor = UIColor(fromHexCode: settings.bgColor)
         toastView.addSubview(icon)
         toastView.addSubview(label)
 
@@ -209,63 +219,40 @@ class UiUtils {
     public static func ToastSuccessHandler(msg: ServerMessage) throws -> PromisedReply<ServerMessage>? {
         if let ctrl = msg.ctrl, ctrl.code >= 300 {
             DispatchQueue.main.async {
-                UiUtils.showToast(message: "Something went wrong: \(ctrl.code) - \(ctrl.text)")
+                UiUtils.showToast(message: "Something went wrong: \(ctrl.code) - \(ctrl.text)", level: .warning)
             }
         }
         return nil
     }
-    public static func showPermissionsEditDialog(
-        over viewController: UIViewController?,
-        acs: AcsHelper, callback: PermissionsEditViewController.OnChangeHandler?,
-        disabledPermissions: [PermissionsEditViewController.PermissionType]?) {
-        let alertVC = PermissionsEditViewController(
-            permissionsTuple: (
-                acs.hasPermissions(forMode: AcsHelper.kModeJoin),
-                acs.hasPermissions(forMode: AcsHelper.kModeRead),
-                acs.hasPermissions(forMode: AcsHelper.kModeWrite),
-                acs.hasPermissions(forMode: AcsHelper.kModePres),
-                acs.hasPermissions(forMode: AcsHelper.kModeApprove),
-                acs.hasPermissions(forMode: AcsHelper.kModeShare),
-                acs.hasPermissions(forMode: AcsHelper.kModeDelete)
-            ),
-            disabledPermissions: disabledPermissions,
-            onChangeHandler: callback)
+    public static func showPermissionsEditDialog(over viewController: UIViewController?, acs: AcsHelper, callback: PermissionsEditViewController.ChangeHandler?, disabledPermissions: String?) {
+        let alertVC = PermissionsEditViewController(set: acs.description, disabled: disabledPermissions, changeHandler: callback)
         alertVC.show(over: viewController)
     }
+
     public enum PermissionsChangeType {
         case updateSelfSub, updateSub, updateAuth, updateAnon
     }
+
     @discardableResult
-    public static func handlePermissionsChange(onTopic topic: DefaultTopic,
-                                               forUid uid: String?,
-                                               changeType: PermissionsChangeType,
-                                               permissions: PermissionsEditViewController.PermissionsTuple)
+    public static func handlePermissionsChange(onTopic topic: DefaultTopic, forUid uid: String?, changeType: PermissionsChangeType, newPermissions: String)
         -> PromisedReply<ServerMessage>? {
-        var permissionsStr = ""
-        if permissions.join { permissionsStr += "J" }
-        if permissions.read { permissionsStr += "R" }
-        if permissions.write { permissionsStr += "W" }
-        if permissions.notifications { permissionsStr += "P" }
-        if permissions.approve { permissionsStr += "A" }
-        if permissions.invite { permissionsStr += "S" }
-        if permissions.delete { permissionsStr += "D" }
         do {
             var reply: PromisedReply<ServerMessage>? = nil
             switch changeType {
             case .updateSelfSub:
-                reply = topic.updateMode(uid: nil, update: permissionsStr)
+                reply = topic.updateMode(uid: nil, update: newPermissions)
             case .updateSub:
-                reply = topic.updateMode(uid: uid, update: permissionsStr)
+                reply = topic.updateMode(uid: uid, update: newPermissions)
             case .updateAuth:
-                reply = topic.updateDefacs(auth: permissionsStr, anon: nil)
+                reply = topic.updateDefacs(auth: newPermissions, anon: nil)
             case .updateAnon:
-                reply = topic.updateDefacs(auth: nil, anon: permissionsStr)
+                reply = topic.updateDefacs(auth: nil, anon: newPermissions)
             }
             return try reply?.then(
                 onSuccess: { msg in
                     if let ctrl = msg.ctrl, ctrl.code >= 300 {
                         DispatchQueue.main.async {
-                            UiUtils.showToast(message: "Couldn't update permissions: \(ctrl.code) - \(ctrl.text)")
+                            UiUtils.showToast(message: "Couldn't update permissions: \(ctrl.code) - \(ctrl.text)", level: .warning)
                         }
                     }
                     return nil
@@ -463,3 +450,29 @@ extension UIColor {
                   alpha: CGFloat(alpha) / 255.0)
     }
 }
+
+public enum UIButtonBorderSide {
+    case top, bottom, left, right
+}
+
+extension UIButton {
+
+    public func addBorder(side: UIButtonBorderSide, color: UIColor, width: CGFloat) {
+        let border = CALayer()
+        border.backgroundColor = color.cgColor
+
+        switch side {
+        case .top:
+            border.frame = CGRect(x: 0, y: 0, width: frame.size.width, height: width)
+        case .bottom:
+            border.frame = CGRect(x: 0, y: self.frame.size.height - width, width: self.frame.size.width, height: width)
+        case .left:
+            border.frame = CGRect(x: 0, y: 0, width: width, height: self.frame.size.height)
+        case .right:
+            border.frame = CGRect(x: self.frame.size.width - width, y: 0, width: width, height: self.frame.size.height)
+        }
+
+        self.layer.addSublayer(border)
+    }
+}
+

@@ -107,19 +107,14 @@ class AccountSettingsViewController: UITableViewController {
             print("could not get acs")
             return
         }
-        UiUtils.showPermissionsEditDialog(
-            over: self, acs: acsUnwrapped,
-            callback: {
-                permissionsTuple in
-                _ = try? UiUtils.handlePermissionsChange(
-                    onTopic: self.me, forUid: nil, changeType: changeType,
-                    permissions: permissionsTuple)?.then(
-                        onSuccess: { msg in
-                            DispatchQueue.main.async { self.reloadData() }
-                            return nil
-                        }
-                    )},
-            disabledPermissions: nil)
+        UiUtils.showPermissionsEditDialog(over: self, acs: acsUnwrapped, callback: { permissions in
+            _ = try? UiUtils.handlePermissionsChange(onTopic: self.me, forUid: nil, changeType: changeType, newPermissions: permissions)?.then(
+                onSuccess: { msg in
+                    DispatchQueue.main.async { self.reloadData() }
+                        return nil
+                    }
+            )
+        }, disabledPermissions: "OASD")
     }
     @IBAction func readReceiptsClicked(_ sender: Any) {
         UserDefaults.standard.set(self.sendReadReceiptsSwitch.isOn, forKey: Utils.kTinodePrefReadReceipts)
@@ -173,7 +168,7 @@ class AccountSettingsViewController: UITableViewController {
             onSuccess: nil,
             onFailure: { err in
                 DispatchQueue.main.async {
-                    UiUtils.showToast(message: "Could not change password: \(err.localizedDescription)")
+                    UiUtils.showToast(message: "Could not change password: \(err.localizedDescription))")
                 }
                 return nil
             })
