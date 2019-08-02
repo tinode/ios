@@ -26,7 +26,7 @@ internal struct Constants {
     internal static let kTagEditViewSpaceBetweenLines: CGFloat = 2.0
     internal static let kTagEditViewMarginLayouts =
         UIEdgeInsets(top: 2, left: 6, bottom: 2, right: 6)
-    internal static let kTagEditViewBorderColor: UIColor = .gray
+    internal static let kTagEditViewBorderColor: UIColor = .lightGray
 }
 
 public typealias TinodeTag = String
@@ -171,8 +171,8 @@ extension TagView: UIKeyInput {
     }
 }
 
+@IBDesignable
 public class TagsEditView: UIScrollView {
-
     private class TagsTextField: UITextField {
         var onDeleteBackwards: (() -> Void)?
 
@@ -193,6 +193,7 @@ public class TagsEditView: UIScrollView {
         }
     }
 
+    @IBInspectable
     public var placeholder: String = "Comma-separated tags" {
         didSet {
             updatePlaceholderTextVisibility()
@@ -559,5 +560,13 @@ extension TagsEditView: UITextFieldDelegate {
             return false
         }
         return true
+    }
+}
+
+extension TagsEditView {
+    public var tags: [TinodeTag] {
+        get {
+            return self.tagViews.map { $0.displayTag }
+        }
     }
 }
