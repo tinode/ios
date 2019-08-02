@@ -16,8 +16,15 @@ class AccountSettingsViewController: UITableViewController {
     @IBOutlet weak var sendReadReceiptsSwitch: UISwitch!
     @IBOutlet weak var sendTypingNotificationsSwitch: UISwitch!
     @IBOutlet weak var myUIDLabel: UILabel!
-    @IBOutlet weak var authUsersPermissionsLabel: UILabel!
-    @IBOutlet weak var anonUsersPermissionsLabel: UILabel!
+
+    @IBOutlet weak var authUsersPermissions: UITableViewCell!
+    @IBOutlet weak var anonUsersPermissions: UITableViewCell!
+    @IBOutlet weak var authPermissionsLabel: UILabel!
+    @IBOutlet weak var anonPermissionsLabel: UILabel!
+
+    @IBOutlet weak var actionChangePassword: UITableViewCell!
+    @IBOutlet weak var actionLogOut: UITableViewCell!
+
     weak var tinode: Tinode!
     weak var me: DefaultMeTopic!
     private var imagePicker: ImagePicker!
@@ -38,15 +45,23 @@ class AccountSettingsViewController: UITableViewController {
             action: #selector(AccountSettingsViewController.topicTitleTapped),
             actionTarget: self)
         UiUtils.setupTapRecognizer(
-            forView: authUsersPermissionsLabel,
+            forView: authUsersPermissions,
             action: #selector(AccountSettingsViewController.permissionsTapped),
             actionTarget: self)
         UiUtils.setupTapRecognizer(
-            forView: anonUsersPermissionsLabel,
+            forView: anonUsersPermissions,
             action: #selector(AccountSettingsViewController.permissionsTapped),
             actionTarget: self)
-        self.imagePicker = ImagePicker(
-            presentationController: self, delegate: self)
+        UiUtils.setupTapRecognizer(
+            forView: actionChangePassword,
+            action: #selector(AccountSettingsViewController.changePasswordClicked),
+            actionTarget: self)
+        UiUtils.setupTapRecognizer(
+            forView: actionLogOut,
+            action: #selector(AccountSettingsViewController.logoutClicked),
+            actionTarget: self)
+
+        self.imagePicker = ImagePicker(presentationController: self, delegate: self)
     }
     private func reloadData() {
         // Title.
@@ -66,10 +81,10 @@ class AccountSettingsViewController: UITableViewController {
         self.avatarImage.set(icon: me.pub?.photo?.image(), title: me.pub?.fn, id: self.tinode.myUid)
         self.avatarImage.letterTileFont = self.avatarImage.letterTileFont.withSize(CGFloat(50))
         // Permissions.
-        self.authUsersPermissionsLabel.text = me.defacs?.getAuth() ?? ""
-        self.authUsersPermissionsLabel.sizeToFit()
-        self.anonUsersPermissionsLabel.text = me.defacs?.getAnon() ?? ""
-        self.anonUsersPermissionsLabel.sizeToFit()
+        self.authPermissionsLabel.text = me.defacs?.getAuth() ?? ""
+        self.authPermissionsLabel.sizeToFit()
+        self.anonPermissionsLabel.text = me.defacs?.getAnon() ?? ""
+        self.anonPermissionsLabel.sizeToFit()
     }
     @objc
     func topicTitleTapped(sender: UITapGestureRecognizer) {
@@ -88,10 +103,10 @@ class AccountSettingsViewController: UITableViewController {
         self.present(alert, animated: true)
     }
     private func getAcsAndPermissionsChangeType(for sender: UIView) -> (AcsHelper?, UiUtils.PermissionsChangeType?) {
-        if sender === authUsersPermissionsLabel {
+        if sender === authUsersPermissions {
             return (me.defacs?.auth, .updateAuth)
         }
-        if sender === anonUsersPermissionsLabel {
+        if sender === anonUsersPermissions {
             return (me.defacs?.anon, .updateAnon)
         }
         return (nil, nil)
@@ -108,13 +123,14 @@ class AccountSettingsViewController: UITableViewController {
             return
         }
         UiUtils.showPermissionsEditDialog(over: self, acs: acsUnwrapped, callback: { permissions in
+            print("dialog returned:\(permissions) type:\(changeType)")
             _ = try? UiUtils.handlePermissionsChange(onTopic: self.me, forUid: nil, changeType: changeType, newPermissions: permissions)?.then(
                 onSuccess: { msg in
                     DispatchQueue.main.async { self.reloadData() }
                         return nil
                     }
             )
-        }, disabledPermissions: "OASD")
+        }, disabledPermissions: "ODS")
     }
     @IBAction func readReceiptsClicked(_ sender: Any) {
         UserDefaults.standard.set(self.sendReadReceiptsSwitch.isOn, forKey: Utils.kTinodePrefReadReceipts)
@@ -125,7 +141,8 @@ class AccountSettingsViewController: UITableViewController {
     @IBAction func loadAvatarClicked(_ sender: Any) {
         imagePicker.present(from: self.view)
     }
-    @IBAction func changePasswordClicked(_ sender: Any) {
+
+    @objc func changePasswordClicked(sender: UITapGestureRecognizer) {
         let alert = UIAlertController(title: "Change Password", message: nil, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
         alert.addTextField(configurationHandler: { textField in
@@ -141,7 +158,8 @@ class AccountSettingsViewController: UITableViewController {
             }))
         self.present(alert, animated: true)
     }
-    @IBAction func logoutClicked(_ sender: Any) {
+
+    @objc func logoutClicked(sender: UITapGestureRecognizer) {
         let alert = UIAlertController(title: nil, message: "Are you sure you want to log out?", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
         alert.addAction(UIAlertAction(
@@ -151,6 +169,7 @@ class AccountSettingsViewController: UITableViewController {
             }))
         self.present(alert, animated: true)
     }
+
     private func updatePassword(with newPassword: String) {
         guard newPassword.count >= 4 else {
             DispatchQueue.main.async {

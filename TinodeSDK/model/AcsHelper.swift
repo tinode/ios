@@ -157,6 +157,7 @@ public class AcsHelper: Codable, Equatable {
         return result
     }
 
+    @discardableResult
     public func update(from umode: String) -> Bool {
         let olda = a
         do {

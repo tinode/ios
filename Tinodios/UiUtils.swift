@@ -252,14 +252,14 @@ class UiUtils {
                 onSuccess: { msg in
                     if let ctrl = msg?.ctrl, ctrl.code >= 300 {
                         DispatchQueue.main.async {
-                            UiUtils.showToast(message: "Couldn't update permissions: \(ctrl.text) (\(ctrl.code))", level: .warning)
+                            UiUtils.showToast(message: "Permissions not modified: \(ctrl.text) (\(ctrl.code))", level: .warning)
                         }
                     }
                     return nil
                 },
                 onFailure: { err in
                     DispatchQueue.main.async {
-                        UiUtils.showToast(message: "Error changing permissions \(err.localizedDescription)")
+                        UiUtils.showToast(message: "Error changing permissions: \(err.localizedDescription)")
                     }
                     return nil
                 })
