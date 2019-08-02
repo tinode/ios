@@ -29,6 +29,7 @@ protocol MessageBusinessLogic: class {
 protocol MessageDataStore {
     var topicName: String? { get set }
     var topic: DefaultComTopic? { get set }
+    @discardableResult
     func setup(topicName: String?) -> Bool
     func loadMessages()
     func loadNextPage()
@@ -110,7 +111,6 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                     .withDel()
                     .build())?.then(
                     onSuccess: { [weak self] msg in
-                        print("subscribed to topic")
                         self?.messageSenderQueue.async {
                             _ = self?.topic?.syncAll()
                         }
@@ -121,12 +121,15 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                         self?.presenter?.applyTopicPermissions()
                         return nil
                     },
-                    onFailure: { err in
+                    onFailure: { [weak self] err in
                         DispatchQueue.main.async {
-                            UiUtils.showToast(
-                                message: "Failed to subscribe to topic: \(err.localizedDescription)") }
-                        if case TinodeError.notConnected(_) = err {
+                            UiUtils.showToast(message: "Failed to subscribe to topic: \(err.localizedDescription)")
+                        }
+                        switch err {
+                        case TinodeError.notConnected(_):
                             Cache.getTinode().reconnectNow()
+                        default:
+                            self?.presenter?.applyTopicPermissions()
                         }
                         return nil
                     })
@@ -134,7 +137,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
             // presenter --> show error message
             print("Tinode is not connected \(errorMsg)")
         } catch {
-            print("Error subscribing to topic \(error)")
+            print("Error subscribing to topic \(error.localizedDescription)")
         }
         return false
     }
@@ -231,7 +234,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         } catch TinodeError.notConnected(_) {
             UiUtils.showToast(message: "You are offline")
         } catch {
-            UiUtils.showToast(message: "Action failed: \(error)")
+            UiUtils.showToast(message: "Action failed: \(error.localizedDescription)")
         }
     }
 
@@ -250,7 +253,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         } catch TinodeError.notConnected(_) {
             UiUtils.showToast(message: "You are offline")
         } catch {
-            UiUtils.showToast(message: "Action failed: \(error)")
+            UiUtils.showToast(message: "Action failed: \(error.localizedDescription)")
         }
     }
     func acceptInvitation() {
@@ -270,7 +273,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
             } catch TinodeError.notConnected(_) {
                 UiUtils.showToast(message: "You are offline")
             } catch {
-                UiUtils.showToast(message: "Operation failed \(error)")
+                UiUtils.showToast(message: "Operation failed \(error.localizedDescription)")
             }
         }
         _ = try? response?.thenApply(onSuccess: { msg in
@@ -298,7 +301,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         } catch TinodeError.notConnected(_) {
             UiUtils.showToast(message: "You are offline")
         } catch {
-            UiUtils.showToast(message: "Operation failed \(error)")
+            UiUtils.showToast(message: "Operation failed \(error.localizedDescription)")
         }
     }
     static private func existingInteractor(for topicName: String?) -> MessageInteractor? {

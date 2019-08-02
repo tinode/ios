@@ -410,8 +410,13 @@ extension MessageViewController: MessageDisplayLogic {
 
     func displayChatMessages(messages: [StoredMessage]) {
         assert(Thread.isMainThread)
+
         let oldData = self.messages
         let newData: [StoredMessage] = messages.reversed()
+
+        // Both empty: no change.
+        guard !oldData.isEmpty || !newData.isEmpty else { return }
+
         self.messageSeqIdIndex = newData.enumerated().reduce([Int:Int]()) { (dict, item) -> [Int:Int] in
             var dict = dict
             dict[item.element.seqId] = item.offset
@@ -425,7 +430,7 @@ extension MessageViewController: MessageDisplayLogic {
 
         if oldData.isEmpty || newData.isEmpty {
             self.messages = newData
-            collectionView.reloadData()
+            collectionView.reloadSections(IndexSet(integer: 0))
         } else {
             // Get indexes of inserted and deleted items.
             let diff = Utils.diffMessageArray(sortedOld: oldData, sortedNew: newData)
@@ -988,7 +993,11 @@ extension MessageViewController : MessageCellDelegate {
     }
 
     @objc func willHidePopupMenu() {
-        sendMessageBar.inputField.nextResponderOverride = nil
+        if sendMessageBar.inputField.nextResponderOverride != nil {
+            sendMessageBar.inputField.nextResponderOverride!.resignFirstResponder()
+            sendMessageBar.inputField.nextResponderOverride = nil
+        }
+
         UIMenuController.shared.menuItems = nil
         NotificationCenter.default.removeObserver(self, name: UIMenuController.willHideMenuNotification, object: nil)
     }

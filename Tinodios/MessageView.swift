@@ -92,7 +92,7 @@ extension MessageView {
             messageLabel.textColor = .darkGray
             messageLabel.numberOfLines = 0
             messageLabel.textAlignment = .center
-            messageLabel.font = .preferredFont(forTextStyle: .body)
+            messageLabel.font = .preferredFont(forTextStyle: .headline)
             messageLabel.sizeToFit()
 
             self.backgroundView = messageLabel

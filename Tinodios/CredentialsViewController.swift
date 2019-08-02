@@ -39,8 +39,8 @@ class CredentialsViewController : UIViewController {
         
         do {
             try tinode.loginToken(token: token, creds: creds)?
-                .then(onSuccess: {[weak self] msg in
-                    if let code = msg.ctrl?.code, code >= 300 {
+                .then(onSuccess: { [weak self] msg in
+                    if let ctrl = msg?.ctrl, ctrl.code >= 300 {
                         print("login error")
                     } else {
                         let storyboard = UIStoryboard(name: "Main", bundle: nil)

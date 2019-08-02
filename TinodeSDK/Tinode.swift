@@ -387,8 +387,7 @@ public class Tinode {
                     if ctrl.code >= 200 && ctrl.code < 400 {
                         try r.resolve(result: serverMsg)
                     } else {
-                        try r.reject(error: TinodeError.serverResponseError(
-                            ctrl.code, ctrl.text, ctrl.getStringParam(for: "what")))
+                        try r.reject(error: TinodeError.serverResponseError(ctrl.code, ctrl.text, ctrl.getStringParam(for: "what")))
                     }
                 }
                 Tinode.log.debug("ctrl.id = %d", id)
@@ -485,7 +484,7 @@ public class Tinode {
                             lang: kLocale))
         return try! sendWithPromise(payload: msg, with: msgId).thenApply(
             onSuccess: { [weak self] pkt in
-                guard let ctrl = pkt.ctrl else {
+                guard let ctrl = pkt?.ctrl else {
                     throw TinodeError.invalidReply("Unexpected type of reply packet to hello")
                 }
                 if !(ctrl.params?.isEmpty ?? true) {
@@ -668,7 +667,7 @@ public class Tinode {
         }
         return try! future.then(
             onSuccess: { [weak self] pkt in
-                try self?.loginSuccessful(ctrl: pkt.ctrl)
+                try self?.loginSuccessful(ctrl: pkt?.ctrl)
                 return nil
             }, onFailure: { [weak self] err in
                 if let e = err as? TinodeError {
@@ -738,7 +737,7 @@ public class Tinode {
         return try! sendWithPromise(payload: msg, with: msgId).then(
             onSuccess: { [weak self] pkt in
                 self?.loginInProgress = false
-                try self?.loginSuccessful(ctrl: pkt.ctrl)
+                try self?.loginSuccessful(ctrl: pkt?.ctrl)
                 return nil
             },
             onFailure: { [weak self] err in
@@ -834,13 +833,13 @@ public class Tinode {
                     if let connected = tinode.connectedPromise, !connected.isDone {
                         try connected.resolve(result: pkt)
                     }
-                    let ctrl = pkt.ctrl!
-                    tinode.timeAdjustment = Date().timeIntervalSince(ctrl.ts)
-                    // tinode store
-                    tinode.store?.setTimeAdjustment(adjustment: tinode.timeAdjustment)
-                    // listener
-                    tinode.listener?.onConnect(
-                        code: ctrl.code, reason: ctrl.text, params: ctrl.params)
+                    if let let ctrl = pkt?.ctrl {
+                        tinode.timeAdjustment = Date().timeIntervalSince(ctrl.ts)
+                        // tinode store
+                        tinode.store?.setTimeAdjustment(adjustment: tinode.timeAdjustment)
+                        // listener
+                        tinode.listener?.onConnect(code: ctrl.code, reason: ctrl.text, params: ctrl.params)
+                    }
                     return nil
                 }, onFailure: nil)
                 if tinode.autoLogin && reconnecting {
