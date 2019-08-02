@@ -484,7 +484,7 @@ public class Tinode {
                             lang: kLocale))
         return try! sendWithPromise(payload: msg, with: msgId).thenApply(
             onSuccess: { [weak self] pkt in
-                guard let pkt = pkt, let ctrl = pkt.ctrl else {
+                guard let ctrl = pkt?.ctrl else {
                     throw TinodeError.invalidReply("Unexpected type of reply packet to hello")
                 }
                 if !(ctrl.params?.isEmpty ?? true) {
@@ -833,7 +833,7 @@ public class Tinode {
                     if let connected = tinode.connectedPromise, !connected.isDone {
                         try connected.resolve(result: pkt)
                     }
-                    if let pkt = pkt, let ctrl = pkt.ctrl {
+                    if let let ctrl = pkt?.ctrl {
                         tinode.timeAdjustment = Date().timeIntervalSince(ctrl.ts)
                         // tinode store
                         tinode.store?.setTimeAdjustment(adjustment: tinode.timeAdjustment)

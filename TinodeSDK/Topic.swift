@@ -530,7 +530,7 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
                 let isAttached = self?.attached ?? false
                 if !isAttached {
                     self?.attached = true
-                    if let msg = msg, let ctrl = msg.ctrl {
+                    if let ctrl = msg?.ctrl {
                         if !(ctrl.params?.isEmpty ?? false) {
                             self?.description?.acs = Acs(from: ctrl.getStringDict(for: "acs"))
                             if self?.isNew ?? false {
