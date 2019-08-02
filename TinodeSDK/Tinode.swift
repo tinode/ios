@@ -833,7 +833,7 @@ public class Tinode {
                     if let connected = tinode.connectedPromise, !connected.isDone {
                         try connected.resolve(result: pkt)
                     }
-                    if let let ctrl = pkt?.ctrl {
+                    if let ctrl = pkt?.ctrl {
                         tinode.timeAdjustment = Date().timeIntervalSince(ctrl.ts)
                         // tinode store
                         tinode.store?.setTimeAdjustment(adjustment: tinode.timeAdjustment)
