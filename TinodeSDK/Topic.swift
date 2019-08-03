@@ -501,7 +501,7 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
             setMsg = MsgSetMeta<DP, DR>(
                 desc: MetaSetDesc(pub: self.pub, priv: self.priv),
                 sub: nil,
-                tags: self.tags)
+                tags: self.tags, cred: nil)
         } else {
             getMsg = getMetaGetBuilder()
                 .withDesc().withData().withSub().withTags().build()
@@ -889,7 +889,7 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
         }
     }
     public func setDescription(desc: MetaSetDesc<DP, DR>) -> PromisedReply<ServerMessage>? {
-        return setMeta(meta: MsgSetMeta<DP, DR>(desc: desc, sub: nil, tags: nil))
+        return setMeta(meta: MsgSetMeta<DP, DR>(desc: desc, sub: nil, tags: nil, cred: nil))
     }
     public func setDescription(pub: DP?, priv: DR?) -> PromisedReply<ServerMessage>? {
         return setDescription(desc: MetaSetDesc<DP, DR>(pub: pub, priv: priv))
@@ -904,7 +904,7 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
         return description!.acs!.update(from: ac)
     }
     public func setSubscription(sub: MetaSetSub) -> PromisedReply<ServerMessage>? {
-        return setMeta(meta: MsgSetMeta(desc: nil, sub: sub, tags: nil))
+        return setMeta(meta: MsgSetMeta(desc: nil, sub: sub, tags: nil, cred: nil))
     }
     public func updateMode(uid: String?, update: String) -> PromisedReply<ServerMessage>? {
         var uid = uid
@@ -952,7 +952,7 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
             let metaSetSub = MetaSetSub(user: uid, mode: mode)
             //metaSetSub.user = uid
             //metaSetSub.mode = mode
-            let future = setMeta(meta: MsgSetMeta(desc: nil, sub: metaSetSub, tags: nil))
+            let future = setMeta(meta: MsgSetMeta(desc: nil, sub: metaSetSub, tags: nil, cred: nil))
             return try future?.thenApply(
                 onSuccess: { [weak self] msg in
                     if let topic = self {
@@ -1458,7 +1458,8 @@ public class ComTopic<DP: Codable>: Topic<DP, PrivateType, DP, PrivateType> {
         let meta = MsgSetMeta<DP, PrivateType>(
             desc: MetaSetDesc(pub: nil, priv: priv),
             sub: nil,
-            tags: nil)
+            tags: nil,
+            cred: nil)
         return setMeta(meta: meta)
     }
 }

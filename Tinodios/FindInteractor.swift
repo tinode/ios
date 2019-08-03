@@ -106,7 +106,7 @@ class FindInteractor: FindBusinessLogic {
                     } :
                     self.localContacts!
             if changed {
-                self.fndTopic?.setMeta(meta: MsgSetMeta(desc: MetaSetDesc(pub: searchQuery != nil ? searchQuery! : Tinode.kNullValue, priv: nil), sub: nil, tags: nil))
+                self.fndTopic?.setMeta(meta: MsgSetMeta(desc: MetaSetDesc(pub: searchQuery != nil ? searchQuery! : Tinode.kNullValue, priv: nil), sub: nil, tags: nil, cred: nil))
             }
             self.remoteContacts?.removeAll()
             if let queryString = searchQuery, queryString.count >= UiUtils.kMinTagLength {

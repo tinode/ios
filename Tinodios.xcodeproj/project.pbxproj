@@ -55,7 +55,7 @@
 		0AEE8BEE226456080022EC3F /* UiUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AEE8BED226456080022EC3F /* UiUtils.swift */; };
 		58CBE6CE018029121E923407 /* Pods_Tinodios.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B787A84CD010EF920890105 /* Pods_Tinodios.framework */; };
 		7DDADC5021D5C156009733B5 /* RegisterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DDADC4F21D5C156009733B5 /* RegisterViewController.swift */; };
-		7DDADC5221D5C219009733B5 /* Validate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DDADC5121D5C219009733B5 /* Validate.swift */; };
+		7DDADC5221D5C219009733B5 /* ValidatedCredential.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DDADC5121D5C219009733B5 /* ValidatedCredential.swift */; };
 		7DDADC5421D5C2E6009733B5 /* CredentialsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DDADC5321D5C2E6009733B5 /* CredentialsViewController.swift */; };
 		B008593C22741B8A002C5168 /* AttributedStringFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B008593B22741B89002C5168 /* AttributedStringFormatter.swift */; };
 		B0125998229C982900688FCE /* ContactViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0125996229C982900688FCE /* ContactViewCell.swift */; };
@@ -149,7 +149,7 @@
 		5900B7863CDFB018A86DD3AC /* Pods-Tinodios.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Tinodios.release.xcconfig"; path = "Pods/Target Support Files/Pods-Tinodios/Pods-Tinodios.release.xcconfig"; sourceTree = "<group>"; };
 		75BC852198885F22E865D563 /* Pods-Tinodios.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Tinodios.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Tinodios/Pods-Tinodios.debug.xcconfig"; sourceTree = "<group>"; };
 		7DDADC4F21D5C156009733B5 /* RegisterViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegisterViewController.swift; sourceTree = "<group>"; };
-		7DDADC5121D5C219009733B5 /* Validate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Validate.swift; sourceTree = "<group>"; };
+		7DDADC5121D5C219009733B5 /* ValidatedCredential.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ValidatedCredential.swift; sourceTree = "<group>"; };
 		7DDADC5321D5C2E6009733B5 /* CredentialsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CredentialsViewController.swift; sourceTree = "<group>"; };
 		B008593B22741B89002C5168 /* AttributedStringFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttributedStringFormatter.swift; sourceTree = "<group>"; };
 		B0125996229C982900688FCE /* ContactViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactViewCell.swift; sourceTree = "<group>"; };
@@ -249,7 +249,7 @@
 				0A69D47E22A6552300769426 /* TopicInfoViewController.swift */,
 				0AEE8BED226456080022EC3F /* UiUtils.swift */,
 				0A35BA9F2283A37500AA5E2F /* Utils.swift */,
-				7DDADC5121D5C219009733B5 /* Validate.swift */,
+				7DDADC5121D5C219009733B5 /* ValidatedCredential.swift */,
 				0A0380DB21B3CC8100A3FA0E /* Main.storyboard */,
 				B031BE542263075E004160AE /* Settings.bundle */,
 				0A0380E921B3CCB000A3FA0E /* Supporting Files */,
@@ -505,7 +505,7 @@
 				B0DF032F2282FF46000F9492 /* SendMessageBar.swift in Sources */,
 				0A6AC324229FB0EE0025A4EC /* PermissionsEditViewController.swift in Sources */,
 				B02F5C8B22679BC80079A97E /* ImagePicker.swift in Sources */,
-				7DDADC5221D5C219009733B5 /* Validate.swift in Sources */,
+				7DDADC5221D5C219009733B5 /* ValidatedCredential.swift in Sources */,
 				B0A612B5229132CC00569DFE /* MessageBubbleDecorator.swift in Sources */,
 				B0DF0319227C2517000F9492 /* MessageView.swift in Sources */,
 				7DDADC5421D5C2E6009733B5 /* CredentialsViewController.swift in Sources */,

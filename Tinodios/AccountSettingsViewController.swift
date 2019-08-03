@@ -154,10 +154,41 @@ class AccountSettingsViewController: UITableViewController {
             handler: { action in
                 let tags = tagsEditField.tags
                 do {
-                    try self.me.setMeta(meta: MsgSetMeta(desc: nil, sub: nil, tags: tags))?.thenCatch(onFailure: UiUtils.ToastFailureHandler)
+                    try self.me.setMeta(meta: MsgSetMeta(desc: nil, sub: nil, tags: tags, cred: nil))?.thenCatch(onFailure: UiUtils.ToastFailureHandler)
                 } catch {
                     DispatchQueue.main.async {
                         UiUtils.showToast(message: "Failed to update tags \(error.localizedDescription)")
+                    }
+                }
+        }))
+        self.present(alert, animated: true)
+    }
+    @IBAction func addContactClicked(_ sender: Any) {
+        let alert = UIAlertController(title: "Add contact", message: "Enter email or phone number", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        alert.addTextField(configurationHandler: nil)
+        alert.addAction(UIAlertAction(
+            title: "OK", style: .default,
+            handler: { action in
+                if let cred = ValidatedCredential.parse(from: alert.textFields?.first?.text) {
+                    let credMsg: Credential?
+                    switch cred {
+                    case .email(let emailStr):
+                        credMsg = Credential(meth: Credential.kMethEmail, val: emailStr)
+                    case .phoneNum(let phone):
+                        credMsg = Credential(meth: Credential.kMethPhone, val: phone)
+                    default:
+                        credMsg = nil
+                    }
+                    if let credential = credMsg {
+                        do {
+                            try self.me.setMeta(
+                                meta: MsgSetMeta(desc: nil, sub: nil, tags: nil, cred: credential))?.thenCatch(onFailure: UiUtils.ToastFailureHandler)
+                        } catch {
+                            DispatchQueue.main.async {
+                                UiUtils.showToast(message: "Failed to add credential \(error.localizedDescription)")
+                            }
+                        }
                     }
                 }
         }))
