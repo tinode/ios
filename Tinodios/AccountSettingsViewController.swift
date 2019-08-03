@@ -125,6 +125,44 @@ class AccountSettingsViewController: UITableViewController {
     @IBAction func loadAvatarClicked(_ sender: Any) {
         imagePicker.present(from: self.view)
     }
+    @IBAction func manageTagsClicked(_ sender: Any) {
+        let alert = UIAlertController(title: "Tags (content discovery)", message: nil, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+
+        let tagsEditField = TagsEditView()
+        tagsEditField.onVerifyTag = { (_, tag) in
+            return Utils.isValidTag(tag: tag)
+        }
+        if let tags = self.me.tags {
+            tagsEditField.addTags(tags)
+        }
+
+        alert.view.addSubview(tagsEditField)
+
+        tagsEditField.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            tagsEditField.topAnchor.constraint(equalTo: alert.view.topAnchor, constant: 45),
+            tagsEditField.rightAnchor.constraint(equalTo: alert.view.rightAnchor, constant: -10),
+            tagsEditField.leftAnchor.constraint(equalTo: alert.view.leftAnchor, constant: 10)
+        ])
+        alert.view.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            alert.view.heightAnchor.constraint(equalToConstant: 130)
+        ])
+        alert.addAction(UIAlertAction(
+            title: "OK", style: .default,
+            handler: { action in
+                let tags = tagsEditField.tags
+                do {
+                    try self.me.setMeta(meta: MsgSetMeta(desc: nil, sub: nil, tags: tags))?.thenCatch(onFailure: UiUtils.ToastFailureHandler)
+                } catch {
+                    DispatchQueue.main.async {
+                        UiUtils.showToast(message: "Failed to update tags \(error.localizedDescription)")
+                    }
+                }
+        }))
+        self.present(alert, animated: true)
+    }
     @IBAction func changePasswordClicked(_ sender: Any) {
         let alert = UIAlertController(title: "Change Password", message: nil, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))

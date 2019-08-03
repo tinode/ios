@@ -335,14 +335,16 @@ public class MsgClientSet<Pu: Encodable, Pr: Encodable>: Encodable {
     let topic: String?
     let desc: MetaSetDesc<Pu, Pr>?
     let sub: MetaSetSub?
-    init(id: String, topic: String, desc: MetaSetDesc<Pu, Pr>?, sub: MetaSetSub?) {
+    let tags: [String]?
+    init(id: String, topic: String, desc: MetaSetDesc<Pu, Pr>?, sub: MetaSetSub?, tags: [String]?) {
         self.id = id
         self.topic = topic
         self.desc = desc
         self.sub = sub
+        self.tags = tags
     }
     convenience init(id: String, topic: String, meta: MsgSetMeta<Pu, Pr>?) {
-        self.init(id: id, topic: topic, desc: meta?.desc, sub: meta?.sub)
+        self.init(id: id, topic: topic, desc: meta?.desc, sub: meta?.sub, tags: meta?.tags)
     }
 }
 
