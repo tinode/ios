@@ -141,7 +141,7 @@ class ContactsSynchronizer {
                 //let q: Int? = nil
                 let metaDesc: MetaSetDesc<Int, String> = MetaSetDesc(pub: nil, priv: contacts)
                 let setMeta: MsgSetMeta<Int, String> = MsgSetMeta<Int, String>(
-                    desc: metaDesc, sub: nil, tags: nil)
+                    desc: metaDesc, sub: nil, tags: nil, cred: nil)
                 _ = try tinode.setMeta(
                     for: Tinode.kTopicFnd,
                     meta: setMeta)?.getResult()

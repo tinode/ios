@@ -337,6 +337,10 @@ public class TagsEditView: UIScrollView {
         repositionViews()
     }
 
+    public func addTags(_ tags: [TinodeTag]) {
+        tags.forEach { addTag($0) }
+    }
+
     public func removeTagAtIndex(_ index: Int) {
         guard 0 ... self.tagViews.count - 1 ~= index else { return }
 

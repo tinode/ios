@@ -9,13 +9,13 @@
 import Foundation
 
 
-enum Validate {
+enum ValidatedCredential {
     case email(_: String)
     case phoneNum(_: String)
     case URL(_: String)
     case IP(_: String)
-    
-    
+
+
     var isRight: Bool {
         var predicateStr:String!
         var currObject:String!
@@ -33,9 +33,21 @@ enum Validate {
             predicateStr = "^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
             currObject = str
         }
-        
+
         let predicate =  NSPredicate(format: "SELF MATCHES %@" ,predicateStr)
         return predicate.evaluate(with: currObject)
     }
 
+    static public func parse(from str: String?) -> ValidatedCredential? {
+        guard let str = str else { return nil }
+        let email = ValidatedCredential.email(str)
+        if email.isRight { return email }
+        let phone = ValidatedCredential.phoneNum(str)
+        if phone.isRight { return phone }
+        let url = ValidatedCredential.URL(str)
+        if url.isRight { return url }
+        let ip = ValidatedCredential.IP(str)
+        if ip.isRight { return ip }
+        return nil
+    }
 }

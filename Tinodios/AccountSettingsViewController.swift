@@ -22,6 +22,9 @@ class AccountSettingsViewController: UITableViewController {
     @IBOutlet weak var authPermissionsLabel: UILabel!
     @IBOutlet weak var anonPermissionsLabel: UILabel!
 
+    @IBOutlet weak var manageContacts: UITableViewCell!
+    @IBOutlet weak var manageTags: UITableViewCell!
+
     @IBOutlet weak var actionChangePassword: UITableViewCell!
     @IBOutlet weak var actionLogOut: UITableViewCell!
 
@@ -51,6 +54,14 @@ class AccountSettingsViewController: UITableViewController {
         UiUtils.setupTapRecognizer(
             forView: anonUsersPermissions,
             action: #selector(AccountSettingsViewController.permissionsTapped),
+            actionTarget: self)
+        UiUtils.setupTapRecognizer(
+            forView: manageTags,
+            action: #selector(AccountSettingsViewController.manageTagsClicked),
+            actionTarget: self)
+        UiUtils.setupTapRecognizer(
+            forView: manageContacts,
+            action: #selector(AccountSettingsViewController.addContactClicked),
             actionTarget: self)
         UiUtils.setupTapRecognizer(
             forView: actionChangePassword,
@@ -140,6 +151,76 @@ class AccountSettingsViewController: UITableViewController {
     }
     @IBAction func loadAvatarClicked(_ sender: Any) {
         imagePicker.present(from: self.view)
+    }
+
+    @objc func manageTagsClicked(sender: UITapGestureRecognizer) {
+        let alert = UIAlertController(title: "Tags (content discovery)", message: nil, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+
+        let tagsEditField = TagsEditView()
+        tagsEditField.onVerifyTag = { (_, tag) in
+            return Utils.isValidTag(tag: tag)
+        }
+        if let tags = self.me.tags {
+            tagsEditField.addTags(tags)
+        }
+
+        alert.view.addSubview(tagsEditField)
+
+        tagsEditField.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            tagsEditField.topAnchor.constraint(equalTo: alert.view.topAnchor, constant: 45),
+            tagsEditField.rightAnchor.constraint(equalTo: alert.view.rightAnchor, constant: -10),
+            tagsEditField.leftAnchor.constraint(equalTo: alert.view.leftAnchor, constant: 10)
+            ])
+        alert.view.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            alert.view.heightAnchor.constraint(equalToConstant: 130)
+            ])
+        alert.addAction(UIAlertAction(
+            title: "OK", style: .default,
+            handler: { action in
+                let tags = tagsEditField.tags
+                do {
+                    try self.me.setMeta(meta: MsgSetMeta(desc: nil, sub: nil, tags: tags, cred: nil))?.thenCatch(onFailure: UiUtils.ToastFailureHandler)
+                } catch {
+                    DispatchQueue.main.async {
+                        UiUtils.showToast(message: "Failed to update tags \(error.localizedDescription)")
+                    }
+                }
+        }))
+        self.present(alert, animated: true)
+    }
+    @objc func addContactClicked(sender: UIGestureRecognizer) {
+        let alert = UIAlertController(title: "Add contact", message: "Enter email or phone number", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        alert.addTextField(configurationHandler: nil)
+        alert.addAction(UIAlertAction(
+            title: "OK", style: .default,
+            handler: { action in
+                if let cred = ValidatedCredential.parse(from: alert.textFields?.first?.text) {
+                    let credMsg: Credential?
+                    switch cred {
+                    case .email(let emailStr):
+                        credMsg = Credential(meth: Credential.kMethEmail, val: emailStr)
+                    case .phoneNum(let phone):
+                        credMsg = Credential(meth: Credential.kMethPhone, val: phone)
+                    default:
+                        credMsg = nil
+                    }
+                    if let credential = credMsg {
+                        do {
+                            try self.me.setMeta(
+                                meta: MsgSetMeta(desc: nil, sub: nil, tags: nil, cred: credential))?.thenCatch(onFailure: UiUtils.ToastFailureHandler)
+                        } catch {
+                            DispatchQueue.main.async {
+                                UiUtils.showToast(message: "Failed to add credential \(error.localizedDescription)")
+                            }
+                        }
+                    }
+                }
+        }))
+        self.present(alert, animated: true)
     }
 
     @objc func changePasswordClicked(sender: UITapGestureRecognizer) {

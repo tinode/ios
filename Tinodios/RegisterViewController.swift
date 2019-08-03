@@ -53,10 +53,10 @@ class RegisterViewController: UIViewController {
         guard !login.isEmpty && !pwd.isEmpty && !name.isEmpty && !credential.isEmpty else { return }
 
         var method: String?
-        if Validate.email(credential).isRight {
+        if ValidatedCredential.email(credential).isRight {
             method = "email"
         }
-        if Validate.phoneNum(credential).isRight {
+        if ValidatedCredential.phoneNum(credential).isRight {
             method = "tel"
         }
         

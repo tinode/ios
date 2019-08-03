@@ -249,7 +249,8 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
             try topic?.setMeta(meta: MsgSetMeta(
                 desc: nil,
                 sub: MetaSetSub(user: topic?.name, mode: am.givenString),
-                tags: nil))?.thenCatch(onFailure: UiUtils.ToastFailureHandler)
+                tags: nil,
+                cred: nil))?.thenCatch(onFailure: UiUtils.ToastFailureHandler)
         } catch TinodeError.notConnected(_) {
             UiUtils.showToast(message: "You are offline")
         } catch {
@@ -258,7 +259,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
     }
     func acceptInvitation() {
         guard let topic = self.topic, let mode = self.topic?.accessMode?.givenString else { return }
-        var response = topic.setMeta(meta: MsgSetMeta(desc: nil, sub: MetaSetSub(mode: mode), tags: nil))
+        var response = topic.setMeta(meta: MsgSetMeta(desc: nil, sub: MetaSetSub(mode: mode), tags: nil, cred: nil))
         if topic.isP2PType {
             // For P2P topics change 'given' permission of the peer too.
             // In p2p topics the other user has the same name as the topic.
@@ -267,7 +268,8 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                     _ = topic.setMeta(meta: MsgSetMeta(
                         desc: nil,
                         sub: MetaSetSub(user: topic.name, mode: mode),
-                        tags: nil))
+                        tags: nil,
+                        cred: nil))
                     return nil
                 })
             } catch TinodeError.notConnected(_) {
@@ -293,7 +295,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         let am = Acs(from: origAm)
         guard am.want?.update(from: "-JP") ?? false else { return }
         do {
-            try self.topic?.setMeta(meta: MsgSetMeta(desc: nil, sub: MetaSetSub(mode: am.wantString), tags: nil))?.thenFinally(
+            try self.topic?.setMeta(meta: MsgSetMeta(desc: nil, sub: MetaSetSub(mode: am.wantString), tags: nil, cred: nil))?.thenFinally(
                 finally: {
                     self.presenter?.dismiss()
                     return nil
