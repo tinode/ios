@@ -15,7 +15,7 @@ protocol MessageDisplayLogic: class {
     func displayChatMessages(messages: [StoredMessage])
     func reloadMessage(withSeqId seqId: Int)
     func updateProcess(forMsgId msgId: Int64, progress: Float)
-    func applyTopicPermissions()
+    func applyTopicPermissions(withMessage: String?)
     func endRefresh()
     func dismissVC()
 }
@@ -487,17 +487,18 @@ extension MessageViewController: MessageDisplayLogic {
         }
     }
 
-    func applyTopicPermissions() {
+    func applyTopicPermissions(withMessage message: String? = nil) {
         assert(Thread.isMainThread)
         // Make sure the view is visible.
         guard self.isViewLoaded && ((self.view?.window) != nil) else { return }
-        if !(self.topic?.isReader ?? false) {
-            self.collectionView.showNoAccessOverlay()
+
+        if !(self.topic?.isReader ?? false) || message != nil {
+            self.collectionView.showNoAccessOverlay(withMessage: message)
         } else {
             self.collectionView.removeNoAccessOverlay()
         }
         // No "W" permission. Replace input field with a message "Not available".
-        self.sendMessageBar.toggleNotAvailableOverlay(visible: !(self.topic?.isWriter ?? false))
+        self.sendMessageBar.toggleNotAvailableOverlay(visible: !(self.topic?.isWriter ?? false) || message != nil)
         // The peer is missing either "W" or "R" permissions. Show "Peer's messaging is disabled" message.
         if let acs = self.topic?.peer?.acs, let missing = acs.missing {
             self.sendMessageBar.togglePeerMessagingDisabled(visible: acs.isJoiner(for: .want) && (missing.isReader || missing.isWriter))

@@ -103,7 +103,7 @@ extension MessageView {
 
     /// Adds a blurring overlay over the messages
     /// with "No access to messages" label in the center.
-    public func showNoAccessOverlay() {
+    public func showNoAccessOverlay(withMessage message: String?) {
         // Make sure there's no foreground overlay yet.
         guard self.foregroundView == nil else { return }
 
@@ -129,18 +129,37 @@ extension MessageView {
         }
 
         // "No access to messages" text.
-        let noAccessLabel = UILabel()//frame: view.bounds)
+        let noAccessLabel = UILabel()
         noAccessLabel.text = "No access to messages"
-        noAccessLabel.sizeToFit()
         noAccessLabel.numberOfLines = 0
         noAccessLabel.textAlignment = .center
         noAccessLabel.font = UIFont.preferredFont(forTextStyle: .headline)
         noAccessLabel.translatesAutoresizingMaskIntoConstraints = false
+        noAccessLabel.sizeToFit()
         blurEffectView.contentView.addSubview(noAccessLabel)
-        // Pin it to the superview center.
+
+        var offset: CGFloat = 0
+        if let message = message {
+            let messageLabel = UILabel()
+            messageLabel.text = message
+            messageLabel.numberOfLines = 0
+            messageLabel.textAlignment = .center
+            messageLabel.font = UIFont.preferredFont(forTextStyle: .subheadline)
+            messageLabel.translatesAutoresizingMaskIntoConstraints = false
+            messageLabel.sizeToFit()
+            blurEffectView.contentView.addSubview(messageLabel)
+
+            offset = messageLabel.bounds.height * 0.75
+            // Pin it to the superview slightly below center.
+            NSLayoutConstraint.activate([
+                messageLabel.centerXAnchor.constraint(equalTo: blurEffectView.centerXAnchor),
+                messageLabel.centerYAnchor.constraint(equalTo: blurEffectView.centerYAnchor, constant: offset)])
+        }
+        // Pin it to the superview center (or above center in case of a message).
         NSLayoutConstraint.activate([
             noAccessLabel.centerXAnchor.constraint(equalTo: blurEffectView.centerXAnchor),
-            noAccessLabel.centerYAnchor.constraint(equalTo: blurEffectView.centerYAnchor)])
+            noAccessLabel.centerYAnchor.constraint(equalTo: blurEffectView.centerYAnchor, constant: -offset)])
+
         // Disable user interaction for the message view.
         self.isUserInteractionEnabled = false
 

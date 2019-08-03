@@ -98,7 +98,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
     }
     func attachToTopic() -> Bool {
         guard !(self.topic?.attached ?? false) else {
-            self.presenter?.applyTopicPermissions()
+            self.presenter?.applyTopicPermissions(withMessage: nil)
             return true
         }
         do {
@@ -118,7 +118,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                             self?.topicId = BaseDb.getInstance().topicDb?.getId(topic: self?.topicName)
                         }
                         self?.loadMessages()
-                        self?.presenter?.applyTopicPermissions()
+                        self?.presenter?.applyTopicPermissions(withMessage: nil)
                         return nil
                     },
                     onFailure: { [weak self] err in
@@ -129,7 +129,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                         case TinodeError.notConnected(_):
                             Cache.getTinode().reconnectNow()
                         default:
-                            self?.presenter?.applyTopicPermissions()
+                            self?.presenter?.applyTopicPermissions(withMessage: err.localizedDescription)
                         }
                         return nil
                     })
@@ -279,7 +279,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
             }
         }
         _ = try? response?.thenApply(onSuccess: { msg in
-            self.presenter?.applyTopicPermissions()
+            self.presenter?.applyTopicPermissions(withMessage: nil)
             return nil
         })
     }
@@ -371,7 +371,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         self.loadMessages()
     }
     override func onPres(pres: MsgServerPres) {
-        DispatchQueue.main.async { self.presenter?.applyTopicPermissions() }
+        DispatchQueue.main.async { self.presenter?.applyTopicPermissions(withMessage: nil) }
     }
     override func onOnline(online: Bool) {
         self.presenter?.setOnline(online: online)
@@ -391,9 +391,9 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         }
     }
     override func onSubsUpdated() {
-        self.presenter?.applyTopicPermissions()
+        self.presenter?.applyTopicPermissions(withMessage: nil)
     }
     override func onMetaDesc(desc: Description<VCard, PrivateType>) {
-        self.presenter?.applyTopicPermissions()
+        self.presenter?.applyTopicPermissions(withMessage: nil)
     }
 }
