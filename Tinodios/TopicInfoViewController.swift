@@ -38,11 +38,22 @@ class TopicInfoViewController: UITableViewController {
     @IBOutlet weak var loadAvatarButton: UIButton!
     @IBOutlet weak var mutedSwitch: UISwitch!
     @IBOutlet weak var topicIDLabel: UILabel!
+
+    @IBOutlet weak var actionMyPermissions: UITableViewCell!
     @IBOutlet weak var myPermissionsLabel: UILabel!
+    @IBOutlet weak var actionPeerPermissions: UITableViewCell!
     @IBOutlet weak var peerNameLabel: UILabel!
     @IBOutlet weak var peerPermissionsLabel: UILabel!
+
     @IBOutlet weak var authUsersPermissionsLabel: UILabel!
     @IBOutlet weak var anonUsersPermissionsLabel: UILabel!
+    @IBOutlet weak var actionAuthPermissions: UITableViewCell!
+    @IBOutlet weak var actionAnonPermissions: UITableViewCell!
+
+    @IBOutlet weak var actionDeleteMessages: UITableViewCell!
+    @IBOutlet weak var actionDeleteGroup: UITableViewCell!
+    @IBOutlet weak var actionLeaveGroup: UITableViewCell!
+    @IBOutlet weak var actionLeaveConversation: UITableViewCell!
 
     var topicName = ""
     private var topic: DefaultComTopic!
@@ -97,24 +108,41 @@ class TopicInfoViewController: UITableViewController {
         }
 
         UiUtils.setupTapRecognizer(
-            forView: myPermissionsLabel,
+            forView: actionDeleteMessages,
+            action: #selector(TopicInfoViewController.deleteMessagesClicked),
+            actionTarget: self)
+        UiUtils.setupTapRecognizer(
+            forView: actionDeleteGroup,
+            action: #selector(TopicInfoViewController.deleteGroupClicked),
+            actionTarget: self)
+        UiUtils.setupTapRecognizer(
+            forView: actionLeaveGroup,
+            action: #selector(TopicInfoViewController.leaveGroupClicked),
+            actionTarget: self)
+        UiUtils.setupTapRecognizer(
+            forView: actionLeaveConversation,
+            action: #selector(TopicInfoViewController.leaveConversationClicked),
+            actionTarget: self)
+
+        UiUtils.setupTapRecognizer(
+            forView: actionMyPermissions,
             action: #selector(TopicInfoViewController.permissionsTapped),
             actionTarget: self)
 
         if showPeerPermissions {
             UiUtils.setupTapRecognizer(
-                forView: peerPermissionsLabel,
+                forView: actionPeerPermissions,
                 action: #selector(TopicInfoViewController.permissionsTapped),
                 actionTarget: self)
         }
 
         if showDefaultPermissions {
             UiUtils.setupTapRecognizer(
-                forView: authUsersPermissionsLabel,
+                forView: actionAuthPermissions,
                 action: #selector(TopicInfoViewController.permissionsTapped),
                 actionTarget: self)
             UiUtils.setupTapRecognizer(
-                forView: anonUsersPermissionsLabel,
+                forView: actionAnonPermissions,
                 action: #selector(TopicInfoViewController.permissionsTapped),
                 actionTarget: self)
         }
@@ -125,10 +153,13 @@ class TopicInfoViewController: UITableViewController {
 
     private func reloadData() {
         topicTitleTextView.text = topic.pub?.fn ?? "Unknown"
+        topicTitleTextView.sizeToFit()
+        print("topicTitleTextView.frme: \(topicTitleTextView.frame)")
         topicIDLabel.text = topic?.name
         topicIDLabel.sizeToFit()
         let subtitle = topic.comment ?? ""
         topicSubtitleTextView.text = !subtitle.isEmpty ? subtitle : "Private info: not set"
+        topicSubtitleTextView.sizeToFit()
         avatarImage.set(icon: topic.pub?.photo?.image(), title: topic.pub?.fn, id: topic?.name)
         avatarImage.letterTileFont = self.avatarImage.letterTileFont.withSize(CGFloat(50))
         mutedSwitch.isOn = topic.isMuted
@@ -217,16 +248,16 @@ class TopicInfoViewController: UITableViewController {
     }
 
     private func getAcsAndPermissionsChangeType(for sender: UIView) -> (AcsHelper?, String?, UiUtils.PermissionsChangeType?, String?) {
-        if sender === myPermissionsLabel {
+        if sender === actionMyPermissions {
             return (topic.accessMode?.want, nil, .updateSelfSub, "ASDO")
         }
-        if sender === peerPermissionsLabel {
+        if sender === actionPeerPermissions {
             return (self.topic.getSubscription(for: self.topic.name)?.acs?.given, topic.name, .updateSub, "ASDO")
         }
-        if sender === authUsersPermissionsLabel {
+        if sender === actionAuthPermissions {
             return (topic.defacs?.auth, nil, .updateAuth, "O")
         }
-        if sender === anonUsersPermissionsLabel {
+        if sender === actionAnonPermissions {
             return (topic.defacs?.anon, nil, .updateAnon, "O")
         }
         return (nil, nil, nil, nil)
@@ -272,7 +303,7 @@ class TopicInfoViewController: UITableViewController {
         }
     }
 
-    @IBAction func deleteGroupClicked(_ sender: Any) {
+    @objc func deleteGroupClicked(sender: UITapGestureRecognizer) {
         guard topic.isOwner else {
             UiUtils.showToast(message: "Only Owner can delete group")
             return
@@ -285,7 +316,7 @@ class TopicInfoViewController: UITableViewController {
         present(alert, animated: true)
     }
 
-    @IBAction func deleteMessagesClicked(_ sender: Any) {
+    @objc func deleteMessagesClicked(sender: UITapGestureRecognizer) {
         let handler: (Bool) -> Void = { (hard: Bool) -> Void in
             do {
                 try self.topic?.delMessages(hard: hard)?.thenCatch(onFailure: UiUtils.ToastFailureHandler)
@@ -307,7 +338,7 @@ class TopicInfoViewController: UITableViewController {
         present(alert, animated: true)
     }
 
-    @IBAction func leaveConversationClicked(_ sender: Any) {
+    @objc func leaveConversationClicked(sender: UITapGestureRecognizer) {
         let alert = UIAlertController(title: "Leave the conversation?", message: nil, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
         alert.addAction(UIAlertAction(
@@ -316,7 +347,7 @@ class TopicInfoViewController: UITableViewController {
         present(alert, animated: true)
     }
 
-    @IBAction func leaveGroupClicked(_ sender: Any) {
+    @objc func leaveGroupClicked(sender: UITapGestureRecognizer) {
         guard !topic.isOwner else {
             UiUtils.showToast(message: "Owner cannot leave the group")
             return
