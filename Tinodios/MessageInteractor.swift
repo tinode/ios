@@ -110,9 +110,16 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                     .withData()
                     .withDel()
                     .build())?.then(
-                    onSuccess: { [weak self] msg in
+                    onSuccess: { [weak self] _ in
                         self?.messageSenderQueue.async {
-                            _ = self?.topic?.syncAll()
+                            do {
+                                try _ = self?.topic?.syncAll()?.thenApply(onSuccess: { [weak self] _ in
+                                    self?.loadMessages()
+                                    return nil
+                                })
+                            } catch {
+                                print("Failed to send pending messages \(error)")
+                            }
                         }
                         if self?.topicId == -1 {
                             self?.topicId = BaseDb.getInstance().topicDb?.getId(topic: self?.topicName)

@@ -1217,17 +1217,6 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
             let msgId = msg.msgId
             _ = self.store?.msgSyncing(topic: self, dbMessageId: msgId, sync: true)
             result = self.publish(content: msg.content!, msgId: msgId)
-            /*
-            result = try! self.tinode?.publish(
-                topic: self.name, data: msg.content)?.then(
-                    onSuccess: { [weak self] msg in
-                        if let ctrl = msg.ctrl {
-                            self?.processDelivery(ctrl: ctrl, id: msgId)
-                        }
-                        return nil
-                    },
-                    onFailure: nil)
-            */
         }
         return result
     }
