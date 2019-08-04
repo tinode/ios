@@ -311,6 +311,22 @@ class UiUtils {
             topVC?.present(activityViewController, animated: true, completion: nil)
         }
     }
+
+    public static func toggleProgressOverlay(in parent: UIViewController, visible: Bool, title: String? = nil) {
+        if visible {
+            let alert = UIAlertController(title: nil, message: title ?? "Please wait...", preferredStyle: .alert)
+
+            let loadingIndicator = UIActivityIndicatorView(frame: CGRect(x: 10, y: 5, width: 50, height: 50))
+            loadingIndicator.hidesWhenStopped = true
+            loadingIndicator.style = UIActivityIndicatorView.Style.gray
+            loadingIndicator.startAnimating();
+
+            alert.view.addSubview(loadingIndicator)
+            parent.present(alert, animated: true, completion: nil)
+        } else if let vc = parent.presentedViewController, vc is UIAlertController {
+            parent.dismiss(animated: false, completion: nil)
+        }
+    }
 }
 
 extension UIViewController {
