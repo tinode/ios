@@ -80,6 +80,8 @@ class FindViewController: UITableViewController, FindDisplayLogic {
         self.tabBarController?.navigationItem.rightBarButtonItem = inviteActionButtonItem
     }
     override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+
         self.interactor?.cleanup()
         self.tabBarController?.navigationItem.rightBarButtonItem = nil
     }
