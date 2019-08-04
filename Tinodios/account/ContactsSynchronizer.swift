@@ -178,7 +178,7 @@ class ContactsSynchronizer {
     }
 }
 
-private extension CNPhoneNumber {
+extension CNPhoneNumber {
     // Hack: simply filters out all non-digit characters.
     var naiveE164: String {
         get {

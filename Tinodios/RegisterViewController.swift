@@ -52,12 +52,16 @@ class RegisterViewController: UIViewController {
 
         guard !login.isEmpty && !pwd.isEmpty && !name.isEmpty && !credential.isEmpty else { return }
 
-        var method: String?
-        if ValidatedCredential.email(credential).isRight {
-            method = "email"
-        }
-        if ValidatedCredential.phoneNum(credential).isRight {
-            method = "tel"
+        var method: String? = nil
+        if let cred = ValidatedCredential.parse(from: credential) {
+            switch cred {
+            case .email:
+                method = Credential.kMethEmail
+            case .phoneNum:
+                method = Credential.kMethPhone
+            default:
+                break
+            }
         }
         
         guard method != nil else {
