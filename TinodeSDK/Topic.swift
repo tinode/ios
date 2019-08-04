@@ -501,7 +501,7 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
             setMsg = MsgSetMeta<DP, DR>(
                 desc: MetaSetDesc(pub: self.pub, priv: self.priv),
                 sub: nil,
-                tags: self.tags)
+                tags: self.tags, cred: nil)
         } else {
             getMsg = getMetaGetBuilder()
                 .withDesc().withData().withSub().withTags().build()
@@ -530,7 +530,7 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
                 let isAttached = self?.attached ?? false
                 if !isAttached {
                     self?.attached = true
-                    if let ctrl = msg.ctrl {
+                    if let ctrl = msg?.ctrl {
                         if !(ctrl.params?.isEmpty ?? false) {
                             self?.description?.acs = Acs(from: ctrl.getStringDict(for: "acs"))
                             if self?.isNew ?? false {
@@ -789,7 +789,7 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
         // Delete works even if the topic is not attached.
         return try! tinode!.delTopic(topicName: name)?.then(
             onSuccess: { msg in
-                self.topicLeft(unsub: true, code: msg.ctrl?.code, reason: msg.ctrl?.text)
+                self.topicLeft(unsub: true, code: msg?.ctrl?.code, reason: msg?.ctrl?.text)
                 self.tinode!.stopTrackingTopic(topicName: self.name)
                 self.persist(false)
                 return nil
@@ -877,8 +877,8 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
         do {
             return try tinode?.setMeta(for: self.name, meta: meta)?.thenApply(
                 onSuccess: { msg in
-                    print("setMeta thenApply -> ctrl: \(msg.ctrl)")
-                    if let ctrl = msg.ctrl {
+                    print("setMeta thenApply -> ctrl: \(msg?.ctrl)")
+                    if let ctrl = msg?.ctrl, ctrl.code < 300 {
                         self.update(ctrl: ctrl, meta: meta)
                     }
                     return nil
@@ -889,14 +889,22 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
         }
     }
     public func setDescription(desc: MetaSetDesc<DP, DR>) -> PromisedReply<ServerMessage>? {
-        return setMeta(meta: MsgSetMeta<DP, DR>(desc: desc, sub: nil, tags: nil))
+        return setMeta(meta: MsgSetMeta<DP, DR>(desc: desc, sub: nil, tags: nil, cred: nil))
     }
     public func setDescription(pub: DP?, priv: DR?) -> PromisedReply<ServerMessage>? {
         return setDescription(desc: MetaSetDesc<DP, DR>(pub: pub, priv: priv))
     }
     public func updateDefacs(auth: String?, anon: String?) -> PromisedReply<ServerMessage>? {
-        return setDescription(desc: MetaSetDesc<DP, DR>(da: Defacs(auth: auth, anon: anon)))
+        let newdacs: Defacs
+        if let olddacs = self.defacs {
+            newdacs = Defacs(from: olddacs)
+            newdacs.update(auth: auth, anon: anon)
+        } else {
+            newdacs = Defacs(auth: auth, anon: anon)
+        }
+        return setDescription(desc: MetaSetDesc<DP, DR>(da: newdacs))
     }
+
     public func updateAccessMode(ac: AccessChange?) -> Bool {
         if description!.acs == nil {
             description!.acs = Acs(from: nil as Acs?)
@@ -904,7 +912,7 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
         return description!.acs!.update(from: ac)
     }
     public func setSubscription(sub: MetaSetSub) -> PromisedReply<ServerMessage>? {
-        return setMeta(meta: MsgSetMeta(desc: nil, sub: sub, tags: nil))
+        return setMeta(meta: MsgSetMeta(desc: nil, sub: sub, tags: nil, cred: nil))
     }
     public func updateMode(uid: String?, update: String) -> PromisedReply<ServerMessage>? {
         var uid = uid
@@ -916,9 +924,9 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
         if description!.acs == nil {
             description!.acs = Acs()
         }
-        let mode = uidIsSelf ? description!.acs!.want : sub!.acs!.given
-        if mode?.update(from: update) ?? false {
-            return setSubscription(sub: MetaSetSub(user: uid, mode: mode?.description))
+        let mode = AcsHelper(ah: uidIsSelf ? description!.acs!.want : sub!.acs!.given)
+        if mode.update(from: update) {
+            return setSubscription(sub: MetaSetSub(user: uid, mode: mode.description))
         }
         return PromisedReply<ServerMessage>(value: ServerMessage())
     }
@@ -952,7 +960,7 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
             let metaSetSub = MetaSetSub(user: uid, mode: mode)
             //metaSetSub.user = uid
             //metaSetSub.mode = mode
-            let future = setMeta(meta: MsgSetMeta(desc: nil, sub: metaSetSub, tags: nil))
+            let future = setMeta(meta: MsgSetMeta(desc: nil, sub: metaSetSub, tags: nil, cred: nil))
             return try future?.thenApply(
                 onSuccess: { [weak self] msg in
                     if let topic = self {
@@ -1069,7 +1077,7 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
                         guard let s = self else {
                             throw TinodeError.invalidState("Topic.self not available in result handler")
                         }
-                        s.topicLeft(unsub: unsub, code: msg.ctrl?.code, reason: msg.ctrl?.text)
+                        s.topicLeft(unsub: unsub, code: msg?.ctrl?.code, reason: msg?.ctrl?.text)
                         if unsub ?? false {
                             s.tinode?.stopTrackingTopic(topicName: s.name)
                             s.persist(false)
@@ -1110,7 +1118,7 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
     public func publish(content: Drafty, msgId: Int64) -> PromisedReply<ServerMessage>? {
         return try! tinode!.publish(topic: name, data: content)?.then(
             onSuccess: { [weak self] msg in
-                self?.processDelivery(ctrl: msg.ctrl, id: msgId)
+                self?.processDelivery(ctrl: msg?.ctrl, id: msgId)
                 return nil
             }, onFailure: { [weak self] err in
                 self?.store?.msgSyncing(topic: self!, dbMessageId: msgId, sync: false)
@@ -1140,9 +1148,8 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
             return try! self.tinode?.delMessage(
                 topicName: self.name, list: pendingDeletes, hard: hard)?.then(
                     onSuccess: { [weak self] msg in
-                        if let id = msg.ctrl?.getIntParam(for: "del"), let s = self {
-                            _ = s.store?.msgDelete(
-                                topic: s, delete: id, deleteAll: pendingDeletes)
+                        if let id = msg?.ctrl?.getIntParam(for: "del"), let s = self {
+                            _ = s.store?.msgDelete(topic: s, delete: id, deleteAll: pendingDeletes)
                         }
                         return nil
                     }, onFailure: nil)
@@ -1156,7 +1163,7 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
             do {
                 return try tinode?.delMessage(topicName: self.name, fromId: fromId, toId: toId, hard: hard)?.then(
                     onSuccess: { [weak self] msg in
-                        if let delId = msg.ctrl?.getIntParam(for: "del"), delId > 0 {
+                        if let delId = msg?.ctrl?.getIntParam(for: "del"), delId > 0 {
                             self?.store?.msgDelete(topic: self!, delete: delId, deleteFrom: fromId, deleteTo: toId)
                         }
                         return nil
@@ -1210,17 +1217,6 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
             let msgId = msg.msgId
             _ = self.store?.msgSyncing(topic: self, dbMessageId: msgId, sync: true)
             result = self.publish(content: msg.content!, msgId: msgId)
-            /*
-            result = try! self.tinode?.publish(
-                topic: self.name, data: msg.content)?.then(
-                    onSuccess: { [weak self] msg in
-                        if let ctrl = msg.ctrl {
-                            self?.processDelivery(ctrl: ctrl, id: msgId)
-                        }
-                        return nil
-                    },
-                    onFailure: nil)
-            */
         }
         return result
     }
@@ -1459,7 +1455,8 @@ public class ComTopic<DP: Codable>: Topic<DP, PrivateType, DP, PrivateType> {
         let meta = MsgSetMeta<DP, PrivateType>(
             desc: MetaSetDesc(pub: nil, priv: priv),
             sub: nil,
-            tags: nil)
+            tags: nil,
+            cred: nil)
         return setMeta(meta: meta)
     }
 }

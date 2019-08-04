@@ -7,16 +7,16 @@
 //
 
 import Foundation
+import Contacts
 
-
-enum Validate {
+enum ValidatedCredential {
     case email(_: String)
     case phoneNum(_: String)
     case URL(_: String)
     case IP(_: String)
-    
-    
-    var isRight: Bool {
+
+
+    mutating func isValid() -> Bool {
         var predicateStr:String!
         var currObject:String!
         switch self {
@@ -24,8 +24,14 @@ enum Validate {
             predicateStr = "^([a-z0-9_\\.-]+)@([\\da-z\\.-]+)\\.([a-z\\.]{2,6})$"
             currObject = str
         case let .phoneNum(str):
-            predicateStr = "^((13[0-9])|(15[^4,\\D]) |(17[0,0-9])|(18[0,0-9]))\\d{8}$"
-            currObject = str
+            let e164 = CNPhoneNumber(stringValue: str).naiveE164
+            if !e164.isEmpty {
+                print("phone = \(e164)")
+                self = .phoneNum(e164)
+                return true
+            } else {
+                return false
+            }
         case let .URL(str):
             predicateStr = "^(https?:\\/\\/)?([\\da-z\\.-]+)\\.([a-z\\.]{2,6})([\\/\\w \\.-]*)*\\/?$"
             currObject = str
@@ -33,9 +39,21 @@ enum Validate {
             predicateStr = "^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
             currObject = str
         }
-        
+
         let predicate =  NSPredicate(format: "SELF MATCHES %@" ,predicateStr)
         return predicate.evaluate(with: currObject)
     }
 
+    static public func parse(from str: String?) -> ValidatedCredential? {
+        guard let str = str else { return nil }
+        var email = ValidatedCredential.email(str)
+        if email.isValid() { return email }
+        var phone = ValidatedCredential.phoneNum(str)
+        if phone.isValid() { return phone }
+        var url = ValidatedCredential.URL(str)
+        if url.isValid() { return url }
+        var ip = ValidatedCredential.IP(str)
+        if ip.isValid() { return ip }
+        return nil
+    }
 }

@@ -52,12 +52,16 @@ class RegisterViewController: UIViewController {
 
         guard !login.isEmpty && !pwd.isEmpty && !name.isEmpty && !credential.isEmpty else { return }
 
-        var method: String?
-        if Validate.email(credential).isRight {
-            method = "email"
-        }
-        if Validate.phoneNum(credential).isRight {
-            method = "tel"
+        var method: String? = nil
+        if let cred = ValidatedCredential.parse(from: credential) {
+            switch cred {
+            case .email:
+                method = Credential.kMethEmail
+            case .phoneNum:
+                method = Credential.kMethPhone
+            default:
+                break
+            }
         }
         
         guard method != nil else {
@@ -89,10 +93,9 @@ class RegisterViewController: UIViewController {
 
             try future?.then(
                 onSuccess: { [weak self] msg in
-                    if let code = msg.ctrl?.code, code >= 300 {
-                        let vc = self?.storyboard?.instantiateViewController(withIdentifier: String(describing: type(of: CredentialsViewController())))
-                            as! CredentialsViewController
-                        if let cArr = msg.ctrl!.getStringArray(for: "cred") {
+                    if let ctrl = msg?.ctrl, ctrl.code >= 300 {
+                        let vc = self?.storyboard?.instantiateViewController(withIdentifier: String(describing: type(of: CredentialsViewController()))) as! CredentialsViewController
+                        if let cArr = ctrl.getStringArray(for: "cred") {
                             for c in cArr {
                                 vc.meth = c
                             }

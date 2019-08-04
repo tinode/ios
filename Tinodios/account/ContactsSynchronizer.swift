@@ -141,7 +141,7 @@ class ContactsSynchronizer {
                 //let q: Int? = nil
                 let metaDesc: MetaSetDesc<Int, String> = MetaSetDesc(pub: nil, priv: contacts)
                 let setMeta: MsgSetMeta<Int, String> = MsgSetMeta<Int, String>(
-                    desc: metaDesc, sub: nil, tags: nil)
+                    desc: metaDesc, sub: nil, tags: nil, cred: nil)
                 _ = try tinode.setMeta(
                     for: Tinode.kTopicFnd,
                     meta: setMeta)?.getResult()
@@ -153,7 +153,7 @@ class ContactsSynchronizer {
                     if try future.waitResult() {
                         print("okay")
                         let pkt = try! future.getResult()
-                        guard let subs = pkt.meta?.sub else { return }
+                        guard let subs = pkt?.meta?.sub else { return }
                         print("got subs\nquery = \(contacts)\nsubs = \(subs)")
                         for sub in subs {
                             if Tinode.topicTypeByName(name: sub.user) == .p2p {
@@ -178,7 +178,7 @@ class ContactsSynchronizer {
     }
 }
 
-private extension CNPhoneNumber {
+extension CNPhoneNumber {
     // Hack: simply filters out all non-digit characters.
     var naiveE164: String {
         get {

@@ -15,7 +15,7 @@ protocol MessageDisplayLogic: class {
     func displayChatMessages(messages: [StoredMessage])
     func reloadMessage(withSeqId seqId: Int)
     func updateProcess(forMsgId msgId: Int64, progress: Float)
-    func applyTopicPermissions()
+    func applyTopicPermissions(withError: Error?)
     func endRefresh()
     func dismissVC()
 }
@@ -410,8 +410,13 @@ extension MessageViewController: MessageDisplayLogic {
 
     func displayChatMessages(messages: [StoredMessage]) {
         assert(Thread.isMainThread)
+
         let oldData = self.messages
         let newData: [StoredMessage] = messages.reversed()
+
+        // Both empty: no change.
+        guard !oldData.isEmpty || !newData.isEmpty else { return }
+
         self.messageSeqIdIndex = newData.enumerated().reduce([Int:Int]()) { (dict, item) -> [Int:Int] in
             var dict = dict
             dict[item.element.seqId] = item.offset
@@ -425,7 +430,7 @@ extension MessageViewController: MessageDisplayLogic {
 
         if oldData.isEmpty || newData.isEmpty {
             self.messages = newData
-            collectionView.reloadData()
+            collectionView.reloadSections(IndexSet(integer: 0))
         } else {
             // Get indexes of inserted and deleted items.
             let diff = Utils.diffMessageArray(sortedOld: oldData, sortedNew: newData)
@@ -482,17 +487,18 @@ extension MessageViewController: MessageDisplayLogic {
         }
     }
 
-    func applyTopicPermissions() {
+    func applyTopicPermissions(withError err: Error? = nil) {
         assert(Thread.isMainThread)
         // Make sure the view is visible.
         guard self.isViewLoaded && ((self.view?.window) != nil) else { return }
-        if !(self.topic?.isReader ?? false) {
-            self.collectionView.showNoAccessOverlay()
+
+        if !(self.topic?.isReader ?? false) || err != nil {
+            self.collectionView.showNoAccessOverlay(withMessage: err?.localizedDescription)
         } else {
             self.collectionView.removeNoAccessOverlay()
         }
         // No "W" permission. Replace input field with a message "Not available".
-        self.sendMessageBar.toggleNotAvailableOverlay(visible: !(self.topic?.isWriter ?? false))
+        self.sendMessageBar.toggleNotAvailableOverlay(visible: !(self.topic?.isWriter ?? false) || err != nil)
         // The peer is missing either "W" or "R" permissions. Show "Peer's messaging is disabled" message.
         if let acs = self.topic?.peer?.acs, let missing = acs.missing {
             self.sendMessageBar.togglePeerMessagingDisabled(visible: acs.isJoiner(for: .want) && (missing.isReader || missing.isWriter))
@@ -988,7 +994,11 @@ extension MessageViewController : MessageCellDelegate {
     }
 
     @objc func willHidePopupMenu() {
-        sendMessageBar.inputField.nextResponderOverride = nil
+        if sendMessageBar.inputField.nextResponderOverride != nil {
+            sendMessageBar.inputField.nextResponderOverride!.resignFirstResponder()
+            sendMessageBar.inputField.nextResponderOverride = nil
+        }
+
         UIMenuController.shared.menuItems = nil
         NotificationCenter.default.removeObserver(self, name: UIMenuController.willHideMenuNotification, object: nil)
     }

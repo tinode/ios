@@ -26,6 +26,8 @@ public class MsgClientHi : Encodable {
 }
 
 public class Credential: Encodable {
+    public static let kMethEmail = "email"
+    public static let kMethPhone = "tel"
     // Confirmation method: email, phone, captcha.
     var meth: String? = nil
     // Credential to be confirmed, e.g. email or a phone number.
@@ -291,11 +293,13 @@ public class MsgSetMeta<Pu: Encodable, Pr: Encodable>: Encodable {
     let desc: MetaSetDesc<Pu, Pr>?
     let sub: MetaSetSub?
     let tags: [String]?
+    let cred: Credential?
     
-    public init(desc: MetaSetDesc<Pu, Pr>?, sub: MetaSetSub?, tags: [String]?) {
+    public init(desc: MetaSetDesc<Pu, Pr>?, sub: MetaSetSub?, tags: [String]?, cred: Credential?) {
         self.desc = desc
         self.sub = sub
         self.tags = tags
+        self.cred = cred
     }
 }
 
@@ -335,14 +339,18 @@ public class MsgClientSet<Pu: Encodable, Pr: Encodable>: Encodable {
     let topic: String?
     let desc: MetaSetDesc<Pu, Pr>?
     let sub: MetaSetSub?
-    init(id: String, topic: String, desc: MetaSetDesc<Pu, Pr>?, sub: MetaSetSub?) {
+    let tags: [String]?
+    let cred: Credential?
+    init(id: String, topic: String, desc: MetaSetDesc<Pu, Pr>?, sub: MetaSetSub?, tags: [String]?, cred: Credential?) {
         self.id = id
         self.topic = topic
         self.desc = desc
         self.sub = sub
+        self.tags = tags
+        self.cred = cred
     }
     convenience init(id: String, topic: String, meta: MsgSetMeta<Pu, Pr>?) {
-        self.init(id: id, topic: topic, desc: meta?.desc, sub: meta?.sub)
+        self.init(id: id, topic: topic, desc: meta?.desc, sub: meta?.sub, tags: meta?.tags, cred: meta?.cred)
     }
 }
 

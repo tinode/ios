@@ -16,6 +16,7 @@
 		0A0380E221B3CC8200A3FA0E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0A0380E021B3CC8200A3FA0E /* LaunchScreen.storyboard */; };
 		0A09810C21CCB80400600013 /* StoredMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A09810B21CCB80400600013 /* StoredMessage.swift */; };
 		0A0E940322D324F1006416F8 /* LargeFileHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A0E940222D324F1006416F8 /* LargeFileHelper.swift */; };
+		0A11912D22F03E3100A1BBA1 /* TagsEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A11912C22F03E3100A1BBA1 /* TagsEditView.swift */; };
 		0A15739421DB53130070C31F /* SubscriberDb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A15739321DB53130070C31F /* SubscriberDb.swift */; };
 		0A15739621DB531E0070C31F /* UserDb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A15739521DB531E0070C31F /* UserDb.swift */; };
 		0A2F81C6229677DD007E562C /* AddByIDViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2F81C5229677DD007E562C /* AddByIDViewController.swift */; };
@@ -54,7 +55,7 @@
 		0AEE8BEE226456080022EC3F /* UiUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AEE8BED226456080022EC3F /* UiUtils.swift */; };
 		58CBE6CE018029121E923407 /* Pods_Tinodios.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B787A84CD010EF920890105 /* Pods_Tinodios.framework */; };
 		7DDADC5021D5C156009733B5 /* RegisterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DDADC4F21D5C156009733B5 /* RegisterViewController.swift */; };
-		7DDADC5221D5C219009733B5 /* Validate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DDADC5121D5C219009733B5 /* Validate.swift */; };
+		7DDADC5221D5C219009733B5 /* ValidatedCredential.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DDADC5121D5C219009733B5 /* ValidatedCredential.swift */; };
 		7DDADC5421D5C2E6009733B5 /* CredentialsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DDADC5321D5C2E6009733B5 /* CredentialsViewController.swift */; };
 		B008593C22741B8A002C5168 /* AttributedStringFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B008593B22741B89002C5168 /* AttributedStringFormatter.swift */; };
 		B0125998229C982900688FCE /* ContactViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0125996229C982900688FCE /* ContactViewCell.swift */; };
@@ -108,6 +109,7 @@
 		0A0380E321B3CC8200A3FA0E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0A09810B21CCB80400600013 /* StoredMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoredMessage.swift; sourceTree = "<group>"; };
 		0A0E940222D324F1006416F8 /* LargeFileHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LargeFileHelper.swift; sourceTree = "<group>"; };
+		0A11912C22F03E3100A1BBA1 /* TagsEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagsEditView.swift; sourceTree = "<group>"; };
 		0A15739321DB53130070C31F /* SubscriberDb.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriberDb.swift; sourceTree = "<group>"; };
 		0A15739521DB531E0070C31F /* UserDb.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDb.swift; sourceTree = "<group>"; };
 		0A2F81C5229677DD007E562C /* AddByIDViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddByIDViewController.swift; sourceTree = "<group>"; };
@@ -147,7 +149,7 @@
 		5900B7863CDFB018A86DD3AC /* Pods-Tinodios.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Tinodios.release.xcconfig"; path = "Pods/Target Support Files/Pods-Tinodios/Pods-Tinodios.release.xcconfig"; sourceTree = "<group>"; };
 		75BC852198885F22E865D563 /* Pods-Tinodios.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Tinodios.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Tinodios/Pods-Tinodios.debug.xcconfig"; sourceTree = "<group>"; };
 		7DDADC4F21D5C156009733B5 /* RegisterViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegisterViewController.swift; sourceTree = "<group>"; };
-		7DDADC5121D5C219009733B5 /* Validate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Validate.swift; sourceTree = "<group>"; };
+		7DDADC5121D5C219009733B5 /* ValidatedCredential.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ValidatedCredential.swift; sourceTree = "<group>"; };
 		7DDADC5321D5C2E6009733B5 /* CredentialsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CredentialsViewController.swift; sourceTree = "<group>"; };
 		B008593B22741B89002C5168 /* AttributedStringFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttributedStringFormatter.swift; sourceTree = "<group>"; };
 		B0125996229C982900688FCE /* ContactViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactViewCell.swift; sourceTree = "<group>"; };
@@ -247,7 +249,7 @@
 				0A69D47E22A6552300769426 /* TopicInfoViewController.swift */,
 				0AEE8BED226456080022EC3F /* UiUtils.swift */,
 				0A35BA9F2283A37500AA5E2F /* Utils.swift */,
-				7DDADC5121D5C219009733B5 /* Validate.swift */,
+				7DDADC5121D5C219009733B5 /* ValidatedCredential.swift */,
 				0A0380DB21B3CC8100A3FA0E /* Main.storyboard */,
 				B031BE542263075E004160AE /* Settings.bundle */,
 				0A0380E921B3CCB000A3FA0E /* Supporting Files */,
@@ -310,8 +312,8 @@
 		B0C496B022787C020084FA0D /* widgets */ = {
 			isa = PBXGroup;
 			children = (
-				0A8D945722BEED3700DC154E /* AvatarWithOnlineIndicator.xib */,
 				0A8D945922BEF08100DC154E /* AvatarWithOnlineIndicator.swift */,
+				0A8D945722BEED3700DC154E /* AvatarWithOnlineIndicator.xib */,
 				0A8D945B22BF5B7F00DC154E /* AvatarWithOnlineIndicator+TypingAnimation.swift */,
 				0ADDBC8A2249F617000BD00D /* ChatListViewCell.swift */,
 				0AE7339B22C33FEF0089C8D8 /* ChatListViewCell.xib */,
@@ -328,8 +330,9 @@
 				B0DF03162279F027000F9492 /* RoundImageView.swift */,
 				B012599A229CEBE600688FCE /* SelectedMemberViewCell.swift */,
 				B012599B229CEBE600688FCE /* SelectedMemberViewCell.xib */,
-				B0DF032C2282EE8A000F9492 /* SendMessageBar.xib */,
 				B0DF032E2282FF46000F9492 /* SendMessageBar.swift */,
+				B0DF032C2282EE8A000F9492 /* SendMessageBar.xib */,
+				0A11912C22F03E3100A1BBA1 /* TagsEditView.swift */,
 			);
 			path = widgets;
 			sourceTree = "<group>";
@@ -480,6 +483,7 @@
 				0AE50D4822156A5B0021F7B7 /* FindPresenter.swift in Sources */,
 				B0DF03312283FFD8000F9492 /* PlaceholderTextView.swift in Sources */,
 				0A35BA9E22836CCF00AA5E2F /* ContactsSynchronizer.swift in Sources */,
+				0A11912D22F03E3100A1BBA1 /* TagsEditView.swift in Sources */,
 				0A8D945A22BEF08100DC154E /* AvatarWithOnlineIndicator.swift in Sources */,
 				0A0016E721E7236900088188 /* MessageInteractor.swift in Sources */,
 				0A36776922B09C1900724873 /* EditMembersViewController.swift in Sources */,
@@ -501,7 +505,7 @@
 				B0DF032F2282FF46000F9492 /* SendMessageBar.swift in Sources */,
 				0A6AC324229FB0EE0025A4EC /* PermissionsEditViewController.swift in Sources */,
 				B02F5C8B22679BC80079A97E /* ImagePicker.swift in Sources */,
-				7DDADC5221D5C219009733B5 /* Validate.swift in Sources */,
+				7DDADC5221D5C219009733B5 /* ValidatedCredential.swift in Sources */,
 				B0A612B5229132CC00569DFE /* MessageBubbleDecorator.swift in Sources */,
 				B0DF0319227C2517000F9492 /* MessageView.swift in Sources */,
 				7DDADC5421D5C2E6009733B5 /* CredentialsViewController.swift in Sources */,

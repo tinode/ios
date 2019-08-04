@@ -67,7 +67,7 @@ class Utils {
             } else if n == new.count || old[o].seqId < new[n].seqId {
                 // Present in old, missing in new: removed
                 removed.append(o)
-                if mutated.last ?? -1 != n {
+                if mutated.last ?? -1 != n && n < new.count {
                     // Appending n, not o because mutated is an index agaist the new data.
                     mutated.append(n)
                 }
@@ -90,10 +90,8 @@ class Utils {
         return (inserted: inserted, removed: removed, mutated: mutated)
     }
 
-    public static func parseTags(from tagsString: String?) -> [String]? {
-        guard let tagsString = tagsString else { return nil }
-        let candidates = tagsString.split(separator: ",")
-        return candidates.filter { $0.count >= UiUtils.kMinTagLength }.map { String($0) }
+    public static func isValidTag(tag: String) -> Bool {
+        return tag.count >= UiUtils.kMinTagLength
     }
 
     public static func uniqueFilename(forMime mime: String?) -> String {

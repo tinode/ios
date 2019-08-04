@@ -18,7 +18,7 @@ class NewGroupViewController: UIViewController, UITableViewDataSource {
     @IBOutlet weak var membersTableView: UITableView!
     @IBOutlet weak var groupNameTextField: UITextField!
     @IBOutlet weak var privateTextField: UITextField!
-    @IBOutlet weak var tagsTextField: UITextField!
+    @IBOutlet weak var tagsTextField: TagsEditView!
     @IBOutlet weak var avatarView: RoundImageView!
     @IBOutlet weak var selectedCollectionView: UICollectionView!
 
@@ -37,6 +37,9 @@ class NewGroupViewController: UIViewController, UITableViewDataSource {
         interactor.presenter = self
 
         self.imagePicker = ImagePicker(presentationController: self, delegate: self)
+        self.tagsTextField.onVerifyTag = { (_, tag) in
+            return Utils.isValidTag(tag: tag)
+        }
     }
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -51,7 +54,6 @@ class NewGroupViewController: UIViewController, UITableViewDataSource {
 
         self.groupNameTextField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: UIControl.Event.editingChanged)
         self.privateTextField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: UIControl.Event.editingChanged)
-        self.tagsTextField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: UIControl.Event.editingChanged)
         UiUtils.dismissKeyboardForTaps(onView: self.view)
         setup()
     }
@@ -103,8 +105,6 @@ class NewGroupViewController: UIViewController, UITableViewDataSource {
         let groupName = UiUtils.ensureDataInTextField(groupNameTextField)
         // Optional
         let privateInfo = (privateTextField.text ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
-        // Optional
-        let tags = (tagsTextField.text ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
         guard let members = self.interactor?.selectedMembers else {
             print("members can't be empty")
             return
@@ -112,7 +112,7 @@ class NewGroupViewController: UIViewController, UITableViewDataSource {
 
         guard !groupName.isEmpty else { return }
         let avatar = imageUploaded ? avatarView.image?.resize(width: CGFloat(Float(UiUtils.kAvatarSize)), height: CGFloat(Float(UiUtils.kAvatarSize)), clip: true) : nil
-        let tagsList = Utils.parseTags(from: tags)
+        let tagsList = tagsTextField.tags
         self.interactor?.createGroupTopic(titled: groupName, subtitled: privateInfo, with: tagsList, consistingOf: members, withAvatar: avatar)
     }
 
