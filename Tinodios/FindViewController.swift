@@ -72,6 +72,8 @@ class FindViewController: UITableViewController, FindDisplayLogic {
         self.setup()
     }
     override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
         self.interactor?.setup()
         self.interactor?.attachToFndTopic()
         self.interactor?.loadAndPresentContacts(searchQuery: nil)
