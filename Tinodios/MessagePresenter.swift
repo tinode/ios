@@ -15,7 +15,7 @@ protocol MessagePresentationLogic {
     func presentMessages(messages: [StoredMessage])
     func reloadMessage(withSeqId seqId: Int)
     func updateProgress(forMsgId msgId: Int64, progress: Float)
-    func applyTopicPermissions()
+    func applyTopicPermissions(withError: Error?)
     func endRefresh()
     func dismiss()
 }
@@ -58,9 +58,9 @@ class MessagePresenter: MessagePresentationLogic {
             self.viewController?.runTypingAnimation()
         }
     }
-    func applyTopicPermissions() {
+    func applyTopicPermissions(withError err: Error? = nil) {
         DispatchQueue.main.async {
-            self.viewController?.applyTopicPermissions()
+            self.viewController?.applyTopicPermissions(withError: err)
         }
     }
     func dismiss() {

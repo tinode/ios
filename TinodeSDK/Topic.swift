@@ -878,7 +878,7 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
             return try tinode?.setMeta(for: self.name, meta: meta)?.thenApply(
                 onSuccess: { msg in
                     print("setMeta thenApply -> ctrl: \(msg?.ctrl)")
-                    if let ctrl = msg?.ctrl {
+                    if let ctrl = msg?.ctrl, ctrl.code < 300 {
                         self.update(ctrl: ctrl, meta: meta)
                     }
                     return nil
@@ -895,8 +895,16 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
         return setDescription(desc: MetaSetDesc<DP, DR>(pub: pub, priv: priv))
     }
     public func updateDefacs(auth: String?, anon: String?) -> PromisedReply<ServerMessage>? {
-        return setDescription(desc: MetaSetDesc<DP, DR>(da: Defacs(auth: auth, anon: anon)))
+        let newdacs: Defacs
+        if let olddacs = self.defacs {
+            newdacs = Defacs(from: olddacs)
+            newdacs.update(auth: auth, anon: anon)
+        } else {
+            newdacs = Defacs(auth: auth, anon: anon)
+        }
+        return setDescription(desc: MetaSetDesc<DP, DR>(da: newdacs))
     }
+
     public func updateAccessMode(ac: AccessChange?) -> Bool {
         if description!.acs == nil {
             description!.acs = Acs(from: nil as Acs?)
@@ -1209,17 +1217,6 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
             let msgId = msg.msgId
             _ = self.store?.msgSyncing(topic: self, dbMessageId: msgId, sync: true)
             result = self.publish(content: msg.content!, msgId: msgId)
-            /*
-            result = try! self.tinode?.publish(
-                topic: self.name, data: msg.content)?.then(
-                    onSuccess: { [weak self] msg in
-                        if let ctrl = msg.ctrl {
-                            self?.processDelivery(ctrl: ctrl, id: msgId)
-                        }
-                        return nil
-                    },
-                    onFailure: nil)
-            */
         }
         return result
     }

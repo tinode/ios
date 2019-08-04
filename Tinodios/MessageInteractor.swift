@@ -98,7 +98,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
     }
     func attachToTopic() -> Bool {
         guard !(self.topic?.attached ?? false) else {
-            self.presenter?.applyTopicPermissions()
+            self.presenter?.applyTopicPermissions(withError: nil)
             return true
         }
         do {
@@ -110,15 +110,22 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                     .withData()
                     .withDel()
                     .build())?.then(
-                    onSuccess: { [weak self] msg in
+                    onSuccess: { [weak self] _ in
                         self?.messageSenderQueue.async {
-                            _ = self?.topic?.syncAll()
+                            do {
+                                try _ = self?.topic?.syncAll()?.thenApply(onSuccess: { [weak self] _ in
+                                    self?.loadMessages()
+                                    return nil
+                                })
+                            } catch {
+                                print("Failed to send pending messages \(error)")
+                            }
                         }
                         if self?.topicId == -1 {
                             self?.topicId = BaseDb.getInstance().topicDb?.getId(topic: self?.topicName)
                         }
                         self?.loadMessages()
-                        self?.presenter?.applyTopicPermissions()
+                        self?.presenter?.applyTopicPermissions(withError: nil)
                         return nil
                     },
                     onFailure: { [weak self] err in
@@ -129,7 +136,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                         case TinodeError.notConnected(_):
                             Cache.getTinode().reconnectNow()
                         default:
-                            self?.presenter?.applyTopicPermissions()
+                            self?.presenter?.applyTopicPermissions(withError: err)
                         }
                         return nil
                     })
@@ -279,7 +286,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
             }
         }
         _ = try? response?.thenApply(onSuccess: { msg in
-            self.presenter?.applyTopicPermissions()
+            self.presenter?.applyTopicPermissions(withError: nil)
             return nil
         })
     }
@@ -371,7 +378,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         self.loadMessages()
     }
     override func onPres(pres: MsgServerPres) {
-        DispatchQueue.main.async { self.presenter?.applyTopicPermissions() }
+        DispatchQueue.main.async { self.presenter?.applyTopicPermissions(withError: nil) }
     }
     override func onOnline(online: Bool) {
         self.presenter?.setOnline(online: online)
@@ -391,9 +398,9 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         }
     }
     override func onSubsUpdated() {
-        self.presenter?.applyTopicPermissions()
+        self.presenter?.applyTopicPermissions(withError: nil)
     }
     override func onMetaDesc(desc: Description<VCard, PrivateType>) {
-        self.presenter?.applyTopicPermissions()
+        self.presenter?.applyTopicPermissions(withError: nil)
     }
 }

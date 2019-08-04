@@ -7,7 +7,7 @@
 
 import Foundation
 
-public class Defacs: Codable {
+public class Defacs: Codable, Equatable {
     public var auth: AcsHelper?
     public var anon: AcsHelper?
     
@@ -17,6 +17,15 @@ public class Defacs: Codable {
         }
         if let anon = anon {
             setAnon(a: anon)
+        }
+    }
+
+    init(from acs: Defacs) {
+        if let auth = acs.auth {
+            self.auth = AcsHelper(ah: auth)
+        }
+        if let anon = acs.anon {
+            self.anon = AcsHelper(ah: anon)
         }
     }
     private enum CodingKeys : String, CodingKey  {
@@ -74,6 +83,29 @@ public class Defacs: Codable {
         }
         return changed > 0
     }
+
+    @discardableResult
+    func update(auth: String?, anon: String?) -> Bool {
+        var changed: Bool = false
+        if let auth = auth {
+            if self.auth == nil {
+                self.auth = AcsHelper(a: AcsHelper.kModeNone)
+            }
+            changed = self.auth!.update(from: auth)
+        }
+        if let anon = anon {
+            if self.anon == nil {
+                self.anon = AcsHelper(a: AcsHelper.kModeNone)
+            }
+            changed = changed || self.anon!.update(from: anon)
+        }
+        return changed
+    }
+
+    public static func == (lhs: Defacs, rhs: Defacs) -> Bool {
+        return lhs.anon == rhs.anon && lhs.auth == rhs.auth
+    }
+
     public func serialize() -> String {
         return [self.auth?.description ?? "",
                 self.anon?.description ?? ""].joined(separator: ",")
