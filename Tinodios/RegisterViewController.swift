@@ -2,7 +2,6 @@
 //  RegisterViewController.swift
 //  Tinodios
 //
-//  Created by ztimc on 2018/12/26.
 //  Copyright © 2018 Tinode. All rights reserved.
 //
 
