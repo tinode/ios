@@ -58,10 +58,14 @@ class NewGroupViewController: UIViewController, UITableViewDataSource {
         setup()
     }
     override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
         self.tabBarController?.navigationItem.rightBarButtonItem = saveButtonItem
         self.interactor?.loadAndPresentContacts()
     }
     override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+
         self.tabBarController?.navigationItem.rightBarButtonItem = nil
     }
     @objc func textFieldDidChange(_ textField: UITextField) {

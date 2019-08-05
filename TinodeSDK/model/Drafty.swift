@@ -739,9 +739,9 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
         // Sort spans first by start index (asc) then by length (desc).
         spans.sort { lhs, rhs in
             if lhs.start == rhs.start {
-                return rhs.end < lhs.end; // longer one comes first (<0)
+                return rhs.end < lhs.end // longer one comes first (<0)
             }
-            return lhs.start < rhs.start;
+            return lhs.start < rhs.start
         }
 
         for span in spans {

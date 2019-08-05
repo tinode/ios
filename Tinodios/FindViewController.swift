@@ -72,12 +72,16 @@ class FindViewController: UITableViewController, FindDisplayLogic {
         self.setup()
     }
     override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
         self.interactor?.setup()
         self.interactor?.attachToFndTopic()
         self.interactor?.loadAndPresentContacts(searchQuery: nil)
         self.tabBarController?.navigationItem.rightBarButtonItem = inviteActionButtonItem
     }
     override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+
         self.interactor?.cleanup()
         self.tabBarController?.navigationItem.rightBarButtonItem = nil
     }
