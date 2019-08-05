@@ -149,8 +149,8 @@ public class TopicDb {
         }
         //let t = self.table?.select(self.id)
         if let row = try? db.pluck(self.table.select(self.id).filter(self.accountId
-            == BaseDb.getInstance().account?.id && self.topic == topic)), let r = row?[self.id] {
-            return r
+            == BaseDb.getInstance().account?.id && self.topic == topic)) {
+            return row[self.id]
         }
         return -1
     }

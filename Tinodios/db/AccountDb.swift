@@ -57,8 +57,8 @@ public class AccountDb {
         return try self.db.run(self.table.update(self.active <- 0))
     }
     private func getByUid(uid: String) -> Int64 {
-        if let row = try? db.pluck(self.table.select(self.id).filter(self.uid == uid)), let r = row?[self.id] {
-            return r
+        if let row = try? db.pluck(self.table.select(self.id).filter(self.uid == uid)) {
+            return row[self.id]
         }
         return -1
     }
@@ -87,8 +87,8 @@ public class AccountDb {
     }
     func getActiveAccount() -> StoredAccount? {
         if let row = try? db.pluck(self.table.select(self.id, self.uid).filter(self.active == 1)),
-            let rid = row?[self.id], let ruid = row?[self.uid] {
-            return StoredAccount(id: rid, uid: ruid)
+            let ruid = row[self.uid] {
+            return StoredAccount(id: row[self.id], uid: ruid)
         }
         return nil
     }
@@ -102,7 +102,7 @@ public class AccountDb {
     }
     func getDeviceToken() -> String? {
         if let row = try? db.pluck(self.table.select(self.deviceId).filter(self.active == 1)),
-            let d = row?[self.deviceId] {
+            let d = row[self.deviceId] {
             return d
         }
         return nil

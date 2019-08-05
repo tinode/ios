@@ -125,8 +125,8 @@ class UserDb {
         guard let accountId = BaseDb.getInstance().account?.id else  {
             return -1
         }
-        if let row = try? db.pluck(self.table.select(self.id).filter(self.uid == uid && self.accountId == accountId)), let r = row?[self.id] {
-            return r
+        if let row = try? db.pluck(self.table.select(self.id).filter(self.uid == uid && self.accountId == accountId)) {
+            return row[self.id]
         }
         return -1
     }
@@ -143,10 +143,10 @@ class UserDb {
         guard let uid = uid, let accountId = BaseDb.getInstance().account?.id else {
             return nil
         }
-        guard let row = try? db.pluck(self.table.filter(self.uid == uid && self.accountId == accountId)), let r = row else {
+        guard let row = try? db.pluck(self.table.filter(self.uid == uid && self.accountId == accountId)) else {
             return nil
         }
-        return rowToUser(r: r, uid: uid)
+        return rowToUser(r: row, uid: uid)
     }
     func readAll(for uid: String?) -> [UserProto]? {
         guard let uid = uid else { return nil }

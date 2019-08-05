@@ -102,8 +102,8 @@ extension ImagePicker: UIImagePickerControllerDelegate, UINavigationControllerDe
 
         // Get mime type and file name
         let urlResourceValues = try? imageUrl?.resourceValues(forKeys: [.typeIdentifierKey, .nameKey])
-        let uti = urlResourceValues??[.typeIdentifierKey] as? NSString
-        let fname = urlResourceValues??[.nameKey] as? NSString
+        let uti = urlResourceValues?[.typeIdentifierKey] as? NSString
+        let fname = urlResourceValues?[.nameKey] as? NSString
 
         let mimeType: String?
         if let uti = uti {
