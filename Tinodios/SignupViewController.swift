@@ -128,6 +128,7 @@ class SignupViewController: UITableViewController {
             print("Failed to connect/createAccountBasic to Tinode: \(error).")
             tinode.disconnect()
             DispatchQueue.main.async {
+                UiUtils.showToast(message: "Failed to create account: \(error.localizedDescription)")
                 self.signUpButton.isUserInteractionEnabled = true
                 UiUtils.toggleProgressOverlay(in: self, visible: false)
             }
