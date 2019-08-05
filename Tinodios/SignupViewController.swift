@@ -2,7 +2,6 @@
 //  SignupViewController.swift
 //  Tinodios
 //
-//  Created by Gene Sokolov on 05/08/2019.
 //  Copyright © 2019 Tinode. All rights reserved.
 //
 
