@@ -763,12 +763,6 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
                 subsLastUpdated = meta.ts!
             }
             self.routeMetaSub(meta: meta)
-            /*
-            if (mSubsUpdated == null || meta.ts.after(mSubsUpdated)) {
-                mSubsUpdated = meta.ts;
-            }
-            routeMetaSub(meta);
-            */
             print("handling subs")
         }
         if meta.del != nil {
@@ -1011,6 +1005,10 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
                     store?.msgRecvByRemote(sub: sub, recv: info.seq)
                 case Tinode.kNoteRead:
                     sub.read = info.seq
+                    if sub.getRecv < sub.getRead {
+                        sub.recv = sub.read
+                        store?.msgRecvByRemote(sub: sub, recv: info.seq)
+                    }
                     store?.msgReadByRemote(sub: sub, read: info.seq)
                 default:
                     break
@@ -1179,7 +1177,7 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
     }
 
     public func delMessages(hard: Bool) -> PromisedReply<ServerMessage>? {
-        return delMessages(from: 0, to: (self.seq ?? 0) + 1, hard: hard)
+        return delMessages(from: 0, to: (self.seq ?? 0), hard: hard)
     }
 
     public func delMessage(id: Int, hard: Bool)  -> PromisedReply<ServerMessage>? {

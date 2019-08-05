@@ -350,19 +350,16 @@ public class TopicDb {
             return false
         }
     }
-    private func updateCounter(for topicId: Int64, in column: Expression<Int?>, with value: Int) -> Bool{
-        let record = self.table.filter(self.id == topicId && column < value)
-        do {
-            return try self.db.run(record.update(column <- value)) > 0
-        } catch {
-            print("updateCounter failed: \(error)")
-            return false
-        }
-    }
+
     func updateRead(for topicId: Int64, with value: Int) -> Bool {
-        return self.updateCounter(for: topicId, in: self.read, with: value)
+        return BaseDb.updateCounter(db: self.db, table: self.table,
+                                    usingIdColumn: self.id, forId: topicId,
+                                    in: self.read, with: value)
     }
+
     func updateRecv(for topicId: Int64, with value: Int) -> Bool {
-        return self.updateCounter(for: topicId, in: self.recv, with: value)
+        return BaseDb.updateCounter(db: self.db, table: self.table,
+                                    usingIdColumn: self.id, forId: topicId,
+                                    in: self.recv, with: value)
     }
 }

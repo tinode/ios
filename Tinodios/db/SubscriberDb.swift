@@ -247,4 +247,16 @@ class SubscriberDb {
             return nil
         }
     }
+
+    func updateRead(for subId: Int64, with value: Int) -> Bool {
+        return BaseDb.updateCounter(db: self.db, table: self.table,
+                                    usingIdColumn: self.id, forId: subId,
+                                    in: self.read, with: value)
+    }
+
+    func updateRecv(for subId: Int64, with value: Int) -> Bool {
+        return BaseDb.updateCounter(db: self.db, table: self.table,
+                                    usingIdColumn: self.id, forId: subId,
+                                    in: self.recv, with: value)
+    }
 }

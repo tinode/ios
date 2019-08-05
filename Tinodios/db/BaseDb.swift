@@ -126,6 +126,17 @@ public class BaseDb {
         _ = try? self.accountDb?.deactivateAll()
         self.setUid(uid: nil)
     }
+    public static func updateCounter(db: SQLite.Connection, table: Table,
+                                     usingIdColumn idColumn: Expression<Int64>, forId id: Int64,
+                                     in column: Expression<Int?>, with value: Int) -> Bool {
+        let record = table.filter(idColumn == id && column < value)
+        do {
+            return try db.run(record.update(column <- value)) > 0
+        } catch {
+            print("updateCounter failed: \(error)")
+            return false
+        }
+    }
 }
 
 // Database schema versioning.

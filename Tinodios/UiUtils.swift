@@ -111,7 +111,7 @@ class UiUtils {
 
     public static func bytesToHumanSize(_ bytes: Int64) -> String {
         guard bytes > 0 else {
-            return "0 Bytes";
+            return "0 Bytes"
         }
 
         // Not that GB+ are likely to be used ever, just making sure sizes[bucket] does not crash on large values.
@@ -309,6 +309,22 @@ class UiUtils {
             let topVC = UiUtils.topViewController(
                 rootViewController: UIApplication.shared.keyWindow?.rootViewController)
             topVC?.present(activityViewController, animated: true, completion: nil)
+        }
+    }
+
+    public static func toggleProgressOverlay(in parent: UIViewController, visible: Bool, title: String? = nil) {
+        if visible {
+            let alert = UIAlertController(title: nil, message: title ?? "Please wait...", preferredStyle: .alert)
+
+            let loadingIndicator = UIActivityIndicatorView(frame: CGRect(x: 10, y: 5, width: 50, height: 50))
+            loadingIndicator.hidesWhenStopped = true
+            loadingIndicator.style = UIActivityIndicatorView.Style.gray
+            loadingIndicator.startAnimating()
+
+            alert.view.addSubview(loadingIndicator)
+            parent.present(alert, animated: true, completion: nil)
+        } else if let vc = parent.presentedViewController, vc is UIAlertController {
+            parent.dismiss(animated: false, completion: nil)
         }
     }
 }

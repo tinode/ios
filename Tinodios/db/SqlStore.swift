@@ -271,11 +271,17 @@ class SqlStore : Storage {
     }
     
     func msgRecvByRemote(sub: SubscriptionProto, recv: Int?) -> Bool {
-        return false
+        guard let ss = sub.payload as? StoredSubscription, let sid = ss.id, sid > 0, let recv = recv else {
+            return false
+        }
+        return BaseDb.getInstance().subscriberDb?.updateRecv(for: sid, with: recv) ?? false
     }
     
     func msgReadByRemote(sub: SubscriptionProto, read: Int?) -> Bool {
-        return false
+        guard let ss = sub.payload as? StoredSubscription, let sid = ss.id, sid > 0, let read = read else {
+            return false
+        }
+        return BaseDb.getInstance().subscriberDb?.updateRead(for: sid, with: read) ?? false
     }
     
     func getMessageById(topic: TopicProto, dbMessageId: Int64) -> Message? {
