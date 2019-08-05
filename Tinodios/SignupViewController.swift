@@ -1,23 +1,21 @@
 //
-//  RegisterViewController.swift
+//  SignupViewController.swift
 //  Tinodios
 //
-//  Created by ztimc on 2018/12/26.
-//  Copyright © 2018 Tinode. All rights reserved.
+//  Copyright © 2019 Tinode. All rights reserved.
 //
 
-import Foundation
 import UIKit
 import TinodeSDK
 
-class RegisterViewController: UIViewController {
-    @IBOutlet weak var loginText: UITextField!
-    @IBOutlet weak var pwdText: UITextField!
-    @IBOutlet weak var nameText: UITextField!
-    @IBOutlet weak var credentialText: UITextField!
-    @IBOutlet weak var signUpBtn: UIButton!
-    @IBOutlet weak var loadAvatar: UIButton!
-    @IBOutlet weak var avatarView: RoundImageView!
+class SignupViewController: UITableViewController {
+
+    @IBOutlet weak var avatarImageView: RoundImageView!
+    @IBOutlet weak var loginTextField: UITextField!
+    @IBOutlet weak var passwordTextField: UITextField!
+    @IBOutlet weak var nameTextField: UITextField!
+    @IBOutlet weak var emailPhoneTextField: UITextField!
+    @IBOutlet weak var signUpButton: UIButton!
 
     var imagePicker: ImagePicker!
     var uploadedAvatar: Bool = false
@@ -28,27 +26,27 @@ class RegisterViewController: UIViewController {
         self.imagePicker = ImagePicker(presentationController: self, delegate: self)
 
         // Listen to text change events to clear the possible error from earlier attempt.
-        loginText.addTarget(self, action: #selector(textFieldDidChange(_:)), for: UIControl.Event.editingChanged)
-        pwdText.addTarget(self, action: #selector(textFieldDidChange(_:)), for: UIControl.Event.editingChanged)
-        nameText.addTarget(self, action: #selector(textFieldDidChange(_:)), for: UIControl.Event.editingChanged)
-        credentialText.addTarget(self, action: #selector(textFieldDidChange(_:)), for: UIControl.Event.editingChanged)
+        loginTextField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: UIControl.Event.editingChanged)
+        passwordTextField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: UIControl.Event.editingChanged)
+        nameTextField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: UIControl.Event.editingChanged)
+        emailPhoneTextField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: UIControl.Event.editingChanged)
         UiUtils.dismissKeyboardForTaps(onView: self.view)
     }
 
     @objc func textFieldDidChange(_ textField: UITextField) {
         UiUtils.clearTextFieldError(textField)
     }
-    
-    @IBAction func onLoadAvatar(_ sender: UIButton) {
+
+    @IBAction func addAvatarClicked(_ sender: Any) {
         // Get avatar image
         self.imagePicker.present(from: self.view)
     }
 
-    @IBAction func onSignUp(_ sender: Any) {
-        let login = UiUtils.ensureDataInTextField(loginText)
-        let pwd = UiUtils.ensureDataInTextField(pwdText)
-        let name = UiUtils.ensureDataInTextField(nameText)
-        let credential = UiUtils.ensureDataInTextField(credentialText)
+    @IBAction func signUpClicked(_ sender: Any) {
+        let login = UiUtils.ensureDataInTextField(loginTextField)
+        let pwd = UiUtils.ensureDataInTextField(passwordTextField)
+        let name = UiUtils.ensureDataInTextField(nameTextField)
+        let credential = UiUtils.ensureDataInTextField(emailPhoneTextField)
 
         guard !login.isEmpty && !pwd.isEmpty && !name.isEmpty && !credential.isEmpty else { return }
 
@@ -63,22 +61,23 @@ class RegisterViewController: UIViewController {
                 break
             }
         }
-        
+
         guard method != nil else {
-            UiUtils.markTextFieldAsError(credentialText)
+            UiUtils.markTextFieldAsError(emailPhoneTextField)
             return
         }
-        
-        signUpBtn.isUserInteractionEnabled = false
+
+        signUpButton.isUserInteractionEnabled = false
         let tinode = Cache.getTinode()
 
-        let avatar = uploadedAvatar ? avatarView?.image?.resize(width: 128, height: 128, clip: true) : nil
+        let avatar = uploadedAvatar ? avatarImageView?.image?.resize(width: UiUtils.kAvatarSize, height: UiUtils.kAvatarSize, clip: true) : nil
         let vcard = VCard(fn: name, avatar: avatar)
 
         let desc = MetaSetDesc<VCard, String>(pub: vcard, priv: nil)
         let cred = Credential(meth: method!, val: credential)
         var creds = [Credential]()
         creds.append(cred)
+        UiUtils.toggleProgressOverlay(in: self, visible: true, title: "Registering...")
         do {
             let future = !tinode.isConnected ?
                 try tinode.connect(to: Cache.kHostName, useTLS: false)?.thenApply(
@@ -86,7 +85,7 @@ class RegisterViewController: UIViewController {
                         return tinode.createAccountBasic(
                             uname: login, pwd: pwd, login: true,
                             tags: nil, desc: desc, creds: creds)
-                    }) :
+                }) :
                 tinode.createAccountBasic(
                     uname: login, pwd: pwd, login: true,
                     tags: nil, desc: desc, creds: creds)
@@ -112,34 +111,40 @@ class RegisterViewController: UIViewController {
                     }
                     return nil
                 }, onFailure: { err in
-                    print("Could not create account: \(err)")
-                    tinode.disconnect()
-                    return nil
-                })?.thenFinally(finally: { [weak self] in
                     DispatchQueue.main.async {
-                        self?.signUpBtn.isUserInteractionEnabled = true
+                        UiUtils.showToast(message: "Failed to create account: \(err.localizedDescription)")
                     }
+                    tinode.disconnect()
+                    print("Could not create account: \(err)")
                     return nil
-                })
-            
+            })?.thenFinally(finally: { [weak self] in
+                guard let signupVC = self else { return }
+                DispatchQueue.main.async {
+                    signupVC.signUpButton.isUserInteractionEnabled = true
+                    UiUtils.toggleProgressOverlay(in: signupVC, visible: false)
+                }
+            })
         } catch {
             print("Failed to connect/createAccountBasic to Tinode: \(error).")
             tinode.disconnect()
             DispatchQueue.main.async {
-                self.signUpBtn.isUserInteractionEnabled = true
+                UiUtils.showToast(message: "Failed to create account: \(error.localizedDescription)")
+                self.signUpButton.isUserInteractionEnabled = true
+                UiUtils.toggleProgressOverlay(in: self, visible: false)
             }
         }
     }
 }
 
-extension RegisterViewController: ImagePickerDelegate {
+extension SignupViewController: ImagePickerDelegate {
     func didSelect(image: UIImage?, mimeType: String?, fileName: String?) {
         guard let image = image?.resize(width: CGFloat(UiUtils.kAvatarSize), height: CGFloat(UiUtils.kAvatarSize), clip: true) else {
             print("No image specified or failed to resize - skipping")
             return
         }
 
-        self.avatarView.image = image
+        self.avatarImageView.image = image
         uploadedAvatar = true
     }
 }
+
