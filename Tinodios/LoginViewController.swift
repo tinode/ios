@@ -83,6 +83,7 @@ class LoginViewController: UIViewController {
         let tinode = Cache.getTinode()
         let (hostName, useTLS, _) = SettingsHelper.getConnectionSettings()
         print("connecting to \(hostName), useTLS = \(useTLS)")
+        UiUtils.toggleProgressOverlay(in: self, visible: true, title: "Logging in...")
         do {
             try tinode.connect(to: (hostName ?? Cache.kHostName), useTLS: (useTLS ?? false))?
                 .then(
@@ -102,9 +103,12 @@ class LoginViewController: UIViewController {
                         }
                         // TODO: handle credentials validation (pkt.ctrl.code >= 300).
                         Cache.synchronizeContactsPeriodically()
-                        self?.routeToChats()
+                        if let loginVC = self {
+                            UiUtils.toggleProgressOverlay(in: loginVC, visible: false)
+                            loginVC.routeToChats()
+                        }
                         return nil
-                    }, onFailure: { err in
+                    }, onFailure: { [weak self] err in
                         print("failed to login \(err)")
                         var toastMsg: String
                         if let tinodeErr = err as? TinodeError {
@@ -115,12 +119,16 @@ class LoginViewController: UIViewController {
                             toastMsg = err.localizedDescription
                         }
                         DispatchQueue.main.async {
+                            if let loginVC = self {
+                                UiUtils.toggleProgressOverlay(in: loginVC, visible: false)
+                            }
                             UiUtils.showToast(message: toastMsg)
                         }
                         _ = tinode.logout()
                         return nil
                     })
             } catch {
+                UiUtils.toggleProgressOverlay(in: self, visible: false)
                 //os_log("Failed to connect/login to Tinode: %s.", log: OSLog.default, type: .error, error as CVarArg)
                 print("Failed to connect/login to Tinode: \(error).")
                 _ = tinode.logout()

@@ -154,7 +154,7 @@ class AttributedStringFormatter: DraftyFormatter {
             if var children = span.children, !children.isEmpty {
                 // Add line breaks between form elements: each direct descendant is a paragraph.
                 for i in stride(from: children.count-1, to: 0, by: -1) {
-                    children.insert(TreeNode(content: "\n"), at: i);
+                    children.insert(TreeNode(content: "\n"), at: i)
                 }
                 span.children = children
             }
