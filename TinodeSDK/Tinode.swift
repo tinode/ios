@@ -507,7 +507,6 @@ public class Tinode {
      * Stop tracking the topic: remove it from in-memory cache.
      */
     public func stopTrackingTopic(topicName: String) {
-        //Topic topic = mTopics.remove(topicName);
         topics.removeValue(forKey: topicName)
     }
 

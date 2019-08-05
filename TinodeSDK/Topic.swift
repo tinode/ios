@@ -763,12 +763,6 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
                 subsLastUpdated = meta.ts!
             }
             self.routeMetaSub(meta: meta)
-            /*
-            if (mSubsUpdated == null || meta.ts.after(mSubsUpdated)) {
-                mSubsUpdated = meta.ts;
-            }
-            routeMetaSub(meta);
-            */
             print("handling subs")
         }
         if meta.del != nil {
