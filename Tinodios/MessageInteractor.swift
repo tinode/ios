@@ -303,7 +303,6 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         _ = try? self.topic?.delete()?.thenFinally(
             finally: {
                 self.presenter?.dismiss()
-                return nil
             })
     }
     func blockTopic() {
@@ -314,7 +313,6 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
             try self.topic?.setMeta(meta: MsgSetMeta(desc: nil, sub: MetaSetSub(mode: am.wantString), tags: nil, cred: nil))?.thenFinally(
                 finally: {
                     self.presenter?.dismiss()
-                    return nil
                 })
         } catch TinodeError.notConnected(_) {
             UiUtils.showToast(message: "You are offline")
@@ -375,7 +373,6 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                         _ = topic.store?.msgReady(topic: topic, dbMessageId: msgId, data: content)
                         _ = try? topic.syncOne(msgId: msgId)?.thenFinally(finally: {
                             interactor?.loadMessages()
-                            return nil
                         })
                         success = true
                     }

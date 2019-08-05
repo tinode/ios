@@ -70,13 +70,14 @@ class SignupViewController: UITableViewController {
         signUpButton.isUserInteractionEnabled = false
         let tinode = Cache.getTinode()
 
-        let avatar = uploadedAvatar ? avatarImageView?.image?.resize(width: 128, height: 128, clip: true) : nil
+        let avatar = uploadedAvatar ? avatarImageView?.image?.resize(width: UiUtils.kAvatarSize, height: UiUtils.kAvatarSize, clip: true) : nil
         let vcard = VCard(fn: name, avatar: avatar)
 
         let desc = MetaSetDesc<VCard, String>(pub: vcard, priv: nil)
         let cred = Credential(meth: method!, val: credential)
         var creds = [Credential]()
         creds.append(cred)
+        UiUtils.toggleProgressOverlay(in: self, visible: true, title: "Registering...")
         do {
             let future = !tinode.isConnected ?
                 try tinode.connect(to: Cache.kHostName, useTLS: false)?.thenApply(
@@ -114,17 +115,18 @@ class SignupViewController: UITableViewController {
                     tinode.disconnect()
                     return nil
             })?.thenFinally(finally: { [weak self] in
+                guard let signupVC = self else { return }
                 DispatchQueue.main.async {
-                    self?.signUpButton.isUserInteractionEnabled = true
+                    signupVC.signUpButton.isUserInteractionEnabled = true
+                    UiUtils.toggleProgressOverlay(in: signupVC, visible: false)
                 }
-                return nil
             })
-
         } catch {
             print("Failed to connect/createAccountBasic to Tinode: \(error).")
             tinode.disconnect()
             DispatchQueue.main.async {
                 self.signUpButton.isUserInteractionEnabled = true
+                UiUtils.toggleProgressOverlay(in: self, visible: false)
             }
         }
     }
