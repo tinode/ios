@@ -54,7 +54,6 @@
 		0AE7339C22C33FEF0089C8D8 /* ChatListViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0AE7339B22C33FEF0089C8D8 /* ChatListViewCell.xib */; };
 		0AEE8BEE226456080022EC3F /* UiUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AEE8BED226456080022EC3F /* UiUtils.swift */; };
 		58CBE6CE018029121E923407 /* Pods_Tinodios.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B787A84CD010EF920890105 /* Pods_Tinodios.framework */; };
-		7DDADC5021D5C156009733B5 /* RegisterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DDADC4F21D5C156009733B5 /* RegisterViewController.swift */; };
 		7DDADC5221D5C219009733B5 /* ValidatedCredential.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DDADC5121D5C219009733B5 /* ValidatedCredential.swift */; };
 		7DDADC5421D5C2E6009733B5 /* CredentialsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DDADC5321D5C2E6009733B5 /* CredentialsViewController.swift */; };
 		B008593C22741B8A002C5168 /* AttributedStringFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B008593B22741B89002C5168 /* AttributedStringFormatter.swift */; };
@@ -149,7 +148,6 @@
 		3B787A84CD010EF920890105 /* Pods_Tinodios.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Tinodios.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5900B7863CDFB018A86DD3AC /* Pods-Tinodios.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Tinodios.release.xcconfig"; path = "Pods/Target Support Files/Pods-Tinodios/Pods-Tinodios.release.xcconfig"; sourceTree = "<group>"; };
 		75BC852198885F22E865D563 /* Pods-Tinodios.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Tinodios.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Tinodios/Pods-Tinodios.debug.xcconfig"; sourceTree = "<group>"; };
-		7DDADC4F21D5C156009733B5 /* RegisterViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegisterViewController.swift; sourceTree = "<group>"; };
 		7DDADC5121D5C219009733B5 /* ValidatedCredential.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ValidatedCredential.swift; sourceTree = "<group>"; };
 		7DDADC5321D5C2E6009733B5 /* CredentialsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CredentialsViewController.swift; sourceTree = "<group>"; };
 		B008593B22741B89002C5168 /* AttributedStringFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttributedStringFormatter.swift; sourceTree = "<group>"; };
@@ -246,7 +244,6 @@
 				B0DF0322228051B4000F9492 /* MessageViewController+Keyboard.swift */,
 				0A9F62192295169A0087CCF5 /* NewGroupInteractor.swift */,
 				0AC33D022293C7A00060D263 /* NewGroupViewController.swift */,
-				7DDADC4F21D5C156009733B5 /* RegisterViewController.swift */,
 				B031BE5622631304004160AE /* SettingsHelper.swift */,
 				B01C693E22F87B5C003C0AA7 /* SignupViewController.swift */,
 				0A69D47E22A6552300769426 /* TopicInfoViewController.swift */,
@@ -502,7 +499,6 @@
 				0A37D6F521DA075100A124CA /* AccountDb.swift in Sources */,
 				0A0380D821B3CC8100A3FA0E /* AppDelegate.swift in Sources */,
 				0A484E5121E359A800FE9AFE /* MessageDb.swift in Sources */,
-				7DDADC5021D5C156009733B5 /* RegisterViewController.swift in Sources */,
 				B0DF031F227C6898000F9492 /* PaddedLabel.swift in Sources */,
 				0A8D945C22BF5B7F00DC154E /* AvatarWithOnlineIndicator+TypingAnimation.swift in Sources */,
 				B0C6A3C2229EDF14009B0B5D /* ImagePreviewController.swift in Sources */,
