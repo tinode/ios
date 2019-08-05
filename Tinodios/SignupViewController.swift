@@ -111,8 +111,11 @@ class SignupViewController: UITableViewController {
                     }
                     return nil
                 }, onFailure: { err in
-                    print("Could not create account: \(err)")
+                    DispatchQueue.main.async {
+                        UiUtils.showToast(message: "Failed to create account: \(err.localizedDescription)")
+                    }
                     tinode.disconnect()
+                    print("Could not create account: \(err)")
                     return nil
             })?.thenFinally(finally: { [weak self] in
                 guard let signupVC = self else { return }

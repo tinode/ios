@@ -138,8 +138,6 @@ class UiUtils {
         let minMessageHeight = iconSize + spacing * 2
         let maxMessageHeight: CGFloat = 100
 
-        let toastHeight = max(min(parent.frame.height * 0.1, maxMessageHeight), minMessageHeight)
-
         // Prevent very short toasts
         guard duration > 0.5 else { return }
 
@@ -177,6 +175,7 @@ class UiUtils {
         parent.addSubview(toastView)
         label.sizeToFit()
 
+        let toastHeight = max(min(label.frame.height + spacing * 3, maxMessageHeight), minMessageHeight)
         toastView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             toastView.leadingAnchor.constraint(equalTo: parent.leadingAnchor, constant: 0),
