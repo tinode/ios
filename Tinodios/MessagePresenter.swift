@@ -13,7 +13,8 @@ protocol MessagePresentationLogic {
     func setOnline(online: Bool)
     func runTypingAnimation()
     func presentMessages(messages: [StoredMessage])
-    func reloadMessage(withSeqId seqId: Int)
+    func reloadMessages(fromSeqId loId: Int, toSeqId hiId: Int)
+    func reloadAllMessages()
     func updateProgress(forMsgId msgId: Int64, progress: Float)
     func applyTopicPermissions(withError: Error?)
     func endRefresh()
@@ -38,14 +39,19 @@ class MessagePresenter: MessagePresentationLogic {
             self.viewController?.displayChatMessages(messages: messages)
         }
     }
-    func reloadMessage(withSeqId seqId: Int) {
+    func reloadMessages(fromSeqId loId: Int, toSeqId hiId: Int) {
         DispatchQueue.main.async {
-            self.viewController?.reloadMessage(withSeqId: seqId)
+            self.viewController?.reloadMessages(fromSeqId: loId, toSeqId: hiId)
+        }
+    }
+    func reloadAllMessages() {
+        DispatchQueue.main.async {
+            self.viewController?.reloadAllMessages()
         }
     }
     func updateProgress(forMsgId msgId: Int64, progress: Float) {
         DispatchQueue.main.async {
-            self.viewController?.updateProcess(forMsgId: msgId, progress: progress)
+            self.viewController?.updateProgress(forMsgId: msgId, progress: progress)
         }
     }
     func endRefresh() {

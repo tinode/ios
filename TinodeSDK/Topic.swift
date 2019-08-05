@@ -1011,6 +1011,10 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
                     store?.msgRecvByRemote(sub: sub, recv: info.seq)
                 case Tinode.kNoteRead:
                     sub.read = info.seq
+                    if sub.getRecv < sub.getRead {
+                        sub.recv = sub.read
+                        store?.msgRecvByRemote(sub: sub, recv: info.seq)
+                    }
                     store?.msgReadByRemote(sub: sub, read: info.seq)
                 default:
                     break

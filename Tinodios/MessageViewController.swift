@@ -13,8 +13,9 @@ protocol MessageDisplayLogic: class {
     func setOnline(online: Bool)
     func runTypingAnimation()
     func displayChatMessages(messages: [StoredMessage])
-    func reloadMessage(withSeqId seqId: Int)
-    func updateProcess(forMsgId msgId: Int64, progress: Float)
+    func reloadAllMessages()
+    func reloadMessages(fromSeqId loId: Int, toSeqId hiId: Int)
+    func updateProgress(forMsgId msgId: Int64, progress: Float)
     func applyTopicPermissions(withError: Error?)
     func endRefresh()
     func dismissVC()
@@ -408,6 +409,11 @@ extension MessageViewController: MessageDisplayLogic {
         navBarAvatarView.presentTypingAnimation(steps: 30)
     }
 
+    func reloadAllMessages() {
+        assert(Thread.isMainThread)
+        collectionView.reloadSections(IndexSet(integer: 0))
+    }
+
     func displayChatMessages(messages: [StoredMessage]) {
         assert(Thread.isMainThread)
 
@@ -472,14 +478,14 @@ extension MessageViewController: MessageDisplayLogic {
         collectionView.scrollToBottom()
     }
 
-    func reloadMessage(withSeqId seqId: Int) {
+    func reloadMessages(fromSeqId loId: Int, toSeqId hiId: Int) {
         assert(Thread.isMainThread)
-        if let index = self.messageSeqIdIndex[seqId] {
-            self.collectionView.reloadItems(at: [IndexPath(row: index, section: 0)])
-        }
+        let hiIdUpper = hiId + 1
+        let rowIds = (loId..<hiIdUpper).map { self.messageSeqIdIndex[$0] }.filter { $0 != nil }
+        self.collectionView.reloadItems(at: rowIds.map { IndexPath(item: $0!, section: 0) })
     }
 
-    func updateProcess(forMsgId msgId: Int64, progress: Float) {
+    func updateProgress(forMsgId msgId: Int64, progress: Float) {
         assert(Thread.isMainThread)
         if let index = self.messageDbIdIndex[msgId],
             let cell = self.collectionView.cellForItem(at: IndexPath(row: index, section: 0)) as? MessageCell {

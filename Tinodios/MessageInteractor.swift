@@ -58,6 +58,13 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
     var messages: [StoredMessage] = []
     private var messageSenderQueue = DispatchQueue(label: "co.tinode.messagesender")
     private var tinodeEventListener: MessageEventListener? = nil
+    // Last reported recv and read seq ids by the onInfo handler.
+    // Upon receipt of an info message, the handler will reload all messages with
+    // seq ids between the last seen seq id (for recv and read messages respectively)
+    // and the reported info.seq.
+    // The new value for the variables below will be updated to info.seq.
+    private var lastSeenRecv: Int?
+    private var lastSeenRead: Int?
 
     @discardableResult
     func setup(topicName: String?) -> Bool {
@@ -77,6 +84,8 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         if let pub = self.topic?.pub {
             self.presenter?.updateTitleBar(icon: pub.photo?.image(), title: pub.fn, online: self.topic?.online ?? false)
         }
+        self.lastSeenRead = self.topic?.read
+        self.lastSeenRecv = self.topic?.recv
         self.topic?.listener = self
         return self.topic != nil
     }
@@ -388,10 +397,24 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         case "kp":
             self.presenter?.runTypingAnimation()
         case "recv":
-            fallthrough
+            if let oldRecv = self.lastSeenRecv {
+                if let newRecv = info.seq, oldRecv < newRecv {
+                    self.presenter?.reloadMessages(fromSeqId: oldRecv + 1, toSeqId: newRecv)
+                    self.lastSeenRecv = newRecv
+                }
+            } else {
+                self.lastSeenRead = info.seq
+                self.presenter?.reloadAllMessages()
+            }
         case "read":
-            if let seqId = info.seq {
-                self.presenter?.reloadMessage(withSeqId: seqId)
+            if let oldRead = self.lastSeenRead {
+                if let newRead = info.seq, oldRead < newRead {
+                    self.presenter?.reloadMessages(fromSeqId: oldRead + 1, toSeqId: newRead)
+                    self.lastSeenRead = newRead
+                }
+            } else {
+                self.lastSeenRead = info.seq
+                self.presenter?.reloadAllMessages()
             }
         default:
             break
