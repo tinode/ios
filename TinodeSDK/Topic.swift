@@ -1183,7 +1183,7 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
     }
 
     public func delMessages(hard: Bool) -> PromisedReply<ServerMessage>? {
-        return delMessages(from: 0, to: (self.seq ?? 0) + 1, hard: hard)
+        return delMessages(from: 0, to: (self.seq ?? 0), hard: hard)
     }
 
     public func delMessage(id: Int, hard: Bool)  -> PromisedReply<ServerMessage>? {
