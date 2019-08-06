@@ -101,6 +101,8 @@ import UIKit
         if let icon = icon {
             // Avatar image provided.
             self.image = icon
+            // Clear background color.
+            self.backgroundColor = nil
         } else {
             if let id = id, !id.isEmpty {
                 switch Tinode.topicTypeByName(name: id) {
@@ -121,6 +123,7 @@ import UIKit
             } else {
                 // Placeholder image
                 updateDefaultIcon()
+                self.backgroundColor = nil
             }
         }
     }
