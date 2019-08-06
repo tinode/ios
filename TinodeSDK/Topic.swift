@@ -731,8 +731,7 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
         if let s = store {
             for range in delseq {
                 let lo = range.low ?? 0
-                // This generates a 'BETWEEN lo AND hi' SQL query. BETWEEN in SQLite is inclusive-inclusive.
-                s.msgDelete(topic: self, delete: clear, deleteFrom: lo, deleteTo: range.hi ?? lo)
+                s.msgDelete(topic: self, delete: clear, deleteFrom: lo, deleteTo: range.hi ?? lo + 1)
             }
         }
         self.maxDel = clear
@@ -1177,7 +1176,7 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
     }
 
     public func delMessages(hard: Bool) -> PromisedReply<ServerMessage>? {
-        return delMessages(from: 0, to: (self.seq ?? 0), hard: hard)
+        return delMessages(from: 0, to: (self.seq ?? 0) + 1, hard: hard)
     }
 
     public func delMessage(id: Int, hard: Bool)  -> PromisedReply<ServerMessage>? {
