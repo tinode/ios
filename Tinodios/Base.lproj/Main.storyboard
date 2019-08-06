@@ -42,10 +42,10 @@
                                         <rect key="frame" x="0.0" y="16" width="390" height="500"/>
                                         <subviews>
                                             <stackView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" axis="vertical" alignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="dCY-dh-aVz" userLabel="Logo Stack View">
-                                                <rect key="frame" x="0.0" y="0.0" width="390" height="173"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="390" height="45"/>
                                                 <subviews>
                                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="749" verticalCompressionResistancePriority="749" image="logo-ios" translatesAutoresizingMaskIntoConstraints="NO" id="kjo-LF-vGk">
-                                                        <rect key="frame" x="123" y="0.0" width="144" height="144"/>
+                                                        <rect key="frame" x="187" y="0.0" width="16" height="16"/>
                                                         <constraints>
                                                             <constraint firstAttribute="width" relation="lessThanOrEqual" constant="144" id="rbK-QQ-R6l"/>
                                                             <constraint firstAttribute="width" secondItem="kjo-LF-vGk" secondAttribute="height" multiplier="1:1" id="yAo-1D-hRL"/>
@@ -53,7 +53,7 @@
                                                         </constraints>
                                                     </imageView>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="752" text="Tinode Chat" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BS4-zj-4bf">
-                                                        <rect key="frame" x="128.5" y="144" width="133" height="29"/>
+                                                        <rect key="frame" x="128.5" y="16" width="133" height="29"/>
                                                         <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="24"/>
                                                         <nil key="textColor"/>
                                                         <nil key="highlightedColor"/>
@@ -61,7 +61,7 @@
                                                 </subviews>
                                             </stackView>
                                             <stackView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="249" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" axis="vertical" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="l1X-Hs-gMO" userLabel="Login Form Stack View">
-                                                <rect key="frame" x="0.0" y="193" width="390" height="209"/>
+                                                <rect key="frame" x="0.0" y="148.5" width="390" height="209"/>
                                                 <subviews>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" text="Login" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6Zo-fN-yf1">
                                                         <rect key="frame" x="0.0" y="0.0" width="390" height="20.5"/>
@@ -1556,6 +1556,7 @@
                     <connections>
                         <segue destination="UgX-En-K1m" kind="relationship" relationship="viewControllers" id="wTY-U1-Zpb"/>
                         <segue destination="TGI-qc-GMt" kind="relationship" relationship="viewControllers" id="xMD-wH-Ach"/>
+                        <segue destination="54g-fF-w5D" kind="relationship" relationship="viewControllers" id="HZm-mW-ka2"/>
                         <segue destination="6na-ed-mpJ" kind="relationship" relationship="viewControllers" id="c5G-ZL-su1"/>
                     </connections>
                 </tabBarController>
@@ -1656,7 +1657,7 @@
         <!--New Group Controller-->
         <scene sceneID="H36-1e-dDP">
             <objects>
-                <viewController title="New Group Controller" id="TGI-qc-GMt" customClass="NewGroupViewController" customModule="Tinodios" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="New Group Controller" id="TGI-qc-GMt" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="3bC-Mu-7q3">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1809,9 +1810,6 @@
                                                 <integer key="value" value="24"/>
                                             </userDefinedRuntimeAttribute>
                                         </userDefinedRuntimeAttributes>
-                                        <connections>
-                                            <action selector="loadAvatarClicked:" destination="TGI-qc-GMt" eventType="touchUpInside" id="Zk0-Gm-KZg"/>
-                                        </connections>
                                     </button>
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -1858,22 +1856,9 @@
                     </view>
                     <tabBarItem key="tabBarItem" title="New Group" image="new-group-25" id="bYb-ea-USw"/>
                     <toolbarItems>
-                        <barButtonItem systemItem="save" id="18D-3K-VJ1">
-                            <connections>
-                                <action selector="saveButtonClicked:" destination="TGI-qc-GMt" id="Qtb-fa-hfB"/>
-                            </connections>
-                        </barButtonItem>
+                        <barButtonItem systemItem="save" id="18D-3K-VJ1"/>
                     </toolbarItems>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
-                    <connections>
-                        <outlet property="avatarView" destination="osc-Cn-khV" id="z37-4d-UPk"/>
-                        <outlet property="groupNameTextField" destination="NCa-fb-bVK" id="gtV-mx-viP"/>
-                        <outlet property="membersTableView" destination="eRo-gC-LR2" id="QeK-tr-m7P"/>
-                        <outlet property="privateTextField" destination="z0Q-rh-DzF" id="yb0-PQ-PHS"/>
-                        <outlet property="saveButtonItem" destination="18D-3K-VJ1" id="CrK-I0-AhG"/>
-                        <outlet property="selectedCollectionView" destination="tUT-r9-WMo" id="xRe-zv-dWz"/>
-                        <outlet property="tagsTextField" destination="YQ6-fM-V3P" id="pie-if-Wvu"/>
-                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="bTN-HH-J8a" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -1882,17 +1867,12 @@
         <!--New Group-->
         <scene sceneID="Wih-ax-Cue">
             <objects>
-                <tableViewController id="54g-fF-w5D" sceneMemberID="viewController">
+                <tableViewController id="54g-fF-w5D" customClass="NewGroupViewController" customModule="Tinodios" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" dataMode="static" style="grouped" separatorStyle="default" allowsSelection="NO" rowHeight="50" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="1" id="ieh-40-9nh">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <inset key="separatorInset" minX="18" minY="0.0" maxX="18" maxY="0.0"/>
-                        <view key="tableFooterView" contentMode="scaleToFill" id="97T-cj-WVa" userLabel="Blank footer">
-                            <rect key="frame" x="0.0" y="419" width="414" height="44"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                        </view>
                         <sections>
                             <tableViewSection id="6EZ-fq-tiF">
                                 <cells>
@@ -1934,6 +1914,7 @@
                                                                 </userDefinedRuntimeAttribute>
                                                             </userDefinedRuntimeAttributes>
                                                             <connections>
+                                                                <action selector="loadAvatarClicked:" destination="54g-fF-w5D" eventType="touchUpInside" id="8nV-Gy-AbA"/>
                                                                 <action selector="loadAvatarClicked:" destination="TGI-qc-GMt" eventType="touchUpInside" id="DrD-4x-PVN"/>
                                                             </connections>
                                                         </button>
@@ -2004,17 +1985,26 @@
                                             <rect key="frame" x="0.0" y="0.0" width="414" height="49.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Tags, comma-separate list" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="qI8-qu-wYg">
-                                                    <rect key="frame" x="20" y="14" width="374" height="22"/>
-                                                    <nil key="textColor"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="18"/>
-                                                    <textInputTraits key="textInputTraits"/>
-                                                </textField>
+                                                <view opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="eW7-0d-9hE" customClass="TagsEditView" customModule="Tinodios" customModuleProvider="target">
+                                                    <rect key="frame" x="20" y="9" width="374" height="32"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="32" id="Bcb-YN-XQA"/>
+                                                    </constraints>
+                                                    <userDefinedRuntimeAttributes>
+                                                        <userDefinedRuntimeAttribute type="string" keyPath="placeholder" value="Tags, comma-separated list"/>
+                                                        <userDefinedRuntimeAttribute type="number" keyPath="borderStyle">
+                                                            <integer key="value" value="0"/>
+                                                        </userDefinedRuntimeAttribute>
+                                                        <userDefinedRuntimeAttribute type="number" keyPath="fontSize">
+                                                            <integer key="value" value="18"/>
+                                                        </userDefinedRuntimeAttribute>
+                                                    </userDefinedRuntimeAttributes>
+                                                </view>
                                             </subviews>
                                             <constraints>
-                                                <constraint firstItem="qI8-qu-wYg" firstAttribute="centerY" secondItem="gLA-7s-ZF8" secondAttribute="centerY" id="gF8-Xt-jNs"/>
-                                                <constraint firstItem="qI8-qu-wYg" firstAttribute="leading" secondItem="gLA-7s-ZF8" secondAttribute="leading" constant="20" symbolic="YES" id="qGi-3V-2Yl"/>
-                                                <constraint firstAttribute="trailing" secondItem="qI8-qu-wYg" secondAttribute="trailing" constant="20" symbolic="YES" id="wEc-rE-nU8"/>
+                                                <constraint firstItem="eW7-0d-9hE" firstAttribute="leading" secondItem="gLA-7s-ZF8" secondAttribute="leading" constant="20" symbolic="YES" id="KDM-vR-1dL"/>
+                                                <constraint firstItem="eW7-0d-9hE" firstAttribute="centerY" secondItem="gLA-7s-ZF8" secondAttribute="centerY" id="LG3-sR-30u"/>
+                                                <constraint firstAttribute="trailing" secondItem="eW7-0d-9hE" secondAttribute="trailing" constant="20" symbolic="YES" id="O0D-Hf-KWr"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
@@ -2042,6 +2032,7 @@
                                                 </imageView>
                                             </subviews>
                                         </tableViewCellContentView>
+                                        <color key="tintColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                     </tableViewCell>
                                 </cells>
                             </tableViewSection>
@@ -2053,9 +2044,20 @@
                     </tableView>
                     <tabBarItem key="tabBarItem" title="New Group" image="new-group-25" id="0Fx-rq-hiS"/>
                     <toolbarItems>
-                        <barButtonItem systemItem="save" id="sKP-e9-Xlo"/>
+                        <barButtonItem systemItem="save" id="sKP-e9-Xlo">
+                            <connections>
+                                <action selector="saveButtonClicked:" destination="54g-fF-w5D" id="Iuc-0p-ama"/>
+                            </connections>
+                        </barButtonItem>
                     </toolbarItems>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
+                    <connections>
+                        <outlet property="avatarView" destination="IVi-b4-eb8" id="6nd-mH-AZe"/>
+                        <outlet property="groupNameTextField" destination="kDN-bf-JDL" id="Z8N-ve-nML"/>
+                        <outlet property="privateTextField" destination="Do2-Ue-UdA" id="EYV-vV-p6S"/>
+                        <outlet property="saveButtonItem" destination="sKP-e9-Xlo" id="Fnt-yq-h4A"/>
+                        <outlet property="tagsTextField" destination="eW7-0d-9hE" id="U9u-ob-cKc"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="slW-Wc-jxc" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -2110,7 +2112,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ICE-Ms-S7M" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2784" y="1795"/>
+            <point key="canvasLocation" x="2810" y="1787"/>
         </scene>
     </scenes>
     <resources>

@@ -20,12 +20,10 @@ internal struct Constants {
     internal static let kTagEditViewTextfieldHSpace: CGFloat = 3.0
     internal static let kTagEditViewMinTextfieldWidth: CGFloat = 56.0
     internal static let kTagEditViewStandardRowHeight: CGFloat = 25.0
-    internal static let kTagEditViewContentInsets =
-        UIEdgeInsets(top: 2, left: 2, bottom: 2, right: 2)
+    internal static let kTagEditViewContentInsets = UIEdgeInsets(top: 2, left: 2, bottom: 2, right: 2)
     internal static let kTagEditViewSpaceBetweenTags: CGFloat = 2.0
     internal static let kTagEditViewSpaceBetweenLines: CGFloat = 2.0
-    internal static let kTagEditViewMarginLayouts =
-        UIEdgeInsets(top: 2, left: 6, bottom: 2, right: 6)
+    internal static let kTagEditViewMarginLayouts = UIEdgeInsets(top: 2, left: 6, bottom: 2, right: 6)
     internal static let kTagEditViewBorderColor: UIColor = .lightGray
 }
 
@@ -194,9 +192,23 @@ public class TagsEditView: UIScrollView {
     }
 
     @IBInspectable
-    public var placeholder: String = "Comma-separated tags" {
+    public var placeholder: String = "" {
         didSet {
             updatePlaceholderTextVisibility()
+        }
+    }
+
+    @IBInspectable
+    public var fontSize: CGFloat = UIFont.preferredFont(forTextStyle: .body).pointSize {
+        didSet {
+            textField.font = textField.font?.withSize(self.fontSize)
+        }
+    }
+
+    @IBInspectable
+    public var borderStyle: Int = 3 { // 3 is UITextField.BorderStyle.roundedRect
+        didSet {
+            textField.borderStyle = UITextField.BorderStyle(rawValue: self.borderStyle) ?? .roundedRect
         }
     }
 
@@ -408,9 +420,6 @@ extension TagsEditView {
         self.showsHorizontalScrollIndicator = false
 
         self.layoutMargins = Constants.kTagEditViewMarginLayouts
-        self.layer.borderWidth = Constants.kTagBorderWidth
-        self.layer.borderColor = Constants.kTagEditViewBorderColor.cgColor
-        self.layer.cornerRadius = Constants.kTagCornerRadius
         self.contentInset = Constants.kTagEditViewContentInsets
 
         clipsToBounds = true
