@@ -147,8 +147,8 @@ class MessageDb {
         if endId == 0 {
             endId = startId
         }
-        // delete from messages where topic_id = topicId and seq between startId and endId.
-        let rows = self.table.filter(self.topicId == topicId && startId...endId ~= self.seq)
+        // delete from messages where topic_id = topicId and seq between startId (inclusive) and endId (non-inclusive).
+        let rows = self.table.filter(self.topicId == topicId && startId <= self.seq && self.seq < endId)
         do {
             return try self.db.run(rows.delete()) > 0
         } catch {
@@ -168,11 +168,11 @@ class MessageDb {
             var deleteResult = false
             try db.savepoint("MessageDb.markDeleted") {
                 let rowsToMarkDeleted = self.table.filter(
-                    self.topicId == topicId && startId...endId ~= self.seq && self.status == BaseDb.kStatusSynced)
+                    self.topicId == topicId && startId <= self.seq && self.seq < endId && self.status == BaseDb.kStatusSynced)
                 updateResult = try self.db.run(rowsToMarkDeleted.update(
                     self.status <- hard ? BaseDb.kStatusDeletedHard : BaseDb.kStatusDeletedSoft)) > 0
                 let rowsToDelete = self.table.filter(
-                    self.topicId == topicId && startId...endId ~= self.seq && self.status <= BaseDb.kStatusQueued)
+                    self.topicId == topicId && startId <= self.seq && self.seq < endId && self.status <= BaseDb.kStatusQueued)
                 deleteResult = try self.db.run(rowsToDelete.delete()) > 0
             }
             return updateResult && deleteResult
