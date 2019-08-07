@@ -45,6 +45,13 @@ class EditMembersViewController: UIViewController, UITableViewDataSource {
     }
 
     private func setup() {
+        if let subscriptions = delegate?.editMembersInitialSelection(editMembersView) {
+            for uid in subscriptions {
+                selectedIds.insert(uid)
+                initialIds.insert(uid)
+            }
+        }
+
         contacts = contactsManager.fetchContacts()
         for i in 0..<contacts.count {
             let c = contacts[i]
@@ -53,12 +60,6 @@ class EditMembersViewController: UIViewController, UITableViewDataSource {
             }
         }
         self.navigationItem.title = "Manage members"
-
-        guard let subscriptions = delegate?.editMembersInitialSelection(editMembersView) else { return }
-        for uid in subscriptions {
-            selectedIds.insert(uid)
-            initialIds.insert(uid)
-        }
     }
     func addUser(with uniqueId: String) {
         self.selectedIds.insert(uniqueId)
