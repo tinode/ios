@@ -50,13 +50,12 @@ class NewGroupViewController: UITableViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        //self.tabBarController?.navigationItem.rightBarButtonItem = saveButtonItem
-        self.interactor?.loadAndPresentContacts()
+        self.tabBarController?.navigationItem.rightBarButtonItem = saveButtonItem
     }
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
 
-        //self.tabBarController?.navigationItem.rightBarButtonItem = nil
+        self.tabBarController?.navigationItem.rightBarButtonItem = nil
     }
 
     @objc func textFieldDidChange(_ textField: UITextField) {
@@ -66,6 +65,15 @@ class NewGroupViewController: UITableViewController {
     // MARK: - Table view data source
     override func numberOfSections(in tableView: UITableView) -> Int {
         return 2
+    }
+
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        print("Got segue \(segue.identifier ?? "unnamed")")
+        if segue.identifier == "NewGroupToEditMembers" {
+            let navigator = segue.destination as! UINavigationController
+            let destination = navigator.viewControllers.first as! EditMembersViewController
+            destination.delegate = self
+        }
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -138,6 +146,20 @@ class NewGroupViewController: UITableViewController {
 extension NewGroupViewController: NewGroupDisplayLogic {
     func presentChat(with topicName: String) {
         self.presentChatReplacingCurrentVC(with: topicName)
+    }
+}
+
+extension NewGroupViewController: EditMembersDelegate {
+    func editMembersInitialSelection(_: UIView) -> [String] {
+        return selectedContacts.compactMap { $0.uniqueId }
+    }
+
+    func editMembersDidEndEditing(_: UIView, added: [String], removed: [String]) {
+        self.interactor?.updateSelection(added: added, removed: removed)
+    }
+
+    func editMembersWillChangeState(_: UIView, uid: String, added: Bool, initiallySelected: Bool) -> Bool {
+        return true
     }
 }
 

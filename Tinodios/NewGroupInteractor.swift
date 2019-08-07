@@ -10,11 +10,13 @@ import UIKit
 import TinodeSDK
 
 protocol NewGroupBusinessLogic: class {
+    // List of selected members
     var selectedMembers: Array<String> { get }
-    func loadAndPresentContacts()
-    func addUser(with uniqueId: String)
-    func removeUser(with uniqueId: String)
-    func userSelected(with uniqueId: String) -> Bool
+    // func loadAndPresentContacts()
+    func updateSelection(added: [String], removed: [String])
+    // func addUser(with uniqueId: String)
+    // func removeUser(with uniqueId: String)
+    // func userSelected(with uniqueId: String) -> Bool
     func createGroupTopic(
         titled name: String, subtitled subtitle: String,
         with tags: [String]?, consistingOf members: [String],
@@ -33,6 +35,10 @@ class NewGroupInteractor: NewGroupBusinessLogic {
     weak var presenter: NewGroupDisplayLogic?
     func loadAndPresentContacts() {
         self.contacts = self.contactsManager.fetchContacts()
+    }
+    func updateSelection(added: [String], removed: [String]) {
+        self.selectedUsers.formUnion(added)
+        self.selectedUsers.subtract(removed)
     }
     func addUser(with uniqueId: String) {
         self.selectedUsers.insert(uniqueId)

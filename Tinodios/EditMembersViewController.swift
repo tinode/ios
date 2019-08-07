@@ -24,7 +24,7 @@ class EditMembersViewController: UIViewController, UITableViewDataSource {
     private var initialIds = Set<String>()
     private var selectedIds = Set<String>()
 
-    private weak var delegate: EditMembersDelegate?
+    weak var delegate: EditMembersDelegate?
 
     @IBOutlet var editMembersView: UIView!
     @IBOutlet weak var membersTableView: UITableView!
@@ -45,19 +45,20 @@ class EditMembersViewController: UIViewController, UITableViewDataSource {
     }
 
     private func setup() {
-        guard let subscriptions = delegate?.editMembersInitialSelection(editMembersView) else { return }
-        for uid in subscriptions {
-            selectedIds.insert(uid)
-            initialIds.insert(uid)
-        }
+        contacts = contactsManager.fetchContacts()
         for i in 0..<contacts.count {
             let c = contacts[i]
             if let uid = c.uniqueId, userSelected(with: uid) {
                 selectedContacts.append(IndexPath(row: i, section: 0))
             }
         }
-        // isAdmin = topic.isAdmin
-        // self.navigationItem.title = topic.pub?.fn ?? "Unknown"
+        self.navigationItem.title = "Manage members"
+
+        guard let subscriptions = delegate?.editMembersInitialSelection(editMembersView) else { return }
+        for uid in subscriptions {
+            selectedIds.insert(uid)
+            initialIds.insert(uid)
+        }
     }
     func addUser(with uniqueId: String) {
         self.selectedIds.insert(uniqueId)
@@ -94,40 +95,33 @@ class EditMembersViewController: UIViewController, UITableViewDataSource {
         return cell
     }
     @IBAction func saveClicked(_ sender: Any) {
-        self.updateGroup()
-        self.navigationController?.popViewController(animated: true)
-        self.dismiss(animated: true, completion: nil)
-    }
-    private func getDeltas() -> ([String], [String]) {
-        let additions = selectedIds.subtracting(initialIds)
-        let deletions = initialIds.subtracting(selectedIds)
-        return (additions.map { $0 }, deletions.map { $0 })
-    }
-    func updateGroup() {
+        navigationController?.popViewController(animated: true)
+
         let deltas = getDeltas()
         let additions = deltas.0
         let deletions = deltas.1
 
         delegate?.editMembersDidEndEditing(editMembersView, added: additions, removed: deletions)
-        /*
-        print("inviting \(additions)")
-        for uid in additions {
-            _ = try? topic.invite(user: uid, in: nil)?.then(
-                onSuccess: nil, onFailure: UiUtils.ToastFailureHandler)
-        }
-        print("ejecting \(deletions)")
-        for uid in deletions {
-            _ = try? topic.eject(user: uid, ban: false)?.then(
-                onSuccess: nil, onFailure: UiUtils.ToastFailureHandler)
-        }
-        */
+
+        dismiss(animated: true, completion: nil)
+    }
+
+    @IBAction func cancelClicked(_ sender: Any) {
+        self.navigationController?.popViewController(animated: true)
+        self.dismiss(animated: true, completion: nil)
+    }
+
+    private func getDeltas() -> ([String], [String]) {
+        let additions = selectedIds.subtracting(initialIds)
+        let deletions = initialIds.subtracting(selectedIds)
+        return (additions.map { $0 }, deletions.map { $0 })
     }
 }
 
 extension EditMembersViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
-        guard let uid = contacts[indexPath.row - 1].uniqueId else {
-            print("no unique id for user at \(indexPath.row - 1)")
+        guard let uid = contacts[indexPath.row].uniqueId else {
+            print("no unique id for user at \(indexPath.row)")
             return nil
         }
 
@@ -135,8 +129,8 @@ extension EditMembersViewController: UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard let uid = contacts[indexPath.row - 1].uniqueId else {
-            print("no unique id for user at \(indexPath.row - 1)")
+        guard let uid = contacts[indexPath.row].uniqueId else {
+            print("no unique id for user at \(indexPath.row)")
             return
         }
 
@@ -149,7 +143,7 @@ extension EditMembersViewController: UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, willDeselectRowAt indexPath: IndexPath) -> IndexPath? {
-        guard let uid = contacts[indexPath.row - 1].uniqueId else {
+        guard let uid = contacts[indexPath.row].uniqueId else {
             print("no unique id for user at \(indexPath.row - 1)")
             return indexPath
         }
@@ -159,7 +153,7 @@ extension EditMembersViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
         guard let uid = contacts[indexPath.row - 1].uniqueId else {
-            print("no unique id for user at \(indexPath.row - 1)")
+            print("no unique id for user at \(indexPath.row)")
             return
         }
 
