@@ -100,13 +100,15 @@ class UiUtils {
         return text
     }
     public static func markTextFieldAsError(_ field: UITextField) {
-        // Make border red to signify error.
-        field.layer.borderColor = UIColor.red.cgColor
-        field.layer.borderWidth = 1.0
+        field.rightViewMode = .always
+        let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
+        imageView.image = UIImage(named: "important-32")
+        imageView.tintColor = .red
+        field.rightView = imageView
     }
     public static func clearTextFieldError(_ field: UITextField) {
-        // Reset red border to default.
-        field.layer.borderWidth = 0.0
+        field.rightViewMode = .never
+        field.rightView = nil
     }
 
     public static func bytesToHumanSize(_ bytes: Int64) -> String {
