@@ -93,14 +93,7 @@ class LoginViewController: UIViewController {
                 .then(
                     onSuccess: { [weak self] pkt in
                         print("login successful for: \(tinode.myUid!)")
-                        UserDefaults.standard.set(userName, forKey: Utils.kTinodePrefLastLogin)
-                        if let token = tinode.authToken, !token.isEmpty {
-                            let tokenSaveSuccessful = KeychainWrapper.standard.set(
-                                token, forKey: LoginViewController.kTokenKey)
-                            if !tokenSaveSuccessful {
-                                print("Could not save auth token...")
-                            }
-                        }
+                        Utils.saveAuthToken(for: userName, token: tinode.authToken)
                         // TODO: handle credentials validation (pkt.ctrl.code >= 300).
                         Cache.synchronizeContactsPeriodically()
                         if let loginVC = self {

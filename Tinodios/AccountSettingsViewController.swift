@@ -292,6 +292,7 @@ class AccountSettingsViewController: UITableViewController {
         print("logging out")
         BaseDb.getInstance().logout()
         Cache.invalidate()
+        Utils.removeAuthToken()
         UiUtils.routeToLoginVC()
     }
 }
