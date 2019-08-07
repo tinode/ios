@@ -1480,6 +1480,7 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
+                        <outlet property="editMembersView" destination="O3T-QZ-1RZ" id="cJQ-mW-Zoi"/>
                         <outlet property="membersTableView" destination="Bzn-Pa-JP8" id="PdM-1T-1yD"/>
                         <outlet property="selectedCollectionView" destination="S8Z-r1-Nrh" id="6Y6-uN-WxJ"/>
                     </connections>
@@ -2131,6 +2132,6 @@
         <image name="tags-24" width="24" height="24"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="11u-RR-BAc"/>
+        <segue reference="Fnn-wi-PrS"/>
     </inferredMetricsTieBreakers>
 </document>

@@ -15,7 +15,6 @@ internal struct Constants {
     internal static let kTagTextColor: UIColor = .white
     internal static let kTextFont = UIFont.systemFont(ofSize: 12.0)
     internal static let kTagCornerRadius: CGFloat = 3.0
-    internal static let kTagBorderWidth: CGFloat = 1.0
 
     internal static let kTagEditViewTextfieldHSpace: CGFloat = 3.0
     internal static let kTagEditViewMinTextfieldWidth: CGFloat = 56.0
@@ -24,7 +23,6 @@ internal struct Constants {
     internal static let kTagEditViewSpaceBetweenTags: CGFloat = 2.0
     internal static let kTagEditViewSpaceBetweenLines: CGFloat = 2.0
     internal static let kTagEditViewMarginLayouts = UIEdgeInsets(top: 2, left: 6, bottom: 2, right: 6)
-    internal static let kTagEditViewBorderColor: UIColor = .lightGray
 }
 
 public typealias TinodeTag = String
@@ -54,7 +52,6 @@ public class TagView: UIView {
         super.init(frame: CGRect.zero)
         self.backgroundColor = tintColor
         self.layer.cornerRadius = Constants.kTagCornerRadius
-        self.layer.borderWidth = Constants.kTagBorderWidth
         self.layer.masksToBounds = true
 
         textLabel.frame = CGRect(x: layoutMargins.left, y: layoutMargins.top, width: 0, height: 0)

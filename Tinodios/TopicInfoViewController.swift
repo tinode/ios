@@ -156,7 +156,6 @@ class TopicInfoViewController: UITableViewController {
     private func reloadData() {
         topicTitleTextView.text = topic.pub?.fn ?? "Unknown"
         topicTitleTextView.sizeToFit()
-        print("topicTitleTextView.frme: \(topicTitleTextView.frame)")
         topicIDLabel.text = topic?.name
         topicIDLabel.sizeToFit()
         let subtitle = topic.comment ?? ""
@@ -431,6 +430,11 @@ extension TopicInfoViewController {
 
     override func tableView(_ tableView: UITableView, indentationLevelForRowAt indexPath: IndexPath) -> Int {
         return 0
+    }
+
+    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        // Hide empty header in the first section.
+        return section == 0 ? CGFloat.leastNormalMagnitude : super.tableView(tableView, heightForHeaderInSection: section)
     }
 
     struct AccessModeLabel {

@@ -9,7 +9,6 @@ import UIKit
 import TinodeSDK
 
 protocol NewGroupDisplayLogic: class {
-    func displayContacts(contacts: [ContactHolder])
     func presentChat(with topicName: String)
 }
 
@@ -20,8 +19,7 @@ class NewGroupViewController: UITableViewController {
     @IBOutlet weak var tagsTextField: TagsEditView!
     @IBOutlet weak var avatarView: RoundImageView!
 
-    private var contacts: [ContactHolder] = []
-    private var selectedContacts: [IndexPath] = []
+    private var selectedContacts: [ContactHolder] = []
 
     private var imageUploaded: Bool = false
 
@@ -82,7 +80,7 @@ class NewGroupViewController: UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ContactViewCell", for: indexPath) as! ContactViewCell
 
         // Configure the cell...
-        let contact = contacts[indexPath.row - 1]
+        let contact = selectedContacts[indexPath.row - 1]
 
         cell.avatar.set(icon: contact.image, title: contact.displayName, id: contact.uniqueId)
         cell.title.text = contact.displayName
@@ -91,6 +89,11 @@ class NewGroupViewController: UITableViewController {
         cell.subtitle.sizeToFit()
 
         return cell
+    }
+
+    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        // Hide empty header in the first section.
+        return section == 0 ? CGFloat.leastNormalMagnitude : super.tableView(tableView, heightForHeaderInSection: section)
     }
 
     // MARK: - UI event handlers.
@@ -133,28 +136,9 @@ class NewGroupViewController: UITableViewController {
 }
 
 extension NewGroupViewController: NewGroupDisplayLogic {
-    func displayContacts(contacts: [ContactHolder]) {
-        self.contacts = contacts
-    }
-
     func presentChat(with topicName: String) {
         self.presentChatReplacingCurrentVC(with: topicName)
     }
-}
-
-extension NewGroupViewController : UICollectionViewDataSource {
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        toggleNoSelectedMembersNote(on: selectedContacts.isEmpty)
-        return selectedContacts.count
-    }
-
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SelectedMemberViewCell", for: indexPath) as! SelectedMemberViewCell
-        let contact = contacts[selectedContacts[indexPath.item].item]
-        cell.avatarImageView.set(icon: contact.image, title: contact.displayName, id: contact.uniqueId)
-        return cell
-    }
-
 }
 
 extension NewGroupViewController: ImagePickerDelegate {

@@ -33,7 +33,6 @@ class NewGroupInteractor: NewGroupBusinessLogic {
     weak var presenter: NewGroupDisplayLogic?
     func loadAndPresentContacts() {
         self.contacts = self.contactsManager.fetchContacts()
-        self.presenter?.displayContacts(contacts: contacts ?? [])
     }
     func addUser(with uniqueId: String) {
         self.selectedUsers.insert(uniqueId)
