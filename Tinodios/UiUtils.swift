@@ -78,6 +78,16 @@ class UiUtils {
         }
     }
 
+    public static func routeToCredentialsVC(in navVC: UINavigationController?, verifying meth: String?) {
+        guard let navVC = navVC else { return }
+        DispatchQueue.main.async {
+            let storyboard = UIStoryboard(name: "Main", bundle: nil)
+            let destinationVC = storyboard.instantiateViewController(withIdentifier: "CredentialsViewController") as! CredentialsViewController
+            destinationVC.meth = meth
+            navVC.pushViewController(destinationVC, animated: true)
+        }
+    }
+
     public static func routeToChatListVC() {
         DispatchQueue.main.async {
             let storyboard = UIStoryboard(name: "Main", bundle: nil)

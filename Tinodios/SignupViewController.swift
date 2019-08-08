@@ -93,15 +93,8 @@ class SignupViewController: UITableViewController {
             try future?.then(
                 onSuccess: { [weak self] msg in
                     if let ctrl = msg?.ctrl, ctrl.code >= 300 {
-                        let vc = self?.storyboard?.instantiateViewController(withIdentifier: String(describing: type(of: CredentialsViewController()))) as! CredentialsViewController
-                        if let cArr = ctrl.getStringArray(for: "cred") {
-                            for c in cArr {
-                                vc.meth = c
-                            }
-                        }
-                        DispatchQueue.main.async {
-                            self?.navigationController?.pushViewController(vc, animated: true)
-                        }
+                        UiUtils.routeToCredentialsVC(in: self?.navigationController,
+                                                     verifying: ctrl.getStringArray(for: "cred")?.first)
                     } else {
                         let storyboard = UIStoryboard(name: "Main", bundle: nil)
                         let destinationVC = storyboard.instantiateViewController(withIdentifier: "ChatsNavigator") as! UINavigationController
