@@ -145,7 +145,7 @@ extension EditMembersViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, willDeselectRowAt indexPath: IndexPath) -> IndexPath? {
         guard let uid = contacts[indexPath.row].uniqueId else {
-            print("no unique id for user at \(indexPath.row - 1)")
+            print("no unique id for user at \(indexPath.row)")
             return indexPath
         }
 
@@ -153,7 +153,7 @@ extension EditMembersViewController: UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
-        guard let uid = contacts[indexPath.row - 1].uniqueId else {
+        guard let uid = contacts[indexPath.row].uniqueId else {
             print("no unique id for user at \(indexPath.row)")
             return
         }
