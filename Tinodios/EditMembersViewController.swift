@@ -136,11 +136,9 @@ extension EditMembersViewController: UITableViewDelegate {
         }
 
         tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
-        print("selected index path = \(indexPath)")
         self.addUser(with: uid)
         selectedContacts.append(indexPath)
         selectedCollectionView.insertItems(at: [IndexPath(item: selectedContacts.count - 1, section: 0)])
-        print("+ selected rows: \(self.selectedIds)")
     }
 
     func tableView(_ tableView: UITableView, willDeselectRowAt indexPath: IndexPath) -> IndexPath? {
@@ -164,7 +162,6 @@ extension EditMembersViewController: UITableViewDelegate {
             selectedContacts.remove(at: removeAt)
             selectedCollectionView.deleteItems(at: [IndexPath(item: removeAt, section: 0)])
         }
-        print("- selected rows: \(self.selectedIds)")
     }
 }
 

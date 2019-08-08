@@ -30,7 +30,6 @@ class TopicInfoViewController: UITableViewController {
     private static let kSectionDefaultPermissionsAnon = 1
 
     private static let kSectionMembers = 5
-    private static let kSectionMembersButtons = 0
 
     @IBOutlet weak var topicTitleTextView: UITextView!
     @IBOutlet weak var topicSubtitleTextView: UITextView!
@@ -171,6 +170,7 @@ class TopicInfoViewController: UITableViewController {
             anonUsersPermissionsLabel?.text = topic.defacs?.getAnon()
             myPermissionsLabel?.text = acs?.modeString
             subscriptions = topic.getSubscriptions()
+            // FIXME: reload just the members section.
             tableView.reloadData()
         } else {
             peerNameLabel?.text = topic.pub?.fn ?? "Unknown"

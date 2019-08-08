@@ -20,18 +20,20 @@ class NewGroupViewController: UITableViewController {
     @IBOutlet weak var avatarView: RoundImageView!
 
     private var selectedContacts: [ContactHolder] = []
+    private var selectedUids = Set<String>()
+    var selectedMembers: Array<String> {
+        get {
+            return selectedUids.map { $0 }
+        }
+    }
+    private var contactsManager = ContactsManager()
 
     private var imageUploaded: Bool = false
-
-    private var interactor: NewGroupBusinessLogic?
 
     private var imagePicker: ImagePicker!
 
     private func setup() {
-        let interactor = NewGroupInteractor()
-        self.interactor = interactor
-        interactor.presenter = self
-
+        print("setup called")
         self.imagePicker = ImagePicker(presentationController: self, delegate: self)
         self.tagsTextField.onVerifyTag = { (_, tag) in
             return Utils.isValidTag(tag: tag)
@@ -67,15 +69,6 @@ class NewGroupViewController: UITableViewController {
         return 2
     }
 
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        print("Got segue \(segue.identifier ?? "unnamed")")
-        if segue.identifier == "NewGroupToEditMembers" {
-            let navigator = segue.destination as! UINavigationController
-            let destination = navigator.viewControllers.first as! EditMembersViewController
-            destination.delegate = self
-        }
-    }
-
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // Section 0: use default.
         // Section 1: always show [+ Add members] then the list of members.
@@ -104,6 +97,23 @@ class NewGroupViewController: UITableViewController {
         return section == 0 ? CGFloat.leastNormalMagnitude : super.tableView(tableView, heightForHeaderInSection: section)
     }
 
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        // Otherwise crash
+        return indexPath.section == 0 || indexPath.row == 0 ? super.tableView(tableView, heightForRowAt: indexPath) : 60
+    }
+    override func tableView(_ tableView: UITableView, indentationLevelForRowAt indexPath: IndexPath) -> Int {
+        // Otherwise crash
+        return indexPath.section == 0 || indexPath.row == 0 ? super.tableView(tableView, indentationLevelForRowAt: indexPath) : 0
+    }
+
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "NewGroupToEditMembers" {
+            let navigator = segue.destination as! UINavigationController
+            let destination = navigator.viewControllers.first as! EditMembersViewController
+            destination.delegate = self
+        }
+    }
+
     // MARK: - UI event handlers.
     @IBAction func loadAvatarClicked(_ sender: Any) {
         // Get avatar image
@@ -112,17 +122,16 @@ class NewGroupViewController: UITableViewController {
 
     @IBAction func saveButtonClicked(_ sender: Any) {
         let groupName = UiUtils.ensureDataInTextField(groupNameTextField)
-        // Optional
-        let privateInfo = (privateTextField.text ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
-        guard let members = self.interactor?.selectedMembers else {
-            print("members can't be empty")
+        let members = selectedMembers
+        if members.isEmpty {
+            UiUtils.showToast(message: "Select at least one group member")
             return
         }
-
+        // Optional
+        let privateInfo = (privateTextField.text ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
         guard !groupName.isEmpty else { return }
         let avatar = imageUploaded ? avatarView.image?.resize(width: CGFloat(Float(UiUtils.kAvatarSize)), height: CGFloat(Float(UiUtils.kAvatarSize)), clip: true) : nil
-        let tagsList = tagsTextField.tags
-        self.interactor?.createGroupTopic(titled: groupName, subtitled: privateInfo, with: tagsList, consistingOf: members, withAvatar: avatar)
+        createGroupTopic(titled: groupName, subtitled: privateInfo, with: tagsTextField.tags, consistingOf: members, withAvatar: avatar)
     }
 
     /// Show message that no members are selected.
@@ -141,6 +150,29 @@ class NewGroupViewController: UITableViewController {
             tableView.backgroundView = nil
         }
     }
+
+    private func createGroupTopic(titled name: String, subtitled subtitle: String, with tags: [String]?, consistingOf members: [String], withAvatar avatar: UIImage?) {
+        let tinode = Cache.getTinode()
+        let topic = DefaultComTopic(in: tinode, forwardingEventsTo: nil)
+        topic.pub = VCard(fn: name, avatar: avatar)
+        topic.priv = ["comment": .string(subtitle)] // No need to use Tinode.kNullValue here
+        topic.tags = tags
+        do {
+            try topic.subscribe()?.then(
+                onSuccess: { msg in
+                    // TODO: invite members
+                    for u in members {
+                        topic.invite(user: u, in: nil)
+                    }
+                    // route to chat
+                    self.presentChat(with: topic.name)
+                    return nil
+            },onFailure: UiUtils.ToastFailureHandler)
+        } catch {
+            UiUtils.showToast(message: "Failed to create group: \(error.localizedDescription)")
+            print("failed to create group: \(error)")
+        }
+    }
 }
 
 extension NewGroupViewController: NewGroupDisplayLogic {
@@ -151,11 +183,30 @@ extension NewGroupViewController: NewGroupDisplayLogic {
 
 extension NewGroupViewController: EditMembersDelegate {
     func editMembersInitialSelection(_: UIView) -> [String] {
-        return selectedContacts.compactMap { $0.uniqueId }
+        return selectedMembers
     }
 
     func editMembersDidEndEditing(_: UIView, added: [String], removed: [String]) {
-        self.interactor?.updateSelection(added: added, removed: removed)
+        selectedUids.formUnion(added)
+        selectedUids.subtract(removed)
+        // A simple tableView.reloadData() results in a crash. Thus doing this crazy stuff.
+        let removedPaths = removed.map( {(rem: String) -> IndexPath in
+            let row = selectedContacts.firstIndex(where: { h in h.uniqueId == rem })
+            assert(row != nil, "Removed non-existent user")
+            return IndexPath(row: row! + 1, section: 1)
+        })
+        let newSelection = contactsManager.fetchContacts(withUids: selectedMembers) ?? []
+        let addedPaths = added.map( {(add: String) -> IndexPath in
+            let row = newSelection.firstIndex(where: { h in h.uniqueId == add })
+            assert(row != nil, "Added non-existent user")
+            return IndexPath(row: row! + 1, section: 1)
+        })
+
+        tableView.beginUpdates()
+        selectedContacts = newSelection
+        self.tableView.deleteRows(at: removedPaths, with: .automatic)
+        self.tableView.insertRows(at: addedPaths, with: .automatic)
+        tableView.endUpdates()
     }
 
     func editMembersWillChangeState(_: UIView, uid: String, added: Bool, initiallySelected: Bool) -> Bool {

@@ -340,7 +340,7 @@
                                             <constraints>
                                                 <constraint firstItem="yKx-xt-rdn" firstAttribute="centerY" secondItem="BQ9-e7-B1U" secondAttribute="centerY" id="0vz-c8-7ON"/>
                                                 <constraint firstItem="yKx-xt-rdn" firstAttribute="leading" secondItem="BQ9-e7-B1U" secondAttribute="leadingMargin" id="RN4-ab-Ylf"/>
-                                                <constraint firstAttribute="trailing" secondItem="yKx-xt-rdn" secondAttribute="trailing" constant="20" symbolic="YES" id="lVB-9b-irj"/>
+                                                <constraint firstAttribute="trailingMargin" secondItem="yKx-xt-rdn" secondAttribute="trailing" id="lVB-9b-irj"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
@@ -359,7 +359,7 @@
                                                 </textField>
                                             </subviews>
                                             <constraints>
-                                                <constraint firstAttribute="trailing" secondItem="zmL-3Y-R2r" secondAttribute="trailing" constant="20" symbolic="YES" id="QPJ-zi-knp"/>
+                                                <constraint firstAttribute="trailingMargin" secondItem="zmL-3Y-R2r" secondAttribute="trailing" id="QPJ-zi-knp"/>
                                                 <constraint firstItem="zmL-3Y-R2r" firstAttribute="centerY" secondItem="4Va-US-eGJ" secondAttribute="centerY" id="bsJ-hf-gCM"/>
                                                 <constraint firstItem="zmL-3Y-R2r" firstAttribute="leading" secondItem="4Va-US-eGJ" secondAttribute="leadingMargin" id="hdn-W0-3JP"/>
                                             </constraints>
