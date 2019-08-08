@@ -2,8 +2,7 @@
 //  CredentialsViewController.swift
 //  Tinodios
 //
-//  Created by ztimc on 2018/12/26.
-//  Copyright © 2018 Tinode. All rights reserved.
+//  Copyright © 2019 Tinode. All rights reserved.
 //
 
 import UIKit
@@ -30,6 +29,7 @@ class CredentialsViewController : UIViewController {
         let tinode = Cache.getTinode()
         
         guard let token = tinode.authToken else {
+            self.dismiss(animated: true, completion: nil)
             return
         }
         
@@ -43,9 +43,7 @@ class CredentialsViewController : UIViewController {
                     if let ctrl = msg?.ctrl, ctrl.code >= 300 {
                         print("login error")
                     } else {
-                        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-                        let destinationVC = storyboard.instantiateViewController(withIdentifier: "ChatsNavigator") as! UINavigationController
-                        self?.show(destinationVC, sender: nil)
+                        UiUtils.routeToChatListVC()
                     }
                     return nil
                     }, onFailure: nil)
@@ -56,6 +54,6 @@ class CredentialsViewController : UIViewController {
    
     
     @IBAction func onCancel(_ sender: UIButton) {
-        
+        self.dismiss(animated: true, completion: nil)
     }
 }
