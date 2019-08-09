@@ -94,11 +94,9 @@ class LoginViewController: UIViewController {
         }
 
         let tinode = Cache.getTinode()
-        let (hostName, useTLS, _) = SettingsHelper.getConnectionSettings()
-        print("connecting to \(hostName), useTLS = \(useTLS)")
         UiUtils.toggleProgressOverlay(in: self, visible: true, title: "Logging in...")
         do {
-            try tinode.connect(to: (hostName ?? Cache.kHostName), useTLS: (useTLS ?? false))?
+            try tinode.connectDefault()?
                 .then(
                     onSuccess: { pkt in
                         return tinode.loginBasic(uname: userName, password: password)

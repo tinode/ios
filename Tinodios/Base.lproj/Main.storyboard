@@ -160,7 +160,7 @@
         <!--Reset Password-->
         <scene sceneID="XJG-SC-LDS">
             <objects>
-                <viewController title="Reset Password" id="lq5-3O-Yva" sceneMemberID="viewController">
+                <viewController title="Reset Password" id="lq5-3O-Yva" customClass="ResetPasswordViewController" customModule="Tinodios" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Yaq-Qa-bSO">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -171,18 +171,22 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="VJ5-b7-ozY">
-                                <rect key="frame" x="48" y="184.5" width="318" height="30"/>
+                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="VJ5-b7-ozY" userLabel="Email or phone">
+                                <rect key="frame" x="48" y="184.5" width="318" height="40"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="40" id="h4Y-dG-mwN"/>
+                                </constraints>
                                 <nil key="textColor"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="18"/>
                                 <textInputTraits key="textInputTraits"/>
                             </textField>
                             <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" horizontalCompressionResistancePriority="751" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="i0f-S8-O1v">
-                                <rect key="frame" x="169.5" y="234.5" width="75" height="36"/>
+                                <rect key="frame" x="169.5" y="244.5" width="75" height="36"/>
                                 <fontDescription key="fontDescription" type="system" weight="medium" pointSize="20"/>
                                 <state key="normal" title="Request"/>
                                 <connections>
                                     <action selector="onConfirm:" destination="1NU-b8-NVe" eventType="touchUpInside" id="iM3-YB-iQb"/>
+                                    <action selector="requestButtonClicked:" destination="lq5-3O-Yva" eventType="touchUpInside" id="qud-p2-kkt"/>
                                 </connections>
                             </button>
                         </subviews>
@@ -200,6 +204,10 @@
                     </view>
                     <navigationItem key="navigationItem" title="Reset Password" id="wWt-TO-3We"/>
                     <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
+                    <connections>
+                        <outlet property="credentialTextField" destination="VJ5-b7-ozY" id="1rg-dP-3gF"/>
+                        <outlet property="requestButton" destination="i0f-S8-O1v" id="t5a-jD-6KE"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="QtJ-u7-Oyt" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

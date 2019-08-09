@@ -13,6 +13,7 @@ struct AuthScheme {
     }
     static let kLoginBasic = "basic"
     static let kLoginToken = "token"
+    static let kLoginReset = "reset"
     
     let scheme: String
     let secret: String
@@ -43,7 +44,14 @@ struct AuthScheme {
         }
         return (uname + ":" + password).toBase64()!
     }
-    
+
+    static func encodeResetToken(scheme: String, method: String, value: String) throws -> String {
+        guard scheme.range(of: ":") == nil && method.range(of: ":") == nil else {
+            throw AuthSchemeError.invalidParams("invalid parameter")
+        }
+        return "\(scheme):\(method):\(value)".toBase64()!
+    }
+
     static func decodeBasicToken(token: String) throws -> [String] {
         guard let basicToken = token.fromBase64() else {
             throw AuthSchemeError.invalidParams(
