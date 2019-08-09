@@ -42,6 +42,8 @@ class SendMessageBar: UIView {
     // MARK: IBActions
 
     @IBAction func attach(_ sender: UIButton) {
+        inputField.resignFirstResponder()
+        
         let alert = UIAlertController(title: "Attachment", message: nil, preferredStyle: .actionSheet)
         alert.addAction(UIAlertAction(title: "Image", style: .default, handler: { action in
             self.delegate?.sendMessageBar(attachment: false)
