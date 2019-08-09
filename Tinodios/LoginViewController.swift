@@ -31,11 +31,25 @@ class LoginViewController: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: UIControl.keyboardWillHideNotification, object: nil)
 
         UiUtils.dismissKeyboardForTaps(onView: self.view)
-/*
-        let tap = UITapGestureRecognizer(target: self.view, action: #selector(UIView.endEditing(_:)))
-        tap.cancelsTouchesInView = false
-        self.view.addGestureRecognizer(tap)
- */
+    }
+
+    deinit {
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardDidShowNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardDidHideNotification, object: nil)
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        self.navigationController?.navigationBar.isHidden = true
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        self.navigationController?.navigationBar.isHidden = false
+    }
+
+    override var prefersStatusBarHidden: Bool {
+        return true
     }
 
     @objc func keyboardWillShow(_ notification: Notification) {
@@ -48,6 +62,17 @@ class LoginViewController: UIViewController {
 
         scrollView.contentInset.bottom = bottomInset
         scrollView.scrollIndicatorInsets.bottom = bottomInset
+
+        // If active text field is hidden by the keyboard, scroll it into view.
+        var visibleRect = self.view.frame
+        visibleRect.size.height -= keyboardSize.height
+        if let activeField = [userNameTextEdit, passwordTextEdit].first(where: { $0.isFirstResponder }) {
+            print("visible \(visibleRect); active origin \(activeField.frame.origin)")
+            if visibleRect.contains(activeField.frame.origin) {
+                let scrollPoint = CGPoint(x: 0, y: activeField.frame.origin.y - keyboardSize.height)
+                scrollView.setContentOffset(scrollPoint, animated: true)
+            }
+        }
     }
 
     @objc func keyboardWillHide(_ notification: Notification) {
