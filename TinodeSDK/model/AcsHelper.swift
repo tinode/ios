@@ -40,54 +40,42 @@ public class AcsHelper: Codable, Equatable {
         guard let b = a else { return "" }
         return AcsHelper.encode(mode: b)
     }
+    /// The value is neither nil nor Invalid. None is considered to be defined.
     public var isDefined: Bool {
-        guard let b = a else { return false }
-        return b != AcsHelper.kModeInvalid
-    }
-    public var isAdmin: Bool {
-        get {
-            return ((a ?? 0) & AcsHelper.kModeApprove) != 0
-        }
-    }
-    public var isSharer: Bool {
-        get {
-            return ((a ?? 0) & AcsHelper.kModeShare) != 0
-        }
+        return (a ?? AcsHelper.kModeInvalid) != AcsHelper.kModeInvalid
     }
     public var isOwner: Bool {
-        get {
-            return ((a ?? 0) & AcsHelper.kModeOwner) != 0
-        }
+        return ((a ?? 0) & AcsHelper.kModeOwner) != 0
+    }
+    public var isAdmin: Bool {
+        return ((a ?? 0) & AcsHelper.kModeApprove) != 0
+    }
+    public var isManager: Bool {
+        return isOwner || isAdmin
+    }
+    public var isSharer: Bool {
+        return ((a ?? 0) & AcsHelper.kModeShare) != 0
     }
     public var isMuted: Bool {
-        get {
-            return ((a ?? 0) & AcsHelper.kModePres) == 0
-        }
+        return ((a ?? 0) & AcsHelper.kModePres) == 0
     }
     public var isInvalid: Bool {
-        get {
-            return (a ?? 0) == AcsHelper.kModeInvalid
-        }
+        return (a ?? 0) == AcsHelper.kModeInvalid
     }
     public var isJoiner: Bool {
-        get {
-            return ((a ?? 0) & AcsHelper.kModeJoin) != 0
-        }
+        return ((a ?? 0) & AcsHelper.kModeJoin) != 0
     }
     public var isReader: Bool {
-        get {
-            return ((a ?? 0) & AcsHelper.kModeRead) != 0
-        }
+        return ((a ?? 0) & AcsHelper.kModeRead) != 0
     }
     public var isWriter: Bool {
-        get {
-            return ((a ?? 0) & AcsHelper.kModeWrite) != 0
-        }
+        return ((a ?? 0) & AcsHelper.kModeWrite) != 0
     }
     public var isDeleter: Bool {
-        get {
-            return ((a ?? 0) & AcsHelper.kModeDelete) != 0
-        }
+        return ((a ?? 0) & AcsHelper.kModeDelete) != 0
+    }
+    public var isNone: Bool {
+        return (a ?? -1) == AcsHelper.kModeNone
     }
     public init(str: String?) {
         a = AcsHelper.decode(from: str)

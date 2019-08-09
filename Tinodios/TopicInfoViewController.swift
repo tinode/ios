@@ -89,7 +89,7 @@ class TopicInfoViewController: UITableViewController {
             loadAvatarButton.isHidden = !topic.isManager
             showDefaultPermissions = topic.isManager
             showPeerPermissions = false
-            showGroupMembers = true
+            showGroupMembers = topic.isManager || topic.isSharer
             tableView.register(UINib(nibName: "ContactViewCell", bundle: nil), forCellReuseIdentifier: "ContactViewCell")
         } else {
             loadAvatarButton.isHidden = true
@@ -477,26 +477,28 @@ extension TopicInfoViewController {
         var result = [AccessModeLabel]()
         if let acs = acs {
             if acs.isModeDefined {
-                if !acs.isJoiner || (!acs.isWriter && !acs.isReader) {
-                    result.append(AccessModeLabel(color: AccessModeLabel.kColorRedBorder, text: "blocked"))
-                } else if acs.isOwner {
-                    result.append(AccessModeLabel(color: AccessModeLabel.kColorGreenBorder, text: "owner"))
-                } else if acs.isAdmin {
-                    result.append(AccessModeLabel(color: AccessModeLabel.kColorGreenBorder, text: "admin"))
-                } else if !acs.isWriter {
-                    result.append(AccessModeLabel(color: AccessModeLabel.kColorYellowBorder, text: "read-only"))
-                } else if !acs.isReader {
-                    result.append(AccessModeLabel(color: AccessModeLabel.kColorYellowBorder, text: "write-only"))
-                }
-            } else if !acs.isInvalid {
-                // The mode is undefined (NONE)
-                if acs.isGivenDefined || !acs.isWantDefined {
-                    result.append(AccessModeLabel(color: AccessModeLabel.kColorGrayBorder, text: "invited"))
-                } else if !acs.isGivenDefined && acs.isWantDefined {
-                    result.append(AccessModeLabel(color: AccessModeLabel.kColorGrayBorder, text: "requested"))
+                if !acs.isNone {
+                    if !acs.isJoiner || (!acs.isWriter && !acs.isReader) {
+                        result.append(AccessModeLabel(color: AccessModeLabel.kColorRedBorder, text: "blocked"))
+                    } else if acs.isOwner {
+                        result.append(AccessModeLabel(color: AccessModeLabel.kColorGreenBorder, text: "owner"))
+                    } else if acs.isAdmin {
+                        result.append(AccessModeLabel(color: AccessModeLabel.kColorGreenBorder, text: "admin"))
+                    } else if !acs.isWriter {
+                        result.append(AccessModeLabel(color: AccessModeLabel.kColorYellowBorder, text: "read-only"))
+                    } else if !acs.isReader {
+                        result.append(AccessModeLabel(color: AccessModeLabel.kColorYellowBorder, text: "write-only"))
+                    }
                 } else {
-                    // Undefined state.
-                    result.append(AccessModeLabel(color: AccessModeLabel.kColorGrayBorder, text: "undefined"))
+                    // The acs.mode is 'N' (none)
+                    if !acs.isNoneGiven || acs.isNoneWant {
+                        result.append(AccessModeLabel(color: AccessModeLabel.kColorGrayBorder, text: "invited"))
+                    } else if acs.isNoneGiven && !acs.isNoneWant {
+                        result.append(AccessModeLabel(color: AccessModeLabel.kColorGrayBorder, text: "requested"))
+                    } else {
+                        // Undefined state: both None.
+                        result.append(AccessModeLabel(color: AccessModeLabel.kColorGrayBorder, text: "undefined"))
+                    }
                 }
             }
         }

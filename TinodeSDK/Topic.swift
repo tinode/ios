@@ -309,72 +309,49 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
     }
 
     public var topicType: TopicType {
-        get {
-            return Tinode.topicTypeByName(name: self.name)
-        }
+        return Tinode.topicTypeByName(name: self.name)
     }
     public var isP2PType: Bool {
-        get {
-            return topicType == .p2p
-        }
+        return topicType == .p2p
     }
     public var isMeType: Bool {
-        get {
-            return topicType == .me
-        }
+        return topicType == .me
     }
     public var isFndType: Bool {
-        get {
-            return topicType == .fnd
-        }
+        return topicType == .fnd
     }
     public var isGrpType: Bool {
-        get {
-            return topicType == .grp
-        }
+        return topicType == .grp
     }
     public var isManager: Bool {
-        get {
-            return description?.acs?.isManager ?? false
-        }
+        return description?.acs?.isManager ?? false
+    }
+    public var isSharer: Bool {
+        return description?.acs?.isSharer ?? false
     }
     public var isMuted: Bool {
-        get {
-            return description?.acs?.isMuted ?? false
-        }
+        return description?.acs?.isMuted ?? false
     }
     public var isOwner: Bool {
-        get {
-            return description?.acs?.isOwner ?? false
-        }
+        return description?.acs?.isOwner ?? false
     }
     public var isAdmin: Bool {
-        get {
-            return description?.acs?.isAdmin ?? false
-        }
+        return description?.acs?.isAdmin ?? false
     }
     public var isReader: Bool {
-        get {
-            return description?.acs?.isReader ?? false
-        }
+        return description?.acs?.isReader ?? false
     }
     public var isWriter: Bool {
-        get {
-            return description?.acs?.isWriter ?? false
-        }
+        return description?.acs?.isWriter ?? false
     }
     public var isJoiner: Bool {
-        get {
-            return description?.acs?.isJoiner ?? false
-        }
+        return description?.acs?.isJoiner ?? false
     }
     public var isDeleter: Bool {
-        get {
-            return description?.acs?.isDeleter ?? false
-        }
+        return description?.acs?.isDeleter ?? false
     }
     public var isArchived: Bool {
-        get { return false }
+        return false
     }
 
     // Storage is owned by Tinode.
@@ -1416,26 +1393,22 @@ public class ComTopic<DP: Codable>: Topic<DP, PrivateType, DP, PrivateType> {
     }
 
     public override var isArchived: Bool {
-        get {
-            guard let archived = priv?["arch"] else { return false }
-            switch archived {
-            case .bool(let x):
-                return x
-            default:
-                return false
-            }
+        guard let archived = priv?["arch"] else { return false }
+        switch archived {
+        case .bool(let x):
+            return x
+        default:
+            return false
         }
     }
 
     public var comment: String? {
-        get { return priv?.comment }
+        return priv?.comment
     }
 
     public var peer: Subscription<DP, PrivateType>? {
-        get {
-            guard isP2PType else { return nil }
-            return self.getSubscription(for: self.name)
-        }
+        guard isP2PType else { return nil }
+        return self.getSubscription(for: self.name)
     }
 
     override public func getSubscription(for key: String?) -> Subscription<DP, PrivateType>? {
