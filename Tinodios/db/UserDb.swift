@@ -125,12 +125,12 @@ class UserDb {
         guard let accountId = BaseDb.getInstance().account?.id else  {
             return -1
         }
-        if let row = try? db.pluck(self.table.select(self.id).filter(self.uid == uid && self.accountId == accountId)), let r = row?[self.id] {
-            return r
+        if let row = try? db.pluck(self.table.select(self.id).filter(self.uid == uid && self.accountId == accountId)) {
+            return row[self.id]
         }
         return -1
     }
-    private func rowToUser(r: Row, uid: String) -> UserProto? {
+    private func rowToUser(r: Row) -> UserProto? {
         let id = r[self.id]
         let updated = r[self.updated]
         let pub = r[self.pub]
@@ -143,23 +143,25 @@ class UserDb {
         guard let uid = uid, let accountId = BaseDb.getInstance().account?.id else {
             return nil
         }
-        guard let row = try? db.pluck(self.table.filter(self.uid == uid && self.accountId == accountId)), let r = row else {
+        guard let row = try? db.pluck(self.table.filter(self.uid == uid && self.accountId == accountId)) else {
             return nil
         }
-        return rowToUser(r: r, uid: uid)
+        return rowToUser(r: row)
     }
-    func readAll(for uid: String?) -> [UserProto]? {
-        guard let uid = uid else { return nil }
+
+    // Generic reader
+    private func read(one uid: String?, multiple uids: [String]) -> [UserProto]? {
+        guard uid != nil || !uids.isEmpty else { return nil }
         guard let accountId = BaseDb.getInstance().account?.id else  {
             return nil
         }
-        let query = self.table.select(self.table[*])
-            .where(self.accountId == accountId && self.uid != uid)
-            .order(self.updated.desc)
+        var query = self.table.select(self.table[*])
+        query = uid != nil ? query.where(self.accountId == accountId && self.uid != uid) : query.where(self.accountId == accountId && uids.contains(self.uid))
+        query = query.order(self.updated.desc, self.id.desc)
         do {
             var users = [UserProto]()
             for r in try db.prepare(query) {
-                if let u = rowToUser(r: r, uid: uid) {
+                if let u = rowToUser(r: r) {
                     users.append(u)
                 }
             }
@@ -168,5 +170,15 @@ class UserDb {
             print("UserDb select all rows for account id \(accountId): \(error)")
         }
         return nil
+    }
+
+    // Read users with uids in the array.
+    func read(uids: [String]) -> [UserProto]? {
+        return read(one: nil, multiple: uids)
+    }
+
+    // Select all users except given user.
+    func readAll(for uid: String?) -> [UserProto]? {
+        return read(one: uid, multiple: [])
     }
 }

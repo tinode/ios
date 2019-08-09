@@ -9,49 +9,41 @@ import UIKit
 import TinodeSDK
 
 protocol NewGroupDisplayLogic: class {
-    func displayContacts(contacts: [ContactHolder])
     func presentChat(with topicName: String)
 }
 
-class NewGroupViewController: UIViewController, UITableViewDataSource {
+class NewGroupViewController: UITableViewController {
     @IBOutlet weak var saveButtonItem: UIBarButtonItem!
-    @IBOutlet weak var membersTableView: UITableView!
     @IBOutlet weak var groupNameTextField: UITextField!
     @IBOutlet weak var privateTextField: UITextField!
     @IBOutlet weak var tagsTextField: TagsEditView!
     @IBOutlet weak var avatarView: RoundImageView!
-    @IBOutlet weak var selectedCollectionView: UICollectionView!
 
-    private var contacts: [ContactHolder] = []
-    private var selectedContacts: [IndexPath] = []
+    private var selectedContacts: [ContactHolder] = []
+    private var selectedUids = Set<String>()
+    var selectedMembers: Array<String> {
+        get {
+            return selectedUids.map { $0 }
+        }
+    }
+    private var contactsManager = ContactsManager()
 
     private var imageUploaded: Bool = false
-
-    private var interactor: NewGroupBusinessLogic?
 
     private var imagePicker: ImagePicker!
 
     private func setup() {
-        let interactor = NewGroupInteractor()
-        self.interactor = interactor
-        interactor.presenter = self
-
+        print("setup called")
         self.imagePicker = ImagePicker(presentationController: self, delegate: self)
         self.tagsTextField.onVerifyTag = { (_, tag) in
             return Utils.isValidTag(tag: tag)
         }
     }
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        self.membersTableView.dataSource = self
-        self.membersTableView.allowsMultipleSelection = true
-        self.membersTableView.delegate = self
-        self.membersTableView.register(UINib(nibName: "ContactViewCell", bundle: nil), forCellReuseIdentifier: "ContactViewCell")
-
-        self.selectedCollectionView.dataSource = self
-        self.selectedCollectionView.register(UINib(nibName: "SelectedMemberViewCell", bundle: nil), forCellWithReuseIdentifier: "SelectedMemberViewCell")
-
+        self.tableView.register(UINib(nibName: "ContactViewCell", bundle: nil), forCellReuseIdentifier: "ContactViewCell")
         self.groupNameTextField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: UIControl.Event.editingChanged)
         self.privateTextField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: UIControl.Event.editingChanged)
         UiUtils.dismissKeyboardForTaps(onView: self.view)
@@ -61,28 +53,35 @@ class NewGroupViewController: UIViewController, UITableViewDataSource {
         super.viewDidAppear(animated)
 
         self.tabBarController?.navigationItem.rightBarButtonItem = saveButtonItem
-        self.interactor?.loadAndPresentContacts()
     }
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
 
         self.tabBarController?.navigationItem.rightBarButtonItem = nil
     }
+
     @objc func textFieldDidChange(_ textField: UITextField) {
         UiUtils.clearTextFieldError(textField)
     }
+
     // MARK: - Table view data source
-    func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
+    override func numberOfSections(in tableView: UITableView) -> Int {
+        return 2
     }
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return contacts.count
+
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        // Section 0: use default.
+        // Section 1: always show [+ Add members] then the list of members.
+        return section == 0 ? super.tableView(tableView, numberOfRowsInSection: 0) : selectedContacts.count + 1
     }
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard indexPath.section == 1 && indexPath.row > 0 else { return super.tableView(tableView, cellForRowAt: indexPath) }
+
         let cell = tableView.dequeueReusableCell(withIdentifier: "ContactViewCell", for: indexPath) as! ContactViewCell
 
         // Configure the cell...
-        let contact = contacts[indexPath.row]
+        let contact = selectedContacts[indexPath.row - 1]
 
         cell.avatar.set(icon: contact.image, title: contact.displayName, id: contact.uniqueId)
         cell.title.text = contact.displayName
@@ -90,13 +89,29 @@ class NewGroupViewController: UIViewController, UITableViewDataSource {
         cell.subtitle.text = contact.subtitle ?? contact.uniqueId
         cell.subtitle.sizeToFit()
 
-        // Data reload clears selection. If we already have any selected users,
-        // select the corresponding rows in the table.
-        if let uniqueId = contact.uniqueId, self.interactor?.userSelected(with: uniqueId) ?? false {
-            tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none)
-        }
-
         return cell
+    }
+
+    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        // Hide empty header in the first section.
+        return section == 0 ? CGFloat.leastNormalMagnitude : super.tableView(tableView, heightForHeaderInSection: section)
+    }
+
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        // Otherwise crash
+        return indexPath.section == 0 || indexPath.row == 0 ? super.tableView(tableView, heightForRowAt: indexPath) : 60
+    }
+    override func tableView(_ tableView: UITableView, indentationLevelForRowAt indexPath: IndexPath) -> Int {
+        // Otherwise crash
+        return indexPath.section == 0 || indexPath.row == 0 ? super.tableView(tableView, indentationLevelForRowAt: indexPath) : 0
+    }
+
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "NewGroupToEditMembers" {
+            let navigator = segue.destination as! UINavigationController
+            let destination = navigator.viewControllers.first as! EditMembersViewController
+            destination.delegate = self
+        }
     }
 
     // MARK: - UI event handlers.
@@ -107,23 +122,22 @@ class NewGroupViewController: UIViewController, UITableViewDataSource {
 
     @IBAction func saveButtonClicked(_ sender: Any) {
         let groupName = UiUtils.ensureDataInTextField(groupNameTextField)
-        // Optional
-        let privateInfo = (privateTextField.text ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
-        guard let members = self.interactor?.selectedMembers else {
-            print("members can't be empty")
+        let members = selectedMembers
+        if members.isEmpty {
+            UiUtils.showToast(message: "Select at least one group member")
             return
         }
-
+        // Optional
+        let privateInfo = (privateTextField.text ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
         guard !groupName.isEmpty else { return }
         let avatar = imageUploaded ? avatarView.image?.resize(width: CGFloat(Float(UiUtils.kAvatarSize)), height: CGFloat(Float(UiUtils.kAvatarSize)), clip: true) : nil
-        let tagsList = tagsTextField.tags
-        self.interactor?.createGroupTopic(titled: groupName, subtitled: privateInfo, with: tagsList, consistingOf: members, withAvatar: avatar)
+        createGroupTopic(titled: groupName, subtitled: privateInfo, with: tagsTextField.tags, consistingOf: members, withAvatar: avatar)
     }
 
     /// Show message that no members are selected.
     private func toggleNoSelectedMembersNote(on show: Bool) {
         if show {
-            let messageLabel = UILabel(frame: CGRect(x: 0, y: 0, width: selectedCollectionView.bounds.size.width, height: selectedCollectionView.bounds.size.height))
+            let messageLabel = UILabel(frame: CGRect(x: 0, y: 0, width: tableView.bounds.width, height: tableView.bounds.height))
             messageLabel.text = "No members selected"
             messageLabel.textColor = .gray
             messageLabel.numberOfLines = 0
@@ -131,69 +145,73 @@ class NewGroupViewController: UIViewController, UITableViewDataSource {
             messageLabel.font = .preferredFont(forTextStyle: .body)
             messageLabel.sizeToFit()
 
-            selectedCollectionView.backgroundView = messageLabel
+            tableView.backgroundView = messageLabel
         } else {
-            selectedCollectionView.backgroundView = nil
+            tableView.backgroundView = nil
+        }
+    }
+
+    private func createGroupTopic(titled name: String, subtitled subtitle: String, with tags: [String]?, consistingOf members: [String], withAvatar avatar: UIImage?) {
+        let tinode = Cache.getTinode()
+        let topic = DefaultComTopic(in: tinode, forwardingEventsTo: nil)
+        topic.pub = VCard(fn: name, avatar: avatar)
+        topic.priv = ["comment": .string(subtitle)] // No need to use Tinode.kNullValue here
+        topic.tags = tags
+        do {
+            try topic.subscribe()?.then(
+                onSuccess: { msg in
+                    // TODO: invite members
+                    for u in members {
+                        topic.invite(user: u, in: nil)
+                    }
+                    // route to chat
+                    self.presentChat(with: topic.name)
+                    return nil
+            },onFailure: UiUtils.ToastFailureHandler)
+        } catch {
+            UiUtils.showToast(message: "Failed to create group: \(error.localizedDescription)")
+            print("failed to create group: \(error)")
         }
     }
 }
 
 extension NewGroupViewController: NewGroupDisplayLogic {
-    func displayContacts(contacts: [ContactHolder]) {
-        self.contacts = contacts
-        self.membersTableView.reloadData()
-    }
-
     func presentChat(with topicName: String) {
         self.presentChatReplacingCurrentVC(with: topicName)
     }
 }
 
-extension NewGroupViewController: UITableViewDelegate {
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
-        print("selected index path = \(indexPath)")
-        let contact = contacts[indexPath.row]
-        if let uniqueId = contact.uniqueId {
-            self.interactor?.addUser(with: uniqueId)
-            selectedContacts.append(indexPath)
-            selectedCollectionView.insertItems(at: [IndexPath(item: selectedContacts.count - 1, section: 0)])
-        } else {
-            print("no unique id for user \(contact.displayName ?? "No name")")
-        }
-        print("+ selected rows: \(self.interactor?.selectedMembers ?? [])")
+extension NewGroupViewController: EditMembersDelegate {
+    func editMembersInitialSelection(_: UIView) -> [String] {
+        return selectedMembers
     }
 
-    func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
-        tableView.cellForRow(at: indexPath)?.accessoryType = .none
-        print("deselected index path = \(indexPath)")
-        let contact = contacts[indexPath.row]
-        if let uniqueId = contact.uniqueId {
-            self.interactor?.removeUser(with: uniqueId)
-            if let removeAt = selectedContacts.firstIndex(of: indexPath) {
-                selectedContacts.remove(at: removeAt)
-                selectedCollectionView.deleteItems(at: [IndexPath(item: removeAt, section: 0)])
-            }
-        } else {
-            print("no unique id for user \(contact.displayName ?? "No name")")
-        }
-        print("- selected rows: \(self.interactor?.selectedMembers ?? [])")
-    }
-}
+    func editMembersDidEndEditing(_: UIView, added: [String], removed: [String]) {
+        selectedUids.formUnion(added)
+        selectedUids.subtract(removed)
+        // A simple tableView.reloadData() results in a crash. Thus doing this crazy stuff.
+        let removedPaths = removed.map( {(rem: String) -> IndexPath in
+            let row = selectedContacts.firstIndex(where: { h in h.uniqueId == rem })
+            assert(row != nil, "Removed non-existent user")
+            return IndexPath(row: row! + 1, section: 1)
+        })
+        let newSelection = contactsManager.fetchContacts(withUids: selectedMembers) ?? []
+        let addedPaths = added.map( {(add: String) -> IndexPath in
+            let row = newSelection.firstIndex(where: { h in h.uniqueId == add })
+            assert(row != nil, "Added non-existent user")
+            return IndexPath(row: row! + 1, section: 1)
+        })
 
-extension NewGroupViewController : UICollectionViewDataSource {
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        toggleNoSelectedMembersNote(on: selectedContacts.isEmpty)
-        return selectedContacts.count
-    }
-
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SelectedMemberViewCell", for: indexPath) as! SelectedMemberViewCell
-        let contact = contacts[selectedContacts[indexPath.item].item]
-        cell.avatarImageView.set(icon: contact.image, title: contact.displayName, id: contact.uniqueId)
-        return cell
+        tableView.beginUpdates()
+        selectedContacts = newSelection
+        self.tableView.deleteRows(at: removedPaths, with: .automatic)
+        self.tableView.insertRows(at: addedPaths, with: .automatic)
+        tableView.endUpdates()
     }
 
+    func editMembersWillChangeState(_: UIView, uid: String, added: Bool, initiallySelected: Bool) -> Bool {
+        return true
+    }
 }
 
 extension NewGroupViewController: ImagePickerDelegate {

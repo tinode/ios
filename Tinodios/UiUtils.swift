@@ -78,6 +78,16 @@ class UiUtils {
         }
     }
 
+    public static func routeToCredentialsVC(in navVC: UINavigationController?, verifying meth: String?) {
+        guard let navVC = navVC else { return }
+        DispatchQueue.main.async {
+            let storyboard = UIStoryboard(name: "Main", bundle: nil)
+            let destinationVC = storyboard.instantiateViewController(withIdentifier: "CredentialsViewController") as! CredentialsViewController
+            destinationVC.meth = meth
+            navVC.pushViewController(destinationVC, animated: true)
+        }
+    }
+
     public static func routeToChatListVC() {
         DispatchQueue.main.async {
             let storyboard = UIStoryboard(name: "Main", bundle: nil)
@@ -100,13 +110,15 @@ class UiUtils {
         return text
     }
     public static func markTextFieldAsError(_ field: UITextField) {
-        // Make border red to signify error.
-        field.layer.borderColor = UIColor.red.cgColor
-        field.layer.borderWidth = 1.0
+        field.rightViewMode = .always
+        let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
+        imageView.image = UIImage(named: "important-32")
+        imageView.tintColor = .red
+        field.rightView = imageView
     }
     public static func clearTextFieldError(_ field: UITextField) {
-        // Reset red border to default.
-        field.layer.borderWidth = 0.0
+        field.rightViewMode = .never
+        field.rightView = nil
     }
 
     public static func bytesToHumanSize(_ bytes: Int64) -> String {
@@ -137,8 +149,6 @@ class UiUtils {
         let spacing: CGFloat = 8
         let minMessageHeight = iconSize + spacing * 2
         let maxMessageHeight: CGFloat = 100
-
-        let toastHeight = max(min(parent.frame.height * 0.1, maxMessageHeight), minMessageHeight)
 
         // Prevent very short toasts
         guard duration > 0.5 else { return }
@@ -177,6 +187,7 @@ class UiUtils {
         parent.addSubview(toastView)
         label.sizeToFit()
 
+        let toastHeight = max(min(label.frame.height + spacing * 3, maxMessageHeight), minMessageHeight)
         toastView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             toastView.leadingAnchor.constraint(equalTo: parent.leadingAnchor, constant: 0),

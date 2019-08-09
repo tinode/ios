@@ -55,18 +55,6 @@ class LoginViewController: UIViewController {
         scrollView.scrollIndicatorInsets = .zero
     }
 
-    private func routeToChats() {
-        DispatchQueue.main.async {
-            let storyboard = UIStoryboard(name: "Main", bundle: nil)
-            let destinationVC = storyboard.instantiateViewController(withIdentifier: "ChatsNavigator") as! UINavigationController
-
-            if let window = UIApplication.shared.keyWindow {
-                // Use ChatList as the new root view controller (used in navigation).
-                window.rootViewController = destinationVC
-             }
-        }
-    }
-
     @objc func textFieldDidChange(_ textField: UITextField) {
         UiUtils.clearTextFieldError(textField)
     }
@@ -93,19 +81,16 @@ class LoginViewController: UIViewController {
                 .then(
                     onSuccess: { [weak self] pkt in
                         print("login successful for: \(tinode.myUid!)")
-                        UserDefaults.standard.set(userName, forKey: Utils.kTinodePrefLastLogin)
-                        if let token = tinode.authToken, !token.isEmpty {
-                            let tokenSaveSuccessful = KeychainWrapper.standard.set(
-                                token, forKey: LoginViewController.kTokenKey)
-                            if !tokenSaveSuccessful {
-                                print("Could not save auth token...")
-                            }
+                        Utils.saveAuthToken(for: userName, token: tinode.authToken)
+                        if let ctrl = pkt?.ctrl, ctrl.code >= 300, ctrl.text.contains("validate credentials") {
+                            UiUtils.routeToCredentialsVC(in: self?.navigationController,
+                                                         verifying: ctrl.getStringArray(for: "cred")?.first)
+                            return nil
                         }
-                        // TODO: handle credentials validation (pkt.ctrl.code >= 300).
                         Cache.synchronizeContactsPeriodically()
                         if let loginVC = self {
                             UiUtils.toggleProgressOverlay(in: loginVC, visible: false)
-                            loginVC.routeToChats()
+                            UiUtils.routeToChatListVC()
                         }
                         return nil
                     }, onFailure: { [weak self] err in

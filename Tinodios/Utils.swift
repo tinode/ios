@@ -27,6 +27,24 @@ class Utils {
         return KeychainWrapper.standard.string(
             forKey: LoginViewController.kTokenKey)
     }
+
+    public static func removeAuthToken() {
+        let userDefaults = UserDefaults.standard
+        userDefaults.removeObject(forKey: Utils.kTinodePrefLastLogin)
+        KeychainWrapper.standard.removeAllKeys()
+    }
+
+    public static func saveAuthToken(for userName: String, token: String?) {
+        UserDefaults.standard.set(userName, forKey: Utils.kTinodePrefLastLogin)
+        if let token = token, !token.isEmpty {
+            let tokenSaveSuccessful = KeychainWrapper.standard.set(
+                token, forKey: LoginViewController.kTokenKey)
+            if !tokenSaveSuccessful {
+                print("Could not save auth token...")
+            }
+        }
+    }
+
     public static func registerUserDefaults() {
         /// Here you can give default values to your UserDefault keys
         UserDefaults.standard.register(defaults: [

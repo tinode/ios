@@ -60,11 +60,16 @@ class ContactsManager {
         }
     }
     // Returns contacts from the sqlite database's UserDb.
-    public func fetchContacts() -> [ContactHolder]? {
-        guard let uid = Cache.getTinode().myUid else { return nil }
-        guard let users = userDb.readAll(for: uid) else { return nil }
+    public func fetchContacts(withUids uids: [String]? = nil) -> [ContactHolder]? {
+        let users: [UserProto]?
+        if let uids = uids {
+            users = userDb.read(uids: uids)
+        } else {
+            guard let uid = Cache.getTinode().myUid else { return nil }
+            users = userDb.readAll(for: uid)
+        }
         // Turn users into contacts.
-        return users.map { user in
+        return users?.map { user in
             let q = user as! DefaultUser
             return ContactHolder(
                 displayName: q.pub?.fn,
