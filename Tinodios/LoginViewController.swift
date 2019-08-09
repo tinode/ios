@@ -88,10 +88,7 @@ class LoginViewController: UIViewController {
         let userName = UiUtils.ensureDataInTextField(userNameTextEdit)
         let password = UiUtils.ensureDataInTextField(passwordTextEdit)
 
-        if userName == "" || password == "" {
-            print("form elements are empty")
-            return
-        }
+        guard !userName.isEmpty && !password.isEmpty else { return }
 
         let tinode = Cache.getTinode()
         UiUtils.toggleProgressOverlay(in: self, visible: true, title: "Logging in...")
