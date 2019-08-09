@@ -8,18 +8,25 @@
 import UIKit
 import TinodeSDK
 
-// TODO: refactor shared code with NewGroupVC to UiUtils.
+public protocol EditMembersDelegate: class {
+    // Asks for the UIDs of initially selected members
+    func editMembersInitialSelection(_: UIView) -> [String]
+    // Called when the editor completes selection.
+    func editMembersDidEndEditing(_: UIView, added: [String], removed: [String])
+    // Called when member is added or removed. Return 'true' to continue, 'false' to reject the change.
+    func editMembersWillChangeState(_: UIView, uid: String, added: Bool, initiallySelected: Bool) -> Bool
+}
+
 class EditMembersViewController: UIViewController, UITableViewDataSource {
-    public var topicName: String!
-    private var tinode: Tinode!
-    private var topic: DefaultComTopic!
     private var contactsManager = ContactsManager()
     private var contacts: [ContactHolder]!
     private var selectedContacts = [IndexPath]()
     private var initialIds = Set<String>()
     private var selectedIds = Set<String>()
-    private var isAdmin: Bool = false
 
+    weak var delegate: EditMembersDelegate?
+
+    @IBOutlet var editMembersView: UIView!
     @IBOutlet weak var membersTableView: UITableView!
     @IBOutlet weak var selectedCollectionView: UICollectionView!
 
@@ -38,24 +45,21 @@ class EditMembersViewController: UIViewController, UITableViewDataSource {
     }
 
     private func setup() {
-        tinode = Cache.getTinode()
-        topic = tinode.getTopic(topicName: topicName) as? DefaultComTopic
-        self.contacts = self.contactsManager.fetchContacts()
-        let subscriptions = topic.getSubscriptions()!
-        for sub in subscriptions {
-            if let uid = sub.user {
+        if let subscriptions = delegate?.editMembersInitialSelection(editMembersView) {
+            for uid in subscriptions {
                 selectedIds.insert(uid)
                 initialIds.insert(uid)
             }
         }
+
+        contacts = contactsManager.fetchContacts()
         for i in 0..<contacts.count {
             let c = contacts[i]
             if let uid = c.uniqueId, userSelected(with: uid) {
                 selectedContacts.append(IndexPath(row: i, section: 0))
             }
         }
-        isAdmin = topic.isAdmin
-        self.navigationItem.title = topic.pub?.fn ?? "Unknown"
+        self.navigationItem.title = "Manage members"
     }
     func addUser(with uniqueId: String) {
         self.selectedIds.insert(uniqueId)
@@ -92,66 +96,72 @@ class EditMembersViewController: UIViewController, UITableViewDataSource {
         return cell
     }
     @IBAction func saveClicked(_ sender: Any) {
-        self.updateGroup()
+        navigationController?.popViewController(animated: true)
+
+        let deltas = getDeltas()
+        let additions = deltas.0
+        let deletions = deltas.1
+
+        delegate?.editMembersDidEndEditing(editMembersView, added: additions, removed: deletions)
+
+        dismiss(animated: true, completion: nil)
+    }
+
+    @IBAction func cancelClicked(_ sender: Any) {
         self.navigationController?.popViewController(animated: true)
         self.dismiss(animated: true, completion: nil)
     }
+
     private func getDeltas() -> ([String], [String]) {
         let additions = selectedIds.subtracting(initialIds)
         let deletions = initialIds.subtracting(selectedIds)
         return (additions.map { $0 }, deletions.map { $0 })
     }
-    func updateGroup() {
-        //
-        let deltas = getDeltas()
-        let additions = deltas.0
-        let deletions = deltas.1
-        print("inviting \(additions)")
-        for uid in additions {
-            _ = try? topic.invite(user: uid, in: nil)?.then(
-                onSuccess: nil, onFailure: UiUtils.ToastFailureHandler)
-        }
-        print("ejecting \(deletions)")
-        for uid in deletions {
-            _ = try? topic.eject(user: uid, ban: false)?.then(
-                onSuccess: nil, onFailure: UiUtils.ToastFailureHandler)
-        }
-    }
 }
 
 extension EditMembersViewController: UITableViewDelegate {
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
-        print("selected index path = \(indexPath)")
-        let contact = contacts[indexPath.row]
-        if let uniqueId = contact.uniqueId {
-            self.addUser(with: uniqueId)
-            selectedContacts.append(indexPath)
-            selectedCollectionView.insertItems(at: [IndexPath(item: selectedContacts.count - 1, section: 0)])
-        } else {
-            print("no unique id for user \(contact.displayName ?? "No name")")
+    func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
+        guard let uid = contacts[indexPath.row].uniqueId else {
+            print("no unique id for user at \(indexPath.row)")
+            return nil
         }
-        print("+ selected rows: \(self.selectedIds)")
+
+        return delegate?.editMembersWillChangeState(editMembersView, uid: uid, added: true, initiallySelected: initialIds.contains(uid)) ?? true ? indexPath : nil
+    }
+
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard let uid = contacts[indexPath.row].uniqueId else {
+            print("no unique id for user at \(indexPath.row)")
+            return
+        }
+
+        tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
+        self.addUser(with: uid)
+        selectedContacts.append(indexPath)
+        selectedCollectionView.insertItems(at: [IndexPath(item: selectedContacts.count - 1, section: 0)])
+    }
+
+    func tableView(_ tableView: UITableView, willDeselectRowAt indexPath: IndexPath) -> IndexPath? {
+        guard let uid = contacts[indexPath.row].uniqueId else {
+            print("no unique id for user at \(indexPath.row)")
+            return indexPath
+        }
+
+        return delegate?.editMembersWillChangeState(editMembersView, uid: uid, added: false, initiallySelected: initialIds.contains(uid)) ?? true ? indexPath : nil
     }
 
     func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
-        tableView.cellForRow(at: indexPath)?.accessoryType = .none
-        print("deselected index path = \(indexPath)")
-        let contact = contacts[indexPath.row]
-        if let uniqueId = contact.uniqueId {
-            if !isAdmin && initialIds.contains(uniqueId) {
-                DispatchQueue.main.async { tableView.reloadData() }
-                return
-            }
-            self.removeUser(with: uniqueId)
-            if let removeAt = selectedContacts.firstIndex(of: indexPath) {
-                selectedContacts.remove(at: removeAt)
-                selectedCollectionView.deleteItems(at: [IndexPath(item: removeAt, section: 0)])
-            }
-        } else {
-            print("no unique id for user \(contact.displayName ?? "No name")")
+        guard let uid = contacts[indexPath.row].uniqueId else {
+            print("no unique id for user at \(indexPath.row)")
+            return
         }
-        print("- selected rows: \(self.selectedIds)")
+
+        tableView.cellForRow(at: indexPath)?.accessoryType = .none
+        self.removeUser(with: uid)
+        if let removeAt = selectedContacts.firstIndex(of: indexPath) {
+            selectedContacts.remove(at: removeAt)
+            selectedCollectionView.deleteItems(at: [IndexPath(item: removeAt, section: 0)])
+        }
     }
 }
 

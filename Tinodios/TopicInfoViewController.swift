@@ -30,7 +30,6 @@ class TopicInfoViewController: UITableViewController {
     private static let kSectionDefaultPermissionsAnon = 1
 
     private static let kSectionMembers = 5
-    private static let kSectionMembersButtons = 0
 
     @IBOutlet weak var topicTitleTextView: UITextView!
     @IBOutlet weak var topicSubtitleTextView: UITextView!
@@ -156,7 +155,6 @@ class TopicInfoViewController: UITableViewController {
     private func reloadData() {
         topicTitleTextView.text = topic.pub?.fn ?? "Unknown"
         topicTitleTextView.sizeToFit()
-        print("topicTitleTextView.frme: \(topicTitleTextView.frame)")
         topicIDLabel.text = topic?.name
         topicIDLabel.sizeToFit()
         let subtitle = topic.comment ?? ""
@@ -172,6 +170,7 @@ class TopicInfoViewController: UITableViewController {
             anonUsersPermissionsLabel?.text = topic.defacs?.getAnon()
             myPermissionsLabel?.text = acs?.modeString
             subscriptions = topic.getSubscriptions()
+            // FIXME: reload just the members section.
             tableView.reloadData()
         } else {
             peerNameLabel?.text = topic.pub?.fn ?? "Unknown"
@@ -364,8 +363,9 @@ class TopicInfoViewController: UITableViewController {
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "TopicInfo2EditMembers" {
-            let destinationVC = segue.destination as! EditMembersViewController
-            destinationVC.topicName = self.topicName
+            let navigator = segue.destination as! UINavigationController
+            let destination = navigator.viewControllers.first as! EditMembersViewController
+            destination.delegate = self
         }
     }
 
@@ -375,8 +375,13 @@ class TopicInfoViewController: UITableViewController {
     }
 }
 
-extension TopicInfoViewController {
+extension TopicInfoViewController : UIPopoverPresentationControllerDelegate {
+    func adaptivePresentationStyle(for controller: UIPresentationController) -> UIModalPresentationStyle {
+        return UIModalPresentationStyle.none
+    }
+}
 
+extension TopicInfoViewController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if section == TopicInfoViewController.kSectionMembers {
             return showGroupMembers ? (subscriptions?.count ?? 0) + 1 : 0
@@ -427,6 +432,24 @@ extension TopicInfoViewController {
         }
 
         return super.tableView(tableView, titleForHeaderInSection: section)
+    }
+
+    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+
+        // Hide empty header in the first section.
+        if section == TopicInfoViewController.kSectionBasic {
+            return CGFloat.leastNormalMagnitude
+        }
+
+        if section == TopicInfoViewController.kSectionMembers && !showGroupMembers {
+            return CGFloat.leastNormalMagnitude
+        }
+
+        if section == TopicInfoViewController.kSectionDefaultPermissions && !showDefaultPermissions {
+            return CGFloat.leastNormalMagnitude
+        }
+
+        return super.tableView(tableView, heightForHeaderInSection: section)
     }
 
     override func tableView(_ tableView: UITableView, indentationLevelForRowAt indexPath: IndexPath) -> Int {
@@ -594,6 +617,27 @@ extension TopicInfoViewController {
         }))
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
         self.present(alert, animated: true)
+    }
+}
+
+extension TopicInfoViewController: EditMembersDelegate {
+    func editMembersInitialSelection(_: UIView) -> [String] {
+        return subscriptions?.compactMap { print("Selected contact: \($0.user ?? "nil")"); return $0.user } ?? []
+    }
+
+    func editMembersDidEndEditing(_: UIView, added: [String], removed: [String]) {
+         print("inviting \(added)")
+         for uid in added {
+            _ = try? topic.invite(user: uid, in: nil)?.thenCatch(onFailure: UiUtils.ToastFailureHandler)
+         }
+         print("ejecting \(removed)")
+         for uid in removed {
+            _ = try? topic.eject(user: uid, ban: false)?.thenCatch(onFailure: UiUtils.ToastFailureHandler)
+         }
+    }
+
+    func editMembersWillChangeState(_: UIView, uid: String, added: Bool, initiallySelected: Bool) -> Bool {
+        return added || topic.isAdmin || !initiallySelected
     }
 }
 

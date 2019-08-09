@@ -149,7 +149,7 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
             return self
         }
         public func withLaterDel(limit: Int?) -> MetaGetBuilder {
-            return withDel(since: topic.maxDel + 1, limit: limit)
+            return withDel(since: topic.maxDel > 0 ? topic.maxDel + 1 : nil, limit: limit)
         }
         public func withDel() -> MetaGetBuilder {
             return withLaterDel(limit: nil)
