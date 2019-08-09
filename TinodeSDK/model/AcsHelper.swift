@@ -37,22 +37,21 @@ public class AcsHelper: Codable, Equatable {
     private var a: Int?
 
     public var description: String {
-        guard a != nil else {
-            return ""
-        }
-        return AcsHelper.encode(mode: a!)
+        guard let b = a else { return "" }
+        return AcsHelper.encode(mode: b)
     }
     public var isDefined: Bool {
-        get {
-            guard let b = a else {
-                return false
-            }
-            return b != AcsHelper.kModeNone && b != AcsHelper.kModeInvalid
-        }
+        guard let b = a else { return false }
+        return b != AcsHelper.kModeInvalid
     }
     public var isAdmin: Bool {
         get {
             return ((a ?? 0) & AcsHelper.kModeApprove) != 0
+        }
+    }
+    public var isSharer: Bool {
+        get {
+            return ((a ?? 0) & AcsHelper.kModeShare) != 0
         }
     }
     public var isOwner: Bool {
@@ -90,10 +89,10 @@ public class AcsHelper: Codable, Equatable {
             return ((a ?? 0) & AcsHelper.kModeDelete) != 0
         }
     }
-    init(str: String?) {
+    public init(str: String?) {
         a = AcsHelper.decode(from: str)
     }
-    init(ah: AcsHelper?) {
+    public init(ah: AcsHelper?) {
         if ah != nil {
             a = ah!.a
         }
@@ -211,12 +210,12 @@ public class AcsHelper: Codable, Equatable {
         }
         return false
     }
+    // Bitwise & operator.
     public static func and(a1: AcsHelper? , a2: AcsHelper?) -> AcsHelper? {
-        if let ah1 = a1, let ah2 = a2, !ah1.isInvalid, !ah2.isInvalid {
-            return AcsHelper(a: ah1.a! & ah2.a!)
-        }
-        return nil
+        guard let ah1 = a1, let ah2 = a2, !ah1.isInvalid, !ah2.isInvalid else { return nil }
+        return AcsHelper(a: ah1.a! & ah2.a!)
     }
+    // Bits present in a1 but missing in a2.
     public static func diff(a1: AcsHelper?, a2: AcsHelper?) -> AcsHelper? {
         guard let a1a = a1?.a, let a2a = a2?.a, !a1!.isInvalid, !a2!.isInvalid else { return nil }
         return AcsHelper(a: a1a & ~a2a)

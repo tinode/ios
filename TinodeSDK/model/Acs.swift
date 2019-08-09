@@ -36,6 +36,11 @@ public class Acs: Codable, Equatable {
             return mode?.isAdmin ?? false
         }
     }
+    public var isSharer: Bool {
+        get {
+            return mode?.isSharer ?? false
+        }
+    }
     public var isMuted: Bool {
         get {
             return mode?.isMuted ?? false
