@@ -89,7 +89,7 @@ class TopicInfoViewController: UITableViewController {
             loadAvatarButton.isHidden = !topic.isManager
             showDefaultPermissions = topic.isManager
             showPeerPermissions = false
-            showGroupMembers = true
+            showGroupMembers = topic.isManager || topic.isSharer
             tableView.register(UINib(nibName: "ContactViewCell", bundle: nil), forCellReuseIdentifier: "ContactViewCell")
         } else {
             loadAvatarButton.isHidden = true
@@ -247,23 +247,11 @@ class TopicInfoViewController: UITableViewController {
         }
     }
 
-    private func getAcsAndPermissionsChangeType(for sender: UIView) -> (AcsHelper?, String?, UiUtils.PermissionsChangeType?, String?) {
-        if sender === actionMyPermissions {
-            return (topic.accessMode?.want, nil, .updateSelfSub, "ASDO")
+    private func changePermissions(acs: AcsHelper?, uid: String?, changeType: UiUtils.PermissionsChangeType, disabledPermissions: String?) {
+        guard let acs = acs else {
+            print("Unable to change permissions: nil acs")
+            return
         }
-        if sender === actionPeerPermissions {
-            return (self.topic.getSubscription(for: self.topic.name)?.acs?.given, topic.name, .updateSub, "ASDO")
-        }
-        if sender === actionAuthPermissions {
-            return (topic.defacs?.auth, nil, .updateAuth, "O")
-        }
-        if sender === actionAnonPermissions {
-            return (topic.defacs?.anon, nil, .updateAnon, "O")
-        }
-        return (nil, nil, nil, nil)
-    }
-
-    private func changePermissions(acs: AcsHelper, uid: String?, changeType: UiUtils.PermissionsChangeType, disabledPermissions: String?) {
         UiUtils.showPermissionsEditDialog(over: self, acs: acs, callback: {
             permissions in
             _ = try? UiUtils.handlePermissionsChange(onTopic: self.topic, forUid: uid, changeType: changeType, newPermissions: permissions)?.then(onSuccess: self.promiseSuccessHandler)
@@ -271,16 +259,36 @@ class TopicInfoViewController: UITableViewController {
     }
 
     @objc func permissionsTapped(sender: UITapGestureRecognizer) {
-        guard let v = sender.view else {
-            print("Tap from no sender view... quitting")
+        switch sender.view { // apparently there is no need for === operator.
+        case actionMyPermissions:
+            if let acs = topic.accessMode {
+                var disabled: String = ""
+                if acs.isOwner {
+                    // The owner should be able to change any permission except unsetting the 'O'
+                    disabled = "O"
+                } else {
+                    // Allow accepting any of A S D O permissions but don't allow asking for them.
+                    let controlled = AcsHelper(str: "ASDO")
+                    if let notGiven = AcsHelper.diff(a1: controlled, a2: AcsHelper.and(a1: acs.given, a2: controlled)) {
+                        disabled = notGiven.description
+                    } else {
+                        disabled = "ASDO"
+                    }
+                }
+                changePermissions(acs: acs.want, uid: nil, changeType: .updateSelfSub, disabledPermissions: disabled)
+            } else {
+                print("Access mode is nil")
+            }
+        case actionPeerPermissions:
+            changePermissions(acs: topic.getSubscription(for: self.topic.name)?.acs?.given, uid: topic.name, changeType: .updateSub, disabledPermissions: "ASDO")
+        case actionAuthPermissions:
+            changePermissions(acs: topic.defacs?.auth, uid: nil, changeType: .updateAuth, disabledPermissions: "O")
+        case actionAnonPermissions:
+            changePermissions(acs: topic.defacs?.anon, uid: nil, changeType: .updateAnon, disabledPermissions: "O")
+        default:
+            print("Unknown sender in permissionsTapped")
             return
         }
-        let (acs, uid, changeTypeOptional, disablePermissions) = getAcsAndPermissionsChangeType(for: v)
-        guard let acsUnwrapped = acs, let changeType = changeTypeOptional else {
-            print("could not get acs")
-            return
-        }
-        self.changePermissions(acs: acsUnwrapped, uid: uid, changeType: changeType, disabledPermissions: disablePermissions)
     }
 
     private func deleteTopic() {
@@ -469,26 +477,28 @@ extension TopicInfoViewController {
         var result = [AccessModeLabel]()
         if let acs = acs {
             if acs.isModeDefined {
-                if !acs.isJoiner || (!acs.isWriter && !acs.isReader) {
-                    result.append(AccessModeLabel(color: AccessModeLabel.kColorRedBorder, text: "blocked"))
-                } else if acs.isOwner {
-                    result.append(AccessModeLabel(color: AccessModeLabel.kColorGreenBorder, text: "owner"))
-                } else if acs.isAdmin {
-                    result.append(AccessModeLabel(color: AccessModeLabel.kColorGreenBorder, text: "admin"))
-                } else if !acs.isWriter {
-                    result.append(AccessModeLabel(color: AccessModeLabel.kColorYellowBorder, text: "read-only"))
-                } else if !acs.isReader {
-                    result.append(AccessModeLabel(color: AccessModeLabel.kColorYellowBorder, text: "write-only"))
-                }
-            } else if !acs.isInvalid {
-                // The mode is undefined (NONE)
-                if acs.isGivenDefined || !acs.isWantDefined {
-                    result.append(AccessModeLabel(color: AccessModeLabel.kColorGrayBorder, text: "invited"))
-                } else if !acs.isGivenDefined && acs.isWantDefined {
-                    result.append(AccessModeLabel(color: AccessModeLabel.kColorGrayBorder, text: "requested"))
+                if !acs.isNone {
+                    if !acs.isJoiner || (!acs.isWriter && !acs.isReader) {
+                        result.append(AccessModeLabel(color: AccessModeLabel.kColorRedBorder, text: "blocked"))
+                    } else if acs.isOwner {
+                        result.append(AccessModeLabel(color: AccessModeLabel.kColorGreenBorder, text: "owner"))
+                    } else if acs.isAdmin {
+                        result.append(AccessModeLabel(color: AccessModeLabel.kColorGreenBorder, text: "admin"))
+                    } else if !acs.isWriter {
+                        result.append(AccessModeLabel(color: AccessModeLabel.kColorYellowBorder, text: "read-only"))
+                    } else if !acs.isReader {
+                        result.append(AccessModeLabel(color: AccessModeLabel.kColorYellowBorder, text: "write-only"))
+                    }
                 } else {
-                    // Undefined state.
-                    result.append(AccessModeLabel(color: AccessModeLabel.kColorGrayBorder, text: "undefined"))
+                    // The acs.mode is 'N' (none)
+                    if !acs.isNoneGiven || acs.isNoneWant {
+                        result.append(AccessModeLabel(color: AccessModeLabel.kColorGrayBorder, text: "invited"))
+                    } else if acs.isNoneGiven && !acs.isNoneWant {
+                        result.append(AccessModeLabel(color: AccessModeLabel.kColorGrayBorder, text: "requested"))
+                    } else {
+                        // Undefined state: both None.
+                        result.append(AccessModeLabel(color: AccessModeLabel.kColorGrayBorder, text: "undefined"))
+                    }
                 }
             }
         }

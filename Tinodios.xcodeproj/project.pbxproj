@@ -64,6 +64,7 @@
 		B02F5C8B22679BC80079A97E /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = B02F5C8A22679BC80079A97E /* ImagePicker.swift */; };
 		B031BE552263075E004160AE /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = B031BE542263075E004160AE /* Settings.bundle */; };
 		B031BE5722631304004160AE /* SettingsHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = B031BE5622631304004160AE /* SettingsHelper.swift */; };
+		B05ACEB322FDAB5200276713 /* ResetPasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B05ACEB222FDAB5200276713 /* ResetPasswordViewController.swift */; };
 		B08DA7DA22CAF40A00FE5FAF /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B08DA7D922CAF40A00FE5FAF /* GoogleService-Info.plist */; };
 		B0A612AF228B08EC00569DFE /* RichTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0A612AE228B08EC00569DFE /* RichTextView.swift */; };
 		B0A612B1228C85C300569DFE /* MessageViewLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0A612B0228C85C300569DFE /* MessageViewLayout.swift */; };
@@ -157,6 +158,7 @@
 		B02F5C8A22679BC80079A97E /* ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
 		B031BE542263075E004160AE /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		B031BE5622631304004160AE /* SettingsHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsHelper.swift; sourceTree = "<group>"; };
+		B05ACEB222FDAB5200276713 /* ResetPasswordViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResetPasswordViewController.swift; sourceTree = "<group>"; };
 		B08DA7D922CAF40A00FE5FAF /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		B0A612AE228B08EC00569DFE /* RichTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RichTextView.swift; sourceTree = "<group>"; };
 		B0A612B0228C85C300569DFE /* MessageViewLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageViewLayout.swift; sourceTree = "<group>"; };
@@ -241,12 +243,12 @@
 				B0A612B62294288F00569DFE /* MessageViewController+SendMessageBarDelegate.swift */,
 				B0DF0322228051B4000F9492 /* MessageViewController+Keyboard.swift */,
 				0AC33D022293C7A00060D263 /* NewGroupViewController.swift */,
+				B05ACEB222FDAB5200276713 /* ResetPasswordViewController.swift */,
 				B031BE5622631304004160AE /* SettingsHelper.swift */,
 				B01C693E22F87B5C003C0AA7 /* SignupViewController.swift */,
 				0A69D47E22A6552300769426 /* TopicInfoViewController.swift */,
 				0AEE8BED226456080022EC3F /* UiUtils.swift */,
 				0A35BA9F2283A37500AA5E2F /* Utils.swift */,
-				7DDADC5121D5C219009733B5 /* ValidatedCredential.swift */,
 				0A0380DB21B3CC8100A3FA0E /* Main.storyboard */,
 				B031BE542263075E004160AE /* Settings.bundle */,
 				0A0380E921B3CCB000A3FA0E /* Supporting Files */,
@@ -330,6 +332,7 @@
 				B0DF032E2282FF46000F9492 /* SendMessageBar.swift */,
 				B0DF032C2282EE8A000F9492 /* SendMessageBar.xib */,
 				0A11912C22F03E3100A1BBA1 /* TagsEditView.swift */,
+				7DDADC5121D5C219009733B5 /* ValidatedCredential.swift */,
 			);
 			path = widgets;
 			sourceTree = "<group>";
@@ -494,6 +497,7 @@
 				0A8A108121D4C78000B90D73 /* BaseDb.swift in Sources */,
 				0A37D6F521DA075100A124CA /* AccountDb.swift in Sources */,
 				0A0380D821B3CC8100A3FA0E /* AppDelegate.swift in Sources */,
+				B05ACEB322FDAB5200276713 /* ResetPasswordViewController.swift in Sources */,
 				0A484E5121E359A800FE9AFE /* MessageDb.swift in Sources */,
 				B0DF031F227C6898000F9492 /* PaddedLabel.swift in Sources */,
 				0A8D945C22BF5B7F00DC154E /* AvatarWithOnlineIndicator+TypingAnimation.swift in Sources */,

@@ -15,91 +15,64 @@ public class Acs: Codable, Equatable {
     public var want: AcsHelper?
     public var mode: AcsHelper?
 
+    /// The value is neither nil nor Invalid. None is considered to be defined.
     public var isModeDefined: Bool {
-        get {
-            return mode?.isDefined ?? false
-        }
+        return mode?.isDefined ?? false
     }
     public var isManager: Bool {
-        get {
-            guard let m = mode else { return false }
-            return m.isAdmin || m.isOwner
-        }
+        return mode?.isManager ?? false
     }
     public var isOwner: Bool {
-        get {
-            return mode?.isOwner ?? false
-        }
+        return mode?.isOwner ?? false
     }
     public var isAdmin: Bool {
-        get {
-            return mode?.isAdmin ?? false
-        }
+        return mode?.isAdmin ?? false
+    }
+    public var isSharer: Bool {
+        return mode?.isSharer ?? false
     }
     public var isMuted: Bool {
-        get {
-            return mode?.isMuted ?? false
-        }
+        return mode?.isMuted ?? false
     }
     public var isInvalid: Bool {
-        get {
-            return mode?.isInvalid ?? false
-        }
+        return mode?.isInvalid ?? false
     }
     public var isJoiner: Bool {
-        get {
-            return mode?.isJoiner ?? false
-        }
+        return mode?.isJoiner ?? false
     }
     public var isWriter: Bool {
-        get {
-            return mode?.isWriter ?? false
-        }
+        return mode?.isWriter ?? false
     }
     public var isReader: Bool {
-        get {
-            return mode?.isReader ?? false
-        }
+        return mode?.isReader ?? false
     }
     public var isDeleter: Bool {
-        get {
-            return mode?.isDeleter ?? false
-        }
+        return mode?.isDeleter ?? false
     }
+    public var isNone: Bool {
+        return mode?.isNone ?? false
+    }
+
     public var missing: AcsHelper? {
-        get {
-            return AcsHelper.diff(a1: self.want, a2: self.given)
-        }
+        return AcsHelper.diff(a1: self.want, a2: self.given)
     }
     public var excessive: AcsHelper? {
-        get {
-            return AcsHelper.diff(a1: self.given, a2: self.want)
-        }
+        return AcsHelper.diff(a1: self.given, a2: self.want)
     }
-    public var isGivenDefined: Bool {
-        get {
-            return given?.isDefined ?? false
-        }
+    public var isNoneGiven: Bool {
+        return given?.isNone ?? false
     }
-    public var isWantDefined: Bool {
-        get {
-            return want?.isDefined ?? false
-        }
+    public var isNoneWant: Bool {
+        return want?.isNone ?? false
     }
     public var modeString: String {
-        get {
-            return mode?.description ?? ""
-        }
+        return mode?.description ?? ""
     }
     public var wantString: String {
-        get {
-            return want?.description ?? ""
-        }
+        return want?.description ?? ""
     }
     public var givenString: String {
-        get {
-            return given?.description ?? ""
-        }
+        return given?.description ?? ""
     }
     private enum CodingKeys : String, CodingKey  {
         case given, want, mode

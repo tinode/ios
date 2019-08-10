@@ -232,3 +232,11 @@ extension URL {
         return components?.queryItems?.first(where: { $0.name == name })?.value
     }
 }
+
+extension Tinode {
+    func connectDefault() throws -> PromisedReply<ServerMessage>? {
+        let (hostName, useTLS, _) = SettingsHelper.getConnectionSettings()
+        print("Connecting to \(hostName ?? Cache.kHostName), useTLS = \(useTLS ?? false)")
+        return try connect(to: (hostName ?? Cache.kHostName), useTLS: (useTLS ?? false))
+    }
+}
