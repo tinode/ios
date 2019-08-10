@@ -32,7 +32,6 @@ public class BaseDb {
     // Object is rejected by the server.
     public static let kStatusRejected = 7
 
-    
     public static var `default`: BaseDb? = nil
     private let kDatabaseName = "basedb.sqlite3"
     var db: SQLite.Connection?
@@ -51,22 +50,22 @@ public class BaseDb {
             documentsDirectory.append("/")
         }
         self.pathToDatabase = documentsDirectory.appending("database.sqlite")
-        
+
         do {
             self.db = try SQLite.Connection(self.pathToDatabase)
         } catch {
             print(error.localizedDescription)
         }
         assert(self.db != nil)
-        
+
         self.sqlStore = SqlStore(dbh: self)
     }
     private func initDb() {
         self.accountDb = AccountDb(self.db!)
-        self.userDb = UserDb(self.db!)
-        self.topicDb = TopicDb(self.db!)
-        self.subscriberDb = SubscriberDb(self.db!)
-        self.messageDb = MessageDb(self.db!)
+        self.userDb = UserDb(self.db!, baseDb: self)
+        self.topicDb = TopicDb(self.db!, baseDb: self)
+        self.subscriberDb = SubscriberDb(self.db!, baseDb: self)
+        self.messageDb = MessageDb(self.db!, baseDb: self)
 
         if self.db!.schemaVersion != BaseDb.kSchemaVersion {
             print("Schema has changed from \(self.db?.schemaVersion ?? -1) to \(BaseDb.kSchemaVersion)")

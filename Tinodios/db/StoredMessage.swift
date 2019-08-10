@@ -10,7 +10,7 @@ import TinodeSDK
 
 public class StoredMessage : MsgServerData, Message {
     public var msgId: Int64 = 0
-    
+
     public var seqId: Int { return seq ?? 0 }
 
     var topicId: Int64? = nil
@@ -63,7 +63,7 @@ public class StoredMessage : MsgServerData, Message {
         self.init(from: m)
         self.status = status
     }
-    
+
     required init(from decoder: Decoder) throws {
         fatalError("init(from:) has not been implemented")
     }

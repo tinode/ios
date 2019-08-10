@@ -93,14 +93,10 @@ class SignupViewController: UITableViewController {
             try future?.then(
                 onSuccess: { [weak self] msg in
                     if let ctrl = msg?.ctrl, ctrl.code >= 300, ctrl.text.contains("validate credentials") {
-                        UiUtils.routeToCredentialsVC(in: self?.navigationController,
+                        UiUtils.routeToCredentialsVC(in: self!.navigationController,
                                                      verifying: ctrl.getStringArray(for: "cred")?.first)
                     } else {
-                        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-                        let destinationVC = storyboard.instantiateViewController(withIdentifier: "ChatsNavigator") as! UINavigationController
-                        DispatchQueue.main.async {
-                            self?.show(destinationVC, sender: nil)
-                        }
+                        UiUtils.routeToChatListVC()
                     }
                     return nil
                 }, onFailure: { err in

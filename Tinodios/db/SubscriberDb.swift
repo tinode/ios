@@ -23,16 +23,16 @@ enum SubscriberDbError: Error {
 class SubscriberDb {
     private static let kTableName = "subscriptions"
     private let db: SQLite.Connection
-    
+
     private var table: Table
-    
+
     public let id: Expression<Int64>
     public var topicId: Expression<Int64?>
     public let userId: Expression<Int64?>
     public let status: Expression<Int?>
     public let mode: Expression<String?>
     public let updated: Expression<Date?>
-    //public let deleted:
+
     public let read: Expression<Int?>
     public let recv: Expression<Int?>
     public let clear: Expression<Int?>
@@ -41,8 +41,11 @@ class SubscriberDb {
     public let userAgent: Expression<String?>
     public let subscriptionClass: Expression<String>
 
-    init(_ database: SQLite.Connection) {
+    private let baseDb: BaseDb!
+
+    init(_ database: SQLite.Connection, baseDb: BaseDb) {
         self.db = database
+        self.baseDb = baseDb
         self.table = Table(SubscriberDb.kTableName)
         self.id = Expression<Int64>("id")
         self.topicId = Expression<Int64?>("topic_id")
@@ -64,8 +67,8 @@ class SubscriberDb {
         try! self.db.run(self.table.drop(ifExists: true))
     }
     func createTable() {
-        let userDb = BaseDb.getInstance().userDb!
-        let topicDb = BaseDb.getInstance().topicDb!
+        let userDb = baseDb.userDb!
+        let topicDb = baseDb.topicDb!
         // Must succeed.
         try! self.db.run(self.table.create(ifNotExists: true) { t in
             t.column(id, primaryKey: .autoincrement)
@@ -90,16 +93,17 @@ class SubscriberDb {
         do {
             try self.db.savepoint("SubscriberDb.insert") {
                 let ss = StoredSubscription()
-                ss.userId = BaseDb.getInstance().userDb?.getId(for: sub.user)
+                let userDb = baseDb.userDb!
+                ss.userId = userDb.getId(for: sub.user)
                 if (ss.userId ?? -1) <= 0 {
-                    ss.userId = BaseDb.getInstance().userDb?.insert(sub: sub)
+                    ss.userId = userDb.insert(sub: sub)
                 }
                 // Still not okay?
                 if (ss.userId ?? -1) <= 0 {
                     throw SubscriberDbError.dbError("failed to insert row into UserDb: \(String(describing: ss.userId))")
                 }
                 var setters = [Setter]()
-                
+
                 ss.topicId = topicId
                 setters.append(self.topicId <- ss.topicId)
                 setters.append(self.userId <- ss.userId)
@@ -135,7 +139,7 @@ class SubscriberDb {
         do {
             try self.db.savepoint("SubscriberDb.update") {
                 var status = ss.status!
-                _ = BaseDb.getInstance().userDb?.update(sub: sub)
+                _ = baseDb.userDb!.update(sub: sub)
                 var setters = [Setter]()
                 setters.append(self.mode <- sub.acs?.serialize())
                 setters.append(self.updated <- sub.updated)
@@ -182,8 +186,8 @@ class SubscriberDb {
 
     private func readOne(r: Row) -> SubscriptionProto? {
         guard let s = DefaultSubscription.createByName(name: r[self.subscriptionClass]) else { return nil }
-        guard let udb = BaseDb.getInstance().userDb else { return nil }
-        guard let tdb = BaseDb.getInstance().topicDb else { return nil }
+        guard let udb = baseDb.userDb else { return nil }
+        guard let tdb = baseDb.topicDb else { return nil }
         let ss = StoredSubscription()
         ss.id = r[self.id]
         ss.topicId = r[self.topicId]
@@ -206,8 +210,8 @@ class SubscriberDb {
     }
 
     func readAll(topicId: Int64) -> [SubscriptionProto]? {
-        guard let udb = BaseDb.getInstance().userDb else { return nil }
-        guard let tdb = BaseDb.getInstance().topicDb else { return nil }
+        guard let userDb = baseDb.userDb else { return nil }
+        guard let topicDb = baseDb.topicDb else { return nil }
         let joinedTable = self.table.select(
             self.table[self.id],
             self.topicId,
@@ -222,13 +226,13 @@ class SubscriberDb {
             self.table[self.priv],
             self.lastSeen,
             self.userAgent,
-            udb.table[udb.uid],
-            udb.table[udb.pub],
-            tdb.table[tdb.topic],
-            tdb.table[tdb.seq],
+            userDb.table[userDb.uid],
+            userDb.table[userDb.pub],
+            topicDb.table[topicDb.topic],
+            topicDb.table[topicDb.seq],
             self.subscriptionClass)
-            .join(.leftOuter, udb.table, on: self.table[self.userId] == udb.table[udb.id])
-            .join(.leftOuter, tdb.table, on: self.table[self.topicId] == tdb.table[tdb.id])
+            .join(.leftOuter, userDb.table, on: self.table[self.userId] == userDb.table[userDb.id])
+            .join(.leftOuter, topicDb.table, on: self.table[self.topicId] == topicDb.table[topicDb.id])
             .filter(self.topicId == topicId)
 
         do {
@@ -239,7 +243,6 @@ class SubscriberDb {
                 } else {
                     print("failed to create subscription for \(row[self.subscriptionClass])")
                 }
-                
             }
             return subscriptions
         } catch {

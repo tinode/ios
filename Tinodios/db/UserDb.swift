@@ -17,18 +17,21 @@ class StoredUser: Payload {
 class UserDb {
     private static let kTableName = "users"
     private let db: SQLite.Connection
-    
+
     public let table: Table
-    
+
     public let id: Expression<Int64>
     public let accountId: Expression<Int64?>
     public let uid: Expression<String?>
     public let updated: Expression<Date?>
     //public let deleted: Expression<Int?>
     public let pub: Expression<String?>
-    
-    init(_ database: SQLite.Connection) {
+
+    private let baseDb: BaseDb!
+
+    init(_ database: SQLite.Connection, baseDb: BaseDb) {
         self.db = database
+        self.baseDb = baseDb
         self.table = Table(UserDb.kTableName)
         self.id = Expression<Int64>("id")
         self.accountId = Expression<Int64?>("account_id")
@@ -41,7 +44,7 @@ class UserDb {
         try! self.db.run(self.table.drop(ifExists: true))
     }
     func createTable() {
-        let accountDb = BaseDb.getInstance().accountDb!
+        let accountDb = baseDb.accountDb!
         // Must succeed.
         try! self.db.run(self.table.create(ifNotExists: true) { t in
             t.column(id, primaryKey: .autoincrement)
@@ -70,12 +73,10 @@ class UserDb {
         do {
             let rowid = try db.run(
                 self.table.insert(
-                    //email <- "alice@mac.com"
-                    //accountId <- ,
-                    self.accountId <- BaseDb.getInstance().account?.id,
+                    self.accountId <- baseDb.account?.id,
                     self.uid <- uid,
                     self.updated <- updated ?? Date(),
-                    self.pub <- serializedPub//Tinode.serializeObject(t: pub)
+                    self.pub <- serializedPub
             ))
             return rowid
         } catch {
@@ -122,7 +123,7 @@ class UserDb {
         }
     }
     func getId(for uid: String?) -> Int64 {
-        guard let accountId = BaseDb.getInstance().account?.id else  {
+        guard let accountId = baseDb.account?.id else  {
             return -1
         }
         if let row = try? db.pluck(self.table.select(self.id).filter(self.uid == uid && self.accountId == accountId)) {
@@ -140,7 +141,7 @@ class UserDb {
         return user
     }
     func readOne(uid: String?) -> UserProto? {
-        guard let uid = uid, let accountId = BaseDb.getInstance().account?.id else {
+        guard let uid = uid, let accountId = baseDb.account?.id else {
             return nil
         }
         guard let row = try? db.pluck(self.table.filter(self.uid == uid && self.accountId == accountId)) else {
@@ -152,7 +153,7 @@ class UserDb {
     // Generic reader
     private func read(one uid: String?, multiple uids: [String]) -> [UserProto]? {
         guard uid != nil || !uids.isEmpty else { return nil }
-        guard let accountId = BaseDb.getInstance().account?.id else  {
+        guard let accountId = baseDb.account?.id else  {
             return nil
         }
         var query = self.table.select(self.table[*])
