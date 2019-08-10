@@ -31,11 +31,25 @@ class LoginViewController: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: UIControl.keyboardWillHideNotification, object: nil)
 
         UiUtils.dismissKeyboardForTaps(onView: self.view)
-/*
-        let tap = UITapGestureRecognizer(target: self.view, action: #selector(UIView.endEditing(_:)))
-        tap.cancelsTouchesInView = false
-        self.view.addGestureRecognizer(tap)
- */
+    }
+
+    deinit {
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardDidShowNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardDidHideNotification, object: nil)
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        self.navigationController?.navigationBar.isHidden = true
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        self.navigationController?.navigationBar.isHidden = false
+    }
+
+    override var prefersStatusBarHidden: Bool {
+        return true
     }
 
     @objc func keyboardWillShow(_ notification: Notification) {
@@ -48,6 +62,17 @@ class LoginViewController: UIViewController {
 
         scrollView.contentInset.bottom = bottomInset
         scrollView.scrollIndicatorInsets.bottom = bottomInset
+
+        // If active text field is hidden by the keyboard, scroll it into view.
+        var visibleRect = self.view.frame
+        visibleRect.size.height -= keyboardSize.height
+        if let activeField = [userNameTextEdit, passwordTextEdit].first(where: { $0.isFirstResponder }) {
+            print("visible \(visibleRect); active origin \(activeField.frame.origin)")
+            if visibleRect.contains(activeField.frame.origin) {
+                let scrollPoint = CGPoint(x: 0, y: activeField.frame.origin.y - keyboardSize.height)
+                scrollView.setContentOffset(scrollPoint, animated: true)
+            }
+        }
     }
 
     @objc func keyboardWillHide(_ notification: Notification) {
@@ -63,17 +88,12 @@ class LoginViewController: UIViewController {
         let userName = UiUtils.ensureDataInTextField(userNameTextEdit)
         let password = UiUtils.ensureDataInTextField(passwordTextEdit)
 
-        if userName == "" || password == "" {
-            print("form elements are empty")
-            return
-        }
+        guard !userName.isEmpty && !password.isEmpty else { return }
 
         let tinode = Cache.getTinode()
-        let (hostName, useTLS, _) = SettingsHelper.getConnectionSettings()
-        print("connecting to \(hostName), useTLS = \(useTLS)")
         UiUtils.toggleProgressOverlay(in: self, visible: true, title: "Logging in...")
         do {
-            try tinode.connect(to: (hostName ?? Cache.kHostName), useTLS: (useTLS ?? false))?
+            try tinode.connectDefault()?
                 .then(
                     onSuccess: { pkt in
                         return tinode.loginBasic(uname: userName, password: password)

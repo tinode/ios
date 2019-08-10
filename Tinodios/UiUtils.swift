@@ -111,8 +111,9 @@ class UiUtils {
     }
     public static func markTextFieldAsError(_ field: UITextField) {
         field.rightViewMode = .always
-        let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
+        let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 28, height: 20))
         imageView.image = UIImage(named: "important-32")
+        imageView.contentMode = .scaleAspectFit
         imageView.tintColor = .red
         field.rightView = imageView
     }

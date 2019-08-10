@@ -794,6 +794,13 @@ public class Tinode {
             return nil
         }
     }
+    public func requestResetPassword(method: String, newValue: String) -> PromisedReply<ServerMessage>? {
+        do {
+            return try login(scheme: AuthScheme.kLoginReset, secret: AuthScheme.encodeResetToken(scheme: AuthScheme.kLoginBasic, method: method, value: newValue), creds: nil)
+        } catch {
+            return nil
+        }
+    }
     public func disconnect() {
         // Remove auto-login data.
         setAutoLogin(using: nil, authenticateWith: nil)

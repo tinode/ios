@@ -2,7 +2,6 @@
 //  Validate.swift
 //  Tinodios
 //
-//  Created by ztimc on 2018/12/26.
 //  Copyright © 2018 Tinode. All rights reserved.
 //
 
@@ -15,10 +14,9 @@ enum ValidatedCredential {
     case URL(_: String)
     case IP(_: String)
 
-
     mutating func isValid() -> Bool {
-        var predicateStr:String!
-        var currObject:String!
+        var predicateStr: String!
+        var currObject: String!
         switch self {
         case let .email(str):
             predicateStr = "^([a-z0-9_\\.-]+)@([\\da-z\\.-]+)\\.([a-z\\.]{2,6})$"
@@ -45,7 +43,7 @@ enum ValidatedCredential {
     }
 
     static public func parse(from str: String?) -> ValidatedCredential? {
-        guard let str = str else { return nil }
+        guard let str = str, !str.isEmpty else { return nil }
         var email = ValidatedCredential.email(str)
         if email.isValid() { return email }
         var phone = ValidatedCredential.phoneNum(str)
@@ -55,5 +53,14 @@ enum ValidatedCredential {
         var ip = ValidatedCredential.IP(str)
         if ip.isValid() { return ip }
         return nil
+    }
+
+    func methodName() -> String {
+        switch self {
+        case .email: return "email"
+        case .phoneNum: return "tel"
+        case .URL: return "url"
+        case .IP: return "ip"
+        }
     }
 }

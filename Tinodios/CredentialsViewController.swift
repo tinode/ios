@@ -15,6 +15,8 @@ class CredentialsViewController : UIViewController {
     var meth: String?
     
     override func viewDidLoad() {
+        super.viewDidLoad()
+
         UiUtils.dismissKeyboardForTaps(onView: self.view)
     }
 
@@ -39,14 +41,14 @@ class CredentialsViewController : UIViewController {
         
         do {
             try tinode.loginToken(token: token, creds: creds)?
-                .then(onSuccess: { [weak self] msg in
+                .thenApply(onSuccess: { msg in
                     if let ctrl = msg?.ctrl, ctrl.code >= 300 {
                         print("login error")
                     } else {
                         UiUtils.routeToChatListVC()
                     }
                     return nil
-                    }, onFailure: nil)
+                })
         } catch {
             print("Failed to loginToken to Tinode: \(error).")
         }

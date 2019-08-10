@@ -13,6 +13,7 @@ struct AuthScheme {
     }
     static let kLoginBasic = "basic"
     static let kLoginToken = "token"
+    static let kLoginReset = "reset"
     
     let scheme: String
     let secret: String
@@ -38,19 +39,25 @@ struct AuthScheme {
     }
     
     static func encodeBasicToken(uname: String, password: String) throws -> String {
-        guard uname.range(of: ":") == nil else {
+        guard !uname.contains(":") else {
             throw AuthSchemeError.invalidParams("invalid user name: \(uname)")
         }
         return (uname + ":" + password).toBase64()!
     }
-    
+
+    static func encodeResetToken(scheme: String, method: String, value: String) throws -> String {
+        guard !scheme.contains(":") && !method.contains(":") else {
+            throw AuthSchemeError.invalidParams("invalid parameter")
+        }
+        return "\(scheme):\(method):\(value)".toBase64()!
+    }
+
     static func decodeBasicToken(token: String) throws -> [String] {
         guard let basicToken = token.fromBase64() else {
             throw AuthSchemeError.invalidParams(
                 "Failed to decode auth token from base64: \(token)")
         }
         
-        //guard uname.range(of: ":") == nil else {
         let parts = basicToken.split(separator: ":")
         if parts.count != 2 || parts[0].isEmpty {
             throw AuthSchemeError.invalidParams(

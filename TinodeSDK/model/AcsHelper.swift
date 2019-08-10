@@ -37,63 +37,50 @@ public class AcsHelper: Codable, Equatable {
     private var a: Int?
 
     public var description: String {
-        guard a != nil else {
-            return ""
-        }
-        return AcsHelper.encode(mode: a!)
+        guard let b = a else { return "" }
+        return AcsHelper.encode(mode: b)
     }
+    /// The value is neither nil nor Invalid. None is considered to be defined.
     public var isDefined: Bool {
-        get {
-            guard let b = a else {
-                return false
-            }
-            return b != AcsHelper.kModeNone && b != AcsHelper.kModeInvalid
-        }
-    }
-    public var isAdmin: Bool {
-        get {
-            return ((a ?? 0) & AcsHelper.kModeApprove) != 0
-        }
+        return (a ?? AcsHelper.kModeInvalid) != AcsHelper.kModeInvalid
     }
     public var isOwner: Bool {
-        get {
-            return ((a ?? 0) & AcsHelper.kModeOwner) != 0
-        }
+        return ((a ?? 0) & AcsHelper.kModeOwner) != 0
+    }
+    public var isAdmin: Bool {
+        return ((a ?? 0) & AcsHelper.kModeApprove) != 0
+    }
+    public var isManager: Bool {
+        return isOwner || isAdmin
+    }
+    public var isSharer: Bool {
+        return ((a ?? 0) & AcsHelper.kModeShare) != 0
     }
     public var isMuted: Bool {
-        get {
-            return ((a ?? 0) & AcsHelper.kModePres) == 0
-        }
+        return ((a ?? 0) & AcsHelper.kModePres) == 0
     }
     public var isInvalid: Bool {
-        get {
-            return (a ?? 0) == AcsHelper.kModeInvalid
-        }
+        return (a ?? 0) == AcsHelper.kModeInvalid
     }
     public var isJoiner: Bool {
-        get {
-            return ((a ?? 0) & AcsHelper.kModeJoin) != 0
-        }
+        return ((a ?? 0) & AcsHelper.kModeJoin) != 0
     }
     public var isReader: Bool {
-        get {
-            return ((a ?? 0) & AcsHelper.kModeRead) != 0
-        }
+        return ((a ?? 0) & AcsHelper.kModeRead) != 0
     }
     public var isWriter: Bool {
-        get {
-            return ((a ?? 0) & AcsHelper.kModeWrite) != 0
-        }
+        return ((a ?? 0) & AcsHelper.kModeWrite) != 0
     }
     public var isDeleter: Bool {
-        get {
-            return ((a ?? 0) & AcsHelper.kModeDelete) != 0
-        }
+        return ((a ?? 0) & AcsHelper.kModeDelete) != 0
     }
-    init(str: String?) {
+    public var isNone: Bool {
+        return (a ?? -1) == AcsHelper.kModeNone
+    }
+    public init(str: String?) {
         a = AcsHelper.decode(from: str)
     }
-    init(ah: AcsHelper?) {
+    public init(ah: AcsHelper?) {
         if ah != nil {
             a = ah!.a
         }
@@ -211,12 +198,12 @@ public class AcsHelper: Codable, Equatable {
         }
         return false
     }
+    // Bitwise & operator.
     public static func and(a1: AcsHelper? , a2: AcsHelper?) -> AcsHelper? {
-        if let ah1 = a1, let ah2 = a2, !ah1.isInvalid, !ah2.isInvalid {
-            return AcsHelper(a: ah1.a! & ah2.a!)
-        }
-        return nil
+        guard let ah1 = a1, let ah2 = a2, !ah1.isInvalid, !ah2.isInvalid else { return nil }
+        return AcsHelper(a: ah1.a! & ah2.a!)
     }
+    // Bits present in a1 but missing in a2.
     public static func diff(a1: AcsHelper?, a2: AcsHelper?) -> AcsHelper? {
         guard let a1a = a1?.a, let a2a = a2?.a, !a1!.isInvalid, !a2!.isInvalid else { return nil }
         return AcsHelper(a: a1a & ~a2a)
