@@ -18,6 +18,18 @@ class CredentialsViewController : UIViewController {
         UiUtils.dismissKeyboardForTaps(onView: self.view)
     }
 
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        if self.isMovingFromParent {
+            // If the user's logged in and is voluntarily leaving the verification VC
+            // by hitting the Back button.
+            let tinode = Cache.getTinode()
+            if tinode.myUid != nil {
+                tinode.logout()
+            }
+        }
+    }
+
     @IBAction func onConfirm(_ sender: UIButton) {
         guard let code = codeText.text else {
             return
@@ -39,21 +51,18 @@ class CredentialsViewController : UIViewController {
         
         do {
             try tinode.loginToken(token: token, creds: creds)?
-                .then(onSuccess: { [weak self] msg in
+                .then(onSuccess: { msg in
                     if let ctrl = msg?.ctrl, ctrl.code >= 300 {
-                        print("login error")
+                        DispatchQueue.main.async {
+                            UiUtils.showToast(message: "Verification failure: \(ctrl.code) \(ctrl.text)")
+                        }
                     } else {
                         UiUtils.routeToChatListVC()
                     }
                     return nil
-                    }, onFailure: nil)
+                }, onFailure: nil)
         } catch {
             print("Failed to loginToken to Tinode: \(error).")
         }
-    }
-   
-    
-    @IBAction func onCancel(_ sender: UIButton) {
-        self.dismiss(animated: true, completion: nil)
     }
 }

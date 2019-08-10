@@ -80,7 +80,8 @@ class UiUtils {
 
     public static func routeToCredentialsVC(in navVC: UINavigationController?, verifying meth: String?) {
         guard let navVC = navVC else { return }
-        DispatchQueue.main.async {
+        // +1 second to let the spinning wheel dismiss.
+        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1)) {
             let storyboard = UIStoryboard(name: "Main", bundle: nil)
             let destinationVC = storyboard.instantiateViewController(withIdentifier: "CredentialsViewController") as! CredentialsViewController
             destinationVC.meth = meth
