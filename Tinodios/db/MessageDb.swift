@@ -17,9 +17,9 @@ enum MessageDbError: Error {
 class MessageDb {
     private static let kTableName = "messages"
     private let db: SQLite.Connection
-    
+
     public var table: Table
-    
+
     public let id: Expression<Int64>
     public let topicId: Expression<Int64?>
     public let userId: Expression<Int64?>
@@ -29,8 +29,11 @@ class MessageDb {
     public let seq: Expression<Int?>
     public let content: Expression<String?>
 
-    init(_ database: SQLite.Connection) {
+    private let baseDb: BaseDb!
+
+    init(_ database: SQLite.Connection, baseDb: BaseDb) {
         self.db = database
+        self.baseDb = baseDb
         self.table = Table(MessageDb.kTableName)
         self.id = Expression<Int64>("id")
         self.topicId = Expression<Int64?>("topic_id")
@@ -46,8 +49,8 @@ class MessageDb {
         try! self.db.run(self.table.drop(ifExists: true))
     }
     func createTable() {
-        let userDb = BaseDb.getInstance().userDb!
-        let topicDb = BaseDb.getInstance().topicDb!
+        let userDb = baseDb.userDb!
+        let topicDb = baseDb.topicDb!
         // Must succeed.
         try! self.db.run(self.table.create(ifNotExists: true) { t in
             t.column(id, primaryKey: .autoincrement)
@@ -69,16 +72,16 @@ class MessageDb {
             // Already saved.
             return msg.msgId
         }
-        
+
         do {
             try db.savepoint("MessageDb.insert") {
-                guard let tdb = BaseDb.getInstance().topicDb else {
+                guard let tdb = baseDb.topicDb else {
                     throw MessageDbError.dbError("no topicDb in messageDb insert")
                 }
                 if (msg.topicId ?? -1) <= 0 {
                     msg.topicId = tdb.getId(topic: msg.topic)
                 }
-                guard let udb = BaseDb.getInstance().userDb else {
+                guard let udb = baseDb.userDb else {
                     throw MessageDbError.dbError("no userDb in messageDb insert")
                 }
                 if (msg.userId ?? -1) <= 0 {

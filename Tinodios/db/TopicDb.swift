@@ -55,8 +55,11 @@ public class TopicDb {
     public let pub: Expression<String?>
     public let priv: Expression<String?>
 
-    init(_ database: SQLite.Connection) {
+    private let baseDb: BaseDb!
+
+    init(_ database: SQLite.Connection, baseDb: BaseDb) {
         self.db = database
+        self.baseDb = baseDb
         self.table = Table(TopicDb.kTableName)
         self.id = Expression<Int64>("id")
         self.accountId = Expression<Int64?>("account_id")
@@ -87,7 +90,7 @@ public class TopicDb {
     }
 
     func createTable() {
-        let accountDb = BaseDb.getInstance().accountDb!
+        let accountDb = baseDb.accountDb!
         // Must succeed.
         try! self.db.run(self.table.create(ifNotExists: true) { t in
             t.column(id, primaryKey: .autoincrement)
@@ -119,7 +122,6 @@ public class TopicDb {
         try! db.run(self.table.createIndex(accountId, topic, unique: true, ifNotExists: true))
     }
     func deserializeTopic(topic: TopicProto, row: Row) {
-        //
         let st = StoredTopic()
         st.id = row[self.id]
         st.status = row[self.status] ?? BaseDb.kStatusUndefined
@@ -136,7 +138,7 @@ public class TopicDb {
         topic.clear = row[self.clear]
         topic.maxDel = row[self.maxDel] ?? 0
         topic.tags = row[self.tags]?.components(separatedBy: ",")
-        
+
         topic.accessMode = Acs.deserialize(from: row[self.accessMode])
         topic.defacs = Defacs.deserialize(from: row[self.defacs])
         topic.deserializePub(from: row[self.pub])
@@ -147,9 +149,8 @@ public class TopicDb {
         guard let topic = topic else {
             return -1
         }
-        //let t = self.table?.select(self.id)
         if let row = try? db.pluck(self.table.select(self.id).filter(self.accountId
-            == BaseDb.getInstance().account?.id && self.topic == topic)) {
+            == baseDb.account?.id && self.topic == topic)) {
             return row[self.id]
         }
         return -1
@@ -170,7 +171,7 @@ public class TopicDb {
         return -1
     }
     func query() -> AnySequence<Row>? {
-        guard let accountId = BaseDb.getInstance().account?.id else {
+        guard let accountId = baseDb.account?.id else {
             return nil
         }
         let topics = self.table.filter(self.accountId == accountId)
@@ -191,12 +192,10 @@ public class TopicDb {
 
             let tp = topic.topicType
             let tpv = tp.rawValue
-            let accountId = BaseDb.getInstance().account!.id
-            //let pub = topic.
+            let accountId = baseDb.account!.id
             let status = topic.isNew ? BaseDb.kStatusQueued : BaseDb.kStatusSynced
             let rowid = try db.run(
                 self.table.insert(
-                    //email <- "alice@mac.com"
                     self.accountId <- accountId,
                     self.status <- status,
                     self.topic <- topic.name,
@@ -204,20 +203,20 @@ public class TopicDb {
                     visible <- TopicType.grp == tp || TopicType.p2p == tp ? 1 : 0,
                     created <- lastUsed,
                     updated <- topic.updated,
-                    
+
                     read <- topic.read,
                     recv <- topic.recv,
                     seq <- topic.seq,
                     clear <- topic.clear,
                     maxDel <- topic.maxDel,
-                    
+
                     accessMode <- topic.accessMode?.serialize(),
                     defacs <- topic.defacs?.serialize(),
                     self.lastUsed <- lastUsed,
                     minLocalSeq <- 0,
                     maxLocalSeq <- 0,
                     nextUnsentSeq <- TopicDb.kUnsentIdStart,
-                    
+
                     tags <- topic.tags?.joined(separator: ","),
                     pub <- topic.serializePub(),
                     priv <- topic.serializePriv()
@@ -230,12 +229,6 @@ public class TopicDb {
                 st.maxLocalSeq = nil
                 st.status = status
                 st.nextUnsentId = TopicDb.kUnsentIdStart
-                /*
-                    id: rowid, lastUsed: lastUsed,
-                    minLocalSeq: nil, maxLocalSeq: nil,
-                    status: BaseDb.kStatusUndefined,
-                    nextUnsentId: TopicDb.kUnsentIdStart)
-                */
                 topic.payload = st
             }
             print("inserted id: \(rowid)")
@@ -244,7 +237,6 @@ public class TopicDb {
             print("insertion failed: \(error)")
             return -1
         }
-        
     }
     func update(topic: TopicProto) -> Bool {
         guard let st = topic.payload as? StoredTopic, let recordId = st.id else {
