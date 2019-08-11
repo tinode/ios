@@ -23,7 +23,7 @@ class ResetPasswordViewController : UIViewController {
             // If the user's logged in and is voluntarily leaving the ResetPassword VC
             // by hitting the Back button.
             let tinode = Cache.getTinode()
-            if tinode.isConnectionAuthenticated != nil || tinode.myUid != nil {
+            if tinode.isConnectionAuthenticated || tinode.myUid != nil {
                 tinode.logout()
             }
         }
