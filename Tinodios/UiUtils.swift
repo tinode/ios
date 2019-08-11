@@ -53,7 +53,7 @@ class UiUtils {
         } else {
             me!.listener = meListener
         }
-        let get = me!.getMetaGetBuilder().withDesc().withSub().build()
+        let get = me!.getMetaGetBuilder().withDesc().withSub().withTags().withCred().build()
         // TODO: logout on failure and route to login view.
         return me!.subscribe(set: nil, get: get)
     }

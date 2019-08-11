@@ -143,6 +143,7 @@ public class MsgGetMeta: CustomStringConvertible, Encodable {
     private static let kDataSet = 0x04
     private static let kDelSet = 0x08
     private static let kTagsSet = 0x10
+    private static let kCredSet = 0x20
     
     static let kDesc = "desc"
     static let kSub = "sub"
@@ -244,6 +245,10 @@ public class MsgGetMeta: CustomStringConvertible, Encodable {
     }
     func setTags() {
         set |= MsgGetMeta.kTagsSet
+        buildWhat()
+    }
+    func setCred() {
+        set |= MsgGetMeta.kCredSet
         buildWhat()
     }
     private init(what: String) {
