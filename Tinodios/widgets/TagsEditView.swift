@@ -564,10 +564,23 @@ extension TagsEditView: UITextFieldDelegate {
         unselectAllTagViews()
     }
 
+    public func textFieldDidEndEditing(_ textField: UITextField) {
+        if onShouldAcceptTag?(self) ?? true {
+            tokenizeTextFieldText()
+        }
+    }
+
     public func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         if string == "," && onShouldAcceptTag?(self) ?? true {
             tokenizeTextFieldText()
             return false
+        }
+        return true
+    }
+
+    public func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        if onShouldAcceptTag?(self) ?? true {
+            tokenizeTextFieldText()
         }
         return true
     }

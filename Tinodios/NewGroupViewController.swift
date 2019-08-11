@@ -160,11 +160,13 @@ class NewGroupViewController: UITableViewController {
         do {
             try topic.subscribe()?.then(
                 onSuccess: { msg in
-                    // TODO: invite members
                     for u in members {
                         topic.invite(user: u, in: nil)
                     }
-                    // route to chat
+                    // Need to unsubscribe because routing to MessageVC (below)
+                    // will subscribe to the topic again.
+                    topic.leave()
+                    // Route to chat.
                     self.presentChat(with: topic.name)
                     return nil
             },onFailure: UiUtils.ToastFailureHandler)
