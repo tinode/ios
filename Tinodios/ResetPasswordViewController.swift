@@ -17,6 +17,18 @@ class ResetPasswordViewController : UIViewController {
         UiUtils.dismissKeyboardForTaps(onView: self.view)
     }
 
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        if self.isMovingFromParent {
+            // If the user's logged in and is voluntarily leaving the ResetPassword VC
+            // by hitting the Back button.
+            let tinode = Cache.getTinode()
+            if tinode.isConnectionAuthenticated != nil || tinode.myUid != nil {
+                tinode.logout()
+            }
+        }
+    }
+
     @IBAction func requestButtonClicked(_ sender: Any) {
         let input = UiUtils.ensureDataInTextField(credentialTextField)
         guard let credential = ValidatedCredential.parse(from: input) else { return }

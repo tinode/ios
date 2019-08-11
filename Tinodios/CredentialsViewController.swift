@@ -26,7 +26,7 @@ class CredentialsViewController : UIViewController {
             // If the user's logged in and is voluntarily leaving the verification VC
             // by hitting the Back button.
             let tinode = Cache.getTinode()
-            if tinode.myUid != nil {
+            if tinode.isConnectionAuthenticated || tinode.myUid != nil {
                 tinode.logout()
             }
         }
