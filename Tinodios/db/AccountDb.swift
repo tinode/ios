@@ -20,14 +20,14 @@ public class StoredAccount {
 public class AccountDb {
     private static let kTableName = "accounts"
     private let db: SQLite.Connection
-    
+
     public var table: Table
-    
+
     public let id: Expression<Int64>
     public let uid: Expression<String?>
     public let active: Expression<Int?>
     public let deviceId: Expression<String?>
-    
+
     init(_ database: SQLite.Connection) {
         self.db = database
         self.table = Table(AccountDb.kTableName)

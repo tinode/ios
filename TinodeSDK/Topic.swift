@@ -180,6 +180,10 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
             meta.setTags()
             return self
         }
+        public func withCred() -> MetaGetBuilder {
+            meta.setCred()
+            return self
+        }
         public func build() -> MsgGetMeta {
             return meta
         }

@@ -108,12 +108,9 @@ class LoginViewController: UIViewController {
                             return nil
                         }
                         Cache.synchronizeContactsPeriodically()
-                        if let loginVC = self {
-                            UiUtils.toggleProgressOverlay(in: loginVC, visible: false)
-                            UiUtils.routeToChatListVC()
-                        }
+                        UiUtils.routeToChatListVC()
                         return nil
-                    }, onFailure: { [weak self] err in
+                    }, onFailure: { err in
                         print("failed to login \(err)")
                         var toastMsg: String
                         if let tinodeErr = err as? TinodeError {
@@ -124,14 +121,16 @@ class LoginViewController: UIViewController {
                             toastMsg = err.localizedDescription
                         }
                         DispatchQueue.main.async {
-                            if let loginVC = self {
-                                UiUtils.toggleProgressOverlay(in: loginVC, visible: false)
-                            }
                             UiUtils.showToast(message: toastMsg)
                         }
                         _ = tinode.logout()
                         return nil
-                    })
+                    })?.thenFinally { [weak self] in
+                        guard let loginVC = self else { return }
+                        DispatchQueue.main.async {
+                            UiUtils.toggleProgressOverlay(in: loginVC, visible: false)
+                        }
+                    }
             } catch {
                 UiUtils.toggleProgressOverlay(in: self, visible: false)
                 //os_log("Failed to connect/login to Tinode: %s.", log: OSLog.default, type: .error, error as CVarArg)

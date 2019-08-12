@@ -122,13 +122,22 @@ public class Acs: Codable, Equatable {
     func merge(from am: Acs?) -> Bool {
         var changed = 0
         if let am0 = am, self != am0 {
-            if let g = am0.given, given != nil {
+            if let g = am0.given {
+                if given == nil {
+                    given = AcsHelper(a: AcsHelper.kModeNone)
+                }
                 changed += (given!.merge(with: g) ? 1 : 0)
             }
-            if let w = am0.want, want != nil {
+            if let w = am0.want {
+                if want == nil {
+                    want = AcsHelper(a: AcsHelper.kModeNone)
+                }
                 changed += (want!.merge(with: w) ? 1 : 0)
             }
-            if let m = am0.mode, mode != nil {
+            if let m = am0.mode {
+                if mode == nil {
+                    mode = AcsHelper(a: AcsHelper.kModeNone)
+                }
                 changed += (mode!.merge(with: m) ? 1 : 0)
             } else {
                 if let m2 = AcsHelper.and(a1: want, a2: given) {
