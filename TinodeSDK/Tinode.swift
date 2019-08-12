@@ -809,6 +809,7 @@ public class Tinode {
     public func logout() {
         disconnect()
         myUid = nil
+        isConnectionAuthenticated = false
         store?.logout()
     }
     private func handleDisconnect(isServerOriginated: Bool, code: Int, reason: String) {
