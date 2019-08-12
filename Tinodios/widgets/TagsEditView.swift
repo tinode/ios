@@ -13,7 +13,6 @@ internal struct Constants {
     internal static let kTagSelectedColor: UIColor = .gray
     internal static let kTagSelectedTextColor: UIColor = .black
     internal static let kTagTextColor: UIColor = .white
-    internal static let kTextFont = UIFont.systemFont(ofSize: 12.0)
     internal static let kTagCornerRadius: CGFloat = 3.0
 
     internal static let kTagEditViewTextfieldHSpace: CGFloat = 3.0
@@ -48,14 +47,14 @@ public class TagView: UIView {
         }
     }
 
-    public init(tag: TinodeTag) {
+    public init(tag: TinodeTag, usingFont font: UIFont?) {
         super.init(frame: CGRect.zero)
         self.backgroundColor = tintColor
         self.layer.cornerRadius = Constants.kTagCornerRadius
         self.layer.masksToBounds = true
 
         textLabel.frame = CGRect(x: layoutMargins.left, y: layoutMargins.top, width: 0, height: 0)
-        textLabel.font = Constants.kTextFont
+        textLabel.font = font
         textLabel.textColor = Constants.kTagTextColor
         textLabel.backgroundColor = .clear
         addSubview(textLabel)
@@ -195,6 +194,9 @@ public class TagsEditView: UIScrollView {
         }
     }
 
+    // Font used to draw the text in the tag.
+    private var tagFont: UIFont?
+
     @IBInspectable
     public var fontSize: CGFloat = UIFont.preferredFont(forTextStyle: .body).pointSize {
         didSet {
@@ -307,7 +309,10 @@ public class TagsEditView: UIScrollView {
             return
         }
 
-        let tagView = TagView(tag: tag)
+        if let baseFont = textField.font, tagFont == nil {
+            tagFont = baseFont.withSize(baseFont.pointSize - 2)
+        }
+        let tagView = TagView(tag: tag, usingFont: tagFont)
 
         tagView.layoutMargins = self.layoutMargins
 
@@ -426,8 +431,6 @@ extension TagsEditView {
         textField.autocapitalizationType = UITextAutocapitalizationType.none
         textField.spellCheckingType = .no
         textField.delegate = self
-
-        textField.font = Constants.kTextFont
         addSubview(textField)
 
         layerBoundsObserver = self.observe(\.layer.bounds, options: [.old, .new]) { [weak self] sender, change in

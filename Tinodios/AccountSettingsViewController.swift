@@ -10,6 +10,8 @@ import TinodeSDK
 
 class AccountSettingsViewController: UITableViewController {
 
+    private static let kTagFontSize: CGFloat = 17
+
     @IBOutlet weak var topicTitleTextView: UITextView!
     @IBOutlet weak var avatarImage: RoundImageView!
     @IBOutlet weak var loadAvatarButton: UIButton!
@@ -160,6 +162,7 @@ class AccountSettingsViewController: UITableViewController {
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
 
         let tagsEditField = TagsEditView()
+        tagsEditField.fontSize = AccountSettingsViewController.kTagFontSize
         tagsEditField.onVerifyTag = { (_, tag) in
             return Utils.isValidTag(tag: tag)
         }
@@ -171,14 +174,15 @@ class AccountSettingsViewController: UITableViewController {
 
         tagsEditField.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            tagsEditField.topAnchor.constraint(equalTo: alert.view.topAnchor, constant: 45),
+            tagsEditField.topAnchor.constraint(equalTo: alert.view.topAnchor, constant: 48),
+            tagsEditField.heightAnchor.constraint(equalToConstant: 64),
             tagsEditField.rightAnchor.constraint(equalTo: alert.view.rightAnchor, constant: -10),
             tagsEditField.leftAnchor.constraint(equalTo: alert.view.leftAnchor, constant: 10)
-            ])
+        ])
         alert.view.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            alert.view.heightAnchor.constraint(equalToConstant: 130)
-            ])
+            alert.view.heightAnchor.constraint(equalToConstant: 168)
+        ])
         alert.addAction(UIAlertAction(
             title: "OK", style: .default,
             handler: { action in
