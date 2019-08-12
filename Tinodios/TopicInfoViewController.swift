@@ -211,11 +211,15 @@ class TopicInfoViewController: UITableViewController {
             alert.addTextField(configurationHandler: { textField in
                 textField.placeholder = "Name of the group"
                 textField.text = self.topic?.pub?.fn ?? ""
+                textField.borderStyle = .none
+                textField.font = UIFont.preferredFont(forTextStyle: .body)
             })
         }
         alert.addTextField(configurationHandler: { textField in
             textField.placeholder = "Additional info (private)"
             textField.text = self.topic?.comment ?? ""
+            textField.borderStyle = .none
+            textField.font = UIFont.preferredFont(forTextStyle: .body)
         })
         alert.addAction(UIAlertAction(
             title: "OK", style: .default,
