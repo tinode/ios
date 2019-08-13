@@ -292,9 +292,11 @@ public class TagsEditView: UIScrollView {
         self.textField.becomeFirstResponder()
         self.unselectAllTagViews()
 
-        // Scroll to self.textField.
-        let p = self.textField.frame.origin
-        self.contentOffset = p
+        // If the textField isn't visible, scroll to it.
+        if !self.bounds.intersects(self.textField.frame) {
+            let p = self.textField.frame.origin
+            self.contentOffset = p
+        }
     }
 
     public func endEditing() {
