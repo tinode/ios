@@ -32,7 +32,9 @@ public class BaseDb {
     // Object is rejected by the server.
     public static let kStatusRejected = 7
 
-    public static var `default`: BaseDb? = nil
+    // No direct access to the shared instance.
+    private static var `default`: BaseDb? = nil
+    private static let accessQueue = DispatchQueue(label: "co.tinode.tinodios.base-db-access")
     private let kDatabaseName = "basedb.sqlite3"
     var db: SQLite.Connection?
     private let pathToDatabase: String
@@ -44,7 +46,9 @@ public class BaseDb {
     var messageDb: MessageDb? = nil
     var account: StoredAccount? = nil
     var isReady: Bool { get { return self.account != nil } }
-    init() {
+
+    /// The init is private to ensure that the class is a singleton.
+    private init() {
         var documentsDirectory = (NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] as NSString) as String
         if documentsDirectory.last! != "/" {
             documentsDirectory.append("/")
@@ -60,6 +64,7 @@ public class BaseDb {
 
         self.sqlStore = SqlStore(dbh: self)
     }
+
     private func initDb() {
         self.accountDb = AccountDb(self.db!)
         self.userDb = UserDb(self.db!, baseDb: self)
@@ -91,13 +96,15 @@ public class BaseDb {
         self.accountDb?.destroyTable()
     }
     static func getInstance() -> BaseDb {
-        if let instance = BaseDb.default {
+        return BaseDb.accessQueue.sync {
+            if let instance = BaseDb.default {
+                return instance
+            }
+            let instance = BaseDb()
+            BaseDb.default = instance
+            instance.initDb()
             return instance
         }
-        let instance = BaseDb()
-        BaseDb.default = instance
-        instance.initDb()
-        return instance
     }
     func isMe(uid: String?) -> Bool {
         guard let uid = uid, let acctUid = BaseDb.getInstance().uid else { return false }
