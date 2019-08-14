@@ -291,6 +291,12 @@ public class TagsEditView: UIScrollView {
     public func beginEditing() {
         self.textField.becomeFirstResponder()
         self.unselectAllTagViews()
+
+        // If the textField isn't visible, scroll to it.
+        if !self.bounds.intersects(self.textField.frame) {
+            let p = self.textField.frame.origin
+            self.contentOffset = p
+        }
     }
 
     public func endEditing() {
@@ -448,6 +454,13 @@ extension TagsEditView {
 
         updatePlaceholderTextVisibility()
         repositionViews()
+
+        let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleTapGestureRecognizer))
+        addGestureRecognizer(tapRecognizer)
+    }
+
+    @objc func handleTapGestureRecognizer(_ sender: UITapGestureRecognizer) {
+        beginEditing()
     }
 
     fileprivate func calculateContentHeight(layoutWidth: CGFloat) -> CGFloat {

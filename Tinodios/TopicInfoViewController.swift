@@ -16,10 +16,11 @@ class TopicInfoViewController: UITableViewController {
     private static let kSectionMute = 1
 
     private static let kSectionActions = 2
-    private static let kSectionActionsDelMessages = 0
-    private static let kSectionActionsLeaveGroup = 1
-    private static let kSectionActionsLeaveConversation = 2
-    private static let kSectionActionsDelTopic = 3
+    private static let kSectionActionsManageTags = 0
+    private static let kSectionActionsDelMessages = 1
+    private static let kSectionActionsLeaveGroup = 2
+    private static let kSectionActionsLeaveConversation = 3
+    private static let kSectionActionsDelTopic = 4
 
     private static let kSectionPermissions = 3
     private static let kSectionPermissionsMine = 0
@@ -49,6 +50,7 @@ class TopicInfoViewController: UITableViewController {
     @IBOutlet weak var actionAuthPermissions: UITableViewCell!
     @IBOutlet weak var actionAnonPermissions: UITableViewCell!
 
+    @IBOutlet weak var actionManageTags: UITableViewCell!
     @IBOutlet weak var actionDeleteMessages: UITableViewCell!
     @IBOutlet weak var actionDeleteGroup: UITableViewCell!
     @IBOutlet weak var actionLeaveGroup: UITableViewCell!
@@ -108,6 +110,10 @@ class TopicInfoViewController: UITableViewController {
                 actionTarget: self)
         }
 
+        UiUtils.setupTapRecognizer(
+            forView: actionManageTags,
+            action: #selector(TopicInfoViewController.manageTagsClicked),
+            actionTarget: self)
         UiUtils.setupTapRecognizer(
             forView: actionDeleteMessages,
             action: #selector(TopicInfoViewController.deleteMessagesClicked),
@@ -328,6 +334,10 @@ class TopicInfoViewController: UITableViewController {
         present(alert, animated: true)
     }
 
+    @objc func manageTagsClicked(sender: UITapGestureRecognizer) {
+        UiUtils.presentManageTagsEditDialog(over: self, forTopic: self.topic)
+    }
+
     @objc func deleteMessagesClicked(sender: UITapGestureRecognizer) {
         let handler: (Bool) -> Void = { (hard: Bool) -> Void in
             do {
@@ -412,7 +422,11 @@ extension TopicInfoViewController {
             return 60
         }
 
-        if indexPath.section == TopicInfoViewController.kSectionActions && indexPath.row > 0 {
+        if indexPath.section == TopicInfoViewController.kSectionActions {
+            if indexPath.row == TopicInfoViewController.kSectionActionsManageTags && (!(topic?.isGrpType ?? false) || !(topic?.isOwner ?? false)) {
+                // P2P topic or not topic owner, hide [Manage Tags]
+                return CGFloat.leastNonzeroMagnitude
+            }
             if indexPath.row == TopicInfoViewController.kSectionActionsLeaveGroup && !(topic?.isGrpType ?? false) {
                 // P2P topic, hide [Leave Group]
                 return CGFloat.leastNonzeroMagnitude
@@ -635,8 +649,11 @@ extension TopicInfoViewController {
 }
 
 extension TopicInfoViewController: EditMembersDelegate {
-    func editMembersInitialSelection(_: UIView) -> [String] {
-        return subscriptions?.compactMap { print("Selected contact: \($0.user ?? "nil")"); return $0.user } ?? []
+    func editMembersInitialSelection(_: UIView) -> [ContactHolder] {
+        return subscriptions?.compactMap {
+            print("Selected contact: \($0.user ?? "nil")")
+            return ContactHolder(displayName: $0.pub?.fn, image: $0.pub?.photo?.image(), uniqueId: $0.user)
+        } ?? []
     }
 
     func editMembersDidEndEditing(_: UIView, added: [String], removed: [String]) {
@@ -651,7 +668,7 @@ extension TopicInfoViewController: EditMembersDelegate {
     }
 
     func editMembersWillChangeState(_: UIView, uid: String, added: Bool, initiallySelected: Bool) -> Bool {
-        return added || topic.isAdmin || !initiallySelected
+        return !tinode.isMe(uid: uid) && (added || topic.isAdmin || !initiallySelected)
     }
 }
 

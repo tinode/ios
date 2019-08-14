@@ -138,11 +138,11 @@ class RepeatingTimer {
         return t
     }()
     var eventHandler: (() -> Void)?
-    private enum State {
+    public enum State {
         case suspended
         case resumed
     }
-    private var state: State = .suspended
+    public var state: State = .suspended
     deinit {
         timer.setEventHandler {}
         timer.cancel()

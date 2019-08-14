@@ -10,8 +10,6 @@ import TinodeSDK
 
 class AccountSettingsViewController: UITableViewController {
 
-    private static let kTagFontSize: CGFloat = 17
-
     @IBOutlet weak var topicTitleTextView: UITextView!
     @IBOutlet weak var avatarImage: RoundImageView!
     @IBOutlet weak var loadAvatarButton: UIButton!
@@ -158,44 +156,7 @@ class AccountSettingsViewController: UITableViewController {
     }
 
     @objc func manageTagsClicked(sender: UITapGestureRecognizer) {
-        let alert = UIAlertController(title: "Tags (content discovery)", message: nil, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
-
-        let tagsEditField = TagsEditView()
-        tagsEditField.fontSize = AccountSettingsViewController.kTagFontSize
-        tagsEditField.onVerifyTag = { (_, tag) in
-            return Utils.isValidTag(tag: tag)
-        }
-        if let tags = self.me.tags {
-            tagsEditField.addTags(tags)
-        }
-
-        alert.view.addSubview(tagsEditField)
-
-        tagsEditField.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            tagsEditField.topAnchor.constraint(equalTo: alert.view.topAnchor, constant: 48),
-            tagsEditField.heightAnchor.constraint(equalToConstant: 64),
-            tagsEditField.rightAnchor.constraint(equalTo: alert.view.rightAnchor, constant: -10),
-            tagsEditField.leftAnchor.constraint(equalTo: alert.view.leftAnchor, constant: 10)
-        ])
-        alert.view.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            alert.view.heightAnchor.constraint(equalToConstant: 168)
-        ])
-        alert.addAction(UIAlertAction(
-            title: "OK", style: .default,
-            handler: { action in
-                let tags = tagsEditField.tags
-                do {
-                    try self.me.setMeta(meta: MsgSetMeta(desc: nil, sub: nil, tags: tags, cred: nil))?.thenCatch(onFailure: UiUtils.ToastFailureHandler)
-                } catch {
-                    DispatchQueue.main.async {
-                        UiUtils.showToast(message: "Failed to update tags \(error.localizedDescription)")
-                    }
-                }
-        }))
-        self.present(alert, animated: true)
+        UiUtils.presentManageTagsEditDialog(over: self, forTopic: self.me)
     }
     @objc func addContactClicked(sender: UIGestureRecognizer) {
         let alert = UIAlertController(title: "Add contact", message: "Enter email or phone number", preferredStyle: .alert)

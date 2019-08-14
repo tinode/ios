@@ -38,6 +38,9 @@ class NewGroupViewController: UITableViewController {
         self.tagsTextField.onVerifyTag = { (_, tag) in
             return Utils.isValidTag(tag: tag)
         }
+        if !Cache.isContactSynchronizerActive() {
+            Cache.synchronizeContactsPeriodically()
+        }
     }
 
     override func viewDidLoad() {
@@ -184,8 +187,8 @@ extension NewGroupViewController: NewGroupDisplayLogic {
 }
 
 extension NewGroupViewController: EditMembersDelegate {
-    func editMembersInitialSelection(_: UIView) -> [String] {
-        return selectedMembers
+    func editMembersInitialSelection(_: UIView) -> [ContactHolder] {
+        return selectedContacts
     }
 
     func editMembersDidEndEditing(_: UIView, added: [String], removed: [String]) {
@@ -212,7 +215,7 @@ extension NewGroupViewController: EditMembersDelegate {
     }
 
     func editMembersWillChangeState(_: UIView, uid: String, added: Bool, initiallySelected: Bool) -> Bool {
-        return true
+        return !Cache.getTinode().isMe(uid: uid)
     }
 }
 

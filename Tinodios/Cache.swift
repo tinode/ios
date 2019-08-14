@@ -32,6 +32,9 @@ class Cache {
             Cache.default.tinode = nil
         }
     }
+    public static func isContactSynchronizerActive() -> Bool {
+        return Cache.default.timer.state == .resumed
+    }
     public static func synchronizeContactsPeriodically() {
         Cache.default.timer.suspend()
         // Try to synchronize contacts immediately

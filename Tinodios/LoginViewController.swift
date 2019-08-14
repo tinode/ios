@@ -107,7 +107,6 @@ class LoginViewController: UIViewController {
                                                          verifying: ctrl.getStringArray(for: "cred")?.first)
                             return nil
                         }
-                        Cache.synchronizeContactsPeriodically()
                         UiUtils.routeToChatListVC()
                         return nil
                     }, onFailure: { err in
