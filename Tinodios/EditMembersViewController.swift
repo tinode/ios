@@ -9,8 +9,8 @@ import UIKit
 import TinodeSDK
 
 public protocol EditMembersDelegate: class {
-    // Asks for the UIDs of initially selected members
-    func editMembersInitialSelection(_: UIView) -> [String]
+    // Asks for the UIDs and contact info of initially selected members
+    func editMembersInitialSelection(_: UIView) -> [ContactHolder]
     // Called when the editor completes selection.
     func editMembersDidEndEditing(_: UIView, added: [String], removed: [String])
     // Called when member is added or removed. Return 'true' to continue, 'false' to reject the change.
@@ -45,18 +45,33 @@ class EditMembersViewController: UIViewController, UITableViewDataSource {
     }
 
     private func setup() {
-        if let subscriptions = delegate?.editMembersInitialSelection(editMembersView) {
-            for uid in subscriptions {
-                selectedIds.insert(uid)
-                initialIds.insert(uid)
+        var uid2contact = [String:Int]()
+        let subscriptions = delegate?.editMembersInitialSelection(editMembersView)
+        if let subs = subscriptions {
+            for (idx, contact) in subs.enumerated() {
+                if let uid = contact.uniqueId {
+                    selectedIds.insert(uid)
+                    initialIds.insert(uid)
+                    uid2contact[uid] = idx
+                }
             }
         }
 
+        var presentIds = Set<String>()
         contacts = contactsManager.fetchContacts()
         for i in 0..<contacts.count {
             let c = contacts[i]
             if let uid = c.uniqueId, userSelected(with: uid) {
                 selectedContacts.append(IndexPath(row: i, section: 0))
+                presentIds.insert(uid)
+            }
+        }
+        let unknownIds = initialIds.subtracting(presentIds)
+        for uid in unknownIds {
+            print("missing uid = \(uid)")
+            if let idx = uid2contact[uid], let c = subscriptions?[idx] {
+                contacts.append(c)
+                selectedContacts.append(IndexPath(row: contacts.count - 1, section: 0))
             }
         }
         self.navigationItem.title = "Manage members"

@@ -65,7 +65,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 _ = tinode.logout()
             }
         }
-        Cache.synchronizeContactsPeriodically()
         if #available(iOS 12.0, *) {
             let reachability = NWPathMonitor()
             reachability.start(queue: DispatchQueue.global(qos: .background))
