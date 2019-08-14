@@ -38,6 +38,9 @@ class NewGroupViewController: UITableViewController {
         self.tagsTextField.onVerifyTag = { (_, tag) in
             return Utils.isValidTag(tag: tag)
         }
+        if !Cache.isContactSynchronizerActive() {
+            Cache.synchronizeContactsPeriodically()
+        }
     }
 
     override func viewDidLoad() {

@@ -54,6 +54,10 @@ class FindViewController: UITableViewController, FindDisplayLogic {
         // Monitor when the search button is tapped.
         searchController.searchBar.delegate = self
         self.definesPresentationContext = true
+
+        if !Cache.isContactSynchronizerActive() {
+            Cache.synchronizeContactsPeriodically()
+        }
     }
 
     func displayLocalContacts(contacts newContacts: [ContactHolder]) {
