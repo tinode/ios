@@ -8,7 +8,7 @@
 import Foundation
 import TinodeSDK
 
-class ContactHolder {
+public class ContactHolder {
     var displayName: String? = nil
     var image: UIImage? = nil
     var uniqueId: String? = nil

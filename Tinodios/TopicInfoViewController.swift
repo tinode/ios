@@ -649,8 +649,11 @@ extension TopicInfoViewController {
 }
 
 extension TopicInfoViewController: EditMembersDelegate {
-    func editMembersInitialSelection(_: UIView) -> [String] {
-        return subscriptions?.compactMap { print("Selected contact: \($0.user ?? "nil")"); return $0.user } ?? []
+    func editMembersInitialSelection(_: UIView) -> [ContactHolder] {
+        return subscriptions?.compactMap {
+            print("Selected contact: \($0.user ?? "nil")")
+            return ContactHolder(displayName: $0.pub?.fn, image: $0.pub?.photo?.image(), uniqueId: $0.user)
+        } ?? []
     }
 
     func editMembersDidEndEditing(_: UIView, added: [String], removed: [String]) {
@@ -665,7 +668,7 @@ extension TopicInfoViewController: EditMembersDelegate {
     }
 
     func editMembersWillChangeState(_: UIView, uid: String, added: Bool, initiallySelected: Bool) -> Bool {
-        return added || topic.isAdmin || !initiallySelected
+        return !tinode.isMe(uid: uid) && (added || topic.isAdmin || !initiallySelected)
     }
 }
 
