@@ -795,7 +795,7 @@
                         </connections>
                     </tableView>
                     <toolbarItems/>
-                    <navigationItem key="navigationItem" title="Tinodios" id="Rgo-YL-uPZ">
+                    <navigationItem key="navigationItem" title="Tinode" id="Rgo-YL-uPZ">
                         <barButtonItem key="leftBarButtonItem" title="Profile" id="rlG-v4-QUc">
                             <connections>
                                 <segue destination="Pnk-9m-ZVg" kind="show" id="fsg-RJ-g97"/>
@@ -1990,6 +1990,6 @@
     </resources>
     <inferredMetricsTieBreakers>
         <segue reference="Qbx-cO-rju"/>
-        <segue reference="Fnn-wi-PrS"/>
+        <segue reference="11u-RR-BAc"/>
     </inferredMetricsTieBreakers>
 </document>
