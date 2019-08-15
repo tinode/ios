@@ -50,6 +50,11 @@ class ChatListInteractor: ChatListBusinessLogic, ChatListDataStore {
         override func onMetaDesc(desc: Description<VCard, PrivateType>) {
             // TODO: desc.pub?.constructBitmap()
             print("on meta desc")
+            // Handle description for me topic:
+            // add/update user info for ME.
+            if let uid = Cache.getTinode().myUid {
+                ContactsManager.default.processDescription(uid: uid, desc: desc)
+            }
         }
         override func onSubsUpdated() {
             // datasetChanged()

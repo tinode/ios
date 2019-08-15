@@ -40,17 +40,17 @@ public class User<P: Codable>: UserProto {
     public var pub: P?
     public var payload: Payload? = nil
 
-    init(uid: String?, updated: Date?, pub: P?) {
+    public init(uid: String?, updated: Date?, pub: P?) {
         self.uid = uid
         self.updated = updated
         self.pub = pub
     }
-    init<R: Decodable>(uid: String?, desc: Description<P, R>) {
+    public init<R: Decodable>(uid: String?, desc: Description<P, R>) {
         self.uid = uid
         self.updated = desc.updated
         self.pub = desc.pub
     }
-    init<R: Decodable>(sub: Subscription<P, R>) throws {
+    public init<R: Decodable>(sub: Subscription<P, R>) throws {
         if let uid = sub.user, !uid.isEmpty {
             self.uid = uid
             self.updated = sub.updated
@@ -77,7 +77,8 @@ public class User<P: Codable>: UserProto {
         }
         return changed
     }
-    func merge<DR: Decodable>(from desc: Description<P, DR>) -> Bool {
+
+    public func merge<DR: Decodable>(from desc: Description<P, DR>) -> Bool {
         var changed = false
         if desc.updated != nil && (self.updated == nil || self.updated! < desc.updated!) {
             self.updated = desc.updated

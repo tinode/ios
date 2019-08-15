@@ -59,6 +59,26 @@ class ContactsManager {
             }
         }
     }
+
+    public func processDescription(uid: String?, desc: Description<VCard, PrivateType>) {
+        queue.sync {
+            processDescriptionInternal(uid: uid, desc: desc)
+        }
+    }
+
+    private func processDescriptionInternal(uid: String?, desc: Description<VCard, PrivateType>) {
+        guard let uid = uid else { return }
+        if let user = userDb.readOne(uid: uid) as? User<VCard> {
+            // Existing contact.
+            if user.merge(from: desc) {
+                userDb.update(user: user)
+            }
+        } else {
+            let user = User<VCard>(uid: uid, desc: desc)
+            _ = userDb.insert(user: user)
+        }
+    }
+
     // Returns contacts from the sqlite database's UserDb.
     public func fetchContacts(withUids uids: [String]? = nil) -> [ContactHolder]? {
         let users: [UserProto]?

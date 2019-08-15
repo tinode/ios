@@ -578,7 +578,6 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
         update(desc: meta.desc as! Description<DP, DR>)
         if case .p2p = topicType {
             tinode?.updateUser(uid: name, desc: meta.desc as! DefaultDescription)
-            //mTinode.updateUser(getName(), meta.desc);
         }
         // update listener
         listener?.onMetaDesc(desc: (meta.desc as! Description<DP, DR>))

@@ -26,7 +26,6 @@ class NewGroupViewController: UITableViewController {
             return selectedUids.map { $0 }
         }
     }
-    private var contactsManager = ContactsManager()
 
     private var imageUploaded: Bool = false
 
@@ -40,6 +39,15 @@ class NewGroupViewController: UITableViewController {
         }
         if !Cache.isContactSynchronizerActive() {
             Cache.synchronizeContactsPeriodically()
+        }
+
+        // Add me to selectedUids and selectedContacts.
+        let tinode = Cache.getTinode()
+        if let myUid = tinode.myUid {
+            selectedContacts = ContactsManager.default.fetchContacts(withUids: [myUid]) ?? []
+            if !selectedContacts.isEmpty {
+                selectedUids.insert(myUid)
+            }
         }
     }
 
@@ -125,7 +133,8 @@ class NewGroupViewController: UITableViewController {
 
     @IBAction func saveButtonClicked(_ sender: Any) {
         let groupName = UiUtils.ensureDataInTextField(groupNameTextField)
-        let members = selectedMembers
+        let tinode = Cache.getTinode()
+        let members = selectedMembers.filter { !tinode.isMe(uid: $0) }
         if members.isEmpty {
             UiUtils.showToast(message: "Select at least one group member")
             return
@@ -200,12 +209,13 @@ extension NewGroupViewController: EditMembersDelegate {
             assert(row != nil, "Removed non-existent user")
             return IndexPath(row: row! + 1, section: 1)
         })
-        let newSelection = contactsManager.fetchContacts(withUids: selectedMembers) ?? []
+        let newSelection = ContactsManager.default.fetchContacts(withUids: selectedMembers) ?? []
         let addedPaths = added.map( {(add: String) -> IndexPath in
             let row = newSelection.firstIndex(where: { h in h.uniqueId == add })
             assert(row != nil, "Added non-existent user")
             return IndexPath(row: row! + 1, section: 1)
         })
+        assert(selectedUids.count == newSelection.count)
 
         tableView.beginUpdates()
         selectedContacts = newSelection
