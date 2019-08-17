@@ -2,7 +2,7 @@
 //  Drafty.swift
 //  ios
 //
-//  Copyright © 2018 Tinode. All rights reserved.
+//  Copyright © 2019 Tinode. All rights reserved.
 //
 
 import Foundation

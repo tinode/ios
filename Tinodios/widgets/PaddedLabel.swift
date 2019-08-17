@@ -44,4 +44,3 @@ public class PaddedLabel: UILabel {
         super.drawText(in: insetRect)
     }
 }
-

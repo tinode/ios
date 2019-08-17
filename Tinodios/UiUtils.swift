@@ -277,7 +277,6 @@ class UiUtils {
                     return nil
                 })
         } catch {
-            print("Error changing permissions \(error)")
             return nil
         }
     }

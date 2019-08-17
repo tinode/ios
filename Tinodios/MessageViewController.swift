@@ -365,19 +365,16 @@ extension MessageViewController: MessageDisplayLogic {
         alert.addAction(UIAlertAction(
             title: "Accept", style: .default,
             handler: { action in
-                print("ok clicked")
                 self.interactor?.acceptInvitation()
         }))
         alert.addAction(UIAlertAction(
             title: "Ignore", style: .default,
             handler: { action in
-                print("ignore clicked")
                 self.interactor?.ignoreInvitation()
         }))
         alert.addAction(UIAlertAction(
             title: "Block", style: .default,
             handler: { action in
-                print("block clicked")
                 self.interactor?.blockTopic()
         }))
         self.present(alert, animated: true)
@@ -559,7 +556,6 @@ extension MessageViewController: UICollectionViewDataSource {
                 cell.avatarView.set(icon: sub.pub?.photo?.image(), title: sub.pub?.fn, id: message.from)
             } else {
                 cell.avatarView.set(icon: nil, title: nil, id: message.from)
-                print("Subscription not found for \(message.from ?? "nil")")
             }
         }
 
@@ -937,8 +933,6 @@ extension MessageViewController : MessageCellDelegate {
     func didTapContent(in cell: MessageCell, url: URL?) {
         guard let url = url else { return }
 
-        print("didTapContent URL=\(url.absoluteString)")
-
         if url.scheme == "tinode" {
             switch url.path {
             case "/post":
@@ -952,10 +946,9 @@ extension MessageViewController : MessageCellDelegate {
             case "/preview-image":
                 showImagePreview(in: cell)
             default:
-                print("Unknown tinode:// action '\(url.path)'")
+                Cache.log.error("MessageVC - unknown tinode:// action: %{public}@", url.path)
                 break
             }
-            // TODO: post message, save attachment.
             return
         }
 
@@ -967,14 +960,10 @@ extension MessageViewController : MessageCellDelegate {
     }
 
     // TODO: remove as unused
-    func didTapMessage(in cell: MessageCell) {
-        print("didTapMessage")
-    }
+    func didTapMessage(in cell: MessageCell) {}
 
     // TODO: remove as unused or go to user's profile (p2p topic?)
-    func didTapAvatar(in cell: MessageCell) {
-        print("didTapAvatar")
-    }
+    func didTapAvatar(in cell: MessageCell) {}
 
     func createPopupMenu(in cell: MessageCell) {
         // Make cell the first responder otherwise menu will show wrong items.
@@ -1036,7 +1025,6 @@ extension MessageViewController : MessageCellDelegate {
             let msgIdx = self.messageSeqIdIndex[cell.seqId] else { return }
         if Cache.getLargeFileHelper().cancelUpload(
             topicId: topicId, msgId: self.messages[msgIdx].msgId) {
-            print("cancelled upload")
         }
     }
 
@@ -1102,7 +1090,7 @@ extension MessageViewController : MessageCellDelegate {
             try d.write(to: destinationURL)
             UiUtils.presentFileSharingVC(for: destinationURL)
         } catch {
-            print("failed to save \(filename)")
+            Cache.log.error("MessageVC - save attachment failed: %{public}@", error.localizedDescription)
         }
     }
 

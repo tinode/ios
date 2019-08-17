@@ -2,7 +2,7 @@
 //  LoginViewController.swift
 //  Tinodios
 //
-//  Copyright © 2018 Tinode. All rights reserved.
+//  Copyright © 2019 Tinode. All rights reserved.
 //
 
 import UIKit
@@ -67,7 +67,6 @@ class LoginViewController: UIViewController {
         var visibleRect = self.view.frame
         visibleRect.size.height -= keyboardSize.height
         if let activeField = [userNameTextEdit, passwordTextEdit].first(where: { $0.isFirstResponder }) {
-            print("visible \(visibleRect); active origin \(activeField.frame.origin)")
             if visibleRect.contains(activeField.frame.origin) {
                 let scrollPoint = CGPoint(x: 0, y: activeField.frame.origin.y - keyboardSize.height)
                 scrollView.setContentOffset(scrollPoint, animated: true)
@@ -100,7 +99,7 @@ class LoginViewController: UIViewController {
                     })?
                 .then(
                     onSuccess: { [weak self] pkt in
-                        print("login successful for: \(tinode.myUid!)")
+                        Cache.log.info("LoginVC - login successful for %{public}@", tinode.myUid!)
                         Utils.saveAuthToken(for: userName, token: tinode.authToken)
                         if let ctrl = pkt?.ctrl, ctrl.code >= 300, ctrl.text.contains("validate credentials") {
                             UiUtils.routeToCredentialsVC(in: self?.navigationController,
@@ -110,7 +109,7 @@ class LoginViewController: UIViewController {
                         UiUtils.routeToChatListVC()
                         return nil
                     }, onFailure: { err in
-                        print("failed to login \(err)")
+                        Cache.log.error("LoginVC - login failed: %{public}@", err.localizedDescription)
                         var toastMsg: String
                         if let tinodeErr = err as? TinodeError {
                             toastMsg = "Tinode: \(tinodeErr.description)"
@@ -132,8 +131,7 @@ class LoginViewController: UIViewController {
                     }
             } catch {
                 UiUtils.toggleProgressOverlay(in: self, visible: false)
-                //os_log("Failed to connect/login to Tinode: %s.", log: OSLog.default, type: .error, error as CVarArg)
-                print("Failed to connect/login to Tinode: \(error).")
+                Cache.log.error("LoginVC - Failed to connect/login to Tinode: %{public}@", error.localizedDescription)
                 _ = tinode.logout()
             }
     }

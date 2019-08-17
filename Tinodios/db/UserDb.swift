@@ -2,7 +2,7 @@
 //  UserDb.swift
 //  ios
 //
-//  Copyright © 2018 Tinode. All rights reserved.
+//  Copyright © 2019 Tinode. All rights reserved.
 //
 
 import Foundation
@@ -80,7 +80,7 @@ class UserDb {
             ))
             return rowid
         } catch {
-            print("UserDb insertion failed: \(error)")
+            Cache.log.error("UserDb - insert operation failed: uid = %{public}@, error = %{public}@", uid ?? "", error.localizedDescription)
             return -1
         }
     }
@@ -108,7 +108,7 @@ class UserDb {
         do {
             return try self.db.run(record.update(setters)) > 0
         } catch {
-            print("UserDb update failed: \(error)")
+            Cache.log.error("UserDb - update operation failed: userId = %{public}@, error = %{public}@", userId, error.localizedDescription)
             return false
         }
     }
@@ -118,7 +118,7 @@ class UserDb {
         do {
             return try self.db.run(record.delete()) > 0
         } catch {
-            print("UserDb delete failed for id \(id): \(error)")
+            Cache.log.error("UserDb - deleteRow operation failed: userId = %{public}@, error = %{public}@", id, error.localizedDescription)
             return false
         }
     }
@@ -168,7 +168,7 @@ class UserDb {
             }
             return users
         } catch {
-            print("UserDb select all rows for account id \(accountId): \(error)")
+            Cache.log.error("UserDb - read operation failed: error = %{public}@", error.localizedDescription)
         }
         return nil
     }

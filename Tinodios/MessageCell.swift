@@ -179,7 +179,6 @@ class MessageCell: UICollectionViewCell {
 
     /// Handle long press gesture, return true when gestureRecognizer's touch point in `containerView`'s frame
     override func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
-        print("gesture recognizer should begin")
         let touchPoint = gestureRecognizer.location(in: self)
         guard gestureRecognizer.isKind(of: UILongPressGestureRecognizer.self) else { return false }
         return containerView.frame.contains(touchPoint)

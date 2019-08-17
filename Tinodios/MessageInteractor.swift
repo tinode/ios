@@ -91,7 +91,6 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
     }
     func cleanup() {
         // set listeners to nil
-        print("cleaning up the topic \(String(describing: self.topicName))")
         if self.topic?.listener === self {
             self.topic?.listener = nil
         }
@@ -127,7 +126,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                                     return nil
                                 })
                             } catch {
-                                print("Failed to send pending messages \(error)")
+                                Cache.log.error("MessageInteractor - Failed to send pending messages: %{public}@", error.localizedDescription)
                             }
                         }
                         if self?.topicId == -1 {
@@ -150,10 +149,9 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                         return nil
                     })
         } catch TinodeError.notConnected(let errorMsg) {
-            // presenter --> show error message
-            print("Tinode is not connected \(errorMsg)")
+            Cache.log.error("MessageInteractor - Tinode isn't connected: %{public}@", errorMsg)
         } catch {
-            print("Error subscribing to topic \(error.localizedDescription)")
+            Cache.log.error("MessageInteractor - error subscribing to topic: %{public}@", error.localizedDescription)
         }
         return false
     }
@@ -171,12 +169,10 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                 },
                 onFailure: UiUtils.ToastFailureHandler)
         } catch TinodeError.notConnected(let errMsg) {
-            print("sendMessage -- not connected \(errMsg)")
             DispatchQueue.main.async { UiUtils.showToast(message: "You are offline.") }
             Cache.getTinode().reconnectNow()
             return false
         } catch {
-            print("sendMessage failed \(error)")
             DispatchQueue.main.async { UiUtils.showToast(message: "Message not sent.") }
             return false
         }

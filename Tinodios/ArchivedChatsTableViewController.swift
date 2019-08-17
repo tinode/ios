@@ -68,7 +68,6 @@ class ArchivedChatsTableViewController: UITableViewController {
     }
     override func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
         let unarchive = UITableViewRowAction(style: .normal, title: "Unarchive") { (action, indexPath) in
-            print("archiving at index path")
             let topic = self.topics[indexPath.row]
             self.unarchiveTopic(topic: topic)
         }

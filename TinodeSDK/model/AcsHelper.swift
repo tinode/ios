@@ -2,7 +2,7 @@
 //  AcsHelper.swift
 //  ios
 //
-//  Copyright © 2018 Tinode. All rights reserved.
+//  Copyright © 2019 Tinode. All rights reserved.
 //
 
 import Foundation
@@ -151,7 +151,7 @@ public class AcsHelper: Codable, Equatable {
             // Invalid value may be recived from the network. Invalid network data should not crash the client.
             try a = AcsHelper.update(original: a, updateWith: umode)
         } catch {
-            print("Failed to parse access mode \(umode)")
+            print("Failed to parse access mode \(umode) \(error)")
         }
         return a != olda
     }

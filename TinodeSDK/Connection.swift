@@ -2,7 +2,7 @@
 //  Connection.swift
 //  ios
 //
-//  Copyright © 2018 Tinode. All rights reserved.
+//  Copyright © 2019 Tinode. All rights reserved.
 //
 
 import Foundation
@@ -72,21 +72,18 @@ public class Connection {
         // Use a separate thread to run network event handlers.
         self.webSocketConnection!.eventQueue = netEventQueue
         webSocketConnection!.event.open = {
-            print("opened")
             self.backoffSteps.reset()
             let r = self.reconnecting
             self.reconnecting = false
             self.connectionListener?.onConnect(reconnecting: r)
         }
         webSocketConnection!.event.error = { error in
-            print("error \(error)")
             self.connectionListener?.onError(error: error)
         }
         webSocketConnection!.event.message = { message in
             self.connectionListener?.onMessage(with: message as! String)
         }
         webSocketConnection!.event.close = { code, reason, clean in
-            print("connection closed \(code) \(reason) \(clean)")
             self.connectionListener?.onDisconnect(isServerOriginated: clean, code: code, reason: reason)
             guard !self.reconnecting else {
                 return
@@ -102,7 +99,6 @@ public class Connection {
     private func maybeInitReconnectClosure() {
         if reconnectClosure?.isCancelled ?? true {
             reconnectClosure = DispatchWorkItem() {
-                print("reconnecting now")
                 self.connectSocket()
                 if self.isConnected {
                     self.reconnecting = false

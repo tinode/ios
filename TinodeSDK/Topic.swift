@@ -2,7 +2,7 @@
 //  Topic.swift
 //  ios
 //
-//  Copyright © 2018 Tinode. All rights reserved.
+//  Copyright © 2019 Tinode. All rights reserved.
 //
 
 import Foundation
@@ -541,7 +541,6 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
     }
 
     public func allMessagesReceived(count: Int?) {
-        print("allMessagesReceived --> \(String(describing: count))")
         listener?.onAllMessagesReceived(count: count ?? 0)
     }
 
@@ -657,10 +656,8 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
             if self.description?.acs == nil {
                 self.description?.acs = acs
                 changed = true
-                print("Desc set to \(String(describing: self.description?.acs))")
             } else {
                 self.description!.acs!.merge(from: acs)
-                print("Merged to Desc: \(String(describing: self.description?.acs))")
             }
             if changed {
                 self.store?.topicUpdate(topic: self)
@@ -715,12 +712,10 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
             }
         }
         self.maxDel = clear
-        //setMaxDel(maxDel: clear)
         listener?.onData(data: nil)
     }
 
     fileprivate func routeMetaSub(meta: MsgServerMeta) {
-        print("routing sub")
         if let metaSubs = meta.sub as? Array<Subscription<SP, SR>> {
             for newsub in metaSubs {
                 processSub(newsub: newsub)
@@ -742,15 +737,12 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
                 subsLastUpdated = meta.ts!
             }
             self.routeMetaSub(meta: meta)
-            print("handling subs")
         }
         if meta.del != nil {
             routeMetaDel(clear: meta.del!.clear, delseq: meta.del!.delseq)
-            print("handle del")
         }
         if meta.tags != nil {
             routeMetaTags(tags: meta.tags!)
-            print("handle tags")
         }
         // update listener
         listener?.onMeta(meta: meta)
@@ -850,14 +842,12 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
         do {
             return try tinode?.setMeta(for: self.name, meta: meta)?.thenApply(
                 onSuccess: { msg in
-                    print("setMeta thenApply -> ctrl: \(msg?.ctrl)")
                     if let ctrl = msg?.ctrl, ctrl.code < 300 {
                         self.update(ctrl: ctrl, meta: meta)
                     }
                     return nil
                 })
         } catch {
-            print("failed to set meta on topic: \(error)")
             return nil
         }
     }
@@ -1012,15 +1002,11 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
                 sub.updateAccessMode(ac: pres.dacs)
                 if sub.user == tinode?.myUid {
                     if self.updateAccessMode(ac: pres.dacs) {
-                        print("updating store access mode")
                         store?.topicUpdate(topic: self)
                     }
                 }
-                print("sub acs =\(String(describing: sub.acs))")
                 if !sub.acs!.isModeDefined {
-                    print("sub.acs NOT DEFINED")
                     if isP2PType {
-                        print("p2p - calling leave()")
                         leave()
                     }
                     sub.deleted = Date()
@@ -1034,14 +1020,13 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
                 }
             }
         default:
-            print("unknown presence type \(String(describing: pres.what))")
+            Tinode.log.error("pres message - unknown what: %{public}@", String(describing: pres.what))
         }
         listener?.onPres(pres: pres)
     }
     public func topicLeft(unsub: Bool?, code: Int?, reason: String?) {
         if attached {
             attached = false
-            print("leaving \(name): \(String(describing: unsub)) \(String(describing: code)) \(String(describing: reason))")
             listener?.onLeave(unsub: unsub, code: code, text: reason)
         }
     }
@@ -1271,7 +1256,7 @@ open class MeTopic<DP: Codable>: Topic<DP, PrivateType, DP, PrivateType> {
                 // Explicitly ignored: 'me' topic has no messages.
                 break
             default:
-                print("Unrecognized presence update " + (pres.what ?? "nil"))
+                Tinode.log.error("ME.pres message - unknown what: %{public}@", String(describing: pres.what))
             }
         } else {
             // New topic
@@ -1282,14 +1267,14 @@ open class MeTopic<DP: Codable>: Topic<DP, PrivateType, DP, PrivateType> {
                 if acs.isModeDefined {
                     getMeta(query: getMetaGetBuilder().withSub(user: pres.src).build())
                 } else {
-                    print("Unexpected access mode in presence: \(String(describing: pres.dacs))")
+                    Tinode.log.error("ME.acs - unexpected access mode: %{public}@", String(describing: pres.dacs))
                 }
             case .kTags:
                 // Account tags updated
                 getMeta(query: getMetaGetBuilder().withTags().build())
             default:
-                print("Topic not found in me.routePres: " +
-                    (pres.what ?? "nil") + " in " + (pres.src ?? "nil"))
+                Tinode.log.error("ME.pres - topic not found: what = %{public}@, src = %{public}@",
+                                 String(describing: pres.what), String(describing: pres.src))
             }
         }
 
@@ -1300,7 +1285,6 @@ open class MeTopic<DP: Codable>: Topic<DP, PrivateType, DP, PrivateType> {
     }
 
     override fileprivate func routeMetaSub(meta: MsgServerMeta) {
-        print("topic me routemetasub")
         if let metaSubs = meta.sub as? Array<Subscription<DP, PrivateType>> {
             for sub in metaSubs {
                 if let topic = tinode!.getTopic(topicName: sub.topic!) {
@@ -1308,7 +1292,6 @@ open class MeTopic<DP: Codable>: Topic<DP, PrivateType, DP, PrivateType> {
                         topic.persist(false)
                         tinode!.stopTrackingTopic(topicName: sub.topic!)
                     } else {
-                        print("updating \(topic.name)")
                         if let t = topic as? DefaultTopic {
                             t.update(sub: sub as! Subscription<VCard, PrivateType>)
                         } else if let t = topic as? DefaultMeTopic {
@@ -1317,16 +1300,13 @@ open class MeTopic<DP: Codable>: Topic<DP, PrivateType, DP, PrivateType> {
                             t.update(sub: sub)
                         } */
                         else {
-                            print("updable to update topic: \(topic)")
+                            Tinode.log.fault("ME.routeMetaSub - failed to update topic %{public}@", String(describing: topic))
                             assert(false)
                         }
-                        //topic.update(sub)
-                        // topic.listener?.onContUpdate(sub)
                     }
                 } else if sub.deleted == nil {
                     let topic = tinode!.newTopic(sub: sub)
                     topic.persist(true)
-                    print("registering new topic")
                 }
                 listener?.onMetaSub(sub: sub)
             }

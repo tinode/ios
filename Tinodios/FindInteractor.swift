@@ -70,7 +70,7 @@ class FindInteractor: FindBusinessLogic {
                         return nil
                     })
         } catch {
-            print("failed to attach to fnd topic: \(error)")
+            Cache.log.error("FindInteractor - failed to attach to fnd topic: %{public}@", error.localizedDescription)
         }
 
     }

@@ -2,14 +2,13 @@
 //  PromisedReply.swift
 //  ios
 //
-//  Copyright © 2018 Tinode. All rights reserved.
+//  Copyright © 2019 Tinode. All rights reserved.
 //
 
 import Foundation
 
 enum PromisedReplyError: Error {
     case illegalStateError(String)
-    //case decode
 }
 
 // Inspired by https://github.com/uber/swift-concurrency/blob/master/Sources/Concurrency/CountDownLatch.swift
@@ -105,9 +104,8 @@ public class PromisedReply<Value> {
 
     func resolve(result: Value?) throws {
         defer {
-            countDownLatch?.countDown()
             // down the semaphore
-            print("downing the semaphore")
+            countDownLatch?.countDown()
         }
         try queue.sync {
             // critical section
@@ -123,12 +121,9 @@ public class PromisedReply<Value> {
         defer {
             // down the semaphore
             countDownLatch?.countDown()
-            print("down the semaphore")
         }
         try queue.sync {
-            print("rejecting promise \(error)")
             // critical section
-
             guard case .waiting = state else {
                 // down the semaphore
                 throw PromisedReplyError.illegalStateError("Reject: promise already completed")

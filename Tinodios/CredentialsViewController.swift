@@ -64,7 +64,7 @@ class CredentialsViewController : UIViewController {
                     return nil
                 })
         } catch {
-            print("Failed to loginToken to Tinode: \(error).")
+            Cache.log.error("CredentialsVC - loginToken failed: %{public}@", error.localizedDescription)
         }
     }
 }
