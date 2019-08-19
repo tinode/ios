@@ -400,6 +400,20 @@ extension UIViewController {
     }
 }
 
+extension UITableViewController {
+    func resolveNavbarOverlapConflict() {
+        // In iOS 9, UITableViewController.tableView overlaps with the navbar
+        // when the latter is declared in the tabController.
+        // Resolve this issue.
+        if let rect = self.tabBarController?.navigationController?.navigationBar.frame {
+            let y = rect.size.height + rect.origin.y
+            let shift = UIEdgeInsets(top: y, left: 0,bottom: 0,right: 0)
+            self.tableView.scrollIndicatorInsets = shift
+            self.tableView.contentInset = shift
+        }
+    }
+}
+
 extension UIImage {
     private static let kScaleFactor: CGFloat = 0.70710678118 // 1.0/SQRT(2)
     public typealias ScalingData = (dst: CGSize, src: CGRect, altered: Bool)

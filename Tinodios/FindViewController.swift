@@ -54,6 +54,12 @@ class FindViewController: UITableViewController, FindDisplayLogic {
         // Monitor when the search button is tapped.
         searchController.searchBar.delegate = self
         self.definesPresentationContext = true
+        if #available(iOS 10.0, *) {
+            // Do nothing.
+        } else {
+            self.resolveNavbarOverlapConflict()
+            searchController.hidesNavigationBarDuringPresentation = false
+        }
 
         if !Cache.isContactSynchronizerActive() {
             Cache.synchronizeContactsPeriodically()
@@ -75,6 +81,14 @@ class FindViewController: UITableViewController, FindDisplayLogic {
         super.viewDidLoad()
         self.setup()
     }
+
+    private func scrollToTop() {
+        if self.tableView.indexPathsForVisibleRows?.count ?? 0 > 0 {
+            let topIndexPath = IndexPath(row: 0, section: 0)
+            self.tableView.scrollToRow(at: topIndexPath, at: .top, animated: false)
+        }
+    }
+
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
@@ -82,6 +96,11 @@ class FindViewController: UITableViewController, FindDisplayLogic {
         self.interactor?.attachToFndTopic()
         self.interactor?.loadAndPresentContacts(searchQuery: nil)
         self.tabBarController?.navigationItem.rightBarButtonItem = inviteActionButtonItem
+        if #available(iOS 10.0, *) {
+            // Do nothing.
+        } else {
+            self.scrollToTop()
+        }
     }
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
