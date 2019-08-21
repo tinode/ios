@@ -27,6 +27,19 @@ class FindViewController: UITableViewController, FindDisplayLogic {
     // Flag which indicates that the user is leaving the view.
     var transitioningOut: Bool = false
 
+    private func addAppStateObservers() {
+        // App state observers.
+        NotificationCenter.default.addObserver(
+            self, selector: #selector(self.deviceRotated),
+            name: UIDevice.orientationDidChangeNotification, object: nil)
+    }
+    private func removeAppStateObservers() {
+        NotificationCenter.default.removeObserver(
+            self,
+            name: UIDevice.orientationDidChangeNotification,
+            object: nil)
+    }
+
     private func setup() {
         let viewController = self
         let interactor = FindInteractor()
@@ -64,6 +77,12 @@ class FindViewController: UITableViewController, FindDisplayLogic {
         if !Cache.isContactSynchronizerActive() {
             Cache.synchronizeContactsPeriodically()
         }
+
+        addAppStateObservers()
+    }
+
+    deinit {
+        removeAppStateObservers()
     }
 
     func displayLocalContacts(contacts newContacts: [ContactHolder]) {
@@ -86,6 +105,14 @@ class FindViewController: UITableViewController, FindDisplayLogic {
         if self.tableView.indexPathsForVisibleRows?.count ?? 0 > 0 {
             let topIndexPath = IndexPath(row: 0, section: 0)
             self.tableView.scrollToRow(at: topIndexPath, at: .top, animated: false)
+        }
+    }
+
+    @objc
+    func deviceRotated() {
+        if #available(iOS 10.0, *) {
+        } else {
+            self.resolveNavbarOverlapConflict()
         }
     }
 

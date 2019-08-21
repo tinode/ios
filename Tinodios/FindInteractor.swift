@@ -133,7 +133,9 @@ class FindInteractor: FindBusinessLogic {
         }
         guard let topicUnwrapped = topic else { return false }
         topicUnwrapped.persist(true)
-        contactsManager.processSubscription(sub: sub)
+        if topicUnwrapped.isP2PType {
+            contactsManager.processSubscription(sub: sub)
+        }
         return true
     }
 }
