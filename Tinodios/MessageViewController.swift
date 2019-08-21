@@ -1095,7 +1095,7 @@ extension MessageViewController : MessageCellDelegate {
         if let filename = url.extractQueryParam(withName: "filename") {
             urlComps.queryItems = [URLQueryItem(name: "origfn", value: filename)]
         }
-        if let targetUrl = urlComps.url {
+        if let targetUrl = urlComps.url, targetUrl.scheme == "http" || targetUrl.scheme == "https" {
             Cache.getLargeFileHelper().startDownload(from: targetUrl)
         }
     }

@@ -83,6 +83,7 @@ class AttributedStringFormatter: DraftyFormatter {
         case "url":
             guard let ref = attr["ref"]?.asString() else { return nil }
             guard let urlc = URLComponents(string: ref) else { return nil }
+            guard urlc.scheme == "http" || urlc.scheme == "https" else { return nil }
             baseUrl = urlc
             if let name = attr["name"]?.asString() {
                 let actionValue = attr["val"]?.asString() ?? "1"
@@ -134,7 +135,7 @@ class AttributedStringFormatter: DraftyFormatter {
         case "BR":
             span = TreeNode(content: "\n")
         case "LN":
-            if let urlString = attr?["url"]?.asString(), let url = NSURL(string: urlString) {
+            if let urlString = attr?["url"]?.asString(), let url = NSURL(string: urlString), url.scheme == "https" || url.scheme == "http" {
                 span.style(cstyle: [NSAttributedString.Key.link: url])
             }
         case "MN": break // TODO: add fupport for @mentions
