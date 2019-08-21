@@ -169,6 +169,9 @@ class MessageViewController: UIViewController {
             self, selector: #selector(self.appBecameActive),
             name: UIApplication.didBecomeActiveNotification,
             object: nil)
+        NotificationCenter.default.addObserver(
+            self, selector: #selector(self.deviceRotated),
+            name: UIDevice.orientationDidChangeNotification, object: nil)
     }
     private func removeAppStateObservers() {
         NotificationCenter.default.removeObserver(
@@ -178,6 +181,10 @@ class MessageViewController: UIViewController {
         NotificationCenter.default.removeObserver(
             self,
             name: UIApplication.didBecomeActiveNotification,
+            object: nil)
+        NotificationCenter.default.removeObserver(
+            self,
+            name: UIDevice.orientationDidChangeNotification,
             object: nil)
     }
 
@@ -203,6 +210,12 @@ class MessageViewController: UIViewController {
     func appGoingInactive() {
         self.interactor?.cleanup()
         self.interactor?.leaveTopic()
+    }
+    @objc
+    func deviceRotated() {
+        // Force a full redraw so the view can readjust the messages
+        // in the view for the new screen dimensions.
+        self.collectionView.reloadDataAndKeepOffset()
     }
 
     // MARK: lifecycle
@@ -232,6 +245,11 @@ class MessageViewController: UIViewController {
         // Appearance and behavior.
         extendedLayoutIncludesOpaqueBars = true
         automaticallyAdjustsScrollViewInsets = false
+        if #available(iOS 10.0, *) {
+        } else {
+            // On iOS 9, make sure the content doesn't go behind the navbar.
+            edgesForExtendedLayout = []
+        }
 
         // Collection View setup
         collectionView.keyboardDismissMode = .interactive
@@ -292,6 +310,11 @@ class MessageViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
+        if #available(iOS 10.0, *) {
+        } else {
+            // iOS 9: Make sure messages don't hide behind sendMessageBar.
+            collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: self.sendMessageBar.frame.height, right: 0)
+        }
         self.interactor?.attachToTopic()
         self.interactor?.loadMessages()
         self.interactor?.sendReadNotification()
