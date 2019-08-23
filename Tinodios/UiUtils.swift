@@ -7,6 +7,7 @@
 
 import Foundation
 import TinodeSDK
+import Firebase
 
 class UiTinodeEventListener : TinodeEventListener {
     private var connected: Bool = false
@@ -44,6 +45,30 @@ class UiUtils {
     static let kMinTagLength = 4
     static let kAvatarSize: CGFloat = 128
     static let kMaxBitmapSize: CGFloat = 1024
+
+    private static func setUpPushNotifications() {
+        let application = UIApplication.shared
+        let appDelegate = application.delegate as! AppDelegate
+        guard !appDelegate.pushNotificationsConfigured else { return }
+        FirebaseApp.configure()
+        Messaging.messaging().delegate = appDelegate
+        if #available(iOS 10.0, *) {
+            // For iOS 10 display notification (sent via APNS)
+            UNUserNotificationCenter.current().delegate = appDelegate
+
+            let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
+            UNUserNotificationCenter.current().requestAuthorization(
+                options: authOptions,
+                completionHandler: {_, _ in })
+        } else {
+            let settings: UIUserNotificationSettings =
+                UIUserNotificationSettings(types: [.alert, .badge, .sound], categories: nil)
+            application.registerUserNotificationSettings(settings)
+        }
+
+        application.registerForRemoteNotifications()
+        appDelegate.pushNotificationsConfigured = true
+    }
 
     public static func attachToMeTopic(meListener: DefaultMeTopic.Listener?) -> PromisedReply<ServerMessage>? {
         let tinode = Cache.getTinode()
@@ -98,6 +123,7 @@ class UiUtils {
             if let window = UIApplication.shared.keyWindow {
                 window.rootViewController = initialViewController
             }
+            UiUtils.setUpPushNotifications()
         }
     }
 
