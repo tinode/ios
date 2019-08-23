@@ -408,14 +408,15 @@ extension MessageViewController: MessageDisplayLogic {
         self.navigationItem.title = title ?? "Undefined"
 
         navBarAvatarView.set(icon: icon, title: title, id: topicName, online: online)
-        navBarAvatarView.translatesAutoresizingMaskIntoConstraints = false
         navBarAvatarView.bounds = CGRect(x: 0, y: 0, width: Constants.kNavBarAvatarSmallState, height: Constants.kNavBarAvatarSmallState)
 
-        NSLayoutConstraint.activate([
-                navBarAvatarView.heightAnchor.constraint(equalToConstant: Constants.kNavBarAvatarSmallState),
-                navBarAvatarView.widthAnchor.constraint(equalTo: navBarAvatarView.heightAnchor)
-            ])
-
+        if #available(iOS 10.0, *) {
+            navBarAvatarView.translatesAutoresizingMaskIntoConstraints = false
+            NSLayoutConstraint.activate([
+                    navBarAvatarView.heightAnchor.constraint(equalToConstant: Constants.kNavBarAvatarSmallState),
+                    navBarAvatarView.widthAnchor.constraint(equalTo: navBarAvatarView.heightAnchor)
+                ])
+        }
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: navBarAvatarView)
     }
 
