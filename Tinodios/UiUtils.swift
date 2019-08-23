@@ -392,9 +392,15 @@ class UiUtils {
             tagsEditField.rightAnchor.constraint(equalTo: alert.view.rightAnchor, constant: -10),
             tagsEditField.leftAnchor.constraint(equalTo: alert.view.leftAnchor, constant: 10)
             ])
+        let vcHeight: CGFloat
+        if #available(iOS 10.0, *) {
+            vcHeight = 168
+        } else {
+            vcHeight = 190
+        }
         alert.view.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            alert.view.heightAnchor.constraint(equalToConstant: 168)
+            alert.view.heightAnchor.constraint(equalToConstant: vcHeight)
             ])
         alert.addAction(UIAlertAction(
             title: "OK", style: .default,
