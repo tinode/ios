@@ -109,7 +109,7 @@ class MessageDb {
             }
             return msg.msgId
         } catch {
-            print("Failed to save message: \(error)")
+            Cache.log.error("MessageDb - insert operation failed: %{public}@", error.localizedDescription)
             return -1
         }
     }
@@ -126,7 +126,7 @@ class MessageDb {
             do {
                 return try self.db.run(record.update(setters)) > 0
             } catch {
-                print("update failed: \(error)")
+                Cache.log.error("MessageDb - update status operation failed: msgId = %{public}@, error = %{public}@", msgId, error.localizedDescription)
             }
         }
         return false
@@ -139,7 +139,7 @@ class MessageDb {
                 self.ts <- ts,
                 self.seq <- seq)) > 0
         } catch {
-            print("update failed: \(error)")
+            Cache.log.error("MessageDb - update delivery operation failed: msgId = %{public}@, error = %{public}@", msgId, error.localizedDescription)
             return false
         }
     }
@@ -155,7 +155,7 @@ class MessageDb {
         do {
             return try self.db.run(rows.delete()) > 0
         } catch {
-            print("delete failed: \(error)")
+            Cache.log.error("MessageDb - delete operation failed: topicId = %{public}@, error = %{public}@", error.localizedDescription)
             return false
         }
     }
@@ -180,7 +180,7 @@ class MessageDb {
             }
             return updateResult && deleteResult
         } catch {
-            print("Failed to mark messages deleted: \(error)")
+            Cache.log.error("MessageDb - markDeleted operation failed: topicId = %{public}@, error = %{public}@", topicId, error.localizedDescription)
             return false
         }
     }
@@ -189,7 +189,7 @@ class MessageDb {
         do {
             return try self.db.run(record.delete()) > 0
         } catch {
-            print("delete failed: \(error)")
+            Cache.log.error("MessageDb - delete operation failed: msgId = %{public}@, error = %{public}@", msgId, error.localizedDescription)
             return false
         }
     }
@@ -220,7 +220,7 @@ class MessageDb {
             }
             return messages
         } catch {
-            print("failed to read messages \(error)")
+            Cache.log.error("MessageDb - query operation failed: topicId = %{public}@, error = %{public}@", topicId ?? -1, error.localizedDescription)
             return nil
         }
     }
@@ -250,7 +250,7 @@ class MessageDb {
             }
             return seqIds
         } catch {
-            print("Topic: \(topicId) failed to read deleted messages \(error)")
+            Cache.log.error("MessageDb - queryDeleted operation failed: topicId = %{public}@, error = %{public}@", topicId, error.localizedDescription)
             return nil
         }
     }
@@ -268,7 +268,7 @@ class MessageDb {
             }
             return messages
         } catch {
-            print("failed to read messages \(error)")
+            Cache.log.error("MessageDb - queryUnsent operation failed: topicId = %{public}@, error = %{public}@", topicId ?? -1, error.localizedDescription)
             return nil
         }
     }

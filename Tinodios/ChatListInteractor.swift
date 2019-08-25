@@ -2,7 +2,7 @@
 //  ChatListInteractor.swift
 //  Tinodios
 //
-//  Copyright © 2018 Tinode. All rights reserved.
+//  Copyright © 2019 Tinode. All rights reserved.
 //
 
 import Foundation
@@ -27,10 +27,8 @@ protocol ChatListDataStore: class {
 class ChatListInteractor: ChatListBusinessLogic, ChatListDataStore {
     private class MeListener: DefaultMeTopic.Listener {
         weak var interactor: ChatListBusinessLogic?
-        //public init() {}
-        override func onInfo(info: MsgServerInfo) {
-            print("Contacts got onInfo update \(String(describing: info.what))")
-        }
+
+        override func onInfo(info: MsgServerInfo) {}
         override func onPres(pres: MsgServerPres) {
             if pres.what == "msg" {
                 interactor?.loadAndPresentTopics()
@@ -41,15 +39,11 @@ class ChatListInteractor: ChatListBusinessLogic, ChatListDataStore {
             }
         }
         override func onMetaSub(sub: Subscription<VCard, PrivateType>) {
-            // TODO: sub.pub?.constructBitmap()
-            print("on meta sub")
             if Tinode.topicTypeByName(name: sub.topic) == .p2p {
                 ContactsManager.default.processSubscription(sub: sub)
             }
         }
         override func onMetaDesc(desc: Description<VCard, PrivateType>) {
-            // TODO: desc.pub?.constructBitmap()
-            print("on meta desc")
             // Handle description for me topic:
             // add/update user info for ME.
             if let uid = Cache.getTinode().myUid {
@@ -57,8 +51,6 @@ class ChatListInteractor: ChatListBusinessLogic, ChatListDataStore {
             }
         }
         override func onSubsUpdated() {
-            // datasetChanged()
-            print("on subs updated")
             interactor?.loadAndPresentTopics()
         }
         override func onContUpdate(sub: Subscription<VCard, PrivateType>) {
@@ -103,7 +95,6 @@ class ChatListInteractor: ChatListBusinessLogic, ChatListDataStore {
                     self?.meTopic = tinode.getMeTopic()
                     return nil
                 }, onFailure: { [weak self] err in
-                    print("err = ")
                     if let e = err as? TinodeError, case .serverResponseError(let code, _, _) = e {
                         if code == 404 {
                             tinode.logout()

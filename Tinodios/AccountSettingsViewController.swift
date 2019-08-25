@@ -127,16 +127,15 @@ class AccountSettingsViewController: UITableViewController {
     @objc
     func permissionsTapped(sender: UITapGestureRecognizer) {
         guard let v = sender.view else {
-            print("Tap from no sender view... quitting")
+            Cache.log.debug("AccountSettingsVC - permissions tap from no sender view... quitting")
             return
         }
         let (acs, changeTypeOptional) = getAcsAndPermissionsChangeType(for: v)
         guard let acsUnwrapped = acs, let changeType = changeTypeOptional else {
-            print("could not get acs")
+            Cache.log.debug("AccountSettingsVC - permissionsTapped: could not get acs")
             return
         }
         UiUtils.showPermissionsEditDialog(over: self, acs: acsUnwrapped, callback: { permissions in
-            print("dialog returned:\(permissions) type:\(changeType)")
             _ = try? UiUtils.handlePermissionsChange(onTopic: self.me, forUid: nil, changeType: changeType, newPermissions: permissions)?.then(
                 onSuccess: { msg in
                     DispatchQueue.main.async { self.reloadData() }
@@ -254,7 +253,7 @@ class AccountSettingsViewController: UITableViewController {
             onFailure: UiUtils.ToastFailureHandler)
     }
     private func logout() {
-        print("logging out")
+        Cache.log.info("AccountSettingsVC - logging out")
         BaseDb.getInstance().logout()
         Cache.invalidate()
         Utils.removeAuthToken()
@@ -266,6 +265,7 @@ extension AccountSettingsViewController: ImagePickerDelegate {
     func didSelect(image: UIImage?, mimeType: String?, fileName: String?) {
         guard let image = image?.resize(width: CGFloat(UiUtils.kAvatarSize), height: CGFloat(UiUtils.kAvatarSize), clip: true) else {
             print("No image specified or failed to resize - skipping")
+            Cache.log.debug("AccountSettingsVC - No image specified or failed to resize, skipping")
             return
         }
         _ = try? UiUtils.updateAvatar(forTopic: self.me, image: image)?.then(

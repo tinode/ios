@@ -2,7 +2,7 @@
 //  Cache.swift
 //  Tinodios
 //
-//  Copyright © 2018 Tinode. All rights reserved.
+//  Copyright © 2019 Tinode. All rights reserved.
 //
 
 import UIKit
@@ -18,6 +18,7 @@ class Cache {
     private var tinode: Tinode? = nil
     private var timer = RepeatingTimer(timeInterval: 60 * 60 * 4) // Once every 4 hours.
     private var largeFileHelper: LargeFileHelper? = nil
+    internal static let log = TinodeSDK.Log(category: "co.tinode.tinodios")
 
     public static func getTinode() -> Tinode {
         return Cache.default.getTinode()

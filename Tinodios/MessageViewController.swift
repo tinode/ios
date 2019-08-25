@@ -169,6 +169,9 @@ class MessageViewController: UIViewController {
             self, selector: #selector(self.appBecameActive),
             name: UIApplication.didBecomeActiveNotification,
             object: nil)
+        NotificationCenter.default.addObserver(
+            self, selector: #selector(self.deviceRotated),
+            name: UIDevice.orientationDidChangeNotification, object: nil)
     }
     private func removeAppStateObservers() {
         NotificationCenter.default.removeObserver(
@@ -178,6 +181,10 @@ class MessageViewController: UIViewController {
         NotificationCenter.default.removeObserver(
             self,
             name: UIApplication.didBecomeActiveNotification,
+            object: nil)
+        NotificationCenter.default.removeObserver(
+            self,
+            name: UIDevice.orientationDidChangeNotification,
             object: nil)
     }
 
@@ -203,6 +210,12 @@ class MessageViewController: UIViewController {
     func appGoingInactive() {
         self.interactor?.cleanup()
         self.interactor?.leaveTopic()
+    }
+    @objc
+    func deviceRotated() {
+        // Force a full redraw so the view can readjust the messages
+        // in the view for the new screen dimensions.
+        self.collectionView.reloadDataAndKeepOffset()
     }
 
     // MARK: lifecycle
@@ -232,6 +245,11 @@ class MessageViewController: UIViewController {
         // Appearance and behavior.
         extendedLayoutIncludesOpaqueBars = true
         automaticallyAdjustsScrollViewInsets = false
+        if #available(iOS 10.0, *) {
+        } else {
+            // On iOS 9, make sure the content doesn't go behind the navbar.
+            edgesForExtendedLayout = []
+        }
 
         // Collection View setup
         collectionView.keyboardDismissMode = .interactive
@@ -292,6 +310,11 @@ class MessageViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
+        if #available(iOS 10.0, *) {
+        } else {
+            // iOS 9: Make sure messages don't hide behind sendMessageBar.
+            collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: self.sendMessageBar.frame.height, right: 0)
+        }
         self.interactor?.attachToTopic()
         self.interactor?.loadMessages()
         self.interactor?.sendReadNotification()
@@ -365,19 +388,16 @@ extension MessageViewController: MessageDisplayLogic {
         alert.addAction(UIAlertAction(
             title: "Accept", style: .default,
             handler: { action in
-                print("ok clicked")
                 self.interactor?.acceptInvitation()
         }))
         alert.addAction(UIAlertAction(
             title: "Ignore", style: .default,
             handler: { action in
-                print("ignore clicked")
                 self.interactor?.ignoreInvitation()
         }))
         alert.addAction(UIAlertAction(
             title: "Block", style: .default,
             handler: { action in
-                print("block clicked")
                 self.interactor?.blockTopic()
         }))
         self.present(alert, animated: true)
@@ -388,14 +408,15 @@ extension MessageViewController: MessageDisplayLogic {
         self.navigationItem.title = title ?? "Undefined"
 
         navBarAvatarView.set(icon: icon, title: title, id: topicName, online: online)
-        navBarAvatarView.translatesAutoresizingMaskIntoConstraints = false
         navBarAvatarView.bounds = CGRect(x: 0, y: 0, width: Constants.kNavBarAvatarSmallState, height: Constants.kNavBarAvatarSmallState)
 
-        NSLayoutConstraint.activate([
-                navBarAvatarView.heightAnchor.constraint(equalToConstant: Constants.kNavBarAvatarSmallState),
-                navBarAvatarView.widthAnchor.constraint(equalTo: navBarAvatarView.heightAnchor)
-            ])
-
+        if #available(iOS 10.0, *) {
+            navBarAvatarView.translatesAutoresizingMaskIntoConstraints = false
+            NSLayoutConstraint.activate([
+                    navBarAvatarView.heightAnchor.constraint(equalToConstant: Constants.kNavBarAvatarSmallState),
+                    navBarAvatarView.widthAnchor.constraint(equalTo: navBarAvatarView.heightAnchor)
+                ])
+        }
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: navBarAvatarView)
     }
 
@@ -559,7 +580,6 @@ extension MessageViewController: UICollectionViewDataSource {
                 cell.avatarView.set(icon: sub.pub?.photo?.image(), title: sub.pub?.fn, id: message.from)
             } else {
                 cell.avatarView.set(icon: nil, title: nil, id: message.from)
-                print("Subscription not found for \(message.from ?? "nil")")
             }
         }
 
@@ -937,8 +957,6 @@ extension MessageViewController : MessageCellDelegate {
     func didTapContent(in cell: MessageCell, url: URL?) {
         guard let url = url else { return }
 
-        print("didTapContent URL=\(url.absoluteString)")
-
         if url.scheme == "tinode" {
             switch url.path {
             case "/post":
@@ -952,10 +970,9 @@ extension MessageViewController : MessageCellDelegate {
             case "/preview-image":
                 showImagePreview(in: cell)
             default:
-                print("Unknown tinode:// action '\(url.path)'")
+                Cache.log.error("MessageVC - unknown tinode:// action: %{public}@", url.path)
                 break
             }
-            // TODO: post message, save attachment.
             return
         }
 
@@ -967,14 +984,10 @@ extension MessageViewController : MessageCellDelegate {
     }
 
     // TODO: remove as unused
-    func didTapMessage(in cell: MessageCell) {
-        print("didTapMessage")
-    }
+    func didTapMessage(in cell: MessageCell) {}
 
     // TODO: remove as unused or go to user's profile (p2p topic?)
-    func didTapAvatar(in cell: MessageCell) {
-        print("didTapAvatar")
-    }
+    func didTapAvatar(in cell: MessageCell) {}
 
     func createPopupMenu(in cell: MessageCell) {
         // Make cell the first responder otherwise menu will show wrong items.
@@ -1036,7 +1049,6 @@ extension MessageViewController : MessageCellDelegate {
             let msgIdx = self.messageSeqIdIndex[cell.seqId] else { return }
         if Cache.getLargeFileHelper().cancelUpload(
             topicId: topicId, msgId: self.messages[msgIdx].msgId) {
-            print("cancelled upload")
         }
     }
 
@@ -1084,7 +1096,7 @@ extension MessageViewController : MessageCellDelegate {
         if let filename = url.extractQueryParam(withName: "filename") {
             urlComps.queryItems = [URLQueryItem(name: "origfn", value: filename)]
         }
-        if let targetUrl = urlComps.url {
+        if let targetUrl = urlComps.url, targetUrl.scheme == "http" || targetUrl.scheme == "https" {
             Cache.getLargeFileHelper().startDownload(from: targetUrl)
         }
     }
@@ -1102,7 +1114,7 @@ extension MessageViewController : MessageCellDelegate {
             try d.write(to: destinationURL)
             UiUtils.presentFileSharingVC(for: destinationURL)
         } catch {
-            print("failed to save \(filename)")
+            Cache.log.error("MessageVC - save attachment failed: %{public}@", error.localizedDescription)
         }
     }
 

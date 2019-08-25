@@ -7,6 +7,7 @@
 
 import Foundation
 import TinodeSDK
+import Firebase
 
 class UiTinodeEventListener : TinodeEventListener {
     private var connected: Bool = false
@@ -44,6 +45,30 @@ class UiUtils {
     static let kMinTagLength = 4
     static let kAvatarSize: CGFloat = 128
     static let kMaxBitmapSize: CGFloat = 1024
+
+    private static func setUpPushNotifications() {
+        let application = UIApplication.shared
+        let appDelegate = application.delegate as! AppDelegate
+        guard !appDelegate.pushNotificationsConfigured else { return }
+        FirebaseApp.configure()
+        Messaging.messaging().delegate = appDelegate
+        if #available(iOS 10.0, *) {
+            // For iOS 10 display notification (sent via APNS)
+            UNUserNotificationCenter.current().delegate = appDelegate
+
+            let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
+            UNUserNotificationCenter.current().requestAuthorization(
+                options: authOptions,
+                completionHandler: {_, _ in })
+        } else {
+            let settings: UIUserNotificationSettings =
+                UIUserNotificationSettings(types: [.alert, .badge, .sound], categories: nil)
+            application.registerUserNotificationSettings(settings)
+        }
+
+        application.registerForRemoteNotifications()
+        appDelegate.pushNotificationsConfigured = true
+    }
 
     public static func attachToMeTopic(meListener: DefaultMeTopic.Listener?) -> PromisedReply<ServerMessage>? {
         let tinode = Cache.getTinode()
@@ -98,6 +123,7 @@ class UiUtils {
             if let window = UIApplication.shared.keyWindow {
                 window.rootViewController = initialViewController
             }
+            UiUtils.setUpPushNotifications()
         }
     }
 
@@ -277,7 +303,6 @@ class UiUtils {
                     return nil
                 })
         } catch {
-            print("Error changing permissions \(error)")
             return nil
         }
     }
@@ -367,9 +392,15 @@ class UiUtils {
             tagsEditField.rightAnchor.constraint(equalTo: alert.view.rightAnchor, constant: -10),
             tagsEditField.leftAnchor.constraint(equalTo: alert.view.leftAnchor, constant: 10)
             ])
+        let vcHeight: CGFloat
+        if #available(iOS 10.0, *) {
+            vcHeight = 168
+        } else {
+            vcHeight = 190
+        }
         alert.view.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            alert.view.heightAnchor.constraint(equalToConstant: 168)
+            alert.view.heightAnchor.constraint(equalToConstant: vcHeight)
             ])
         alert.addAction(UIAlertAction(
             title: "OK", style: .default,
@@ -397,6 +428,20 @@ extension UIViewController {
                 messageVC.topicName = topicName
                 navController.pushViewController(messageVC, animated: true)
             }
+        }
+    }
+}
+
+extension UITableViewController {
+    func resolveNavbarOverlapConflict() {
+        // In iOS 9, UITableViewController.tableView overlaps with the navbar
+        // when the latter is declared in the tabController.
+        // Resolve this issue.
+        if let rect = self.tabBarController?.navigationController?.navigationBar.frame {
+            let y = rect.size.height + rect.origin.y
+            let shift = UIEdgeInsets(top: y, left: 0,bottom: 0,right: 0)
+            self.tableView.scrollIndicatorInsets = shift
+            self.tableView.contentInset = shift
         }
     }
 }

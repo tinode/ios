@@ -2,7 +2,7 @@
 //  SqlStore.swift
 //  msgr
 //
-//  Copyright © 2018 Tinode. All rights reserved.
+//  Copyright © 2019 Tinode. All rights reserved.
 //
 
 import Foundation
@@ -74,7 +74,7 @@ class SqlStore : Storage {
             }
             return true
         } catch {
-            print("topicDelete failed: \(error)")
+            Cache.log.error("SqlStore - topicDelete operation failed: topicId = %{public}@, error = %{public}@", topicId, error.localizedDescription)
             return false
         }
     }
@@ -152,13 +152,11 @@ class SqlStore : Storage {
             topicId = ss.topicId ?? -1
             userId = ss.userId ?? -1
         } else {
-            print("message from unknown subscriber \(String(describing: msg.from))")
             let st = topic.payload as! StoredTopic
             topicId = st.id ?? -1
             userId = self.dbh?.userDb?.getId(for: msg.from) ?? -1
         }
         guard topicId >= 0 && userId >= 0 else {
-            print("Failed to save message, topicId=\(topicId), userId=\(userId)")
             return -1
         }
         let sm = StoredMessage(from: msg)
@@ -173,7 +171,7 @@ class SqlStore : Storage {
             }
             return sm.msgId
         } catch {
-            print("Failed to save message: \(error)")
+            Cache.log.error("SqlStore - msgReceived operation failed: %{public}@", error.localizedDescription)
             return -1
         }
     }
@@ -237,7 +235,7 @@ class SqlStore : Storage {
             }
             return true
         } catch {
-            print("Failed to handle received message: \(error)")
+            Cache.log.error("SqlStore - msgDelivered operation failed %{public}@", error.localizedDescription)
             return false
         }
     }
@@ -261,7 +259,7 @@ class SqlStore : Storage {
             }
             return result
         } catch {
-            print("Failed to delete messages: \(error)")
+            Cache.log.error("SqlStore - msgDelete operation failed %{public}@", error.localizedDescription)
             return false
         }
     }

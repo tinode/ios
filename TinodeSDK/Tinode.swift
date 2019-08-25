@@ -2,7 +2,7 @@
 //  Tinode.swift
 //  ios
 //
-//  Copyright © 2018 Tinode. All rights reserved.
+//  Copyright © 2019 Tinode. All rights reserved.
 //
 
 import Foundation
@@ -119,7 +119,7 @@ public class Tinode {
     public static let kNoteRead = "read"
     public static let kNoteRecv = "recv"
     public static let kNullValue = "\u{2421}"
-    private static let log = Log(category: "co.tinode.tinodesdk")
+    internal static let log = Log(category: "co.tinode.tinodesdk")
 
     let kProtocolVersion = "0"
     let kVersion = "0.15"
@@ -349,11 +349,6 @@ public class Tinode {
             return "\(appName) (iOS \(OsVersion); \(kLocale)); tinode-swift/\(kLibVersion)"
         }
     }
-    /*
-    private func getUserAgent() -> String {
-        return "\(appName) (iOS \(OsVersion); \(kLocale)); tinode-swift/\(kLibVersion)"
-    }
-    */
 
     private func getNextMsgId() -> String {
         nextMsgId += 1
@@ -390,19 +385,17 @@ public class Tinode {
                         try r.reject(error: TinodeError.serverResponseError(ctrl.code, ctrl.text, ctrl.getStringParam(for: "what")))
                     }
                 }
-                Tinode.log.debug("ctrl.id = %d", id)
             }
             if let what = ctrl.getStringParam(for: "what"), what == "data" {
                 if let topic = ctrl.topic, let t = getTopic(topicName: topic) {
                     t.allMessagesReceived(count: ctrl.getIntParam(for: "count"))
                 }
-                Tinode.log.debug("what = %@", what)
             }
         } else if let meta = serverMsg.meta {
             if let t = getTopic(topicName: meta.topic!) ?? maybeCreateTopic(meta: meta) {
                 t.routeMeta(meta: meta)
 
-                if let updated = t.updated {
+                if let updated = t.updated, t.topicType != .fnd, t.topicType != .me {
                     if topicsUpdated ?? Date.distantPast < updated {
                         topicsUpdated = updated
                     }

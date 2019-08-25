@@ -32,7 +32,6 @@ class NewGroupViewController: UITableViewController {
     private var imagePicker: ImagePicker!
 
     private func setup() {
-        print("setup called")
         self.imagePicker = ImagePicker(presentationController: self, delegate: self)
         self.tagsTextField.onVerifyTag = { (_, tag) in
             return Utils.isValidTag(tag: tag)
@@ -48,6 +47,11 @@ class NewGroupViewController: UITableViewController {
             if !selectedContacts.isEmpty {
                 selectedUids.insert(myUid)
             }
+        }
+        if #available(iOS 10.0, *) {
+            // Do nothing.
+        } else {
+            self.resolveNavbarOverlapConflict()
         }
     }
 
@@ -184,7 +188,6 @@ class NewGroupViewController: UITableViewController {
             },onFailure: UiUtils.ToastFailureHandler)
         } catch {
             UiUtils.showToast(message: "Failed to create group: \(error.localizedDescription)")
-            print("failed to create group: \(error)")
         }
     }
 }
@@ -232,7 +235,6 @@ extension NewGroupViewController: EditMembersDelegate {
 extension NewGroupViewController: ImagePickerDelegate {
     func didSelect(image: UIImage?, mimeType: String?, fileName: String?) {
         guard let image = image?.resize(width: CGFloat(UiUtils.kAvatarSize), height: CGFloat(UiUtils.kAvatarSize), clip: true) else {
-            print("No image specified or failed to resize - skipping")
             return
         }
 

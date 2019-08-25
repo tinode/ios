@@ -15,12 +15,12 @@ enum LogType {
     case fault
 }
 
-class Log {
+open class Log {
     private var osLog: OSLog?
     let subsystem: String
     let category: String
     private static let `default` = Log(category: "default")
-    init(subsystem: String = Bundle.main.bundleIdentifier ?? "", category: String = "") {
+    public init(subsystem: String = Bundle.main.bundleIdentifier ?? "", category: String = "") {
         if #available(iOS 10.0, *) {
             let osLog = OSLog(subsystem: subsystem, category: category)
             self.osLog = osLog
@@ -50,28 +50,28 @@ class Log {
     func log(type: LogType, message: StaticString) {
         log(type: type, message: message, "")
     }
-    func debug(_ message: StaticString, _ args: CVarArg...) {
+    public func debug(_ message: StaticString, _ args: CVarArg...) {
         log(type: .debug, message: message, args)
     }
-    static func debug(_ message: StaticString, _ args: CVarArg...) {
+    public static func debug(_ message: StaticString, _ args: CVarArg...) {
         Log.default.debug(message, args)
     }
-    func info(_ message: StaticString, _ args: CVarArg...) {
+    public func info(_ message: StaticString, _ args: CVarArg...) {
         log(type: .info, message: message, args)
     }
-    static func info(_ message: StaticString, _ args: CVarArg...) {
+    public static func info(_ message: StaticString, _ args: CVarArg...) {
         Log.default.info(message, args)
     }
-    func error(_ message: StaticString, _ args: CVarArg...) {
+    public func error(_ message: StaticString, _ args: CVarArg...) {
         log(type: .error, message: message, args)
     }
-    static func error(_ message: StaticString, _ args: CVarArg...) {
+    public static func error(_ message: StaticString, _ args: CVarArg...) {
         Log.default.error(message, args)
     }
-    func fault(_ message: StaticString, _ args: CVarArg...) {
+    public func fault(_ message: StaticString, _ args: CVarArg...) {
         log(type: .fault, message: message, args)
     }
-    static func fault(_ message: StaticString, _ args: CVarArg...) {
+    public static func fault(_ message: StaticString, _ args: CVarArg...) {
         Log.default.fault(message, args)
     }
 }

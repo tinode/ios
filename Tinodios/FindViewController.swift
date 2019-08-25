@@ -27,6 +27,19 @@ class FindViewController: UITableViewController, FindDisplayLogic {
     // Flag which indicates that the user is leaving the view.
     var transitioningOut: Bool = false
 
+    private func addAppStateObservers() {
+        // App state observers.
+        NotificationCenter.default.addObserver(
+            self, selector: #selector(self.deviceRotated),
+            name: UIDevice.orientationDidChangeNotification, object: nil)
+    }
+    private func removeAppStateObservers() {
+        NotificationCenter.default.removeObserver(
+            self,
+            name: UIDevice.orientationDidChangeNotification,
+            object: nil)
+    }
+
     private func setup() {
         let viewController = self
         let interactor = FindInteractor()
@@ -54,10 +67,22 @@ class FindViewController: UITableViewController, FindDisplayLogic {
         // Monitor when the search button is tapped.
         searchController.searchBar.delegate = self
         self.definesPresentationContext = true
+        if #available(iOS 10.0, *) {
+            // Do nothing.
+        } else {
+            self.resolveNavbarOverlapConflict()
+            searchController.hidesNavigationBarDuringPresentation = false
+        }
 
         if !Cache.isContactSynchronizerActive() {
             Cache.synchronizeContactsPeriodically()
         }
+
+        addAppStateObservers()
+    }
+
+    deinit {
+        removeAppStateObservers()
     }
 
     func displayLocalContacts(contacts newContacts: [ContactHolder]) {
@@ -75,6 +100,22 @@ class FindViewController: UITableViewController, FindDisplayLogic {
         super.viewDidLoad()
         self.setup()
     }
+
+    private func scrollToTop() {
+        if self.tableView.indexPathsForVisibleRows?.count ?? 0 > 0 {
+            let topIndexPath = IndexPath(row: 0, section: 0)
+            self.tableView.scrollToRow(at: topIndexPath, at: .top, animated: false)
+        }
+    }
+
+    @objc
+    func deviceRotated() {
+        if #available(iOS 10.0, *) {
+        } else {
+            self.resolveNavbarOverlapConflict()
+        }
+    }
+
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
@@ -82,6 +123,11 @@ class FindViewController: UITableViewController, FindDisplayLogic {
         self.interactor?.attachToFndTopic()
         self.interactor?.loadAndPresentContacts(searchQuery: nil)
         self.tabBarController?.navigationItem.rightBarButtonItem = inviteActionButtonItem
+        if #available(iOS 10.0, *) {
+            // Do nothing.
+        } else {
+            self.scrollToTop()
+        }
     }
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)

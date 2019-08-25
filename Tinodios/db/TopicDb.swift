@@ -2,7 +2,7 @@
 //  TopicDb.swift
 //  ios
 //
-//  Copyright © 2018 Tinode. All rights reserved.
+//  Copyright © 2019 Tinode. All rights reserved.
 //
 
 import Foundation
@@ -166,7 +166,7 @@ public class TopicDb {
                 return st.nextUnsentId!
             }
         } catch {
-            print("getNextUnusedSeq failed: \(error)")
+            Cache.log.error("TopicDb - getNextUnusedSeq operation failed: topicId = %{public}@, error = %{public}@", recordId, error.localizedDescription)
         }
         return -1
     }
@@ -231,10 +231,9 @@ public class TopicDb {
                 st.nextUnsentId = TopicDb.kUnsentIdStart
                 topic.payload = st
             }
-            print("inserted id: \(rowid)")
             return rowid
         } catch {
-            print("insertion failed: \(error)")
+            Cache.log.error("TopicDb - insert operation failed: error = %{public}@", error.localizedDescription)
             return -1
         }
     }
@@ -274,7 +273,7 @@ public class TopicDb {
                 return true
             }
         } catch {
-            print("update failed: \(error)")
+            Cache.log.error("TopicDb - update operation failed: topicId = %{public}@, error = %{public}@", recordId, error.localizedDescription)
         }
         return false
     }
@@ -311,7 +310,7 @@ public class TopicDb {
                     if updateMaxLocalSeq { st.maxLocalSeq = seq }
                 }
             } catch {
-                print("msg received failed: \(error)")
+                Cache.log.error("TopicDb - msgReceived operation failed: topicId = %{public}@, error = %{public}@", recordId, error.localizedDescription)
                 return false
             }
         }
@@ -326,7 +325,7 @@ public class TopicDb {
             do {
                 return try self.db.run(record.update(self.maxDel <- delId)) > 0
             } catch {
-                print("msgDeleted failed: \(error)")
+                Cache.log.error("TopicDb - msgDelivered operation failed: topicId = %{public}@, error = %{public}@", recordId, error.localizedDescription)
                 return false
             }
         }
@@ -338,7 +337,7 @@ public class TopicDb {
         do {
             return try self.db.run(record.delete()) > 0
         } catch {
-            print("delete failed: \(error)")
+            Cache.log.error("TopicDb - delete operation failed: topicId = %{public}@, error = %{public}@", recordId, error.localizedDescription)
             return false
         }
     }

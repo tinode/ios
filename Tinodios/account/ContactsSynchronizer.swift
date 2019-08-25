@@ -79,7 +79,7 @@ class ContactsSynchronizer {
                 contacts.append(contact)
             }
         } catch let error {
-            print("Fetch contact error: \(error)")
+            Cache.log.error("ContactsSynchronizer - system contact fetch error: %{public}@", error.localizedDescription)
         }
 
         return contacts.map {
@@ -104,7 +104,7 @@ class ContactsSynchronizer {
                     // This will trigger synchronizeInternal.
                     self?.authStatus = .authorized
                 } else {
-                    NSLog("Permission denied")
+                    Cache.log.error("ContactsSynchronizer - permissions denied.")
                     self?.authStatus = .denied
                 }
             })
@@ -113,7 +113,7 @@ class ContactsSynchronizer {
                 self.synchronizeInternal()
             }
         default:
-            print("not authorized to access contacts. quitting...")
+            Cache.log.info("ContactsSynchronizer - not authorized to access contacts. quitting...")
             break
         }
     }
@@ -125,7 +125,7 @@ class ContactsSynchronizer {
         let contactsManager = ContactsManager.default
         let t0 = Utils.getAuthToken()
         if let token = t0, !token.isEmpty, let contacts = self.fetchContacts(), !contacts.isEmpty {
-            print("starting sync for account")
+            Cache.log.info("ContactsSynchronizer - starting sync.")
             let contacts: String = contactsToQueryString(contacts: contacts)
             var lastSyncMarker = self.serverSyncMarker
             let tinode = Cache.getTinode()
@@ -151,10 +151,8 @@ class ContactsSynchronizer {
                     data: nil, del: nil, tags: false)
                 if let future = tinode.getMeta(topic: Tinode.kTopicFnd, query: meta) {
                     if try future.waitResult() {
-                        print("okay")
                         let pkt = try! future.getResult()
                         guard let subs = pkt?.meta?.sub else { return }
-                        print("got subs\nquery = \(contacts)\nsubs = \(subs)")
                         for sub in subs {
                             if Tinode.topicTypeByName(name: sub.user) == .p2p {
                                 if (lastSyncMarker ?? Date.distantPast) < (sub.updated ?? Date.distantPast) {
@@ -170,10 +168,9 @@ class ContactsSynchronizer {
                 }
                 success = true
             } catch {
-                print("Failed to connect to synchronize contacts: \(error)")
+                Cache.log.error("ContactsSynchronizer - sync failure: %{public}@", error.localizedDescription)
             }
-            print("Contact sync operation completed: " +
-                (success ? "success" : "failure"))
+            Cache.log.info("ContactsSynchronizer - sync operation completed: %{public}@", (success ? "success" : "failure"))
         }
     }
 }

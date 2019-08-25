@@ -2,7 +2,7 @@
 //  BaseDb.swift
 //  ios
 //
-//  Copyright © 2018 Tinode. All rights reserved.
+//  Copyright © 2019 Tinode. All rights reserved.
 //
 
 import Foundation
@@ -124,7 +124,7 @@ public class BaseDb {
             }
             self.account = self.accountDb?.addOrActivateAccount(for: uid)
         } catch {
-            print("setUid failed \(error)")
+            Cache.log.error("BaseDb - setUid failed %{public}@", error.localizedDescription)
             self.account = nil
         }
     }
@@ -139,7 +139,7 @@ public class BaseDb {
         do {
             return try db.run(record.update(column <- value)) > 0
         } catch {
-            print("updateCounter failed: \(error)")
+            Cache.log.error("BaseDb - updateCounter failed %{public}@", error.localizedDescription)
             return false
         }
     }

@@ -2,7 +2,7 @@
 //  AppDelegate.swift
 //  ios
 //
-//  Copyright © 2018 Tinode. All rights reserved.
+//  Copyright © 2019 Tinode. All rights reserved.
 //
 
 import Firebase
@@ -17,29 +17,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var backgroundSessionCompletionHandler: (() -> Void)?
     // Network reachability.
     var nwReachability: Any!
-    
-    func setupPushNotifications(for application: UIApplication) {
-        FirebaseApp.configure()
-        Messaging.messaging().delegate = self
-        if #available(iOS 10.0, *) {
-            // For iOS 10 display notification (sent via APNS)
-            UNUserNotificationCenter.current().delegate = self
-
-            let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
-            UNUserNotificationCenter.current().requestAuthorization(
-                options: authOptions,
-                completionHandler: {_, _ in })
-        } else {
-            let settings: UIUserNotificationSettings =
-                UIUserNotificationSettings(types: [.alert, .badge, .sound], categories: nil)
-            application.registerUserNotificationSettings(settings)
-        }
-
-        application.registerForRemoteNotifications()
-    }
+    var pushNotificationsConfigured = false
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        setupPushNotifications(for: application)
         Utils.registerUserDefaults()
         if let token = Utils.getAuthToken(), !token.isEmpty {
             let tinode = Cache.getTinode()
@@ -50,7 +30,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 _ = try tinode.connect(to: (hostName ?? Cache.kHostName), useTLS: (useTLS ?? false))?.getResult()
                 let msg = try tinode.loginToken(token: token, creds: nil)?.getResult()
                 if let code = msg?.ctrl?.code, code < 300 {
-                    print("login successful for: \(tinode.myUid!)")
+                    Cache.log.debug("AppDelegate - login successful for: %{public}@", tinode.myUid!)
                     UiUtils.routeToChatListVC()
                     success = true
                 }
@@ -59,7 +39,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 UiUtils.routeToChatListVC()
                 success = true
             } catch {
-                print("Failed to automatically login to Tinode: \(error).")
+                Cache.log.info("AppDelegate - failed to automatically login to Tinode: %{public}@", error.localizedDescription)
             }
             if !success {
                 _ = tinode.logout()
@@ -69,7 +49,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             let reachability = NWPathMonitor()
             reachability.start(queue: DispatchQueue.global(qos: .background))
             reachability.pathUpdateHandler = { path in
-                print("connectivity status = \(path)")
                 let tinode = Cache.getTinode()
                 if path.status == .satisfied, !tinode.isConnected {
                     tinode.reconnectNow()

@@ -70,7 +70,7 @@ class FindInteractor: FindBusinessLogic {
                         return nil
                     })
         } catch {
-            print("failed to attach to fnd topic: \(error)")
+            Cache.log.error("FindInteractor - failed to attach to fnd topic: %{public}@", error.localizedDescription)
         }
 
     }
@@ -133,7 +133,9 @@ class FindInteractor: FindBusinessLogic {
         }
         guard let topicUnwrapped = topic else { return false }
         topicUnwrapped.persist(true)
-        contactsManager.processSubscription(sub: sub)
+        if topicUnwrapped.isP2PType {
+            contactsManager.processSubscription(sub: sub)
+        }
         return true
     }
 }

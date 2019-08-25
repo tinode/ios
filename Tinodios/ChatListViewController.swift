@@ -2,7 +2,7 @@
 //  ChatListViewController.swift
 //  Tinodios
 //
-//  Copyright © 2018 Tinode. All rights reserved.
+//  Copyright © 2019 Tinode. All rights reserved.
 //
 
 import UIKit
@@ -182,7 +182,6 @@ extension ChatListViewController {
             self.interactor?.deleteTopic(topic.name)
         }
         let archive = UITableViewRowAction(style: .normal, title: "Archive") { (action, indexPath) in
-            print("archiving at index path")
             let topic = self.topics[indexPath.row]
             self.interactor?.changeArchivedStatus(
                 forTopic: topic.name, archived: !topic.isArchived)

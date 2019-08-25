@@ -259,7 +259,7 @@ class TopicInfoViewController: UITableViewController {
 
     private func changePermissions(acs: AcsHelper?, uid: String?, changeType: UiUtils.PermissionsChangeType, disabledPermissions: String?) {
         guard let acs = acs else {
-            print("Unable to change permissions: nil acs")
+            Cache.log.error("TopicInfoVC - can't change nil permissions")
             return
         }
         UiUtils.showPermissionsEditDialog(over: self, acs: acs, callback: {
@@ -296,7 +296,6 @@ class TopicInfoViewController: UITableViewController {
         case actionAnonPermissions:
             changePermissions(acs: topic.defacs?.anon, uid: nil, changeType: .updateAnon, disabledPermissions: "O")
         default:
-            print("Unknown sender in permissionsTapped")
             return
         }
     }
@@ -651,17 +650,14 @@ extension TopicInfoViewController {
 extension TopicInfoViewController: EditMembersDelegate {
     func editMembersInitialSelection(_: UIView) -> [ContactHolder] {
         return subscriptions?.compactMap {
-            print("Selected contact: \($0.user ?? "nil")")
             return ContactHolder(displayName: $0.pub?.fn, image: $0.pub?.photo?.image(), uniqueId: $0.user)
         } ?? []
     }
 
     func editMembersDidEndEditing(_: UIView, added: [String], removed: [String]) {
-         print("inviting \(added)")
          for uid in added {
             _ = try? topic.invite(user: uid, in: nil)?.thenCatch(onFailure: UiUtils.ToastFailureHandler)
          }
-         print("ejecting \(removed)")
          for uid in removed {
             _ = try? topic.eject(user: uid, ban: false)?.thenCatch(onFailure: UiUtils.ToastFailureHandler)
          }
@@ -675,7 +671,6 @@ extension TopicInfoViewController: EditMembersDelegate {
 extension TopicInfoViewController: ImagePickerDelegate {
     func didSelect(image: UIImage?, mimeType: String?, fileName: String?) {
         guard let image = image?.resize(width: UiUtils.kAvatarSize, height: UiUtils.kAvatarSize, clip: true) else {
-            print("No image specified or failed to resize - skipping")
             return
         }
         _ = try? UiUtils.updateAvatar(forTopic: self.topic, image: image)?.then(

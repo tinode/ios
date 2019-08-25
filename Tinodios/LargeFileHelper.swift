@@ -138,7 +138,6 @@ extension LargeFileHelper: URLSessionDelegate {
 extension LargeFileHelper: URLSessionDataDelegate {
     func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive: Data) {
         if let taskId = dataTask.taskDescription, let upload = activeUploads[taskId] {
-            print("working with task \(taskId) - \(upload.topicId)")
             upload.responseData.append(didReceive)
         }
     }
@@ -146,7 +145,6 @@ extension LargeFileHelper: URLSessionDataDelegate {
 extension LargeFileHelper: URLSessionTaskDelegate {
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError: Error?) {
         guard let taskId = task.taskDescription, let upload = activeUploads[taskId] else {
-            print("Unknown upload. Discarding.")
             return
         }
         activeUploads.removeValue(forKey: taskId)
@@ -159,7 +157,7 @@ extension LargeFileHelper: URLSessionTaskDelegate {
         guard uploadError == nil else {
             return
         }
-        print("done with task \(taskId) - \(upload.topicId)")
+        Cache.log.debug("LargeFileHelper - finished task: id = %{public}@, topicId = %{public}@", taskId, upload.topicId)
         guard let response = task.response as? HTTPURLResponse else {
             uploadError = TinodeError.invalidState("Upload failed (\(upload.topicId)). No server response.")
             return
@@ -193,10 +191,9 @@ extension LargeFileHelper: URLSessionDownloadDelegate {
     func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask,
                     didFinishDownloadingTo location: URL) {
         guard downloadTask.error == nil else {
-            print("download failed: \(downloadTask.error!)")
+            Cache.log.error("LargeFileHelper - download failed: %{public}@", downloadTask.error!.localizedDescription)
             return
         }
-        print("Finished downloading to \(location).")
 
         guard let url = downloadTask.originalRequest?.url else { return }
         let fn = url.extractQueryParam(withName: "origfn") ?? url.lastPathComponent
@@ -214,6 +211,7 @@ extension LargeFileHelper: URLSessionDownloadDelegate {
             try fileManager.moveItem(at: location, to: destinationURL)
             UiUtils.presentFileSharingVC(for: destinationURL)
         } catch {
+            Cache.log.error("LargeFileHelper - could not copy file to disk: %{public}@", error.localizedDescription)
             print("Could not copy file to disk: \(error.localizedDescription)")
         }
     }

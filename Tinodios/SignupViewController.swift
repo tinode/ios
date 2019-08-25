@@ -104,7 +104,6 @@ class SignupViewController: UITableViewController {
                         UiUtils.showToast(message: "Failed to create account: \(err.localizedDescription)")
                     }
                     tinode.disconnect()
-                    print("Could not create account: \(err)")
                     return nil
             })?.thenFinally(finally: { [weak self] in
                 guard let signupVC = self else { return }
@@ -114,7 +113,6 @@ class SignupViewController: UITableViewController {
                 }
             })
         } catch {
-            print("Failed to connect/createAccountBasic to Tinode: \(error).")
             tinode.disconnect()
             DispatchQueue.main.async {
                 UiUtils.showToast(message: "Failed to create account: \(error.localizedDescription)")
@@ -128,7 +126,6 @@ class SignupViewController: UITableViewController {
 extension SignupViewController: ImagePickerDelegate {
     func didSelect(image: UIImage?, mimeType: String?, fileName: String?) {
         guard let image = image?.resize(width: CGFloat(UiUtils.kAvatarSize), height: CGFloat(UiUtils.kAvatarSize), clip: true) else {
-            print("No image specified or failed to resize - skipping")
             return
         }
 

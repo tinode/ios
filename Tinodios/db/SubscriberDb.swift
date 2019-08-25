@@ -2,7 +2,7 @@
 //  SubscriberDb.swift
 //  ios
 //
-//  Copyright © 2018 Tinode. All rights reserved.
+//  Copyright © 2019 Tinode. All rights reserved.
 //
 
 import Foundation
@@ -125,7 +125,7 @@ class SubscriberDb {
                 sub.payload = ss
             }
         } catch {
-            print("SubscriberDb insertion failed: \(error)")
+            Cache.log.error("SubscriberDb - insert operation failed: topicId = %{public}@, error = %{public}@", error.localizedDescription)
             return -1
         }
         return rowId
@@ -159,7 +159,7 @@ class SubscriberDb {
                 ss.status = status
             }
         } catch {
-            print("SubscriberDb update failed: \(error)")
+            Cache.log.error("SubscriberDb - update operation failed: subId = %{public}@, error = %{public}@", recordId, error.localizedDescription)
             return false
         }
         return updated > 0
@@ -169,7 +169,7 @@ class SubscriberDb {
         do {
             return try self.db.run(record.delete()) > 0
         } catch {
-            print("delete failed: \(error)")
+            Cache.log.error("SubscriberDb - delete operation failed: subId = %{public}@, error = %{public}@", recordId, error.localizedDescription)
             return false
         }
     }
@@ -179,7 +179,7 @@ class SubscriberDb {
         do {
             return try self.db.run(record.delete()) > 0
         } catch {
-            print("delete failed: \(error)")
+            Cache.log.error("SubscriberDb - deleteForTopic operation failed: topicId = %{public}@, error = %{public}@", topicId, error.localizedDescription)
             return false
         }
     }
@@ -241,7 +241,7 @@ class SubscriberDb {
                 if let s = self.readOne(r: row) {
                     subscriptions.append(s)
                 } else {
-                    print("failed to create subscription for \(row[self.subscriptionClass])")
+                    Cache.log.error("SubscriberDb - readAll: topicId = %{public}@ | failed to create subscription for %{public}@", topicId, row[self.subscriptionClass])
                 }
             }
             return subscriptions
