@@ -14,6 +14,7 @@ The immediate goal is to have a basic end-to-end working application prototype t
 * Register new accounts.
 * Start new chats.
 * Edit personal details.
+* Edit chat parameters.
 * View the list of active chats
 * Send and receive plain text messages one-on-one or in group chats.
 * In-app presence notifications.
@@ -22,16 +23,17 @@ The immediate goal is to have a basic end-to-end working application prototype t
 * Transport Level Security - https/wss.
 * Drafty: Markdown-style formatting of text, e.g. \*style\* → **style**.
 * Viewing attachments and inline images.
-* Typing indicators.
-
-
-### Does not work yet
-* Edit chat parameters.
 * Delivery and received/read indicators for messages (little check marks in messages).
 * Muting/un-muting conversations and other permission management.
 * Invite contacts to the app by SMS or email.
 * Push notifications.
-* Attachments and inline images cannot be created yet.
+* Attachments and inline images.
+
+### Not Done Yet
+
+* Typing indicators.
+* No support for multiple servers
+
 
 ## Dependencies
 
