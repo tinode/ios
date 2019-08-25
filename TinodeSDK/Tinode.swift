@@ -395,7 +395,7 @@ public class Tinode {
             if let t = getTopic(topicName: meta.topic!) ?? maybeCreateTopic(meta: meta) {
                 t.routeMeta(meta: meta)
 
-                if let updated = t.updated {
+                if let updated = t.updated, t.topicType != .fnd, t.topicType != .me {
                     if topicsUpdated ?? Date.distantPast < updated {
                         topicsUpdated = updated
                     }
