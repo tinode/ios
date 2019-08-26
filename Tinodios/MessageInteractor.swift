@@ -168,7 +168,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                     return nil
                 },
                 onFailure: UiUtils.ToastFailureHandler)
-        } catch TinodeError.notConnected(let errMsg) {
+        } catch TinodeError.notConnected {
             DispatchQueue.main.async { UiUtils.showToast(message: "You are offline.") }
             Cache.getTinode().reconnectNow()
             return false
