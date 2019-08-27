@@ -5,6 +5,7 @@
 //  Copyright © 2019 Tinode. All rights reserved.
 //
 
+import MessageUI
 import UIKit
 import TinodeSDK
 
@@ -31,6 +32,11 @@ class AccountSettingsViewController: UITableViewController {
     weak var tinode: Tinode!
     weak var me: DefaultMeTopic!
     private var imagePicker: ImagePicker!
+
+    @IBOutlet weak var contactUs: UITableViewCell!
+    @IBOutlet weak var termsOfUse: UITableViewCell!
+    @IBOutlet weak var privacyPolicy: UITableViewCell!
+    @IBOutlet weak var appVersion: UILabel!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -73,8 +79,24 @@ class AccountSettingsViewController: UITableViewController {
             forView: actionLogOut,
             action: #selector(AccountSettingsViewController.logoutClicked),
             actionTarget: self)
+        UiUtils.setupTapRecognizer(
+            forView: privacyPolicy,
+            action: #selector(AccountSettingsViewController.privacyPolicyClicked),
+            actionTarget: self)
+        UiUtils.setupTapRecognizer(
+            forView: contactUs,
+            action: #selector(AccountSettingsViewController.contactUsClicked),
+            actionTarget: self)
+        UiUtils.setupTapRecognizer(
+            forView: termsOfUse,
+            action: #selector(AccountSettingsViewController.termsOfUseClicked),
+            actionTarget: self)
 
         self.imagePicker = ImagePicker(presentationController: self, delegate: self)
+
+        let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "0.0.0"
+        let versionCode = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "0"
+        self.appVersion.text = "\(version) (\(versionCode))"
     }
     private func reloadData() {
         // Title.
@@ -217,6 +239,25 @@ class AccountSettingsViewController: UITableViewController {
         self.present(alert, animated: true)
     }
 
+    @objc func termsOfUseClicked(sender: UITapGestureRecognizer) {
+        UIApplication.shared.openURL(URL(string: "https://tinode.co/terms.html")!)
+    }
+
+    @objc func privacyPolicyClicked(sender: UITapGestureRecognizer) {
+        UIApplication.shared.openURL(URL(string: "https://tinode.co/privacy.html")!)
+    }
+
+    @objc func contactUsClicked(sender: UITapGestureRecognizer) {
+        if MFMailComposeViewController.canSendMail() {
+            let mail = MFMailComposeViewController()
+            mail.mailComposeDelegate = self
+            mail.setToRecipients(["mailto:info@tinode.co"])
+            present(mail, animated: true)
+        } else {
+            UiUtils.showToast(message: "Cannot send email: functionality not accessible.")
+        }
+    }
+
     private func updatePassword(with newPassword: String) {
         guard newPassword.count >= 4 else {
             DispatchQueue.main.async {
@@ -275,5 +316,14 @@ extension AccountSettingsViewController: ImagePickerDelegate {
                 }
                 return nil
             })
+    }
+}
+
+extension AccountSettingsViewController: MFMailComposeViewControllerDelegate {
+    func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
+        controller.dismiss(animated: true)
+        if let err = error {
+            UiUtils.showToast(message: "Failed to send email: \(err.localizedDescription)")
+        }
     }
 }
