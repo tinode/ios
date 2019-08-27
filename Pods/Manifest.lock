@@ -1,4 +1,7 @@
 PODS:
+  - Crashlytics (3.13.4):
+    - Fabric (~> 1.10.2)
+  - Fabric (1.10.2)
   - Firebase/CoreOnly (6.1.0):
     - FirebaseCore (= 6.0.1)
   - Firebase/Messaging (6.1.0):
@@ -45,6 +48,8 @@ PODS:
   - SwiftWebSocket (2.7.0)
 
 DEPENDENCIES:
+  - Crashlytics (~> 3.13.4)
+  - Fabric (~> 1.10.2)
   - Firebase/Messaging
   - SQLite.swift (~> 0.12.0)
   - SwiftKeychainWrapper (~> 3.2)
@@ -52,6 +57,8 @@ DEPENDENCIES:
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
+    - Crashlytics
+    - Fabric
     - Firebase
     - FirebaseAnalyticsInterop
     - FirebaseCore
@@ -64,6 +71,8 @@ SPEC REPOS:
     - SwiftWebSocket
 
 SPEC CHECKSUMS:
+  Crashlytics: 2dfd686bcb918dc10ee0e76f7f853fe42c7bd552
+  Fabric: 706c8b8098fff96c33c0db69cbf81f9c551d0d74
   Firebase: 8d77bb33624ae9b62d745d82ec023de5f70f7e4f
   FirebaseAnalyticsInterop: efbe45c8385ec626e29f9525e5ebd38520dfb6c1
   FirebaseCore: 66bdef3b310a026880e2a5bc8aa586ab62ce4543
@@ -75,6 +84,6 @@ SPEC CHECKSUMS:
   SwiftKeychainWrapper: 82c4c02cdc36f9a24f7edfcaab3e336401caa1a1
   SwiftWebSocket: 612c9729fd503cb6b0b8b45390c788686dac306f
 
-PODFILE CHECKSUM: 4431e7e7423f37840c4ab06adde943df4c7f0ba0
+PODFILE CHECKSUM: 4aecd66fc00ee80a16303d9496b7c892afb5c174
 
 COCOAPODS: 1.6.1

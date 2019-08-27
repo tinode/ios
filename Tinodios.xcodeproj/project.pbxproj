@@ -350,6 +350,7 @@
 				0A0380D221B3CC8100A3FA0E /* Resources */,
 				0A431C052244A26200A837F7 /* Embed Frameworks */,
 				A5A27E48338DE610B94531E7 /* [CP] Embed Pods Frameworks */,
+				B094C9A92313C1F100C98B64 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -442,7 +443,7 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Tinodios/Pods-Tinodios-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/SwiftWebSocket-iOS10.0/SwiftWebSocket.framework",
+				"${BUILT_PRODUCTS_DIR}/SwiftWebSocket/SwiftWebSocket.framework",
 				"${BUILT_PRODUCTS_DIR}/GoogleUtilities/GoogleUtilities.framework",
 				"${BUILT_PRODUCTS_DIR}/Protobuf/Protobuf.framework",
 				"${BUILT_PRODUCTS_DIR}/SQLite.swift/SQLite.framework",
@@ -462,6 +463,24 @@
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Tinodios/Pods-Tinodios-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
+		};
+		B094C9A92313C1F100C98B64 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/$(BUILT_PRODUCTS_DIR)/$(INFOPLIST_PATH)",
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n\n\"${PODS_ROOT}/Fabric/run\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -589,7 +608,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;

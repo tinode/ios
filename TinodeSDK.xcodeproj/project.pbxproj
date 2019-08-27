@@ -353,7 +353,7 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-TinodeSDKTests/Pods-TinodeSDKTests-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/SwiftWebSocket-iOS9.0/SwiftWebSocket.framework",
+				"${BUILT_PRODUCTS_DIR}/SwiftWebSocket/SwiftWebSocket.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
@@ -608,7 +608,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = co.tinode.ios.TinodeSDKTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -632,7 +632,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = co.tinode.ios.TinodeSDKTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;

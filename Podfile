@@ -35,4 +35,7 @@ target 'Tinodios' do
     project 'Tinodios'
     sdk_pods
     ui_pods
+    # Pods for Crashlytics
+    pod 'Fabric', '~> 1.10.2'
+    pod 'Crashlytics', '~> 3.13.4'
 end
