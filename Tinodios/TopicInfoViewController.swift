@@ -136,6 +136,18 @@ class TopicInfoViewController: UITableViewController {
             forView: actionLeaveConversation,
             action: #selector(TopicInfoViewController.leaveConversationClicked),
             actionTarget: self)
+        UiUtils.setupTapRecognizer(
+            forView: actionBlockContact,
+            action: #selector(TopicInfoViewController.blockContactClicked),
+            actionTarget: self)
+        UiUtils.setupTapRecognizer(
+            forView: actionReportContact,
+            action: #selector(TopicInfoViewController.reportContactClicked),
+            actionTarget: self)
+        UiUtils.setupTapRecognizer(
+            forView: actionReportGroup,
+            action: #selector(TopicInfoViewController.reportGroupClicked),
+            actionTarget: self)
 
         UiUtils.setupTapRecognizer(
             forView: actionMyPermissions,
@@ -326,6 +338,30 @@ class TopicInfoViewController: UITableViewController {
         }
     }
 
+    private func blockContact() {
+        do {
+            try topic.updateMode(uid: self.topic.name, update: "-J")?.then(
+                onSuccess: { msg in
+                DispatchQueue.main.async {
+                    let storyboard = UIStoryboard(name: "Main", bundle: nil)
+                    let destinationVC = storyboard.instantiateViewController(withIdentifier: "ChatsNavigator") as! UINavigationController
+
+                    self.show(destinationVC, sender: nil)
+                }
+                return nil
+            },
+            onFailure: UiUtils.ToastFailureHandler)
+        } catch TinodeError.notConnected(let e) {
+            UiUtils.showToast(message: "You are offline \(e)")
+        } catch {
+            UiUtils.showToast(message: "Action failed \(error)")
+        }
+    }
+
+    private func reportTopic(reason: String) {
+    /// TODO: implement topic reporting.
+    }
+
     @objc func deleteGroupClicked(sender: UITapGestureRecognizer) {
         guard topic.isOwner else {
             UiUtils.showToast(message: "Only Owner can delete group")
@@ -385,6 +421,33 @@ class TopicInfoViewController: UITableViewController {
         alert.addAction(UIAlertAction(
             title: "Leave", style: .destructive,
             handler: { action in self.deleteTopic() }))
+        present(alert, animated: true)
+    }
+
+    @objc func blockContactClicked(sender: UITapGestureRecognizer) {
+        let alert = UIAlertController(title: "Block contact?", message: nil, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(
+            title: "Block", style: .destructive,
+            handler: { action in self.blockContact() }))
+        present(alert, animated: true)
+    }
+
+    @objc func reportContactClicked(sender: UITapGestureRecognizer) {
+        let alert = UIAlertController(title: "Report contact?", message: nil, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(
+            title: "Report", style: .destructive,
+            handler: { action in self.reportTopic(reason: "TODO") }))
+        present(alert, animated: true)
+    }
+
+    @objc func reportGroupClicked(sender: UITapGestureRecognizer) {
+        let alert = UIAlertController(title: "Report Group?", message: nil, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(
+            title: "Report", style: .destructive,
+            handler: { action in self.reportTopic(reason: "TODO") }))
         present(alert, animated: true)
     }
 
