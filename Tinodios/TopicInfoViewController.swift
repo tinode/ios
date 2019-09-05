@@ -434,7 +434,7 @@ class TopicInfoViewController: UITableViewController {
     }
 
     @objc func reportContactClicked(sender: UITapGestureRecognizer) {
-        let alert = UIAlertController(title: "Report contact?", message: nil, preferredStyle: .alert)
+        let alert = UIAlertController(title: "Report contact?", message: "Also block and remove all messages", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
         alert.addAction(UIAlertAction(
             title: "Report", style: .destructive,
@@ -443,7 +443,7 @@ class TopicInfoViewController: UITableViewController {
     }
 
     @objc func reportGroupClicked(sender: UITapGestureRecognizer) {
-        let alert = UIAlertController(title: "Report Group?", message: nil, preferredStyle: .alert)
+        let alert = UIAlertController(title: "Report Group?", message: "Also block and remove all messages", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
         alert.addAction(UIAlertAction(
             title: "Report", style: .destructive,
