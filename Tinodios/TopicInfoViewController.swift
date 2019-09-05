@@ -21,6 +21,9 @@ class TopicInfoViewController: UITableViewController {
     private static let kSectionActionsLeaveGroup = 2
     private static let kSectionActionsLeaveConversation = 3
     private static let kSectionActionsDelTopic = 4
+    private static let kSectionActionsBlock = 5
+    private static let kSectionActionsReport = 6
+    private static let kSectionActionsReportGroup = 7
 
     private static let kSectionPermissions = 3
     private static let kSectionPermissionsMine = 0
@@ -444,6 +447,18 @@ extension TopicInfoViewController {
             }
             if indexPath.row == TopicInfoViewController.kSectionActionsDelTopic && !(topic?.isOwner ?? false) {
                 // Not an owner, hide [Delete Topic]
+                return CGFloat.leastNonzeroMagnitude
+            }
+            if indexPath.row == TopicInfoViewController.kSectionActionsBlock && topic?.isGrpType ?? false {
+                // Group topic, hide [Block Contact]
+                return CGFloat.leastNonzeroMagnitude
+            }
+            if indexPath.row == TopicInfoViewController.kSectionActionsReport && topic?.isGrpType ?? false {
+                // Group topic, hide [Report Contact]
+                return CGFloat.leastNonzeroMagnitude
+            }
+            if indexPath.row == TopicInfoViewController.kSectionActionsReport && (!(topic?.isGrpType ?? false) || (topic?.isOwner ?? false)) {
+                // P2P topic or the owner, hide [Report Group]
                 return CGFloat.leastNonzeroMagnitude
             }
         }
