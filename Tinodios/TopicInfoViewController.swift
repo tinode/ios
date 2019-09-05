@@ -55,6 +55,9 @@ class TopicInfoViewController: UITableViewController {
     @IBOutlet weak var actionDeleteGroup: UITableViewCell!
     @IBOutlet weak var actionLeaveGroup: UITableViewCell!
     @IBOutlet weak var actionLeaveConversation: UITableViewCell!
+    @IBOutlet weak var actionBlockContact: UITableViewCell!
+    @IBOutlet weak var actionReportContact: UITableViewCell!
+    @IBOutlet weak var actionReportGroup: UITableViewCell!
 
     var topicName = ""
     private var topic: DefaultComTopic!
