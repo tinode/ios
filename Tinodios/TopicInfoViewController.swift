@@ -359,7 +359,13 @@ class TopicInfoViewController: UITableViewController {
     }
 
     private func reportTopic(reason: String) {
-    /// TODO: implement topic reporting.
+        blockContact();
+        let tinode = Cache.getTinode()
+        // Create and send spam report.
+        _ = tinode.publish(topic: "sys", data: Drafty().attachJSON([
+            "action": JSONValue.string("report"),
+            "target": JSONValue.string(self.topic.name)
+            ]))
     }
 
     @objc func deleteGroupClicked(sender: UITapGestureRecognizer) {
