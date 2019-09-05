@@ -362,7 +362,7 @@ class TopicInfoViewController: UITableViewController {
         blockContact();
         let tinode = Cache.getTinode()
         // Create and send spam report.
-        _ = tinode.publish(topic: "sys", data: Drafty().attachJSON([
+        _ = tinode.publish(topic: Tinode.kTopicSys, data: Drafty().attachJSON([
             "action": JSONValue.string("report"),
             "target": JSONValue.string(self.topic.name)
             ]))
