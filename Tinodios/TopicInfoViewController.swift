@@ -340,7 +340,7 @@ class TopicInfoViewController: UITableViewController {
 
     private func blockContact() {
         do {
-            try topic.updateMode(uid: self.topic.name, update: "-J")?.then(
+            try topic.updateMode(uid: self.topic.name, update: "-JP")?.then(
                 onSuccess: { msg in
                 DispatchQueue.main.async {
                     let storyboard = UIStoryboard(name: "Main", bundle: nil)
@@ -526,7 +526,7 @@ extension TopicInfoViewController {
                 // Group topic, hide [Report Contact]
                 return CGFloat.leastNonzeroMagnitude
             }
-            if indexPath.row == TopicInfoViewController.kSectionActionsReport && (!(topic?.isGrpType ?? false) || (topic?.isOwner ?? false)) {
+            if indexPath.row == TopicInfoViewController.kSectionActionsReportGroup && (!(topic?.isGrpType ?? false) || (topic?.isOwner ?? false)) {
                 // P2P topic or the owner, hide [Report Group]
                 return CGFloat.leastNonzeroMagnitude
             }

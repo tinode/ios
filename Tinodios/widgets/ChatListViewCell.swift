@@ -14,6 +14,8 @@ class ChatListViewCell: UITableViewCell {
     @IBOutlet weak var title: UILabel!
     @IBOutlet weak var subtitle: UILabel!
     @IBOutlet weak var unreadCount: UILabel!
+    @IBOutlet weak var blockedIcon: UIImageView!
+    @IBOutlet weak var mutedIcon: UIImageView!
 
     override func awakeFromNib() {
         super.awakeFromNib()
