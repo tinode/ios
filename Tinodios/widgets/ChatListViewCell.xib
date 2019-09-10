@@ -9,12 +9,7 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
-        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="ChatListViewCell" customModule="Tinodios" customModuleProvider="target">
-            <connections>
-                <outlet property="blockedIcon" destination="8zw-ko-8Ep" id="7TS-xI-26B"/>
-                <outlet property="mutedIcon" destination="DSQ-ow-mzk" id="MkY-Yf-iiR"/>
-            </connections>
-        </placeholder>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="ChatListViewCell" customModule="Tinodios" customModuleProvider="target"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
         <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="ChatListViewCell" rowHeight="60" id="AM8-MA-3P8" userLabel="ChatListViewCell" customClass="ChatListViewCell" customModule="Tinodios" customModuleProvider="target">
             <rect key="frame" x="0.0" y="0.0" width="414" height="60"/>
@@ -69,7 +64,10 @@
                     </label>
                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="block-25" translatesAutoresizingMaskIntoConstraints="NO" id="8zw-ko-8Ep" userLabel="Icon Blocked">
                         <rect key="frame" x="132" y="10" width="26" height="18"/>
-                        <color key="tintColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <color key="tintColor" red="0.80000000000000004" green="0.80000000000000004" blue="0.80000000000000004" alpha="1" colorSpace="calibratedRGB"/>
+                        <accessibility key="accessibilityConfiguration">
+                            <accessibilityTraits key="traits" image="YES" notEnabled="YES"/>
+                        </accessibility>
                         <constraints>
                             <constraint firstAttribute="height" constant="18" id="Ka8-Mu-xbu"/>
                             <constraint firstAttribute="width" constant="26" id="azP-Ol-mbp"/>
@@ -77,7 +75,7 @@
                     </imageView>
                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="alarm-off-25" translatesAutoresizingMaskIntoConstraints="NO" id="DSQ-ow-mzk" userLabel="Icon Muted">
                         <rect key="frame" x="158" y="10" width="26" height="18"/>
-                        <color key="tintColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <color key="tintColor" red="0.80000000000000004" green="0.80000000000000004" blue="0.80000000000000004" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="26" id="2op-7v-zNJ"/>
                             <constraint firstAttribute="height" constant="18" id="nJz-QB-fyD"/>
@@ -103,11 +101,15 @@
             <edgeInsets key="layoutMargins" top="8" left="8" bottom="8" right="8"/>
             <connections>
                 <outlet property="icon" destination="epv-Q0-yKc" id="NQP-XU-ztt"/>
+                <outlet property="iconBlocked" destination="8zw-ko-8Ep" id="19j-T8-noT"/>
+                <outlet property="iconBlockedWidth" destination="azP-Ol-mbp" id="3AJ-OG-5vd"/>
+                <outlet property="iconMuted" destination="DSQ-ow-mzk" id="dVx-rT-fmw"/>
                 <outlet property="subtitle" destination="g5B-Iw-vLQ" id="Kxf-dh-WoM"/>
                 <outlet property="title" destination="wDJ-YF-7hy" id="3Rg-Xm-ZlM"/>
                 <outlet property="unreadCount" destination="FaT-ra-R9w" id="uuV-4N-5dx"/>
+                <outlet property="unreadCountWidth" destination="pfH-oq-llg" id="ZIG-7s-yb3"/>
             </connections>
-            <point key="canvasLocation" x="-5.7971014492753632" y="-40.513392857142854"/>
+            <point key="canvasLocation" x="70" y="-42"/>
         </tableViewCell>
     </objects>
     <resources>
