@@ -340,7 +340,7 @@ class TopicInfoViewController: UITableViewController {
 
     private func blockContact() {
         do {
-            try topic.updateMode(uid: self.topic.name, update: "-JP")?.then(
+            try topic.updateMode(uid: nil, update: "-JP")?.then(
                 onSuccess: { msg in
                 DispatchQueue.main.async {
                     let storyboard = UIStoryboard(name: "Main", bundle: nil)
