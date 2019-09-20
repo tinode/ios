@@ -177,6 +177,8 @@ public class Acs: Codable, Equatable {
         }
         return changed > 0
     }
+
+    /// Convert access mode into a string "MODE,WANT,GIVEN" like "JRWPA,JRWPA,JRWPA".
     public func serialize() -> String {
         return [self.mode?.description ?? "",
                 self.want?.description ?? "",

@@ -21,6 +21,9 @@ class TopicInfoViewController: UITableViewController {
     private static let kSectionActionsLeaveGroup = 2
     private static let kSectionActionsLeaveConversation = 3
     private static let kSectionActionsDelTopic = 4
+    private static let kSectionActionsBlock = 5
+    private static let kSectionActionsReport = 6
+    private static let kSectionActionsReportGroup = 7
 
     private static let kSectionPermissions = 3
     private static let kSectionPermissionsMine = 0
@@ -55,6 +58,9 @@ class TopicInfoViewController: UITableViewController {
     @IBOutlet weak var actionDeleteGroup: UITableViewCell!
     @IBOutlet weak var actionLeaveGroup: UITableViewCell!
     @IBOutlet weak var actionLeaveConversation: UITableViewCell!
+    @IBOutlet weak var actionBlockContact: UITableViewCell!
+    @IBOutlet weak var actionReportContact: UITableViewCell!
+    @IBOutlet weak var actionReportGroup: UITableViewCell!
 
     var topicName = ""
     private var topic: DefaultComTopic!
@@ -129,6 +135,18 @@ class TopicInfoViewController: UITableViewController {
         UiUtils.setupTapRecognizer(
             forView: actionLeaveConversation,
             action: #selector(TopicInfoViewController.leaveConversationClicked),
+            actionTarget: self)
+        UiUtils.setupTapRecognizer(
+            forView: actionBlockContact,
+            action: #selector(TopicInfoViewController.blockContactClicked),
+            actionTarget: self)
+        UiUtils.setupTapRecognizer(
+            forView: actionReportContact,
+            action: #selector(TopicInfoViewController.reportContactClicked),
+            actionTarget: self)
+        UiUtils.setupTapRecognizer(
+            forView: actionReportGroup,
+            action: #selector(TopicInfoViewController.reportGroupClicked),
             actionTarget: self)
 
         UiUtils.setupTapRecognizer(
@@ -320,6 +338,36 @@ class TopicInfoViewController: UITableViewController {
         }
     }
 
+    private func blockContact() {
+        do {
+            try topic.updateMode(uid: nil, update: "-JP")?.then(
+                onSuccess: { msg in
+                DispatchQueue.main.async {
+                    let storyboard = UIStoryboard(name: "Main", bundle: nil)
+                    let destinationVC = storyboard.instantiateViewController(withIdentifier: "ChatsNavigator") as! UINavigationController
+
+                    self.show(destinationVC, sender: nil)
+                }
+                return nil
+            },
+            onFailure: UiUtils.ToastFailureHandler)
+        } catch TinodeError.notConnected(let e) {
+            UiUtils.showToast(message: "You are offline \(e)")
+        } catch {
+            UiUtils.showToast(message: "Action failed \(error)")
+        }
+    }
+
+    private func reportTopic(reason: String) {
+        blockContact();
+        let tinode = Cache.getTinode()
+        // Create and send spam report.
+        _ = tinode.publish(topic: Tinode.kTopicSys, data: Drafty().attachJSON([
+            "action": JSONValue.string("report"),
+            "target": JSONValue.string(self.topic.name)
+            ]))
+    }
+
     @objc func deleteGroupClicked(sender: UITapGestureRecognizer) {
         guard topic.isOwner else {
             UiUtils.showToast(message: "Only Owner can delete group")
@@ -382,6 +430,33 @@ class TopicInfoViewController: UITableViewController {
         present(alert, animated: true)
     }
 
+    @objc func blockContactClicked(sender: UITapGestureRecognizer) {
+        let alert = UIAlertController(title: "Block contact?", message: nil, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(
+            title: "Block", style: .destructive,
+            handler: { action in self.blockContact() }))
+        present(alert, animated: true)
+    }
+
+    @objc func reportContactClicked(sender: UITapGestureRecognizer) {
+        let alert = UIAlertController(title: "Report contact?", message: "Also block and remove all messages", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(
+            title: "Report", style: .destructive,
+            handler: { action in self.reportTopic(reason: "TODO") }))
+        present(alert, animated: true)
+    }
+
+    @objc func reportGroupClicked(sender: UITapGestureRecognizer) {
+        let alert = UIAlertController(title: "Report Group?", message: "Also block and remove all messages", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(
+            title: "Report", style: .destructive,
+            handler: { action in self.reportTopic(reason: "TODO") }))
+        present(alert, animated: true)
+    }
+
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "TopicInfo2EditMembers" {
             let navigator = segue.destination as! UINavigationController
@@ -441,6 +516,18 @@ extension TopicInfoViewController {
             }
             if indexPath.row == TopicInfoViewController.kSectionActionsDelTopic && !(topic?.isOwner ?? false) {
                 // Not an owner, hide [Delete Topic]
+                return CGFloat.leastNonzeroMagnitude
+            }
+            if indexPath.row == TopicInfoViewController.kSectionActionsBlock && topic?.isGrpType ?? false {
+                // Group topic, hide [Block Contact]
+                return CGFloat.leastNonzeroMagnitude
+            }
+            if indexPath.row == TopicInfoViewController.kSectionActionsReport && topic?.isGrpType ?? false {
+                // Group topic, hide [Report Contact]
+                return CGFloat.leastNonzeroMagnitude
+            }
+            if indexPath.row == TopicInfoViewController.kSectionActionsReportGroup && (!(topic?.isGrpType ?? false) || (topic?.isOwner ?? false)) {
+                // P2P topic or the owner, hide [Report Group]
                 return CGFloat.leastNonzeroMagnitude
             }
         }

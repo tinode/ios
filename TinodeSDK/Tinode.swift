@@ -112,6 +112,8 @@ public class Tinode {
     public static let kUserNew = "new"
     public static let kTopicMe = "me"
     public static let kTopicFnd = "fnd"
+    public static let kTopicSys = "sys"
+
     public static let kTopicGrpPrefix = "grp"
     public static let kTopicUsrPrefix = "usr"
 

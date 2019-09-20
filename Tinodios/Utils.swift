@@ -33,7 +33,7 @@ class Utils {
         userDefaults.removeObject(forKey: Utils.kTinodePrefLastLogin)
         KeychainWrapper.standard.removeAllKeys()
     }
-
+    
     public static func saveAuthToken(for userName: String, token: String?) {
         UserDefaults.standard.set(userName, forKey: Utils.kTinodePrefLastLogin)
         if let token = token, !token.isEmpty {
