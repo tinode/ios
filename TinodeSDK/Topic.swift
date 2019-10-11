@@ -46,6 +46,7 @@ public protocol TopicProto: class {
     func persist(_ on: Bool)
 
     func allMessagesReceived(count: Int?)
+    func allSubsReceived()
     func routeMeta(meta: MsgServerMeta)
     func routeData(data: MsgServerData)
     func routePres(pres: MsgServerPres)
@@ -275,7 +276,7 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
     }
     public var defacs: Defacs? {
         get { return description?.defacs }
-        set { description?.defacs = defacs }
+        set { description?.defacs = newValue }
     }
 
     // The bulk of topic data
@@ -543,6 +544,10 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
 
     public func allMessagesReceived(count: Int?) {
         listener?.onAllMessagesReceived(count: count ?? 0)
+    }
+
+    public func allSubsReceived() {
+        listener?.onSubsUpdated()
     }
 
     @discardableResult internal func loadSubs() -> Int {

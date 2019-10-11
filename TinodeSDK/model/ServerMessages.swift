@@ -15,6 +15,13 @@ public class MsgServerCtrl: Decodable {
     public let ts: Date
     public let params: [String: JSONValue]?
 
+    public func getBoolParam(for key: String) -> Bool? {
+        if case let .bool(v)? = params?[key] {
+            return v
+        }
+        return nil
+    }
+
     public func getStringParam(for key: String) -> String? {
         if case let .string(v)? = params?[key] {
             return v
