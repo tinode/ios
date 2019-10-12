@@ -1003,6 +1003,8 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
             }
         case .kDel:
             routeMetaDel(clear: pres.clear!, delseq: pres.delseq!)
+        case .kTerm:
+            topicLeft(unsub: false, code: 500, reason: "term")
         case .kAcs:
             if let sub = getSubscription(for: pres.src) {
                 sub.updateAccessMode(ac: pres.dacs)
