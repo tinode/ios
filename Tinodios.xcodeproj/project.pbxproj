@@ -150,6 +150,8 @@
 		7DDADC5121D5C219009733B5 /* ValidatedCredential.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ValidatedCredential.swift; sourceTree = "<group>"; };
 		7DDADC5321D5C2E6009733B5 /* CredentialsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CredentialsViewController.swift; sourceTree = "<group>"; };
 		B008593B22741B89002C5168 /* AttributedStringFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttributedStringFormatter.swift; sourceTree = "<group>"; };
+		B01120B72357469300EFCB1F /* devel.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = devel.xcconfig; sourceTree = "<group>"; };
+		B01120B8235746BF00EFCB1F /* prod.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = prod.xcconfig; sourceTree = "<group>"; };
 		B0125996229C982900688FCE /* ContactViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactViewCell.swift; sourceTree = "<group>"; };
 		B0125997229C982900688FCE /* ContactViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ContactViewCell.xib; sourceTree = "<group>"; };
 		B012599A229CEBE600688FCE /* SelectedMemberViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectedMemberViewCell.swift; sourceTree = "<group>"; };
@@ -193,6 +195,8 @@
 		0A0380CB21B3CC8100A3FA0E = {
 			isa = PBXGroup;
 			children = (
+				B01120B72357469300EFCB1F /* devel.xcconfig */,
+				B01120B8235746BF00EFCB1F /* prod.xcconfig */,
 				0A431C022244A26200A837F7 /* TinodeSDK.framework */,
 				0A0380D621B3CC8100A3FA0E /* Tinodios */,
 				0A0380D521B3CC8100A3FA0E /* Products */,
@@ -596,6 +600,7 @@
 /* Begin XCBuildConfiguration section */
 		0A0380E421B3CC8200A3FA0E /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B01120B72357469300EFCB1F /* devel.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -657,6 +662,7 @@
 		};
 		0A0380E521B3CC8200A3FA0E /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B01120B8235746BF00EFCB1F /* prod.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -712,7 +718,7 @@
 		};
 		0A0380E721B3CC8200A3FA0E /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 75BC852198885F22E865D563 /* Pods-Tinodios.debug.xcconfig */;
+			baseConfigurationReference = B01120B72357469300EFCB1F /* devel.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "Apple Development";
@@ -734,7 +740,7 @@
 		};
 		0A0380E821B3CC8200A3FA0E /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5900B7863CDFB018A86DD3AC /* Pods-Tinodios.release.xcconfig */;
+			baseConfigurationReference = B01120B8235746BF00EFCB1F /* prod.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "Apple Development";
