@@ -3,14 +3,12 @@
 # This script assigns DefaultValue for host name and TLS in Settings.bundle/Root.plist preferences
 # reading them from build configuration Info.plist.
 
-prefs_file=~/ventures/tinode/junk/Root.plist
-info_plist=~/ventures/tinode/junk/Info.plist
 # Location of Settings.bundle/Root.plist to update
-# prefs_file="$TARGET_BUILD_DIR/$CONTENTS_FOLDER_PATH/Settings.bundle/Root.plist"
+prefs_file="$TARGET_BUILD_DIR/$CONTENTS_FOLDER_PATH/Settings.bundle/Root.plist"
 # Location of Info.plist to read values from
-# info_plist="$TARGET_BUILD_DIR/$INFOPLIST_PATH"
-# Find array entry with the necessary key
+info_plist="$TARGET_BUILD_DIR/$INFOPLIST_PATH"
 
+# Find array entry with the necessary key
 # Iterate at most 10 array entries until either the key is found or all entries iterated.
 # @param: key to find
 find_array_entry() {
