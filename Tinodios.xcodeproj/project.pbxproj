@@ -356,6 +356,7 @@
 				A5A27E48338DE610B94531E7 /* [CP] Embed Pods Frameworks */,
 				B094C9A92313C1F100C98B64 /* Crashlytics script */,
 				B094C9AA2315841E00C98B64 /* Assign build version from git */,
+				B0BC2B5423589CE100BEEB4B /* Assign DefaultValue in app preferences */,
 			);
 			buildRules = (
 			);
@@ -505,6 +506,24 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "${SRCROOT}/Scripts/set_build_number.sh\n";
+		};
+		B0BC2B5423589CE100BEEB4B /* Assign DefaultValue in app preferences */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Assign DefaultValue in app preferences";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "${SRCROOT}/Scripts/set_default_preferences.sh\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
