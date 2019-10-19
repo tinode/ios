@@ -164,7 +164,7 @@ class MessageDb {
         let startId = loId ?? 0
         var endId = hiId ?? Int.max
         if endId == 0 {
-            endId = startId
+            endId = startId + 1
         }
         do {
             var updateResult = false
