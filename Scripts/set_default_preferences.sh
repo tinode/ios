@@ -30,14 +30,14 @@ find_array_entry "host_name_preference"
 hn_index=$?
 if [ "$hn_index" -eq 0 ]; then
   echo "Entry host_name_preference not found"
-  exit -1
+  exit 1
 fi
 # Find key for TLS use
 find_array_entry "use_tls_preference"
 tls_index=$?
 if [ "$tls_index" -eq 0 ]; then
   echo "Entry use_tls_preference not found"
-  exit -1
+  exit 1
 fi
 
 # Read values from Info.plist
@@ -45,7 +45,7 @@ host_name=$(/usr/libexec/PlistBuddy -c "Print :HOST_NAME" "$info_plist" 2>/dev/n
 use_tls=$(/usr/libexec/PlistBuddy -c "Print :USE_TLS" "$info_plist" 2>/dev/null)
 if [ -z "$host_name" ] || [ -z "$use_tls" ]; then
   echo "Missing host name '$host_name' or TLS value '$use_tls'"
-  exit -1
+  exit 1
 fi
 
 # Assign values as appropriate

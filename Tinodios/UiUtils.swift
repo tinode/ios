@@ -50,7 +50,21 @@ class UiUtils {
         let application = UIApplication.shared
         let appDelegate = application.delegate as! AppDelegate
         guard !appDelegate.pushNotificationsConfigured else { return }
-        FirebaseApp.configure()
+
+        // Use GoogleService-Info-Development for debug environment, -Production for release.
+        #if DEBUG
+            let firebaseConfigFileName = "GoogleService-Info-Development"
+        #else
+            let firebaseConfigFileName = "GoogleService-Info-Production"
+        #endif
+
+        guard let firebaseConfig = Bundle.main.path(forResource: firebaseConfigFileName, ofType: "plist") else {
+            fatalError("Missing Firebase configuration file \(firebaseConfigFileName).plist.")
+        }
+        guard let options = FirebaseOptions(contentsOfFile: firebaseConfig) else {
+            fatalError("Invalid Firebase configuration file.")
+        }
+        FirebaseApp.configure(options: options)
         Messaging.messaging().delegate = appDelegate
         if #available(iOS 10.0, *) {
             // For iOS 10 display notification (sent via APNS)
