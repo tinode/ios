@@ -22,6 +22,7 @@ dsym_plist="$DWARF_DSYM_FOLDER_PATH/$DWARF_DSYM_FILE_NAME/Contents/Info.plist"
 for plist in "$target_plist" "$dsym_plist"; do
   if [ -f "$plist" ]; then
     /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $number_of_commits" "$plist"
-    /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString ${git_release_version#*v}" "$plist"
+    # Disabled for now. Apple wants versions like 1.2.3. Can't use it just yet.
+    # /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString ${git_release_version#*v}" "$plist"
   fi
 done

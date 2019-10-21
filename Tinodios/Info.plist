@@ -2,12 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>$(PRODUCT_NAME) wants to access Photo Library</string>
-	<key>USE_TLS</key>
-	<string>$(USE_TLS)</string>
-	<key>HOST_NAME</key>
-	<string>$(HOST_NAME)</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
@@ -23,9 +17,11 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>Assigned by buildscript</string>
+	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleVersion</key>
-	<string>Assigned by build script</string>
+	<string>Assigned by build script: `git rev-list HEAD --count`</string>
+	<key>HOST_NAME</key>
+	<string>$(HOST_NAME)</string>
 	<key>LSApplicationCategoryType</key>
 	<string></string>
 	<key>LSRequiresIPhoneOS</key>
@@ -34,6 +30,8 @@
 	<string>$(PRODUCT_NAME) wants to use camera</string>
 	<key>NSContactsUsageDescription</key>
 	<string>$(PRODUCT_NAME) contact display</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>$(PRODUCT_NAME) wants to access Photo Library</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>$(PRODUCT_NAME) wants to access photos</string>
 	<key>UILaunchStoryboardName</key>
@@ -59,5 +57,7 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<true/>
+	<key>USE_TLS</key>
+	<string>$(USE_TLS)</string>
 </dict>
 </plist>
