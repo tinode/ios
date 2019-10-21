@@ -15,6 +15,13 @@ public class MsgServerCtrl: Decodable {
     public let ts: Date
     public let params: [String: JSONValue]?
 
+    public func getBoolParam(for key: String) -> Bool? {
+        if case let .bool(v)? = params?[key] {
+            return v
+        }
+        return nil
+    }
+
     public func getStringParam(for key: String) -> String? {
         if case let .string(v)? = params?[key] {
             return v
@@ -179,7 +186,7 @@ public class AccessChange : Decodable {
 
 public class MsgServerPres : Decodable {
     enum What {
-        case kOn, kOff, kUpd, kGone, kAcs, kMsg, kUa, kRecv, kRead, kDel, kTags, kUnknown
+        case kOn, kOff, kUpd, kGone, kTerm, kAcs, kMsg, kUa, kRecv, kRead, kDel, kTags, kUnknown
     }
     public var topic: String?
     public var src: String?
@@ -207,6 +214,8 @@ public class MsgServerPres : Decodable {
             return .kAcs
         case "gone":
             return .kGone
+        case "term":
+            return .kTerm
         case "msg":
             return .kMsg
         case "ua":

@@ -1,0 +1,15 @@
+//
+// Production .xcconfig
+//
+
+// Include Pods config.
+#include "Pods/Target Support Files/Pods-Tinodios/Pods-Tinodios.release.xcconfig"
+
+// Server URL
+HOST_NAME = api.tinode.co
+// Use TLS (https, wss)
+USE_TLS = YES
+
+// App Settings
+APP_NAME = Tinode
+APP_BUNDLE_ID = co.tinode.tinodios

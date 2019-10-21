@@ -388,9 +388,18 @@ public class Tinode {
                     }
                 }
             }
-            if let what = ctrl.getStringParam(for: "what"), what == "data" {
-                if let topic = ctrl.topic, let t = getTopic(topicName: topic) {
-                    t.allMessagesReceived(count: ctrl.getIntParam(for: "count"))
+            if ctrl.code == 205 && ctrl.text == "evicted" {
+                if let topicName = ctrl.topic, let topic = getTopic(topicName: topicName) {
+                    topic.topicLeft(unsub: ctrl.getBoolParam(for: "unsub") ?? false, code: ctrl.code, reason: ctrl.text)
+                }
+            } else if let what = ctrl.getStringParam(for: "what"), let topicName = ctrl.topic, let topic = getTopic(topicName: topicName) {
+                switch what {
+                case "data":
+                    topic.allMessagesReceived(count: ctrl.getIntParam(for: "count"))
+                case "sub":
+                    topic.allSubsReceived()
+                default:
+                    break
                 }
             }
         } else if let meta = serverMsg.meta {
