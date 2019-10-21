@@ -12,16 +12,19 @@ public class MsgClientHi : Encodable {
     let ver: String?
     // User Agent.
     let ua: String?
-    // Device ID.
+    // Push notification token.
     let dev: String?
     let lang: String?
     
-    init(id: String, ver: String, ua: String, dev: String, lang: String) {
+    init(id: String?, ver: String?, ua: String?, dev: String?, lang: String?) {
         self.id = id
         self.ver = ver
         self.ua = ua
         self.dev = dev
         self.lang = lang
+    }
+    convenience init(id: String, dev: String) {
+        self.init(id: id, ver: nil, ua: nil, dev: dev, lang: nil)
     }
 }
 

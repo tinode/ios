@@ -127,7 +127,6 @@ public class Tinode {
     let kVersion = "0.15"
     let kLibVersion = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as! String
     let kLocale = Locale.current.languageCode!
-    public var deviceId: String = ""
     public var OsVersion: String = ""
 
     private class ConcurrentFuturesMap {
@@ -482,10 +481,7 @@ public class Tinode {
     }
     private func hello() -> PromisedReply<ServerMessage>? {
         let msgId = getNextMsgId()
-        let msg = ClientMessage<Int, Int>(
-            hi: MsgClientHi(id: msgId, ver: kVersion,
-                            ua: userAgent, dev: deviceId,
-                            lang: kLocale))
+        let msg = ClientMessage<Int, Int>(hi: MsgClientHi(id: msgId, ver: kVersion, ua: userAgent, dev: deviceToken, lang: kLocale))
         return try! sendWithPromise(payload: msg, with: msgId).thenApply(
             onSuccess: { [weak self] pkt in
                 guard let ctrl = pkt?.ctrl else {
@@ -917,6 +913,30 @@ public class Tinode {
             return true
         } catch {
             return false
+        }
+    }
+
+    /**
+     * Set device token for push notifications.
+     *
+     * @param token device token
+     */
+    public func setDeviceToken(token: String?) {
+        guard token != nil else { return }
+        // Check if token has changed.
+        if deviceToken == nil || deviceToken != token {
+            // Cache token here assuming the call to server does not fail. If it fails clear the cached token.
+            // This prevents multiple unnecessary calls to the server with the same token.
+            deviceToken = token
+            if isConnected && isConnectionAuthenticated {
+                let msgId = getNextMsgId()
+                let msg = ClientMessage<Int, Int>(hi: MsgClientHi(id: msgId, dev: deviceToken!))
+                try! sendWithPromise(payload: msg, with: msgId).thenCatch(onFailure: { [weak self] err in
+                    // Clear cached value on failure to allow for retries.
+                    self?.deviceToken = nil
+                    return nil
+                })
+            }
         }
     }
 

@@ -53,8 +53,6 @@ class Cache {
                             authenticateWith: Cache.kApiKey,
                             persistDataIn: dbh.sqlStore)
             tinode!.OsVersion = UIDevice.current.systemVersion
-            // FIXME: this should be FCM or APNS push ID
-            tinode!.deviceId = UIDevice.current.identifierForVendor!.uuidString
         }
         return tinode!
     }
