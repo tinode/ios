@@ -356,6 +356,7 @@
 				46966AD24309BE3586965D61 /* [CP] Check Pods Manifest.lock */,
 				0A0380D021B3CC8100A3FA0E /* Sources */,
 				0A0380D121B3CC8100A3FA0E /* Frameworks */,
+				B0BC2B5C235E2FEA00BEEB4B /* Setup Firebase */,
 				0A0380D221B3CC8100A3FA0E /* Resources */,
 				0A431C052244A26200A837F7 /* Embed Frameworks */,
 				A5A27E48338DE610B94531E7 /* [CP] Embed Pods Frameworks */,
@@ -529,6 +530,24 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "${SRCROOT}/Scripts/set_default_preferences.sh\n";
+		};
+		B0BC2B5C235E2FEA00BEEB4B /* Setup Firebase */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Setup Firebase";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "${SRCROOT}/Scripts/setup_firebase.sh\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
