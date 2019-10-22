@@ -124,7 +124,7 @@ public class Tinode {
     internal static let log = Log(category: "co.tinode.tinodesdk")
 
     let kProtocolVersion = "0"
-    let kVersion = "0.15"
+    let kVersion = "0.16"
     let kLibVersion = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as! String
     let kLocale = Locale.current.languageCode!
     public var OsVersion: String = ""
