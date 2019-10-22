@@ -137,12 +137,18 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                         return nil
                     },
                     onFailure: { [weak self] err in
-                        DispatchQueue.main.async {
-                            UiUtils.showToast(message: "Failed to subscribe to topic: \(err.localizedDescription)")
+                        let tinode = Cache.getTinode()
+                        let errorMsg = "Failed to subscribe to topic: \(err.localizedDescription)"
+                        if tinode.isConnected {
+                            DispatchQueue.main.async {
+                                UiUtils.showToast(message: errorMsg)
+                            }
+                        } else {
+                            Cache.log.error("MessageInteractor: %{public}@", errorMsg)
                         }
                         switch err {
                         case TinodeError.notConnected(_):
-                            Cache.getTinode().reconnectNow()
+                            tinode.reconnectNow()
                         default:
                             self?.presenter?.applyTopicPermissions(withError: err)
                         }
@@ -380,7 +386,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         self.loadMessages()
     }
     override func onPres(pres: MsgServerPres) {
-        DispatchQueue.main.async { self.presenter?.applyTopicPermissions(withError: nil) }
+        self.presenter?.applyTopicPermissions(withError: nil)
     }
     override func onOnline(online: Bool) {
         self.presenter?.setOnline(online: online)
