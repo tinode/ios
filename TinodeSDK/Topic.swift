@@ -46,6 +46,7 @@ public protocol TopicProto: class {
     func persist(_ on: Bool)
 
     func allMessagesReceived(count: Int?)
+    func allSubsReceived()
     func routeMeta(meta: MsgServerMeta)
     func routeData(data: MsgServerData)
     func routePres(pres: MsgServerPres)
@@ -275,7 +276,7 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
     }
     public var defacs: Defacs? {
         get { return description?.defacs }
-        set { description?.defacs = defacs }
+        set { description?.defacs = newValue }
     }
 
     // The bulk of topic data
@@ -543,6 +544,10 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
 
     public func allMessagesReceived(count: Int?) {
         listener?.onAllMessagesReceived(count: count ?? 0)
+    }
+
+    public func allSubsReceived() {
+        listener?.onSubsUpdated()
     }
 
     @discardableResult internal func loadSubs() -> Int {
@@ -990,7 +995,6 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
 
     public func routePres(pres: MsgServerPres) {
         let what = MsgServerPres.parseWhat(what: pres.what)
-        //var sub: Subscription<SP, SR>? = nil
         switch what {
         case .kOn, .kOff:
             if let sub = getSubscription(for: pres.src) {
@@ -998,6 +1002,8 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
             }
         case .kDel:
             routeMetaDel(clear: pres.clear!, delseq: pres.delseq!)
+        case .kTerm:
+            topicLeft(unsub: false, code: 500, reason: "term")
         case .kAcs:
             if let sub = getSubscription(for: pres.src) {
                 sub.updateAccessMode(ac: pres.dacs)
@@ -1216,6 +1222,11 @@ open class MeTopic<DP: Codable>: Topic<DP, PrivateType, DP, PrivateType> {
     }
     override public func routePres(pres: MsgServerPres) {
         let what = MsgServerPres.parseWhat(what: pres.what)
+        if what == .kTerm {
+            // The 'me' topic itself is detached. Mark as unsubscribed.
+            super.routePres(pres: pres)
+            return
+        }
         // "what":"tags" has src == nil
         if let topic = pres.src != nil ? tinode!.getTopic(topicName: pres.src!) : nil {
             switch what {

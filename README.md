@@ -53,9 +53,8 @@ The immediate goal is to have a basic end-to-end working application prototype t
 If you want to use the app with your own server and want push notification to work you have to set them up:
 
 * Register at https://firebase.google.com/, [set up the project](https://firebase.google.com/docs/ios/setup) if you have not done so already.
-* [Download your own](https://firebase.google.com/docs/cloud-messaging/ios/client) config file `GoogleService-Info.plist` and place it to the `Tinodios/` folder of your copy of the project. The config file contains keys specific to your Firebase/FCM registration. The project will not compile without the `GoogleService-Info.plist`.
+* [Download your own](https://firebase.google.com/docs/cloud-messaging/ios/client) config file `GoogleService-Info.plist` and place it in the `Tinodios/` folder of your copy of the project under the name `GoogleService-Info-Development.plist` (for Debug builds) or `GoogleService-Info-Production.plist` (for Release builds). The config file contains keys specific to your Firebase/FCM registration. The project will not compile without the corresponding `GoogleService-Info-{Development,Production}.plist`.
 * Copy Google-provided server key to `tinode.conf`, see details [here](https://github.com/tinode/chat/blob/master/docs/faq.md#q-how-to-setup-fcm-push-notifications).
-
 
 ## Other
 

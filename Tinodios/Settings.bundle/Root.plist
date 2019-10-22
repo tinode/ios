@@ -34,7 +34,7 @@
 			<key>Type</key>
 			<string>PSToggleSwitchSpecifier</string>
 			<key>Title</key>
-			<string>Use TLS</string>
+			<string>Secure connection</string>
 			<key>Key</key>
 			<string>use_tls_preference</string>
 			<key>DefaultValue</key>

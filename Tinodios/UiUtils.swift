@@ -50,6 +50,8 @@ class UiUtils {
         let application = UIApplication.shared
         let appDelegate = application.delegate as! AppDelegate
         guard !appDelegate.pushNotificationsConfigured else { return }
+
+        // Configure FCM.
         FirebaseApp.configure()
         Messaging.messaging().delegate = appDelegate
         if #available(iOS 10.0, *) {

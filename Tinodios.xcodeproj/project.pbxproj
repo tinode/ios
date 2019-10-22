@@ -65,7 +65,6 @@
 		B031BE552263075E004160AE /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = B031BE542263075E004160AE /* Settings.bundle */; };
 		B031BE5722631304004160AE /* SettingsHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = B031BE5622631304004160AE /* SettingsHelper.swift */; };
 		B05ACEB322FDAB5200276713 /* ResetPasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B05ACEB222FDAB5200276713 /* ResetPasswordViewController.swift */; };
-		B08DA7DA22CAF40A00FE5FAF /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B08DA7D922CAF40A00FE5FAF /* GoogleService-Info.plist */; };
 		B0A612AF228B08EC00569DFE /* RichTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0A612AE228B08EC00569DFE /* RichTextView.swift */; };
 		B0A612B1228C85C300569DFE /* MessageViewLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0A612B0228C85C300569DFE /* MessageViewLayout.swift */; };
 		B0A612B3228EDC7B00569DFE /* DraftyButtonAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0A612B2228EDC7B00569DFE /* DraftyButtonAttachment.swift */; };
@@ -150,6 +149,8 @@
 		7DDADC5121D5C219009733B5 /* ValidatedCredential.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ValidatedCredential.swift; sourceTree = "<group>"; };
 		7DDADC5321D5C2E6009733B5 /* CredentialsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CredentialsViewController.swift; sourceTree = "<group>"; };
 		B008593B22741B89002C5168 /* AttributedStringFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttributedStringFormatter.swift; sourceTree = "<group>"; };
+		B01120B72357469300EFCB1F /* devel.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = devel.xcconfig; sourceTree = "<group>"; };
+		B01120B8235746BF00EFCB1F /* prod.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = prod.xcconfig; sourceTree = "<group>"; };
 		B0125996229C982900688FCE /* ContactViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactViewCell.swift; sourceTree = "<group>"; };
 		B0125997229C982900688FCE /* ContactViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ContactViewCell.xib; sourceTree = "<group>"; };
 		B012599A229CEBE600688FCE /* SelectedMemberViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectedMemberViewCell.swift; sourceTree = "<group>"; };
@@ -159,12 +160,14 @@
 		B031BE542263075E004160AE /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		B031BE5622631304004160AE /* SettingsHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsHelper.swift; sourceTree = "<group>"; };
 		B05ACEB222FDAB5200276713 /* ResetPasswordViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResetPasswordViewController.swift; sourceTree = "<group>"; };
-		B08DA7D922CAF40A00FE5FAF /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		B0A612AE228B08EC00569DFE /* RichTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RichTextView.swift; sourceTree = "<group>"; };
 		B0A612B0228C85C300569DFE /* MessageViewLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageViewLayout.swift; sourceTree = "<group>"; };
 		B0A612B2228EDC7B00569DFE /* DraftyButtonAttachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DraftyButtonAttachment.swift; sourceTree = "<group>"; };
 		B0A612B4229132CC00569DFE /* MessageBubbleDecorator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageBubbleDecorator.swift; sourceTree = "<group>"; };
 		B0A612B62294288F00569DFE /* MessageViewController+SendMessageBarDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MessageViewController+SendMessageBarDelegate.swift"; sourceTree = "<group>"; };
+		B0BC2B57235E0D8A00BEEB4B /* GoogleService-Info-Development.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info-Development.plist"; sourceTree = "<group>"; };
+		B0BC2B59235E0D9700BEEB4B /* GoogleService-Info-Production.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info-Production.plist"; sourceTree = "<group>"; };
+		B0BC2B5B235E0DB800BEEB4B /* Tinodios.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Tinodios.entitlements; sourceTree = "<group>"; };
 		B0C6A3C1229EDF14009B0B5D /* ImagePreviewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePreviewController.swift; sourceTree = "<group>"; };
 		B0DF03162279F027000F9492 /* RoundImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundImageView.swift; sourceTree = "<group>"; };
 		B0DF0318227C2517000F9492 /* MessageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageView.swift; sourceTree = "<group>"; };
@@ -175,6 +178,8 @@
 		B0DF032E2282FF46000F9492 /* SendMessageBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendMessageBar.swift; sourceTree = "<group>"; };
 		B0DF03302283FFD8000F9492 /* PlaceholderTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceholderTextView.swift; sourceTree = "<group>"; };
 		B0F98C8222E381C300444121 /* MessageMenuItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageMenuItem.swift; sourceTree = "<group>"; };
+		B36DBFFF235D850000724348 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Main.strings"; sourceTree = "<group>"; };
+		B36DC000235D850000724348 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/LaunchScreen.strings"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -193,6 +198,8 @@
 		0A0380CB21B3CC8100A3FA0E = {
 			isa = PBXGroup;
 			children = (
+				B01120B72357469300EFCB1F /* devel.xcconfig */,
+				B01120B8235746BF00EFCB1F /* prod.xcconfig */,
 				0A431C022244A26200A837F7 /* TinodeSDK.framework */,
 				0A0380D621B3CC8100A3FA0E /* Tinodios */,
 				0A0380D521B3CC8100A3FA0E /* Products */,
@@ -250,10 +257,12 @@
 				0AEE8BED226456080022EC3F /* UiUtils.swift */,
 				0A35BA9F2283A37500AA5E2F /* Utils.swift */,
 				0A0380DB21B3CC8100A3FA0E /* Main.storyboard */,
+				B0BC2B59235E0D9700BEEB4B /* GoogleService-Info-Production.plist */,
+				B0BC2B57235E0D8A00BEEB4B /* GoogleService-Info-Development.plist */,
+				B0BC2B5B235E0DB800BEEB4B /* Tinodios.entitlements */,
 				B031BE542263075E004160AE /* Settings.bundle */,
 				0A0380E921B3CCB000A3FA0E /* Supporting Files */,
 				0A0380E321B3CC8200A3FA0E /* Info.plist */,
-				B08DA7D922CAF40A00FE5FAF /* GoogleService-Info.plist */,
 			);
 			path = Tinodios;
 			sourceTree = "<group>";
@@ -347,11 +356,13 @@
 				46966AD24309BE3586965D61 /* [CP] Check Pods Manifest.lock */,
 				0A0380D021B3CC8100A3FA0E /* Sources */,
 				0A0380D121B3CC8100A3FA0E /* Frameworks */,
+				B0BC2B5C235E2FEA00BEEB4B /* Setup Firebase */,
 				0A0380D221B3CC8100A3FA0E /* Resources */,
 				0A431C052244A26200A837F7 /* Embed Frameworks */,
 				A5A27E48338DE610B94531E7 /* [CP] Embed Pods Frameworks */,
 				B094C9A92313C1F100C98B64 /* Crashlytics script */,
 				B094C9AA2315841E00C98B64 /* Assign build version from git */,
+				B0BC2B5423589CE100BEEB4B /* Assign DefaultValue in app preferences */,
 			);
 			buildRules = (
 			);
@@ -384,6 +395,7 @@
 			knownRegions = (
 				en,
 				Base,
+				"zh-Hans",
 			);
 			mainGroup = 0A0380CB21B3CC8100A3FA0E;
 			productRefGroup = 0A0380D521B3CC8100A3FA0E /* Products */;
@@ -408,7 +420,6 @@
 				B012599D229CEBE600688FCE /* SelectedMemberViewCell.xib in Resources */,
 				0A6AC322229FAA130025A4EC /* PermissionsEditView.xib in Resources */,
 				0A0380DF21B3CC8200A3FA0E /* Assets.xcassets in Resources */,
-				B08DA7DA22CAF40A00FE5FAF /* GoogleService-Info.plist in Resources */,
 				0A0380DD21B3CC8100A3FA0E /* Main.storyboard in Resources */,
 				0A8D945822BEED3700DC154E /* AvatarWithOnlineIndicator.xib in Resources */,
 			);
@@ -502,6 +513,42 @@
 			shellPath = /bin/sh;
 			shellScript = "${SRCROOT}/Scripts/set_build_number.sh\n";
 		};
+		B0BC2B5423589CE100BEEB4B /* Assign DefaultValue in app preferences */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Assign DefaultValue in app preferences";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "${SRCROOT}/Scripts/set_default_preferences.sh\n";
+		};
+		B0BC2B5C235E2FEA00BEEB4B /* Setup Firebase */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Setup Firebase";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "${SRCROOT}/Scripts/setup_firebase.sh\n";
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -579,6 +626,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				0A0380DC21B3CC8100A3FA0E /* Base */,
+				B36DBFFF235D850000724348 /* zh-Hans */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";
@@ -587,6 +635,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				0A0380E121B3CC8200A3FA0E /* Base */,
+				B36DC000235D850000724348 /* zh-Hans */,
 			);
 			name = LaunchScreen.storyboard;
 			sourceTree = "<group>";
@@ -596,8 +645,10 @@
 /* Begin XCBuildConfiguration section */
 		0A0380E421B3CC8200A3FA0E /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B01120B72357469300EFCB1F /* devel.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -657,8 +708,10 @@
 		};
 		0A0380E521B3CC8200A3FA0E /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B01120B8235746BF00EFCB1F /* prod.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -712,10 +765,11 @@
 		};
 		0A0380E721B3CC8200A3FA0E /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 75BC852198885F22E865D563 /* Pods-Tinodios.debug.xcconfig */;
+			baseConfigurationReference = B01120B72357469300EFCB1F /* devel.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_ENTITLEMENTS = Tinodios/Tinodios.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = Tinodios/Info.plist;
@@ -724,6 +778,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "co.tinode.tinodios-test";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -734,19 +789,21 @@
 		};
 		0A0380E821B3CC8200A3FA0E /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5900B7863CDFB018A86DD3AC /* Pods-Tinodios.release.xcconfig */;
+			baseConfigurationReference = B01120B8235746BF00EFCB1F /* prod.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_ENTITLEMENTS = Tinodios/Tinodios.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 53QN4ZCPDQ;
 				INFOPLIST_FILE = Tinodios/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "co.tinode.tinodios-test";
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = co.tinode.tinodios;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
