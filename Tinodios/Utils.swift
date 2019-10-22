@@ -236,7 +236,7 @@ extension URL {
 extension Tinode {
     func connectDefault() throws -> PromisedReply<ServerMessage>? {
         let (hostName, useTLS, _) = SettingsHelper.getConnectionSettings()
-        Cache.log.info("Connecting to %{}@, useTLS = %{public}@", hostName ?? Cache.kHostName, useTLS ?? false)
+        Cache.log.info("Connecting to %{public}@, useTLS = %{public}@", hostName ?? Cache.kHostName, useTLS ?? false ? "YES" : "NO")
         return try connect(to: (hostName ?? Cache.kHostName), useTLS: (useTLS ?? false))
     }
 }

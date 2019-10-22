@@ -49,5 +49,8 @@ if [ -z "$host_name" ] || [ -z "$use_tls" ]; then
 fi
 
 # Assign values as appropriate
+echo "Modifying preference entries in '$prefs_file'"
 /usr/libexec/PlistBuddy -c "Set PreferenceSpecifiers:${hn_index}:DefaultValue $host_name" "$prefs_file"
+echo "Assigned '$host_name' to PreferenceSpecifiers:${hn_index}:DefaultValue"
 /usr/libexec/PlistBuddy -c "Set PreferenceSpecifiers:${tls_index}:DefaultValue $use_tls" "$prefs_file"
+echo "Assigned '$use_tls' to PreferenceSpecifiers:${tls_index}:DefaultValue"
