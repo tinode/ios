@@ -21,4 +21,5 @@ if [ ! -f "$GOOG_SRC" ]; then
   exit 1
 fi
 
+echo "Copying Firebase config from '${GOOG_SRC}' to '${GOOG_DST}'"
 cp "${GOOG_SRC}" "${GOOG_DST}"

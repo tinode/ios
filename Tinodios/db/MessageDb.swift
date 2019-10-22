@@ -155,7 +155,7 @@ class MessageDb {
         do {
             return try self.db.run(rows.delete()) > 0
         } catch {
-            Cache.log.error("MessageDb - delete operation failed: topicId = %{public}@, error = %{public}@", error.localizedDescription)
+            Cache.log.error("MessageDb - delete operation failed: topicId = %{public}@, error = %{public}@", topicId, error.localizedDescription)
             return false
         }
     }
