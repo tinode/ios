@@ -100,6 +100,8 @@ extension AppDelegate: MessagingDelegate {
     }
     func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String) {
         // Update token. Send to the app server.
+        print("Firebase registration token: \(fcmToken)")
+        Cache.getTinode().setDeviceToken(token: fcmToken)
     }
 }
 
