@@ -138,7 +138,7 @@ class FindViewController: UITableViewController, FindDisplayLogic {
 
     @IBAction func inviteActionClicked(_ sender: Any) {
         let inviteSubject = "Check out Tindroid Messenger"
-        let inviteBody = "Check out Tindroid Messenger. Download it from https://github.com/tinode/"
+        let inviteBody = "Check out Tindroid Messenger: https://tinode.co/"
         let attrs = [ NSAttributedString.Key.font: UIFont.systemFont(ofSize: 20.0) ]
         let dialogTitle = NSAttributedString(string: "Invite", attributes: attrs)
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
