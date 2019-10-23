@@ -51,6 +51,13 @@ class Utils {
             Utils.kTinodePrefReadReceipts: true,
             Utils.kTinodePrefTypingNotifications: true
         ])
+
+        let (hostName, _, _) = SettingsHelper.getConnectionSettings()
+        if hostName == nil {
+            // If hostname is nil, sync values to defaults
+            SettingsHelper.setHostName(Bundle.main.object(forInfoDictionaryKey: "HOST_NAME") as? String)
+            SettingsHelper.setUseTLS(Bundle.main.object(forInfoDictionaryKey: "USE_TLS") as? String)
+        }
     }
 
     // Calculate difference between two arrays of messages. Returns a tuple of insertion indexes and deletion indexes.
@@ -236,7 +243,7 @@ extension URL {
 extension Tinode {
     func connectDefault() throws -> PromisedReply<ServerMessage>? {
         let (hostName, useTLS, _) = SettingsHelper.getConnectionSettings()
-        Cache.log.info("Connecting to %{}@, useTLS = %{public}@", hostName ?? Cache.kHostName, useTLS ?? false)
+        print("Connecting to \(hostName ?? Cache.kHostName), useTLS = \(useTLS ?? false ? "YES" : "NO")")
         return try connect(to: (hostName ?? Cache.kHostName), useTLS: (useTLS ?? false))
     }
 }
