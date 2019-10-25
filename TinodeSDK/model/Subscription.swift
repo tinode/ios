@@ -137,6 +137,9 @@ public class Subscription<SP: Codable, SR: Codable>: SubscriptionProto {
         if sub.touched != nil && (touched == nil || touched! < sub.touched!) {
             touched = sub.touched
         }
+        if sub.deleted != nil {
+            deleted = sub.deleted
+        }
         if sub.acs != nil {
             if acs == nil {
                 self.acs = Acs(from: sub.acs!)
@@ -145,7 +148,42 @@ public class Subscription<SP: Codable, SR: Codable>: SubscriptionProto {
                 changed += (acs!.merge(from: sub.acs) ? 1 : 0)
             }
         }
-        
+
+        if getRead < sub.getRead {
+            read = sub.getRead
+            changed += 1
+        }
+        if getRecv < sub.getRecv {
+            recv = sub.getRecv
+            changed += 1
+        }
+        if getClear < sub.getClear {
+            clear = sub.getClear
+            changed += 1
+        }
+        if getSeq < sub.getSeq {
+            seq = sub.getSeq
+            changed += 1
+        }
+        if sub.priv != nil {
+            priv = sub.priv
+        }
+        if sub.online != nil {
+            online = sub.online
+        }
+        if (topic?.isEmpty ?? true) && !(sub.topic?.isEmpty ?? true) {
+            topic = sub.topic
+            changed += 1
+        }
+        if sub.seen != nil {
+            if seen == nil {
+                seen = sub.seen
+                changed += 1
+            } else {
+                changed += (seen!.merge(seen: sub.seen) ? 1 : 0)
+            }
+        }
+
         return changed > 0
     }
     public func serializePub() -> String? {
