@@ -49,7 +49,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
             _ = interactor?.attachToTopic()
         }
     }
-    static let kMessagesPerPage = 20
+    static let kMessagesPerPage = 24
     var pagesToLoad: Int = 0
     var topicId: Int64?
     var topicName: String?
@@ -115,7 +115,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                 get: self.topic?.getMetaGetBuilder()
                     .withDesc()
                     .withSub()
-                    .withData()
+                    .withLaterData(limit: MessageInteractor.kMessagesPerPage)
                     .withDel()
                     .build())?.then(
                     onSuccess: { [weak self] _ in
