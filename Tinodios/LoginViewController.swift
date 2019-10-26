@@ -99,7 +99,7 @@ class LoginViewController: UIViewController {
                     })?
                 .then(
                     onSuccess: { [weak self] pkt in
-                        Cache.log.info("LoginVC - login successful for %{public}@", tinode.myUid!)
+                        Cache.log.info("LoginVC - login successful for %@", tinode.myUid!)
                         Utils.saveAuthToken(for: userName, token: tinode.authToken)
                         if let ctrl = pkt?.ctrl, ctrl.code >= 300, ctrl.text.contains("validate credentials") {
                             UiUtils.routeToCredentialsVC(in: self?.navigationController,
@@ -109,7 +109,7 @@ class LoginViewController: UIViewController {
                         UiUtils.routeToChatListVC()
                         return nil
                     }, onFailure: { err in
-                        Cache.log.error("LoginVC - login failed: %{public}@", err.localizedDescription)
+                        Cache.log.error("LoginVC - login failed: %@", err.localizedDescription)
                         var toastMsg: String
                         if let tinodeErr = err as? TinodeError {
                             toastMsg = "Tinode: \(tinodeErr.description)"
@@ -131,7 +131,7 @@ class LoginViewController: UIViewController {
                     }
             } catch {
                 UiUtils.toggleProgressOverlay(in: self, visible: false)
-                Cache.log.error("LoginVC - Failed to connect/login to Tinode: %{public}@", error.localizedDescription)
+                Cache.log.error("LoginVC - Failed to connect/login to Tinode: %@", error.localizedDescription)
                 _ = tinode.logout()
             }
     }

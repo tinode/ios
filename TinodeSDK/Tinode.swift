@@ -121,7 +121,7 @@ public class Tinode {
     public static let kNoteRead = "read"
     public static let kNoteRecv = "recv"
     public static let kNullValue = "\u{2421}"
-    internal static let log = Log(category: "co.tinode.tinodesdk")
+    internal static let log = Log(subsystem: "co.tinode.tinodesdk")
 
     let kProtocolVersion = "0"
     let kVersion = "0.16"
@@ -461,7 +461,7 @@ public class Tinode {
             throw TinodeError.notConnected("Attempted to send msg to a closed connection.")
         }
         let jsonData = try Tinode.jsonEncoder.encode(msg)
-        Tinode.log.debug("out: %{public}@", String(decoding: jsonData, as: UTF8.self))
+        Tinode.log.debug("out: %@", String(decoding: jsonData, as: UTF8.self))
         conn.send(payload: jsonData)
     }
     private func sendWithPromise<DP: Codable, DR: Codable>(
@@ -474,7 +474,7 @@ public class Tinode {
             do {
                 try future.reject(error: error)
             } catch {
-                Tinode.log.error("Error rejecting promise: %{public}@", error.localizedDescription)
+                Tinode.log.error("Error rejecting promise: %@", error.localizedDescription)
             }
         }
         return future
@@ -701,7 +701,7 @@ public class Tinode {
             encodedToken = try AuthScheme.encodeBasicToken(
                 uname: uname, password: password)
         } catch {
-            Tinode.log.error("Won't login - failed encoding token: %{public}@", error.localizedDescription)
+            Tinode.log.error("Won't login - failed encoding token: %@", error.localizedDescription)
             return nil
         }
         return login(scheme: AuthScheme.kLoginBasic,
@@ -861,15 +861,16 @@ public class Tinode {
                         onFailure: nil)
                 }
             } catch {
-                Tinode.log.error("Connection error: %{public}@", error.localizedDescription)
+                Tinode.log.error("Connection error: %@", error.localizedDescription)
             }
         }
         func onMessage(with message: String) -> Void {
-            Log.debug("in: %{public}@", message)
+            Log.default.debug("in: %@", message)
             do {
                 try tinode.dispatch(message)
+                Log.default.info("processed msg l = %d", message.count)
             } catch {
-                Log.error("onMessage error: %{public}@", error.localizedDescription)
+                Log.default.error("onMessage error: %@", error.localizedDescription)
             }
         }
         func onDisconnect(isServerOriginated: Bool, code: Int, reason: String) -> Void {
@@ -877,7 +878,7 @@ public class Tinode {
         }
         func onError(error: Error) -> Void {
             tinode.handleDisconnect(isServerOriginated: true, code: 0, reason: error.localizedDescription)
-            Log.error("Tinode network error: %{public}@", error.localizedDescription)
+            Log.default.error("Tinode network error: %@", error.localizedDescription)
             if let connected = tinode.connectedPromise, !connected.isDone {
                 do {
                     try connected.reject(error: error)

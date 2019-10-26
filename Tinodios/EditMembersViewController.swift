@@ -136,7 +136,7 @@ class EditMembersViewController: UIViewController, UITableViewDataSource {
 extension EditMembersViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
         guard let uid = contacts[indexPath.row].uniqueId else {
-            Cache.log.debug("EditMembersVC - no unique id for user at %{public}@", indexPath.row)
+            Cache.log.debug("EditMembersVC - no unique id for user at %d", indexPath.row)
             return nil
         }
 
@@ -145,7 +145,7 @@ extension EditMembersViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let uid = contacts[indexPath.row].uniqueId else {
-            Cache.log.debug("EditMembersVC - no unique id for user at %{public}@", indexPath.row)
+            Cache.log.debug("EditMembersVC - no unique id for user at %d", indexPath.row)
             return
         }
 
@@ -157,7 +157,7 @@ extension EditMembersViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, willDeselectRowAt indexPath: IndexPath) -> IndexPath? {
         guard let uid = contacts[indexPath.row].uniqueId else {
-            Cache.log.debug("EditMembersVC - no unique id for user at %{public}@", indexPath.row)
+            Cache.log.debug("EditMembersVC - no unique id for user at %d", indexPath.row)
             return indexPath
         }
 
@@ -166,7 +166,7 @@ extension EditMembersViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
         guard let uid = contacts[indexPath.row].uniqueId else {
-            Cache.log.debug("EditMembersVC - no unique id for user at %{public}@", indexPath.row)
+            Cache.log.debug("EditMembersVC - no unique id for user at %d", indexPath.row)
             return
         }
 

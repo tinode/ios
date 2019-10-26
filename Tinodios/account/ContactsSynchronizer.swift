@@ -79,7 +79,7 @@ class ContactsSynchronizer {
                 contacts.append(contact)
             }
         } catch let error {
-            Cache.log.error("ContactsSynchronizer - system contact fetch error: %{public}@", error.localizedDescription)
+            Cache.log.error("ContactsSynchronizer - system contact fetch error: %@", error.localizedDescription)
         }
 
         return contacts.map {
@@ -168,9 +168,9 @@ class ContactsSynchronizer {
                 }
                 success = true
             } catch {
-                Cache.log.error("ContactsSynchronizer - sync failure: %{public}@", error.localizedDescription)
+                Cache.log.error("ContactsSynchronizer - sync failure: %@", error.localizedDescription)
             }
-            Cache.log.info("ContactsSynchronizer - sync operation completed: %{public}@", (success ? "success" : "failure"))
+            Cache.log.info("ContactsSynchronizer - sync operation completed: %@", (success ? "success" : "failure"))
         }
     }
 }

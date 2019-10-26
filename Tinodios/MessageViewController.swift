@@ -970,7 +970,7 @@ extension MessageViewController : MessageCellDelegate {
             case "/preview-image":
                 showImagePreview(in: cell)
             default:
-                Cache.log.error("MessageVC - unknown tinode:// action: %{public}@", url.path)
+                Cache.log.error("MessageVC - unknown tinode:// action: %@", url.path)
                 break
             }
             return
@@ -1114,7 +1114,7 @@ extension MessageViewController : MessageCellDelegate {
             try d.write(to: destinationURL)
             UiUtils.presentFileSharingVC(for: destinationURL)
         } catch {
-            Cache.log.error("MessageVC - save attachment failed: %{public}@", error.localizedDescription)
+            Cache.log.error("MessageVC - save attachment failed: %@", error.localizedDescription)
         }
     }
 

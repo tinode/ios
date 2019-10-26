@@ -126,7 +126,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                                     return nil
                                 })
                             } catch {
-                                Cache.log.error("MessageInteractor - Failed to send pending messages: %{public}@", error.localizedDescription)
+                                Cache.log.error("MessageInteractor - Failed to send pending messages: %@", error.localizedDescription)
                             }
                         }
                         if self?.topicId == -1 {
@@ -144,7 +144,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                                 UiUtils.showToast(message: errorMsg)
                             }
                         } else {
-                            Cache.log.error("MessageInteractor: %{public}@", errorMsg)
+                            Cache.log.error("MessageInteractor: %@", errorMsg)
                         }
                         switch err {
                         case TinodeError.notConnected(_):
@@ -155,9 +155,9 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                         return nil
                     })
         } catch TinodeError.notConnected(let errorMsg) {
-            Cache.log.error("MessageInteractor - Tinode isn't connected: %{public}@", errorMsg)
+            Cache.log.error("MessageInteractor - Tinode isn't connected: %@", errorMsg)
         } catch {
-            Cache.log.error("MessageInteractor - error subscribing to topic: %{public}@", error.localizedDescription)
+            Cache.log.error("MessageInteractor - error subscribing to topic: %@", error.localizedDescription)
         }
         return false
     }

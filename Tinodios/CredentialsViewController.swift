@@ -64,7 +64,7 @@ class CredentialsViewController : UIViewController {
                     return nil
                 })
         } catch {
-            Cache.log.error("CredentialsVC - loginToken failed: %{public}@", error.localizedDescription)
+            Cache.log.error("CredentialsVC - loginToken failed: %@", error.localizedDescription)
         }
     }
 }
