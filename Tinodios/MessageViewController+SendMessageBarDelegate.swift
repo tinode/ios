@@ -72,7 +72,7 @@ extension MessageViewController : UIDocumentPickerDelegate {
                 _ = interactor?.sendMessage(content: Drafty().attachFile(mime: mimeType, bits: bits, fname: fname))
             }
         } catch {
-            Cache.log.error("MessageVC - failed to read file: %{public}@", error.localizedDescription)
+            Cache.log.error("MessageVC - failed to read file: %@", error.localizedDescription)
         }
     }
 }

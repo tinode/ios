@@ -124,7 +124,7 @@ public class BaseDb {
             }
             self.account = self.accountDb?.addOrActivateAccount(for: uid)
         } catch {
-            Cache.log.error("BaseDb - setUid failed %{public}@", error.localizedDescription)
+            Cache.log.error("BaseDb - setUid failed %@", error.localizedDescription)
             self.account = nil
         }
     }
@@ -139,7 +139,7 @@ public class BaseDb {
         do {
             return try db.run(record.update(column <- value)) > 0
         } catch {
-            Cache.log.error("BaseDb - updateCounter failed %{public}@", error.localizedDescription)
+            Cache.log.error("BaseDb - updateCounter failed %@", error.localizedDescription)
             return false
         }
     }

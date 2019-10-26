@@ -30,7 +30,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 _ = try tinode.connect(to: (hostName ?? Cache.kHostName), useTLS: (useTLS ?? false))?.getResult()
                 let msg = try tinode.loginToken(token: token, creds: nil)?.getResult()
                 if let code = msg?.ctrl?.code, code < 300 {
-                    Cache.log.debug("AppDelegate - login successful for: %{public}@", tinode.myUid!)
+                    Cache.log.debug("AppDelegate - login successful for: %@", tinode.myUid!)
                     if tinode.authToken != token {
                         Utils.saveAuthToken(for: userName, token: tinode.authToken)
                     }
@@ -42,7 +42,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 UiUtils.routeToChatListVC()
                 success = true
             } catch {
-                Cache.log.info("AppDelegate - failed to automatically login to Tinode: %{public}@", error.localizedDescription)
+                Cache.log.info("AppDelegate - failed to automatically login to Tinode: %@", error.localizedDescription)
             }
             if !success {
                 _ = tinode.logout()
@@ -99,7 +99,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
 
 extension AppDelegate: MessagingDelegate {
     func messaging(_ messaging: Messaging, didReceive remoteMessage: MessagingRemoteMessage) {
-        Cache.log.info("Received data message: %{public}@", remoteMessage.appData)
+        Cache.log.info("Received data message: %@", remoteMessage.appData)
     }
     func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String) {
         // Update token. Send to the app server.

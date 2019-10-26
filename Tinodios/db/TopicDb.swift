@@ -166,7 +166,7 @@ public class TopicDb {
                 return st.nextUnsentId!
             }
         } catch {
-            Cache.log.error("TopicDb - getNextUnusedSeq operation failed: topicId = %{public}@, error = %{public}@", recordId, error.localizedDescription)
+            Cache.log.error("TopicDb - getNextUnusedSeq operation failed: topicId = %lld, error = %@", recordId, error.localizedDescription)
         }
         return -1
     }
@@ -233,7 +233,7 @@ public class TopicDb {
             }
             return rowid
         } catch {
-            Cache.log.error("TopicDb - insert operation failed: error = %{public}@", error.localizedDescription)
+            Cache.log.error("TopicDb - insert operation failed: error = %@", error.localizedDescription)
             return -1
         }
     }
@@ -273,7 +273,7 @@ public class TopicDb {
                 return true
             }
         } catch {
-            Cache.log.error("TopicDb - update operation failed: topicId = %{public}@, error = %{public}@", recordId, error.localizedDescription)
+            Cache.log.error("TopicDb - update operation failed: topicId = %lld, error = %@", recordId, error.localizedDescription)
         }
         return false
     }
@@ -310,7 +310,7 @@ public class TopicDb {
                     if updateMaxLocalSeq { st.maxLocalSeq = seq }
                 }
             } catch {
-                Cache.log.error("TopicDb - msgReceived operation failed: topicId = %{public}@, error = %{public}@", recordId, error.localizedDescription)
+                Cache.log.error("TopicDb - msgReceived operation failed: topicId = %@, error = %@", recordId, error.localizedDescription)
                 return false
             }
         }
@@ -325,7 +325,7 @@ public class TopicDb {
             do {
                 return try self.db.run(record.update(self.maxDel <- delId)) > 0
             } catch {
-                Cache.log.error("TopicDb - msgDelivered operation failed: topicId = %{public}@, error = %{public}@", recordId, error.localizedDescription)
+                Cache.log.error("TopicDb - msgDelivered operation failed: topicId = %lld, error = %@", recordId, error.localizedDescription)
                 return false
             }
         }
@@ -337,7 +337,7 @@ public class TopicDb {
         do {
             return try self.db.run(record.delete()) > 0
         } catch {
-            Cache.log.error("TopicDb - delete operation failed: topicId = %{public}@, error = %{public}@", recordId, error.localizedDescription)
+            Cache.log.error("TopicDb - delete operation failed: topicId = %lld, error = %@", recordId, error.localizedDescription)
             return false
         }
     }

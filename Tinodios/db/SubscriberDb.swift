@@ -125,7 +125,7 @@ class SubscriberDb {
                 sub.payload = ss
             }
         } catch {
-            Cache.log.error("SubscriberDb - insert operation failed: topicId = %{public}@, error = %{public}@", error.localizedDescription)
+            Cache.log.error("SubscriberDb - insert operation failed: topicId = %lld, error = %@", topicId, error.localizedDescription)
             return -1
         }
         return rowId
@@ -159,7 +159,7 @@ class SubscriberDb {
                 ss.status = status
             }
         } catch {
-            Cache.log.error("SubscriberDb - update operation failed: subId = %{public}@, error = %{public}@", recordId, error.localizedDescription)
+            Cache.log.error("SubscriberDb - update operation failed: subId = %lld, error = %@", recordId, error.localizedDescription)
             return false
         }
         return updated > 0
@@ -169,7 +169,7 @@ class SubscriberDb {
         do {
             return try self.db.run(record.delete()) > 0
         } catch {
-            Cache.log.error("SubscriberDb - delete operation failed: subId = %{public}@, error = %{public}@", recordId, error.localizedDescription)
+            Cache.log.error("SubscriberDb - delete operation failed: subId = %lld, error = %@", recordId, error.localizedDescription)
             return false
         }
     }
@@ -179,7 +179,7 @@ class SubscriberDb {
         do {
             return try self.db.run(record.delete()) > 0
         } catch {
-            Cache.log.error("SubscriberDb - deleteForTopic operation failed: topicId = %{public}@, error = %{public}@", topicId, error.localizedDescription)
+            Cache.log.error("SubscriberDb - deleteForTopic operation failed: topicId = %lld, error = %@", topicId, error.localizedDescription)
             return false
         }
     }
@@ -241,7 +241,7 @@ class SubscriberDb {
                 if let s = self.readOne(r: row) {
                     subscriptions.append(s)
                 } else {
-                    Cache.log.error("SubscriberDb - readAll: topicId = %{public}@ | failed to create subscription for %{public}@", topicId, row[self.subscriptionClass])
+                    Cache.log.error("SubscriberDb - readAll: topicId = %lld | failed to create subscription for %@", topicId, row[self.subscriptionClass])
                 }
             }
             return subscriptions

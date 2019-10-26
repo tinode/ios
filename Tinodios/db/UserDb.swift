@@ -80,7 +80,7 @@ class UserDb {
             ))
             return rowid
         } catch {
-            Cache.log.error("UserDb - insert operation failed: uid = %{public}@, error = %{public}@", uid ?? "", error.localizedDescription)
+            Cache.log.error("UserDb - insert operation failed: uid = %@, error = %@", uid ?? "", error.localizedDescription)
             return -1
         }
     }
@@ -108,7 +108,7 @@ class UserDb {
         do {
             return try self.db.run(record.update(setters)) > 0
         } catch {
-            Cache.log.error("UserDb - update operation failed: userId = %{public}@, error = %{public}@", userId, error.localizedDescription)
+            Cache.log.error("UserDb - update operation failed: userId = %lld, error = %@", userId, error.localizedDescription)
             return false
         }
     }
@@ -118,7 +118,7 @@ class UserDb {
         do {
             return try self.db.run(record.delete()) > 0
         } catch {
-            Cache.log.error("UserDb - deleteRow operation failed: userId = %{public}@, error = %{public}@", id, error.localizedDescription)
+            Cache.log.error("UserDb - deleteRow operation failed: userId = %lld, error = %@", id, error.localizedDescription)
             return false
         }
     }
@@ -168,7 +168,7 @@ class UserDb {
             }
             return users
         } catch {
-            Cache.log.error("UserDb - read operation failed: error = %{public}@", error.localizedDescription)
+            Cache.log.error("UserDb - read operation failed: error = %@", error.localizedDescription)
         }
         return nil
     }
