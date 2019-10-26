@@ -31,9 +31,12 @@ The immediate goal is to have a basic end-to-end working application prototype t
 
 ### Not Done Yet
 
+* Previews not generated for videos, audio, links or docs.
 * Typing indicators.
 * No support for multiple servers
-
+* Mentions, hashtags.
+* Replying or forwarding messages.
+* End-to-End encryption.
 
 ## Dependencies
 
