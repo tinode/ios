@@ -16,6 +16,10 @@ class Utils {
     static let kTinodePrefTypingNotifications = "tinodePrefTypingNoficications"
     static let kTinodePrefLastLogin = "tinodeLastLogin"
 
+    public static func getSavedLoginUserName() -> String? {
+        return UserDefaults.standard.string(forKey: Utils.kTinodePrefLastLogin)
+    }
+
     public static func getAuthToken() -> String? {
         let userDefaults = UserDefaults.standard
         guard userDefaults.bool(forKey: Utils.kTinodeHasRunBefore) else {

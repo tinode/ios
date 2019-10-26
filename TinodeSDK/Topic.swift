@@ -1027,7 +1027,7 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
                 }
             }
         default:
-            Tinode.log.error("pres message - unknown what: %{public}@", String(describing: pres.what))
+            Tinode.log.error("pres message - unknown what: %@", String(describing: pres.what))
         }
         listener?.onPres(pres: pres)
     }
@@ -1268,7 +1268,7 @@ open class MeTopic<DP: Codable>: Topic<DP, PrivateType, DP, PrivateType> {
                 // Explicitly ignored: 'me' topic has no messages.
                 break
             default:
-                Tinode.log.error("ME.pres message - unknown what: %{public}@", String(describing: pres.what))
+                Tinode.log.error("ME.pres message - unknown what: %@", String(describing: pres.what))
             }
         } else {
             // New topic
@@ -1279,13 +1279,13 @@ open class MeTopic<DP: Codable>: Topic<DP, PrivateType, DP, PrivateType> {
                 if acs.isModeDefined {
                     getMeta(query: getMetaGetBuilder().withSub(user: pres.src).build())
                 } else {
-                    Tinode.log.error("ME.acs - unexpected access mode: %{public}@", String(describing: pres.dacs))
+                    Tinode.log.error("ME.acs - unexpected access mode: %@", String(describing: pres.dacs))
                 }
             case .kTags:
                 // Account tags updated
                 getMeta(query: getMetaGetBuilder().withTags().build())
             default:
-                Tinode.log.error("ME.pres - topic not found: what = %{public}@, src = %{public}@",
+                Tinode.log.error("ME.pres - topic not found: what = %@, src = %@",
                                  String(describing: pres.what), String(describing: pres.src))
             }
         }
@@ -1312,7 +1312,7 @@ open class MeTopic<DP: Codable>: Topic<DP, PrivateType, DP, PrivateType> {
                             t.update(sub: sub)
                         } */
                         else {
-                            Tinode.log.fault("ME.routeMetaSub - failed to update topic %{public}@", String(describing: topic))
+                            Tinode.log.fault("ME.routeMetaSub - failed to update topic %@", String(describing: topic))
                             assert(false)
                         }
                     }

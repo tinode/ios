@@ -74,7 +74,7 @@ class SqlStore : Storage {
             }
             return true
         } catch {
-            Cache.log.error("SqlStore - topicDelete operation failed: topicId = %{public}@, error = %{public}@", topicId, error.localizedDescription)
+            Cache.log.error("SqlStore - topicDelete operation failed: topicId = %lld, error = %@", topicId, error.localizedDescription)
             return false
         }
     }
@@ -171,7 +171,7 @@ class SqlStore : Storage {
             }
             return sm.msgId
         } catch {
-            Cache.log.error("SqlStore - msgReceived operation failed: %{public}@", error.localizedDescription)
+            Cache.log.error("SqlStore - msgReceived operation failed: %@", error.localizedDescription)
             return -1
         }
     }
@@ -235,7 +235,7 @@ class SqlStore : Storage {
             }
             return true
         } catch {
-            Cache.log.error("SqlStore - msgDelivered operation failed %{public}@", error.localizedDescription)
+            Cache.log.error("SqlStore - msgDelivered operation failed %@", error.localizedDescription)
             return false
         }
     }
@@ -259,7 +259,7 @@ class SqlStore : Storage {
             }
             return result
         } catch {
-            Cache.log.error("SqlStore - msgDelete operation failed %{public}@", error.localizedDescription)
+            Cache.log.error("SqlStore - msgDelete operation failed %@", error.localizedDescription)
             return false
         }
     }

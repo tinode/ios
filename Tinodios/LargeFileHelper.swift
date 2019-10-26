@@ -157,7 +157,7 @@ extension LargeFileHelper: URLSessionTaskDelegate {
         guard uploadError == nil else {
             return
         }
-        Cache.log.debug("LargeFileHelper - finished task: id = %{public}@, topicId = %{public}@", taskId, upload.topicId)
+        Cache.log.debug("LargeFileHelper - finished task: id = %@, topicId = %@", taskId, upload.topicId)
         guard let response = task.response as? HTTPURLResponse else {
             uploadError = TinodeError.invalidState("Upload failed (\(upload.topicId)). No server response.")
             return
@@ -191,7 +191,7 @@ extension LargeFileHelper: URLSessionDownloadDelegate {
     func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask,
                     didFinishDownloadingTo location: URL) {
         guard downloadTask.error == nil else {
-            Cache.log.error("LargeFileHelper - download failed: %{public}@", downloadTask.error!.localizedDescription)
+            Cache.log.error("LargeFileHelper - download failed: %@", downloadTask.error!.localizedDescription)
             return
         }
 
@@ -211,7 +211,7 @@ extension LargeFileHelper: URLSessionDownloadDelegate {
             try fileManager.moveItem(at: location, to: destinationURL)
             UiUtils.presentFileSharingVC(for: destinationURL)
         } catch {
-            Cache.log.error("LargeFileHelper - could not copy file to disk: %{public}@", error.localizedDescription)
+            Cache.log.error("LargeFileHelper - could not copy file to disk: %@", error.localizedDescription)
             print("Could not copy file to disk: \(error.localizedDescription)")
         }
     }

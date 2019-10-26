@@ -265,7 +265,7 @@ class AccountSettingsViewController: UITableViewController {
             }
             return
         }
-        guard let userName = UserDefaults.standard.string(forKey: Utils.kTinodePrefLastLogin) else {
+        guard let userName = Utils.getSavedLoginUserName() else {
             DispatchQueue.main.async {
                 UiUtils.showToast(message: "Login info missing...")
             }
