@@ -32,9 +32,6 @@ open class Log {
             NSLogv(self.prefix + message.description, $0)
         }
     }
-    func log(type: LogType, message: StaticString) {
-        log(type: type, message: message, [""])
-    }
     public func debug(_ message: StaticString, _ args: CVarArg...) {
         log(type: .debug, message: message, args)
     }
