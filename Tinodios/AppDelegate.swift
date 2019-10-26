@@ -21,7 +21,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         Utils.registerUserDefaults()
-        if let token = Utils.getAuthToken(), !token.isEmpty {
+        if let token = Utils.getAuthToken(), !token.isEmpty, let userName = Utils.getSavedLoginUserName(), !userName.isEmpty {
             let tinode = Cache.getTinode()
             var success = false
             do {
@@ -31,6 +31,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 let msg = try tinode.loginToken(token: token, creds: nil)?.getResult()
                 if let code = msg?.ctrl?.code, code < 300 {
                     Cache.log.debug("AppDelegate - login successful for: %{public}@", tinode.myUid!)
+                    if tinode.authToken != token {
+                        Utils.saveAuthToken(for: userName, token: tinode.authToken)
+                    }
                     UiUtils.routeToChatListVC()
                     success = true
                 }
