@@ -11,7 +11,13 @@ import TinodeSDK
 class Cache {
     private static let `default` = Cache()
 
-    public static let kHostName = "127.0.0.1:6060" // localhost
+    #if DEBUG
+        public static let kHostName = "127.0.0.1:6060" // localhost
+        public static let kUseTLS = false
+    #else
+        public static let kHostName = "api.tinode.co" // production cluster
+        public static let kUseTLS = true
+    #endif
 
     private static let kApiKey = "AQEAAAABAAD_rAp4DJh05a1HAwFT3A6K"
 
