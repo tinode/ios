@@ -868,7 +868,6 @@ public class Tinode {
             Log.default.debug("in: %@", message)
             do {
                 try tinode.dispatch(message)
-                Log.default.info("processed msg l = %d", message.count)
             } catch {
                 Log.default.error("onMessage error: %@", error.localizedDescription)
             }
