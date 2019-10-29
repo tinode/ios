@@ -28,8 +28,9 @@ open class Log {
             let shouldLog = type != .debug
         #endif
         guard shouldLog else { return }
+        let msg = self.prefix + message.description
         withVaList(args) {
-            NSLogv(self.prefix + message.description, $0)
+            NSLogv(msg, $0)
         }
     }
     public func debug(_ message: StaticString, _ args: CVarArg...) {
