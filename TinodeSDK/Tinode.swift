@@ -768,18 +768,31 @@ public class Tinode {
             return
         }
         myUid = newUid
-        store?.myUid = newUid
-        // Load topics if not yet loaded.
-        loadTopics()
         authToken = ctrl.getStringParam(for: "token")
         // auth expires
         if ctrl.code < 300 {
-            isConnectionAuthenticated = true
-            if let t = authToken, !autoLogin {
-                setAutoLoginWithToken(token: t)
+            store?.myUid = newUid
+            // Load topics if not yet loaded.
+            loadTopics()
+        } else {
+            var meth: [String]? = nil
+            if let params = ctrl.params {
+                for (key, value) in params {
+                    if key == "cred", case let .string(m) = value {
+                        if meth == nil {
+                            meth = [String]()
+                        }
+                        meth!.append(m)
+                    }
+                }
             }
-            listener?.onLogin(code: ctrl.code, text: ctrl.text)
+            store?.setMyUid(uid: newUid!, credMethods: meth)
         }
+        isConnectionAuthenticated = true
+        if let t = authToken, !autoLogin {
+            setAutoLoginWithToken(token: t)
+        }
+        listener?.onLogin(code: ctrl.code, text: ctrl.text)
     }
     private func updateAccountSecret(uid: String?, scheme: String, secret: String) -> PromisedReply<ServerMessage>? {
         return account(uid: uid, scheme: scheme, secret: secret, loginNow: false, tags: nil, desc: nil as MetaSetDesc<Int, Int>?, creds: nil)

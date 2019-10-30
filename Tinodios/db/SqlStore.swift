@@ -18,7 +18,7 @@ class SqlStore : Storage {
             return self.dbh?.uid
         }
         set {
-            self.dbh?.setUid(uid: newValue)
+            self.dbh?.setUid(uid: newValue, credMethods: nil)
         }
     }
 
@@ -32,6 +32,10 @@ class SqlStore : Storage {
 
     func logout() {
         self.dbh?.logout()
+    }
+
+    func setMyUid(uid: String, credMethods: [String]?) {
+        self.dbh?.setUid(uid: uid, credMethods: credMethods)
     }
 
     func setTimeAdjustment(adjustment: TimeInterval) {
