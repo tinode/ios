@@ -101,9 +101,14 @@ class LoginViewController: UIViewController {
                     onSuccess: { [weak self] pkt in
                         Cache.log.info("LoginVC - login successful for %@", tinode.myUid!)
                         Utils.saveAuthToken(for: userName, token: tinode.authToken)
+                        if let token = tinode.authToken {
+                            tinode.setAutoLoginWithToken(token: token)
+                        }
                         if let ctrl = pkt?.ctrl, ctrl.code >= 300, ctrl.text.contains("validate credentials") {
-                            UiUtils.routeToCredentialsVC(in: self?.navigationController,
-                                                         verifying: ctrl.getStringArray(for: "cred")?.first)
+                            DispatchQueue.main.async {
+                                UiUtils.routeToCredentialsVC(in: self?.navigationController,
+                                                             verifying: ctrl.getStringArray(for: "cred")?.first)
+                            }
                             return nil
                         }
                         UiUtils.routeToChatListVC()

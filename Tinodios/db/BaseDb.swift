@@ -10,7 +10,7 @@ import SQLite
 
 public class BaseDb {
     // Current database schema version. Increment on schema changes.
-    public static let kSchemaVersion: Int32 = 100
+    public static let kSchemaVersion: Int32 = 101
 
     // Onject statuses.
     // Status undefined/not set.
@@ -45,7 +45,10 @@ public class BaseDb {
     var userDb: UserDb? = nil
     var messageDb: MessageDb? = nil
     var account: StoredAccount? = nil
-    var isReady: Bool { get { return self.account != nil } }
+    var isCredValidationRequired: Bool {
+        get { return !(self.account?.credMethods?.isEmpty ?? true) }
+    }
+    var isReady: Bool { get { return !self.isCredValidationRequired } }
 
     /// The init is private to ensure that the class is a singleton.
     private init() {
@@ -113,7 +116,7 @@ public class BaseDb {
     var uid: String? {
         get { return self.account?.uid }
     }
-    func setUid(uid: String?) {
+    func setUid(uid: String?, credMethods: [String]?) {
         guard let uid = uid else {
             self.account = nil
             return
@@ -122,7 +125,7 @@ public class BaseDb {
             if self.account != nil {
                 try self.accountDb?.deactivateAll()
             }
-            self.account = self.accountDb?.addOrActivateAccount(for: uid)
+            self.account = self.accountDb?.addOrActivateAccount(for: uid, withCredMethods: credMethods)
         } catch {
             Cache.log.error("BaseDb - setUid failed %@", error.localizedDescription)
             self.account = nil
@@ -130,7 +133,7 @@ public class BaseDb {
     }
     func logout() {
         _ = try? self.accountDb?.deactivateAll()
-        self.setUid(uid: nil)
+        self.setUid(uid: nil, credMethods: nil)
     }
     public static func updateCounter(db: SQLite.Connection, table: Table,
                                      usingIdColumn idColumn: Expression<Int64>, forId id: Int64,

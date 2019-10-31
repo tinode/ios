@@ -11,9 +11,11 @@ import SQLite
 public class StoredAccount {
     var id: Int64
     let uid: String
-    init(id: Int64, uid: String) {
+    var credMethods: [String]?
+    init(id: Int64, uid: String, credMethods: [String]?) {
         self.id = id
         self.uid = uid
+        self.credMethods = credMethods
     }
 }
 
@@ -26,6 +28,7 @@ public class AccountDb {
     public let id: Expression<Int64>
     public let uid: Expression<String?>
     public let active: Expression<Int?>
+    public let credMethods: Expression<String?>
     public let deviceId: Expression<String?>
 
     init(_ database: SQLite.Connection) {
@@ -34,6 +37,7 @@ public class AccountDb {
         self.id = Expression<Int64>("id")
         self.uid = Expression<String?>("uid")
         self.active = Expression<Int?>("last_active")
+        self.credMethods = Expression<String?>("cred_methods")
         self.deviceId = Expression<String?>("device_id")
     }
     func destroyTable() {
@@ -47,6 +51,7 @@ public class AccountDb {
             t.column(id, primaryKey: .autoincrement)
             t.column(uid)
             t.column(active)
+            t.column(credMethods)
             t.column(deviceId)
         })
         try! self.db.run(self.table.createIndex(uid, unique: true, ifNotExists: true))
@@ -56,39 +61,47 @@ public class AccountDb {
     func deactivateAll() throws -> Int {
         return try self.db.run(self.table.update(self.active <- 0))
     }
-    private func getByUid(uid: String) -> Int64 {
-        if let row = try? db.pluck(self.table.select(self.id).filter(self.uid == uid)) {
-            return row[self.id]
+    private func getByUid(uid: String) -> StoredAccount? {
+        if let row = try? db.pluck(self.table.select(self.id, self.credMethods).filter(self.uid == uid)) {
+            return StoredAccount(id: row[self.id], uid: uid, credMethods: row[self.credMethods]?.components(separatedBy: ","))
         }
-        return -1
+        return nil
     }
-    func addOrActivateAccount(for uid: String) -> StoredAccount? {
+    func addOrActivateAccount(for uid: String, withCredMethods meth: [String]?) -> StoredAccount? {
         var result: StoredAccount? = nil
         do {
             try db.savepoint("AccountDb.addOrActivateAccount") {
                 try self.deactivateAll()
-                result = StoredAccount(id: self.getByUid(uid: uid), uid: uid)
-                if result!.id >= 0 {
+                result = self.getByUid(uid: uid)
+                let serializedCredMeth = meth?.joined(separator: ",")
+                if result != nil {
                     let record = self.table.filter(self.id == result!.id)
-                    try db.run(record.update(self.active <- 1))
+                    try db.run(record.update(
+                        self.active <- 1,
+                        self.credMethods <- serializedCredMeth))
                 } else {
-                    result!.id = try db.run(self.table.insert(
+                    let newId = try db.run(self.table.insert(
                         self.uid <- uid,
-                        self.active <- 1))
+                        self.active <- 1,
+                        self.credMethods <- serializedCredMeth))
+                    result = StoredAccount(id: newId, uid: uid, credMethods: meth)
                 }
                 if result!.id < 0 {
                     result = nil
+                } else {
+                    result?.credMethods = meth
                 }
             }
         } catch {
+            Cache.log.debug("failed to add account '%@'", error.localizedDescription)
             result = nil
         }
         return result
     }
     func getActiveAccount() -> StoredAccount? {
-        if let row = try? db.pluck(self.table.select(self.id, self.uid).filter(self.active == 1)),
+        if let row = try? db.pluck(self.table.select(self.id, self.uid, self.credMethods).filter(self.active == 1)),
             let ruid = row[self.uid] {
-            return StoredAccount(id: row[self.id], uid: ruid)
+            return StoredAccount(id: row[self.id], uid: ruid, credMethods: row[self.credMethods]?.components(separatedBy: ","))
         }
         return nil
     }
