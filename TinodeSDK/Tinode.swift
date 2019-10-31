@@ -775,23 +775,10 @@ public class Tinode {
             // Load topics if not yet loaded.
             loadTopics()
         } else {
-            var meth: [String]? = nil
-            if let params = ctrl.params {
-                for (key, value) in params {
-                    if key == "cred", case let .string(m) = value {
-                        if meth == nil {
-                            meth = [String]()
-                        }
-                        meth!.append(m)
-                    }
-                }
-            }
+            let meth = ctrl.getStringArray(for: "cred")
             store?.setMyUid(uid: newUid!, credMethods: meth)
         }
         isConnectionAuthenticated = true
-        if let t = authToken, !autoLogin {
-            setAutoLoginWithToken(token: t)
-        }
         listener?.onLogin(code: ctrl.code, text: ctrl.text)
     }
     private func updateAccountSecret(uid: String?, scheme: String, secret: String) -> PromisedReply<ServerMessage>? {
