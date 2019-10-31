@@ -21,31 +21,48 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         Utils.registerUserDefaults()
-        if let token = Utils.getAuthToken(), !token.isEmpty, let userName = Utils.getSavedLoginUserName(), !userName.isEmpty {
-            let tinode = Cache.getTinode()
-            var success = false
-            do {
-                let (hostName, useTLS, _) = SettingsHelper.getConnectionSettings()
-                tinode.setAutoLoginWithToken(token: token)
-                _ = try tinode.connect(to: (hostName ?? Cache.kHostName), useTLS: (useTLS ?? false))?.getResult()
-                let msg = try tinode.loginToken(token: token, creds: nil)?.getResult()
-                if let code = msg?.ctrl?.code, code < 300 {
-                    Cache.log.debug("AppDelegate - login successful for: %@", tinode.myUid!)
-                    if tinode.authToken != token {
-                        Utils.saveAuthToken(for: userName, token: tinode.authToken)
+        let baseDb = BaseDb.getInstance()
+        if baseDb.isReady {
+            UiUtils.routeToChatListVC()
+        }
+        // Try to connect and log in in the background.
+        DispatchQueue.global(qos: .background).async {
+            if let token = Utils.getAuthToken(), !token.isEmpty, let userName = Utils.getSavedLoginUserName(), !userName.isEmpty {
+                let tinode = Cache.getTinode()
+                var success = false
+                do {
+                    let (hostName, useTLS, _) = SettingsHelper.getConnectionSettings()
+                    tinode.setAutoLoginWithToken(token: token)
+                    _ = try tinode.connect(to: (hostName ?? Cache.kHostName), useTLS: (useTLS ?? false))?.getResult()
+                    let msg = try tinode.loginToken(token: token, creds: nil)?.getResult()
+                    if let code = msg?.ctrl?.code {
+                        // Assuming success by default.
+                        success = true
+                        switch code {
+                        case 0..<300:
+                            Cache.log.info("AppDelegate - login successful for: %@", tinode.myUid!)
+                            if tinode.authToken != token {
+                                Utils.saveAuthToken(for: userName, token: tinode.authToken)
+                            }
+                        case 409:
+                            Cache.log.info("AppDelegate - already authenticated.")
+                        case 500..<600:
+                            Cache.log.error("AppDelegate - server error on login: %d", code)
+                        default:
+                            success = false
+                        }
                     }
-                    UiUtils.routeToChatListVC()
+                } catch SwiftWebSocket.WebSocketError.network(let e)  {
+                    // No network connection.
+                    Cache.log.debug("AppDelegate [network] - could not connect to Tinode: %@", e)
                     success = true
+                } catch {
+                    Cache.log.error("AppDelegate - failed to automatically login to Tinode: %@", error.localizedDescription)
                 }
-            } catch SwiftWebSocket.WebSocketError.network(_)  {
-                // No network connection.
-                UiUtils.routeToChatListVC()
-                success = true
-            } catch {
-                Cache.log.info("AppDelegate - failed to automatically login to Tinode: %@", error.localizedDescription)
-            }
-            if !success {
-                _ = tinode.logout()
+                if !success {
+                    _ = tinode.logout()
+                    UiUtils.routeToLoginVC()
+                }
             }
         }
         if #available(iOS 12.0, *) {

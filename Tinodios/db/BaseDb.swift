@@ -48,7 +48,7 @@ public class BaseDb {
     var isCredValidationRequired: Bool {
         get { return !(self.account?.credMethods?.isEmpty ?? true) }
     }
-    var isReady: Bool { get { return !self.isCredValidationRequired } }
+    var isReady: Bool { get { return self.account != nil && !self.isCredValidationRequired } }
 
     /// The init is private to ensure that the class is a singleton.
     private init() {
