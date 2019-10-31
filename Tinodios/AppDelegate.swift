@@ -35,12 +35,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     tinode.setAutoLoginWithToken(token: token)
                     _ = try tinode.connect(to: (hostName ?? Cache.kHostName), useTLS: (useTLS ?? false))?.getResult()
                     let msg = try tinode.loginToken(token: token, creds: nil)?.getResult()
-                    if let code = msg?.ctrl?.code, code < 300 {
-                        Cache.log.info("AppDelegate - login successful for: %@", tinode.myUid!)
-                        if tinode.authToken != token {
-                            Utils.saveAuthToken(for: userName, token: tinode.authToken)
-                        }
+                    if let code = msg?.ctrl?.code {
+                        // Assuming success by default.
                         success = true
+                        switch code {
+                        case 0..<300:
+                            Cache.log.info("AppDelegate - login successful for: %@", tinode.myUid!)
+                            if tinode.authToken != token {
+                                Utils.saveAuthToken(for: userName, token: tinode.authToken)
+                            }
+                        case 409:
+                            Cache.log.info("AppDelegate - already authenticated.")
+                        case 500..<600:
+                            Cache.log.error("AppDelegate - server error on login: %d", code)
+                        default:
+                            success = false
+                        }
                     }
                 } catch SwiftWebSocket.WebSocketError.network(let e)  {
                     // No network connection.
