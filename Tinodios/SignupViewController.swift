@@ -93,8 +93,10 @@ class SignupViewController: UITableViewController {
             try future?.then(
                 onSuccess: { [weak self] msg in
                     if let ctrl = msg?.ctrl, ctrl.code >= 300, ctrl.text.contains("validate credentials") {
-                        UiUtils.routeToCredentialsVC(in: self!.navigationController,
-                                                     verifying: ctrl.getStringArray(for: "cred")?.first)
+                        DispatchQueue.main.async {
+                            UiUtils.routeToCredentialsVC(in: self!.navigationController,
+                                                         verifying: ctrl.getStringArray(for: "cred")?.first)
+                        }
                     } else {
                         UiUtils.routeToChatListVC()
                     }

@@ -24,6 +24,7 @@ class Cache {
     private var tinode: Tinode? = nil
     private var timer = RepeatingTimer(timeInterval: 60 * 60 * 4) // Once every 4 hours.
     private var largeFileHelper: LargeFileHelper? = nil
+    private var queue = DispatchQueue(label: "co.tinode.cache")
     internal static let log = TinodeSDK.Log(subsystem: "co.tinode.tinodios")
 
     public static func getTinode() -> Tinode {
@@ -51,14 +52,21 @@ class Cache {
         Cache.default.timer.resume()
     }
     private func getTinode() -> Tinode {
+        // TODO: fix tsan false positive.
+        // TSAN fires because one thread may read |tinode| variable
+        // while another thread may be writing it below in the critical section.
         if tinode == nil {
-            let appVersion: String = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as! String
-            let appName = "Tinodios/" + appVersion
-            let dbh = BaseDb.getInstance()
-            tinode = Tinode(for: appName,
-                            authenticateWith: Cache.kApiKey,
-                            persistDataIn: dbh.sqlStore)
-            tinode!.OsVersion = UIDevice.current.systemVersion
+            queue.sync {
+                if tinode == nil {
+                    let appVersion: String = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as! String
+                    let appName = "Tinodios/" + appVersion
+                    let dbh = BaseDb.getInstance()
+                    tinode = Tinode(for: appName,
+                                    authenticateWith: Cache.kApiKey,
+                                    persistDataIn: dbh.sqlStore)
+                    tinode!.OsVersion = UIDevice.current.systemVersion
+                }
+            }
         }
         return tinode!
     }

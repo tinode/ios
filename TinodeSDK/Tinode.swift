@@ -630,7 +630,7 @@ public class Tinode {
     ///   - uid: uid of the user to affect
     ///   - scheme: authentication scheme to use
     ///   - secret: authentication secret for the chosen scheme
-    ///   - loginNow: use new account to loin immediately
+    ///   - loginNow: use new account to login immediately
     ///   - tags: tags
     ///   - desc: default access parameters for this account
     ///   - creds: creds
@@ -768,18 +768,18 @@ public class Tinode {
             return
         }
         myUid = newUid
-        store?.myUid = newUid
-        // Load topics if not yet loaded.
-        loadTopics()
         authToken = ctrl.getStringParam(for: "token")
         // auth expires
         if ctrl.code < 300 {
-            isConnectionAuthenticated = true
-            if let t = authToken, !autoLogin {
-                setAutoLoginWithToken(token: t)
-            }
-            listener?.onLogin(code: ctrl.code, text: ctrl.text)
+            store?.myUid = newUid
+            // Load topics if not yet loaded.
+            loadTopics()
+        } else {
+            let meth = ctrl.getStringArray(for: "cred")
+            store?.setMyUid(uid: newUid!, credMethods: meth)
         }
+        isConnectionAuthenticated = 200...299 ~= ctrl.code
+        listener?.onLogin(code: ctrl.code, text: ctrl.text)
     }
     private func updateAccountSecret(uid: String?, scheme: String, secret: String) -> PromisedReply<ServerMessage>? {
         return account(uid: uid, scheme: scheme, secret: secret, loginNow: false, tags: nil, desc: nil as MetaSetDesc<Int, Int>?, creds: nil)
@@ -868,7 +868,6 @@ public class Tinode {
             Log.default.debug("in: %@", message)
             do {
                 try tinode.dispatch(message)
-                Log.default.info("processed msg l = %d", message.count)
             } catch {
                 Log.default.error("onMessage error: %@", error.localizedDescription)
             }

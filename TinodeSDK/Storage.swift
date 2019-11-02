@@ -58,6 +58,8 @@ public protocol Storage: class {
 
     func logout()
 
+    func setMyUid(uid: String, credMethods: [String]?)
+
     // Server time minus local time.
     func setTimeAdjustment(adjustment: TimeInterval)
 

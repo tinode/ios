@@ -56,7 +56,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
     var topic: DefaultComTopic?
     var presenter: MessagePresentationLogic?
     var messages: [StoredMessage] = []
-    private var messageSenderQueue = DispatchQueue(label: "co.tinode.messagesender")
+    private var messageInteractorQueue = DispatchQueue(label: "co.tinode.messageinteractor")
     private var tinodeEventListener: MessageEventListener? = nil
     // Last reported recv and read seq ids by the onInfo handler.
     // Upon receipt of an info message, the handler will reload all messages with
@@ -119,7 +119,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                     .withDel()
                     .build())?.then(
                     onSuccess: { [weak self] _ in
-                        self?.messageSenderQueue.async {
+                        self?.messageInteractorQueue.async {
                             do {
                                 try _ = self?.topic?.syncAll()?.thenApply(onSuccess: { [weak self] _ in
                                     self?.loadMessages()
@@ -193,7 +193,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
     }
 
     func loadMessages() {
-        DispatchQueue.global(qos: .userInteractive).async {
+        self.messageInteractorQueue.async {
             if let messages = BaseDb.getInstance().messageDb?.query(
                     topicId: self.topicId,
                     pageCount: self.pagesToLoad,

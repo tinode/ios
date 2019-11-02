@@ -26,14 +26,8 @@
 	<string></string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-	<key>NSCameraUsageDescription</key>
-	<string>$(PRODUCT_NAME) wants to use camera</string>
 	<key>NSContactsUsageDescription</key>
-	<string>$(PRODUCT_NAME) contact display</string>
-	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>$(PRODUCT_NAME) wants to access Photo Library</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>$(PRODUCT_NAME) wants to access photos</string>
+	<string>$(APP_NAME) sends only emails and phone numbers to the $(APP_NAME) server to help you connect with other users</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
