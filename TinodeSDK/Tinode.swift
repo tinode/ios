@@ -630,7 +630,7 @@ public class Tinode {
     ///   - uid: uid of the user to affect
     ///   - scheme: authentication scheme to use
     ///   - secret: authentication secret for the chosen scheme
-    ///   - loginNow: use new account to loin immediately
+    ///   - loginNow: use new account to login immediately
     ///   - tags: tags
     ///   - desc: default access parameters for this account
     ///   - creds: creds
@@ -778,7 +778,7 @@ public class Tinode {
             let meth = ctrl.getStringArray(for: "cred")
             store?.setMyUid(uid: newUid!, credMethods: meth)
         }
-        isConnectionAuthenticated = true
+        isConnectionAuthenticated = 200...299 ~= ctrl.code
         listener?.onLogin(code: ctrl.code, text: ctrl.text)
     }
     private func updateAccountSecret(uid: String?, scheme: String, secret: String) -> PromisedReply<ServerMessage>? {
