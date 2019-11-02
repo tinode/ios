@@ -26,7 +26,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             UiUtils.routeToChatListVC()
         }
         // Try to connect and log in in the background.
-        DispatchQueue.global(qos: .background).async {
+        DispatchQueue.global(qos: .userInitiated).async {
             if let token = Utils.getAuthToken(), !token.isEmpty, let userName = Utils.getSavedLoginUserName(), !userName.isEmpty {
                 let tinode = Cache.getTinode()
                 var success = false
