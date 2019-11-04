@@ -189,7 +189,7 @@ public class Tinode {
 
     // Forwards events to all subscribed listeners.
     private class ListenerNotifier: TinodeEventListener {
-        private var listeners = [TinodeEventListener]()
+        private var listeners: [TinodeEventListener] = []
         private var queue = DispatchQueue(label: "co.tinode.listener")
 
         public func addListener(_ l: TinodeEventListener) {
