@@ -124,7 +124,6 @@ public class VCard: Codable, Mergeable {
         if anotherVCard.fn != nil {
             self.fn = anotherVCard.fn
         }
-        assert(self.n == nil && anotherVCard.n == nil)
         if anotherVCard.title != nil {
             self.title = anotherVCard.title
         }
