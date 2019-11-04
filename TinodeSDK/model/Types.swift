@@ -6,13 +6,16 @@
 //
 
 public protocol Mergeable {
-    mutating func merge(from another: Mergeable)
+    // Merges self with |another|.
+    // Retuns the total number of modified fields.
+    mutating func merge(with another: Mergeable) -> Int
 }
 
 extension String: Mergeable {
-    public mutating func merge(from another: Mergeable) {
-        guard another is String else { return }
+    public mutating func merge(with another: Mergeable) -> Int {
+        guard another is String else { return 0 }
         self = another as! String
+        return 1
     }
 }
 
@@ -37,12 +40,13 @@ extension PrivateType: Mergeable {
         }
         set { self["arch"] = newValue != nil ? .bool(newValue!) : nil }
     }
-    public mutating func merge(from another: Mergeable) {
-        guard another is PrivateType else { return }
+    public mutating func merge(with another: Mergeable) -> Int {
+        guard another is PrivateType else { return 0 }
         let anotherPT = another as! PrivateType
         for (k, v) in anotherPT {
             self[k] = v
         }
+        return anotherPT.count
     }
 }
 
