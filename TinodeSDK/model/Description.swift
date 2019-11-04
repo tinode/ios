@@ -13,10 +13,7 @@ import Foundation
 // to handle descriptions with all these types.
 public protocol DescriptionProto: Codable {}
 
-public typealias DescPublic = Any & Codable
-public typealias DescPrivate = Any & Codable
-
-public class Description<DP: Codable, DR: Codable>: DescriptionProto {
+public class Description<DP: Codable & Mergeable, DR: Codable & Mergeable>: DescriptionProto {
     var created: Date? = nil
     var updated: Date? = nil
     var touched: Date? = nil
@@ -152,10 +149,18 @@ public class Description<DP: Codable, DR: Codable>: DescriptionProto {
             }
         }
         if let pub = desc.pub {
-            self.pub = pub
+            if self.pub == nil {
+                self.pub = pub
+            } else {
+                self.pub!.merge(from: pub)
+            }
         }
         if let priv = desc.priv {
-            self.priv = priv
+            if self.priv == nil {
+                self.priv = priv
+            } else {
+                self.priv!.merge(from: priv)
+            }
         }
         return changed > 0
     }

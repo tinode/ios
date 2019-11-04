@@ -75,7 +75,7 @@ public class Name: Codable {
     }
 }
 
-public class VCard: Codable {
+public class VCard: Codable, Mergeable {
     public var fn: String?
     public var n: Name?
     public var org: String?
@@ -116,5 +116,32 @@ public class VCard: Codable {
         vcardCopy.email = self.email?.map { $0 }
         vcardCopy.impp = self.impp?.map { $0 }
         return vcardCopy
+    }
+
+    public func merge(from another: Mergeable) {
+        guard another is VCard else { return }
+        let anotherVCard = another as! VCard
+        if anotherVCard.fn != nil {
+            self.fn = anotherVCard.fn
+        }
+        assert(self.n == nil && anotherVCard.n == nil)
+        if anotherVCard.title != nil {
+            self.title = anotherVCard.title
+        }
+        if anotherVCard.org != nil {
+            self.org = anotherVCard.org
+        }
+        if anotherVCard.tel != nil {
+            self.tel = anotherVCard.tel
+        }
+        if anotherVCard.email != nil {
+            self.email = anotherVCard.email
+        }
+        if anotherVCard.impp != nil {
+            self.impp = anotherVCard.impp
+        }
+        if anotherVCard.photo != nil {
+            self.photo = anotherVCard.photo
+        }
     }
 }

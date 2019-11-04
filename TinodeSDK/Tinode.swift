@@ -517,7 +517,7 @@ public class Tinode {
         return topics[topicName] != nil
     }
 
-    public func newTopic<SP: Codable, SR: Codable>(sub: Subscription<SP, SR>) -> TopicProto {
+    public func newTopic<SP: Codable & Mergeable, SR: Codable>(sub: Subscription<SP, SR>) -> TopicProto {
         if sub.topic == Tinode.kTopicMe {
             let t = MeTopic<SP>(tinode: self, l: nil)
             return t
