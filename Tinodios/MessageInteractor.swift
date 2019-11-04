@@ -110,14 +110,17 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
             return true
         }
         do {
+            var builder = self.topic!.getMetaGetBuilder()
+                .withDesc()
+                .withSub()
+                .withLaterData(limit: MessageInteractor.kMessagesPerPage)
+                .withDel()
+            if self.topic!.isOwner {
+                builder = builder.withTags()
+            }
             try self.topic?.subscribe(
                 set: nil,
-                get: self.topic?.getMetaGetBuilder()
-                    .withDesc()
-                    .withSub()
-                    .withLaterData(limit: MessageInteractor.kMessagesPerPage)
-                    .withDel()
-                    .build())?.then(
+                get: builder.build())?.then(
                     onSuccess: { [weak self] _ in
                         self?.messageInteractorQueue.async {
                             do {

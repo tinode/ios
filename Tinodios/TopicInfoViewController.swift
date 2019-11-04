@@ -79,6 +79,7 @@ class TopicInfoViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setup()
+        reloadData()
     }
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
@@ -271,7 +272,9 @@ class TopicInfoViewController: UITableViewController {
             }
         }
         if pub != nil || priv != nil {
-            UiUtils.setTopicData(forTopic: topic, pub: pub, priv: priv)
+            try? UiUtils.setTopicData(forTopic: topic, pub: pub, priv: priv)?.thenFinally {
+                DispatchQueue.main.async { self.reloadData() }
+            }
         }
     }
 
