@@ -54,7 +54,7 @@ public class Description<DP: Codable & Mergeable, DR: Codable & Mergeable>: Desc
         return self.priv!.merge(with: another)
     }
 
-    func merge(desc: Description) -> Bool {
+    func merge(desc: Description<DP, DR>) -> Bool {
         var changed = 0
         if created == nil && desc.created != nil {
             created = desc.created
@@ -100,11 +100,15 @@ public class Description<DP: Codable & Mergeable, DR: Codable & Mergeable>: Desc
             clear = desc.getClear
             changed += 1
         }
-        if desc.pub != nil {
-            pub = desc.pub
+        if let spub = desc.pub {
+            if mergePub(with: spub) > 0 {
+                changed += 1
+            }
         }
-        if desc.priv != nil {
-            priv = desc.priv
+        if let spriv = desc.priv {
+            if mergePriv(with: spriv) > 0 {
+                changed += 1
+            }
         }
         return changed > 0
     }
