@@ -427,5 +427,8 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
     }
     override func onMetaDesc(desc: Description<VCard, PrivateType>) {
         self.presenter?.applyTopicPermissions(withError: nil)
+        if let pub = topic?.pub {
+            self.presenter?.updateTitleBar(icon: pub.photo?.image(), title: pub.fn, online: self.topic?.online ?? false)
+        }
     }
 }
