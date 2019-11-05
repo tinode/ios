@@ -9,11 +9,11 @@ import UIKit
 import TinodeSDK
 
 class CredentialsViewController : UIViewController {
-    
+
     @IBOutlet weak var codeText: UITextField!
-    
+
     var meth: String?
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -39,18 +39,18 @@ class CredentialsViewController : UIViewController {
         guard let method = meth else {
             return
         }
-        
+
         let tinode = Cache.getTinode()
-        
+
         guard let token = tinode.authToken else {
             self.dismiss(animated: true, completion: nil)
             return
         }
-        
+
         let c = Credential(meth: method, val: nil, resp: code, params: nil)
         var creds = [Credential]()
         creds.append(c)
-        
+
         do {
             try tinode.loginToken(token: token, creds: creds)?
                 .thenApply(onSuccess: { msg in

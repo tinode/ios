@@ -345,7 +345,7 @@ class MessageViewController: UIViewController {
     //        self.interactor?.cleanup()
     //    }
     // }
-    
+
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
 

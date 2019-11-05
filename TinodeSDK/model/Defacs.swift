@@ -10,7 +10,7 @@ import Foundation
 public class Defacs: Codable, Equatable {
     public var auth: AcsHelper?
     public var anon: AcsHelper?
-    
+
     init(auth: String?, anon: String?) {
         if let auth = auth {
             setAuth(a: auth)
@@ -56,7 +56,7 @@ public class Defacs: Codable, Equatable {
     func setAuth(a: String) {
         auth = AcsHelper(str: a)
     }
-    
+
     public func getAnon() -> String? {
         return anon != nil ? anon!.description : nil
     }

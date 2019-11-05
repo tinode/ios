@@ -186,6 +186,71 @@ public class Tinode {
             }
         }
     }
+
+    // Forwards events to all subscribed listeners.
+    private class ListenerNotifier: TinodeEventListener {
+        private var listeners: [TinodeEventListener] = []
+        private var queue = DispatchQueue(label: "co.tinode.listener")
+
+        public func addListener(_ l: TinodeEventListener) {
+            queue.sync {
+                guard listeners.firstIndex(where: { $0 === l }) == nil else { return }
+                listeners.append(l)
+            }
+        }
+
+        public func removeListener(_ l: TinodeEventListener) {
+            queue.sync {
+                if let idx = listeners.firstIndex(where: { $0 === l }) {
+                    listeners.remove(at: idx)
+                }
+            }
+        }
+
+        public var listenersThreadSafe: [TinodeEventListener] {
+            queue.sync { return self.listeners }
+        }
+
+        func onConnect(code: Int, reason: String, params: [String : JSONValue]?) {
+            listenersThreadSafe.forEach { $0.onConnect(code: code, reason: reason, params: params) }
+        }
+
+        func onDisconnect(byServer: Bool, code: Int, reason: String) {
+            listenersThreadSafe.forEach { $0.onDisconnect(byServer: byServer, code: code, reason: reason) }
+        }
+
+        func onLogin(code: Int, text: String) {
+            listenersThreadSafe.forEach { $0.onLogin(code: code, text: text) }
+        }
+
+        func onMessage(msg: ServerMessage?) {
+            listenersThreadSafe.forEach { $0.onMessage(msg: msg) }
+        }
+
+        func onRawMessage(msg: String) {
+            listenersThreadSafe.forEach { $0.onRawMessage(msg: msg) }
+        }
+
+        func onCtrlMessage(ctrl: MsgServerCtrl?) {
+            listenersThreadSafe.forEach { $0.onCtrlMessage(ctrl: ctrl) }
+        }
+
+        func onDataMessage(data: MsgServerData?) {
+            listenersThreadSafe.forEach { $0.onDataMessage(data: data) }
+        }
+
+        func onInfoMessage(info: MsgServerInfo?) {
+            listenersThreadSafe.forEach { $0.onInfoMessage(info: info) }
+        }
+
+        func onMetaMessage(meta: MsgServerMeta?) {
+            listenersThreadSafe.forEach { $0.onMetaMessage(meta: meta) }
+        }
+
+        func onPresMessage(pres: MsgServerPres?) {
+            listenersThreadSafe.forEach { $0.onPresMessage(pres: pres) }
+        }
+    }
     public var appName: String
     public var apiKey: String
     public var useTLS: Bool
@@ -203,7 +268,7 @@ public class Tinode {
     public var authToken: String?
     public var nameCounter = 0
     public var store: Storage? = nil
-    public var listener: TinodeEventListener? = nil
+    private var listenerNotifier = ListenerNotifier()
     public var topicsLoaded = false
     private(set) public var topicsUpdated: Date? = nil
 
@@ -266,7 +331,9 @@ public class Tinode {
         self.appName = appname
         self.apiKey = apiKey
         self.store = store
-        self.listener = l
+        if let listener = l {
+            self.listenerNotifier.addListener(listener)
+        }
         self.myUid = self.store?.myUid
         self.deviceToken = self.store?.deviceToken
         self.useTLS = false
@@ -282,6 +349,14 @@ public class Tinode {
         // deviceToken
         loadTopics()
     }
+
+    public func addListener(_ l: TinodeEventListener) {
+        listenerNotifier.addListener(l)
+    }
+    public func removeListener(_ l: TinodeEventListener) {
+        listenerNotifier.removeListener(l)
+    }
+
     @discardableResult
     private func loadTopics() -> Bool {
         guard !topicsLoaded else { return true }
@@ -368,16 +443,16 @@ public class Tinode {
             return
         }
 
-        listener?.onRawMessage(msg: msg)
+        listenerNotifier.onRawMessage(msg: msg)
         guard let data = msg.data(using: .utf8) else {
             throw TinodeJsonError.decode
         }
         let serverMsg = try Tinode.jsonDecoder.decode(ServerMessage.self, from: data)
 
-        listener?.onMessage(msg: serverMsg)
+        listenerNotifier.onMessage(msg: serverMsg)
 
         if let ctrl = serverMsg.ctrl {
-            listener?.onCtrlMessage(ctrl: ctrl)
+            listenerNotifier.onCtrlMessage(ctrl: ctrl)
             if let id = ctrl.id {
                 if let r = futures.removeValue(forKey: id) {
                     if ctrl.code >= 200 && ctrl.code < 400 {
@@ -412,14 +487,14 @@ public class Tinode {
                 }
             }
 
-            listener?.onMetaMessage(meta: meta)
+            listenerNotifier.onMetaMessage(meta: meta)
             try resolveWithPacket(id: meta.id, pkt: serverMsg)
             //if t != nil
         } else if let data = serverMsg.data {
             if let t = getTopic(topicName: data.topic!) {
                 t.routeData(data: data)
             }
-            listener?.onDataMessage(data: data)
+            listenerNotifier.onDataMessage(data: data)
             try resolveWithPacket(id: data.id, pkt: serverMsg)
         } else if let pres = serverMsg.pres {
             if let topicName = pres.topic {
@@ -432,13 +507,13 @@ public class Tinode {
                     }
                 }
             }
-            listener?.onPresMessage(pres: pres)
+            listenerNotifier.onPresMessage(pres: pres)
         } else if let info = serverMsg.info {
             if let topicName = info.topic {
                 if let t = getTopic(topicName: topicName) {
                     t.routeInfo(info: info)
                 }
-                listener?.onInfoMessage(info: info)
+                listenerNotifier.onInfoMessage(info: info)
             }
         }
     }
@@ -517,7 +592,7 @@ public class Tinode {
         return topics[topicName] != nil
     }
 
-    public func newTopic<SP: Codable, SR: Codable>(sub: Subscription<SP, SR>) -> TopicProto {
+    public func newTopic<SP: Codable & Mergeable, SR: Codable>(sub: Subscription<SP, SR>) -> TopicProto {
         if sub.topic == Tinode.kTopicMe {
             let t = MeTopic<SP>(tinode: self, l: nil)
             return t
@@ -676,7 +751,7 @@ public class Tinode {
                             // clear auth data.
                         }
                         self?.isConnectionAuthenticated = false
-                        self?.listener?.onLogin(code: code, text: text)
+                        self?.listenerNotifier.onLogin(code: code, text: text)
                     }
                 }
                 return PromisedReply<ServerMessage>(error: err)
@@ -750,7 +825,7 @@ public class Tinode {
                             self?.authToken = nil
                         }
                         self?.isConnectionAuthenticated = false
-                        self?.listener?.onLogin(code: code, text: text)
+                        self?.listenerNotifier.onLogin(code: code, text: text)
                     }
                 }
                 return PromisedReply<ServerMessage>(error: err)
@@ -764,7 +839,7 @@ public class Tinode {
         let newUid = ctrl.getStringParam(for: "user")
         if let curUid = myUid, curUid != newUid {
             logout()
-            listener?.onLogin(code: 400, text: "UID mismatch")
+            listenerNotifier.onLogin(code: 400, text: "UID mismatch")
             return
         }
         myUid = newUid
@@ -779,7 +854,7 @@ public class Tinode {
             store?.setMyUid(uid: newUid!, credMethods: meth)
         }
         isConnectionAuthenticated = 200...299 ~= ctrl.code
-        listener?.onLogin(code: ctrl.code, text: ctrl.text)
+        listenerNotifier.onLogin(code: ctrl.code, text: ctrl.text)
     }
     private func updateAccountSecret(uid: String?, scheme: String, secret: String) -> PromisedReply<ServerMessage>? {
         return account(uid: uid, scheme: scheme, secret: secret, loginNow: false, tags: nil, desc: nil as MetaSetDesc<Int, Int>?, creds: nil)
@@ -821,7 +896,7 @@ public class Tinode {
         for t in topics.values {
             t.topicLeft(unsub: false, code: 503, reason: "disconnected")
         }
-        listener?.onDisconnect(byServer: isServerOriginated, code: code, reason: reason)
+        listenerNotifier.onDisconnect(byServer: isServerOriginated, code: code, reason: reason)
     }
     public class TinodeConnectionListener : ConnectionListener {
         var tinode: Tinode
@@ -845,7 +920,7 @@ public class Tinode {
                         // tinode store
                         tinode.store?.setTimeAdjustment(adjustment: tinode.timeAdjustment)
                         // listener
-                        tinode.listener?.onConnect(code: ctrl.code, reason: ctrl.text, params: ctrl.params)
+                        tinode.listenerNotifier.onConnect(code: ctrl.code, reason: ctrl.text, params: ctrl.params)
                     }
                     return nil
                 }, onFailure: nil)

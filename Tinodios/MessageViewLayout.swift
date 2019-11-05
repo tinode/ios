@@ -141,7 +141,7 @@ class MessageViewLayoutAttributes: UICollectionViewLayoutAttributes {
 
     override func isEqual(_ object: Any?) -> Bool {
         guard let other = object as? MessageViewLayoutAttributes else { return false }
-        
+
         return super.isEqual(object) && other.avatarFrame == avatarFrame &&
             other.senderNameFrame == senderNameFrame &&
             other.containerFrame == containerFrame &&

@@ -32,7 +32,7 @@ public class Connection {
     // TODO: figure out a solution here (e.g. switch to another library or
     //       implement connection primitives by hand).
     fileprivate let kConnectionTimeout = 3000
-    
+
     var isConnected: Bool {
         get {
             if let conn = webSocketConnection, conn.readyState == .open {
@@ -41,7 +41,7 @@ public class Connection {
             return false
         }
     }
-    
+
     private var webSocketConnection: WebSocket?
     private var connectionListener: ConnectionListener?
     private var endpointComponenets: URLComponents
@@ -53,7 +53,7 @@ public class Connection {
     private var reconnecting: Bool = false
     private var backoffSteps = ExpBackoffSteps()
     private var reconnectClosure: DispatchWorkItem? = nil
-    
+
     init(open url: URL, with apiKey: String, notify listener: ConnectionListener?) {
         self.apiKey = apiKey
         // TODO: apply necessary URL modifications.
@@ -114,7 +114,7 @@ public class Connection {
         request.addValue(apiKey, forHTTPHeaderField: "X-Tinode-APIKey")
         return request
     }
-    
+
     private func openConnection(with urlRequest: URLRequest) {
         self.webSocketConnection?.open(request: urlRequest)
     }
@@ -152,11 +152,11 @@ public class Connection {
             reconnectClosure!.cancel()
         }
     }
-    
+
     func send(payload data: Data) -> Void {
         webSocketConnection?.send(data: data)
     }
-    
+
 }
 
 protocol ConnectionListener {

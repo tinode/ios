@@ -52,7 +52,7 @@ public class PromisedReply<Value> {
         case waiting
         case resolved(Value?)
         case rejected(Error)
-        
+
         var isDone: Bool {
             get {
                 switch self {
@@ -89,7 +89,7 @@ public class PromisedReply<Value> {
             return state.isDone
         }
     }
-            
+
     public init() {
         countDownLatch = CountDownLatch(count: 1)
     }
@@ -116,7 +116,7 @@ public class PromisedReply<Value> {
             try callOnSuccess(result: result)
         }
     }
-    
+
     func reject(error: Error) throws {
         defer {
             // down the semaphore
@@ -193,7 +193,7 @@ public class PromisedReply<Value> {
         }
         try handleSuccess(ret: ret)
     }
-    
+
     private func callOnFailure(err: Error) throws {
         if let fh = failureHandler {
             // Try to recover.
@@ -207,7 +207,7 @@ public class PromisedReply<Value> {
             try handleFailure(e: err)
         }
     }
-    
+
     private func handleSuccess(ret: PromisedReply<Value>?) throws {
         guard let np = nextPromise else {
             if let r = ret, case .rejected(let retError) = r.state {

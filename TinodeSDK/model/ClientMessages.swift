@@ -15,7 +15,7 @@ public class MsgClientHi : Encodable {
     // Push notification token.
     let dev: String?
     let lang: String?
-    
+
     init(id: String?, ver: String?, ua: String?, dev: String?, lang: String?) {
         self.id = id
         self.ver = ver
@@ -39,12 +39,12 @@ public class Credential: Encodable {
     var resp: String? = nil
     // Confirmation parameters.
     var params: [String:String]? = nil
-    
+
     public init(meth: String, val: String) {
         self.meth = meth
         self.val = val
     }
-    
+
     public init(meth: String?, val: String?, resp: String?, params: [String:String]?) {
         self.meth = meth
         self.val = val
@@ -62,7 +62,7 @@ public class MsgClientAcc<Pu: Encodable,Pr: Encodable>: Encodable {
     var tags: [String]?
     var cred: [Credential]?
     var desc: MetaSetDesc<Pu,Pr>?
-    
+
     init(id: String?,
          uid: String?,
          scheme: String?,
@@ -76,14 +76,14 @@ public class MsgClientAcc<Pu: Encodable,Pr: Encodable>: Encodable {
         self.desc = desc
         self.secret = secret
     }
-    
+
     func addTag(tag: String) {
         if self.tags == nil {
             self.tags = [String]()
         }
         self.tags?.append(tag)
     }
-    
+
     func addCred(cred: Credential) {
         if self.cred == nil {
             self.cred = [Credential]()
@@ -97,14 +97,14 @@ public class MsgClientLogin: Encodable {
     let scheme: String?
     let secret: String?
     var cred: [Credential]?
-    
+
     init(id: String?, scheme: String?, secret: String?, credentials: [Credential]?) {
         self.id = id
         self.scheme = scheme
         self.secret = secret
         self.cred = credentials
     }
-    
+
     func addCred(c: Credential) {
         if cred == nil {
             cred = []
@@ -147,21 +147,21 @@ public class MsgGetMeta: CustomStringConvertible, Encodable {
     private static let kDelSet = 0x08
     private static let kTagsSet = 0x10
     private static let kCredSet = 0x20
-    
+
     static let kDesc = "desc"
     static let kSub = "sub"
     static let kData = "data"
     static let kDel = "del"
     static let kTags = "tags"
-    
+
     private var set = 0
-    
+
     public var what: String = ""
     public var desc: MetaGetDesc? = nil
     public var sub: MetaGetSub? = nil
     public var data: MetaGetData? = nil
     public var del: MetaGetData? = nil
-    
+
     // Only use these fields in JSON representation.
     private enum CodingKeys: String, CodingKey {
         case what
@@ -170,7 +170,7 @@ public class MsgGetMeta: CustomStringConvertible, Encodable {
         case data
         case del
     }
-    
+
     public var description: String {
         //return
         let desc_str = desc != nil ? String(describing: desc!) : "null"
@@ -184,7 +184,7 @@ public class MsgGetMeta: CustomStringConvertible, Encodable {
             " del=[\(del_str)]" +
         " tags=[\((set & MsgGetMeta.kTagsSet) != 0 ? "set" : "null")]"
     }
-    
+
     init() {
         self.what = "\(MsgGetMeta.kDesc) \(MsgGetMeta.kData) \(MsgGetMeta.kDel) \(MsgGetMeta.kTags)"
     }
@@ -217,7 +217,7 @@ public class MsgGetMeta: CustomStringConvertible, Encodable {
         }
         self.what = parts.joined(separator: " ")
     }
-    
+
     func setData(since: Int?, before: Int?, limit: Int?) {
         if since != nil || before != nil || limit != nil {
             data = MetaGetData(since: since, before: before, limit: limit)
@@ -302,7 +302,7 @@ public class MsgSetMeta<Pu: Encodable, Pr: Encodable>: Encodable {
     let sub: MetaSetSub?
     let tags: [String]?
     let cred: Credential?
-    
+
     public init(desc: MetaSetDesc<Pu, Pr>?, sub: MetaSetSub?, tags: [String]?, cred: Credential?) {
         self.desc = desc
         self.sub = sub
@@ -331,7 +331,7 @@ public class MsgClientGet: Encodable {
     let desc: MetaGetDesc?
     let sub: MetaGetSub?
     let data: MetaGetData?
-    
+
     init(id: String, topic: String, query: MsgGetMeta) {
         self.id = id
         self.topic = topic
@@ -377,7 +377,7 @@ public class MsgClientNote: Encodable {
     let topic: String?
     let what: String?
     let seq: Int?
-    
+
     init(topic: String, what: String, seq: Int) {
         self.topic = topic
         self.what = what
@@ -469,7 +469,7 @@ public class ClientMessage<Pu: Encodable, Pr: Encodable> : Encodable {
     var note: MsgClientNote?
     var pub: MsgClientPub?
     var del: MsgClientDel?
-    
+
     init(hi: MsgClientHi) {
         self.hi = hi
     }

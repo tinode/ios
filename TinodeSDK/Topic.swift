@@ -51,7 +51,6 @@ public protocol TopicProto: class {
     func routeData(data: MsgServerData)
     func routePres(pres: MsgServerPres)
     func routeInfo(info: MsgServerInfo)
-    //func setStorage(store: Storage?)
 }
 
 public enum TopicType: Int {
@@ -72,7 +71,7 @@ public enum TopicType: Int {
 // Cannot make it a class constant because Swift is poorly designed: "Static stored properties not supported in generic types"
 fileprivate let kIntervalBetweenKeyPresses: TimeInterval = 3.0
 
-open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto {
+open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, SR: Codable>: TopicProto {
     enum TopicError: Error {
         case alreadySubscribed
         case notSynchronized
@@ -85,7 +84,6 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
         case kKeyPress
     }
 
-    //open class Listener2<DP2: Codable, DR2: Codable, SP2: Codable, SR2: Codable> {
     open class Listener {
         public init() {}
         open func onSubscribe(code: Int, text: String) {}
@@ -95,7 +93,7 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
         open func onData(data: MsgServerData?) {}
         // All requested data messages received.
         open func onAllMessagesReceived(count: Int) {}
-        
+
         // {info} message received.
         open func onInfo(info: MsgServerInfo) {}
         // {meta} message received.
@@ -115,17 +113,16 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
         // Called by MeTopic when topic descriptor as contact is updated.
         open func onContUpdate(sub: Subscription<SP, SR>) {}
     }
-    //public typealias Listener = Listener2<DP, DR, SP, SR>
 
     public class MetaGetBuilder {
         let topic: TopicProto
         var meta: MsgGetMeta
-        
+
         init(parent: TopicProto) {
             self.topic = parent
             self.meta = MsgGetMeta()
         }
-        
+
         public func withData(since: Int?, before: Int?, limit: Int?) -> MetaGetBuilder {
             meta.setData(since: since, before: before, limit: limit)
             return self
@@ -694,7 +691,7 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
         if (newsub.deleted != nil) {
             store?.subDelete(topic: self, sub: newsub)
             removeSubFromCache(sub: newsub)
-            
+
             sub = newsub
         } else {
             sub = getSubscription(for: newsub.user)
@@ -1191,12 +1188,7 @@ open class Topic<DP: Codable, DR: Codable, SP: Codable, SR: Codable>: TopicProto
     }
 }
 
-public typealias DefaultTopic = Topic<VCard, PrivateType, VCard, PrivateType>
-public typealias DefaultComTopic = ComTopic<VCard>
-public typealias DefaultMeTopic = MeTopic<VCard>
-public typealias DefaultFndTopic = FndTopic<VCard>
-
-open class MeTopic<DP: Codable>: Topic<DP, PrivateType, DP, PrivateType> {
+open class MeTopic<DP: Codable & Mergeable>: Topic<DP, PrivateType, DP, PrivateType> {
     public init(tinode: Tinode?, l: MeTopic<DP>.Listener?) {
         super.init(tinode: tinode, name: Tinode.kTopicMe, l: l)
     }
@@ -1373,7 +1365,7 @@ public class FndTopic<SP: Codable>: Topic<String, String, SP, Array<String>> {
     }
 }
 
-public class ComTopic<DP: Codable>: Topic<DP, PrivateType, DP, PrivateType> {
+public class ComTopic<DP: Codable & Mergeable>: Topic<DP, PrivateType, DP, PrivateType> {
     override init(tinode: Tinode?, name: String, l: Listener?) {
         super.init(tinode: tinode, name: name, l: l)
     }
