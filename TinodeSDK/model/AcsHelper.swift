@@ -31,9 +31,9 @@ public class AcsHelper: Codable, Equatable {
     public static let kModeNone = 0
     // Invalid mode to indicate an error
     public static let kModeInvalid = 0x100000
-    
+
     private static let kModes = ["J", "R", "W", "P", "A", "S", "D", "O"]
-    
+
     private var a: Int?
 
     public var description: String {
@@ -114,7 +114,7 @@ public class AcsHelper: Codable, Equatable {
         if mode == kModeNone {
             return "N"
         }
-        
+
         var result: [String] = []
         for i in 0..<kModes.count {
             if ((mode >> i) & 1) != 0 {

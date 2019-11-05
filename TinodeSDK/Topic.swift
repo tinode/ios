@@ -93,7 +93,7 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
         open func onData(data: MsgServerData?) {}
         // All requested data messages received.
         open func onAllMessagesReceived(count: Int) {}
-        
+
         // {info} message received.
         open func onInfo(info: MsgServerInfo) {}
         // {meta} message received.
@@ -117,12 +117,12 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
     public class MetaGetBuilder {
         let topic: TopicProto
         var meta: MsgGetMeta
-        
+
         init(parent: TopicProto) {
             self.topic = parent
             self.meta = MsgGetMeta()
         }
-        
+
         public func withData(since: Int?, before: Int?, limit: Int?) -> MetaGetBuilder {
             meta.setData(since: since, before: before, limit: limit)
             return self
@@ -691,7 +691,7 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
         if (newsub.deleted != nil) {
             store?.subDelete(topic: self, sub: newsub)
             removeSubFromCache(sub: newsub)
-            
+
             sub = newsub
         } else {
             sub = getSubscription(for: newsub.user)

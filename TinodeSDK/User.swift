@@ -92,7 +92,7 @@ public class User<P: Codable>: UserProto {
         }
         return changed
     }
-    
+
     func merge<DR: Decodable>(from sub: Subscription<P, DR>) -> Bool {
         var changed = false
         if sub.updated != nil && (self.updated == nil || self.updated! < sub.updated!) {

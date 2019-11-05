@@ -14,7 +14,7 @@ protocol FindPresentationLogic {
 
 class FindPresenter: FindPresentationLogic {
     weak var viewController: FindDisplayLogic?
-    
+
     func presentLocalContacts(contacts: [ContactHolder]) {
         DispatchQueue.main.async {
             self.viewController?.displayLocalContacts(contacts: contacts)

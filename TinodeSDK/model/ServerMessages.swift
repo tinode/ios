@@ -28,7 +28,7 @@ public class MsgServerCtrl: Decodable {
         }
         return nil
     }
-    
+
     public func getStringArray(for key: String) -> [String]? {
         if case .array(let  v)? = params?[key] {
             return v.compactMap { element -> String? in
@@ -40,7 +40,7 @@ public class MsgServerCtrl: Decodable {
         }
         return nil
     }
-    
+
     public func getIntParam(for key: String) -> Int? {
         if case let .int(v)? = params?[key] {
             return v
@@ -63,15 +63,15 @@ public class MsgServerCtrl: Decodable {
 public class MsgDelRange: Codable {
     public var low: Int? = nil
     public var hi: Int? = nil
-    
+
     init() {
         low = 0
     }
-    
+
     init(id: Int) {
         low = id
     }
-    
+
     init(low: Int, hi: Int) {
         self.low = low
         self.hi = hi
@@ -111,7 +111,7 @@ public class MsgServerMeta: Decodable {
     public let sub: [SubscriptionProto]?
     public let del: DelValues?
     public let tags: [String]?
-    
+
     private enum CodingKeys: String, CodingKey  {
         case id, topic, ts, desc, sub, del, tags
     }
@@ -169,7 +169,7 @@ public class MsgServerPres : Decodable {
     public var act: String?
     public var tgt: String?
     public var dacs: AccessChange?
-    
+
     static func parseWhat(what: String?) -> What {
         guard let what = what else {
             return .kUnknown

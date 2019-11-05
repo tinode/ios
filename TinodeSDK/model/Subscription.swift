@@ -93,7 +93,7 @@ public class Subscription<SP: Codable, SR: Codable>: SubscriptionProto {
     public var pub: SP?
     public var seen: LastSeen?
     public var payload: Payload? = nil
-    
+
     public var uniqueId: String? {
         get {
             if topic == nil {

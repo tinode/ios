@@ -91,7 +91,7 @@ import UIKit
     convenience public init() {
         self.init(frame: .zero)
     }
-    
+
     convenience public init(icon: UIImage?, title: String?, id: String?) {
         self.init(frame: .zero)
         self.set(icon: icon, title: title, id: id)

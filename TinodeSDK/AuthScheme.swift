@@ -14,15 +14,15 @@ struct AuthScheme {
     static let kLoginBasic = "basic"
     static let kLoginToken = "token"
     static let kLoginReset = "reset"
-    
+
     let scheme: String
     let secret: String
-    
+
     init(scheme: String, secret: String) {
         self.scheme = scheme
         self.secret = secret
     }
-    
+
     static func parse(from str: String?) throws -> AuthScheme? {
         if let data = str {
             let parts = data.split(separator: ":")
@@ -37,7 +37,7 @@ struct AuthScheme {
         }
         return nil
     }
-    
+
     static func encodeBasicToken(uname: String, password: String) throws -> String {
         guard !uname.contains(":") else {
             throw AuthSchemeError.invalidParams("invalid user name: \(uname)")
@@ -57,7 +57,7 @@ struct AuthScheme {
             throw AuthSchemeError.invalidParams(
                 "Failed to decode auth token from base64: \(token)")
         }
-        
+
         let parts = basicToken.split(separator: ":")
         if parts.count != 2 || parts[0].isEmpty {
             throw AuthSchemeError.invalidParams(
@@ -65,12 +65,12 @@ struct AuthScheme {
         }
         return [String(parts[0]), String(parts[1])]
     }
-    
+
     static func basicInstance(login: String, password: String) throws -> AuthScheme {
         return AuthScheme(scheme: kLoginBasic,
                           secret: try encodeBasicToken(uname: login, password: password))
     }
-    
+
     static func tokenInstance(secret: String) -> AuthScheme {
         return AuthScheme(scheme: kLoginToken, secret: secret)
     }

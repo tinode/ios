@@ -17,7 +17,7 @@ public enum JSONValue: Codable, Equatable {
     case dict([String: JSONValue])
     case array([JSONValue])
     case bytes(Data)
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
         switch self {
@@ -37,7 +37,7 @@ public enum JSONValue: Codable, Equatable {
             try container.encode(v)
         }
     }
-    
+
     public init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
         if let value = try? container.decode(String.self) {
