@@ -77,7 +77,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                 interactor: self,
                 connected: tinode.isConnected)
         }
-        tinode.listener = self.tinodeEventListener
+        tinode.addListener(self.tinodeEventListener!)
         self.topic = tinode.getTopic(topicName: topicName) as? DefaultComTopic
         self.pagesToLoad = 1
 
@@ -95,8 +95,8 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
             self.topic?.listener = nil
         }
         let tinode = Cache.getTinode()
-        if tinode.listener === self.tinodeEventListener {
-            tinode.listener = nil
+        if let listener = self.tinodeEventListener {
+            tinode.removeListener(listener)
         }
     }
     func leaveTopic() {
@@ -110,14 +110,17 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
             return true
         }
         do {
+            var builder = self.topic!.getMetaGetBuilder()
+                .withDesc()
+                .withSub()
+                .withLaterData(limit: MessageInteractor.kMessagesPerPage)
+                .withDel()
+            if self.topic!.isOwner {
+                builder = builder.withTags()
+            }
             try self.topic?.subscribe(
                 set: nil,
-                get: self.topic?.getMetaGetBuilder()
-                    .withDesc()
-                    .withSub()
-                    .withLaterData(limit: MessageInteractor.kMessagesPerPage)
-                    .withDel()
-                    .build())?.then(
+                get: builder.build())?.then(
                     onSuccess: { [weak self] _ in
                         self?.messageInteractorQueue.async {
                             do {
@@ -424,5 +427,8 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
     }
     override func onMetaDesc(desc: Description<VCard, PrivateType>) {
         self.presenter?.applyTopicPermissions(withError: nil)
+        if let pub = topic?.pub {
+            self.presenter?.updateTitleBar(icon: pub.photo?.image(), title: pub.fn, online: self.topic?.online ?? false)
+        }
     }
 }

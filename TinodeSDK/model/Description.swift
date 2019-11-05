@@ -13,10 +13,7 @@ import Foundation
 // to handle descriptions with all these types.
 public protocol DescriptionProto: Codable {}
 
-public typealias DescPublic = Any & Codable
-public typealias DescPrivate = Any & Codable
-
-public class Description<DP: Codable, DR: Codable>: DescriptionProto {
+public class Description<DP: Codable & Mergeable, DR: Codable & Mergeable>: DescriptionProto {
     var created: Date? = nil
     var updated: Date? = nil
     var touched: Date? = nil
@@ -41,7 +38,23 @@ public class Description<DP: Codable, DR: Codable>: DescriptionProto {
              pub = "public", priv = "private"
     }
 
-    func merge(desc: Description) -> Bool {
+    private func mergePub(with another: DP) -> Int {
+        guard self.pub != nil else {
+            self.pub = another
+            return 1
+        }
+        return self.pub!.merge(with: another)
+    }
+
+    private func mergePriv(with another: DR) -> Int {
+        guard self.priv != nil else {
+            self.priv = another
+            return 1
+        }
+        return self.priv!.merge(with: another)
+    }
+
+    func merge(desc: Description<DP, DR>) -> Bool {
         var changed = 0
         if created == nil && desc.created != nil {
             created = desc.created
@@ -87,11 +100,15 @@ public class Description<DP: Codable, DR: Codable>: DescriptionProto {
             clear = desc.getClear
             changed += 1
         }
-        if desc.pub != nil {
-            pub = desc.pub
+        if let spub = desc.pub {
+            if mergePub(with: spub) > 0 {
+                changed += 1
+            }
         }
-        if desc.priv != nil {
-            priv = desc.priv
+        if let spriv = desc.priv {
+            if mergePriv(with: spriv) > 0 {
+                changed += 1
+            }
         }
         return changed > 0
     }
@@ -132,12 +149,16 @@ public class Description<DP: Codable, DR: Codable>: DescriptionProto {
             changed += 1
         }
         if sub.pub != nil {
-            pub = (sub.pub as! DP)
-            changed += 1
+            let spub = sub.pub as! DP
+            if mergePub(with: spub) > 0 {
+                changed += 1
+            }
         }
         if sub.priv != nil {
-            priv = sub.priv as? DR
-            changed += 1
+            let spriv = sub.priv as! DR
+            if mergePriv(with: spriv) > 0 {
+                changed += 1
+            }
         }
         return changed > 0
     }
@@ -152,10 +173,14 @@ public class Description<DP: Codable, DR: Codable>: DescriptionProto {
             }
         }
         if let pub = desc.pub {
-            self.pub = pub
+            if mergePub(with: pub) > 0 {
+                changed += 1
+            }
         }
         if let priv = desc.priv {
-            self.priv = priv
+            if mergePriv(with: priv) > 0 {
+                changed += 1
+            }
         }
         return changed > 0
     }

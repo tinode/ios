@@ -125,15 +125,15 @@ class ChatListInteractor: ChatListBusinessLogic, ChatListDataStore {
                 interactor: self,
                 connected: tinode.isConnected)
         }
-        tinode.listener = self.tinodeEventListener
+        tinode.addListener(self.tinodeEventListener!)
     }
     func cleanup() {
         if self.meTopic?.listener === self.meListener {
             self.meTopic?.listener = nil
         }
         let tinode = Cache.getTinode()
-        if tinode.listener === self.tinodeEventListener {
-            tinode.listener = nil
+        if let listener = self.tinodeEventListener {
+            tinode.removeListener(listener)
         }
     }
     private func getTopics(archived: Bool) -> [DefaultComTopic]? {
