@@ -27,6 +27,8 @@
 		0A431C032244A26200A837F7 /* TinodeSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A431C022244A26200A837F7 /* TinodeSDK.framework */; };
 		0A431C042244A26200A837F7 /* TinodeSDK.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0A431C022244A26200A837F7 /* TinodeSDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		0A484E5121E359A800FE9AFE /* MessageDb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A484E5021E359A800FE9AFE /* MessageDb.swift */; };
+		0A4B11FC2373D6E400199310 /* TagsEditDialogView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0A4B11FB2373D6E400199310 /* TagsEditDialogView.xib */; };
+		0A4B11FE2373DC1400199310 /* TagsEditDialogView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4B11FD2373DC1400199310 /* TagsEditDialogView.swift */; };
 		0A4E1D3022829C46006C0912 /* ContactsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4E1D2F22829C46006C0912 /* ContactsManager.swift */; };
 		0A69D47F22A6552300769426 /* TopicInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A69D47E22A6552300769426 /* TopicInfoViewController.swift */; };
 		0A6AC322229FAA130025A4EC /* PermissionsEditView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0A6AC321229FAA130025A4EC /* PermissionsEditView.xib */; };
@@ -118,6 +120,8 @@
 		0A37D6F421DA075100A124CA /* AccountDb.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountDb.swift; sourceTree = "<group>"; };
 		0A431C022244A26200A837F7 /* TinodeSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = TinodeSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		0A484E5021E359A800FE9AFE /* MessageDb.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageDb.swift; sourceTree = "<group>"; };
+		0A4B11FB2373D6E400199310 /* TagsEditDialogView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TagsEditDialogView.xib; sourceTree = "<group>"; };
+		0A4B11FD2373DC1400199310 /* TagsEditDialogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagsEditDialogView.swift; sourceTree = "<group>"; };
 		0A4E1D2F22829C46006C0912 /* ContactsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsManager.swift; sourceTree = "<group>"; };
 		0A69D47E22A6552300769426 /* TopicInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopicInfoViewController.swift; sourceTree = "<group>"; };
 		0A6AC321229FAA130025A4EC /* PermissionsEditView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PermissionsEditView.xib; sourceTree = "<group>"; };
@@ -342,6 +346,8 @@
 				B0DF032C2282EE8A000F9492 /* SendMessageBar.xib */,
 				0A11912C22F03E3100A1BBA1 /* TagsEditView.swift */,
 				7DDADC5121D5C219009733B5 /* ValidatedCredential.swift */,
+				0A4B11FB2373D6E400199310 /* TagsEditDialogView.xib */,
+				0A4B11FD2373DC1400199310 /* TagsEditDialogView.swift */,
 			);
 			path = widgets;
 			sourceTree = "<group>";
@@ -422,6 +428,7 @@
 				0A0380DF21B3CC8200A3FA0E /* Assets.xcassets in Resources */,
 				0A0380DD21B3CC8100A3FA0E /* Main.storyboard in Resources */,
 				0A8D945822BEED3700DC154E /* AvatarWithOnlineIndicator.xib in Resources */,
+				0A4B11FC2373D6E400199310 /* TagsEditDialogView.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -604,6 +611,7 @@
 				B0A612B3228EDC7B00569DFE /* DraftyButtonAttachment.swift in Sources */,
 				0ADDBC8B2249F617000BD00D /* ChatListViewCell.swift in Sources */,
 				0A8A108321D4C78C00B90D73 /* TopicDb.swift in Sources */,
+				0A4B11FE2373DC1400199310 /* TagsEditDialogView.swift in Sources */,
 				0A69D47F22A6552300769426 /* TopicInfoViewController.swift in Sources */,
 				0A0016E921E736CD00088188 /* MessagePresenter.swift in Sources */,
 				B0F98C8322E381C300444121 /* MessageMenuItem.swift in Sources */,

@@ -1139,4 +1139,9 @@ public class Tinode {
         }
         return try? Tinode.jsonDecoder.decode(T.self, from: d)
     }
+
+    public static func isNull(obj: Any?) -> Bool {
+        guard let obj = obj as? String else { return false }
+        return obj == Tinode.kNullValue
+    }
 }
