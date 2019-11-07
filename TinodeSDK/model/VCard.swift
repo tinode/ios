@@ -123,31 +123,31 @@ public class VCard: Codable, Mergeable {
         let anotherVCard = another as! VCard
         var changed = 0
         if anotherVCard.fn != nil {
-            self.fn = anotherVCard.fn
+            self.fn = !Tinode.isNull(obj: anotherVCard.fn) ? anotherVCard.fn : nil
             changed += 1
         }
         if anotherVCard.title != nil {
-            self.title = anotherVCard.title
+            self.title = !Tinode.isNull(obj: anotherVCard.title) ? anotherVCard.title : nil
             changed += 1
         }
         if anotherVCard.org != nil {
-            self.org = anotherVCard.org
+            self.org = !Tinode.isNull(obj: anotherVCard.org) ? anotherVCard.org : nil
             changed += 1
         }
         if anotherVCard.tel != nil {
-            self.tel = anotherVCard.tel
+            self.tel = !Tinode.isNull(obj: anotherVCard.tel) ? anotherVCard.tel : nil
             changed += 1
         }
         if anotherVCard.email != nil {
-            self.email = anotherVCard.email
+            self.email = !Tinode.isNull(obj: anotherVCard.email) ? anotherVCard.email : nil
             changed += 1
         }
         if anotherVCard.impp != nil {
-            self.impp = anotherVCard.impp
+            self.impp = !Tinode.isNull(obj: anotherVCard.impp) ? anotherVCard.impp : nil
             changed += 1
         }
         if anotherVCard.photo != nil {
-            self.photo = anotherVCard.photo
+            self.photo = !Tinode.isNull(obj: anotherVCard.photo) ? anotherVCard.photo : nil
             changed += 1
         }
         return changed
