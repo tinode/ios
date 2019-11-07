@@ -19,9 +19,11 @@ enum ValidatedCredential {
         var currObject: String!
         switch self {
         case let .email(str):
-            predicateStr = "^([a-z0-9_\\.-]+)@([\\da-z\\.-]+)\\.([a-z\\.]{2,6})$"
+            predicateStr = "^([a-z0-9_\\.+-]+)@([\\da-z\\.-]+)\\.([a-z\\.]{2,6})$"
             currObject = str
         case let .phoneNum(str):
+            // FIXME: this call does nothing. If one passes an email, it just reurns the same email back.
+            // Maybe use https://github.com/marmelroy/PhoneNumberKit
             let e164 = CNPhoneNumber(stringValue: str).naiveE164
             if !e164.isEmpty {
                 print("phone = \(e164)")

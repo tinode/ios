@@ -964,7 +964,7 @@ public class Tinode {
     }
     public func connect(to hostName: String, useTLS: Bool) throws -> PromisedReply<ServerMessage>? {
         if isConnected {
-            Tinode.log.error("Tinode is already connected")
+            Tinode.log.debug("Tinode is already connected")
             return PromisedReply<ServerMessage>(value: ServerMessage())
         }
         self.useTLS = useTLS

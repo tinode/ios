@@ -79,18 +79,13 @@ class SignupViewController: UITableViewController {
         creds.append(cred)
         UiUtils.toggleProgressOverlay(in: self, visible: true, title: "Registering...")
         do {
-            let future = !tinode.isConnected ?
-                try tinode.connect(to: Cache.kHostName, useTLS: false)?.thenApply(
+            try tinode.connectDefault()?.thenApply(
                     onSuccess: { pkt in
+                        print("Successfully connected, creating account")
                         return tinode.createAccountBasic(
                             uname: login, pwd: pwd, login: true,
                             tags: nil, desc: desc, creds: creds)
-                }) :
-                tinode.createAccountBasic(
-                    uname: login, pwd: pwd, login: true,
-                    tags: nil, desc: desc, creds: creds)
-
-            try future?.then(
+            })?.thenApply(
                 onSuccess: { [weak self] msg in
                     if let ctrl = msg?.ctrl, ctrl.code >= 300, ctrl.text.contains("validate credentials") {
                         DispatchQueue.main.async {
@@ -101,7 +96,8 @@ class SignupViewController: UITableViewController {
                         UiUtils.routeToChatListVC()
                     }
                     return nil
-                }, onFailure: { err in
+            })?.thenCatch(
+                onFailure: { err in
                     DispatchQueue.main.async {
                         UiUtils.showToast(message: "Failed to create account: \(err.localizedDescription)")
                     }
