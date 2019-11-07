@@ -375,50 +375,21 @@ class UiUtils {
         // Topic<VCard, PrivateType, VCard, PrivateType> is the least common ancestor for
         // DefaultMeTopic (AccountSettingsVC) and DefaultComTopic (TopicInfoVC).
         guard let topic = topic as? Topic<VCard, PrivateType, VCard, PrivateType> else { return }
-        let alert = UIAlertController(title: "Tags (content discovery)", message: nil, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
-
-        let tagsEditField = TagsEditView()
-        tagsEditField.fontSize = 17
-        tagsEditField.onVerifyTag = { (_, tag) in
-            return Utils.isValidTag(tag: tag)
+        guard let tags = topic.tags else {
+            DispatchQueue.main.async { UiUtils.showToast(message: "Tags missing.")}
+            return
         }
-        if let tags = topic.tags {
-            tagsEditField.addTags(tags)
-        }
-
-        alert.view.addSubview(tagsEditField)
-
-        tagsEditField.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            tagsEditField.topAnchor.constraint(equalTo: alert.view.topAnchor, constant: 48),
-            tagsEditField.heightAnchor.constraint(equalToConstant: 64),
-            tagsEditField.rightAnchor.constraint(equalTo: alert.view.rightAnchor, constant: -10),
-            tagsEditField.leftAnchor.constraint(equalTo: alert.view.leftAnchor, constant: 10)
-            ])
-        let vcHeight: CGFloat
-        if #available(iOS 10.0, *) {
-            vcHeight = 168
-        } else {
-            vcHeight = 190
-        }
-        alert.view.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            alert.view.heightAnchor.constraint(equalToConstant: vcHeight)
-            ])
-        alert.addAction(UIAlertAction(
-            title: "OK", style: .default,
-            handler: { action in
-                let tags = tagsEditField.tags
-                do {
-                    try topic.setMeta(meta: MsgSetMeta(desc: nil, sub: nil, tags: tags, cred: nil))?.thenCatch(onFailure: UiUtils.ToastFailureHandler)
-                } catch {
-                    DispatchQueue.main.async {
-                        UiUtils.showToast(message: "Failed to update tags \(error.localizedDescription)")
-                    }
+        let alert = TagsEditDialogViewController(with: tags)
+        alert.completionHandler = { newTags in
+            do {
+                try topic.setMeta(meta: MsgSetMeta(desc: nil, sub: nil, tags: newTags, cred: nil))?.thenCatch(onFailure: UiUtils.ToastFailureHandler)
+            } catch {
+                DispatchQueue.main.async {
+                    UiUtils.showToast(message: "Failed to update tags \(error.localizedDescription)")
                 }
-        }))
-        viewController.present(alert, animated: true)
+            }
+        }
+        alert.show(over: viewController)
     }
 }
 
