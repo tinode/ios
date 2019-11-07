@@ -23,7 +23,7 @@
             <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
             <subviews>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="jFh-3V-rNI" userLabel="Alert View">
-                    <rect key="frame" x="66" y="356.5" width="282" height="193"/>
+                    <rect key="frame" x="66" y="357.5" width="282" height="191"/>
                     <subviews>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="751" text="Tags (content discovery)" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eeW-SH-URg">
                             <rect key="frame" x="42" y="18" width="198.5" height="21"/>
@@ -39,7 +39,7 @@
                             </constraints>
                         </view>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vOv-C1-oEb">
-                            <rect key="frame" x="0.0" y="145" width="141" height="48"/>
+                            <rect key="frame" x="0.0" y="145" width="141" height="46"/>
                             <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="17"/>
                             <state key="normal" title="Cancel"/>
                             <connections>
@@ -47,9 +47,9 @@
                             </connections>
                         </button>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="PJ7-dH-ATp">
-                            <rect key="frame" x="141" y="145" width="141" height="48"/>
+                            <rect key="frame" x="141" y="145" width="141" height="46"/>
                             <constraints>
-                                <constraint firstAttribute="height" constant="48" id="dpC-aJ-bhr"/>
+                                <constraint firstAttribute="height" constant="46" id="dpC-aJ-bhr"/>
                             </constraints>
                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                             <state key="normal" title="OK"/>
