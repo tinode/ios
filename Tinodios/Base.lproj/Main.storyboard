@@ -445,10 +445,10 @@
                                                 <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" restorationIdentifier="Topic Title" editable="NO" text="User name" textAlignment="natural" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bFa-Y7-bbT" userLabel="User name">
                                                     <rect key="frame" x="16" y="7" width="203" height="44"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <accessibility key="accessibilityConfiguration">
                                                         <accessibilityTraits key="traits" notEnabled="YES"/>
                                                     </accessibility>
+                                                    <color key="textColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="22"/>
                                                     <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                                                 </textView>
@@ -482,7 +482,6 @@
                                                             </connections>
                                                         </button>
                                                     </subviews>
-                                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <constraints>
                                                         <constraint firstItem="5J8-4E-FC0" firstAttribute="width" secondItem="nER-gj-WQf" secondAttribute="width" multiplier="0.4" priority="999" id="EOf-aL-GLU"/>
                                                         <constraint firstItem="nER-gj-WQf" firstAttribute="leading" secondItem="HTP-Je-liO" secondAttribute="leading" id="Opv-H5-zdK"/>
@@ -521,7 +520,7 @@
                                                     <rect key="frame" x="297.5" y="14" width="61.5" height="19.5"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" name="CourierNewPSMT" family="Courier New" pointSize="17"/>
-                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                    <color key="textColor" systemColor="secondaryLabelColor" red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                             </subviews>
@@ -1065,20 +1064,19 @@
                                                     <subviews>
                                                         <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" restorationIdentifier="Topic Title" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" editable="NO" text="Topic title (public)" textAlignment="natural" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ity-bg-zqr" userLabel="Topic Title">
                                                             <rect key="frame" x="0.0" y="0.0" width="179" height="54.5"/>
-                                                            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                             <accessibility key="accessibilityConfiguration">
                                                                 <accessibilityTraits key="traits" notEnabled="YES"/>
                                                             </accessibility>
+                                                            <color key="textColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
                                                             <fontDescription key="fontDescription" type="system" pointSize="22"/>
                                                             <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                                                         </textView>
                                                         <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" restorationIdentifier="Topic Subtitle" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" editable="NO" text="Topic subtitle (private)" textAlignment="natural" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="D3z-yf-zJA" userLabel="Topic Subitle">
                                                             <rect key="frame" x="0.0" y="54.5" width="173" height="45.5"/>
-                                                            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                             <accessibility key="accessibilityConfiguration">
                                                                 <accessibilityTraits key="traits" notEnabled="YES"/>
                                                             </accessibility>
-                                                            <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                            <color key="textColor" systemColor="secondaryLabelColor" red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
                                                             <fontDescription key="fontDescription" type="system" pointSize="16"/>
                                                             <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                                                         </textView>
@@ -1119,7 +1117,6 @@
                                                             </connections>
                                                         </button>
                                                     </subviews>
-                                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <constraints>
                                                         <constraint firstItem="dWX-X1-W59" firstAttribute="centerX" secondItem="ut1-ZJ-7ei" secondAttribute="centerX" id="189-us-oHd"/>
                                                         <constraint firstItem="dWX-X1-W59" firstAttribute="width" secondItem="ut1-ZJ-7ei" secondAttribute="width" id="N1w-6O-OGB"/>
@@ -1907,7 +1904,6 @@
                                                             </connections>
                                                         </button>
                                                     </subviews>
-                                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <constraints>
                                                         <constraint firstItem="IVi-b4-eb8" firstAttribute="top" secondItem="qec-5m-tPw" secondAttribute="top" id="Ako-2N-nZB"/>
                                                         <constraint firstAttribute="height" constant="128" id="GGT-g6-pxm"/>
