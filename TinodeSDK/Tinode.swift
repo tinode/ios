@@ -882,10 +882,11 @@ public class Tinode {
         connection?.disconnect()
     }
     public func logout() {
-        disconnect()
-        myUid = nil
-        isConnectionAuthenticated = false
-        store?.logout()
+        try? setDeviceToken(token: Tinode.kNullValue)?.thenFinally {
+            self.disconnect()
+            self.myUid = nil
+            self.store?.logout()
+        }
     }
     private func handleDisconnect(isServerOriginated: Bool, code: Int, reason: String) {
         let e = TinodeError.notConnected("no longer connected to server")
@@ -996,23 +997,22 @@ public class Tinode {
      *
      * @param token device token
      */
-    public func setDeviceToken(token: String?) {
-        guard token != nil else { return }
-        // Check if token has changed.
-        if deviceToken == nil || deviceToken != token {
-            // Cache token here assuming the call to server does not fail. If it fails clear the cached token.
-            // This prevents multiple unnecessary calls to the server with the same token.
-            deviceToken = token
-            if isConnected && isConnectionAuthenticated {
-                let msgId = getNextMsgId()
-                let msg = ClientMessage<Int, Int>(hi: MsgClientHi(id: msgId, dev: deviceToken!))
-                try! sendWithPromise(payload: msg, with: msgId).thenCatch(onFailure: { [weak self] err in
-                    // Clear cached value on failure to allow for retries.
-                    self?.deviceToken = nil
-                    return nil
-                })
-            }
+    public func setDeviceToken(token: String) -> PromisedReply<ServerMessage>? {
+        guard token != deviceToken else {
+            return PromisedReply<ServerMessage>(value: ServerMessage())
         }
+        // Cache token here assuming the call to server does not fail. If it fails clear the cached token.
+        // This prevents multiple unnecessary calls to the server with the same token.
+        deviceToken = Tinode.isNull(obj: token) ? nil : token
+        let msgId = getNextMsgId()
+        let msg = ClientMessage<Int, Int>(hi: MsgClientHi(id: msgId, dev: token))
+        return try? sendWithPromise(payload: msg, with: msgId)
+            .thenCatch(onFailure: { [weak self] err in
+                // Clear cached value on failure to allow for retries.
+                self?.deviceToken = nil
+                self?.store?.deviceToken = nil
+                return nil
+            })
     }
 
     public func subscribe<Pu: Codable, Pr: Codable>(

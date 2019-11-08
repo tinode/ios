@@ -105,7 +105,7 @@ public class AccountDb {
         }
         return nil
     }
-    func updateDeviceToken(token: String) -> Bool {
+    func saveDeviceToken(token: String?) -> Bool {
         let record = self.table.filter(self.active == 1)
         do {
             return try self.db.run(record.update(self.deviceId <- token)) > 0

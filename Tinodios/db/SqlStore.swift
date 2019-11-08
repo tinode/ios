@@ -22,7 +22,10 @@ class SqlStore : Storage {
         }
     }
 
-    var deviceToken: String?
+    var deviceToken: String? {
+        get { self.dbh?.accountDb?.getDeviceToken() }
+        set { self.dbh?.accountDb?.saveDeviceToken(token: newValue) }
+    }
     var dbh: BaseDb?
     var myId: Int64 = -1
 
