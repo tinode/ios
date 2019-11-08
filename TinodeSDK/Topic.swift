@@ -505,6 +505,9 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
         guard tnd.isConnected else {
             return PromisedReply(error: TinodeError.notConnected("Cannot subscribe to topic. No server connection."))
         }
+        guard tnd.isConnectionAuthenticated else {
+            return PromisedReply(error: TinodeError.invalidState("Connection is not authenticated.") )
+        }
         return try! tnd.subscribe(to: name, set: set, get: get)?.then(
             onSuccess: { [weak self] msg in
                 let isAttached = self?.attached ?? false
