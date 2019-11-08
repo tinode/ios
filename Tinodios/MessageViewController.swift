@@ -22,7 +22,6 @@ protocol MessageDisplayLogic: class {
 }
 
 class MessageViewController: UIViewController {
-
     // MARK: static parameters
 
     private enum Constants {
@@ -49,14 +48,18 @@ class MessageViewController: UIViewController {
         // Color of all other markers.
         static let kDeliveryMarkerColor = UIColor.gray.withAlphaComponent(0.7)
 
-        // Light gray color: outgoing messages
-        static let kOutgoingBubbleColor = UIColor(red: 230/255, green: 230/255, blue: 230/255, alpha: 1)
+        // Light/dark gray color: outgoing messages
+        static let kOutgoingBubbleColorLight = UIColor(red: 230/255, green: 230/255, blue: 230/255, alpha: 1)
+        static let kOutgoingBubbleColorDark = UIColor(red: 51/255, green: 51/255, blue: 51/255, alpha: 1)
         // And corresponding text color
-        static let kOutgoingTextColor = UIColor.darkText
-        // Bright green color
-        static let kIncomingBubbleColor = UIColor(red: 69/255, green: 193/255, blue: 89/255, alpha: 1)
+        static let kOutgoingTextColorLight = UIColor.darkText
+        static let kOutgoingTextColorDark = UIColor.lightText
+        // Bright/dark green color
+        static let kIncomingBubbleColorLight = UIColor(red: 69/255, green: 193/255, blue: 89/255, alpha: 1)
+        static let kIncomingBubbleColorDark = UIColor(red: 40/255, green: 120/255, blue: 60/255, alpha: 1)
         // And corresponding font color
-        static let kIncomingTextColor = UIColor.white
+        static let kIncomingTextColorLight = UIColor.white
+        static let kIncomingTextColorDark = UIColor.lightText
 
         static let kContentFont = UIFont.preferredFont(forTextStyle: .body)
 
@@ -288,7 +291,11 @@ class MessageViewController: UIViewController {
         self.collectionView.dataSource = self
         sendMessageBar.delegate = self
 
-        view.backgroundColor = .white
+        if #available(iOS 12.0, *), traitCollection.userInterfaceStyle == .dark {
+            view.backgroundColor = .black
+        } else {
+            view.backgroundColor = .white
+        }
 
         if (self.interactor?.setup(topicName: self.topicName) ?? false) {
             self.interactor?.loadMessages()
@@ -613,11 +620,21 @@ extension MessageViewController: UICollectionViewDataSource {
 
         cell.content.backgroundColor = nil
         if isFromCurrentSender(message: message) {
-            cell.containerView.backgroundColor = Constants.kOutgoingBubbleColor
-            cell.content.textColor = .darkText
+            if #available(iOS 12.0, *), traitCollection.userInterfaceStyle == .dark {
+                cell.containerView.backgroundColor = Constants.kOutgoingBubbleColorDark
+                cell.content.textColor = Constants.kOutgoingTextColorDark
+            } else {
+                cell.containerView.backgroundColor = Constants.kOutgoingBubbleColorLight
+                cell.content.textColor = Constants.kOutgoingTextColorDark
+            }
         } else {
-            cell.containerView.backgroundColor = Constants.kIncomingBubbleColor
-            cell.content.textColor = .white
+            if #available(iOS 12.0, *), traitCollection.userInterfaceStyle == .dark {
+                cell.containerView.backgroundColor = Constants.kIncomingBubbleColorDark
+                cell.content.textColor = Constants.kIncomingTextColorDark
+            } else {
+                cell.containerView.backgroundColor = Constants.kIncomingBubbleColorLight
+                cell.content.textColor = Constants.kIncomingTextColorLight
+            }
         }
 
         cell.content.font = Constants.kContentFont
@@ -933,7 +950,12 @@ extension MessageViewController : MessageViewLayoutDelegate {
 
         let carveout = isFromCurrentSender(message: message) ? Constants.kOutgoingMetadataCarveout : Constants.kIncomingMetadataCarveout
 
-        let textColor = isFromCurrentSender(message: message) ? Constants.kOutgoingTextColor : Constants.kIncomingTextColor
+        let textColor: UIColor
+        if #available(iOS 12.0, *), traitCollection.userInterfaceStyle == .dark {
+            textColor = isFromCurrentSender(message: message) ? Constants.kOutgoingTextColorDark : Constants.kIncomingTextColorDark
+        } else {
+            textColor = isFromCurrentSender(message: message) ? Constants.kOutgoingTextColorLight : Constants.kIncomingTextColorLight
+        }
 
         let storedMessage = message as! StoredMessage
         if let content = storedMessage.attributedContent(fitIn: CGSize(width: maxWidth, height: collectionView.frame.height * 0.66), withDefaultAttributes: [.font: Constants.kContentFont, .foregroundColor: textColor]) {
