@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
-    <device id="retina6_1" orientation="portrait">
-        <adaptation id="fullscreen"/>
-    </device>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15400" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15404"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -35,7 +33,7 @@
                     <blurEffect style="light"/>
                 </visualEffectView>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Sxl-U7-4Vy" userLabel="attachButton">
-                    <rect key="frame" x="8" y="76" width="32" height="32"/>
+                    <rect key="frame" x="8" y="110" width="32" height="32"/>
                     <constraints>
                         <constraint firstAttribute="width" secondItem="Sxl-U7-4Vy" secondAttribute="height" multiplier="1:1" id="4Wy-xE-ah9"/>
                         <constraint firstAttribute="width" constant="32" id="vxu-KV-i5b"/>
@@ -46,17 +44,15 @@
                     </connections>
                 </button>
                 <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="bxx-m5-ifU" customClass="PlaceholderTextView" customModule="Tinodios" customModuleProvider="target">
-                    <rect key="frame" x="50" y="4" width="360" height="108"/>
-                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <rect key="frame" x="50" y="4" width="360" height="142"/>
+                    <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                     <constraints>
                         <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="40" id="gP4-QC-iyW"/>
                     </constraints>
+                    <color key="textColor" systemColor="labelColor" cocoaTouchSystemColor="darkTextColor"/>
                     <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                     <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                     <userDefinedRuntimeAttributes>
-                        <userDefinedRuntimeAttribute type="color" keyPath="mainTextColor">
-                            <color key="value" cocoaTouchSystemColor="darkTextColor"/>
-                        </userDefinedRuntimeAttribute>
                         <userDefinedRuntimeAttribute type="color" keyPath="placeholderColor">
                             <color key="value" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         </userDefinedRuntimeAttribute>
@@ -64,7 +60,7 @@
                     </userDefinedRuntimeAttributes>
                 </textView>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LQB-Eu-unW" userLabel="sendButton">
-                    <rect key="frame" x="374" y="76" width="32" height="32"/>
+                    <rect key="frame" x="374" y="110" width="32" height="32"/>
                     <color key="backgroundColor" red="0.25098039220000001" green="0.75294117650000003" blue="0.25098039220000001" alpha="1" colorSpace="calibratedRGB"/>
                     <constraints>
                         <constraint firstAttribute="width" secondItem="LQB-Eu-unW" secondAttribute="height" multiplier="1:1" id="O3z-8u-PRJ"/>
@@ -83,7 +79,7 @@
                     </connections>
                 </button>
                 <stackView hidden="YES" opaque="NO" contentMode="scaleToFill" alignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="Awf-Rd-vTa" userLabel="Peer Messaging Stack View">
-                    <rect key="frame" x="50" y="116" width="360" height="30"/>
+                    <rect key="frame" x="50" y="150" width="360" height="30"/>
                     <subviews>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Peer's messaging is disabled" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5la-4N-ZQw">
                             <rect key="frame" x="0.0" y="5" width="220.5" height="20.5"/>
@@ -107,7 +103,7 @@
                     <rect key="frame" x="0.0" y="0.0" width="414" height="180"/>
                     <subviews>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Not Available" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Gvw-uT-5lm">
-                            <rect key="frame" x="150" y="83" width="114.5" height="24"/>
+                            <rect key="frame" x="144.5" y="99" width="125.5" height="26.5"/>
                             <fontDescription key="fontDescription" style="UICTFontTextStyleTitle2"/>
                             <nil key="textColor"/>
                             <nil key="highlightedColor"/>
