@@ -261,14 +261,14 @@ class TopicInfoViewController: UITableViewController {
         var pub: VCard? = nil
         if let nt = newTitle {
             if let oldPub = topic.pub, oldPub.fn != nt {
-                pub = VCard(fn: nt, avatar: nil as Data?)
+                pub = VCard(fn: String(nt.prefix(UiUtils.kMaxTitleLength)), avatar: nil as Data?)
             }
         }
         var priv: PrivateType? = nil
         if let ns = newSubtitle {
             if let oldComment = topic.comment, oldComment != ns {
                 priv = PrivateType()
-                priv!.comment = ns
+                priv!.comment = String(ns.prefix(UiUtils.kMaxTitleLength))
             }
         }
         if pub != nil || priv != nil {
