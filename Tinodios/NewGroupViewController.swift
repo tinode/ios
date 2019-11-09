@@ -136,7 +136,7 @@ class NewGroupViewController: UITableViewController {
     }
 
     @IBAction func saveButtonClicked(_ sender: Any) {
-        let groupName = UiUtils.ensureDataInTextField(groupNameTextField)
+        let groupName = UiUtils.ensureDataInTextField(groupNameTextField, maxLength: UiUtils.kMaxTitleLength)
         let tinode = Cache.getTinode()
         let members = selectedMembers.filter { !tinode.isMe(uid: $0) }
         if members.isEmpty {
@@ -144,7 +144,7 @@ class NewGroupViewController: UITableViewController {
             return
         }
         // Optional
-        let privateInfo = (privateTextField.text ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+        let privateInfo = String((privateTextField.text ?? "").trimmingCharacters(in: .whitespacesAndNewlines).prefix(UiUtils.kMaxTitleLength))
         guard !groupName.isEmpty else { return }
         let avatar = imageUploaded ? avatarView.image?.resize(width: CGFloat(Float(UiUtils.kAvatarSize)), height: CGFloat(Float(UiUtils.kAvatarSize)), clip: true) : nil
         createGroupTopic(titled: groupName, subtitled: privateInfo, with: tagsTextField.tags, consistingOf: members, withAvatar: avatar)

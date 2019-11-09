@@ -125,7 +125,6 @@ public class Connection {
     }
     private func connectWithBackoffAsync() {
         let delay = Double(self.backoffSteps.getNextDelay()) / 1000
-        print("will reconnect run after \(delay) sec")
         maybeInitReconnectClosure()
         self.connectQueue.asyncAfter(
             deadline: .now() + delay,

@@ -284,7 +284,7 @@ class AccountSettingsViewController: UITableViewController {
         guard let newTitle = newTitle else { return }
         let pub = me.pub == nil ? VCard(fn: nil, avatar: nil as Data?) : me.pub!.copy()
         if pub.fn != newTitle {
-            pub.fn = newTitle
+            pub.fn = String(newTitle.prefix(UiUtils.kMaxTitleLength))
         }
         _ = try? UiUtils.setTopicData(forTopic: self.me, pub: pub, priv: nil)?.then(
             onSuccess: { msg in

@@ -31,14 +31,22 @@ class MessageCell: UICollectionViewCell {
 
     public override init(frame: CGRect) {
         super.init(frame: frame)
-        backgroundColor = UIColor.white
+        if #available(iOS 12.0, *), traitCollection.userInterfaceStyle == .dark {
+            backgroundColor = .black
+        } else {
+            backgroundColor = .white
+        }
         contentView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         setupSubviews()
     }
 
     public required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
-        backgroundColor = UIColor.white
+        if #available(iOS 12.0, *), traitCollection.userInterfaceStyle == .dark {
+            backgroundColor = .black
+        } else {
+            backgroundColor = .white
+        }
         contentView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         setupSubviews()
     }

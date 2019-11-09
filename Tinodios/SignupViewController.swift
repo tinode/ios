@@ -45,7 +45,7 @@ class SignupViewController: UITableViewController {
     @IBAction func signUpClicked(_ sender: Any) {
         let login = UiUtils.ensureDataInTextField(loginTextField)
         let pwd = UiUtils.ensureDataInTextField(passwordTextField)
-        let name = UiUtils.ensureDataInTextField(nameTextField)
+        let name = UiUtils.ensureDataInTextField(nameTextField, maxLength: UiUtils.kMaxTitleLength)
         let credential = UiUtils.ensureDataInTextField(emailPhoneTextField)
 
         guard !login.isEmpty && !pwd.isEmpty && !name.isEmpty && !credential.isEmpty else { return }

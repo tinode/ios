@@ -45,6 +45,8 @@ class UiUtils {
     static let kMinTagLength = 4
     static let kAvatarSize: CGFloat = 128
     static let kMaxBitmapSize: CGFloat = 1024
+    // Maximum length of topic title or user name.
+    static let kMaxTitleLength = 60
 
     private static func setUpPushNotifications() {
         let application = UIApplication.shared
@@ -130,13 +132,13 @@ class UiUtils {
     }
 
     // Get text from UITextField or mark the field red if the field is blank
-    public static func ensureDataInTextField(_ field: UITextField) -> String {
+    public static func ensureDataInTextField(_ field: UITextField, maxLength: Int = -1) -> String {
         let text = (field.text ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
         if text.isEmpty {
             markTextFieldAsError(field)
             return ""
         }
-        return text
+        return maxLength > 0 ? String(text.prefix(maxLength)) : text
     }
     public static func markTextFieldAsError(_ field: UITextField) {
         field.rightViewMode = .always
