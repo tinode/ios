@@ -56,7 +56,7 @@
                                                         <nil key="highlightedColor"/>
                                                     </label>
                                                 </subviews>
-                                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <constraints>
                                                     <constraint firstItem="kjo-LF-vGk" firstAttribute="centerY" secondItem="Rob-ty-RSP" secondAttribute="centerY" id="4hv-5U-2Zr"/>
                                                     <constraint firstAttribute="trailing" secondItem="BS4-zj-4bf" secondAttribute="trailing" constant="20" id="CKO-YO-oAO"/>
@@ -220,7 +220,7 @@
                         <view key="tableFooterView" contentMode="scaleToFill" id="CSz-pB-KzR" userLabel="Blank footer">
                             <rect key="frame" x="0.0" y="470" width="375" height="44"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         </view>
                         <sections>
                             <tableViewSection id="PCy-HM-M03">
@@ -267,7 +267,7 @@
                                                             </connections>
                                                         </button>
                                                     </subviews>
-                                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <constraints>
                                                         <constraint firstItem="fp2-jW-uGT" firstAttribute="trailing" secondItem="lIy-Lk-DvY" secondAttribute="trailing" identifier="avatar.trailing=loadAvatar.leading" id="78o-g3-2dk"/>
                                                         <constraint firstAttribute="trailing" secondItem="fp2-jW-uGT" secondAttribute="trailing" identifier="avatarView.trailing=avatar.trailing" id="MyH-81-lsR"/>

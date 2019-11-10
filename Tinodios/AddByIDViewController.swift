@@ -22,6 +22,26 @@ class AddByIDViewController: UIViewController {
         self.tinode = Cache.getTinode()
         UiUtils.dismissKeyboardForTaps(onView: self.view)
     }
+
+    override func viewDidAppear(_ animated: Bool) {
+        self.setInterfaceColors()
+    }
+
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        guard UIApplication.shared.applicationState == .active else {
+            return
+        }
+        self.setInterfaceColors()
+    }
+
+    private func setInterfaceColors() {
+        if #available(iOS 12.0, *), traitCollection.userInterfaceStyle == .dark {
+            self.view.backgroundColor = .black
+        } else {
+            self.view.backgroundColor = .white
+        }
+    }
+
     @objc func textFieldDidChange(_ textField: UITextField) {
         UiUtils.clearTextFieldError(textField)
     }

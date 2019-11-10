@@ -14,7 +14,7 @@ class MessageBubbleDecorator {
         case single, last, middle, first
     }
 
-    private static func drawIncomig(path: UIBezierPath, size: CGSize, style: Style) {
+    private static func drawIncoming(path: UIBezierPath, size: CGSize, style: Style) {
         let width = size.width
         let height = size.height
 
@@ -107,7 +107,7 @@ class MessageBubbleDecorator {
         let path = UIBezierPath()
 
         if isIncoming {
-            drawIncomig(path: path, size: rect.size, style: style)
+            drawIncoming(path: path, size: rect.size, style: style)
         } else {
             drawOutgoing(path: path, size: rect.size, style: style)
         }

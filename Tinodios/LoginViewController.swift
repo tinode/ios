@@ -41,6 +41,7 @@ class LoginViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.navigationController?.navigationBar.isHidden = true
+        self.setInterfaceColors()
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -50,6 +51,21 @@ class LoginViewController: UIViewController {
 
     override var prefersStatusBarHidden: Bool {
         return true
+    }
+
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        guard UIApplication.shared.applicationState == .active else {
+            return
+        }
+        self.setInterfaceColors()
+    }
+
+    private func setInterfaceColors() {
+        if #available(iOS 12.0, *), traitCollection.userInterfaceStyle == .dark {
+            self.view.backgroundColor = .black
+        } else {
+            self.view.backgroundColor = .white
+        }
     }
 
     @objc func keyboardWillShow(_ notification: Notification) {

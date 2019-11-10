@@ -17,6 +17,10 @@ class ResetPasswordViewController : UIViewController {
         UiUtils.dismissKeyboardForTaps(onView: self.view)
     }
 
+    override func viewDidAppear(_ animated: Bool) {
+        self.setInterfaceColors()
+    }
+
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         if self.isMovingFromParent {
@@ -26,6 +30,21 @@ class ResetPasswordViewController : UIViewController {
             if tinode.isConnectionAuthenticated || tinode.myUid != nil {
                 tinode.logout()
             }
+        }
+    }
+
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        guard UIApplication.shared.applicationState == .active else {
+            return
+        }
+        self.setInterfaceColors()
+    }
+
+    private func setInterfaceColors() {
+        if #available(iOS 12.0, *), traitCollection.userInterfaceStyle == .dark {
+            self.view.backgroundColor = .black
+        } else {
+            self.view.backgroundColor = .white
         }
     }
 
