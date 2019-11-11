@@ -130,10 +130,8 @@ class ContactsSynchronizer {
             var lastSyncMarker = self.serverSyncMarker
             let tinode = Cache.getTinode()
             do {
-                let (hostName, useTLS, _) = SettingsHelper.getConnectionSettings()
-                // TODO: implement TLS.
                 tinode.setAutoLoginWithToken(token: token)
-                _ = try tinode.connect(to: (hostName ?? Cache.kHostName), useTLS: (useTLS ?? false))?.getResult()
+                _ = try tinode.connectDefault()?.getResult()
 
                 _ = try tinode.loginToken(token: token, creds: nil)?.getResult()
                 // Generic params don't matter.
