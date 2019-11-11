@@ -31,9 +31,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 let tinode = Cache.getTinode()
                 var success = false
                 do {
-                    let (hostName, useTLS, _) = SettingsHelper.getConnectionSettings()
                     tinode.setAutoLoginWithToken(token: token)
-                    _ = try tinode.connect(to: (hostName ?? Cache.kHostName), useTLS: (useTLS ?? false))?.getResult()
+                    _ = try tinode.connectDefault()?.getResult()
                     let msg = try tinode.loginToken(token: token, creds: nil)?.getResult()
                     if let code = msg?.ctrl?.code {
                         // Assuming success by default.
