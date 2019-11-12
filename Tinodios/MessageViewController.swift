@@ -964,7 +964,16 @@ extension MessageViewController : MessageViewLayoutDelegate {
             attributedText.append(NSAttributedString(string: "none", attributes: [.font: Constants.kContentFont]))
         }
         attributedText.append(NSAttributedString(string: carveout, attributes: [.font: Constants.kContentFont]))
-        let size = attributedText.boundingRect(with: CGSize(width: maxWidth, height: .greatestFiniteMagnitude), options: [.usesLineFragmentOrigin, .usesFontLeading], context: nil).integral.size
+
+        // Calculate content size.
+        // Per https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/TextLayout/Tasks/StringHeight.html
+        let ts = NSTextStorage(attributedString: attributedText)
+        let tc = NSTextContainer(size: CGSize(width: maxWidth, height: .greatestFiniteMagnitude))
+        let lm = NSLayoutManager()
+        lm.addTextContainer(tc)
+        ts.addLayoutManager(lm)
+
+        let size = lm.usedRect(for: tc).integral.size
         return size
     }
 }
