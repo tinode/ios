@@ -239,14 +239,21 @@ class FindViewController: UITableViewController, FindDisplayLogic {
 
 extension FindViewController: UISearchResultsUpdating, UISearchControllerDelegate, UISearchBarDelegate {
 
+    public func cancelPendingSearchRequest(deactivateSearch dismiss: Bool) {
+        pendingSearchRequest?.cancel()
+        pendingSearchRequest = nil
+        if dismiss {
+            searchController.isActive = false
+        }
+    }
+
     private func doSearch(queryString: String?) {
         // print("Searching contacts for: [\(queryString ?? "nil")]")
         self.interactor?.loadAndPresentContacts(searchQuery: queryString)
     }
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         searchBar.resignFirstResponder()
-        pendingSearchRequest?.cancel()
-        pendingSearchRequest = nil
+        cancelPendingSearchRequest(deactivateSearch: false)
         guard let s = getQueryString() else { return }
         doSearch(queryString: s)
     }
@@ -259,8 +266,7 @@ extension FindViewController: UISearchResultsUpdating, UISearchControllerDelegat
     }
 
     func updateSearchResults(for searchController: UISearchController) {
-        pendingSearchRequest?.cancel()
-        pendingSearchRequest = nil
+        cancelPendingSearchRequest(deactivateSearch: false)
 
         if transitioningOut {
             return
@@ -277,8 +283,7 @@ extension FindViewController: UISearchResultsUpdating, UISearchControllerDelegat
     // and is moving to another view. In the second case no need to loadAndPresentContacts because
     // fnd.leave() will be called anyway. Otherwise an update to content prevents notmal navigation.
     func didDismissSearchController(_ searchController: UISearchController) {
-        pendingSearchRequest?.cancel()
-        pendingSearchRequest = nil
+        cancelPendingSearchRequest(deactivateSearch: false)
         if !transitioningOut {
             self.interactor?.loadAndPresentContacts(searchQuery: nil)
         }
@@ -298,9 +303,7 @@ extension FindViewController: ContactViewCellDelegate {
         }
 
         // Make sure there are no pending search requests.
-        pendingSearchRequest?.cancel()
-        pendingSearchRequest = nil
-
+        cancelPendingSearchRequest(deactivateSearch: false)
         transitioningOut = true
 
         // If the search bar is active, deactivate it.

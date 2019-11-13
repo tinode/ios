@@ -43,6 +43,7 @@
 		0A8D945A22BEF08100DC154E /* AvatarWithOnlineIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8D945922BEF08100DC154E /* AvatarWithOnlineIndicator.swift */; };
 		0A8D945C22BF5B7F00DC154E /* AvatarWithOnlineIndicator+TypingAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8D945B22BF5B7F00DC154E /* AvatarWithOnlineIndicator+TypingAnimation.swift */; };
 		0A95F4D4229BD95900AEF7D3 /* AccountSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A95F4D3229BD95900AEF7D3 /* AccountSettingsViewController.swift */; };
+		0A9E7149237BCC8400C1D491 /* NewChatTabController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A9E7148237BCC8400C1D491 /* NewChatTabController.swift */; };
 		0AB5FDCE22C20D1900F44AFD /* ArchivedChatsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AB5FDCD22C20D1900F44AFD /* ArchivedChatsTableViewController.swift */; };
 		0AC33D032293C7A00060D263 /* NewGroupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC33D022293C7A00060D263 /* NewGroupViewController.swift */; };
 		0ACB5F0E22097651008FE740 /* ChatListPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACB5F0D22097651008FE740 /* ChatListPresenter.swift */; };
@@ -136,6 +137,7 @@
 		0A8D945922BEF08100DC154E /* AvatarWithOnlineIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvatarWithOnlineIndicator.swift; sourceTree = "<group>"; };
 		0A8D945B22BF5B7F00DC154E /* AvatarWithOnlineIndicator+TypingAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AvatarWithOnlineIndicator+TypingAnimation.swift"; sourceTree = "<group>"; };
 		0A95F4D3229BD95900AEF7D3 /* AccountSettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountSettingsViewController.swift; sourceTree = "<group>"; };
+		0A9E7148237BCC8400C1D491 /* NewChatTabController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewChatTabController.swift; sourceTree = "<group>"; };
 		0AB5FDCD22C20D1900F44AFD /* ArchivedChatsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchivedChatsTableViewController.swift; sourceTree = "<group>"; };
 		0AC33D022293C7A00060D263 /* NewGroupViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewGroupViewController.swift; sourceTree = "<group>"; };
 		0ACB5F0D22097651008FE740 /* ChatListPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatListPresenter.swift; sourceTree = "<group>"; };
@@ -254,6 +256,7 @@
 				B0A612B62294288F00569DFE /* MessageViewController+SendMessageBarDelegate.swift */,
 				B0DF0322228051B4000F9492 /* MessageViewController+Keyboard.swift */,
 				0AC33D022293C7A00060D263 /* NewGroupViewController.swift */,
+				0A9E7148237BCC8400C1D491 /* NewChatTabController.swift */,
 				B05ACEB222FDAB5200276713 /* ResetPasswordViewController.swift */,
 				B031BE5622631304004160AE /* SettingsHelper.swift */,
 				B01C693E22F87B5C003C0AA7 /* SignupViewController.swift */,
@@ -613,6 +616,7 @@
 				0A8A108321D4C78C00B90D73 /* TopicDb.swift in Sources */,
 				0A4B11FE2373DC1400199310 /* TagsEditDialogView.swift in Sources */,
 				0A69D47F22A6552300769426 /* TopicInfoViewController.swift in Sources */,
+				0A9E7149237BCC8400C1D491 /* NewChatTabController.swift in Sources */,
 				0A0016E921E736CD00088188 /* MessagePresenter.swift in Sources */,
 				B0F98C8322E381C300444121 /* MessageMenuItem.swift in Sources */,
 				B0A612B1228C85C300569DFE /* MessageViewLayout.swift in Sources */,
