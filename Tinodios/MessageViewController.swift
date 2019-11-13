@@ -250,9 +250,9 @@ class MessageViewController: UIViewController {
         // Appearance and behavior.
         extendedLayoutIncludesOpaqueBars = true
         automaticallyAdjustsScrollViewInsets = false
-        if #available(iOS 10.0, *) {
+        if #available(iOS 11.0, *) {
         } else {
-            // On iOS 9, make sure the content doesn't go behind the navbar.
+            // On iOS 9-10, make sure the content doesn't go behind the navbar.
             edgesForExtendedLayout = []
         }
 
@@ -319,9 +319,9 @@ class MessageViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        if #available(iOS 10.0, *) {
+        if #available(iOS 11.0, *) {
         } else {
-            // iOS 9: Make sure messages don't hide behind sendMessageBar.
+            // iOS 9-10: Make sure messages don't hide behind sendMessageBar.
             collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: self.sendMessageBar.frame.height, right: 0)
         }
         self.interactor?.attachToTopic()

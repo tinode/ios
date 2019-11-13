@@ -67,7 +67,7 @@ class FindViewController: UITableViewController, FindDisplayLogic {
         // Monitor when the search button is tapped.
         searchController.searchBar.delegate = self
         self.definesPresentationContext = true
-        if #available(iOS 10.0, *) {
+        if #available(iOS 11.0, *) {
             // Do nothing.
         } else {
             self.resolveNavbarOverlapConflict()
@@ -110,7 +110,7 @@ class FindViewController: UITableViewController, FindDisplayLogic {
 
     @objc
     func deviceRotated() {
-        if #available(iOS 10.0, *) {
+        if #available(iOS 11.0, *) {
         } else {
             self.resolveNavbarOverlapConflict()
         }
@@ -123,7 +123,7 @@ class FindViewController: UITableViewController, FindDisplayLogic {
         self.interactor?.attachToFndTopic()
         self.interactor?.loadAndPresentContacts(searchQuery: nil)
         self.tabBarController?.navigationItem.rightBarButtonItem = inviteActionButtonItem
-        if #available(iOS 10.0, *) {
+        if #available(iOS 11.0, *) {
             // Do nothing.
         } else {
             self.scrollToTop()
