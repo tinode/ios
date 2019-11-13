@@ -48,7 +48,7 @@ class NewGroupViewController: UITableViewController {
                 selectedUids.insert(myUid)
             }
         }
-        if #available(iOS 10.0, *) {
+        if #available(iOS 11, *) {
             // Do nothing.
         } else {
             self.resolveNavbarOverlapConflict()
