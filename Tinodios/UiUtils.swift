@@ -37,6 +37,31 @@ class UiTinodeEventListener : TinodeEventListener {
     func onPresMessage(pres: MsgServerPres?) {}
 }
 
+// Calculates attributed string size (bounding rectangle) with with specified width.
+// Can't use AttributedString.boundingRect(with CGSize) per
+// https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/TextLayout/Tasks/StringHeight.html
+class TextSizeHelper {
+    private let textStorage: NSTextStorage
+    private let textContainer: NSTextContainer
+    private let layoutManager: NSLayoutManager
+
+    init() {
+        textStorage = NSTextStorage()
+        textContainer = NSTextContainer()
+        layoutManager = NSLayoutManager()
+
+        layoutManager.addTextContainer(textContainer)
+        textStorage.addLayoutManager(layoutManager)
+    }
+
+    public func computeSize(for attributedText: NSAttributedString,
+                            within maxWidth: CGFloat) -> CGSize {
+        textStorage.setAttributedString(attributedText)
+        textContainer.size = CGSize(width: maxWidth, height: .greatestFiniteMagnitude)
+        return layoutManager.usedRect(for: textContainer).integral.size
+    }
+}
+
 enum ToastLevel {
     case error, warning, info
 }

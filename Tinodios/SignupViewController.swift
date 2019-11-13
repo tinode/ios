@@ -93,6 +93,9 @@ class SignupViewController: UITableViewController {
                                                          verifying: ctrl.getStringArray(for: "cred")?.first)
                         }
                     } else {
+                        if let token = tinode.authToken {
+                            tinode.setAutoLoginWithToken(token: token)
+                        }
                         UiUtils.routeToChatListVC()
                     }
                     return nil

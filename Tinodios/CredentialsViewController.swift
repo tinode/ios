@@ -64,6 +64,9 @@ class CredentialsViewController : UIViewController {
                             UiUtils.showToast(message: "Verification failure: \(ctrl.code) \(ctrl.text)")
                         }
                     } else {
+                        if let token = tinode.authToken {
+                            tinode.setAutoLoginWithToken(token: token)
+                        }
                         UiUtils.routeToChatListVC()
                     }
                     return nil

@@ -150,6 +150,8 @@ class MessageViewController: UIViewController {
 
     var isInitialLayout = true
 
+    private var textSizeHelper = TextSizeHelper()
+
     // MARK: initializers
 
     init() {
@@ -964,8 +966,8 @@ extension MessageViewController : MessageViewLayoutDelegate {
             attributedText.append(NSAttributedString(string: "none", attributes: [.font: Constants.kContentFont]))
         }
         attributedText.append(NSAttributedString(string: carveout, attributes: [.font: Constants.kContentFont]))
-        let size = attributedText.boundingRect(with: CGSize(width: maxWidth, height: .greatestFiniteMagnitude), options: [.usesLineFragmentOrigin, .usesFontLeading], context: nil).integral.size
-        return size
+
+        return textSizeHelper.computeSize(for: attributedText, within: maxWidth)
     }
 }
 
