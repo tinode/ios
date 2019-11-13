@@ -150,6 +150,8 @@ class MessageViewController: UIViewController {
 
     var isInitialLayout = true
 
+    private var textSizeHelper = TextSizeHelper()
+
     // MARK: initializers
 
     init() {
@@ -965,16 +967,7 @@ extension MessageViewController : MessageViewLayoutDelegate {
         }
         attributedText.append(NSAttributedString(string: carveout, attributes: [.font: Constants.kContentFont]))
 
-        // Calculate content size.
-        // Per https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/TextLayout/Tasks/StringHeight.html
-        let ts = NSTextStorage(attributedString: attributedText)
-        let tc = NSTextContainer(size: CGSize(width: maxWidth, height: .greatestFiniteMagnitude))
-        let lm = NSLayoutManager()
-        lm.addTextContainer(tc)
-        ts.addLayoutManager(lm)
-
-        let size = lm.usedRect(for: tc).integral.size
-        return size
+        return textSizeHelper.computeSize(for: attributedText, within: maxWidth)
     }
 }
 
