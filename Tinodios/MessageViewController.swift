@@ -293,11 +293,7 @@ class MessageViewController: UIViewController {
         self.collectionView.dataSource = self
         sendMessageBar.delegate = self
 
-        if #available(iOS 12.0, *), traitCollection.userInterfaceStyle == .dark {
-            view.backgroundColor = .black
-        } else {
-            view.backgroundColor = .white
-        }
+        self.setInterfaceColors()
 
         if (self.interactor?.setup(topicName: self.topicName) ?? false) {
             self.interactor?.loadMessages()
@@ -313,6 +309,14 @@ class MessageViewController: UIViewController {
             addKeyboardObservers()
         }
     }
+
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        guard UIApplication.shared.applicationState == .active else {
+            return
+        }
+        self.setInterfaceColors()
+    }
+
     @objc private func processNotifications() {
         self.interactor?.sendReadNotification()
     }
@@ -380,6 +384,14 @@ class MessageViewController: UIViewController {
 
     @objc func navBarAvatarTapped(tapGestureRecognizer: UITapGestureRecognizer) {
         performSegue(withIdentifier: "Messages2TopicInfo", sender: nil)
+    }
+
+    private func setInterfaceColors() {
+        if #available(iOS 12.0, *), traitCollection.userInterfaceStyle == .dark {
+            view.backgroundColor = .black
+        } else {
+            view.backgroundColor = .white
+        }
     }
 }
 
