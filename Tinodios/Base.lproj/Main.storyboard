@@ -1741,7 +1741,7 @@
         <!--NewChat-->
         <scene sceneID="REJ-Dq-O5O">
             <objects>
-                <tabBarController title="New chat" automaticallyAdjustsScrollViewInsets="NO" id="qBo-ye-avT" userLabel="NewChat" sceneMemberID="viewController">
+                <tabBarController title="New chat" automaticallyAdjustsScrollViewInsets="NO" id="qBo-ye-avT" userLabel="NewChat" customClass="NewChatTabController" customModule="Tinodios" customModuleProvider="target" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationItem key="navigationItem" title="New chat" id="hZA-k4-xku"/>
                     <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
