@@ -250,9 +250,9 @@ class MessageViewController: UIViewController {
         // Appearance and behavior.
         extendedLayoutIncludesOpaqueBars = true
         automaticallyAdjustsScrollViewInsets = false
-        if #available(iOS 10.0, *) {
+        if #available(iOS 11, *) {
         } else {
-            // On iOS 9, make sure the content doesn't go behind the navbar.
+            // On iOS 9-10, make sure the content doesn't go behind the navbar.
             edgesForExtendedLayout = []
         }
 
@@ -270,7 +270,7 @@ class MessageViewController: UIViewController {
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         let top = collectionView.topAnchor.constraint(equalTo: view.topAnchor, constant: topLayoutGuide.length)
         let trailing: NSLayoutConstraint, leading: NSLayoutConstraint, bottom: NSLayoutConstraint
-        if #available(iOS 11.0, *) {
+        if #available(iOS 11, *) {
             // Extra padding as -50. It's probably due to a bug somewhere.
             bottom = collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -50)
             leading = collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor)
@@ -293,11 +293,7 @@ class MessageViewController: UIViewController {
         self.collectionView.dataSource = self
         sendMessageBar.delegate = self
 
-        if #available(iOS 12.0, *), traitCollection.userInterfaceStyle == .dark {
-            view.backgroundColor = .black
-        } else {
-            view.backgroundColor = .white
-        }
+        self.setInterfaceColors()
 
         if (self.interactor?.setup(topicName: self.topicName) ?? false) {
             self.interactor?.loadMessages()
@@ -313,21 +309,29 @@ class MessageViewController: UIViewController {
             addKeyboardObservers()
         }
     }
+
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        guard UIApplication.shared.applicationState == .active else {
+            return
+        }
+        self.setInterfaceColors()
+    }
+
     @objc private func processNotifications() {
         self.interactor?.sendReadNotification()
     }
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        if #available(iOS 10.0, *) {
+        if #available(iOS 11, *) {
         } else {
-            // iOS 9: Make sure messages don't hide behind sendMessageBar.
+            // iOS 9-10: Make sure messages don't hide behind sendMessageBar.
             collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: self.sendMessageBar.frame.height, right: 0)
         }
         self.interactor?.attachToTopic()
         self.interactor?.loadMessages()
         self.interactor?.sendReadNotification()
-        if #available(iOS 10.0, *) {
+        if #available(iOS 10, *) {
             self.noteTimer = Timer.scheduledTimer(
                 withTimeInterval: 1,
                 repeats: true,
@@ -381,6 +385,14 @@ class MessageViewController: UIViewController {
     @objc func navBarAvatarTapped(tapGestureRecognizer: UITapGestureRecognizer) {
         performSegue(withIdentifier: "Messages2TopicInfo", sender: nil)
     }
+
+    private func setInterfaceColors() {
+        if #available(iOS 12, *), traitCollection.userInterfaceStyle == .dark {
+            view.backgroundColor = .black
+        } else {
+            view.backgroundColor = .white
+        }
+    }
 }
 
 // Methods for updating title area and refreshing messages.
@@ -419,7 +431,7 @@ extension MessageViewController: MessageDisplayLogic {
         navBarAvatarView.set(icon: icon, title: title, id: topicName, online: online)
         navBarAvatarView.bounds = CGRect(x: 0, y: 0, width: Constants.kNavBarAvatarSmallState, height: Constants.kNavBarAvatarSmallState)
 
-        if #available(iOS 10.0, *) {
+        if #available(iOS 10, *) {
             navBarAvatarView.translatesAutoresizingMaskIntoConstraints = false
             NSLayoutConstraint.activate([
                     navBarAvatarView.heightAnchor.constraint(equalToConstant: Constants.kNavBarAvatarSmallState),
@@ -622,7 +634,7 @@ extension MessageViewController: UICollectionViewDataSource {
 
         cell.content.backgroundColor = nil
         if isFromCurrentSender(message: message) {
-            if #available(iOS 12.0, *), traitCollection.userInterfaceStyle == .dark {
+            if #available(iOS 12, *), traitCollection.userInterfaceStyle == .dark {
                 cell.containerView.backgroundColor = Constants.kOutgoingBubbleColorDark
                 cell.content.textColor = Constants.kOutgoingTextColorDark
             } else {
@@ -630,7 +642,7 @@ extension MessageViewController: UICollectionViewDataSource {
                 cell.content.textColor = Constants.kOutgoingTextColorDark
             }
         } else {
-            if #available(iOS 12.0, *), traitCollection.userInterfaceStyle == .dark {
+            if #available(iOS 12, *), traitCollection.userInterfaceStyle == .dark {
                 cell.containerView.backgroundColor = Constants.kIncomingBubbleColorDark
                 cell.content.textColor = Constants.kIncomingTextColorDark
             } else {
@@ -953,7 +965,7 @@ extension MessageViewController : MessageViewLayoutDelegate {
         let carveout = isFromCurrentSender(message: message) ? Constants.kOutgoingMetadataCarveout : Constants.kIncomingMetadataCarveout
 
         let textColor: UIColor
-        if #available(iOS 12.0, *), traitCollection.userInterfaceStyle == .dark {
+        if #available(iOS 12, *), traitCollection.userInterfaceStyle == .dark {
             textColor = isFromCurrentSender(message: message) ? Constants.kOutgoingTextColorDark : Constants.kIncomingTextColorDark
         } else {
             textColor = isFromCurrentSender(message: message) ? Constants.kOutgoingTextColorLight : Constants.kIncomingTextColorLight
@@ -1000,7 +1012,7 @@ extension MessageViewController : MessageCellDelegate {
             return
         }
 
-        if #available(iOS 10.0, *) {
+        if #available(iOS 10, *) {
             UIApplication.shared.open(url)
         } else {
             UIApplication.shared.openURL(url)

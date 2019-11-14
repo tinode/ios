@@ -13,7 +13,7 @@ import UIKit
     // MARK: constants
 
     private enum Constants {
-        static let defaultPlaceholderColorLight = UIColor(red: 25/255, green: 25/255, blue: 25/255, alpha: 0.22)
+        static let defaultPlaceholderColorLight = UIColor(red: 0, green: 0, blue: 25/255, alpha: 0.22)
         static let defaultPlaceholderColorDark = UIColor.lightGray
         static let defaultTextColorLight = UIColor.black
         static let defaultTextColorDark = UIColor.white
@@ -75,11 +75,7 @@ import UIKit
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         setColors()
-        if text.isEmpty {
-            textEmptyHandler()
-        } else {
-            textColor = mainTextColor
-        }
+        textColor = isShowingPlaceholder ? placeholderColor : mainTextColor
     }
 
     // MARK: initializers
