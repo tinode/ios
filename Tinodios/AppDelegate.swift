@@ -108,9 +108,24 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 }
 @available(iOS 10.0, *)
 extension AppDelegate: UNUserNotificationCenterDelegate {
+    // Called when the app is in the foreground.
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        let userInfo = notification.request.content.userInfo
+        guard let topicName = userInfo["topic"] as? String, !topicName.isEmpty else { return }
+        if let messageVC = UiUtils.topViewController(rootViewController: UIApplication.shared.keyWindow?.rootViewController) as? MessageViewController, messageVC.topicName == topicName {
+            // We are already in the correct topic. Do not present the notification.
+            completionHandler([])
+        } else {
+            completionHandler([.alert, .badge, .sound])
+        }
+    }
+
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
         print(response)
-        completionHandler()
+        let userInfo = response.notification.request.content.userInfo
+        defer { completionHandler() }
+        guard let topicName = userInfo["topic"] as? String, !topicName.isEmpty else { return }
+        UiUtils.routeToMessageVC(forTopic: topicName)
     }
 }
 
