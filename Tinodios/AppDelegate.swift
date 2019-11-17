@@ -23,7 +23,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         Utils.registerUserDefaults()
         let baseDb = BaseDb.getInstance()
         if baseDb.isReady {
-            UiUtils.routeToChatListVC()
+            // When the app launch after user tap on notification (originally was not running / not in background).
+            if let opts = launchOptions, let userInfo = opts[.remoteNotification] as? [String: Any],
+                let topicName = userInfo["topic"] as? String, !topicName.isEmpty {
+                UiUtils.routeToMessageVC(forTopic: topicName)
+            } else {
+                UiUtils.routeToChatListVC()
+            }
         }
         // Try to connect and log in in the background.
         DispatchQueue.global(qos: .userInitiated).async {

@@ -156,14 +156,21 @@ class UiUtils {
         }
     }
 
+    private static func isShowingChatListVC() -> Bool {
+        guard let rootVC = UIApplication.shared.keyWindow?.rootViewController as? UINavigationController else {
+            return false
+        }
+        return rootVC.viewControllers.contains(where: { $0 is ChatListViewController })
+    }
+
     public static func routeToMessageVC(forTopic topicId: String) {
         DispatchQueue.main.async {
             let storyboard = UIStoryboard(name: "Main", bundle: nil)
 
             var shouldReplaceRootVC = true
             var rootVC: UINavigationController
-            if let curRootVC = UIApplication.shared.keyWindow?.rootViewController as? UINavigationController {
-                rootVC = curRootVC
+            if isShowingChatListVC() {
+                rootVC = UIApplication.shared.keyWindow!.rootViewController as! UINavigationController
                 // The app is in the foreground.
                 while !(rootVC.topViewController is ChatListViewController) {
                     rootVC.popViewController(animated: false)
@@ -181,6 +188,7 @@ class UiUtils {
             if let window = UIApplication.shared.keyWindow, shouldReplaceRootVC {
                 window.rootViewController = rootVC
             }
+            UiUtils.setUpPushNotifications()
         }
     }
 
