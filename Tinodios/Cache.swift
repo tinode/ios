@@ -85,4 +85,12 @@ class Cache {
         }
         return largeFileHelper!
     }
+    public static func totalUnreadCount() -> Int {
+        guard let tinode = Cache.default.tinode, let topics = tinode.getTopics() else {
+            return 0
+        }
+        return topics.reduce(into: 0, { result, topic in
+            result += topic.isReader && !topic.isMuted ? topic.unread : 0
+        })
+    }
 }
