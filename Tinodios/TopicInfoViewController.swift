@@ -7,6 +7,7 @@
 
 import UIKit
 import TinodeSDK
+import TinodiosDB
 
 class TopicInfoViewController: UITableViewController {
 

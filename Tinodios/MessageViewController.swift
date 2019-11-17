@@ -7,6 +7,7 @@
 
 import UIKit
 import TinodeSDK
+import TinodiosDB
 
 protocol MessageDisplayLogic: class {
     func updateTitleBar(icon: UIImage?, title: String?, online: Bool)

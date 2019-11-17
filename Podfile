@@ -15,8 +15,11 @@ def sdk_pods
     pod 'SwiftWebSocket', '~> 2.7.0'
 end
 
-def ui_pods
+def db_pods
     pod 'SQLite.swift', '~> 0.12.0'
+end
+
+def ui_pods
     pod 'SwiftKeychainWrapper', '~> 3.2'
     pod 'Firebase/Messaging'
 end
@@ -31,10 +34,16 @@ target 'TinodeSDKTests' do
     sdk_pods
 end
 
+target 'TinodiosDB' do
+    project 'TinodiosDB'
+    db_pods
+end
+
 target 'Tinodios' do
     project 'Tinodios'
     sdk_pods
     ui_pods
+    db_pods
     # Pods for Crashlytics
     pod 'Fabric', '~> 1.10.2'
     pod 'Crashlytics', '~> 3.13.4'

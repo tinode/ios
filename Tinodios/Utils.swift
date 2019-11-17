@@ -6,9 +6,10 @@
 //
 
 import Foundation
+import MobileCoreServices
 import SwiftKeychainWrapper
 import TinodeSDK
-import MobileCoreServices
+import TinodiosDB
 
 class Utils {
     static let kTinodeHasRunBefore = "tinodeHasRunBefore"
@@ -249,5 +250,17 @@ extension Tinode {
         let (hostName, useTLS, _) = SettingsHelper.getConnectionSettings()
         Cache.log.debug("Connecting to %@, secure %@", hostName ?? Cache.kHostName, useTLS ?? Cache.kUseTLS ? "YES" : "NO")
         return try connect(to: (hostName ?? Cache.kHostName), useTLS: (useTLS ?? Cache.kUseTLS))
+    }
+}
+
+extension StoredMessage {
+    /// Generate and cache NSAttributedString representation of Drafty content.
+    func attributedContent(fitIn size: CGSize, withDefaultAttributes attributes: [NSAttributedString.Key : Any]? = nil) -> NSAttributedString? {
+        if cachedContent != nil {
+            return cachedContent
+        }
+        guard let content = content else { return nil }
+        cachedContent = AttributedStringFormatter.toAttributed(content, fitIn: size, withDefaultAttributes: attributes)
+        return cachedContent
     }
 }

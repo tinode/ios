@@ -67,6 +67,8 @@ public protocol Storage: class {
 
     // Fetch all topics.
     func topicGetAll(from tinode: Tinode?) -> [TopicProto]?
+    // Retrieve a topic by name.
+    func topicGet(from tinode: Tinode?, withName name: String?) -> TopicProto?
     // Add new topic.
     @discardableResult
     func topicAdd(topic: TopicProto) -> Int64

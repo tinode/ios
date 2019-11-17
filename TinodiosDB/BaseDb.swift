@@ -7,6 +7,7 @@
 
 import Foundation
 import SQLite
+import TinodeSDK
 
 public class BaseDb {
     // Current database schema version. Increment on schema changes.
@@ -32,27 +33,31 @@ public class BaseDb {
     // Object is rejected by the server.
     public static let kStatusRejected = 7
 
+    public static let kBundleId = "co.tinode.tinodios.db"
     // No direct access to the shared instance.
     private static var `default`: BaseDb? = nil
-    private static let accessQueue = DispatchQueue(label: "co.tinode.tinodios.base-db-access")
+    private static let accessQueue = DispatchQueue(label: BaseDb.kBundleId)
     private let kDatabaseName = "basedb.sqlite3"
     var db: SQLite.Connection?
     private let pathToDatabase: String
-    var sqlStore: SqlStore?
-    var topicDb: TopicDb? = nil
-    var accountDb: AccountDb? = nil
-    var subscriberDb: SubscriberDb? = nil
-    var userDb: UserDb? = nil
-    var messageDb: MessageDb? = nil
+    public var sqlStore: SqlStore?
+    public var topicDb: TopicDb? = nil
+    public var accountDb: AccountDb? = nil
+    public var subscriberDb: SubscriberDb? = nil
+    public var userDb: UserDb? = nil
+    public var messageDb: MessageDb? = nil
     var account: StoredAccount? = nil
     var isCredValidationRequired: Bool {
         get { return !(self.account?.credMethods?.isEmpty ?? true) }
     }
-    var isReady: Bool { get { return self.account != nil && !self.isCredValidationRequired } }
+    public var isReady: Bool { get { return self.account != nil && !self.isCredValidationRequired } }
+
+    internal static let log = TinodeSDK.Log(subsystem: BaseDb.kBundleId)
 
     /// The init is private to ensure that the class is a singleton.
     private init() {
-        var documentsDirectory = (NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] as NSString) as String
+        var documentsDirectory = FileManager.default
+            .containerURL(forSecurityApplicationGroupIdentifier: "group." + BaseDb.kBundleId)!.absoluteString
         if documentsDirectory.last! != "/" {
             documentsDirectory.append("/")
         }
@@ -98,7 +103,7 @@ public class BaseDb {
         self.userDb?.destroyTable()
         self.accountDb?.destroyTable()
     }
-    static func getInstance() -> BaseDb {
+    public static func getInstance() -> BaseDb {
         return BaseDb.accessQueue.sync {
             if let instance = BaseDb.default {
                 return instance
@@ -127,11 +132,11 @@ public class BaseDb {
             }
             self.account = self.accountDb?.addOrActivateAccount(for: uid, withCredMethods: credMethods)
         } catch {
-            Cache.log.error("BaseDb - setUid failed %@", error.localizedDescription)
+            BaseDb.log.error("BaseDb - setUid failed %@", error.localizedDescription)
             self.account = nil
         }
     }
-    func logout() {
+    public func logout() {
         _ = try? self.accountDb?.deactivateAll()
         self.setUid(uid: nil, credMethods: nil)
     }
@@ -142,14 +147,14 @@ public class BaseDb {
         do {
             return try db.run(record.update(column <- value)) > 0
         } catch {
-            Cache.log.error("BaseDb - updateCounter failed %@", error.localizedDescription)
+            BaseDb.log.error("BaseDb - updateCounter failed %@", error.localizedDescription)
             return false
         }
     }
 }
 
 // Database schema versioning.
-extension Connection {
+extension SQLite.Connection {
     public var schemaVersion: Int32 {
         get { return Int32((try? scalar("PRAGMA user_version") as! Int64) ?? -1) }
         set { try! run("PRAGMA user_version = \(newValue)") }

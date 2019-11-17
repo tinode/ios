@@ -9,18 +9,18 @@ import Foundation
 import SQLite
 import TinodeSDK
 
-class StoredSubscription: Payload  {
-    var id: Int64? = nil
-    var topicId: Int64? = nil
-    var userId: Int64? = nil
-    var status: Int? = nil
+public class StoredSubscription: Payload  {
+    public var id: Int64? = nil
+    public var topicId: Int64? = nil
+    public var userId: Int64? = nil
+    public var status: Int? = nil
 }
 
 enum SubscriberDbError: Error {
     case dbError(String)
 }
 
-class SubscriberDb {
+public class SubscriberDb {
     private static let kTableName = "subscriptions"
     private let db: SQLite.Connection
 
@@ -125,7 +125,7 @@ class SubscriberDb {
                 sub.payload = ss
             }
         } catch {
-            Cache.log.error("SubscriberDb - insert operation failed: topicId = %lld, error = %@", topicId, error.localizedDescription)
+            BaseDb.log.error("SubscriberDb - insert operation failed: topicId = %lld, error = %@", topicId, error.localizedDescription)
             return -1
         }
         return rowId
@@ -159,7 +159,7 @@ class SubscriberDb {
                 ss.status = status
             }
         } catch {
-            Cache.log.error("SubscriberDb - update operation failed: subId = %lld, error = %@", recordId, error.localizedDescription)
+            BaseDb.log.error("SubscriberDb - update operation failed: subId = %lld, error = %@", recordId, error.localizedDescription)
             return false
         }
         return updated > 0
@@ -169,7 +169,7 @@ class SubscriberDb {
         do {
             return try self.db.run(record.delete()) > 0
         } catch {
-            Cache.log.error("SubscriberDb - delete operation failed: subId = %lld, error = %@", recordId, error.localizedDescription)
+            BaseDb.log.error("SubscriberDb - delete operation failed: subId = %lld, error = %@", recordId, error.localizedDescription)
             return false
         }
     }
@@ -179,7 +179,7 @@ class SubscriberDb {
         do {
             return try self.db.run(record.delete()) > 0
         } catch {
-            Cache.log.error("SubscriberDb - deleteForTopic operation failed: topicId = %lld, error = %@", topicId, error.localizedDescription)
+            BaseDb.log.error("SubscriberDb - deleteForTopic operation failed: topicId = %lld, error = %@", topicId, error.localizedDescription)
             return false
         }
     }
@@ -241,7 +241,7 @@ class SubscriberDb {
                 if let s = self.readOne(r: row) {
                     subscriptions.append(s)
                 } else {
-                    Cache.log.error("SubscriberDb - readAll: topicId = %lld | failed to create subscription for %@", topicId, row[self.subscriptionClass])
+                    BaseDb.log.error("SubscriberDb - readAll: topicId = %lld | failed to create subscription for %@", topicId, row[self.subscriptionClass])
                 }
             }
             return subscriptions

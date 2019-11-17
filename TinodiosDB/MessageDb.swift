@@ -14,7 +14,7 @@ enum MessageDbError: Error {
     case dbError(String)
 }
 
-class MessageDb {
+public class MessageDb {
     private static let kTableName = "messages"
     private let db: SQLite.Connection
 
@@ -109,7 +109,7 @@ class MessageDb {
             }
             return msg.msgId
         } catch {
-            Cache.log.error("MessageDb - insert operation failed: %@", error.localizedDescription)
+            BaseDb.log.error("MessageDb - insert operation failed: %@", error.localizedDescription)
             return -1
         }
     }
@@ -126,7 +126,7 @@ class MessageDb {
             do {
                 return try self.db.run(record.update(setters)) > 0
             } catch {
-                Cache.log.error("MessageDb - update status operation failed: msgId = %lld, error = %@", msgId, error.localizedDescription)
+                BaseDb.log.error("MessageDb - update status operation failed: msgId = %lld, error = %@", msgId, error.localizedDescription)
             }
         }
         return false
@@ -139,7 +139,7 @@ class MessageDb {
                 self.ts <- ts,
                 self.seq <- seq)) > 0
         } catch {
-            Cache.log.error("MessageDb - update delivery operation failed: msgId = %lld, error = %@", msgId, error.localizedDescription)
+            BaseDb.log.error("MessageDb - update delivery operation failed: msgId = %lld, error = %@", msgId, error.localizedDescription)
             return false
         }
     }
@@ -155,7 +155,7 @@ class MessageDb {
         do {
             return try self.db.run(rows.delete()) > 0
         } catch {
-            Cache.log.error("MessageDb - delete operation failed: topicId = %lld, error = %@", topicId, error.localizedDescription)
+            BaseDb.log.error("MessageDb - delete operation failed: topicId = %lld, error = %@", topicId, error.localizedDescription)
             return false
         }
     }
@@ -180,7 +180,7 @@ class MessageDb {
             }
             return updateResult && deleteResult
         } catch {
-            Cache.log.error("MessageDb - markDeleted operation failed: topicId = %lld, error = %@", topicId, error.localizedDescription)
+            BaseDb.log.error("MessageDb - markDeleted operation failed: topicId = %lld, error = %@", topicId, error.localizedDescription)
             return false
         }
     }
@@ -189,7 +189,7 @@ class MessageDb {
         do {
             return try self.db.run(record.delete()) > 0
         } catch {
-            Cache.log.error("MessageDb - delete operation failed: msgId = %lld, error = %@", msgId, error.localizedDescription)
+            BaseDb.log.error("MessageDb - delete operation failed: msgId = %lld, error = %@", msgId, error.localizedDescription)
             return false
         }
     }
@@ -205,7 +205,7 @@ class MessageDb {
         sm.content = Drafty.deserialize(from: r[self.content])
         return sm
     }
-    func query(topicId: Int64?, pageCount: Int, pageSize: Int) -> [StoredMessage]? {
+    public func query(topicId: Int64?, pageCount: Int, pageSize: Int) -> [StoredMessage]? {
         let queryTable = self.table
             .filter(
                 self.topicId == topicId &&
@@ -220,7 +220,7 @@ class MessageDb {
             }
             return messages
         } catch {
-            Cache.log.error("MessageDb - query operation failed: topicId = %lld, error = %@", topicId ?? -1, error.localizedDescription)
+            BaseDb.log.error("MessageDb - query operation failed: topicId = %lld, error = %@", topicId ?? -1, error.localizedDescription)
             return nil
         }
     }
@@ -250,7 +250,7 @@ class MessageDb {
             }
             return seqIds
         } catch {
-            Cache.log.error("MessageDb - queryDeleted operation failed: topicId = %lld, error = %@", topicId, error.localizedDescription)
+            BaseDb.log.error("MessageDb - queryDeleted operation failed: topicId = %lld, error = %@", topicId, error.localizedDescription)
             return nil
         }
     }
@@ -268,7 +268,7 @@ class MessageDb {
             }
             return messages
         } catch {
-            Cache.log.error("MessageDb - queryUnsent operation failed: topicId = %lld, error = %@", topicId ?? -1, error.localizedDescription)
+            BaseDb.log.error("MessageDb - queryUnsent operation failed: topicId = %lld, error = %@", topicId ?? -1, error.localizedDescription)
             return nil
         }
     }

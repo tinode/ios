@@ -9,6 +9,7 @@ import Firebase
 import Network
 import SwiftWebSocket
 import UIKit
+import TinodiosDB
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
