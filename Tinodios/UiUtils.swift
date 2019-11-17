@@ -76,7 +76,16 @@ class UiUtils {
     private static func setUpPushNotifications() {
         let application = UIApplication.shared
         let appDelegate = application.delegate as! AppDelegate
-        guard !appDelegate.pushNotificationsConfigured else { return }
+        guard !appDelegate.pushNotificationsConfigured else {
+            InstanceID.instanceID().instanceID { (result, error) in
+              if let error = error {
+                Cache.log.debug("Error fetching remote Firebase instance ID: %@", error.localizedDescription)
+              } else if let result = result {
+                Cache.getTinode().setDeviceToken(token: result.token)
+              }
+            }
+            return
+        }
 
         // Configure FCM.
         FirebaseApp.configure()
