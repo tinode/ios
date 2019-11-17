@@ -7,6 +7,7 @@
 
 import UIKit
 import TinodeSDK
+import Firebase
 
 class Cache {
     private static let `default` = Cache()
@@ -37,6 +38,9 @@ class Cache {
         if let tinode = Cache.default.tinode {
             Cache.default.timer.suspend()
             tinode.logout()
+            InstanceID.instanceID().deleteID { error in
+                Cache.log.debug("Failed to delete FCM instance id: %@", error.debugDescription)
+            }
             Cache.default.tinode = nil
         }
     }
@@ -80,5 +84,13 @@ class Cache {
             }
         }
         return largeFileHelper!
+    }
+    public static func totalUnreadCount() -> Int {
+        guard let tinode = Cache.default.tinode, let topics = tinode.getTopics() else {
+            return 0
+        }
+        return topics.reduce(into: 0, { result, topic in
+            result += topic.isReader && !topic.isMuted ? topic.unread : 0
+        })
     }
 }

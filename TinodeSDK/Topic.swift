@@ -33,6 +33,9 @@ public protocol TopicProto: class {
     var cachedMessageRange: Storage.Range? { get }
     var isArchived: Bool { get }
     var isJoiner: Bool { get }
+    var isReader: Bool { get }
+    var isMuted: Bool { get }
+    var unread: Int { get }
 
     func serializePub() -> String?
     func serializePriv() -> String?

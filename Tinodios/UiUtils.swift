@@ -76,7 +76,16 @@ class UiUtils {
     private static func setUpPushNotifications() {
         let application = UIApplication.shared
         let appDelegate = application.delegate as! AppDelegate
-        guard !appDelegate.pushNotificationsConfigured else { return }
+        guard !appDelegate.pushNotificationsConfigured else {
+            InstanceID.instanceID().instanceID { (result, error) in
+              if let error = error {
+                Cache.log.debug("Error fetching remote Firebase instance ID: %@", error.localizedDescription)
+              } else if let result = result {
+                Cache.getTinode().setDeviceToken(token: result.token)
+              }
+            }
+            return
+        }
 
         // Configure FCM.
         FirebaseApp.configure()
@@ -155,6 +164,43 @@ class UiUtils {
             UiUtils.setUpPushNotifications()
         }
     }
+
+    private static func isShowingChatListVC() -> Bool {
+        guard let rootVC = UIApplication.shared.keyWindow?.rootViewController as? UINavigationController else {
+            return false
+        }
+        return rootVC.viewControllers.contains(where: { $0 is ChatListViewController })
+    }
+
+    public static func routeToMessageVC(forTopic topicId: String) {
+        DispatchQueue.main.async {
+            let storyboard = UIStoryboard(name: "Main", bundle: nil)
+
+            var shouldReplaceRootVC = true
+            var rootVC: UINavigationController
+            if isShowingChatListVC() {
+                rootVC = UIApplication.shared.keyWindow!.rootViewController as! UINavigationController
+                // The app is in the foreground.
+                while !(rootVC.topViewController is ChatListViewController) {
+                    rootVC.popViewController(animated: false)
+                }
+                shouldReplaceRootVC = false
+            } else {
+                rootVC = storyboard.instantiateViewController(
+                    withIdentifier: "ChatsNavigator") as! UINavigationController
+            }
+            let messageViewController =
+                storyboard.instantiateViewController(
+                    withIdentifier: "MessageViewController") as! MessageViewController
+            messageViewController.topicName = topicId
+            rootVC.pushViewController(messageViewController, animated: false)
+            if let window = UIApplication.shared.keyWindow, shouldReplaceRootVC {
+                window.rootViewController = rootVC
+            }
+            UiUtils.setUpPushNotifications()
+        }
+    }
+
 
     // Get text from UITextField or mark the field red if the field is blank
     public static func ensureDataInTextField(_ field: UITextField, maxLength: Int = -1) -> String {
@@ -354,7 +400,7 @@ class UiUtils {
         }
     }
 
-    private static func topViewController(rootViewController: UIViewController?) -> UIViewController? {
+    public static func topViewController(rootViewController: UIViewController?) -> UIViewController? {
         guard let rootViewController = rootViewController else { return nil }
         guard let presented = rootViewController.presentedViewController else {
             return rootViewController

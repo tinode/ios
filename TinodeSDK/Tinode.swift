@@ -997,6 +997,7 @@ public class Tinode {
      *
      * @param token device token
      */
+    @discardableResult
     public func setDeviceToken(token: String) -> PromisedReply<ServerMessage>? {
         guard token != deviceToken else {
             return PromisedReply<ServerMessage>(value: ServerMessage())
