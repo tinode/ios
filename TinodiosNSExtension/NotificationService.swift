@@ -28,8 +28,8 @@ class NotificationService: UNNotificationServiceExtension {
             guard let topic = userInfo["topic"] as? String, !topic.isEmpty,
                 let xfrom = userInfo["xfrom"] as? String, !xfrom.isEmpty else { return }
 
-            guard let user = store.userGet(uid: xfrom) as? DefaultUser else { return }
-            let senderName = user.pub?.fn ?? "Unknown"
+            let user = store.userGet(uid: xfrom) as? DefaultUser
+            let senderName = user?.pub?.fn ?? "Unknown"
             switch Tinode.topicTypeByName(name: topic) {
             case .p2p:
                 bestAttemptContent.title = senderName
