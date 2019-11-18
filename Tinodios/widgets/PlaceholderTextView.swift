@@ -27,7 +27,7 @@ import UIKit
     @IBInspectable var placeholderText: String = Constants.defaultPlaceholderText
 
     var mainTextColor: UIColor = Constants.defaultTextColorLight
-    var placeholderColor: UIColor = Constants.defaultPlaceholderColorLight
+    @IBInspectable var placeholderColor: UIColor = Constants.defaultPlaceholderColorLight
 
     // MARK: overrired UITextView variables
 
