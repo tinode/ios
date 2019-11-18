@@ -93,7 +93,7 @@ public class AccountDb {
                 }
             }
         } catch {
-            Cache.log.debug("failed to add account '%@'", error.localizedDescription)
+            BaseDb.log.debug("failed to add account '%@'", error.localizedDescription)
             result = nil
         }
         return result

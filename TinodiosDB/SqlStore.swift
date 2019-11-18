@@ -12,8 +12,8 @@ enum SqlStoreError: Error {
     case dbError(String)
 }
 
-class SqlStore : Storage {
-    var myUid: String? {
+public class SqlStore : Storage {
+    public var myUid: String? {
         get {
             return self.dbh?.uid
         }
@@ -22,7 +22,7 @@ class SqlStore : Storage {
         }
     }
 
-    var deviceToken: String? {
+    public var deviceToken: String? {
         get { self.dbh?.accountDb?.getDeviceToken() }
         set { self.dbh?.accountDb?.saveDeviceToken(token: newValue) }
     }
@@ -33,21 +33,21 @@ class SqlStore : Storage {
         self.dbh = dbh
     }
 
-    func logout() {
+    public func logout() {
         self.dbh?.logout()
     }
 
-    func setMyUid(uid: String, credMethods: [String]?) {
+    public func setMyUid(uid: String, credMethods: [String]?) {
         self.dbh?.setUid(uid: uid, credMethods: credMethods)
     }
 
-    func setTimeAdjustment(adjustment: TimeInterval) {
+    public func setTimeAdjustment(adjustment: TimeInterval) {
         self.timeAdjustment = adjustment
     }
     var timeAdjustment: TimeInterval = TimeInterval(0)
-    var isReady: Bool { get { return self.dbh?.isReady ?? false }}
+    public var isReady: Bool { get { return self.dbh?.isReady ?? false }}
 
-    func topicGetAll(from tinode: Tinode?) -> [TopicProto]? {
+    public func topicGetAll(from tinode: Tinode?) -> [TopicProto]? {
         guard let tdb = self.dbh?.topicDb, let rows = tdb.query() else {
             return nil
         }
@@ -60,18 +60,23 @@ class SqlStore : Storage {
         return results
     }
 
-    func topicAdd(topic: TopicProto) -> Int64 {
+    public func topicGet(from tinode: Tinode?, withName name: String?) -> TopicProto? {
+        guard let tdb = self.dbh?.topicDb else { return nil }
+        return tdb.readOne(for: tinode, withName: name)
+    }
+
+    public func topicAdd(topic: TopicProto) -> Int64 {
         if let st = topic.payload as? StoredTopic {
             return st.id ?? 0
         }
         return self.dbh?.topicDb?.insert(topic: topic) ?? 0
     }
 
-    func topicUpdate(topic: TopicProto) -> Bool {
+    public func topicUpdate(topic: TopicProto) -> Bool {
         return self.dbh?.topicDb?.update(topic: topic) ?? false
     }
 
-    func topicDelete(topic: TopicProto) -> Bool {
+    public func topicDelete(topic: TopicProto) -> Bool {
         guard let st = topic.payload as? StoredTopic, let topicId = st.id else { return false }
         do {
             try dbh?.db?.savepoint("SqlStore.topicDelete") {
@@ -81,76 +86,76 @@ class SqlStore : Storage {
             }
             return true
         } catch {
-            Cache.log.error("SqlStore - topicDelete operation failed: topicId = %lld, error = %@", topicId, error.localizedDescription)
+            BaseDb.log.error("SqlStore - topicDelete operation failed: topicId = %lld, error = %@", topicId, error.localizedDescription)
             return false
         }
     }
 
-    func getCachedMessagesRange(topic: TopicProto) -> Storage.Range? {
+    public func getCachedMessagesRange(topic: TopicProto) -> Storage.Range? {
         guard let st = topic.payload as? StoredTopic else { return nil }
         return (st.minLocalSeq ?? 0, st.maxLocalSeq ?? 0)
     }
 
-    func setRead(topic: TopicProto, read: Int) -> Bool {
+    public func setRead(topic: TopicProto, read: Int) -> Bool {
         guard let st = topic.payload as? StoredTopic,
             let topicId = st.id, topicId > 0 else { return false }
         return self.dbh?.topicDb?.updateRead(for: topicId, with: read) ?? false
     }
 
-    func setRecv(topic: TopicProto, recv: Int) -> Bool {
+    public func setRecv(topic: TopicProto, recv: Int) -> Bool {
         guard let st = topic.payload as? StoredTopic,
             let topicId = st.id, topicId > 0 else { return false }
         return self.dbh?.topicDb?.updateRecv(for: topicId, with: recv) ?? false
     }
 
-    func subAdd(topic: TopicProto, sub: SubscriptionProto) -> Int64 {
+    public func subAdd(topic: TopicProto, sub: SubscriptionProto) -> Int64 {
         guard let st = topic.payload as? StoredTopic, let topicId = st.id else {
             return 0
         }
         return self.dbh?.subscriberDb?.insert(for: topicId, with: BaseDb.kStatusSynced, using: sub) ?? 0
     }
 
-    func subUpdate(topic: TopicProto, sub: SubscriptionProto) -> Bool {
+    public func subUpdate(topic: TopicProto, sub: SubscriptionProto) -> Bool {
         guard let ss = sub.payload as? StoredSubscription, let subId = ss.id, subId > 0 else {
             return false
         }
         return self.dbh?.subscriberDb?.update(using: sub) ?? false
     }
 
-    func subNew(topic: TopicProto, sub: SubscriptionProto) -> Int64 {
+    public func subNew(topic: TopicProto, sub: SubscriptionProto) -> Int64 {
         guard let st = topic.payload as? StoredTopic, let topicId = st.id else {
             return 0
         }
         return self.dbh?.subscriberDb?.insert(for: topicId, with: BaseDb.kStatusQueued, using: sub) ?? 0
     }
 
-    func subDelete(topic: TopicProto, sub: SubscriptionProto) -> Bool {
+    public func subDelete(topic: TopicProto, sub: SubscriptionProto) -> Bool {
         guard let ss = sub.payload as? StoredSubscription, let subId = ss.id, subId > 0 else {
             return false
         }
         return self.dbh?.subscriberDb?.delete(recordId: subId) ?? false
     }
 
-    func getSubscriptions(topic: TopicProto) -> [SubscriptionProto]? {
+    public func getSubscriptions(topic: TopicProto) -> [SubscriptionProto]? {
         guard let st = topic.payload as? StoredTopic, let topicId = st.id else {
             return nil
         }
         return self.dbh?.subscriberDb?.readAll(topicId: topicId)
     }
 
-    func userGet(uid: String) -> UserProto? {
+    public func userGet(uid: String) -> UserProto? {
         return self.dbh?.userDb?.readOne(uid: uid)
     }
 
-    func userAdd(user: UserProto) -> Int64 {
+    public func userAdd(user: UserProto) -> Int64 {
         return self.dbh?.userDb?.insert(user: user) ?? 0
     }
 
-    func userUpdate(user: UserProto) -> Bool {
+    public func userUpdate(user: UserProto) -> Bool {
         return self.dbh?.userDb?.update(user: user) ?? false
     }
 
-    func msgReceived(topic: TopicProto, sub: SubscriptionProto?, msg: MsgServerData?) -> Int64 {
+    public func msgReceived(topic: TopicProto, sub: SubscriptionProto?, msg: MsgServerData?) -> Int64 {
         guard let msg = msg else { return -1 }
 
         var topicId: Int64 = -1
@@ -178,7 +183,7 @@ class SqlStore : Storage {
             }
             return sm.msgId
         } catch {
-            Cache.log.error("SqlStore - msgReceived operation failed: %@", error.localizedDescription)
+            BaseDb.log.error("SqlStore - msgReceived operation failed: %@", error.localizedDescription)
             return -1
         }
     }
@@ -198,40 +203,40 @@ class SqlStore : Storage {
         return self.dbh?.messageDb?.insert(topic: topic, msg: msg) ?? -1
     }
 
-    func msgSend(topic: TopicProto, data: Drafty) -> Int64 {
+    public func msgSend(topic: TopicProto, data: Drafty) -> Int64 {
         return self.insertMessage(topic: topic, data: data, initialStatus: BaseDb.kStatusUndefined)
     }
 
-    func msgDraft(topic: TopicProto, data: Drafty) -> Int64 {
+    public func msgDraft(topic: TopicProto, data: Drafty) -> Int64 {
         return self.insertMessage(topic: topic, data: data, initialStatus: BaseDb.kStatusDraft)
     }
 
-    func msgDraftUpdate(topic: TopicProto, dbMessageId: Int64, data: Drafty) -> Bool {
+    public func msgDraftUpdate(topic: TopicProto, dbMessageId: Int64, data: Drafty) -> Bool {
         return self.dbh?.messageDb?.updateStatusAndContent(
             msgId: dbMessageId,
             status: BaseDb.kStatusUndefined,
             content: data) ?? false
     }
 
-    func msgReady(topic: TopicProto, dbMessageId: Int64, data: Drafty) -> Bool {
+    public func msgReady(topic: TopicProto, dbMessageId: Int64, data: Drafty) -> Bool {
         return self.dbh?.messageDb?.updateStatusAndContent(
             msgId: dbMessageId,
             status: BaseDb.kStatusQueued,
             content: data) ?? false
     }
 
-    func msgSyncing(topic: TopicProto, dbMessageId: Int64, sync: Bool) -> Bool {
+    public func msgSyncing(topic: TopicProto, dbMessageId: Int64, sync: Bool) -> Bool {
         return self.dbh?.messageDb?.updateStatusAndContent(
             msgId: dbMessageId,
             status: sync ? BaseDb.kStatusSending : BaseDb.kStatusQueued,
             content: nil) ?? false
     }
 
-    func msgDiscard(topic: TopicProto, dbMessageId: Int64) -> Bool {
+    public func msgDiscard(topic: TopicProto, dbMessageId: Int64) -> Bool {
         return self.dbh?.messageDb?.delete(msgId: dbMessageId) ?? false
     }
 
-    func msgDelivered(topic: TopicProto, dbMessageId: Int64, timestamp: Date, seq: Int) -> Bool {
+    public func msgDelivered(topic: TopicProto, dbMessageId: Int64, timestamp: Date, seq: Int) -> Bool {
         do {
             try dbh?.db?.savepoint("SqlStore.msgDelivered") {
                 let messageDbSuccessful = self.dbh?.messageDb?.delivered(msgId: dbMessageId, ts: timestamp, seq: seq) ?? false
@@ -242,21 +247,21 @@ class SqlStore : Storage {
             }
             return true
         } catch {
-            Cache.log.error("SqlStore - msgDelivered operation failed %@", error.localizedDescription)
+            BaseDb.log.error("SqlStore - msgDelivered operation failed %@", error.localizedDescription)
             return false
         }
     }
 
-    func msgMarkToDelete(topic: TopicProto, from idLo: Int, to idHi: Int, markAsHard: Bool) -> Bool {
+    public func msgMarkToDelete(topic: TopicProto, from idLo: Int, to idHi: Int, markAsHard: Bool) -> Bool {
         guard let st = topic.payload as? StoredTopic, let topicId = st.id else { return false }
         return self.dbh?.messageDb?.markDeleted(topicId: topicId, from: idLo, to: idHi, hard: markAsHard) ?? false
     }
 
-    func msgMarkToDelete(topic: TopicProto, list: [Int], markAsHard: Bool) -> Bool {
+    public func msgMarkToDelete(topic: TopicProto, list: [Int], markAsHard: Bool) -> Bool {
         return false
     }
 
-    func msgDelete(topic: TopicProto, delete id: Int, deleteFrom idLo: Int, deleteTo idHi: Int) -> Bool {
+    public func msgDelete(topic: TopicProto, delete id: Int, deleteFrom idLo: Int, deleteTo idHi: Int) -> Bool {
         guard let st = topic.payload as? StoredTopic, let topicId = st.id else { return false }
         do {
             var result = false
@@ -266,40 +271,40 @@ class SqlStore : Storage {
             }
             return result
         } catch {
-            Cache.log.error("SqlStore - msgDelete operation failed %@", error.localizedDescription)
+            BaseDb.log.error("SqlStore - msgDelete operation failed %@", error.localizedDescription)
             return false
         }
     }
 
-    func msgDelete(topic: TopicProto, delete id: Int, deleteAll list: [Int]?) -> Bool {
+    public func msgDelete(topic: TopicProto, delete id: Int, deleteAll list: [Int]?) -> Bool {
         return false
     }
 
-    func msgRecvByRemote(sub: SubscriptionProto, recv: Int?) -> Bool {
+    public func msgRecvByRemote(sub: SubscriptionProto, recv: Int?) -> Bool {
         guard let ss = sub.payload as? StoredSubscription, let sid = ss.id, sid > 0, let recv = recv else {
             return false
         }
         return BaseDb.getInstance().subscriberDb?.updateRecv(for: sid, with: recv) ?? false
     }
 
-    func msgReadByRemote(sub: SubscriptionProto, read: Int?) -> Bool {
+    public func msgReadByRemote(sub: SubscriptionProto, read: Int?) -> Bool {
         guard let ss = sub.payload as? StoredSubscription, let sid = ss.id, sid > 0, let read = read else {
             return false
         }
         return BaseDb.getInstance().subscriberDb?.updateRead(for: sid, with: read) ?? false
     }
 
-    func getMessageById(topic: TopicProto, dbMessageId: Int64) -> Message? {
+    public func getMessageById(topic: TopicProto, dbMessageId: Int64) -> Message? {
         return BaseDb.getInstance().messageDb?.query(msgId: dbMessageId)
     }
 
-    func getQueuedMessages(topic: TopicProto) -> [Message]? {
+    public func getQueuedMessages(topic: TopicProto) -> [Message]? {
         guard let st = topic.payload as? StoredTopic else { return nil }
         guard let id = st.id, id > 0 else { return nil }
         return BaseDb.getInstance().messageDb?.queryUnsent(topicId: id)
     }
 
-    func getQueuedMessageDeletes(topic: TopicProto, hard: Bool) -> [Int]? {
+    public func getQueuedMessageDeletes(topic: TopicProto, hard: Bool) -> [Int]? {
         guard let st = topic.payload as? StoredTopic else { return nil }
         guard let id = st.id, id > 0 else { return nil }
         return BaseDb.getInstance().messageDb?.queryDeleted(topicId: id, hard: hard)

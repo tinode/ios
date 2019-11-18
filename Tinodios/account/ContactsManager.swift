@@ -7,6 +7,7 @@
 
 import Foundation
 import TinodeSDK
+import TinodiosDB
 
 public class ContactHolder {
     var displayName: String? = nil

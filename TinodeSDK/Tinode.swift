@@ -602,14 +602,19 @@ public class Tinode {
         }
         return ComTopic<SP>(tinode: self, sub: sub as! Subscription<SP, PrivateType>)
     }
-    public func newTopic(for name: String, with listener: DefaultTopic.Listener?) -> TopicProto {
+    public static func newTopic(withTinode tinode: Tinode?,
+                                forTopic name: String,
+                                withListener listener: DefaultTopic.Listener?) -> TopicProto {
         if name == Tinode.kTopicMe {
-            return DefaultMeTopic(tinode: self, l: listener)
+            return DefaultMeTopic(tinode: tinode, l: listener)
         }
         if name == Tinode.kTopicFnd {
-            return DefaultFndTopic(tinode: self)
+            return DefaultFndTopic(tinode: tinode)
         }
-        return DefaultComTopic(tinode: self, name: name, l: listener)
+        return DefaultComTopic(tinode: tinode, name: name, l: listener)
+    }
+    public func newTopic(for name: String, with listener: DefaultTopic.Listener?) -> TopicProto {
+        return Tinode.newTopic(withTinode: self, forTopic: name, withListener: listener)
     }
     public func maybeCreateTopic(meta: MsgServerMeta) -> TopicProto? {
         if meta.desc == nil {

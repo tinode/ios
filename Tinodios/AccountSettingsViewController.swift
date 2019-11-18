@@ -6,8 +6,9 @@
 //
 
 import MessageUI
-import UIKit
 import TinodeSDK
+import TinodiosDB
+import UIKit
 
 class AccountSettingsViewController: UITableViewController {
 

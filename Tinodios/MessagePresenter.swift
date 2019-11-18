@@ -8,6 +8,8 @@
 import Foundation
 import UIKit
 
+import TinodiosDB
+
 protocol MessagePresentationLogic {
     func updateTitleBar(icon: UIImage?, title: String?, online: Bool)
     func setOnline(online: Bool)

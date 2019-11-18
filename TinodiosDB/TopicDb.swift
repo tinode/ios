@@ -17,7 +17,7 @@ public class StoredTopic: Payload {
     var status: Int = BaseDb.kStatusUndefined
     var nextUnsentId: Int? = nil
 
-    static func isAllDataLoaded(topic: TopicProto?) -> Bool {
+    public static func isAllDataLoaded(topic: TopicProto?) -> Bool {
         guard let topic = topic else { return false }
         if (topic.seq ?? -1) == 0 { return true }
         guard let st = topic.payload as? StoredTopic else { return false }
@@ -145,7 +145,7 @@ public class TopicDb {
         topic.deserializePriv(from: row[self.priv])
         topic.payload = st
     }
-    func getId(topic: String?) -> Int64 {
+    public func getId(topic: String?) -> Int64 {
         guard let topic = topic else {
             return -1
         }
@@ -166,7 +166,7 @@ public class TopicDb {
                 return st.nextUnsentId!
             }
         } catch {
-            Cache.log.error("TopicDb - getNextUnusedSeq operation failed: topicId = %lld, error = %@", recordId, error.localizedDescription)
+            BaseDb.log.error("TopicDb - getNextUnusedSeq operation failed: topicId = %lld, error = %@", recordId, error.localizedDescription)
         }
         return -1
     }
@@ -177,11 +177,21 @@ public class TopicDb {
         let topics = self.table.filter(self.accountId == accountId)
         return try? self.db.prepare(topics)
     }
-    func readOne(for tinode: Tinode?, row: Row) -> TopicProto? {
-        guard let tn = tinode, let topicName = row[self.topic] else {
+    func readOne(for tinode: Tinode?, withName topicName: String?) -> TopicProto? {
+        guard let accountId = baseDb.account?.id else {
             return nil
         }
-        let t = tn.newTopic(for: topicName, with: nil)
+        if let row = try? db.pluck(self.table.filter(self.accountId == accountId && self.topic == topicName)) {
+            return readOne(for: tinode, row: row)
+        }
+        return nil
+    }
+    func readOne(for tinode: Tinode?, row: Row) -> TopicProto? {
+        guard let topicName = row[self.topic] else {
+            return nil
+        }
+        //let t = Tinode.newTopic(for: topicName, with: nil)
+        let t = Tinode.newTopic(withTinode: tinode, forTopic: topicName, withListener: nil)
         self.deserializeTopic(topic: t, row: row)
         return t
     }
@@ -233,7 +243,7 @@ public class TopicDb {
             }
             return rowid
         } catch {
-            Cache.log.error("TopicDb - insert operation failed: error = %@", error.localizedDescription)
+            BaseDb.log.error("TopicDb - insert operation failed: error = %@", error.localizedDescription)
             return -1
         }
     }
@@ -273,7 +283,7 @@ public class TopicDb {
                 return true
             }
         } catch {
-            Cache.log.error("TopicDb - update operation failed: topicId = %lld, error = %@", recordId, error.localizedDescription)
+            BaseDb.log.error("TopicDb - update operation failed: topicId = %lld, error = %@", recordId, error.localizedDescription)
         }
         return false
     }
@@ -310,7 +320,7 @@ public class TopicDb {
                     if updateMaxLocalSeq { st.maxLocalSeq = seq }
                 }
             } catch {
-                Cache.log.error("TopicDb - msgReceived operation failed: topicId = %@, error = %@", recordId, error.localizedDescription)
+                BaseDb.log.error("TopicDb - msgReceived operation failed: topicId = %@, error = %@", recordId, error.localizedDescription)
                 return false
             }
         }
@@ -325,7 +335,7 @@ public class TopicDb {
             do {
                 return try self.db.run(record.update(self.maxDel <- delId)) > 0
             } catch {
-                Cache.log.error("TopicDb - msgDelivered operation failed: topicId = %lld, error = %@", recordId, error.localizedDescription)
+                BaseDb.log.error("TopicDb - msgDelivered operation failed: topicId = %lld, error = %@", recordId, error.localizedDescription)
                 return false
             }
         }
@@ -337,7 +347,7 @@ public class TopicDb {
         do {
             return try self.db.run(record.delete()) > 0
         } catch {
-            Cache.log.error("TopicDb - delete operation failed: topicId = %lld, error = %@", recordId, error.localizedDescription)
+            BaseDb.log.error("TopicDb - delete operation failed: topicId = %lld, error = %@", recordId, error.localizedDescription)
             return false
         }
     }

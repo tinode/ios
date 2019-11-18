@@ -9,12 +9,12 @@ import Foundation
 import SQLite
 import TinodeSDK
 
-class StoredUser: Payload {
+public class StoredUser: Payload {
     let id: Int64?
     init(id: Int64) { self.id = id }
 }
 
-class UserDb {
+public class UserDb {
     private static let kTableName = "users"
     private let db: SQLite.Connection
 
@@ -55,7 +55,7 @@ class UserDb {
         })
         try! self.db.run(self.table.createIndex(accountId, uid, ifNotExists: true))
     }
-    func insert(user: UserProto?) -> Int64 {
+    public func insert(user: UserProto?) -> Int64 {
         guard let user = user else { return 0 }
         let id = self.insert(uid: user.uid, updated: user.updated, serializedPub: user.serializePub())
         if id > 0 {
@@ -65,7 +65,7 @@ class UserDb {
         return id
     }
     @discardableResult
-    func insert(sub: SubscriptionProto?) -> Int64 {
+    public func insert(sub: SubscriptionProto?) -> Int64 {
         guard let sub = sub else { return -1 }
         return self.insert(uid: sub.user ?? sub.topic, updated: sub.updated, serializedPub: sub.serializePub())
     }
@@ -80,22 +80,22 @@ class UserDb {
             ))
             return rowid
         } catch {
-            Cache.log.error("UserDb - insert operation failed: uid = %@, error = %@", uid ?? "", error.localizedDescription)
+            BaseDb.log.error("UserDb - insert operation failed: uid = %@, error = %@", uid ?? "", error.localizedDescription)
             return -1
         }
     }
     @discardableResult
-    func update(user: UserProto?) -> Bool {
+    public func update(user: UserProto?) -> Bool {
         guard let user = user, let su = user.payload as? StoredUser, let userId = su.id, userId > 0 else { return false }
         return self.update(userId: userId, updated: user.updated, serializedPub: user.serializePub())
     }
     @discardableResult
-    func update(sub: SubscriptionProto?) -> Bool {
+    public func update(sub: SubscriptionProto?) -> Bool {
         guard let st = sub?.payload as? StoredSubscription, let userId = st.userId else { return false }
         return self.update(userId: userId, updated: sub?.updated, serializedPub: sub?.serializePub())
     }
     @discardableResult
-    func update(userId: Int64, updated: Date?, serializedPub: String?) -> Bool {
+    public func update(userId: Int64, updated: Date?, serializedPub: String?) -> Bool {
         var setters = [Setter]()
         if let u = updated {
             setters.append(self.updated <- u)
@@ -108,21 +108,21 @@ class UserDb {
         do {
             return try self.db.run(record.update(setters)) > 0
         } catch {
-            Cache.log.error("UserDb - update operation failed: userId = %lld, error = %@", userId, error.localizedDescription)
+            BaseDb.log.error("UserDb - update operation failed: userId = %lld, error = %@", userId, error.localizedDescription)
             return false
         }
     }
     @discardableResult
-    func deleteRow(for id: Int64) -> Bool {
+    public func deleteRow(for id: Int64) -> Bool {
         let record = self.table.filter(self.id == id)
         do {
             return try self.db.run(record.delete()) > 0
         } catch {
-            Cache.log.error("UserDb - deleteRow operation failed: userId = %lld, error = %@", id, error.localizedDescription)
+            BaseDb.log.error("UserDb - deleteRow operation failed: userId = %lld, error = %@", id, error.localizedDescription)
             return false
         }
     }
-    func getId(for uid: String?) -> Int64 {
+    public func getId(for uid: String?) -> Int64 {
         guard let accountId = baseDb.account?.id else  {
             return -1
         }
@@ -140,7 +140,7 @@ class UserDb {
         user.payload = storedUser
         return user
     }
-    func readOne(uid: String?) -> UserProto? {
+    public func readOne(uid: String?) -> UserProto? {
         guard let uid = uid, let accountId = baseDb.account?.id else {
             return nil
         }
@@ -168,18 +168,18 @@ class UserDb {
             }
             return users
         } catch {
-            Cache.log.error("UserDb - read operation failed: error = %@", error.localizedDescription)
+            BaseDb.log.error("UserDb - read operation failed: error = %@", error.localizedDescription)
         }
         return nil
     }
 
     // Read users with uids in the array.
-    func read(uids: [String]) -> [UserProto]? {
+    public func read(uids: [String]) -> [UserProto]? {
         return read(one: nil, multiple: uids)
     }
 
     // Select all users except given user.
-    func readAll(for uid: String?) -> [UserProto]? {
+    public func readAll(for uid: String?) -> [UserProto]? {
         return read(one: uid, multiple: [])
     }
 }
