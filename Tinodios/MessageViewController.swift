@@ -980,7 +980,11 @@ extension MessageViewController : MessageViewLayoutDelegate {
         }
         attributedText.append(NSAttributedString(string: carveout, attributes: [.font: Constants.kContentFont]))
 
-        return textSizeHelper.computeSize(for: attributedText, within: maxWidth)
+        return storedMessage.isImage ?
+            attributedText.boundingRect(with: CGSize(width: maxWidth, height: .greatestFiniteMagnitude),
+                                        options: [.usesLineFragmentOrigin, .usesFontLeading],
+                                        context: nil).integral.size :
+            textSizeHelper.computeSize(for: attributedText, within: maxWidth)
     }
 }
 

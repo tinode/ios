@@ -263,4 +263,10 @@ extension StoredMessage {
         cachedContent = AttributedStringFormatter.toAttributed(content, fitIn: size, withDefaultAttributes: attributes)
         return cachedContent
     }
+
+    // Returns true if message contains an inline image.
+    var isImage: Bool {
+        guard let entity = self.content?.entities?[0] else { return false }
+        return entity.data?["val"] != nil && entity.data?["mime"] != nil
+    }
 }
