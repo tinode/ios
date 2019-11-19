@@ -17,23 +17,8 @@
 		0ACE9E6C2381356B006BE575 /* AccountDb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACE9E612381356B006BE575 /* AccountDb.swift */; };
 		0ACE9E6D2381356B006BE575 /* SubscriberDb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACE9E622381356B006BE575 /* SubscriberDb.swift */; };
 		0ACE9E832381418A006BE575 /* TinodeSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0ACE9E822381418A006BE575 /* TinodeSDK.framework */; };
-		0ACE9E842381418A006BE575 /* TinodeSDK.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0ACE9E822381418A006BE575 /* TinodeSDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		81E552C57A611B0337154F1A /* Pods_TinodiosDB.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B351FFA61AB7A59DE7E76A0 /* Pods_TinodiosDB.framework */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		0ACE9E852381418B006BE575 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				0ACE9E842381418A006BE575 /* TinodeSDK.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		0ACE9E502381342B006BE575 /* TinodiosDB.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = TinodiosDB.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -142,7 +127,6 @@
 				0ACE9E4C2381342B006BE575 /* Sources */,
 				0ACE9E4D2381342B006BE575 /* Frameworks */,
 				0ACE9E4E2381342B006BE575 /* Resources */,
-				0ACE9E852381418B006BE575 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
