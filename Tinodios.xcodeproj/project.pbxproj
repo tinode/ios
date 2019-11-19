@@ -34,14 +34,13 @@
 		0A8D945822BEED3700DC154E /* AvatarWithOnlineIndicator.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0A8D945722BEED3700DC154E /* AvatarWithOnlineIndicator.xib */; };
 		0A8D945A22BEF08100DC154E /* AvatarWithOnlineIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8D945922BEF08100DC154E /* AvatarWithOnlineIndicator.swift */; };
 		0A8D945C22BF5B7F00DC154E /* AvatarWithOnlineIndicator+TypingAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8D945B22BF5B7F00DC154E /* AvatarWithOnlineIndicator+TypingAnimation.swift */; };
+		0A910AFC2383A60500C95AD3 /* TinodiosDB.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0ACE9E7E23814157006BE575 /* TinodiosDB.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		0A95F4D4229BD95900AEF7D3 /* AccountSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A95F4D3229BD95900AEF7D3 /* AccountSettingsViewController.swift */; };
 		0A9E7149237BCC8400C1D491 /* NewChatTabController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A9E7148237BCC8400C1D491 /* NewChatTabController.swift */; };
 		0AB5FDCE22C20D1900F44AFD /* ArchivedChatsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AB5FDCD22C20D1900F44AFD /* ArchivedChatsTableViewController.swift */; };
 		0AC33D032293C7A00060D263 /* NewGroupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AC33D022293C7A00060D263 /* NewGroupViewController.swift */; };
 		0ACB5F0E22097651008FE740 /* ChatListPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACB5F0D22097651008FE740 /* ChatListPresenter.swift */; };
 		0ACB5F1022097665008FE740 /* ChatListRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACB5F0F22097665008FE740 /* ChatListRouter.swift */; };
-		0ACE9E5C238134A2006BE575 /* TinodiosDB.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0ACE9E5B238134A2006BE575 /* TinodiosDB.framework */; };
-		0ACE9E5D238134A2006BE575 /* TinodiosDB.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0ACE9E5B238134A2006BE575 /* TinodiosDB.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		0ACE9E7523813A1D006BE575 /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACE9E7423813A1D006BE575 /* NotificationService.swift */; };
 		0ACE9E7923813A1D006BE575 /* TinodiosNSExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 0ACE9E7223813A1D006BE575 /* TinodiosNSExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		0ACE9E7F23814157006BE575 /* TinodiosDB.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0ACE9E7E23814157006BE575 /* TinodiosDB.framework */; };
@@ -100,8 +99,8 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				0A910AFC2383A60500C95AD3 /* TinodiosDB.framework in Embed Frameworks */,
 				0A431C042244A26200A837F7 /* TinodeSDK.framework in Embed Frameworks */,
-				0ACE9E5D238134A2006BE575 /* TinodiosDB.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -165,7 +164,6 @@
 		0AC33D022293C7A00060D263 /* NewGroupViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewGroupViewController.swift; sourceTree = "<group>"; };
 		0ACB5F0D22097651008FE740 /* ChatListPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatListPresenter.swift; sourceTree = "<group>"; };
 		0ACB5F0F22097665008FE740 /* ChatListRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatListRouter.swift; sourceTree = "<group>"; };
-		0ACE9E5B238134A2006BE575 /* TinodiosDB.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = TinodiosDB.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		0ACE9E7223813A1D006BE575 /* TinodiosNSExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = TinodiosNSExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		0ACE9E7423813A1D006BE575 /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
 		0ACE9E7623813A1D006BE575 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -223,7 +221,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				0A431C032244A26200A837F7 /* TinodeSDK.framework in Frameworks */,
-				0ACE9E5C238134A2006BE575 /* TinodiosDB.framework in Frameworks */,
 				58CBE6CE018029121E923407 /* Pods_Tinodios.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -345,7 +342,6 @@
 			isa = PBXGroup;
 			children = (
 				0ACE9E7E23814157006BE575 /* TinodiosDB.framework */,
-				0ACE9E5B238134A2006BE575 /* TinodiosDB.framework */,
 				3B787A84CD010EF920890105 /* Pods_Tinodios.framework */,
 			);
 			name = Frameworks;
@@ -885,7 +881,7 @@
 				CODE_SIGN_ENTITLEMENTS = Tinodios/Tinodios.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 53QN4ZCPDQ;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = Tinodios/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -904,6 +900,7 @@
 		0ACE9E7B23813A1D006BE575 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = NO;
 				CODE_SIGN_ENTITLEMENTS = TinodiosNSExtension/TinodiosNSExtension.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
@@ -927,10 +924,11 @@
 		0ACE9E7C23813A1D006BE575 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = NO;
 				CODE_SIGN_ENTITLEMENTS = TinodiosNSExtension/TinodiosNSExtension.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 53QN4ZCPDQ;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = TinodiosNSExtension/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (

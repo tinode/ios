@@ -221,7 +221,7 @@ class MessageViewController: UIViewController {
     func deviceRotated() {
         // Force a full redraw so the view can readjust the messages
         // in the view for the new screen dimensions.
-        self.collectionView.reloadDataAndKeepOffset()
+        self.collectionView?.reloadDataAndKeepOffset()
     }
 
     // MARK: lifecycle
