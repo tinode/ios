@@ -44,7 +44,6 @@
 		0ACE9E7523813A1D006BE575 /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACE9E7423813A1D006BE575 /* NotificationService.swift */; };
 		0ACE9E7923813A1D006BE575 /* TinodiosNSExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 0ACE9E7223813A1D006BE575 /* TinodiosNSExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		0ACE9E7F23814157006BE575 /* TinodiosDB.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0ACE9E7E23814157006BE575 /* TinodiosDB.framework */; };
-		0ACE9E8023814157006BE575 /* TinodiosDB.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0ACE9E7E23814157006BE575 /* TinodiosDB.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		0AD5552A21C625BB0027FD16 /* ChatListInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AD5552921C625BB0027FD16 /* ChatListInteractor.swift */; };
 		0ADDBC8B2249F617000BD00D /* ChatListViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ADDBC8A2249F617000BD00D /* ChatListViewCell.swift */; };
 		0AE50D4422156A250021F7B7 /* FindViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AE50D4322156A250021F7B7 /* FindViewController.swift */; };
@@ -114,17 +113,6 @@
 				0ACE9E7923813A1D006BE575 /* TinodiosNSExtension.appex in Embed App Extensions */,
 			);
 			name = "Embed App Extensions";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		0ACE9E8123814157006BE575 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				0ACE9E8023814157006BE575 /* TinodiosDB.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -423,7 +411,6 @@
 				0ACE9E6E23813A1D006BE575 /* Sources */,
 				0ACE9E6F23813A1D006BE575 /* Frameworks */,
 				0ACE9E7023813A1D006BE575 /* Resources */,
-				0ACE9E8123814157006BE575 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
