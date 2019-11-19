@@ -980,6 +980,8 @@ extension MessageViewController : MessageViewLayoutDelegate {
         }
         attributedText.append(NSAttributedString(string: carveout, attributes: [.font: Constants.kContentFont]))
 
+        // FIXME: storedMessage may contain an image surrounded by text. In such cases,
+        // size calculations may be wrong. Handle it.
         return storedMessage.isImage ?
             attributedText.boundingRect(with: CGSize(width: maxWidth, height: .greatestFiniteMagnitude),
                                         options: [.usesLineFragmentOrigin, .usesFontLeading],
