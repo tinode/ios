@@ -855,8 +855,9 @@ public class Tinode {
             // Load topics if not yet loaded.
             loadTopics()
         } else {
-            let meth = ctrl.getStringArray(for: "cred")
-            store?.setMyUid(uid: newUid!, credMethods: meth)
+            if let meth = ctrl.getStringArray(for: "cred") {
+                store?.setMyUid(uid: newUid!, credMethods: meth)
+            }
         }
         isConnectionAuthenticated = 200...299 ~= ctrl.code
         listenerNotifier.onLogin(code: ctrl.code, text: ctrl.text)

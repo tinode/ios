@@ -196,13 +196,16 @@ public class TopicDb {
         return t
     }
     func insert(topic: TopicProto) -> Int64 {
+        guard let accountId = baseDb.account?.id else {
+            BaseDb.log.error("TopicDb.insert: account id is not defined.")
+            return -1
+        }
         do {
             // 1414213562 is Oct 25, 2014 05:06:02 UTC, incidentally equal to the first few digits of sqrt(2)
             let lastUsed = topic.touched ?? Date(timeIntervalSince1970: 1414213562)
 
             let tp = topic.topicType
             let tpv = tp.rawValue
-            let accountId = baseDb.account!.id
             let status = topic.isNew ? BaseDb.kStatusQueued : BaseDb.kStatusSynced
             let rowid = try db.run(
                 self.table.insert(
