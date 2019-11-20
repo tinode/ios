@@ -411,6 +411,7 @@
 				0ACE9E6E23813A1D006BE575 /* Sources */,
 				0ACE9E6F23813A1D006BE575 /* Frameworks */,
 				0ACE9E7023813A1D006BE575 /* Resources */,
+				B0DB87172383FEF0005FBBC1 /* Assign bundle version from git */,
 			);
 			buildRules = (
 			);
@@ -608,6 +609,24 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "${SRCROOT}/Scripts/setup_firebase.sh\n";
+		};
+		B0DB87172383FEF0005FBBC1 /* Assign bundle version from git */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Assign bundle version from git";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "${SRCROOT}/Scripts/set_build_number.sh\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
