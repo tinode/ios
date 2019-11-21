@@ -480,6 +480,8 @@ extension MessageViewController: MessageDisplayLogic {
         if oldData.isEmpty || newData.isEmpty {
             self.messages = newData
             collectionView.reloadSections(IndexSet(integer: 0))
+            collectionView.layoutIfNeeded()
+            collectionView.scrollToBottom()
         } else {
             // Get indexes of inserted and deleted items.
             let diff = Utils.diffMessageArray(sortedOld: oldData, sortedNew: newData)
@@ -515,10 +517,10 @@ extension MessageViewController: MessageDisplayLogic {
                 }
             }, completion: { (Bool) -> Void in
                 self.collectionView.reloadItems(at: refresh.map { IndexPath(item: $0, section: 0) })
+                self.collectionView.layoutIfNeeded()
+                self.collectionView.scrollToBottom()
             })
         }
-        collectionView.layoutIfNeeded()
-        collectionView.scrollToBottom()
     }
 
     func reloadMessages(fromSeqId loId: Int, toSeqId hiId: Int) {
