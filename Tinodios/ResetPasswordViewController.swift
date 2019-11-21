@@ -50,7 +50,7 @@ class ResetPasswordViewController : UIViewController {
 
     @IBAction func requestButtonClicked(_ sender: Any) {
         let input = UiUtils.ensureDataInTextField(credentialTextField)
-        guard let credential = ValidatedCredential.parse(from: input) else { return }
+        guard let credential = ValidatedCredential.parse(from: input.lowercased()) else { return }
         let normalized: String
         switch credential {
         case let .email(str): normalized = str
