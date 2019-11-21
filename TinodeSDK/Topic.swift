@@ -1235,6 +1235,9 @@ open class MeTopic<DP: Codable & Mergeable>: Topic<DP, PrivateType, DP, PrivateT
                 topic.lastSeen = LastSeen(when: Date(), ua: nil)
             case .kMsg: // new message received
                 topic.seq = pres.seq
+                if pres.act == nil || tinode!.isMe(uid: pres.act!) {
+                    assignRead(to: topic, read: pres.seq)
+                }
                 topic.touched = Date()
             case .kUpd: // pub/priv updated
                 getMeta(query: getMetaGetBuilder().withSub(user: pres.src).build())
@@ -1245,19 +1248,9 @@ open class MeTopic<DP: Codable & Mergeable>: Topic<DP, PrivateType, DP, PrivateT
             case .kUa: // user agent changed
                 topic.lastSeen = LastSeen(when: Date(), ua: pres.ua)
             case .kRecv: // user's other session marked some messages as received
-                if (topic.recv ?? -1) < (pres.seq ?? -1) {
-                    topic.recv = pres.seq
-                    self.store?.setRecv(topic: topic, recv: pres.seq!)
-                }
+                assignRecv(to: topic, recv: pres.seq)
             case .kRead: // user's other session marked some messages as read
-                if (topic.read ?? -1) < (pres.seq ?? -1) {
-                    topic.read = pres.seq
-                    self.store?.setRead(topic: topic, read: topic.read!)
-                    if (topic.recv ?? -1) < (topic.read ?? -1) {
-                        topic.recv = topic.read
-                        self.store?.setRecv(topic: topic, recv: topic.read!)
-                    }
-                }
+                assignRead(to: topic, read: pres.seq)
             case .kGone:
                 // If topic is unknown (==nil), then we don't care to unregister it.
                 topic.persist(false)
@@ -1292,6 +1285,21 @@ open class MeTopic<DP: Codable & Mergeable>: Topic<DP, PrivateType, DP, PrivateT
             listener?.onSubsUpdated()
         }
         listener?.onPres(pres: pres)
+    }
+
+    fileprivate func assignRecv(to topic: TopicProto, recv seq: Int?) {
+        if (topic.recv ?? -1) < (seq ?? -1) {
+            topic.recv = seq
+            self.store?.setRecv(topic: topic, recv: seq!)
+        }
+    }
+
+    fileprivate func assignRead(to topic: TopicProto, read seq: Int?) {
+        if (topic.read ?? -1) < (seq ?? -1) {
+            topic.read = seq
+            self.store?.setRead(topic: topic, read: topic.read!)
+            assignRecv(to: topic, recv: topic.read)
+        }
     }
 
     override fileprivate func routeMetaSub(meta: MsgServerMeta) {
