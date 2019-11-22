@@ -31,7 +31,7 @@
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>$(APP_NAME) needs access to your photos to let you you send them to your contacts</string>
 	<key>NSCameraUsageDescription</key>
-	<string>$(APP_NAME) allows you to take pictures with camera and upload these as avatar or messages </string>
+	<string>$(APP_NAME) takes photos with the camera to use as avatar or to send them to your contacts </string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
