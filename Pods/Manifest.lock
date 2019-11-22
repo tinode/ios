@@ -40,6 +40,12 @@ PODS:
     - GoogleUtilities/Logger
   - GoogleUtilities/UserDefaults (6.2.0):
     - GoogleUtilities/Logger
+  - PhoneNumberKit (3.1.0):
+    - PhoneNumberKit/PhoneNumberKitCore (= 3.1.0)
+    - PhoneNumberKit/UIKit (= 3.1.0)
+  - PhoneNumberKit/PhoneNumberKitCore (3.1.0)
+  - PhoneNumberKit/UIKit (3.1.0):
+    - PhoneNumberKit/PhoneNumberKitCore
   - Protobuf (3.8.0)
   - SQLite.swift (0.12.0):
     - SQLite.swift/standard (= 0.12.0)
@@ -51,6 +57,7 @@ DEPENDENCIES:
   - Crashlytics (~> 3.13.4)
   - Fabric (~> 1.10.2)
   - Firebase/Messaging
+  - PhoneNumberKit (~> 3.1)
   - SQLite.swift (~> 0.12.0)
   - SwiftKeychainWrapper (~> 3.2)
   - SwiftWebSocket (~> 2.7.0)
@@ -65,6 +72,7 @@ SPEC REPOS:
     - FirebaseInstanceID
     - FirebaseMessaging
     - GoogleUtilities
+    - PhoneNumberKit
     - Protobuf
     - SQLite.swift
     - SwiftKeychainWrapper
@@ -79,11 +87,12 @@ SPEC CHECKSUMS:
   FirebaseInstanceID: 27bed93a59b6685f5c3e0c028a878a764fd75c33
   FirebaseMessaging: 31377e05331d16dc6c9fd82554f9a5c49aa70aed
   GoogleUtilities: 996e0db07153674fd1b54b220fda3a3dc3547cba
+  PhoneNumberKit: adffe4e128af1918386e09e7421d3d851a2987af
   Protobuf: 3f617b9a6e73605565086864c9bc26b2bf2dd5a3
   SQLite.swift: 7cad9db150a03716336e69469ec9559c85aece5b
   SwiftKeychainWrapper: 82c4c02cdc36f9a24f7edfcaab3e336401caa1a1
   SwiftWebSocket: 612c9729fd503cb6b0b8b45390c788686dac306f
 
-PODFILE CHECKSUM: ec4bf1074c2ea647ea346bdb4fd7a8d388b87b47
+PODFILE CHECKSUM: 0fb8d6014b8f93e5bebb932fee8c7a4a0244b1f4
 
 COCOAPODS: 1.6.1

@@ -22,6 +22,7 @@ end
 def ui_pods
     pod 'SwiftKeychainWrapper', '~> 3.2'
     pod 'Firebase/Messaging'
+    pod 'PhoneNumberKit', '~> 3.1'
 end
 
 target 'TinodeSDK' do

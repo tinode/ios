@@ -7,6 +7,7 @@
 
 import Foundation
 import MobileCoreServices
+import PhoneNumberKit
 import SwiftKeychainWrapper
 import TinodeSDK
 import TinodiosDB
@@ -16,6 +17,10 @@ class Utils {
     static let kTinodePrefReadReceipts = "tinodePrefSendReadReceipts"
     static let kTinodePrefTypingNotifications = "tinodePrefTypingNoficications"
     static let kTinodePrefLastLogin = "tinodeLastLogin"
+
+    static var phoneNumberKit: PhoneNumberKit = {
+        return PhoneNumberKit()
+    }()
 
     public static func getSavedLoginUserName() -> String? {
         return UserDefaults.standard.string(forKey: Utils.kTinodePrefLastLogin)
