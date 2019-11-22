@@ -22,16 +22,14 @@ enum ValidatedCredential {
             predicateStr = "^([a-z0-9_\\.+-]+)@([\\da-z\\.-]+)\\.([a-z\\.]{2,6})$"
             currObject = str
         case let .phoneNum(str):
-            // FIXME: this call does nothing. If one passes an email, it just reurns the same email back.
-            // Maybe use https://github.com/marmelroy/PhoneNumberKit
-            let e164 = CNPhoneNumber(stringValue: str).naiveE164
-            if !e164.isEmpty {
-                print("phone = \(e164)")
-                self = .phoneNum(e164)
+            do {
+                let phoneNumber = try Utils.phoneNumberKit.parse(str, ignoreType: true)
+                self = .phoneNum(Utils.phoneNumberKit.format(phoneNumber, toType: .e164))
                 return true
-            } else {
-                return false
+            } catch {
+                Cache.log.error("Failed to parse phone number credential: %@, error: %@", str, error.localizedDescription)
             }
+            return false
         case let .URL(str):
             predicateStr = "^(https?:\\/\\/)?([\\da-z\\.-]+)\\.([a-z\\.]{2,6})([\\/\\w \\.-]*)*\\/?$"
             currObject = str

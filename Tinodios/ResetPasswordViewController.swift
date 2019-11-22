@@ -48,9 +48,20 @@ class ResetPasswordViewController : UIViewController {
         }
     }
 
+    @IBAction func credentialTextChanged(_ sender: Any) {
+        if credentialTextField.rightView != nil {
+            UiUtils.clearTextFieldError(credentialTextField)
+        }
+    }
+
     @IBAction func requestButtonClicked(_ sender: Any) {
+        UiUtils.clearTextFieldError(credentialTextField)
         let input = UiUtils.ensureDataInTextField(credentialTextField)
-        guard let credential = ValidatedCredential.parse(from: input.lowercased()) else { return }
+        guard let credential = ValidatedCredential.parse(from: input.lowercased()) else {
+            UiUtils.markTextFieldAsError(self.credentialTextField)
+            UiUtils.showToast(message: "Enter a valid credential (phone or email).")
+            return
+        }
         let normalized: String
         switch credential {
         case let .email(str): normalized = str
