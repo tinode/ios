@@ -196,7 +196,7 @@ class MessageViewController: UIViewController {
 
     private func setup() {
         myUID = Cache.getTinode().myUid
-        self.imagePicker = ImagePicker(presentationController: self, delegate: self)
+        self.imagePicker = ImagePicker(presentationController: self, delegate: self, editable: false)
 
         let interactor = MessageInteractor()
         let presenter = MessagePresenter()

@@ -290,7 +290,10 @@ class UiUtils {
         parent.addSubview(toastView)
         label.sizeToFit()
 
-        let toastHeight = max(min(label.frame.height + spacing * 3, maxMessageHeight), minMessageHeight)
+        var toastHeight = max(min(label.frame.height + spacing * 3, maxMessageHeight), minMessageHeight)
+        if #available(iOS 11.0, *) {
+            toastHeight += parent.safeAreaInsets.bottom
+        }
         toastView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             toastView.leadingAnchor.constraint(equalTo: parent.leadingAnchor, constant: 0),
@@ -576,12 +579,12 @@ extension UIImage {
         // scale is [0,1): 0 - very large original, 1: under the limits already.
         let scaleX = min(originalWidth, maxWidth) / originalWidth
         let scaleY = min(originalHeight, maxHeight) / originalHeight
+        // How much to scale the image
         let scale = clip ?
-            // How much to scale the image with at least of of either width or height below the limits; clip the other dimension, the image will have the new aspect ratio.
-            max(scaleX, scaleY) :
-            // How much to scale the image that has both width and height below the limits: no clipping will occur,
-            // the image will keep the original aspect ratio.
-            min(scaleX, scaleY)
+            // Scale as little as possible: only one dimension is below the limit, clip the other dimension; the image will have the new aspect ratio.
+            min(scaleX, scaleY) :
+            // Both width and height are below the limits: no clipping will occur, the image will keep the original aspect ratio.
+            max(scaleX, scaleY)
 
         let dstSize = CGSize(width: min(maxWidth, originalWidth * scale), height: min(maxHeight, originalHeight * scale))
 

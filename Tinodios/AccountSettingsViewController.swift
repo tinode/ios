@@ -93,7 +93,7 @@ class AccountSettingsViewController: UITableViewController {
             action: #selector(AccountSettingsViewController.termsOfUseClicked),
             actionTarget: self)
 
-        self.imagePicker = ImagePicker(presentationController: self, delegate: self)
+        self.imagePicker = ImagePicker(presentationController: self, delegate: self, editable: true)
 
         let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "0.0.0"
         let versionCode = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "0"
