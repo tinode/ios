@@ -82,7 +82,7 @@ extension MessageViewController : ImagePickerDelegate {
         let mimeType: String = mime == "image/png" ?  mime! : "image/jpeg"
 
         // Ensure image size in bytes and liner dimensions are under the limits.
-        guard let image = image?.resize(byteSize: MessageViewController.kMaxInbandAttachmentSize, asMimeType: mimeType)?.resize(width: UiUtils.kMaxBitmapSize, height: UiUtils.kMaxBitmapSize, clip: false) else { return }
+        guard let image = image?.resize(width: UiUtils.kMaxBitmapSize, height: UiUtils.kMaxBitmapSize, clip: false)?.resize(byteSize: MessageViewController.kMaxInbandAttachmentSize, asMimeType: mimeType) else { return }
 
         guard let bits = image.pixelData(forMimeType: mime) else { return }
 

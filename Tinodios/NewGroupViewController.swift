@@ -32,7 +32,7 @@ class NewGroupViewController: UITableViewController {
     private var imagePicker: ImagePicker!
 
     private func setup() {
-        self.imagePicker = ImagePicker(presentationController: self, delegate: self)
+        self.imagePicker = ImagePicker(presentationController: self, delegate: self, editable: true)
         self.tagsTextField.onVerifyTag = { (_, tag) in
             return Utils.isValidTag(tag: tag)
         }

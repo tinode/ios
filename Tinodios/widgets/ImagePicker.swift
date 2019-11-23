@@ -18,7 +18,7 @@ open class ImagePicker: NSObject {
     private weak var presentationController: UIViewController?
     private weak var delegate: ImagePickerDelegate?
 
-    public init(presentationController: UIViewController, delegate: ImagePickerDelegate) {
+    public init(presentationController: UIViewController, delegate: ImagePickerDelegate, editable: Bool) {
         self.pickerController = UIImagePickerController()
 
         super.init()
@@ -27,7 +27,7 @@ open class ImagePicker: NSObject {
         self.delegate = delegate
 
         self.pickerController.delegate = self
-        self.pickerController.allowsEditing = true
+        self.pickerController.allowsEditing = editable
 
         self.pickerController.mediaTypes = [kUTTypeImage as String]
     }
@@ -88,7 +88,7 @@ extension ImagePicker: UIImagePickerControllerDelegate, UINavigationControllerDe
 
     public func imagePickerController(_ picker: UIImagePickerController,
                                       didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
-        guard let image = info[.editedImage] as? UIImage else {
+        guard let image = info[self.pickerController.allowsEditing ? .editedImage : .originalImage] as? UIImage else {
             return self.pickerController(picker, didSelect: nil, mimeType: nil, fileName: nil)
         }
 
