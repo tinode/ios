@@ -576,15 +576,15 @@ extension UIImage {
         let originalWidth = CGFloat(self.size.width * self.scale)
         let originalHeight = CGFloat(self.size.height * self.scale)
 
-        // scale is [0,1): 0 - very large original, 1: under the limits already.
+        // scale is [0,1): ~0 - very large original, =1: under the limits already.
         let scaleX = min(originalWidth, maxWidth) / originalWidth
         let scaleY = min(originalHeight, maxHeight) / originalHeight
         // How much to scale the image
         let scale = clip ?
-            // Scale as little as possible: only one dimension is below the limit, clip the other dimension; the image will have the new aspect ratio.
-            min(scaleX, scaleY) :
+            // Scale as little as possible (large 'scale' == little change): only one dimension is below the limit, clip the other dimension; the image will have the new aspect ratio.
+            max(scaleX, scaleY) :
             // Both width and height are below the limits: no clipping will occur, the image will keep the original aspect ratio.
-            max(scaleX, scaleY)
+            min(scaleX, scaleY)
 
         let dstSize = CGSize(width: min(maxWidth, originalWidth * scale), height: min(maxHeight, originalHeight * scale))
 
