@@ -175,7 +175,7 @@ class TopicInfoViewController: UITableViewController {
         }
 
         self.imagePicker = ImagePicker(
-            presentationController: self, delegate: self)
+            presentationController: self, delegate: self, editable: true)
     }
 
     private func reloadData() {

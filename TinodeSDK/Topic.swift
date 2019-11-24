@@ -1225,6 +1225,13 @@ open class MeTopic<DP: Codable & Mergeable>: Topic<DP, PrivateType, DP, PrivateT
             super.routePres(pres: pres)
             return
         }
+
+        if what == .kUpd && Tinode.kTopicMe == pres.src {
+            // Me's desc was updated, fetch the updated version.
+            getMeta(query: getMetaGetBuilder().withDesc().build())
+            return
+        }
+
         // "what":"tags" has src == nil
         if let topic = pres.src != nil ? tinode!.getTopic(topicName: pres.src!) : nil {
             switch what {

@@ -23,7 +23,7 @@ class SignupViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        self.imagePicker = ImagePicker(presentationController: self, delegate: self)
+        self.imagePicker = ImagePicker(presentationController: self, delegate: self, editable: true)
 
         // Listen to text change events to clear the possible error from earlier attempt.
         loginTextField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: UIControl.Event.editingChanged)
