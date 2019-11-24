@@ -227,7 +227,6 @@ class MessageViewController: UIViewController {
     // MARK: lifecycle
 
     deinit {
-        removeKeyboardObservers()
         // removeMenuControllerObservers()
         removeAppStateObservers()
         // Clean up.
