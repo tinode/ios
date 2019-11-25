@@ -9,13 +9,13 @@
 import UIKit
 
 struct KeyboardInfo {
-    
+
     let frameBegin: CGRect
     let frameEnd: CGRect
     let isLocal: Bool
     let animationDuration: TimeInterval
     let animationCurve: UIView.AnimationCurve
-    
+
     init?(notification: Notification) {
         guard
             let userInfo = notification.userInfo,
@@ -26,14 +26,14 @@ struct KeyboardInfo {
             let rawCurve = userInfo[UIResponder.keyboardAnimationCurveUserInfoKey] as? Int,
             let animationCurve = UIView.AnimationCurve(rawValue: rawCurve)
             else { return nil }
-        
+
         self.frameBegin = frameBegin
         self.frameEnd = frameEnd
         self.isLocal = isLocal
         self.animationDuration = animationDuration
         self.animationCurve = animationCurve
     }
-    
+
     var animationOptions: UIView.AnimationOptions {
         let option = animationCurve.rawValue << 16
         return UIView.AnimationOptions(rawValue: UInt(option))

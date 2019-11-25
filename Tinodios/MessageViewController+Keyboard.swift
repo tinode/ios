@@ -29,12 +29,12 @@ extension MessageViewController {
             let keyboardInfo = KeyboardInfo(notification: notification),
             !keyboardInfo.frameBegin.isEmpty
         else { return }
-        
+
         let change: CGFloat = keyboardInfo.frameEnd.height
         collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: change, right: 0)
-        
+
         let overlap: CGFloat
-        
+
         if collectionView.contentSize.height > collectionView.bounds.height {
             overlap = collectionView.bounds.height - keyboardInfo.frameEnd.origin.y
         } else {
@@ -43,7 +43,7 @@ extension MessageViewController {
                 - collectionView.contentOffset.y
                 - keyboardInfo.frameEnd.origin.y
         }
-        
+
         if overlap > 0 {
             let contentOffset = CGPoint(
                 x: collectionView.contentOffset.x,
@@ -51,7 +51,7 @@ extension MessageViewController {
             collectionView.setContentOffset(contentOffset, animated: false)
         }
     }
-    
+
     @objc private func keyboardWillHide(_ notification: Notification) {
         collectionView.contentInset = .zero
     }
