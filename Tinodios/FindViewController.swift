@@ -5,8 +5,9 @@
 //  Copyright © 2019 Tinode. All rights reserved.
 //
 
-import UIKit
+import Contacts
 import MessageUI
+import UIKit
 
 protocol FindDisplayLogic: class {
     func displayLocalContacts(contacts: [ContactHolder])
@@ -40,6 +41,23 @@ class FindViewController: UITableViewController, FindDisplayLogic {
             object: nil)
     }
 
+    private func updateSearchBarPlaceholder(authStatus: CNAuthorizationStatus) {
+        let placeholderText: String
+        let placeholderFontSize: CGFloat
+        if authStatus == .authorized {
+            placeholderText = "Search by tags"
+            placeholderFontSize = 17
+        } else {
+            placeholderText = "Search functionality limited. Grant Contacts permission."
+            placeholderFontSize = 10
+        }
+        searchController.searchBar.textField?.attributedPlaceholder =
+            NSAttributedString(
+                string: placeholderText,
+                attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: placeholderFontSize),
+                             NSAttributedString.Key.foregroundColor: UIColor.systemGray])
+    }
+
     private func setup() {
         let viewController = self
         let interactor = FindInteractor()
@@ -52,7 +70,11 @@ class FindViewController: UITableViewController, FindDisplayLogic {
         searchController = UISearchController(searchResultsController: nil)
         searchController.searchResultsUpdater = self
         searchController.searchBar.autocapitalizationType = .none
-        searchController.searchBar.placeholder = "Search by tags"
+        ContactsSynchronizer.default.permissionsChangedCallback = { [weak self] authStatus in
+            DispatchQueue.main.async {
+                self?.updateSearchBarPlaceholder(authStatus: authStatus)
+            }
+        }
 
         // Make it a-la Telegram UI instead of placing the search bar
         // in the navigation item.
@@ -77,6 +99,7 @@ class FindViewController: UITableViewController, FindDisplayLogic {
         if !Cache.isContactSynchronizerActive() {
             Cache.synchronizeContactsPeriodically()
         }
+        self.updateSearchBarPlaceholder(authStatus: ContactsSynchronizer.default.authStatus)
 
         addAppStateObservers()
     }
@@ -326,5 +349,23 @@ extension FindViewController: MFMailComposeViewControllerDelegate {
 extension FindViewController: MFMessageComposeViewControllerDelegate {
     func messageComposeViewController(_ controller: MFMessageComposeViewController, didFinishWith result: MessageComposeResult) {
         controller.dismiss(animated: true)
+    }
+}
+
+// UISearchBar.searchTextField is only available in iOS 13+.
+// Needed so we can change placeholder font size in the search bar.
+extension UISearchBar {
+    var textField : UITextField? {
+        if #available(iOS 13.0, *) {
+            return self.searchTextField
+        } else {
+            // Fallback on earlier versions
+            for view : UIView in (self.subviews[0]).subviews {
+                if let textField = view as? UITextField {
+                    return textField
+                }
+            }
+        }
+        return nil
     }
 }
