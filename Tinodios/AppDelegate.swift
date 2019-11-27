@@ -7,8 +7,8 @@
 
 import Firebase
 import Network
-import SwiftWebSocket
 import UIKit
+import TinodeSDK
 import TinodiosDB
 
 @UIApplicationMain
@@ -19,6 +19,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     // Network reachability.
     var nwReachability: Any!
     var pushNotificationsConfigured = false
+    var appIsStarting: Bool = false
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         Utils.registerUserDefaults()
@@ -34,41 +35,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         // Try to connect and log in in the background.
         DispatchQueue.global(qos: .userInitiated).async {
-            if let token = Utils.getAuthToken(), !token.isEmpty, let userName = Utils.getSavedLoginUserName(), !userName.isEmpty {
-                let tinode = Cache.getTinode()
-                var success = false
-                do {
-                    tinode.setAutoLoginWithToken(token: token)
-                    _ = try tinode.connectDefault()?.getResult()
-                    let msg = try tinode.loginToken(token: token, creds: nil)?.getResult()
-                    if let code = msg?.ctrl?.code {
-                        // Assuming success by default.
-                        success = true
-                        switch code {
-                        case 0..<300:
-                            Cache.log.info("AppDelegate - login successful for: %@", tinode.myUid!)
-                            if tinode.authToken != token {
-                                Utils.saveAuthToken(for: userName, token: tinode.authToken)
-                            }
-                        case 409:
-                            Cache.log.info("AppDelegate - already authenticated.")
-                        case 500..<600:
-                            Cache.log.error("AppDelegate - server error on login: %d", code)
-                        default:
-                            success = false
-                        }
-                    }
-                } catch SwiftWebSocket.WebSocketError.network(let e)  {
-                    // No network connection.
-                    Cache.log.debug("AppDelegate [network] - could not connect to Tinode: %@", e)
-                    success = true
-                } catch {
-                    Cache.log.error("AppDelegate - failed to automatically login to Tinode: %@", error.localizedDescription)
-                }
-                if !success {
-                    _ = tinode.logout()
-                    UiUtils.routeToLoginVC()
-                }
+            if !Utils.connectAndLoginSync() {
+                Cache.getTinode().logout()
+                UiUtils.routeToLoginVC()
             }
         }
         if #available(iOS 12.0, *) {
@@ -92,22 +61,55 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func applicationWillResignActive(_ application: UIApplication) {
+        self.appIsStarting = false
     }
 
     func applicationDidEnterBackground(_ application: UIApplication) {
+        self.appIsStarting = false
         application.applicationIconBadgeNumber = Cache.totalUnreadCount()
     }
 
     func applicationWillEnterForeground(_ application: UIApplication) {
+        self.appIsStarting = true
     }
 
     func applicationDidBecomeActive(_ application: UIApplication) {
+        self.appIsStarting = false
     }
 
     func applicationWillTerminate(_ application: UIApplication) {
         application.applicationIconBadgeNumber = Cache.totalUnreadCount()
     }
+
+    func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any],
+                     fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+        let state = application.applicationState
+        guard let topicName = userInfo["topic"] as? String, !topicName.isEmpty else {
+            completionHandler(.failed)
+            return
+        }
+        if state == .background || (state == .inactive && !self.appIsStarting) {
+            if Utils.connectAndLoginSync() {
+                let tinode = Cache.getTinode()
+                var result: UIBackgroundFetchResult = .failed
+                if let topic = tinode.getTopic(topicName: topicName) as? DefaultComTopic {
+                    if let msg = try? UiUtils.attachToTopic(topic: topic, fetchTags: false, maxMessages: 10)?.getResult(), (msg.ctrl?.code ?? 500) < 300 {
+                        result = .newData
+                    }
+                    tinode.logout()
+                }
+                completionHandler(result)
+            }
+        } else if state == .inactive && self.appIsStarting {
+            // User tapped notification.
+            completionHandler(.newData)
+        } else {
+            // App is active.
+            completionHandler(.noData)
+        }
+    }
 }
+
 @available(iOS 10.0, *)
 extension AppDelegate: UNUserNotificationCenterDelegate {
     // Called when the app is in the foreground.

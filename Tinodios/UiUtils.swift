@@ -129,7 +129,20 @@ class UiUtils {
             fnd.subscribe(set: nil, get: nil) :
             PromisedReply<ServerMessage>(value: ServerMessage())
     }
-
+    public static func attachToTopic(topic: DefaultComTopic?, fetchTags: Bool, maxMessages: Int) -> PromisedReply<ServerMessage>? {
+        guard let topic = topic else { return nil }
+        var builder = topic.getMetaGetBuilder()
+            .withDesc()
+            .withSub()
+            .withLaterData(limit: maxMessages)
+            .withDel()
+        if fetchTags {
+            builder = builder.withTags()
+        }
+        return topic.subscribe(
+            set: nil,
+            get: builder.build())
+    }
     public static func routeToLoginVC() {
         DispatchQueue.main.async {
             let storyboard = UIStoryboard(name: "Main", bundle: nil)
