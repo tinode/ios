@@ -84,7 +84,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any],
                      fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
         let state = application.applicationState
-        guard let topicName = userInfo["topic"] as? String, !topicName.isEmpty else {
+        guard let topicName = userInfo["topic"] as? String, !topicName.isEmpty, let seq = userInfo["seq"] as? Int else {
             completionHandler(.failed)
             return
         }
@@ -93,10 +93,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 let tinode = Cache.getTinode()
                 var result: UIBackgroundFetchResult = .failed
                 if let topic = tinode.getTopic(topicName: topicName) as? DefaultComTopic {
-                    if let msg = try? UiUtils.attachToTopic(topic: topic, fetchTags: false, maxMessages: 10)?.getResult(), (msg.ctrl?.code ?? 500) < 300 {
+                    if (topic.seq ?? 0) >= seq {
+                        result = .noData
+                    } else if let msg = try? UiUtils.attachToTopic(topic: topic, fetchTags: false, maxMessages: 10)?.getResult(), (msg.ctrl?.code ?? 500) < 300 {
                         result = .newData
                     }
-                    tinode.logout()
                 }
                 completionHandler(result)
             }
