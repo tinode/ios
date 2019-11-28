@@ -96,23 +96,25 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 var result: UIBackgroundFetchResult = .failed
                 defer { completionHandler(result) }
                 var topic: DefaultComTopic
+                var builder: DefaultComTopic.MetaGetBuilder
                 if !tinode.isTopicTracked(topicName: topicName) {
                     // New topic. Create it.
                     guard let t = tinode.newTopic(for: topicName, with: nil) as? DefaultComTopic else { return }
                     topic = t
                     topic.persist(true)
+                    builder = topic.getMetaGetBuilder().withDesc().withSub()
                 } else {
                     // Existing topic.
                     guard let t = tinode.getTopic(topicName: topicName) as? DefaultComTopic else { return }
                     topic = t
+                    builder = topic.getMetaGetBuilder()
                 }
 
                 if (topic.seq ?? 0) >= seq {
                     result = .noData
                 } else if let msg = try? topic.subscribe(
                     set: nil,
-                    get: topic
-                        .getMetaGetBuilder()
+                    get: builder
                         .withLaterData(limit: 10)
                         .withDel().build())?.getResult(), (msg.ctrl?.code ?? 500) < 300 {
                     result = .newData
