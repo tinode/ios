@@ -94,14 +94,24 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             if Utils.connectAndLoginSync() {
                 let tinode = Cache.getTinode()
                 var result: UIBackgroundFetchResult = .failed
-                if let topic = tinode.getTopic(topicName: topicName) as? DefaultComTopic {
-                    if (topic.seq ?? 0) >= seq {
-                        result = .noData
-                    } else if let msg = try? UiUtils.attachToTopic(topic: topic, fetchOptions: [.data(10), .del])?.getResult(), (msg.ctrl?.code ?? 500) < 300 {
-                        result = .newData
-                    }
+                defer { completionHandler(result) }
+                var topic: DefaultComTopic
+                if !tinode.isTopicTracked(topicName: topicName) {
+                    // New topic. Create it.
+                    guard let t = tinode.newTopic(for: topicName, with: nil) as? DefaultComTopic else { return }
+                    topic = t
+                    topic.persist(true)
+                } else {
+                    // Existing topic.
+                    guard let t = tinode.getTopic(topicName: topicName) as? DefaultComTopic else { return }
+                    topic = t
                 }
-                completionHandler(result)
+
+                if (topic.seq ?? 0) >= seq {
+                    result = .noData
+                } else if let msg = try? UiUtils.attachToTopic(topic: topic, fetchOptions: [.data(10), .del])?.getResult(), (msg.ctrl?.code ?? 500) < 300 {
+                    result = .newData
+                }
             }
         } else if state == .inactive && self.appIsStarting {
             // User tapped notification.
