@@ -9,7 +9,7 @@
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
-	<string>$(APP_BUNDLE_ID)</string>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
@@ -62,5 +62,7 @@
 	<true/>
 	<key>USE_TLS</key>
 	<string>$(USE_TLS)</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Images and pictures from $(APP_NAME) can be saved in the photo library</string>
 </dict>
 </plist>
