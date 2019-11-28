@@ -38,9 +38,10 @@ class ContactsSynchronizer {
     public static let `default` = ContactsSynchronizer()
     private let store = CNContactStore()
     private let queue = DispatchQueue(label: "co.tinode.sync")
-    private var authStatus: CNAuthorizationStatus = .notDetermined {
+    public var authStatus: CNAuthorizationStatus = .notDetermined {
         didSet {
             if self.authStatus == .authorized {
+                permissionsChangedCallback?(self.authStatus)
                 queue.async {
                     self.synchronizeInternal()
                 }
@@ -61,6 +62,7 @@ class ContactsSynchronizer {
             }
         }
     }
+    public var permissionsChangedCallback: ((CNAuthorizationStatus) -> Void)?
 
     private func fetchContacts() -> [ContactHolder2]? {
         let keysToFetch: [CNKeyDescriptor] = [

@@ -106,22 +106,20 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         }
     }
     func attachToTopic() -> Bool {
-        guard !(self.topic?.attached ?? false) else {
+        guard let topic = self.topic, !topic.attached else {
             self.presenter?.applyTopicPermissions(withError: nil)
             return true
         }
         do {
-            var builder = self.topic!.getMetaGetBuilder()
+            var builder = topic.getMetaGetBuilder()
                 .withDesc()
                 .withSub()
                 .withLaterData(limit: MessageInteractor.kMessagesPerPage)
                 .withDel()
-            if self.topic!.isOwner {
+            if topic.isOwner {
                 builder = builder.withTags()
             }
-            try self.topic?.subscribe(
-                set: nil,
-                get: builder.build())?.then(
+            try topic.subscribe(set: nil, get: builder.build())?.then(
                     onSuccess: { [weak self] _ in
                         self?.messageInteractorQueue.async {
                             do {
