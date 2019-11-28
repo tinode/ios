@@ -9,6 +9,7 @@ import Foundation
 import MobileCoreServices
 import PhoneNumberKit
 import SwiftKeychainWrapper
+import SwiftWebSocket
 import TinodeSDK
 import TinodiosDB
 
@@ -136,6 +137,41 @@ class Utils {
             ext = UTTypeCopyPreferredTagWithClass(uti, kUTTagClassFilenameExtension)?.takeUnretainedValue() as String?
         }
         return ProcessInfo.processInfo.globallyUniqueString + "." + (ext ?? "bin")
+    }
+
+    public static func connectAndLoginSync() -> Bool {
+        guard let token = Utils.getAuthToken(), !token.isEmpty, let userName = Utils.getSavedLoginUserName(), !userName.isEmpty else { return false }
+        let tinode = Cache.getTinode()
+        var success = false
+        do {
+            tinode.setAutoLoginWithToken(token: token)
+            _ = try tinode.connectDefault()?.getResult()
+            let msg = try tinode.loginToken(token: token, creds: nil)?.getResult()
+            if let code = msg?.ctrl?.code {
+                // Assuming success by default.
+                success = true
+                switch code {
+                case 0..<300:
+                    Cache.log.info("Connect&Login Sync - login successful for: %@", tinode.myUid!)
+                    if tinode.authToken != token {
+                        Utils.saveAuthToken(for: userName, token: tinode.authToken)
+                    }
+                case 409:
+                    Cache.log.info("Connect&Login Sync - already authenticated.")
+                case 500..<600:
+                    Cache.log.error("Connect&Login Sync - server error on login: %d", code)
+                default:
+                    success = false
+                }
+            }
+        } catch SwiftWebSocket.WebSocketError.network(let e)  {
+            // No network connection.
+            Cache.log.debug("AppDelegate [network] - could not connect to Tinode: %@", e)
+            success = true
+        } catch {
+            Cache.log.error("AppDelegate - failed to automatically login to Tinode: %@", error.localizedDescription)
+        }
+        return success
     }
 }
 
