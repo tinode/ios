@@ -129,15 +129,26 @@ class UiUtils {
             fnd.subscribe(set: nil, get: nil) :
             PromisedReply<ServerMessage>(value: ServerMessage())
     }
-    public static func attachToTopic(topic: DefaultComTopic?, fetchTags: Bool, maxMessages: Int) -> PromisedReply<ServerMessage>? {
+    public static func attachToTopic(topic: DefaultComTopic?, fetchOptions: [DefaultComTopic.MetaGetBuilder.Options]?) -> PromisedReply<ServerMessage>? {
         guard let topic = topic else { return nil }
         var builder = topic.getMetaGetBuilder()
-            .withDesc()
-            .withSub()
-            .withLaterData(limit: maxMessages)
-            .withDel()
-        if fetchTags {
-            builder = builder.withTags()
+        if let opts = fetchOptions {
+            for o in opts {
+                switch o {
+                case .desc:
+                    builder = builder.withDesc()
+                case .sub:
+                    builder = builder.withSub()
+                case .data(let maxMessages):
+                    builder = builder.withLaterData(limit: maxMessages)
+                case .del:
+                    builder = builder.withDel()
+                case .tags:
+                    builder = builder.withTags()
+                case .cred:
+                    builder = builder.withCred()
+                }
+            }
         }
         return topic.subscribe(
             set: nil,

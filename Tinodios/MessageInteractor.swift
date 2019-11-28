@@ -111,7 +111,11 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
             return true
         }
         do {
-            try UiUtils.attachToTopic(topic: self.topic, fetchTags: self.topic!.isOwner, maxMessages: MessageInteractor.kMessagesPerPage)?.then(
+            var opts: [DefaultComTopic.MetaGetBuilder.Options] = [.desc, .sub, .data(MessageInteractor.kMessagesPerPage), .del]
+            if self.topic!.isOwner {
+                opts.append(.tags)
+            }
+            try UiUtils.attachToTopic(topic: self.topic, fetchOptions: opts)?.then(
                     onSuccess: { [weak self] _ in
                         self?.messageInteractorQueue.async {
                             do {

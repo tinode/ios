@@ -118,6 +118,11 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
     }
 
     public class MetaGetBuilder {
+
+        public enum Options {
+            case desc, sub, data(Int), tags, cred, del
+        }
+
         let topic: TopicProto
         var meta: MsgGetMeta
 

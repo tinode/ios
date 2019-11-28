@@ -81,6 +81,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         application.applicationIconBadgeNumber = Cache.totalUnreadCount()
     }
 
+    // Application woken up in the background (e.g. for data fetch).
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any],
                      fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
         let state = application.applicationState
@@ -89,13 +90,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             return
         }
         if state == .background || (state == .inactive && !self.appIsStarting) {
+            // Fetch data in the background.
             if Utils.connectAndLoginSync() {
                 let tinode = Cache.getTinode()
                 var result: UIBackgroundFetchResult = .failed
                 if let topic = tinode.getTopic(topicName: topicName) as? DefaultComTopic {
                     if (topic.seq ?? 0) >= seq {
                         result = .noData
-                    } else if let msg = try? UiUtils.attachToTopic(topic: topic, fetchTags: false, maxMessages: 10)?.getResult(), (msg.ctrl?.code ?? 500) < 300 {
+                    } else if let msg = try? UiUtils.attachToTopic(topic: topic, fetchOptions: [.data(10), .del])?.getResult(), (msg.ctrl?.code ?? 500) < 300 {
                         result = .newData
                     }
                 }
