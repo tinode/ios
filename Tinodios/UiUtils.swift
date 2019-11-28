@@ -129,31 +129,6 @@ class UiUtils {
             fnd.subscribe(set: nil, get: nil) :
             PromisedReply<ServerMessage>(value: ServerMessage())
     }
-    public static func attachToTopic(topic: DefaultComTopic?, fetchOptions: [DefaultComTopic.MetaGetBuilder.Options]?) -> PromisedReply<ServerMessage>? {
-        guard let topic = topic else { return nil }
-        var builder = topic.getMetaGetBuilder()
-        if let opts = fetchOptions {
-            for o in opts {
-                switch o {
-                case .desc:
-                    builder = builder.withDesc()
-                case .sub:
-                    builder = builder.withSub()
-                case .data(let maxMessages):
-                    builder = builder.withLaterData(limit: maxMessages)
-                case .del:
-                    builder = builder.withDel()
-                case .tags:
-                    builder = builder.withTags()
-                case .cred:
-                    builder = builder.withCred()
-                }
-            }
-        }
-        return topic.subscribe(
-            set: nil,
-            get: builder.build())
-    }
     public static func routeToLoginVC() {
         DispatchQueue.main.async {
             let storyboard = UIStoryboard(name: "Main", bundle: nil)

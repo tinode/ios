@@ -109,7 +109,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
                 if (topic.seq ?? 0) >= seq {
                     result = .noData
-                } else if let msg = try? UiUtils.attachToTopic(topic: topic, fetchOptions: [.data(10), .del])?.getResult(), (msg.ctrl?.code ?? 500) < 300 {
+                } else if let msg = try? topic.subscribe(
+                    set: nil,
+                    get: topic
+                        .getMetaGetBuilder()
+                        .withLaterData(limit: 10)
+                        .withDel().build())?.getResult(), (msg.ctrl?.code ?? 500) < 300 {
                     result = .newData
                 }
             }
