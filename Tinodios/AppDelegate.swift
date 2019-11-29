@@ -126,6 +126,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             completionHandler(.noData)
         }
     }
+
+    func application(_ application: UIApplication,
+                     continue userActivity: NSUserActivity,
+                     restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
+        guard userActivity.activityType == NSUserActivityTypeBrowsingWeb,
+            let url = userActivity.webpageURL,
+            let components = URLComponents(url: url, resolvingAgainstBaseURL: true) else {
+            return false
+        }
+        if (components.host?.hasSuffix("tinode.co") ?? false) {
+            // Start the app.
+            return true
+        }
+        return false
+    }
 }
 
 @available(iOS 10.0, *)
