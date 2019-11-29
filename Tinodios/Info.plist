@@ -64,5 +64,7 @@
 	<true/>
 	<key>USE_TLS</key>
 	<string>$(USE_TLS)</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Images and pictures from $(APP_NAME) can be saved in the photo library</string>
 </dict>
 </plist>

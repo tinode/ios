@@ -59,7 +59,7 @@ class ImagePreviewController : UIViewController, UIScrollViewDelegate {
     @IBAction func saveImageButtonClicked(_ sender: Any) {
         guard let content = previewContent, let imageBits = content.imageBits else { return }
 
-        let picturesUrl: URL = FileManager.default.urls(for: .picturesDirectory, in: .userDomainMask).first!
+        let picturesUrl: URL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
         let destinationURL = picturesUrl.appendingPathComponent(content.fileName ?? Utils.uniqueFilename(forMime: content.contentType))
         do {
             try FileManager.default.createDirectory(at: picturesUrl, withIntermediateDirectories: true, attributes: nil)
