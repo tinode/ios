@@ -135,6 +135,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             let components = URLComponents(url: url, resolvingAgainstBaseURL: true) else {
             return false
         }
+        // TODO: support 3rd party urls.
         if (components.host?.hasSuffix("tinode.co") ?? false) {
             // Start the app.
             return true
