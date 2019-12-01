@@ -1,4 +1,4 @@
-framework module Protobuf {
+framework module protobuf {
   umbrella header "Protobuf-umbrella.h"
 
   export *
