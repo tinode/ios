@@ -39,7 +39,7 @@ if [ "$tls_index" -eq -1 ]; then
   echo "Entry use_tls_preference not found"
   exit 1
 fi
-# Find key for TLS use
+# Find key for bundle version
 find_array_entry "bundle_version"
 bv_index=$?
 if [ "$bv_index" -eq -1 ]; then
