@@ -50,6 +50,22 @@ class ImagePreviewController : UIViewController, UIScrollViewDelegate {
             sizeString += "; \(width)×\(height)"
         }
         sizeLabel.text = sizeString
+        setInterfaceColors()
+    }
+
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        guard UIApplication.shared.applicationState == .active else {
+            return
+        }
+        self.setInterfaceColors()
+    }
+
+    private func setInterfaceColors() {
+        if #available(iOS 12.0, *), traitCollection.userInterfaceStyle == .dark {
+            self.view.backgroundColor = .black
+        } else {
+            self.view.backgroundColor = .white
+        }
     }
 
     func viewForZooming(in: UIScrollView) -> UIView? {
