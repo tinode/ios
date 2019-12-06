@@ -165,7 +165,18 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         let userInfo = response.notification.request.content.userInfo
         defer { completionHandler() }
         guard let topicName = userInfo["topic"] as? String, !topicName.isEmpty else { return }
-        UiUtils.routeToMessageVC(forTopic: topicName)
+        if Cache.getTinode().isConnectionAuthenticated {
+            UiUtils.routeToMessageVC(forTopic: topicName)
+            return
+        }
+        DispatchQueue.global(qos: .userInitiated).async {
+            if !Utils.connectAndLoginSync() {
+                Cache.getTinode().logout()
+                UiUtils.routeToLoginVC()
+            } else {
+                UiUtils.routeToMessageVC(forTopic: topicName)
+            }
+        }
     }
 }
 
