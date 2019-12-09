@@ -43,6 +43,7 @@ extension MessageViewController {
                 collectionView.contentSize.height
                 - collectionView.contentOffset.y
                 - keyboardInfo.frameEnd.origin.y
+                + inputAccessoryViewHeight
         }
 
         if overlap > 0 && keyboardInfo.frameEnd.size.height != inputAccessoryViewHeight {
