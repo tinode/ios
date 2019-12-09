@@ -219,6 +219,9 @@ class MessageViewController: UIViewController {
     }
     @objc
     func deviceRotated() {
+        // Invalidate cached content in the messages since it was
+        // tailored for the old device orientation.
+        self.messages.forEach { ($0 as? StoredMessage)?.cachedContent = nil }
         // Force a full redraw so the view can readjust the messages
         // in the view for the new screen dimensions.
         self.collectionView?.reloadDataAndKeepOffset()
