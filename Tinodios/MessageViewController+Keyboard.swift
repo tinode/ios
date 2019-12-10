@@ -37,7 +37,10 @@ extension MessageViewController {
         let overlap: CGFloat
 
         if collectionView.contentSize.height > collectionView.bounds.height - inputAccessoryViewHeight {
-            overlap = collectionView.bounds.height - keyboardInfo.frameEnd.origin.y
+            overlap =
+                collectionView.bounds.height
+                - keyboardInfo.frameEnd.origin.y
+                - inputAccessoryViewHeight
         } else {
             overlap =
                 collectionView.contentSize.height

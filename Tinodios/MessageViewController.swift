@@ -319,14 +319,12 @@ class MessageViewController: UIViewController {
     @objc private func processNotifications() {
         self.interactor?.sendReadNotification()
     }
+
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        if #available(iOS 11, *) {
-        } else {
-            // iOS 9-10: Make sure messages don't hide behind sendMessageBar.
-            collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: self.sendMessageBar.frame.height, right: 0)
-        }
+        collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: sendMessageBar.frame.height, right: 0)
+        
         self.interactor?.attachToTopic()
         self.interactor?.loadMessages()
         self.interactor?.sendReadNotification()
