@@ -616,6 +616,12 @@ public class Tinode {
     public func newTopic(for name: String, with listener: DefaultTopic.Listener?) -> TopicProto {
         return Tinode.newTopic(withTinode: self, forTopic: name, withListener: listener)
     }
+    public func createAndPresistTopic(withName name: String,
+                                      with listener: DefaultTopic.Listener?) -> TopicProto? {
+        let topic = newTopic(for: name, with: listener)
+        topic.persist(true)
+        return topic
+    }
     public func maybeCreateTopic(meta: MsgServerMeta) -> TopicProto? {
         if meta.desc == nil {
             return nil
