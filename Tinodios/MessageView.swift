@@ -57,7 +57,7 @@ class MessageView: UICollectionView {
     }
 
     func scrollToBottom(animated: Bool = false) {
-        let contentHeight = contentSize.height //collectionViewLayout.collectionViewContentSize.height
+        let contentHeight = collectionViewLayout.collectionViewContentSize.height
         performBatchUpdates(nil) { _ in
             self.scrollRectToVisible(CGRect(x: 0, y: contentHeight - 1, width: 1, height: 1), animated: animated)
         }

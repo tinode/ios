@@ -230,7 +230,6 @@ class MessageViewController: UIViewController {
     // MARK: lifecycle
 
     deinit {
-        removeKeyboardObservers()
         // removeMenuControllerObservers()
         removeAppStateObservers()
         // Clean up.
@@ -275,8 +274,7 @@ class MessageViewController: UIViewController {
         let top = collectionView.topAnchor.constraint(equalTo: view.topAnchor, constant: topLayoutGuide.length)
         let trailing: NSLayoutConstraint, leading: NSLayoutConstraint, bottom: NSLayoutConstraint
         if #available(iOS 11, *) {
-            // Extra padding as -50. It's probably due to a bug somewhere.
-            bottom = collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -50)
+            bottom = collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
             leading = collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor)
             trailing = collectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor)
         } else {
@@ -324,14 +322,12 @@ class MessageViewController: UIViewController {
     @objc private func processNotifications() {
         self.interactor?.sendReadNotification()
     }
+
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        if #available(iOS 11, *) {
-        } else {
-            // iOS 9-10: Make sure messages don't hide behind sendMessageBar.
-            collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: self.sendMessageBar.frame.height, right: 0)
-        }
+        collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: sendMessageBar.frame.height, right: 0)
+        
         self.interactor?.attachToTopic()
         self.interactor?.loadMessages()
         self.interactor?.sendReadNotification()
