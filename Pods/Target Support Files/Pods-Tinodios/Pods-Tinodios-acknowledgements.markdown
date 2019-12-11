@@ -261,6 +261,10 @@ Fabric: Copyright 2018 Google, Inc. All Rights Reserved. Use of this software is
    limitations under the License.
 
 
+## FirebaseAnalytics
+
+Copyright 2019 Google
+
 ## FirebaseAnalyticsInterop
 
 
@@ -1496,6 +1500,10 @@ Fabric: Copyright 2018 Google, Inc. All Rights Reserved. Use of this software is
    See the License for the specific language governing permissions and
    limitations under the License.
 
+
+## GoogleAppMeasurement
+
+Copyright 2019 Google
 
 ## GoogleDataTransport
 
