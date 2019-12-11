@@ -84,6 +84,7 @@ extension ImagePicker: UIImagePickerControllerDelegate, UINavigationControllerDe
 
     public func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         self.pickerController(picker, didSelect: nil, mimeType: nil, fileName: nil)
+        picker.dismiss(animated: true, completion: nil)
     }
 
     public func imagePickerController(_ picker: UIImagePickerController,
