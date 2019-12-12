@@ -128,11 +128,11 @@ class FindInteractor: FindBusinessLogic {
         if !tinode.isTopicTracked(topicName: topicName) {
             topic = tinode.newTopic(for: topicName, with: nil) as? DefaultComTopic
             topic?.pub = sub.pub
+            topic?.persist(true)
         } else {
             topic = tinode.getTopic(topicName: topicName) as? DefaultComTopic
         }
         guard let topicUnwrapped = topic else { return false }
-        topicUnwrapped.persist(true)
         if topicUnwrapped.isP2PType {
             contactsManager.processSubscription(sub: sub)
         }

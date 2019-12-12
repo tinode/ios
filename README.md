@@ -48,7 +48,8 @@ The immediate goal is to have a basic end-to-end working application prototype t
 
 * https://github.com/stephencelis/SQLite.swift for local persistence
 * https://github.com/jrendel/SwiftKeychainWrapper
-* [GoogleService-Info.plist](https://firebase.google.com/docs/cloud-messaging/ios/client) for push notifications. See below.
+* https://github.com/marmelroy/PhoneNumberKit
+* Google Firebase for [push notifications](https://firebase.google.com/docs/cloud-messaging/ios/client) and [analytics](https://firebase.google.com/docs/analytics/get-started?platform=ios). See below.
 
 
 ## Push notifications
