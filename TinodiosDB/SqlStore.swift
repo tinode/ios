@@ -195,6 +195,8 @@ public class SqlStore : Storage {
         msg.seq = 0
         msg.status = initialStatus
         msg.content = data
+        //FIXME: probably in the future this should change for reply/forwarded messages
+        msg.head = data.isPlain ? nil : ["mime": JSONValue.string(Drafty.kMimeType)]
         msg.topicId = (topic.payload as? StoredTopic)?.id ?? -1
         if myId < 0 {
             myId = self.dbh?.userDb?.getId(for: msg.from) ?? -1

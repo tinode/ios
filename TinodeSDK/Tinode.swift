@@ -1128,7 +1128,7 @@ public class Tinode {
         return sendWithPromise(payload: msg, with: msgId)
     }
 
-    static func serializeObject<T: Encodable>(_ t: T) -> String? {
+    public static func serializeObject<T: Encodable>(_ t: T) -> String? {
         guard let jsonData = try? Tinode.jsonEncoder.encode(t) else {
             return nil
         }
@@ -1136,7 +1136,7 @@ public class Tinode {
         let json = String(decoding: jsonData, as: UTF8.self)
         return [typeName, json].joined(separator: ";")
     }
-    static func deserializeObject<T: Decodable>(from data: String?) -> T? {
+    public static func deserializeObject<T: Decodable>(from data: String?) -> T? {
         guard let parts = data?.split(separator: ";", maxSplits: 1, omittingEmptySubsequences: true), parts.count == 2 else {
             return nil
         }
