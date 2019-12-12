@@ -503,7 +503,9 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
             return PromisedReply(error: TopicError.alreadySubscribed)
         }
         let name = self.name
-        persist(true)
+        if !isPersisted {
+            persist(true)
+        }
         let tnd = tinode!
         guard tnd.isConnected else {
             return PromisedReply(error: TinodeError.notConnected("Cannot subscribe to topic. No server connection."))

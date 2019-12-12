@@ -90,7 +90,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         var builder: DefaultComTopic.MetaGetBuilder
         if !tinode.isTopicTracked(topicName: topicName) {
             // New topic. Create it.
-            guard let t = tinode.createAndPresistTopic(withName: topicName, with: nil) as? DefaultComTopic else {
+            guard let t = tinode.newTopic(for: topicName, with: nil) as? DefaultComTopic else {
                 return .failed
             }
             topic = t
