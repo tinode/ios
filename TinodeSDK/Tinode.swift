@@ -1060,8 +1060,9 @@ public class Tinode {
         return sendWithPromise(payload: msg, with: msgId)
     }
 
-    public static func draftyHeaders(for message: Drafty) -> [String: JSONValue] {
-        var head = [String: JSONValue]()
+    public static func draftyHeaders(for message: Drafty) -> [String: JSONValue]? {
+        guard !message.isPlain else { return nil }
+        var head: [String: JSONValue] = [:]
         head["mime"] = JSONValue.string(Drafty.kMimeType)
         if let refs = message.getEntReferences() {
             head["attachments"] = JSONValue.array(refs.map { JSONValue.string($0) })
