@@ -344,7 +344,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                                                 fname: filename,
                                                 refurl: refurl,
                                                 size: data.count) else { return }
-        if let msgId = topic.store?.msgDraft(topic: topic, data: content) {
+        if let msgId = topic.store?.msgDraft(topic: topic, data: content, head: Tinode.draftyHeaders(for: content)) {
             let helper = Cache.getLargeFileHelper()
             helper.startUpload(
                 filename: filename, mimetype: mimeType, d: data,

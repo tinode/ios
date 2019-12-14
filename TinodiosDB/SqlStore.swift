@@ -187,7 +187,7 @@ public class SqlStore : Storage {
             return -1
         }
     }
-    private func insertMessage(topic: TopicProto, data: Drafty, initialStatus: Int) -> Int64 {
+    private func insertMessage(topic: TopicProto, data: Drafty, head: [String: JSONValue]?, initialStatus: Int) -> Int64 {
         let msg = StoredMessage()
         msg.topic = topic.name
         msg.from = myUid
@@ -195,6 +195,7 @@ public class SqlStore : Storage {
         msg.seq = 0
         msg.status = initialStatus
         msg.content = data
+        msg.head = head
         msg.topicId = (topic.payload as? StoredTopic)?.id ?? -1
         if myId < 0 {
             myId = self.dbh?.userDb?.getId(for: msg.from) ?? -1
@@ -203,12 +204,12 @@ public class SqlStore : Storage {
         return self.dbh?.messageDb?.insert(topic: topic, msg: msg) ?? -1
     }
 
-    public func msgSend(topic: TopicProto, data: Drafty) -> Int64 {
-        return self.insertMessage(topic: topic, data: data, initialStatus: BaseDb.kStatusUndefined)
+    public func msgSend(topic: TopicProto, data: Drafty, head: [String: JSONValue]?) -> Int64 {
+        return self.insertMessage(topic: topic, data: data, head: head, initialStatus: BaseDb.kStatusUndefined)
     }
 
-    public func msgDraft(topic: TopicProto, data: Drafty) -> Int64 {
-        return self.insertMessage(topic: topic, data: data, initialStatus: BaseDb.kStatusDraft)
+    public func msgDraft(topic: TopicProto, data: Drafty, head: [String: JSONValue]?) -> Int64 {
+        return self.insertMessage(topic: topic, data: data, head: head, initialStatus: BaseDb.kStatusDraft)
     }
 
     public func msgDraftUpdate(topic: TopicProto, dbMessageId: Int64, data: Drafty) -> Bool {
