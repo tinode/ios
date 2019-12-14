@@ -27,6 +27,7 @@ public class MessageDb {
     public let sender: Expression<String?>
     public let ts: Expression<Date?>
     public let seq: Expression<Int?>
+    public let head: Expression<String?>
     public let content: Expression<String?>
 
     private let baseDb: BaseDb!
@@ -42,6 +43,7 @@ public class MessageDb {
         self.sender = Expression<String?>("sender")
         self.ts = Expression<Date?>("ts")
         self.seq = Expression<Int?>("seq")
+        self.head = Expression<String?>("head")
         self.content = Expression<String?>("content")
     }
     func destroyTable() {
@@ -60,6 +62,7 @@ public class MessageDb {
             t.column(sender)
             t.column(ts)
             t.column(seq)
+            t.column(head)
             t.column(content)
         })
         try! self.db.run(self.table.createIndex(topicId, ts, ifNotExists: true))
@@ -104,6 +107,7 @@ public class MessageDb {
                 setters.append(self.sender <- msg.from)
                 setters.append(self.ts <- msg.ts)
                 setters.append(self.seq <- msg.seq)
+                setters.append(self.head <- Tinode.serializeObject(msg.head))
                 setters.append(self.content <- msg.content?.serialize())
                 msg.msgId = try db.run(self.table.insert(setters))
             }
@@ -202,6 +206,7 @@ public class MessageDb {
         sm.from = r[self.sender]
         sm.ts = r[self.ts]
         sm.seq = r[self.seq]
+        sm.head = Tinode.deserializeObject(from: r[self.head])
         sm.content = Drafty.deserialize(from: r[self.content])
         return sm
     }
