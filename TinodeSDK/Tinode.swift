@@ -1075,13 +1075,7 @@ public class Tinode {
             pub: MsgClientPub(id: msgId, topic: topic, noecho: true, head: head, content: content))
         return sendWithPromise(payload: msg, with: msgId)
     }
-    /*
-    public func publish(topic: String, data: Drafty) -> PromisedReply<ServerMessage>? {
-        return publish(topic: topic,
-                       head: data.isPlain ? nil : ["mime": JSONValue.string(Drafty.kMimeType)],
-                       content: data)
-    }
-    */
+
     public func getTopics() -> Array<TopicProto>? {
         return Array(topics.values)
     }
