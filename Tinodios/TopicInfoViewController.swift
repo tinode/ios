@@ -366,10 +366,11 @@ class TopicInfoViewController: UITableViewController {
         blockContact();
         let tinode = Cache.getTinode()
         // Create and send spam report.
-        _ = tinode.publish(topic: Tinode.kTopicSys, data: Drafty().attachJSON([
+        let msg = Drafty().attachJSON([
             "action": JSONValue.string("report"),
             "target": JSONValue.string(self.topic.name)
-            ]))
+            ])
+        _ = tinode.publish(topic: Tinode.kTopicSys, head: Tinode.draftyHeaders(for: msg), content: msg)
     }
 
     @objc func deleteGroupClicked(sender: UITapGestureRecognizer) {

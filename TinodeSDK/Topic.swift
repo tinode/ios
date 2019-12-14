@@ -1089,8 +1089,12 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
         setRead(read: seq)
         store?.setRead(topic: self, read: seq)
     }
-    public func publish(content: Drafty, msgId: Int64) -> PromisedReply<ServerMessage>? {
-        return try! tinode!.publish(topic: name, data: content)?.then(
+    public func publish(content: Drafty, head: [String: JSONValue]?, msgId: Int64) -> PromisedReply<ServerMessage>? {
+        var headers = head
+        if content.isPlain && headers?["mime"] != nil {
+            headers?.removeValue(forKey: "mime")
+        }
+        return try! tinode!.publish(topic: name, head: headers, content: content)?.then(
             onSuccess: { [weak self] msg in
                 self?.processDelivery(ctrl: msg?.ctrl, id: msgId)
                 return nil
@@ -1101,16 +1105,17 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
             })
     }
     public func publish(content: Drafty) -> PromisedReply<ServerMessage>? {
+        let head = !content.isPlain ? Tinode.draftyHeaders(for: content) : nil
         var id: Int64 = -1
         if let s = store {
-            id = s.msgSend(topic: self, data: content)
+            id = s.msgSend(topic: self, data: content, head: head)
         }
         if attached {
-            return publish(content: content, msgId: id)
+            return publish(content: content, head: head, msgId: id)
         } else {
             return try! subscribe()?.thenApply(
                 onSuccess: { [weak self] msg in
-                    return self?.publish(content: content, msgId: id)
+                    return self?.publish(content: content, head: head, msgId: id)
                 })?.thenCatch(onFailure: { [weak self] err in
                     self?.store?.msgSyncing(topic: self!, dbMessageId: id, sync: false)
                     throw err
@@ -1169,7 +1174,7 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
         }
         if m.isReady, let content = m.content {
             store?.msgSyncing(topic: self, dbMessageId: msgId, sync: true)
-            return self.publish(content: content, msgId: msgId)
+            return self.publish(content: content, head: m.head, msgId: msgId)
         }
         return nil
     }
@@ -1190,7 +1195,7 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
         for msg in pendingMsgs {
             let msgId = msg.msgId
             _ = self.store?.msgSyncing(topic: self, dbMessageId: msgId, sync: true)
-            result = self.publish(content: msg.content!, msgId: msgId)
+            result = self.publish(content: msg.content!, head: msg.head, msgId: msgId)
         }
         return result
     }

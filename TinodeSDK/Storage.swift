@@ -11,6 +11,9 @@ public protocol Message {
     // Get current message payload.
     var content: Drafty? { get }
 
+    // Message headers.
+    var head: [String: JSONValue]? { get }
+
     // Timestamp
     var ts: Date? { get }
 
@@ -121,18 +124,20 @@ public protocol Storage: class {
     // Params:
     //   topic: topic which sent the message.
     //   data: message data to save.
+    //   head: message headers.
     // Returns:
     //   database ID of the message suitable for use in.
-    func msgSend(topic: TopicProto, data: Drafty) -> Int64
+    func msgSend(topic: TopicProto, data: Drafty, head: [String: JSONValue]?) -> Int64
 
     // Save message to database as a draft.
     // Draft will not be sent to server until it status changes.
     // Params:
     //   topic: topic which sent the message.
     //   data: message data to save.
+    //   head: message headers.
     // Returns:
     //   database ID of the message suitable for use in
-    func msgDraft(topic: TopicProto, data: Drafty) -> Int64
+    func msgDraft(topic: TopicProto, data: Drafty, head: [String: JSONValue]?) -> Int64
 
     // Update message draft content without
     // Params:

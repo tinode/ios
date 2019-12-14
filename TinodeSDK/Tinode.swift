@@ -1060,18 +1060,23 @@ public class Tinode {
         return sendWithPromise(payload: msg, with: msgId)
     }
 
-    internal func publish(topic: String, head: [String:JSONValue]?, content: Drafty) -> PromisedReply<ServerMessage>? {
+    public static func draftyHeaders(for message: Drafty) -> [String: JSONValue]? {
+        guard !message.isPlain else { return nil }
+        var head: [String: JSONValue] = [:]
+        head["mime"] = JSONValue.string(Drafty.kMimeType)
+        if let refs = message.getEntReferences() {
+            head["attachments"] = JSONValue.array(refs.map { JSONValue.string($0) })
+        }
+        return head
+    }
+
+    public func publish(topic: String, head: [String:JSONValue]?, content: Drafty) -> PromisedReply<ServerMessage>? {
         let msgId = getNextMsgId()
         let msg = ClientMessage<Int, Int>(
             pub: MsgClientPub(id: msgId, topic: topic, noecho: true, head: head, content: content))
         return sendWithPromise(payload: msg, with: msgId)
     }
 
-    public func publish(topic: String, data: Drafty) -> PromisedReply<ServerMessage>? {
-        return publish(topic: topic,
-                       head: data.isPlain ? nil : ["mime": JSONValue.string(Drafty.kMimeType)],
-                       content: data)
-    }
     public func getTopics() -> Array<TopicProto>? {
         return Array(topics.values)
     }
