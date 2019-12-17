@@ -271,13 +271,14 @@ class MessageViewController: UIViewController {
 
         // Setup UICollectionView constraints: fill the screen
         collectionView.translatesAutoresizingMaskIntoConstraints = false
-        let top = collectionView.topAnchor.constraint(equalTo: view.topAnchor, constant: topLayoutGuide.length)
-        let trailing: NSLayoutConstraint, leading: NSLayoutConstraint, bottom: NSLayoutConstraint
+        let top: NSLayoutConstraint, trailing: NSLayoutConstraint, leading: NSLayoutConstraint, bottom: NSLayoutConstraint
         if #available(iOS 11, *) {
+            top = collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: topLayoutGuide.length)
             bottom = collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
             leading = collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor)
             trailing = collectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor)
         } else {
+            top = collectionView.topAnchor.constraint(equalTo: view.topAnchor, constant: topLayoutGuide.length)
             bottom = collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
             leading = collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor)
             trailing = collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
