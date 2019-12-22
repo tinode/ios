@@ -107,19 +107,7 @@ class MessageCell: UICollectionViewCell {
         return label
     }()
 
-    var progressBar: UIProgressView = {
-        let bar = UIProgressView()
-        bar.transform = bar.transform.scaledBy(x: 1, y: 20)
-        return bar
-    }()
-
-    var cancelUploadButton: UIButton = {
-        let button = UIButton()
-        button.setTitle("×", for: .normal)
-        button.setTitleColor(UIColor.blue, for: .normal)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 10)
-        return button
-    }()
+    var progressView = CircularProgressView()
 
     /// The `MessageCellDelegate` for the cell.
     weak var delegate: MessageCellDelegate?
@@ -137,12 +125,9 @@ class MessageCell: UICollectionViewCell {
     }
 
     func showProgressBar() {
-        containerView.addSubview(progressBar)
-        containerView.addSubview(cancelUploadButton)
-        progressBar.isHidden = false
-        cancelUploadButton.isHidden = false
-        containerView.bringSubviewToFront(progressBar)
-        containerView.bringSubviewToFront(cancelUploadButton)
+        containerView.addSubview(progressView)
+        progressView.isHidden = false
+        containerView.bringSubviewToFront(progressView)
     }
 
     override func prepareForReuse() {
@@ -166,7 +151,7 @@ class MessageCell: UICollectionViewCell {
         let touchLocation = gesture.location(in: self)
 
         switch true {
-        case cancelUploadButton.frame.contains(convert(touchLocation, to: containerView)):
+        case progressView.stopButton.frame.contains(convert(touchLocation, to: progressView)):
             delegate?.didTapCancelUpload(in: self)
         case content.frame.contains(convert(touchLocation, to: containerView)):
             let url = content.getURLForTap(convert(touchLocation, to: content))
@@ -202,4 +187,3 @@ class MessageCell: UICollectionViewCell {
         return true
     }
 }
-
