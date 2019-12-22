@@ -107,10 +107,7 @@ class MessageCell: UICollectionViewCell {
         return label
     }()
 
-    var progressView: CircularProgressView = {
-        let progress = CircularProgressView()
-        return progress
-    }()
+    var progressView = CircularProgressView()
 
     /// The `MessageCellDelegate` for the cell.
     weak var delegate: MessageCellDelegate?
