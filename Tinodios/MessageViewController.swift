@@ -32,6 +32,8 @@ class MessageViewController: UIViewController {
         /// Size of the avatar in group topics.
         static let kAvatarSize: CGFloat = 30
 
+        static let kProgressCircleSize: CGFloat = 40
+
         // Size of delivery marker (checkmarks etc)
         static let kDeliveryMarkerSize: CGFloat = 16
         // Horizontal space between delivery marker and the edge of the message bubble
@@ -534,7 +536,7 @@ extension MessageViewController: MessageDisplayLogic {
         assert(Thread.isMainThread)
         if let index = self.messageDbIdIndex[msgId],
             let cell = self.collectionView.cellForItem(at: IndexPath(row: index, section: 0)) as? MessageCell {
-            cell.progressBar.progress = progress
+            cell.progressView.setProgress(value: progress, withAnimation: false)
         }
     }
 
@@ -594,6 +596,8 @@ extension MessageViewController: UICollectionViewDataSource {
         // Get cell attributes from cache.
         let attributes = collectionView.layoutAttributesForItem(at: indexPath) as! MessageViewLayoutAttributes
 
+        cell.progressView.frame = attributes.progressViewFrame
+
         // Set colors and fill out content except for the avatar. The maxumum size is needed for placing attached images.
         configureCell(cell: cell, with: message, at: indexPath)
 
@@ -624,9 +628,6 @@ extension MessageViewController: UICollectionViewDataSource {
 
         // Draw the bubble
         bubbleDecorator(for: message, at: indexPath)(cell.containerView)
-
-        cell.progressBar.frame = attributes.progressBarFrame
-        cell.cancelUploadButton.frame = attributes.cancelUploadButtonFrame
 
         return cell
     }
@@ -850,14 +851,15 @@ extension MessageViewController : MessageViewLayoutDelegate {
         let avatarPadding = hasAvatars ? Constants.kAvatarSize : 0
 
         // Size of the message bubble.
-        let containerSize = calcContainerSize(for: message, avatarsVisible: hasAvatars)
+        let showUploadProgress = shouldShowProgressBar(for: message)
+        let containerSize = calcContainerSize(for: message, avatarsVisible: hasAvatars, progressCircleVisible: showUploadProgress)
         // isFromCurrent Sender ? Flush container right : flush left.
         let originX = isOutgoing ? cellSize.width - avatarPadding - containerSize.width - containerPadding.right : avatarPadding + containerPadding.left
         attr.containerFrame = CGRect(origin: CGPoint(x: originX, y: newDateLabelHeight + containerPadding.top), size: containerSize)
 
         // Content: RichTextLabel.
         let contentInset = isOutgoing ? Constants.kOutgoingMessageContentInset : Constants.kIncomingMessageContentInset
-        attr.contentFrame = CGRect(x: contentInset.left, y: contentInset.top, width: attr.containerFrame.width - contentInset.left - contentInset.right, height: attr.containerFrame.height - contentInset.top - contentInset.bottom)
+        attr.contentFrame = CGRect(x: contentInset.left, y: contentInset.top, width: attr.containerFrame.width - contentInset.left - contentInset.right - (showUploadProgress ? Constants.kProgressCircleSize : 0), height: attr.containerFrame.height - contentInset.top - contentInset.bottom)
 
         var rightEdge = CGPoint(x: attr.containerFrame.width - Constants.kDeliveryMarkerPadding, y: attr.containerFrame.height - Constants.kDeliveryMarkerSize)
         if isOutgoing {
@@ -876,18 +878,16 @@ extension MessageViewController : MessageViewLayoutDelegate {
             attr.newDateFrame = .zero
         }
 
-        if shouldShowProgressBar(for: message) {
-            let leftEdge = CGPoint(x: attr.contentFrame.origin.x,
-                                   y: attr.contentFrame.height + Constants.kDeliveryMarkerSize / 2)
-            attr.progressBarFrame =
+        if showUploadProgress {
+            let leftEdge = CGPoint(
+                x: attr.contentFrame.origin.x + attr.contentFrame.size.width,
+                y: attr.contentFrame.origin.y + attr.contentFrame.size.height / 2 - Constants.kProgressCircleSize / 2)
+            attr.progressViewFrame =
                 CGRect(x: leftEdge.x, y: leftEdge.y,
-                       width: attr.containerFrame.width - attr.timestampFrame.width - attr.deliveryMarkerFrame.width - Constants.kProgressBarRightPadding - 20,
-                       height: attr.timestampFrame.height)
-            attr.cancelUploadButtonFrame =
-                CGRect(x: leftEdge.x + attr.progressBarFrame.width + 4, y: leftEdge.y - 2, width: 8, height: 8)
+                       width: Constants.kProgressCircleSize,
+                       height: Constants.kProgressCircleSize)
         } else {
-            attr.progressBarFrame = .zero
-            attr.cancelUploadButtonFrame = .zero
+            attr.progressViewFrame = .zero
         }
 
         attr.frame = CGRect(origin: CGPoint(), size: cellSize)
@@ -903,8 +903,9 @@ extension MessageViewController : MessageViewLayoutDelegate {
 
         let message = messages[indexPath.item]
         let hasAvatars = avatarsVisible(message: message)
-        let containerHeight = calcContainerSize(for: message, avatarsVisible: hasAvatars).height
-        let size = CGSize(width: calcCellWidth(), height: calcCellHeightFromContent(for: message, at: indexPath, containerHeight: containerHeight, avatarsVisible: hasAvatars))
+        let showProgressCircle = shouldShowProgressBar(for: message)
+        let containerHeight = calcContainerSize(for: message, avatarsVisible: hasAvatars, progressCircleVisible: showProgressCircle).height
+        let size = CGSize(width: calcCellWidth(), height: calcCellHeightFromContent(for: message, at: indexPath, containerHeight: containerHeight, avatarsVisible: hasAvatars, progressCircleVisible: showProgressCircle))
         // cellSizeCache[indexPath.item] = size
         return size
     }
@@ -913,14 +914,17 @@ extension MessageViewController : MessageViewLayoutDelegate {
         return collectionView.frame.width - collectionView.layoutMargins.left - collectionView.layoutMargins.right
     }
 
-    func calcCellHeightFromContent(for message: Message, at indexPath: IndexPath, containerHeight: CGFloat, avatarsVisible hasAvatars: Bool) -> CGFloat {
+    func calcCellHeightFromContent(
+        for message: Message, at indexPath: IndexPath, containerHeight: CGFloat,
+        avatarsVisible hasAvatars: Bool, progressCircleVisible: Bool) -> CGFloat {
 
         let senderNameLabelHeight: CGFloat = shouldShowAvatar(for: message, at: indexPath) ? Constants.kSenderNameLabelHeight : 0
         let newDateLabelHeight: CGFloat = calcNewDateLabelHeight(at: indexPath)
         let avatarHeight = hasAvatars ? Constants.kAvatarSize : 0
+        let progressCircleHeight = progressCircleVisible ? Constants.kProgressCircleSize : 0
 
         let totalLabelHeight: CGFloat = newDateLabelHeight + containerHeight + senderNameLabelHeight
-        return max(avatarHeight, totalLabelHeight)
+        return max(avatarHeight, progressCircleHeight, totalLabelHeight)
     }
 
     func calcNewDateLabelHeight(at indexPath: IndexPath) -> CGFloat {
@@ -936,20 +940,22 @@ extension MessageViewController : MessageViewLayoutDelegate {
     }
 
     // Calculate maximum width of content inside message bubble
-    func calcMaxContentWidth(for message: Message, avatarsVisible: Bool) -> CGFloat {
+    func calcMaxContentWidth(for message: Message,
+                             avatarsVisible: Bool, progressCircleVisible: Bool) -> CGFloat {
 
         let insets = isFromCurrentSender(message: message) ? Constants.kOutgoingMessageContentInset : Constants.kIncomingMessageContentInset
 
         let avatarWidth = avatarsVisible ? Constants.kAvatarSize : 0
+        let progressCircleSize = progressCircleVisible ? Constants.kProgressCircleSize : 0
 
         let padding = isFromCurrentSender(message: message) ? Constants.kOutgoingContainerPadding : Constants.kIncomingContainerPadding
 
-        return calcCellWidth() - avatarWidth - padding.left - padding.right - insets.left - insets.right
+        return calcCellWidth() - avatarWidth - progressCircleSize - padding.left - padding.right - insets.left - insets.right
     }
 
     /// Calculate size of the view which holds message content.
-    func calcContainerSize(for message: Message, avatarsVisible: Bool) -> CGSize {
-        let maxWidth = calcMaxContentWidth(for: message, avatarsVisible: avatarsVisible)
+    func calcContainerSize(for message: Message, avatarsVisible: Bool, progressCircleVisible: Bool) -> CGSize {
+        let maxWidth = calcMaxContentWidth(for: message, avatarsVisible: avatarsVisible, progressCircleVisible: progressCircleVisible)
         let insets = isFromCurrentSender(message: message) ? Constants.kOutgoingMessageContentInset : Constants.kIncomingMessageContentInset
 
         var size = calcContentSize(for: message, maxWidth: maxWidth)
@@ -957,6 +963,9 @@ extension MessageViewController : MessageViewLayoutDelegate {
         size.width += insets.left + insets.right
         size.width = max(size.width, Constants.kMinimumCellWidth)
         size.height += insets.top + insets.bottom
+        if progressCircleVisible {
+            size.width += Constants.kProgressCircleSize
+        }
 
         return size
     }
