@@ -283,6 +283,8 @@ public class Tinode {
     private var loginCredentials: LoginCredentials? = nil
     private var autoLogin: Bool = false
     private var loginInProgress: Bool = false
+    // Queue to execute state-mutating operations on.
+    private let operationsQueue = DispatchQueue(label: "co.tinode.operations")
 
     public func baseURL(useWebsocketProtocol: Bool) -> URL? {
         guard !hostName.isEmpty else { return nil }
@@ -883,15 +885,19 @@ public class Tinode {
         }
     }
     public func disconnect() {
-        // Remove auto-login data.
-        setAutoLogin(using: nil, authenticateWith: nil)
-        connection?.disconnect()
+        operationsQueue.sync {
+            // Remove auto-login data.
+            setAutoLogin(using: nil, authenticateWith: nil)
+            connection?.disconnect()
+        }
     }
     public func logout() {
-        try? setDeviceToken(token: Tinode.kNullValue)?.thenFinally {
-            self.disconnect()
-            self.myUid = nil
-            self.store?.logout()
+        operationsQueue.sync {
+            try? setDeviceToken(token: Tinode.kNullValue)?.thenFinally {
+                self.disconnect()
+                self.myUid = nil
+                self.store?.logout()
+            }
         }
     }
     private func handleDisconnect(isServerOriginated: Bool, code: Int, reason: String) {
@@ -972,6 +978,12 @@ public class Tinode {
 
     @discardableResult
     public func connect(to hostName: String, useTLS: Bool) throws -> PromisedReply<ServerMessage>? {
+        try operationsQueue.sync {
+            return try connectThreadUnsafe(to: hostName, useTLS: useTLS)
+        }
+    }
+
+    private func connectThreadUnsafe(to hostName: String, useTLS: Bool) throws -> PromisedReply<ServerMessage>? {
         if isConnected {
             Tinode.log.debug("Tinode is already connected")
             return PromisedReply<ServerMessage>(value: ServerMessage())
@@ -991,8 +1003,8 @@ public class Tinode {
 
     // Connect with saved connection params (host name and tls settings).
     @discardableResult
-    public func connect() throws -> PromisedReply<ServerMessage>? {
-        return try connect(to: self.hostName, useTLS: self.useTLS)
+    private func connect() throws -> PromisedReply<ServerMessage>? {
+        return try connectThreadUnsafe(to: self.hostName, useTLS: self.useTLS)
     }
 
     // Make sure connection is either already established or being established:
@@ -1004,40 +1016,42 @@ public class Tinode {
     // If |reset| is true, drop connection and reconnect. Happens when cluster is reconfigured.
     @discardableResult
     public func reconnectNow(interactively: Bool, reset: Bool) -> Bool {
-        var reconnectInteractive = interactively
-        if connection == nil {
-            do {
-                try connect()
-            } catch {
-                Tinode.log.error("Couldn't connect to server: %@", error.localizedDescription)
+        operationsQueue.sync {
+            var reconnectInteractive = interactively
+            if connection == nil {
+                do {
+                    try connect()
+                } catch {
+                    Tinode.log.error("Couldn't connect to server: %@", error.localizedDescription)
+                    return false
+                }
+            }
+            guard connection != nil else {
+                Tinode.log.error("Error: connection cannot be nil in reconnectNow()")
                 return false
             }
-        }
-        guard connection != nil else {
-            Tinode.log.error("Error: connection cannot be nil in reconnectNow()")
+            if connection!.isConnected {
+                // We are done unless we need to reset the connection.
+                if !reset {
+                    return true
+                }
+                connection!.disconnect()
+                reconnectInteractive = true
+            }
+
+            // Connection exists but not connected.
+            // Try to connect immediately only if requested or if
+            // autoreconnect is not enabled.
+            if reconnectInteractive || !connection!.isWaitingToConnect {
+                do {
+                    try connection!.connect(reconnectAutomatically: true)
+                    return true
+                } catch {
+                    return false
+                }
+            }
             return false
         }
-        if connection!.isConnected {
-            // We are done unless we need to reset the connection.
-            if !reset {
-                return true
-            }
-            connection!.disconnect()
-            reconnectInteractive = true
-        }
-
-        // Connection exists but not connected.
-        // Try to connect immediately only if requested or if
-        // autoreconnect is not enabled.
-        if reconnectInteractive || !connection!.isWaitingToConnect {
-            do {
-                try connection!.connect(reconnectAutomatically: true)
-                return true
-            } catch {
-                return false
-            }
-        }
-        return false
     }
 
     /**
@@ -1047,21 +1061,23 @@ public class Tinode {
      */
     @discardableResult
     public func setDeviceToken(token: String) -> PromisedReply<ServerMessage>? {
-        guard token != deviceToken else {
-            return PromisedReply<ServerMessage>(value: ServerMessage())
+        operationsQueue.sync {
+            guard token != deviceToken else {
+                return PromisedReply<ServerMessage>(value: ServerMessage())
+            }
+            // Cache token here assuming the call to server does not fail. If it fails clear the cached token.
+            // This prevents multiple unnecessary calls to the server with the same token.
+            deviceToken = Tinode.isNull(obj: token) ? nil : token
+            let msgId = getNextMsgId()
+            let msg = ClientMessage<Int, Int>(hi: MsgClientHi(id: msgId, dev: token))
+            return try? sendWithPromise(payload: msg, with: msgId)
+                .thenCatch(onFailure: { [weak self] err in
+                    // Clear cached value on failure to allow for retries.
+                    self?.deviceToken = nil
+                    self?.store?.deviceToken = nil
+                    return nil
+                })
         }
-        // Cache token here assuming the call to server does not fail. If it fails clear the cached token.
-        // This prevents multiple unnecessary calls to the server with the same token.
-        deviceToken = Tinode.isNull(obj: token) ? nil : token
-        let msgId = getNextMsgId()
-        let msg = ClientMessage<Int, Int>(hi: MsgClientHi(id: msgId, dev: token))
-        return try? sendWithPromise(payload: msg, with: msgId)
-            .thenCatch(onFailure: { [weak self] err in
-                // Clear cached value on failure to allow for retries.
-                self?.deviceToken = nil
-                self?.store?.deviceToken = nil
-                return nil
-            })
     }
 
     public func subscribe<Pu: Codable, Pr: Codable>(
