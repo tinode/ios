@@ -36,8 +36,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Try to connect and log in in the background.
         DispatchQueue.global(qos: .userInitiated).async {
             if !Utils.connectAndLoginSync() {
-                Cache.getTinode().logout()
-                UiUtils.routeToLoginVC()
+                UiUtils.logoutAndRouteToLoginVC()
             }
         }
         if #available(iOS 12.0, *) {
@@ -46,7 +45,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             reachability.pathUpdateHandler = { path in
                 let tinode = Cache.getTinode()
                 if path.status == .satisfied, !tinode.isConnected {
-                    tinode.reconnectNow()
+                    tinode.reconnectNow(interactively: false, reset: false)
                 }
             }
             self.nwReachability = reachability
@@ -189,8 +188,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         }
         DispatchQueue.global(qos: .userInitiated).async {
             if !Utils.connectAndLoginSync() {
-                Cache.getTinode().logout()
-                UiUtils.routeToLoginVC()
+                UiUtils.logoutAndRouteToLoginVC()
             } else {
                 UiUtils.routeToMessageVC(forTopic: topicName)
             }

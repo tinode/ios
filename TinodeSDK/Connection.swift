@@ -35,10 +35,15 @@ public class Connection {
 
     var isConnected: Bool {
         get {
-            if let conn = webSocketConnection, conn.readyState == .open {
-                return true
-            }
-            return false
+            guard let conn = webSocketConnection else { return false }
+            return conn.readyState == .open
+        }
+    }
+
+    var isWaitingToConnect: Bool {
+        get {
+            guard let conn = webSocketConnection else { return false }
+            return conn.readyState == .connecting
         }
     }
 

@@ -13,7 +13,7 @@ protocol MessageBusinessLogic: class {
     @discardableResult
     func setup(topicName: String?) -> Bool
     @discardableResult
-    func attachToTopic() -> Bool
+    func attachToTopic(interactively: Bool) -> Bool
     func cleanup()
     func leaveTopic()
 
@@ -47,7 +47,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         override func onLogin(code: Int, text: String) {
             super.onLogin(code: code, text: text)
             _ = UiUtils.attachToMeTopic(meListener: nil)
-            _ = interactor?.attachToTopic()
+            _ = interactor?.attachToTopic(interactively: false)
         }
     }
     static let kMessagesPerPage = 24
@@ -105,10 +105,17 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
             self.topic?.leave()
         }
     }
-    func attachToTopic() -> Bool {
+    func attachToTopic(interactively: Bool) -> Bool {
         guard let topic = self.topic, !topic.attached else {
             self.presenter?.applyTopicPermissions(withError: nil)
             return true
+        }
+        let tinode = Cache.getTinode()
+        guard tinode.isConnectionAuthenticated else {
+            // If connection is not ready, wait for completion.
+            // MessageInteractor.attachToTopic() will be called again from the onLogin callback.
+            tinode.reconnectNow(interactively: interactively, reset: false)
+            return false
         }
         do {
             var builder = topic.getMetaGetBuilder()
@@ -150,7 +157,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                         }
                         switch err {
                         case TinodeError.notConnected(_):
-                            tinode.reconnectNow()
+                            tinode.reconnectNow(interactively: false, reset: false)
                         default:
                             self?.presenter?.applyTopicPermissions(withError: err)
                         }
@@ -178,7 +185,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                 onFailure: UiUtils.ToastFailureHandler)
         } catch TinodeError.notConnected {
             DispatchQueue.main.async { UiUtils.showToast(message: "You are offline.") }
-            Cache.getTinode().reconnectNow()
+            Cache.getTinode().reconnectNow(interactively: false, reset: false)
             return false
         } catch {
             DispatchQueue.main.async { UiUtils.showToast(message: "Message not sent.") }

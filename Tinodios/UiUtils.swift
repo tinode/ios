@@ -5,9 +5,10 @@
 //  Copyright © 2019 Tinode. All rights reserved.
 //
 
-import Foundation
-import TinodeSDK
 import Firebase
+import Foundation
+import TinodiosDB
+import TinodeSDK
 
 class UiTinodeEventListener : TinodeEventListener {
     private var connected: Bool = false
@@ -117,8 +118,29 @@ class UiUtils {
             me!.listener = meListener
         }
         let get = me!.getMetaGetBuilder().withDesc().withSub().withTags().withCred().build()
-        // TODO: logout on failure and route to login view.
-        return me!.subscribe(set: nil, get: get)
+        do {
+            return try me!.subscribe(set: nil, get: get)?.thenCatch(onFailure: { err in
+                Cache.log.error("ME topic subscription error: %@", err.localizedDescription)
+                if let e = err as? TinodeError {
+                    if case TinodeError.serverResponseError(let code, let text, _) = e {
+                        switch code {
+                        case 404:
+                            UiUtils.logoutAndRouteToLoginVC()
+                        case 502:
+                            if text == "cluster unreachable" {
+                                Cache.getTinode().reconnectNow(interactively: false, reset: true)
+                            }
+                        default:
+                            break
+                        }
+                    }
+                }
+                return nil
+            })
+        } catch {
+            Cache.log.error("Error when subscribing to ME topic: %@", error.localizedDescription)
+            return nil
+        }
     }
     public static func attachToFndTopic(fndListener: DefaultFndTopic.Listener?) -> PromisedReply<ServerMessage>? {
         let tinode = Cache.getTinode()
@@ -129,7 +151,15 @@ class UiUtils {
             fnd.subscribe(set: nil, get: nil) :
             PromisedReply<ServerMessage>(value: ServerMessage())
     }
-    public static func routeToLoginVC() {
+
+    public static func logoutAndRouteToLoginVC() {
+        BaseDb.getInstance().logout()
+        Cache.invalidate()
+        Utils.removeAuthToken()
+        UiUtils.routeToLoginVC()
+    }
+
+    private static func routeToLoginVC() {
         DispatchQueue.main.async {
             let storyboard = UIStoryboard(name: "Main", bundle: nil)
             let destinationVC = storyboard.instantiateViewController(withIdentifier: "StartNavigator") as! UINavigationController
