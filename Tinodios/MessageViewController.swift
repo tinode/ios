@@ -212,7 +212,7 @@ class MessageViewController: UIViewController {
     @objc
     func appBecameActive() {
         self.interactor?.setup(topicName: topicName)
-        self.interactor?.attachToTopic()
+        self.interactor?.attachToTopic(interactively: true)
     }
     @objc
     func appGoingInactive() {
@@ -331,7 +331,7 @@ class MessageViewController: UIViewController {
 
         collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: sendMessageBar.frame.height, right: 0)
         
-        self.interactor?.attachToTopic()
+        self.interactor?.attachToTopic(interactively: true)
         self.interactor?.loadMessages()
         self.interactor?.sendReadNotification()
         if #available(iOS 10, *) {

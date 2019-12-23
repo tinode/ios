@@ -45,7 +45,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             reachability.pathUpdateHandler = { path in
                 let tinode = Cache.getTinode()
                 if path.status == .satisfied, !tinode.isConnected {
-                    tinode.reconnectNow()
+                    tinode.reconnectNow(interactively: false, reset: false)
                 }
             }
             self.nwReachability = reachability

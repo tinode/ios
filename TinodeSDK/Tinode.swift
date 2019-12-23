@@ -134,7 +134,7 @@ public class Tinode {
         static let kFutureExpiryTimerTolerance = 0.2
         static let kFutureTimeout = 5.0
         private var futuresDict = [String:PromisedReply<ServerMessage>]()
-        private let queue = DispatchQueue(label: "co.tinode.futuresmap")
+        private let futuresQueue = DispatchQueue(label: "co.tinode.futuresmap")
         private var timer: Timer?
         init() {
             timer = Timer(
@@ -155,7 +155,7 @@ public class Tinode {
             timer!.invalidate()
         }
         @objc private func expireFutures() {
-            queue.sync {
+            futuresQueue.sync {
                 let expirationThreshold = Date().addingTimeInterval(TimeInterval(-ConcurrentFuturesMap.kFutureTimeout))
                 let error = TinodeError.serverResponseError(504, "timeout", nil)
                 var expiredKeys = [String]()
@@ -171,14 +171,14 @@ public class Tinode {
             }
         }
         subscript(key: String) -> PromisedReply<ServerMessage>? {
-            get { return queue.sync { return futuresDict[key] } }
-            set { queue.sync { futuresDict[key] = newValue } }
+            get { return futuresQueue.sync { return futuresDict[key] } }
+            set { futuresQueue.sync { futuresDict[key] = newValue } }
         }
         func removeValue(forKey key: String) -> PromisedReply<ServerMessage>? {
-            return queue.sync { return futuresDict.removeValue(forKey: key) }
+            return futuresQueue.sync { return futuresDict.removeValue(forKey: key) }
         }
         func rejectAndPurgeAll(withError e: Error) {
-            queue.sync {
+            futuresQueue.sync {
                 for f in futuresDict.values {
                     try? f.reject(error: e)
                 }
@@ -969,6 +969,8 @@ public class Tinode {
             }
         }
     }
+
+    @discardableResult
     public func connect(to hostName: String, useTLS: Bool) throws -> PromisedReply<ServerMessage>? {
         if isConnected {
             Tinode.log.debug("Tinode is already connected")
@@ -987,15 +989,55 @@ public class Tinode {
         return connectedPromise
     }
 
+    // Connect with saved connection params (host name and tls settings).
     @discardableResult
-    public func reconnectNow() -> Bool {
-        guard connection != nil && !isConnected else { return false }
-        do {
-            try connection!.connect(reconnectAutomatically: true)
-            return true
-        } catch {
+    public func connect() throws -> PromisedReply<ServerMessage>? {
+        return try connect(to: self.hostName, useTLS: self.useTLS)
+    }
+
+    // Make sure connection is either already established or being established:
+    //  - If connection is already established do nothing
+    //  - If connection does not exist, create
+    //  - If not connected and waiting for backoff timer, wake it up.
+    //
+    // |interactively| is true if user directly requested a reconnect.
+    // If |reset| is true, drop connection and reconnect. Happens when cluster is reconfigured.
+    @discardableResult
+    public func reconnectNow(interactively: Bool, reset: Bool) -> Bool {
+        var reconnectInteractive = interactively
+        if connection == nil {
+            do {
+                try connect()
+            } catch {
+                Tinode.log.error("Couldn't connect to server: %@", error.localizedDescription)
+                return false
+            }
+        }
+        guard connection != nil else {
+            Tinode.log.error("Error: connection cannot be nil in reconnectNow()")
             return false
         }
+        if connection!.isConnected {
+            // We are done unless we need to reset the connection.
+            if !reset {
+                return true
+            }
+            connection!.disconnect()
+            reconnectInteractive = true
+        }
+
+        // Connection exists but not connected.
+        // Try to connect immediately only if requested or if
+        // autoreconnect is not enabled.
+        if reconnectInteractive || !connection!.isWaitingToConnect {
+            do {
+                try connection!.connect(reconnectAutomatically: true)
+                return true
+            } catch {
+                return false
+            }
+        }
+        return false
     }
 
     /**

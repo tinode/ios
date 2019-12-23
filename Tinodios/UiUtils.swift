@@ -118,8 +118,29 @@ class UiUtils {
             me!.listener = meListener
         }
         let get = me!.getMetaGetBuilder().withDesc().withSub().withTags().withCred().build()
-        // TODO: logout on failure and route to login view.
-        return me!.subscribe(set: nil, get: get)
+        do {
+            return try me!.subscribe(set: nil, get: get)?.thenCatch(onFailure: { err in
+                Cache.log.error("ME topic subscription error: %@", err.localizedDescription)
+                if let e = err as? TinodeError {
+                    if case TinodeError.serverResponseError(let code, let text, _) = e {
+                        switch code {
+                        case 404:
+                            UiUtils.logoutAndRouteToLoginVC()
+                        case 502:
+                            if text == "cluster unreachable" {
+                                Cache.getTinode().reconnectNow(interactively: false, reset: true)
+                            }
+                        default:
+                            break
+                        }
+                    }
+                }
+                return nil
+            })
+        } catch {
+            Cache.log.error("Error when subscribing to ME topic: %@", error.localizedDescription)
+            return nil
+        }
     }
     public static func attachToFndTopic(fndListener: DefaultFndTopic.Listener?) -> PromisedReply<ServerMessage>? {
         let tinode = Cache.getTinode()

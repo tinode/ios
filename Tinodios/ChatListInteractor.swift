@@ -97,14 +97,12 @@ class ChatListInteractor: ChatListBusinessLogic, ChatListDataStore {
                 }, onFailure: { [weak self] err in
                     if let e = err as? TinodeError, case .serverResponseError(let code, _, _) = e {
                         if code == 404 {
-                            tinode.logout()
                             self?.router?.routeToLogin()
                         }
                     }
                     return nil
                 })
         } catch {
-            tinode.logout()
             self.router?.routeToLogin()
         }
     }
