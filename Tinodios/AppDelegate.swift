@@ -36,8 +36,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Try to connect and log in in the background.
         DispatchQueue.global(qos: .userInitiated).async {
             if !Utils.connectAndLoginSync() {
-                Cache.getTinode().logout()
-                UiUtils.routeToLoginVC()
+                UiUtils.logoutAndRouteToLoginVC()
             }
         }
         if #available(iOS 12.0, *) {
@@ -189,8 +188,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         }
         DispatchQueue.global(qos: .userInitiated).async {
             if !Utils.connectAndLoginSync() {
-                Cache.getTinode().logout()
-                UiUtils.routeToLoginVC()
+                UiUtils.logoutAndRouteToLoginVC()
             } else {
                 UiUtils.routeToMessageVC(forTopic: topicName)
             }

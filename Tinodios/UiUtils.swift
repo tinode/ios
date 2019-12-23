@@ -5,9 +5,10 @@
 //  Copyright © 2019 Tinode. All rights reserved.
 //
 
-import Foundation
-import TinodeSDK
 import Firebase
+import Foundation
+import TinodiosDB
+import TinodeSDK
 
 class UiTinodeEventListener : TinodeEventListener {
     private var connected: Bool = false
@@ -129,7 +130,15 @@ class UiUtils {
             fnd.subscribe(set: nil, get: nil) :
             PromisedReply<ServerMessage>(value: ServerMessage())
     }
-    public static func routeToLoginVC() {
+
+    public static func logoutAndRouteToLoginVC() {
+        BaseDb.getInstance().logout()
+        Cache.invalidate()
+        Utils.removeAuthToken()
+        UiUtils.routeToLoginVC()
+    }
+
+    private static func routeToLoginVC() {
         DispatchQueue.main.async {
             let storyboard = UIStoryboard(name: "Main", bundle: nil)
             let destinationVC = storyboard.instantiateViewController(withIdentifier: "StartNavigator") as! UINavigationController

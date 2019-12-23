@@ -119,7 +119,7 @@ class ChatListViewController: UITableViewController, ChatListDisplayLogic {
     // }
 
     func displayLoginView() {
-        UiUtils.routeToLoginVC()
+        UiUtils.logoutAndRouteToLoginVC()
     }
 
     func displayChats(_ topics: [DefaultComTopic], archivedTopics: [DefaultComTopic]?) {
