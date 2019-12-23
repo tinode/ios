@@ -6,6 +6,13 @@ Status: work in progress.
 
 The immediate goal is to have a basic end-to-end working application prototype that one will be able to install and use.
 
+
+## Getting support
+
+* Read [server-side](https://github.com/tinode/chat/blob/master/docs/API.md) API documentation.
+* For support, general questions, discussions post to [https://groups.google.com/d/forum/tinode](https://groups.google.com/d/forum/tinode).
+* For bugs and feature requests [open an issue](https://github.com/tinode/ios/issues/new).
+
 ## Features
 
 ### Completed
