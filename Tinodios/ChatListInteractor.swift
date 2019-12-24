@@ -161,7 +161,7 @@ class ChatListInteractor: ChatListBusinessLogic, ChatListDataStore {
                 return nil
             })
         } catch {
-            print(error)
+            Cache.log.error("ChatListInteractor - Delete op failed for topic: %@", name)
         }
     }
 
@@ -173,7 +173,7 @@ class ChatListInteractor: ChatListBusinessLogic, ChatListDataStore {
                 return nil
             })
         } catch {
-            print(error)
+            Cache.log.error("ChatListInteractor - Archive/Unarchive op failed for topic: %@", name)
         }
     }
 }

@@ -892,12 +892,11 @@ public class Tinode {
         }
     }
     public func logout() {
-        operationsQueue.sync {
-            try? setDeviceToken(token: Tinode.kNullValue)?.thenFinally {
-                self.disconnect()
-                self.myUid = nil
-                self.store?.logout()
-            }
+        // setDeviceToken is thread-safe.
+        try? setDeviceToken(token: Tinode.kNullValue)?.thenFinally {
+            self.disconnect()
+            self.myUid = nil
+            self.store?.logout()
         }
     }
     private func handleDisconnect(isServerOriginated: Bool, code: Int, reason: String) {
@@ -993,6 +992,7 @@ public class Tinode {
         guard let endpointURL = self.channelsURL(useWebsocketProtocol: true) else {
             throw TinodeError.invalidState("Could not form server url.")
         }
+        nextMsgId = 0xffff + Int((Float(arc4random()) / Float(UInt32.max)) * 0xffff)
         connection = Connection(open: endpointURL,
                                 with: apiKey,
                                 notify: TinodeConnectionListener(tinode: self))
