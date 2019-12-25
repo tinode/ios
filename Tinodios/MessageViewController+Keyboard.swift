@@ -35,18 +35,17 @@ extension MessageViewController {
         let inputAccessoryViewHeight = inputAccessoryView?.frame.height ?? 0
 
         let overlap: CGFloat
-
-        if collectionView.contentSize.height > collectionView.bounds.height - inputAccessoryViewHeight {
-            overlap =
-                collectionView.bounds.height
-                - keyboardInfo.frameEnd.origin.y
-                - inputAccessoryViewHeight
+        // Try to use frameBegin and frameEnd, when all available content is taller
+        // than viewport less send bar. This can be done only on newer iOS versions.
+        if #available(iOS 11, *), collectionView.contentSize.height > collectionView.bounds.height - inputAccessoryViewHeight {
+            overlap = keyboardInfo.frameEnd.height - keyboardInfo.frameBegin.height
         } else {
             overlap =
                 collectionView.contentSize.height
                 - collectionView.contentOffset.y
                 - keyboardInfo.frameEnd.origin.y
-                + inputAccessoryViewHeight
+                // 2x because keyboardInfo.frameEnd.origin.y accounts for inputAccessoryViewHeight
+                + 2 * inputAccessoryViewHeight
         }
 
         if overlap > 0 && keyboardInfo.frameEnd.size.height != inputAccessoryViewHeight {
