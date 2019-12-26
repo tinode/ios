@@ -107,7 +107,9 @@ public class MessageDb {
                 setters.append(self.sender <- msg.from)
                 setters.append(self.ts <- msg.ts)
                 setters.append(self.seq <- msg.seq)
-                setters.append(self.head <- Tinode.serializeObject(msg.head))
+                if let h = msg.head {
+                    setters.append(self.head <- Tinode.serializeObject(h))
+                }
                 setters.append(self.content <- msg.content?.serialize())
                 msg.msgId = try db.run(self.table.insert(setters))
             }
