@@ -982,6 +982,10 @@ public class Tinode {
         }
     }
 
+    private func resetMsgId() {
+        nextMsgId = 0xffff + Int((Float(arc4random()) / Float(UInt32.max)) * 0xffff)
+    }
+
     private func connectThreadUnsafe(to hostName: String, useTLS: Bool) throws -> PromisedReply<ServerMessage>? {
         if isConnected {
             Tinode.log.debug("Tinode is already connected")
@@ -992,7 +996,7 @@ public class Tinode {
         guard let endpointURL = self.channelsURL(useWebsocketProtocol: true) else {
             throw TinodeError.invalidState("Could not form server url.")
         }
-        nextMsgId = 0xffff + Int((Float(arc4random()) / Float(UInt32.max)) * 0xffff)
+        resetMsgId()
         connection = Connection(open: endpointURL,
                                 with: apiKey,
                                 notify: TinodeConnectionListener(tinode: self))
