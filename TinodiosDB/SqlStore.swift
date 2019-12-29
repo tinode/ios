@@ -282,7 +282,7 @@ public class SqlStore : Storage {
     public func msgDelete(topic: TopicProto, delete delId: Int, deleteAllIn ranges: [MsgRange]?) -> Bool {
         guard let st = topic.payload as? StoredTopic, let topicId = st.id,
             let ranges = ranges, !ranges.isEmpty else { return false }
-        let collapsedRanges = MsgRange.collapse(ranges) //MsgRange.collapse(ranges)
+        let collapsedRanges = MsgRange.collapse(ranges)
         let enclosing = MsgRange.enclosing(for: collapsedRanges)
         var success = false
         do {

@@ -59,45 +59,7 @@ public class MsgServerCtrl: Decodable {
         return nil
     }
 }
-/*
-public class MsgDelRange: Codable {
-    public var low: Int? = nil
-    public var hi: Int? = nil
 
-    init() {
-        low = 0
-    }
-
-    init(id: Int) {
-        low = id
-    }
-
-    init(low: Int, hi: Int) {
-        self.low = low
-        self.hi = hi
-    }
-
-    static func listToRanges(list: [Int]?) -> [MsgDelRange]? {
-        guard var list = list else { return nil }
-        guard list.count > 0 else { return [] }
-        list.sort()
-        var res = [MsgDelRange]()
-        var first = list[0]
-        var last = first
-        for i in 1..<list.count {
-            let cur = list[i]
-            if cur == last { continue }
-            if cur > last + 1 {
-                res.append(MsgDelRange(low: first, hi: last + 1))
-                first = cur
-            }
-            last = cur
-        }
-        res.append(MsgDelRange(low: first, hi: last + 1))
-        return res
-    }
-}
-*/
 public class DelValues: Decodable {
     let clear: Int
     let delseq: [MsgRange]
