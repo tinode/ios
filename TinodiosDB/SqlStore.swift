@@ -270,7 +270,7 @@ public class SqlStore : Storage {
         var success = false
         do {
             try dbh?.db?.savepoint("SqlStore.msgDelete-bounds") {
-                success = (delId >= 0 || (dbh?.topicDb?.msgDeleted(topic: topic, delId: delId, from: idLo, to: idHi) ?? false)) &&
+                success = (dbh?.topicDb?.msgDeleted(topic: topic, delId: delId, from: idLo, to: idHi) ?? false) &&
                     (dbh?.messageDb?.delete(topicId: topicId, deleteId: delId, from: idLo, to: idHi) ?? false)
             }
         } catch {
@@ -287,7 +287,7 @@ public class SqlStore : Storage {
         var success = false
         do {
             try dbh?.db?.savepoint("SqlStore.msgDelete-ranges") {
-                success = (delId >= 0 || (dbh?.topicDb?.msgDeleted(topic: topic, delId: delId, from: enclosing!.lower, to: enclosing!.upper) ?? false)) &&
+                success = (dbh?.topicDb?.msgDeleted(topic: topic, delId: delId, from: enclosing!.lower, to: enclosing!.upper) ?? false) &&
                     (dbh?.messageDb?.deleteOrMarkDeleted(topicId: topicId, delId: delId, inRanges: collapsedRanges, hard: false) ?? false)
             }
         } catch {

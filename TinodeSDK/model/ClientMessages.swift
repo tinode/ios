@@ -430,7 +430,7 @@ public class MsgClientDel: Encodable {
                   user: nil, hard: hard)
     }
     /// Delete messages by range
-    convenience init(id: String?, topic: String?, from: Int?, to: Int?, hard: Bool?) {
+    convenience init(id: String?, topic: String?, from: Int, to: Int?, hard: Bool?) {
         self.init(id: id, topic: topic, what: MsgClientDel.kStrMsg,
                   ranges: [MsgRange(low: from, hi: to)],
                   user: nil, hard: hard)

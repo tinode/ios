@@ -175,7 +175,7 @@ public class MessageDb {
     }
 
     @discardableResult
-    func delete(topicId: Int64, deleteId delId: Int?, from loId: Int?, to hiId: Int?) -> Bool {
+    func delete(topicId: Int64, deleteId delId: Int?, from loId: Int, to hiId: Int?) -> Bool {
         return deleteOrMarkDeleted(topicId: topicId, delId: delId, from: loId, to: hiId, hard: false)
     }
 
@@ -197,9 +197,9 @@ public class MessageDb {
         return success
     }
     @discardableResult
-    func deleteOrMarkDeleted(topicId: Int64, delId: Int?, from loId: Int?, to hiId: Int?, hard: Bool) -> Bool {
+    func deleteOrMarkDeleted(topicId: Int64, delId: Int?, from loId: Int, to hiId: Int?, hard: Bool) -> Bool {
         let delId = delId ?? 0
-        var startId = loId ?? 0
+        var startId = loId
         var endId = hiId ?? Int.max
         if endId == 0 {
             endId = startId + 1
@@ -325,7 +325,9 @@ public class MessageDb {
         do {
             var ranges = [MsgRange]()
             for row in try db.prepare(queryTable) {
-                ranges.append(MsgRange(low: row[self.seq], hi: row[self.high]))
+                if let low = row[self.seq] {
+                    ranges.append(MsgRange(low: low, hi: row[self.high]))
+                }
             }
             return ranges
         } catch {

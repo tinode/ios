@@ -10,20 +10,20 @@ import Foundation
 // Represents a contiguous range of message sequence ids:
 // inclusive on the left - exclusive on the right.
 public class MsgRange: Codable {
-    public var low: Int?
+    public var low: Int
     public var hi: Int?
-    public var lower: Int { return low ?? 0 }
+    public var lower: Int { return low }
     public var upper: Int { return hi ?? lower + 1 }
 
     public init() {
         self.low = 0
         self.hi = nil
     }
-    public init(id: Int?) {
+    public init(id: Int) {
         self.low = id
         self.hi = nil
     }
-    public init(low: Int?, hi: Int?) {
+    public init(low: Int, hi: Int?) {
         self.low = low
         self.hi = hi
     }
@@ -37,7 +37,7 @@ public class MsgRange: Codable {
     }
     public func compare(to other: MsgRange) -> Int {
         let rl = MsgRange.cmp(self.low, other.low)
-        return rl == 0 ? MsgRange.cmp(self.hi, other.hi) : rl
+        return rl == 0 ? MsgRange.cmp(other.hi, self.hi) : rl
     }
     /**
      * Collapse multiple possibly overlapping ranges into as few ranges non-overlapping
