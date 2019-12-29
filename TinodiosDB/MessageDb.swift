@@ -14,6 +14,9 @@ enum MessageDbError: Error {
     case dbError(String)
 }
 
+// The table contains:
+// * messages (both synchronized and not yet synchronized with the server).
+// * message deletion markers (synchronized and not yet synchronized).
 public class MessageDb {
     private static let kTableName = "messages"
     private let db: SQLite.Connection
@@ -21,12 +24,16 @@ public class MessageDb {
     public var table: Table
 
     public let id: Expression<Int64>
+    // Topic ID, references topics.id
     public let topicId: Expression<Int64?>
+    // Id of the originator of the message, references users.id
     public let userId: Expression<Int64?>
     public let status: Expression<Int?>
     public let sender: Expression<String?>
     public let ts: Expression<Date?>
     public let seq: Expression<Int?>
+    public let high: Expression<Int?>
+    public let delId: Expression<Int?>
     public let head: Expression<String?>
     public let content: Expression<String?>
 
@@ -43,6 +50,8 @@ public class MessageDb {
         self.sender = Expression<String?>("sender")
         self.ts = Expression<Date?>("ts")
         self.seq = Expression<Int?>("seq")
+        self.high = Expression<Int?>("high")
+        self.delId = Expression<Int?>("del_id")
         self.head = Expression<String?>("head")
         self.content = Expression<String?>("content")
     }
@@ -62,6 +71,8 @@ public class MessageDb {
             t.column(sender)
             t.column(ts)
             t.column(seq)
+            t.column(high)
+            t.column(delId)
             t.column(head)
             t.column(content)
         })
@@ -149,42 +160,107 @@ public class MessageDb {
             return false
         }
     }
+
+    // Deletes all messages in a given topic, no exceptions. Use only when deleting the topic.
     @discardableResult
-    func delete(topicId: Int64, from loId: Int?, to hiId: Int?) -> Bool {
-        let startId = loId ?? 0
-        var endId = hiId ?? Int.max
-        if endId == 0 {
-            endId = startId
-        }
-        // delete from messages where topic_id = topicId and seq between startId (inclusive) and endId (non-inclusive).
-        let rows = self.table.filter(self.topicId == topicId && startId <= self.seq && self.seq < endId)
+    func deleteAll(topicId: Int64) -> Bool {
+        // Delete from messages where topic_id = topicId.
+        let rows = self.table.filter(self.topicId == topicId)
         do {
             return try self.db.run(rows.delete()) > 0
         } catch {
-            BaseDb.log.error("MessageDb - delete operation failed: topicId = %lld, error = %@", topicId, error.localizedDescription)
+            BaseDb.log.error("MessageDb - deleteAll operation failed: topicId = %lld, error = %@", topicId, error.localizedDescription)
             return false
         }
     }
+
     @discardableResult
-    func markDeleted(topicId: Int64, from loId: Int?, to hiId: Int?, hard: Bool) -> Bool {
-        let startId = loId ?? 0
+    func delete(topicId: Int64, deleteId delId: Int?, from loId: Int?, to hiId: Int?) -> Bool {
+        return deleteOrMarkDeleted(topicId: topicId, delId: delId, from: loId, to: hiId, hard: false)
+    }
+
+    @discardableResult
+    func deleteOrMarkDeleted(topicId: Int64, delId: Int?, inRanges ranges: [MsgRange], hard: Bool) -> Bool {
+        var success = false
+        do {
+            try db.savepoint("MessageDb.deleteOrMarkDeleted-ranges") {
+                for r in ranges {
+                    if !deleteOrMarkDeleted(topicId: topicId, delId: delId, from: r.lower, to: r.upper, hard: hard) {
+                        throw MessageDbError.dbError("Failed to process: delId \(delId ?? -1) range: \(r)")
+                    }
+                }
+            }
+            success = true
+        } catch {
+            BaseDb.log.error("MessageDb - deleteOrMarkDeleted2 with ranges failed: topicId = %lld, error = %@", topicId, error.localizedDescription)
+        }
+        return success
+    }
+    @discardableResult
+    func deleteOrMarkDeleted(topicId: Int64, delId: Int?, from loId: Int?, to hiId: Int?, hard: Bool) -> Bool {
+        let delId = delId ?? 0
+        var startId = loId ?? 0
         var endId = hiId ?? Int.max
         if endId == 0 {
             endId = startId + 1
         }
+        // 1. Delete all messages in the range.
         do {
             var updateResult = false
-            var deleteResult = false
-            try db.savepoint("MessageDb.markDeleted") {
-                let rowsToMarkDeleted = self.table.filter(
-                    self.topicId == topicId && startId <= self.seq && self.seq < endId && self.status == BaseDb.kStatusSynced)
-                updateResult = try self.db.run(rowsToMarkDeleted.update(
-                    self.status <- hard ? BaseDb.kStatusDeletedHard : BaseDb.kStatusDeletedSoft)) > 0
-                let rowsToDelete = self.table.filter(
-                    self.topicId == topicId && startId <= self.seq && self.seq < endId && self.status <= BaseDb.kStatusQueued)
-                deleteResult = try self.db.run(rowsToDelete.delete()) > 0
+            try db.savepoint("MessageDb.deleteOrMarkDeleted-plain") {
+                // Message selector: all messages in a given topic with seq between fromId and toId [inclusive, exclusive).
+                let messageSelector = self.table.filter(
+                    self.topicId == topicId && startId <= self.seq && self.seq < endId && self.status <= BaseDb.kStatusSynced)
+                // Selector of ranges which are fully within the new range.
+                let rangeDeleteSelector = self.table.filter(
+                    self.topicId == topicId && startId <= self.seq && self.seq < endId && self.status >= BaseDb.kStatusDeletedHard)
+
+                // Selector of partially overlapping deletion ranges. Find bounds of existing deletion ranges of the same type
+                // which partially overlap with the new deletion range.
+                let statusToConsume =
+                    delId > 0 ? BaseDb.kStatusDeletedSynced :
+                    hard ? BaseDb.kStatusDeletedHard : BaseDb.kStatusDeletedSoft
+                var rangeConsumeSelector = self.table.filter(
+                    self.topicId == topicId && self.status == statusToConsume
+                )
+                if delId > 0 {
+                    rangeConsumeSelector = rangeConsumeSelector.filter(self.delId < delId)
+                }
+
+                let overlapSelector = rangeConsumeSelector.filter(
+                    self.high >= startId && self.seq <= endId
+                )
+
+                try self.db.run(messageSelector.delete())
+                try self.db.run(rangeDeleteSelector.delete())
+
+                // Find the maximum continuous range which overlaps with the current range.
+                let fullRange = overlapSelector.select([self.seq.min, self.high.max])
+                if let row = try? db.pluck(fullRange) {
+                    if let newStartId = row[self.seq.min], newStartId < startId {
+                        startId = newStartId
+                    }
+                    if let newEndId = row[self.high.max], newEndId > endId {
+                        endId = newEndId
+                    }
+                }
+
+                // 3. Consume partially overlapped ranges. They will be replaced with the new expanded range.
+                let overlapSelector2 = rangeConsumeSelector.filter(
+                    self.high >= startId && self.seq <= endId
+                )
+                try self.db.run(overlapSelector2.delete())
+
+                // 4. Insert new range.
+                var setters = [Setter]()
+                setters.append(self.topicId <- topicId)
+                setters.append(self.delId <- delId)
+                setters.append(self.seq <- startId)
+                setters.append(self.high <- endId)
+                setters.append(self.status <- statusToConsume)
+                updateResult = try db.run(self.table.insert(setters)) > 0
             }
-            return updateResult && deleteResult
+            return updateResult
         } catch {
             BaseDb.log.error("MessageDb - markDeleted operation failed: topicId = %lld, error = %@", topicId, error.localizedDescription)
             return false
@@ -214,10 +290,8 @@ public class MessageDb {
     }
     public func query(topicId: Int64?, pageCount: Int, pageSize: Int) -> [StoredMessage]? {
         let queryTable = self.table
-            .filter(
-                self.topicId == topicId &&
-                self.status <= BaseDb.kStatusVisible)
-            .order(self.ts.desc)
+            .filter(self.topicId == topicId)
+            .order(self.seq.desc)
             .limit(pageCount * pageSize)
         do {
             var messages = [StoredMessage]()
@@ -239,23 +313,21 @@ public class MessageDb {
         }
         return nil
     }
-    func queryDeleted(topicId: Int64?, hard: Bool) -> [Int]? {
+    func queryDeleted(topicId: Int64?, hard: Bool) -> [MsgRange]? {
         guard let topicId = topicId else { return nil }
         let status = hard ? BaseDb.kStatusDeletedHard : BaseDb.kStatusDeletedSoft
         let queryTable = self.table
             .filter(
                 self.topicId == topicId &&
                 self.status == status)
-            .select(self.seq)
-            .order(self.ts)
+            .select(self.delId, self.seq, self.high)
+            .order(self.seq)
         do {
-            var seqIds = [Int]()
+            var ranges = [MsgRange]()
             for row in try db.prepare(queryTable) {
-                if let sm = row[self.seq] {
-                    seqIds.append(sm)
-                }
+                ranges.append(MsgRange(low: row[self.seq], hi: row[self.high]))
             }
-            return seqIds
+            return ranges
         } catch {
             BaseDb.log.error("MessageDb - queryDeleted operation failed: topicId = %lld, error = %@", topicId, error.localizedDescription)
             return nil

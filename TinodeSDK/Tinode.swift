@@ -1159,18 +1159,18 @@ public class Tinode {
         guard let msgId = msg.del?.id else { return nil }
         return sendWithPromise(payload: msg, with: msgId)
     }
-    func delMessage(topicName: String?, fromId: Int, toId: Int, hard: Bool) -> PromisedReply<ServerMessage>? {
+    func delMessage(topicName: String?, fromId: Int?, toId: Int?, hard: Bool) -> PromisedReply<ServerMessage>? {
         return sendDeleteMessage(
             msg: ClientMessage<Int, Int>(
                 del: MsgClientDel(id: getNextMsgId(),
                                   topic: topicName,
                                   from: fromId, to: toId, hard: hard)))
     }
-    func delMessage(topicName: String?, list: [Int]?, hard: Bool) -> PromisedReply<ServerMessage>? {
+    func delMessage(topicName: String?, ranges: [MsgRange]?, hard: Bool) -> PromisedReply<ServerMessage>? {
         return sendDeleteMessage(
             msg: ClientMessage<Int, Int>(
                 del: MsgClientDel(id: getNextMsgId(),
-                                  topic: topicName, list: list, hard: hard)))
+                                  topic: topicName, ranges: ranges, hard: hard)))
     }
     func delMessage(topicName: String?, msgId: Int, hard: Bool) -> PromisedReply<ServerMessage>? {
         return sendDeleteMessage(

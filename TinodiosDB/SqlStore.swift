@@ -80,7 +80,7 @@ public class SqlStore : Storage {
         guard let st = topic.payload as? StoredTopic, let topicId = st.id else { return false }
         do {
             try dbh?.db?.savepoint("SqlStore.topicDelete") {
-                self.dbh?.messageDb?.delete(topicId: topicId, from: 0, to: nil)
+                self.dbh?.messageDb?.deleteAll(topicId: topicId)
                 self.dbh?.subscriberDb?.deleteForTopic(topicId: topicId)
                 self.dbh?.topicDb?.delete(recordId: topicId)
             }
@@ -91,9 +91,9 @@ public class SqlStore : Storage {
         }
     }
 
-    public func getCachedMessagesRange(topic: TopicProto) -> Storage.Range? {
+    public func getCachedMessagesRange(topic: TopicProto) -> MsgRange? {
         guard let st = topic.payload as? StoredTopic else { return nil }
-        return (st.minLocalSeq ?? 0, st.maxLocalSeq ?? 0)
+        return MsgRange(low: st.minLocalSeq ?? 0, hi: (st.maxLocalSeq ?? 0) + 1)
     }
 
     public func setRead(topic: TopicProto, read: Int) -> Bool {
@@ -255,30 +255,45 @@ public class SqlStore : Storage {
 
     public func msgMarkToDelete(topic: TopicProto, from idLo: Int, to idHi: Int, markAsHard: Bool) -> Bool {
         guard let st = topic.payload as? StoredTopic, let topicId = st.id else { return false }
-        return self.dbh?.messageDb?.markDeleted(topicId: topicId, from: idLo, to: idHi, hard: markAsHard) ?? false
+        return self.dbh?.messageDb?.deleteOrMarkDeleted(topicId: topicId, delId: nil, from: idLo, to: idHi, hard: markAsHard) ?? false
     }
 
-    public func msgMarkToDelete(topic: TopicProto, list: [Int], markAsHard: Bool) -> Bool {
-        return false
+    public func msgMarkToDelete(topic: TopicProto, ranges: [MsgRange]?, markAsHard: Bool) -> Bool {
+        guard let st = topic.payload as? StoredTopic, let topicId = st.id,
+            let ranges = ranges, !ranges.isEmpty else { return false }
+        return self.dbh?.messageDb?.deleteOrMarkDeleted(topicId: topicId, delId: nil, inRanges: ranges, hard: markAsHard) ?? false
     }
 
-    public func msgDelete(topic: TopicProto, delete id: Int, deleteFrom idLo: Int, deleteTo idHi: Int) -> Bool {
+    public func msgDelete(topic: TopicProto, delete delId: Int, deleteFrom idLo: Int, deleteTo idHi: Int) -> Bool {
         guard let st = topic.payload as? StoredTopic, let topicId = st.id else { return false }
+        let idHi = idHi <= 0 ? (st.maxLocalSeq ?? 0) + 1 : idHi
+        var success = false
         do {
-            var result = false
-            try dbh?.db?.savepoint("SqlStore.msgDelete") {
-                result = (dbh?.topicDb?.msgDeleted(topic: topic, delId: id) ?? false) &&
-                    (dbh?.messageDb?.delete(topicId: topicId, from: idLo, to: idHi) ?? false)
+            try dbh?.db?.savepoint("SqlStore.msgDelete-bounds") {
+                success = (delId >= 0 || (dbh?.topicDb?.msgDeleted(topic: topic, delId: delId, from: idLo, to: idHi) ?? false)) &&
+                    (dbh?.messageDb?.delete(topicId: topicId, deleteId: delId, from: idLo, to: idHi) ?? false)
             }
-            return result
         } catch {
             BaseDb.log.error("SqlStore - msgDelete operation failed %@", error.localizedDescription)
-            return false
         }
+        return success
     }
 
-    public func msgDelete(topic: TopicProto, delete id: Int, deleteAll list: [Int]?) -> Bool {
-        return false
+    public func msgDelete(topic: TopicProto, delete delId: Int, deleteAllIn ranges: [MsgRange]?) -> Bool {
+        guard let st = topic.payload as? StoredTopic, let topicId = st.id,
+            let ranges = ranges, !ranges.isEmpty else { return false }
+        let collapsedRanges = MsgRange.collapse(ranges) //MsgRange.collapse(ranges)
+        let enclosing = MsgRange.enclosing(for: collapsedRanges)
+        var success = false
+        do {
+            try dbh?.db?.savepoint("SqlStore.msgDelete-ranges") {
+                success = (delId >= 0 || (dbh?.topicDb?.msgDeleted(topic: topic, delId: delId, from: enclosing!.lower, to: enclosing!.upper) ?? false)) &&
+                    (dbh?.messageDb?.deleteOrMarkDeleted(topicId: topicId, delId: delId, inRanges: collapsedRanges, hard: false) ?? false)
+            }
+        } catch {
+            BaseDb.log.error("SqlStore - msgDelete operation failed %@", error.localizedDescription)
+        }
+        return success
     }
 
     public func msgRecvByRemote(sub: SubscriptionProto, recv: Int?) -> Bool {
@@ -305,9 +320,9 @@ public class SqlStore : Storage {
         return BaseDb.getInstance().messageDb?.queryUnsent(topicId: id)
     }
 
-    public func getQueuedMessageDeletes(topic: TopicProto, hard: Bool) -> [Int]? {
-        guard let st = topic.payload as? StoredTopic else { return nil }
-        guard let id = st.id, id > 0 else { return nil }
+    public func getQueuedMessageDeletes(topic: TopicProto, hard: Bool) -> [MsgRange]? {
+        guard let st = topic.payload as? StoredTopic,
+            let id = st.id, id > 0 else { return nil }
         return BaseDb.getInstance().messageDb?.queryDeleted(topicId: id, hard: hard)
     }
 }

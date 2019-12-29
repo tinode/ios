@@ -59,7 +59,7 @@ public class MsgServerCtrl: Decodable {
         return nil
     }
 }
-
+/*
 public class MsgDelRange: Codable {
     public var low: Int? = nil
     public var hi: Int? = nil
@@ -97,10 +97,10 @@ public class MsgDelRange: Codable {
         return res
     }
 }
-
+*/
 public class DelValues: Decodable {
     let clear: Int
-    let delseq: [MsgDelRange]
+    let delseq: [MsgRange]
 }
 
 public class MsgServerMeta: Decodable {
@@ -164,7 +164,7 @@ public class MsgServerPres : Decodable {
     public var what: String?
     public var seq: Int?
     public var clear: Int?
-    public var delseq: [MsgDelRange]?
+    public var delseq: [MsgRange]?
     public var ua: String?
     public var act: String?
     public var tgt: String?

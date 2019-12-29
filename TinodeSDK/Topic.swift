@@ -30,7 +30,7 @@ public protocol TopicProto: class {
     var defacs: Defacs? { get set }
     var lastSeen: LastSeen? { get set }
     var online: Bool { get set }
-    var cachedMessageRange: Storage.Range? { get }
+    var cachedMessageRange: MsgRange? { get }
     var isArchived: Bool { get }
     var isJoiner: Bool { get }
     var isReader: Bool { get }
@@ -132,13 +132,13 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
         }
         public func withEarlierData(limit: Int?) -> MetaGetBuilder {
             if let r = topic.cachedMessageRange {
-                return withData(since: nil, before: r.min > 0 ? r.min : nil, limit: limit)
+                return withData(since: nil, before: r.low != 0 ? r.low : nil, limit: limit)
             }
             return withData(since: nil, before: nil, limit: limit)
         }
         public func withLaterData(limit: Int?) -> MetaGetBuilder {
             if let r = topic.cachedMessageRange {
-                return withData(since: r.max > 0 ? r.max + 1 : nil, before: nil, limit: limit)
+                return withData(since: r.hi != 0 ? r.hi : nil, before: nil, limit: limit)
             }
             return withData(since: nil, before: nil, limit: limit)
         }
@@ -365,7 +365,7 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
     public var payload: Payload? = nil
     public var isPersisted: Bool { get { return payload != nil } }
 
-    public var cachedMessageRange: Storage.Range? {
+    public var cachedMessageRange: MsgRange? {
         get {
             return store?.getCachedMessagesRange(topic: self)
         }
@@ -715,13 +715,8 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
         }
         listener?.onMetaSub(sub: sub!)
     }
-    private func routeMetaDel(clear: Int, delseq: [MsgDelRange]) {
-        if let s = store {
-            for range in delseq {
-                let lo = range.low ?? 0
-                s.msgDelete(topic: self, delete: clear, deleteFrom: lo, deleteTo: range.hi ?? lo + 1)
-            }
-        }
+    private func routeMetaDel(clear: Int, delseq: [MsgRange]) {
+        store?.msgDelete(topic: self, delete: clear, deleteAllIn: delseq)
         self.maxDel = clear
         listener?.onData(data: nil)
     }
@@ -1125,10 +1120,12 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
     private func sendPendingDeletes(hard: Bool) -> PromisedReply<ServerMessage>? {
         if let pendingDeletes = self.store?.getQueuedMessageDeletes(topic: self, hard: hard), !pendingDeletes.isEmpty {
             return try! self.tinode?.delMessage(
-                topicName: self.name, list: pendingDeletes, hard: hard)?.then(
+                topicName: self.name, ranges: pendingDeletes, hard: hard)?.then(
                     onSuccess: { [weak self] msg in
                         if let id = msg?.ctrl?.getIntParam(for: "del"), let s = self {
-                            _ = s.store?.msgDelete(topic: s, delete: id, deleteAll: pendingDeletes)
+                            s.clear = id
+                            s.maxDel = id
+                            _ = s.store?.msgDelete(topic: s, delete: id, deleteAllIn: pendingDeletes)
                         }
                         return nil
                     }, onFailure: nil)
@@ -1142,8 +1139,10 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
             do {
                 return try tinode?.delMessage(topicName: self.name, fromId: fromId, toId: toId, hard: hard)?.then(
                     onSuccess: { [weak self] msg in
-                        if let delId = msg?.ctrl?.getIntParam(for: "del"), delId > 0 {
-                            self?.store?.msgDelete(topic: self!, delete: delId, deleteFrom: fromId, deleteTo: toId)
+                        if let s = self, let delId = msg?.ctrl?.getIntParam(for: "del"), delId > 0 {
+                            s.clear = delId
+                            s.maxDel = delId
+                            s.store?.msgDelete(topic: s, delete: delId, deleteFrom: fromId, deleteTo: toId)
                         }
                         return nil
                     })
@@ -1162,7 +1161,7 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
     }
 
     public func delMessage(id: Int, hard: Bool)  -> PromisedReply<ServerMessage>? {
-        return delMessages(from: id, to: 0, hard: hard)
+        return delMessages(from: id, to: id + 1, hard: hard)
     }
 
     public func syncOne(msgId: Int64) -> PromisedReply<ServerMessage>? {

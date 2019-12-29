@@ -52,9 +52,6 @@ extension Message {
 
 // Base protocol for implementing persistance.
 public protocol Storage: class {
-    // Min and max values.
-    typealias Range = (min: Int, max: Int)
-
     var myUid: String? { get set }
 
     var deviceToken: String? { get set }
@@ -84,7 +81,7 @@ public protocol Storage: class {
     func topicDelete(topic: TopicProto) -> Bool
 
     // Get seq IDs of the stored messages as a Range.
-    func getCachedMessagesRange(topic: TopicProto) -> Range?
+    func getCachedMessagesRange(topic: TopicProto) -> MsgRange?
     // Local user reported messages as read.
     @discardableResult
     func setRead(topic: TopicProto, read: Int) -> Bool
@@ -181,13 +178,14 @@ public protocol Storage: class {
     func msgMarkToDelete(topic: TopicProto,
                          from idLo: Int, to idHi: Int, markAsHard: Bool) -> Bool
     // Mark messages for deletion by seq ID list.
-    func msgMarkToDelete(topic: TopicProto, list: [Int], markAsHard: Bool) -> Bool
+    func msgMarkToDelete(topic: TopicProto, ranges: [MsgRange]?, markAsHard: Bool) -> Bool
     // Delete messages.
     @discardableResult
     func msgDelete(topic: TopicProto, delete id: Int,
                    deleteFrom idLo: Int, deleteTo idHi: Int) -> Bool
     // Delete messages.
-    func msgDelete(topic: TopicProto, delete id: Int, deleteAll list: [Int]?) -> Bool
+    @discardableResult
+    func msgDelete(topic: TopicProto, delete id: Int, deleteAllIn ranges: [MsgRange]?) -> Bool
     // Set recv value for a given subscriber.
     @discardableResult
     func msgRecvByRemote(sub: SubscriptionProto, recv: Int?) -> Bool
@@ -204,5 +202,5 @@ public protocol Storage: class {
     // Returns a list of pending delete message seq ids.
     // topic: topic where the messages were deleted.
     // hard: when true, fetch hard-deleted messages, soft-deleted otherwise.
-    func getQueuedMessageDeletes(topic: TopicProto, hard: Bool) -> [Int]?
+    func getQueuedMessageDeletes(topic: TopicProto, hard: Bool) -> [MsgRange]?
 }

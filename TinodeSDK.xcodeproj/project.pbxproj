@@ -31,6 +31,7 @@
 		0A56CCE722759078006E2952 /* TinodeSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A431BDC2244A0BE00A837F7 /* TinodeSDK.framework */; };
 		0A610453227563E200C6A9D2 /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A610452227563E200C6A9D2 /* Log.swift */; };
 		0A81B317236FA896009AF14B /* Types.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A81B316236FA896009AF14B /* Types.swift */; };
+		0AAF8BEC23B70E2A00C9CFBB /* MsgRange.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AAF8BEB23B70E2A00C9CFBB /* MsgRange.swift */; };
 		94CD577D9DA889C043928B4C /* Pods_TinodeSDKTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF75C7301A406947462E1C7D /* Pods_TinodeSDKTests.framework */; };
 		9C88C579E43E9FD3687DD093 /* Pods_TinodeSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 679C08F81F0F4B80EE066C70 /* Pods_TinodeSDK.framework */; };
 /* End PBXBuildFile section */
@@ -74,6 +75,7 @@
 		0A56CCE622759078006E2952 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0A610452227563E200C6A9D2 /* Log.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Log.swift; sourceTree = "<group>"; };
 		0A81B316236FA896009AF14B /* Types.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Types.swift; sourceTree = "<group>"; };
+		0AAF8BEB23B70E2A00C9CFBB /* MsgRange.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MsgRange.swift; sourceTree = "<group>"; };
 		15EB4A3618442D5E79FEAB59 /* Pods-TinodeSDK.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TinodeSDK.debug.xcconfig"; path = "Pods/Target Support Files/Pods-TinodeSDK/Pods-TinodeSDK.debug.xcconfig"; sourceTree = "<group>"; };
 		679C08F81F0F4B80EE066C70 /* Pods_TinodeSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TinodeSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		79834550805DF1A314040328 /* Pods-TinodeSDKTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TinodeSDKTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-TinodeSDKTests/Pods-TinodeSDKTests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -158,6 +160,7 @@
 				0A431BEE2244A14B00A837F7 /* ServerMessages.swift */,
 				0A431BEF2244A14B00A837F7 /* Subscription.swift */,
 				0A431BF02244A14B00A837F7 /* VCard.swift */,
+				0AAF8BEB23B70E2A00C9CFBB /* MsgRange.swift */,
 			);
 			path = model;
 			sourceTree = "<group>";
@@ -379,6 +382,7 @@
 				0A431BFD2244A14D00A837F7 /* User.swift in Sources */,
 				0A44B00C2244AAC500A98866 /* JSONValue.swift in Sources */,
 				0A610453227563E200C6A9D2 /* Log.swift in Sources */,
+				0AAF8BEC23B70E2A00C9CFBB /* MsgRange.swift in Sources */,
 				0A81B317236FA896009AF14B /* Types.swift in Sources */,
 				0A44B0052244AAC500A98866 /* ServerMessages.swift in Sources */,
 				0A431BFC2244A14D00A837F7 /* AuthScheme.swift in Sources */,
