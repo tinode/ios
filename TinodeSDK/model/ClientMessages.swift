@@ -408,12 +408,11 @@ public class MsgClientDel: Encodable {
     let id: String?
     let topic: String?
     let what: String?
-    let delseq: [MsgDelRange]?
+    let delseq: [MsgRange]?
     let user: String?
     let hard: Bool?
 
-
-    init(id: String?, topic: String?, what: String?, ranges: [MsgDelRange]?, user: String?, hard: Bool?) {
+    init(id: String?, topic: String?, what: String?, ranges: [MsgRange]?, user: String?, hard: Bool?) {
         self.id = id
         self.topic = topic
         self.what = what
@@ -425,23 +424,22 @@ public class MsgClientDel: Encodable {
     }
 
     /// Delete messages by list
-    convenience init(id: String?, topic: String?, list: [Int]?, hard: Bool?) {
+    convenience init(id: String?, topic: String?, ranges: [MsgRange]?, hard: Bool?) {
         self.init(id: id, topic: topic, what: MsgClientDel.kStrMsg,
-                  ranges: MsgDelRange.listToRanges(list: list),
+                  ranges: ranges,
                   user: nil, hard: hard)
     }
-
     /// Delete messages by range
-    convenience init(id: String?, topic: String?, from: Int, to: Int, hard: Bool?) {
+    convenience init(id: String?, topic: String?, from: Int, to: Int?, hard: Bool?) {
         self.init(id: id, topic: topic, what: MsgClientDel.kStrMsg,
-                  ranges: [MsgDelRange(low: from, hi: to)],
+                  ranges: [MsgRange(low: from, hi: to)],
                   user: nil, hard: hard)
     }
 
     /// Delete message by id
     convenience init(id: String?, topic: String?, msgId: Int, hard: Bool?) {
         self.init(id: id, topic: topic, what: MsgClientDel.kStrMsg,
-                  ranges: [MsgDelRange(id: msgId)],
+                  ranges: [MsgRange(id: msgId)],
                   user: nil, hard: hard)
     }
 

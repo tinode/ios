@@ -11,7 +11,7 @@ import TinodeSDK
 
 public class BaseDb {
     // Current database schema version. Increment on schema changes.
-    public static let kSchemaVersion: Int32 = 102
+    public static let kSchemaVersion: Int32 = 103
 
     // Onject statuses.
     // Status undefined/not set.
@@ -30,8 +30,8 @@ public class BaseDb {
     public static let kStatusDeletedHard = 5
     // Object is soft-deleted.
     public static let kStatusDeletedSoft = 6
-    // Object is rejected by the server.
-    public static let kStatusRejected = 7
+    // Object is a deletion range marker synchronized with the server.
+    public static let kStatusDeletedSynced = 7
 
     public static let kBundleId = "co.tinode.tinodios.db"
     // No direct access to the shared instance.

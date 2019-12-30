@@ -329,20 +329,50 @@ public class TopicDb {
         }
         return true
     }
-    func msgDeleted(topic: TopicProto, delId: Int) -> Bool {
+    func msgDeleted(topic: TopicProto, delId: Int, from loId: Int, to hiId: Int) -> Bool {
         guard let st = topic.payload as? StoredTopic, let recordId = st.id else {
             return false
         }
+        var setters = [Setter]()
         if delId > topic.maxDel {
-            let record = self.table.filter(self.id == recordId)
-            do {
-                return try self.db.run(record.update(self.maxDel <- delId)) > 0
-            } catch {
-                BaseDb.log.error("TopicDb - msgDelivered operation failed: topicId = %lld, error = %@", recordId, error.localizedDescription)
-                return false
-            }
+            setters.append(self.maxDel <- delId)
         }
-        return true
+        // If lowId is 0, all earlier messages are being deleted, set it to lowest possible value: 1.
+        var loId = loId > 0 ? loId : 1
+        // Upper bound is exclusive.
+        // If hiId is zero all later messages are bing deleted, set it to highest possible value.
+        var hiId = hiId > 1 ? hiId - 1 : (topic.seq ?? 0)
+
+        // Expand the available range only when there is an overlap.
+        // When minLocalSeq is 0 then there are no locally stored messages. Don't update minLocalSeq.
+        if loId < (st.minLocalSeq ?? 0) && hiId >= (st.minLocalSeq ?? 0) {
+            setters.append(self.minLocalSeq <- loId)
+        } else {
+            loId = -1
+        }
+        if hiId > (st.maxLocalSeq ?? 0) && loId <= (st.maxLocalSeq ?? 0) {
+            setters.append(self.maxLocalSeq <- hiId);
+        } else {
+            hiId = -1
+        }
+
+        guard !setters.isEmpty else { return true }
+        let record = self.table.filter(self.id == recordId)
+        var success = false
+        do {
+            success = try self.db.run(record.update(setters)) > 0
+            if success {
+                if loId > 0 {
+                    st.minLocalSeq = loId
+                }
+                if hiId > 0 {
+                    st.maxLocalSeq = hiId
+                }
+            }
+        } catch {
+            BaseDb.log.error("TopicDb - msgDelivered operation failed: topicId = %lld, error = %@", recordId, error.localizedDescription)
+        }
+        return success
     }
     @discardableResult
     func delete(recordId: Int64) -> Bool {
