@@ -113,6 +113,7 @@ class MessageCell: UICollectionViewCell {
     weak var delegate: MessageCellDelegate?
 
     var seqId: Int = 0
+    var isDeleted: Bool = false
 
     func setupSubviews() {
         contentView.addSubview(newDateLabel)

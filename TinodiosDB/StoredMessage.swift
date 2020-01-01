@@ -20,7 +20,7 @@ public class StoredMessage : MsgServerData, Message {
     public var isDraft: Bool { get { return status == BaseDb.kStatusDraft } }
     public var isReady: Bool { get { return status == BaseDb.kStatusQueued } }
     public var isDeleted: Bool {
-        get { return status == BaseDb.kStatusDeletedHard || status == BaseDb.kStatusDeletedSoft }
+        get { return status == BaseDb.kStatusDeletedHard || status == BaseDb.kStatusDeletedSoft || status == BaseDb.kStatusDeletedSynced }
     }
     public func isDeleted(hard: Bool) -> Bool {
         return hard ?

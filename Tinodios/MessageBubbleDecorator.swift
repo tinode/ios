@@ -102,6 +102,30 @@ class MessageBubbleDecorator {
         }
     }
 
+    public static func drawDeleted(_ rect: CGRect) -> UIBezierPath {
+        let path = UIBezierPath()
+        let width = rect.size.width
+        let height = rect.size.height
+        // Start at top-left.
+        path.move(to: CGPoint(x: 17, y: 0))
+        // Move to top-right.
+        path.addLine(to: CGPoint(x: width - 17, y: 0))
+        path.addCurve(to: CGPoint(x: width, y: 17), controlPoint1: CGPoint(x: width - 7.61, y: 0), controlPoint2: CGPoint(x: width, y: 7.61))
+
+        // Move to bottom-right.
+        path.addLine(to: CGPoint(x: width, y: height - 17))
+        path.addCurve(to: CGPoint(x: width - 17, y: height), controlPoint1: CGPoint(x: width, y: height - 7.61), controlPoint2: CGPoint(x: width - 7.61, y: height))
+
+        // Move to bottom-left.
+        path.addLine(to: CGPoint(x: 17, y: height))
+        path.addCurve(to: CGPoint(x: 0, y: height - 17), controlPoint1: CGPoint(x: 7.61, y: height), controlPoint2: CGPoint(x: 0, y: height - 7.61))
+
+        // Close the path at top-left.
+        path.addLine(to: CGPoint(x: 0, y: 17))
+        path.addCurve(to: CGPoint(x: 17, y: 0), controlPoint1: CGPoint(x: 0, y: 7.61), controlPoint2: CGPoint(x: 7.61, y: 0))
+        path.close()
+        return path
+    }
 
     public static func draw(_ rect: CGRect, isIncoming: Bool, style: Style) -> UIBezierPath {
         let path = UIBezierPath()

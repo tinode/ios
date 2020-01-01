@@ -300,9 +300,32 @@ extension StoredMessage {
         if cachedContent != nil {
             return cachedContent
         }
-        guard let content = content else { return nil }
-        cachedContent = AttributedStringFormatter.toAttributed(content, fitIn: size, withDefaultAttributes: attributes)
+        if !isDeleted {
+            guard let content = content else { return nil }
+            cachedContent = AttributedStringFormatter.toAttributed(content, fitIn: size, withDefaultAttributes: attributes)
+        } else {
+            cachedContent = StoredMessage.contentDeletedMessage(withAttributes: attributes)
+        }
         return cachedContent
+    }
+    /// Creates "content deleted" string with a small "blocked" icon.
+    private static func contentDeletedMessage(withAttributes attr: [NSAttributedString.Key : Any]?) -> NSAttributedString {
+        let second = NSMutableAttributedString()
+        second.beginEditing()
+
+        // Add 'block' icon.
+        let icon = NSTextAttachment()
+        icon.image = UIImage(named: "block-25")
+        second.append(NSAttributedString(attachment: icon))
+
+        // Align image and text vertically per
+        // https://stackoverflow.com/questions/47844721/vertically-aligning-nstextattachment-in-nsmutableattributedstring
+        let textFont: UIFont = attr?[.font] as? UIFont ?? UIFont.preferredFont(forTextStyle: .body)
+        var newAttr: [NSAttributedString.Key : Any] = attr ?? [:]
+        newAttr[.baselineOffset] = (icon.image!.size.height - textFont.pointSize) / 2 - textFont.descender / 2
+        second.append(NSAttributedString(string: "  Content was deleted", attributes: newAttr))
+        second.endEditing()
+        return second
     }
 
     // Returns true if message contains an inline image.

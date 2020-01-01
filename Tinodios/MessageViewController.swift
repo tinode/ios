@@ -517,11 +517,12 @@ extension MessageViewController: MessageDisplayLogic {
                 if diff.inserted.count > 0 {
                     collectionView.insertItems(at: diff.inserted.map { IndexPath(item: $0, section: 0) })
                 }
-            }, completion: { (Bool) -> Void in
+            }, completion: nil)
+            collectionView.performBatchUpdates({ () -> Void in
                 self.collectionView.reloadItems(at: refresh.map { IndexPath(item: $0, section: 0) })
                 self.collectionView.layoutIfNeeded()
                 self.collectionView.scrollToBottom()
-            })
+            }, completion: nil)
         }
     }
 
@@ -635,9 +636,10 @@ extension MessageViewController: UICollectionViewDataSource {
     private func configureCell(cell: MessageCell, with message: Message, at indexPath: IndexPath) {
 
         cell.seqId = message.seqId
+        cell.isDeleted = message.isDeleted
 
         cell.content.backgroundColor = nil
-        if isFromCurrentSender(message: message) {
+        if message.isDeleted || isFromCurrentSender(message: message) {
             if #available(iOS 12, *), traitCollection.userInterfaceStyle == .dark {
                 cell.containerView.backgroundColor = Constants.kOutgoingBubbleColorDark
                 cell.content.textColor = Constants.kOutgoingTextColorDark
@@ -729,6 +731,7 @@ extension MessageViewController: UICollectionViewDataSource {
     // Returns closure which adds message bubble mask to the supplied UIView.
     func bubbleDecorator(for message: Message, at indexPath: IndexPath) -> (UIView) -> Void {
         let isIncoming = !isFromCurrentSender(message: message)
+        let isDeleted = message.isDeleted
 
         let breakBefore = !isPreviousMessageSameSender(at: indexPath) || !isPreviousMessageSameDate(at: indexPath)
         let breakAfter = !isNextMessageSameSender(at: indexPath) || !isNextMessageSameDate(at: indexPath)
@@ -746,7 +749,9 @@ extension MessageViewController: UICollectionViewDataSource {
         }
 
         return { view in
-            let path = MessageBubbleDecorator.draw(view.bounds, isIncoming: isIncoming, style: style)
+            let path = !isDeleted ?
+                MessageBubbleDecorator.draw(view.bounds, isIncoming: isIncoming, style: style) :
+                MessageBubbleDecorator.drawDeleted(view.bounds)
             let mask = CAShapeLayer()
             mask.path = path.cgPath
             view.layer.mask = mask
@@ -821,18 +826,22 @@ extension MessageViewController : MessageViewLayoutDelegate {
         let isOutgoing = isFromCurrentSender(message: message)
         // The message set has avatars.
         let hasAvatars = avatarsVisible(message: message)
+        let isDeleted = message.isDeleted
         // This message has an avatar.
-        let isAvatarVisible = shouldShowAvatar(for: message, at: indexPath)
+        let isAvatarVisible = !isDeleted && shouldShowAvatar(for: message, at: indexPath)
 
         // Insets for the message bubble relative to collectionView: bubble should not touch the sides of the screen.
         let containerPadding = isOutgoing ? Constants.kOutgoingContainerPadding : Constants.kIncomingContainerPadding
 
+        // Size of the message bubble.
+        let showUploadProgress = shouldShowProgressBar(for: message)
+        let containerSize = calcContainerSize(for: message, avatarsVisible: hasAvatars, progressCircleVisible: showUploadProgress)
         // Get cell size.
-        let cellSize = calcCellSize(forItemAt: indexPath)
+        let cellSize = !isDeleted ? calcCellSize(forItemAt: indexPath) : containerSize
         attr.cellSpacing = Constants.kVerticalCellSpacing
 
         // Height of the field with the current date above the first message of the day.
-        let newDateLabelHeight = calcNewDateLabelHeight(at: indexPath)
+        let newDateLabelHeight = !isDeleted ? calcNewDateLabelHeight(at: indexPath) : 0
 
         // This is the height of the field with the sender's name.
         let senderNameLabelHeight = isAvatarVisible ? Constants.kSenderNameLabelHeight : 0
@@ -850,11 +859,11 @@ extension MessageViewController : MessageViewLayoutDelegate {
         // Additional left padding in group topics with avatar
         let avatarPadding = hasAvatars ? Constants.kAvatarSize : 0
 
-        // Size of the message bubble.
-        let showUploadProgress = shouldShowProgressBar(for: message)
-        let containerSize = calcContainerSize(for: message, avatarsVisible: hasAvatars, progressCircleVisible: showUploadProgress)
+        // isDeleted ? center container : else
         // isFromCurrent Sender ? Flush container right : flush left.
-        let originX = isOutgoing ? cellSize.width - avatarPadding - containerSize.width - containerPadding.right : avatarPadding + containerPadding.left
+        let originX =
+            isDeleted ? (collectionView.bounds.width - containerSize.width) / 2 :
+            isOutgoing ? cellSize.width - avatarPadding - containerSize.width - containerPadding.right : avatarPadding + containerPadding.left
         attr.containerFrame = CGRect(origin: CGPoint(x: originX, y: newDateLabelHeight + containerPadding.top), size: containerSize)
 
         // Content: RichTextLabel.
@@ -978,9 +987,9 @@ extension MessageViewController : MessageViewLayoutDelegate {
 
         let textColor: UIColor
         if #available(iOS 12, *), traitCollection.userInterfaceStyle == .dark {
-            textColor = isFromCurrentSender(message: message) ? Constants.kOutgoingTextColorDark : Constants.kIncomingTextColorDark
+            textColor = message.isDeleted || isFromCurrentSender(message: message) ? Constants.kOutgoingTextColorDark : Constants.kIncomingTextColorDark
         } else {
-            textColor = isFromCurrentSender(message: message) ? Constants.kOutgoingTextColorLight : Constants.kIncomingTextColorLight
+            textColor = message.isDeleted || isFromCurrentSender(message: message) ? Constants.kOutgoingTextColorLight : Constants.kIncomingTextColorLight
         }
 
         let storedMessage = message as! StoredMessage
@@ -1044,6 +1053,8 @@ extension MessageViewController : MessageCellDelegate {
     func didTapAvatar(in cell: MessageCell) {}
 
     func createPopupMenu(in cell: MessageCell) {
+        guard !cell.isDeleted else { return }
+
         // Make cell the first responder otherwise menu will show wrong items.
         if sendMessageBar.inputField.isFirstResponder {
             sendMessageBar.inputField.nextResponderOverride = cell
