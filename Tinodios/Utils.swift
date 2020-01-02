@@ -294,15 +294,47 @@ extension Tinode {
     }
 }
 
+extension UIFont {
+    func withTraits(traits: UIFontDescriptor.SymbolicTraits) -> UIFont {
+        let descriptor = fontDescriptor.withSymbolicTraits(traits)
+        return UIFont(descriptor: descriptor!, size: 0) //size 0 means keep the size as it is
+    }
+}
+
 extension StoredMessage {
     /// Generate and cache NSAttributedString representation of Drafty content.
     func attributedContent(fitIn size: CGSize, withDefaultAttributes attributes: [NSAttributedString.Key : Any]? = nil) -> NSAttributedString? {
         if cachedContent != nil {
             return cachedContent
         }
-        guard let content = content else { return nil }
-        cachedContent = AttributedStringFormatter.toAttributed(content, fitIn: size, withDefaultAttributes: attributes)
+        if !isDeleted {
+            guard let content = content else { return nil }
+            cachedContent = AttributedStringFormatter.toAttributed(content, fitIn: size, withDefaultAttributes: attributes)
+        } else {
+            cachedContent = StoredMessage.contentDeletedMessage(withAttributes: attributes)
+        }
         return cachedContent
+    }
+    /// Creates "content deleted" string with a small "blocked" icon.
+    private static func contentDeletedMessage(withAttributes attr: [NSAttributedString.Key : Any]?) -> NSAttributedString {
+        let second = NSMutableAttributedString()
+        second.beginEditing()
+
+        // Add 'block' icon.
+        let icon = NSTextAttachment()
+        icon.image = UIImage(named: "block-25")
+        second.append(NSAttributedString(attachment: icon))
+
+        // Align image and text vertically per
+        // https://stackoverflow.com/questions/47844721/vertically-aligning-nstextattachment-in-nsmutableattributedstring
+        var textFont: UIFont = attr?[.font] as? UIFont ?? UIFont.italicSystemFont(ofSize: 14)
+        textFont = textFont.withSize(14).withTraits(traits: .traitItalic)
+        var newAttr: [NSAttributedString.Key : Any] = attr ?? [:]
+        newAttr[.baselineOffset] = (icon.image!.size.height - textFont.pointSize) / 2 - textFont.descender / 2
+        newAttr[.font] = textFont
+        second.append(NSAttributedString(string: "  Content was deleted", attributes: newAttr))
+        second.endEditing()
+        return second
     }
 
     // Returns true if message contains an inline image.

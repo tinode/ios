@@ -54,6 +54,9 @@ class MessageViewController: UIViewController {
         // Light/dark gray color: outgoing messages
         static let kOutgoingBubbleColorLight = UIColor(red: 230/255, green: 230/255, blue: 230/255, alpha: 1)
         static let kOutgoingBubbleColorDark = UIColor(red: 51/255, green: 51/255, blue: 51/255, alpha: 1)
+        //
+        static let kDeletedMessageBubbleColor = UIColor(fromHexCode: 0xffe3f2fd)
+        static let kDeletedMessageTextColor = UIColor(fromHexCode: 0xff616161)
         // And corresponding text color
         static let kOutgoingTextColorLight = UIColor.darkText
         static let kOutgoingTextColorDark = UIColor.lightText
@@ -91,6 +94,7 @@ class MessageViewController: UIViewController {
         // Insets around content inside the message bubble.
         static let kIncomingMessageContentInset = UIEdgeInsets(top: 4, left: 18, bottom: 13, right: 14)
         static let kOutgoingMessageContentInset = UIEdgeInsets(top: 4, left: 14, bottom: 13, right: 18)
+        static let kDeletedMessageContentInset = UIEdgeInsets(top: 4, left: 14, bottom: 4, right: 14)
 
         // Carve out for timestamp and delivery marker in the bottom-right corner.
         static let kIncomingMetadataCarveout = "     "
@@ -517,11 +521,12 @@ extension MessageViewController: MessageDisplayLogic {
                 if diff.inserted.count > 0 {
                     collectionView.insertItems(at: diff.inserted.map { IndexPath(item: $0, section: 0) })
                 }
-            }, completion: { (Bool) -> Void in
+            }, completion: nil)
+            collectionView.performBatchUpdates({ () -> Void in
                 self.collectionView.reloadItems(at: refresh.map { IndexPath(item: $0, section: 0) })
                 self.collectionView.layoutIfNeeded()
                 self.collectionView.scrollToBottom()
-            })
+            }, completion: nil)
         }
     }
 
@@ -635,9 +640,13 @@ extension MessageViewController: UICollectionViewDataSource {
     private func configureCell(cell: MessageCell, with message: Message, at indexPath: IndexPath) {
 
         cell.seqId = message.seqId
+        cell.isDeleted = message.isDeleted
 
         cell.content.backgroundColor = nil
-        if isFromCurrentSender(message: message) {
+        if message.isDeleted {
+            cell.containerView.backgroundColor = Constants.kDeletedMessageBubbleColor
+            cell.content.textColor = Constants.kOutgoingTextColorDark
+        } else if isFromCurrentSender(message: message) {
             if #available(iOS 12, *), traitCollection.userInterfaceStyle == .dark {
                 cell.containerView.backgroundColor = Constants.kOutgoingBubbleColorDark
                 cell.content.textColor = Constants.kOutgoingTextColorDark
@@ -729,6 +738,7 @@ extension MessageViewController: UICollectionViewDataSource {
     // Returns closure which adds message bubble mask to the supplied UIView.
     func bubbleDecorator(for message: Message, at indexPath: IndexPath) -> (UIView) -> Void {
         let isIncoming = !isFromCurrentSender(message: message)
+        let isDeleted = message.isDeleted
 
         let breakBefore = !isPreviousMessageSameSender(at: indexPath) || !isPreviousMessageSameDate(at: indexPath)
         let breakAfter = !isNextMessageSameSender(at: indexPath) || !isNextMessageSameDate(at: indexPath)
@@ -746,7 +756,9 @@ extension MessageViewController: UICollectionViewDataSource {
         }
 
         return { view in
-            let path = MessageBubbleDecorator.draw(view.bounds, isIncoming: isIncoming, style: style)
+            let path = !isDeleted ?
+                MessageBubbleDecorator.draw(view.bounds, isIncoming: isIncoming, style: style) :
+                MessageBubbleDecorator.drawDeleted(view.bounds)
             let mask = CAShapeLayer()
             mask.path = path.cgPath
             view.layer.mask = mask
@@ -821,18 +833,22 @@ extension MessageViewController : MessageViewLayoutDelegate {
         let isOutgoing = isFromCurrentSender(message: message)
         // The message set has avatars.
         let hasAvatars = avatarsVisible(message: message)
+        let isDeleted = message.isDeleted
         // This message has an avatar.
-        let isAvatarVisible = shouldShowAvatar(for: message, at: indexPath)
+        let isAvatarVisible = !isDeleted && shouldShowAvatar(for: message, at: indexPath)
 
         // Insets for the message bubble relative to collectionView: bubble should not touch the sides of the screen.
         let containerPadding = isOutgoing ? Constants.kOutgoingContainerPadding : Constants.kIncomingContainerPadding
 
+        // Size of the message bubble.
+        let showUploadProgress = shouldShowProgressBar(for: message)
+        let containerSize = calcContainerSize(for: message, avatarsVisible: hasAvatars, progressCircleVisible: showUploadProgress)
         // Get cell size.
-        let cellSize = calcCellSize(forItemAt: indexPath)
+        let cellSize = !isDeleted ? calcCellSize(forItemAt: indexPath) : containerSize
         attr.cellSpacing = Constants.kVerticalCellSpacing
 
         // Height of the field with the current date above the first message of the day.
-        let newDateLabelHeight = calcNewDateLabelHeight(at: indexPath)
+        let newDateLabelHeight = !isDeleted ? calcNewDateLabelHeight(at: indexPath) : 0
 
         // This is the height of the field with the sender's name.
         let senderNameLabelHeight = isAvatarVisible ? Constants.kSenderNameLabelHeight : 0
@@ -850,15 +866,17 @@ extension MessageViewController : MessageViewLayoutDelegate {
         // Additional left padding in group topics with avatar
         let avatarPadding = hasAvatars ? Constants.kAvatarSize : 0
 
-        // Size of the message bubble.
-        let showUploadProgress = shouldShowProgressBar(for: message)
-        let containerSize = calcContainerSize(for: message, avatarsVisible: hasAvatars, progressCircleVisible: showUploadProgress)
+        // isDeleted ? center container : else
         // isFromCurrent Sender ? Flush container right : flush left.
-        let originX = isOutgoing ? cellSize.width - avatarPadding - containerSize.width - containerPadding.right : avatarPadding + containerPadding.left
+        let originX =
+            isDeleted ? (collectionView.bounds.width - containerSize.width) / 2 :
+            isOutgoing ? cellSize.width - avatarPadding - containerSize.width - containerPadding.right : avatarPadding + containerPadding.left
         attr.containerFrame = CGRect(origin: CGPoint(x: originX, y: newDateLabelHeight + containerPadding.top), size: containerSize)
 
         // Content: RichTextLabel.
-        let contentInset = isOutgoing ? Constants.kOutgoingMessageContentInset : Constants.kIncomingMessageContentInset
+        let contentInset =
+            isDeleted ? Constants.kDeletedMessageContentInset :
+            isOutgoing ? Constants.kOutgoingMessageContentInset : Constants.kIncomingMessageContentInset
         attr.contentFrame = CGRect(x: contentInset.left, y: contentInset.top, width: attr.containerFrame.width - contentInset.left - contentInset.right - (showUploadProgress ? Constants.kProgressCircleSize : 0), height: attr.containerFrame.height - contentInset.top - contentInset.bottom)
 
         var rightEdge = CGPoint(x: attr.containerFrame.width - Constants.kDeliveryMarkerPadding, y: attr.containerFrame.height - Constants.kDeliveryMarkerSize)
@@ -869,7 +887,7 @@ extension MessageViewController : MessageViewLayoutDelegate {
             attr.deliveryMarkerFrame = .zero
         }
 
-        attr.timestampFrame = CGRect(x: rightEdge.x - Constants.kTimestampWidth - Constants.kTimestampPadding, y: rightEdge.y, width: Constants.kTimestampWidth, height: Constants.kDeliveryMarkerSize)
+        attr.timestampFrame = !message.isDeleted ? CGRect(x: rightEdge.x - Constants.kTimestampWidth - Constants.kTimestampPadding, y: rightEdge.y, width: Constants.kTimestampWidth, height: Constants.kDeliveryMarkerSize) : .zero
 
         // New date label
         if newDateLabelHeight > 0 {
@@ -956,7 +974,9 @@ extension MessageViewController : MessageViewLayoutDelegate {
     /// Calculate size of the view which holds message content.
     func calcContainerSize(for message: Message, avatarsVisible: Bool, progressCircleVisible: Bool) -> CGSize {
         let maxWidth = calcMaxContentWidth(for: message, avatarsVisible: avatarsVisible, progressCircleVisible: progressCircleVisible)
-        let insets = isFromCurrentSender(message: message) ? Constants.kOutgoingMessageContentInset : Constants.kIncomingMessageContentInset
+        let insets =
+            message.isDeleted ? Constants.kDeletedMessageContentInset :
+            isFromCurrentSender(message: message) ? Constants.kOutgoingMessageContentInset : Constants.kIncomingMessageContentInset
 
         var size = calcContentSize(for: message, maxWidth: maxWidth)
 
@@ -977,7 +997,9 @@ extension MessageViewController : MessageViewLayoutDelegate {
         let carveout = isFromCurrentSender(message: message) ? Constants.kOutgoingMetadataCarveout : Constants.kIncomingMetadataCarveout
 
         let textColor: UIColor
-        if #available(iOS 12, *), traitCollection.userInterfaceStyle == .dark {
+        if message.isDeleted {
+            textColor = Constants.kDeletedMessageTextColor
+        } else if #available(iOS 12, *), traitCollection.userInterfaceStyle == .dark {
             textColor = isFromCurrentSender(message: message) ? Constants.kOutgoingTextColorDark : Constants.kIncomingTextColorDark
         } else {
             textColor = isFromCurrentSender(message: message) ? Constants.kOutgoingTextColorLight : Constants.kIncomingTextColorLight
@@ -1044,6 +1066,8 @@ extension MessageViewController : MessageCellDelegate {
     func didTapAvatar(in cell: MessageCell) {}
 
     func createPopupMenu(in cell: MessageCell) {
+        guard !cell.isDeleted else { return }
+
         // Make cell the first responder otherwise menu will show wrong items.
         if sendMessageBar.inputField.isFirstResponder {
             sendMessageBar.inputField.nextResponderOverride = cell

@@ -102,6 +102,9 @@ class MessageBubbleDecorator {
         }
     }
 
+    public static func drawDeleted(_ rect: CGRect) -> UIBezierPath {
+        return UIBezierPath(roundedRect: CGRect(x: 0, y: 0, width: rect.size.width, height: rect.size.height), cornerRadius: 15.22)
+    }
 
     public static func draw(_ rect: CGRect, isIncoming: Bool, style: Style) -> UIBezierPath {
         let path = UIBezierPath()
