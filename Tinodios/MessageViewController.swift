@@ -54,6 +54,9 @@ class MessageViewController: UIViewController {
         // Light/dark gray color: outgoing messages
         static let kOutgoingBubbleColorLight = UIColor(red: 230/255, green: 230/255, blue: 230/255, alpha: 1)
         static let kOutgoingBubbleColorDark = UIColor(red: 51/255, green: 51/255, blue: 51/255, alpha: 1)
+        //
+        static let kDeletedMessageBubbleColor = UIColor(fromHexCode: 0xffe3f2fd)
+        static let kDeletedMessageTextColor = UIColor(fromHexCode: 0xff616161)
         // And corresponding text color
         static let kOutgoingTextColorLight = UIColor.darkText
         static let kOutgoingTextColorDark = UIColor.lightText
@@ -91,6 +94,7 @@ class MessageViewController: UIViewController {
         // Insets around content inside the message bubble.
         static let kIncomingMessageContentInset = UIEdgeInsets(top: 4, left: 18, bottom: 13, right: 14)
         static let kOutgoingMessageContentInset = UIEdgeInsets(top: 4, left: 14, bottom: 13, right: 18)
+        static let kDeletedMessageContentInset = UIEdgeInsets(top: 4, left: 14, bottom: 4, right: 14)
 
         // Carve out for timestamp and delivery marker in the bottom-right corner.
         static let kIncomingMetadataCarveout = "     "
@@ -639,7 +643,10 @@ extension MessageViewController: UICollectionViewDataSource {
         cell.isDeleted = message.isDeleted
 
         cell.content.backgroundColor = nil
-        if message.isDeleted || isFromCurrentSender(message: message) {
+        if message.isDeleted {
+            cell.containerView.backgroundColor = Constants.kDeletedMessageBubbleColor
+            cell.content.textColor = Constants.kOutgoingTextColorDark
+        } else if isFromCurrentSender(message: message) {
             if #available(iOS 12, *), traitCollection.userInterfaceStyle == .dark {
                 cell.containerView.backgroundColor = Constants.kOutgoingBubbleColorDark
                 cell.content.textColor = Constants.kOutgoingTextColorDark
@@ -867,7 +874,9 @@ extension MessageViewController : MessageViewLayoutDelegate {
         attr.containerFrame = CGRect(origin: CGPoint(x: originX, y: newDateLabelHeight + containerPadding.top), size: containerSize)
 
         // Content: RichTextLabel.
-        let contentInset = isOutgoing ? Constants.kOutgoingMessageContentInset : Constants.kIncomingMessageContentInset
+        let contentInset =
+            isDeleted ? Constants.kDeletedMessageContentInset :
+            isOutgoing ? Constants.kOutgoingMessageContentInset : Constants.kIncomingMessageContentInset
         attr.contentFrame = CGRect(x: contentInset.left, y: contentInset.top, width: attr.containerFrame.width - contentInset.left - contentInset.right - (showUploadProgress ? Constants.kProgressCircleSize : 0), height: attr.containerFrame.height - contentInset.top - contentInset.bottom)
 
         var rightEdge = CGPoint(x: attr.containerFrame.width - Constants.kDeliveryMarkerPadding, y: attr.containerFrame.height - Constants.kDeliveryMarkerSize)
@@ -878,7 +887,7 @@ extension MessageViewController : MessageViewLayoutDelegate {
             attr.deliveryMarkerFrame = .zero
         }
 
-        attr.timestampFrame = CGRect(x: rightEdge.x - Constants.kTimestampWidth - Constants.kTimestampPadding, y: rightEdge.y, width: Constants.kTimestampWidth, height: Constants.kDeliveryMarkerSize)
+        attr.timestampFrame = !message.isDeleted ? CGRect(x: rightEdge.x - Constants.kTimestampWidth - Constants.kTimestampPadding, y: rightEdge.y, width: Constants.kTimestampWidth, height: Constants.kDeliveryMarkerSize) : .zero
 
         // New date label
         if newDateLabelHeight > 0 {
@@ -965,7 +974,9 @@ extension MessageViewController : MessageViewLayoutDelegate {
     /// Calculate size of the view which holds message content.
     func calcContainerSize(for message: Message, avatarsVisible: Bool, progressCircleVisible: Bool) -> CGSize {
         let maxWidth = calcMaxContentWidth(for: message, avatarsVisible: avatarsVisible, progressCircleVisible: progressCircleVisible)
-        let insets = isFromCurrentSender(message: message) ? Constants.kOutgoingMessageContentInset : Constants.kIncomingMessageContentInset
+        let insets =
+            message.isDeleted ? Constants.kDeletedMessageContentInset :
+            isFromCurrentSender(message: message) ? Constants.kOutgoingMessageContentInset : Constants.kIncomingMessageContentInset
 
         var size = calcContentSize(for: message, maxWidth: maxWidth)
 
@@ -986,10 +997,12 @@ extension MessageViewController : MessageViewLayoutDelegate {
         let carveout = isFromCurrentSender(message: message) ? Constants.kOutgoingMetadataCarveout : Constants.kIncomingMetadataCarveout
 
         let textColor: UIColor
-        if #available(iOS 12, *), traitCollection.userInterfaceStyle == .dark {
-            textColor = message.isDeleted || isFromCurrentSender(message: message) ? Constants.kOutgoingTextColorDark : Constants.kIncomingTextColorDark
+        if message.isDeleted {
+            textColor = Constants.kDeletedMessageTextColor
+        } else if #available(iOS 12, *), traitCollection.userInterfaceStyle == .dark {
+            textColor = isFromCurrentSender(message: message) ? Constants.kOutgoingTextColorDark : Constants.kIncomingTextColorDark
         } else {
-            textColor = message.isDeleted || isFromCurrentSender(message: message) ? Constants.kOutgoingTextColorLight : Constants.kIncomingTextColorLight
+            textColor = isFromCurrentSender(message: message) ? Constants.kOutgoingTextColorLight : Constants.kIncomingTextColorLight
         }
 
         let storedMessage = message as! StoredMessage
