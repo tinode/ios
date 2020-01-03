@@ -1087,14 +1087,16 @@ public class Tinode {
     public func subscribe<Pu: Codable, Pr: Codable>(
         to topicName: String,
         set: MsgSetMeta<Pu, Pr>?,
-        get: MsgGetMeta?) -> PromisedReply<ServerMessage>? {
+        get: MsgGetMeta?,
+        background: Bool) -> PromisedReply<ServerMessage>? {
         let msgId = getNextMsgId()
         let msg = ClientMessage<Pu, Pr>(
             sub: MsgClientSub(
                 id: msgId,
                 topic: topicName,
                 set: set,
-                get: get))
+                get: get,
+                background: background))
         return sendWithPromise(payload: msg, with: msgId)
     }
 

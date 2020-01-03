@@ -314,11 +314,13 @@ public class MsgSetMeta<Pu: Encodable, Pr: Encodable>: Encodable {
 public class MsgClientSub<Pu: Encodable, Pr: Encodable>: Encodable {
     var id: String?
     var topic: String?
+    var bkg: Bool?
     var set: MsgSetMeta<Pu, Pr>?
     var get: MsgGetMeta?
-    init(id: String?, topic: String?, set: MsgSetMeta<Pu, Pr>?, get: MsgGetMeta?) {
+    init(id: String?, topic: String?, set: MsgSetMeta<Pu, Pr>?, get: MsgGetMeta?, background: Bool) {
         self.id = id
         self.topic = topic
+        self.bkg = background ? true : nil
         self.set = set
         self.get = get
     }

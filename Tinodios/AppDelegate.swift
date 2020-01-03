@@ -113,7 +113,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             set: nil,
             get: builder
                 .withLaterData(limit: 10)
-                .withDel().build())?.getResult(), (msg.ctrl?.code ?? 500) < 300 {
+                .withDel().build(),
+            background: true)?.getResult(), (msg.ctrl?.code ?? 500) < 300 {
             return .newData
         }
         return .failed

@@ -137,7 +137,7 @@ class ContactsSynchronizer {
 
                 _ = try tinode.loginToken(token: token, creds: nil)?.getResult()
                 // Generic params don't matter.
-                _ = try tinode.subscribe(to: Tinode.kTopicFnd, set: MsgSetMeta<Int, Int>?(nil), get: nil)?.getResult()
+                _ = try tinode.subscribe(to: Tinode.kTopicFnd, set: MsgSetMeta<Int, Int>?(nil), get: nil, background: false)?.getResult()
                 //let q: Int? = nil
                 let metaDesc: MetaSetDesc<Int, String> = MetaSetDesc(pub: nil, priv: contacts)
                 let setMeta: MsgSetMeta<Int, String> = MsgSetMeta<Int, String>(
