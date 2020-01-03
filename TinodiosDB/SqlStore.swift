@@ -96,6 +96,11 @@ public class SqlStore : Storage {
         return MsgRange(low: st.minLocalSeq ?? 0, hi: (st.maxLocalSeq ?? 0) + 1)
     }
 
+    public func getNextMissingRange(topic: TopicProto) -> MsgRange? {
+        guard let st = topic.payload as? StoredTopic, let topicId = st.id, topicId > 0 else { return nil }
+        return dbh?.messageDb?.fetchNextMissingRange(topicId: topicId)
+    }
+
     public func setRead(topic: TopicProto, read: Int) -> Bool {
         guard let st = topic.payload as? StoredTopic,
             let topicId = st.id, topicId > 0 else { return false }

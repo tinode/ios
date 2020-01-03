@@ -31,6 +31,7 @@ public protocol TopicProto: class {
     var lastSeen: LastSeen? { get set }
     var online: Bool { get set }
     var cachedMessageRange: MsgRange? { get }
+    var missingMessageRange: MsgRange? { get }
     var isArchived: Bool { get }
     var isJoiner: Bool { get }
     var isReader: Bool { get }
@@ -131,8 +132,9 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
             return self
         }
         public func withEarlierData(limit: Int?) -> MetaGetBuilder {
-            if let r = topic.cachedMessageRange {
-                return withData(since: nil, before: r.low != 0 ? r.low : nil, limit: limit)
+            if let r = topic.missingMessageRange, r.low >= 1 {
+                let totalMissing = r.upper - r.lower
+                return withData(since: nil, before: r.upper, limit: min(totalMissing, limit ?? Int.max))
             }
             return withData(since: nil, before: nil, limit: limit)
         }
@@ -366,9 +368,11 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
     public var isPersisted: Bool { get { return payload != nil } }
 
     public var cachedMessageRange: MsgRange? {
-        get {
-            return store?.getCachedMessagesRange(topic: self)
-        }
+        return store?.getCachedMessagesRange(topic: self)
+    }
+
+    public var missingMessageRange: MsgRange? {
+        return (seq ?? 0) > 0 ? store?.getNextMissingRange(topic: self) : cachedMessageRange
     }
 
     // Tells how many topic subscribers have reported the message as read or received.

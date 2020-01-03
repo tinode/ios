@@ -353,4 +353,29 @@ public class MessageDb {
             return nil
         }
     }
+
+    func fetchNextMissingRange(topicId: Int64) -> MsgRange? {
+        let messages2 = self.table.alias("m2")
+        let hiQuery = self.table
+            .join(.leftOuter, messages2,
+                  on: self.table[self.seq] == (messages2[self.high] ?? messages2[self.seq] + 1) && messages2[self.topicId] == topicId)
+            .filter(self.table[self.topicId] == topicId &&
+                    self.table[self.seq] > 1 &&
+                    messages2[self.seq] == nil)
+
+        guard let hi = try? db.scalar(hiQuery.select(self.seq.max)) else {
+            // No gap is found.
+            return nil
+        }
+        let expr = self.high ?? (self.seq + 1)
+        let lowQuery = self.table
+            .filter(self.topicId == topicId && self.seq < hi)
+        let low: Int
+        if let low2 = try? db.scalar(lowQuery.select(expr.max)) {
+            low = low2
+        } else {
+            low = 1
+        }
+        return MsgRange(low: low, hi: hi)
+    }
 }
