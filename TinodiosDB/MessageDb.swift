@@ -367,12 +367,14 @@ public class MessageDb {
             // No gap is found.
             return nil
         }
-        let expr = self.high ?? (self.seq + 1)
+        // Find the first present message with ID less than the 'high'.
+        let seqExpr = self.high ?? (self.seq + 1)
         let lowQuery = self.table
             .filter(self.topicId == topicId && self.seq < hi)
         let low: Int
-        if let low2 = try? db.scalar(lowQuery.select(expr.max)) {
-            low = low2
+        if let low2 = try? db.scalar(lowQuery.select(seqExpr.max)) {
+            // Low is inclusive thus +1.
+            low = low2 + 1
         } else {
             low = 1
         }
