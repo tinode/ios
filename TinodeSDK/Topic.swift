@@ -133,8 +133,7 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
         }
         public func withEarlierData(limit: Int?) -> MetaGetBuilder {
             if let r = topic.missingMessageRange, r.low >= 1 {
-                let totalMissing = r.upper - r.lower
-                return withData(since: nil, before: r.upper, limit: min(totalMissing, limit ?? Int.max))
+                return withData(since: r.lower, before: r.upper, limit: limit)
             }
             return withData(since: nil, before: nil, limit: limit)
         }
@@ -372,7 +371,7 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
     }
 
     public var missingMessageRange: MsgRange? {
-        return (seq ?? 0) > 0 ? store?.getNextMissingRange(topic: self) : cachedMessageRange
+        return store?.getNextMissingRange(topic: self)
     }
 
     // Tells how many topic subscribers have reported the message as read or received.
