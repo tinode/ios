@@ -153,6 +153,7 @@ class UiUtils {
     }
 
     public static func logoutAndRouteToLoginVC() {
+        Cache.log.info("UiUtils - Invalidating cache and logging out.")
         BaseDb.getInstance().logout()
         Cache.invalidate()
         Utils.removeAuthToken()

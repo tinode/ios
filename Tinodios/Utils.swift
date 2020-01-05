@@ -140,13 +140,21 @@ class Utils {
     }
 
     public static func connectAndLoginSync() -> Bool {
-        guard let token = Utils.getAuthToken(), !token.isEmpty, let userName = Utils.getSavedLoginUserName(), !userName.isEmpty else { return false }
+        guard let userName = Utils.getSavedLoginUserName(), !userName.isEmpty else {
+            Cache.log.error("Connect&Login Sync - missing user name")
+            return false
+        }
+        guard let token = Utils.getAuthToken(), !token.isEmpty else {
+            Cache.log.error("Connect&Login Sync - missing auth token")
+            return false
+        }
+        Cache.log.info("Connect&Login Sync - will attempt to login (user name: %@)", userName)
         let tinode = Cache.getTinode()
         var success = false
         do {
             tinode.setAutoLoginWithToken(token: token)
-            _ = try tinode.connectDefault()?.getResult()
-            let msg = try tinode.loginToken(token: token, creds: nil)?.getResult()
+            // Tinode.connect() will automatically log in.
+            let msg = try tinode.connectDefault()?.getResult()
             if let code = msg?.ctrl?.code {
                 // Assuming success by default.
                 success = true
@@ -166,10 +174,10 @@ class Utils {
             }
         } catch SwiftWebSocket.WebSocketError.network(let e)  {
             // No network connection.
-            Cache.log.debug("AppDelegate [network] - could not connect to Tinode: %@", e)
+            Cache.log.debug("Connect&Login Sync [network] - could not connect to Tinode: %@", e)
             success = true
         } catch {
-            Cache.log.error("AppDelegate - failed to automatically login to Tinode: %@", error.localizedDescription)
+            Cache.log.error("Connect&Login Sync - failed to automatically login to Tinode: %@", error.localizedDescription)
         }
         return success
     }

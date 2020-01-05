@@ -260,7 +260,7 @@ public class Tinode {
     private var futures = ConcurrentFuturesMap()
     public var serverVersion: String?
     public var serverBuild: String?
-    public var connectedPromise: PromisedReply<ServerMessage>?
+    private var connectionListener: TinodeConnectionListener? = nil
     public var timeAdjustment: TimeInterval = 0
     public var isConnectionAuthenticated = false
     public var myUid: String?
@@ -912,21 +912,23 @@ public class Tinode {
     }
     public class TinodeConnectionListener : ConnectionListener {
         var tinode: Tinode
+        var completionPromises = [PromisedReply<ServerMessage>]()
+        var promiseQueue = DispatchQueue(label: "co.tinode.completion-promises")
+
         init(tinode: Tinode) {
             self.tinode = tinode
         }
         func onConnect(reconnecting: Bool) -> Void {
             let m = reconnecting ? "YES" : "NO"
             Tinode.log.info("Tinode connected: after reconnect - %@", m.description)
+            let doLogin = tinode.autoLogin && tinode.loginCredentials != nil
             do {
                 let future = try tinode.hello()?.then(onSuccess: { [weak self] pkt in
-                    guard self != nil else {
+                    guard let self = self else {
                         throw TinodeError.invalidState("Missing Tinode instance in connection handler")
                     }
-                    let tinode = self!.tinode
-                    if let connected = tinode.connectedPromise, !connected.isDone {
-                        try connected.resolve(result: pkt)
-                    }
+                    let tinode = self.tinode
+
                     if let ctrl = pkt?.ctrl {
                         tinode.timeAdjustment = Date().timeIntervalSince(ctrl.ts)
                         // tinode store
@@ -934,18 +936,35 @@ public class Tinode {
                         // listener
                         tinode.listenerNotifier.onConnect(code: ctrl.code, reason: ctrl.text, params: ctrl.params)
                     }
+                    if !doLogin {
+                        try self.resolveAllPromises(msg: pkt)
+                    }
                     return nil
-                }, onFailure: nil)
-                if tinode.autoLogin && reconnecting {
+                }, onFailure: { err in
+                    try self.rejectAllPromises(err: err)
+                    return nil
+                })
+                if doLogin {
                     try future?.then(
                         onSuccess: { [weak self] msg in
                             if let t = self?.tinode, let cred = t.loginCredentials, !t.loginInProgress {
-                                _ = self?.tinode.login(
-                                    scheme: cred.scheme, secret: cred.secret, creds: nil)
+                                return try self?.tinode.login(
+                                    scheme: cred.scheme, secret: cred.secret, creds: nil)?.then(
+                                        onSuccess: { msg in
+                                            try self?.resolveAllPromises(msg: msg)
+                                            return nil
+                                        },
+                                        onFailure: { err in
+                                            try self?.rejectAllPromises(err: err)
+                                            return nil
+                                        })
                             }
                             return nil
                         },
-                        onFailure: nil)
+                        onFailure: { [weak self] err in
+                            try self?.rejectAllPromises(err: err)
+                            return nil
+                        })
                 }
             } catch {
                 Tinode.log.error("Connection error: %@", error.localizedDescription)
@@ -960,18 +979,40 @@ public class Tinode {
             }
         }
         func onDisconnect(isServerOriginated: Bool, code: Int, reason: String) -> Void {
+            let serverOriginatedString = isServerOriginated ? "YES" : "NO"
+            Log.default.info("Tinode disconnected: server originated [%@]; code [%d]; reason [%@]",
+                             serverOriginatedString, code, reason)
             tinode.handleDisconnect(isServerOriginated: isServerOriginated, code: code, reason: reason)
         }
         func onError(error: Error) -> Void {
             tinode.handleDisconnect(isServerOriginated: true, code: 0, reason: error.localizedDescription)
             Log.default.error("Tinode network error: %@", error.localizedDescription)
-            if let connected = tinode.connectedPromise, !connected.isDone {
-                do {
-                    try connected.reject(error: error)
-                } catch {
-                    // Do nothing.
-                }
+            try? rejectAllPromises(err: error)
+        }
+        public func addPromise(promise: PromisedReply<ServerMessage>) {
+            promiseQueue.sync {
+                completionPromises.append(promise)
             }
+        }
+        private func completeAllPromises(msg: ServerMessage?, err: Error?) throws {
+            let promises: [PromisedReply<ServerMessage>] = promiseQueue.sync {
+                let promises = completionPromises.map { $0 }
+                completionPromises.removeAll()
+                return promises
+            }
+            if let e = err {
+                try promises.forEach { try $0.reject(error: e) }
+                return
+            }
+            if let msg = msg {
+                try promises.forEach { try $0.resolve(result: msg) }
+            }
+        }
+        private func resolveAllPromises(msg: ServerMessage?) throws {
+            try completeAllPromises(msg: msg, err: nil)
+        }
+        private func rejectAllPromises(err: Error?) throws {
+            try completeAllPromises(msg: nil, err: err)
         }
     }
 
@@ -997,11 +1038,15 @@ public class Tinode {
             throw TinodeError.invalidState("Could not form server url.")
         }
         resetMsgId()
-        connection = Connection(open: endpointURL,
-                                with: apiKey,
-                                notify: TinodeConnectionListener(tinode: self))
-        connectedPromise = PromisedReply<ServerMessage>()
-        try connection?.connect()
+        if connection == nil {
+            connectionListener = TinodeConnectionListener(tinode: self)
+            connection = Connection(open: endpointURL,
+                                    with: apiKey,
+                                    notify: connectionListener)
+        }
+        let connectedPromise = PromisedReply<ServerMessage>()
+        connectionListener!.addPromise(promise: connectedPromise)
+        try connection!.connect()
         return connectedPromise
     }
 
@@ -1025,6 +1070,7 @@ public class Tinode {
             if connection == nil {
                 do {
                     try connect()
+                    return true
                 } catch {
                     Tinode.log.error("Couldn't connect to server: %@", error.localizedDescription)
                     return false
