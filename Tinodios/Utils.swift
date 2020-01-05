@@ -317,22 +317,28 @@ extension StoredMessage {
     }
     /// Creates "content deleted" string with a small "blocked" icon.
     private static func contentDeletedMessage(withAttributes attr: [NSAttributedString.Key : Any]?) -> NSAttributedString {
-        let second = NSMutableAttributedString()
+        // Space is needed as a workaround for a bug in UIKit. The icon style is not applied if the icon is the first object in the attributed string.
+        let second = NSMutableAttributedString(string: " ")
         second.beginEditing()
 
         // Add 'block' icon.
         let icon = NSTextAttachment()
-        icon.image = UIImage(named: "block-25")
+        icon.image = UIImage(named: "block-25")?.withRenderingMode(.alwaysTemplate)
+        // Make image smaller
+        icon.bounds = CGRect(x: 0, y: 0, width: 18, height: 18)
         second.append(NSAttributedString(attachment: icon))
-
+        if let attr = attr {
+            // apply tint color to image
+            second.addAttributes(attr, range: NSRange(location: 0, length: second.length))
+        }
         // Align image and text vertically per
         // https://stackoverflow.com/questions/47844721/vertically-aligning-nstextattachment-in-nsmutableattributedstring
-        var textFont: UIFont = attr?[.font] as? UIFont ?? UIFont.italicSystemFont(ofSize: 14)
-        textFont = textFont.withSize(14).withTraits(traits: .traitItalic)
+        var textFont: UIFont = attr?[.font] as? UIFont ?? UIFont.systemFont(ofSize: 14)
+        textFont = textFont.withSize(14)
         var newAttr: [NSAttributedString.Key : Any] = attr ?? [:]
-        newAttr[.baselineOffset] = (icon.image!.size.height - textFont.pointSize) / 2 - textFont.descender / 2
+        newAttr[.baselineOffset] = (icon.bounds.height - textFont.pointSize) / 2 - textFont.descender / 2
         newAttr[.font] = textFont
-        second.append(NSAttributedString(string: "  Content was deleted", attributes: newAttr))
+        second.append(NSAttributedString(string: "  Content deleted", attributes: newAttr))
         second.endEditing()
         return second
     }
