@@ -912,7 +912,7 @@ public class Tinode {
     }
     public class TinodeConnectionListener : ConnectionListener {
         var tinode: Tinode
-        var completionPromises = [PromisedReply<ServerMessage>]()
+        var completionPromises : [PromisedReply<ServerMessage>] = []
         var promiseQueue = DispatchQueue(label: "co.tinode.completion-promises")
 
         init(tinode: Tinode) {
@@ -948,7 +948,7 @@ public class Tinode {
                     try future?.then(
                         onSuccess: { [weak self] msg in
                             if let t = self?.tinode, let cred = t.loginCredentials, !t.loginInProgress {
-                                return try self?.tinode.login(
+                                return try t.login(
                                     scheme: cred.scheme, secret: cred.secret, creds: nil)?.then(
                                         onSuccess: { msg in
                                             try self?.resolveAllPromises(msg: msg)
@@ -1075,10 +1075,6 @@ public class Tinode {
                     Tinode.log.error("Couldn't connect to server: %@", error.localizedDescription)
                     return false
                 }
-            }
-            guard connection != nil else {
-                Tinode.log.error("Error: connection cannot be nil in reconnectNow()")
-                return false
             }
             if connection!.isConnected {
                 // We are done unless we need to reset the connection.
