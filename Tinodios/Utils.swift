@@ -36,7 +36,7 @@ class Utils {
             return nil
         }
         return KeychainWrapper.standard.string(
-            forKey: LoginViewController.kTokenKey)
+            forKey: LoginViewController.kTokenKey, withAccessibility: .afterFirstUnlock)
     }
 
     public static func removeAuthToken() {
@@ -48,8 +48,7 @@ class Utils {
     public static func saveAuthToken(for userName: String, token: String?) {
         UserDefaults.standard.set(userName, forKey: Utils.kTinodePrefLastLogin)
         if let token = token, !token.isEmpty {
-            let tokenSaveSuccessful = KeychainWrapper.standard.set(
-                token, forKey: LoginViewController.kTokenKey)
+            let tokenSaveSuccessful = KeychainWrapper.standard.set(token, forKey: LoginViewController.kTokenKey, withAccessibility: .afterFirstUnlock)
             if !tokenSaveSuccessful {
                 Cache.log.error("Could not save auth token")
             }
@@ -140,13 +139,21 @@ class Utils {
     }
 
     public static func connectAndLoginSync() -> Bool {
-        guard let token = Utils.getAuthToken(), !token.isEmpty, let userName = Utils.getSavedLoginUserName(), !userName.isEmpty else { return false }
+        guard let userName = Utils.getSavedLoginUserName(), !userName.isEmpty else {
+            Cache.log.error("Connect&Login Sync - missing user name")
+            return false
+        }
+        guard let token = Utils.getAuthToken(), !token.isEmpty else {
+            Cache.log.error("Connect&Login Sync - missing auth token")
+            return false
+        }
+        Cache.log.info("Connect&Login Sync - will attempt to login (user name: %@)", userName)
         let tinode = Cache.getTinode()
         var success = false
         do {
             tinode.setAutoLoginWithToken(token: token)
-            _ = try tinode.connectDefault()?.getResult()
-            let msg = try tinode.loginToken(token: token, creds: nil)?.getResult()
+            // Tinode.connect() will automatically log in.
+            let msg = try tinode.connectDefault()?.getResult()
             if let code = msg?.ctrl?.code {
                 // Assuming success by default.
                 success = true
@@ -166,10 +173,10 @@ class Utils {
             }
         } catch SwiftWebSocket.WebSocketError.network(let e)  {
             // No network connection.
-            Cache.log.debug("AppDelegate [network] - could not connect to Tinode: %@", e)
+            Cache.log.debug("Connect&Login Sync [network] - could not connect to Tinode: %@", e)
             success = true
         } catch {
-            Cache.log.error("AppDelegate - failed to automatically login to Tinode: %@", error.localizedDescription)
+            Cache.log.error("Connect&Login Sync - failed to automatically login to Tinode: %@", error.localizedDescription)
         }
         return success
     }
