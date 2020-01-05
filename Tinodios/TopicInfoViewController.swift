@@ -267,7 +267,7 @@ class TopicInfoViewController: UITableViewController {
         }
         var priv: PrivateType? = nil
         if let ns = newSubtitle {
-            if let oldComment = topic.comment, oldComment != ns {
+            if topic.comment == nil || (topic.comment! != ns) {
                 priv = PrivateType()
                 priv!.comment = String(ns.prefix(UiUtils.kMaxTitleLength))
             }

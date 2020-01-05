@@ -54,9 +54,6 @@ class MessageViewController: UIViewController {
         // Light/dark gray color: outgoing messages
         static let kOutgoingBubbleColorLight = UIColor(red: 230/255, green: 230/255, blue: 230/255, alpha: 1)
         static let kOutgoingBubbleColorDark = UIColor(red: 51/255, green: 51/255, blue: 51/255, alpha: 1)
-        //
-        static let kDeletedMessageBubbleColor = UIColor(fromHexCode: 0xffe3f2fd)
-        static let kDeletedMessageTextColor = UIColor(fromHexCode: 0xff616161)
         // And corresponding text color
         static let kOutgoingTextColorLight = UIColor.darkText
         static let kOutgoingTextColorDark = UIColor.lightText
@@ -66,6 +63,10 @@ class MessageViewController: UIViewController {
         // And corresponding font color
         static let kIncomingTextColorLight = UIColor.white
         static let kIncomingTextColorDark = UIColor.lightText
+        // Meta-messages, such as "Content deleted".
+        static let kDeletedMessageBubbleColorLight = UIColor(fromHexCode: 0xffe3f2fd)
+        static let kDeletedMessageBubbleColorDark = UIColor(fromHexCode: 0xff263238)
+        static let kDeletedMessageTextColor = UIColor.gray
 
         static let kContentFont = UIFont.preferredFont(forTextStyle: .body)
 
@@ -644,8 +645,12 @@ extension MessageViewController: UICollectionViewDataSource {
 
         cell.content.backgroundColor = nil
         if message.isDeleted {
-            cell.containerView.backgroundColor = Constants.kDeletedMessageBubbleColor
-            cell.content.textColor = Constants.kOutgoingTextColorDark
+            if #available(iOS 12, *), traitCollection.userInterfaceStyle == .dark {
+                cell.containerView.backgroundColor = Constants.kDeletedMessageBubbleColorDark
+            } else {
+                cell.containerView.backgroundColor = Constants.kDeletedMessageBubbleColorLight
+            }
+            cell.content.textColor = Constants.kDeletedMessageTextColor
         } else if isFromCurrentSender(message: message) {
             if #available(iOS 12, *), traitCollection.userInterfaceStyle == .dark {
                 cell.containerView.backgroundColor = Constants.kOutgoingBubbleColorDark
