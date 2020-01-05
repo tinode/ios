@@ -36,7 +36,7 @@ class Utils {
             return nil
         }
         return KeychainWrapper.standard.string(
-            forKey: LoginViewController.kTokenKey)
+            forKey: LoginViewController.kTokenKey, withAccessibility: .afterFirstUnlock)
     }
 
     public static func removeAuthToken() {
@@ -48,8 +48,7 @@ class Utils {
     public static func saveAuthToken(for userName: String, token: String?) {
         UserDefaults.standard.set(userName, forKey: Utils.kTinodePrefLastLogin)
         if let token = token, !token.isEmpty {
-            let tokenSaveSuccessful = KeychainWrapper.standard.set(
-                token, forKey: LoginViewController.kTokenKey)
+            let tokenSaveSuccessful = KeychainWrapper.standard.set(token, forKey: LoginViewController.kTokenKey, withAccessibility: .afterFirstUnlock)
             if !tokenSaveSuccessful {
                 Cache.log.error("Could not save auth token")
             }
