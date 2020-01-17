@@ -7,6 +7,7 @@
 
 // Shows full-screen
 import UIKit
+import TinodeSDK
 
 struct ImagePreviewContent {
     let image: UIImage?
@@ -29,6 +30,8 @@ class ImagePreviewController : UIViewController, UIScrollViewDelegate {
 
     var previewContent: ImagePreviewContent? = nil
 
+    var interactor: (MessageBusinessLogic & MessageDataStore)?
+
     override func viewDidLoad() {
         super.viewDidLoad()
         setup()
@@ -37,10 +40,15 @@ class ImagePreviewController : UIViewController, UIScrollViewDelegate {
     private func setup() {
         guard let content = self.previewContent, let imageBits = content.imageBits else { return }
 
+        if content.image != nil {
+            sendImageBar.delegate = self
+        }
+
         scrollView.minimumZoomScale = 1.0
         scrollView.maximumZoomScale = 8.0
 
-        imageView.image = UIImage(data: imageBits) ?? UIImage()
+        // FIXME: Replace blank UIImage() with a "broken image" icon.
+        imageView.image = content.image != nil ? content.image : (UIImage(data: imageBits) ?? UIImage())
 
         fileNameLabel.text = content.fileName ?? "undefined"
         contentTypeLabel.text = content.contentType ?? "undefined"
@@ -53,6 +61,22 @@ class ImagePreviewController : UIViewController, UIScrollViewDelegate {
         }
         sizeLabel.text = sizeString
         setInterfaceColors()
+    }
+
+    /// The `sendImageBar` is used as an optional `inputAccessoryView` in the view controller.
+    private lazy var sendImageBar: SendImageBar = {
+        let view = SendImageBar()
+        view.autoresizingMask = .flexibleHeight
+        return view
+    }()
+
+    // This makes input bar visible.
+    override var inputAccessoryView: UIView? {
+        return previewContent?.image != nil ? sendImageBar : super.inputAccessoryView
+    }
+
+    override var canBecomeFirstResponder: Bool {
+        return previewContent?.image != nil
     }
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
@@ -86,5 +110,30 @@ class ImagePreviewController : UIViewController, UIScrollViewDelegate {
         } catch {
             print("Failed to save image as \(destinationURL): \(error.localizedDescription)")
         }
+    }
+}
+
+extension ImagePreviewController : SendImageBarDelegate {
+    func sendImageBar(caption: String?) -> Bool? {
+        let mimeType: String = previewContent?.contentType == "image/png" ?  "image/png" : "image/jpeg"
+
+        // Ensure image size in bytes and linear dimensions are under the limits.
+        guard let image = previewContent?.image?.resize(width: UiUtils.kMaxBitmapSize, height: UiUtils.kMaxBitmapSize, clip: false)?.resize(byteSize: MessageViewController.kMaxInbandAttachmentSize, asMimeType: mimeType) else { return false }
+
+        guard let bits = image.pixelData(forMimeType: mimeType) else { return false }
+
+        let width = Int(image.size.width * image.scale)
+        let height = Int(image.size.height * image.scale)
+
+        var msg = Drafty(plainText: " ")
+            .insertImage(at: 0, mime: mimeType, bits: bits, width: width, height: height, fname: previewContent?.fileName)
+        if let caption = caption, caption.count > 0 {
+            msg = msg.appendLineBreak().append(Drafty(plainText: caption))
+        }
+        return interactor?.sendMessage(content: msg)
+    }
+
+    func sendImageBar(textChangedTo text: String) {
+        interactor?.sendTypingNotification()
     }
 }

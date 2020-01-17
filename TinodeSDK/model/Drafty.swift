@@ -153,12 +153,19 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
         self.ent = that.ent
     }
 
+    /// Initializes Drafty without parsing the text string.
+    /// - Parameters:
+    ///     - text: text body
+    public init(plainText: String) {
+        txt = plainText
+    }
+
     /// Initializes Drafty with text and formatting obeject without parsing the text string.
     /// - Parameters:
     ///     - text: text body
     ///     - fmt: array of inline styles and references to entities
     ///     - ent: array of entity attachments
-    init(text: String, fmt: [Style]? = nil, ent: [Entity]? = nil) {
+    init(text: String, fmt: [Style]?, ent: [Entity]?) {
         self.txt = text
         self.fmt = fmt
         self.ent = ent
