@@ -158,7 +158,7 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
     ///     - text: text body
     ///     - fmt: array of inline styles and references to entities
     ///     - ent: array of entity attachments
-    init(text: String, fmt: [Style]?, ent: [Entity]?) {
+    init(text: String, fmt: [Style]? = nil, ent: [Entity]? = nil) {
         self.txt = text
         self.fmt = fmt
         self.ent = ent
@@ -592,7 +592,50 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
         return self
     }
 
+    /// Append line break 'BR' to Darfty document
+    /// - Returns: 'self' Drafty object.
+    public func appendLineBreak() -> Drafty {
+        if fmt == nil {
+            fmt = []
+        }
 
+        fmt!.append(Style(tp: "BR", at: txt.count, len: 1))
+        txt += " "
+
+        return self;
+    }
+
+    /// Append one Drafty document to another.
+    /// - Returns: 'self' Drafty object.
+    public func append(_ that: Drafty) -> Drafty {
+        let len = txt.count
+        txt += that.txt
+
+        if let that_fmt = that.fmt {
+            if fmt == nil {
+                fmt = []
+            }
+
+            if that.ent != nil && ent == nil {
+                ent = []
+            }
+
+            for src in that_fmt {
+                let style = Style()
+                style.at = src.at + len
+                style.len = src.len
+                if src.tp != nil {
+                    style.tp = src.tp
+                } else if let that_ent = that.ent {
+                    style.key = ent!.count
+                    ent!.append(that_ent[src.key ?? 0])
+                }
+                fmt!.append(style)
+            }
+        }
+
+        return self
+    }
 
     /// Insert button into Drafty document.
     ///
