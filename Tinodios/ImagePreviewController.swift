@@ -2,7 +2,7 @@
 //  ImagePreviewController.swift
 //  Tinodios
 //
-//  Copyright © 2019 Tinode. All rights reserved.
+//  Copyright © 2019-2020 Tinode. All rights reserved.
 //
 
 // Shows full-screen
@@ -38,28 +38,36 @@ class ImagePreviewController : UIViewController, UIScrollViewDelegate {
     }
 
     private func setup() {
-        guard let content = self.previewContent, let imageBits = content.imageBits else { return }
+        guard let content = self.previewContent else { return }
 
         if content.image != nil {
             sendImageBar.delegate = self
+            // Hide [Save image] button.
+            navigationItem.rightBarButtonItem = nil
+            // Hide image details panel.
+            imageDetailsPanel.bounds = CGRect()
         }
 
         scrollView.minimumZoomScale = 1.0
         scrollView.maximumZoomScale = 8.0
 
-        // FIXME: Replace blank UIImage() with a "broken image" icon.
-        imageView.image = content.image != nil ? content.image : (UIImage(data: imageBits) ?? UIImage(named: "broken-image"))
+        // Try to use image first, if not create image from bits, if unsuccessful use broken-image icon.
+        imageView.image = content.image != nil ? content.image : (content.imageBits != nil ? (UIImage(data: content.imageBits!) ?? UIImage(named: "broken-image")) : UIImage(named: "broken-image"))
 
-        fileNameLabel.text = content.fileName ?? "undefined"
-        contentTypeLabel.text = content.contentType ?? "undefined"
-        var sizeString = "?? KB"
-        if let size = content.size {
-            sizeString = UiUtils.bytesToHumanSize(size)
+        if content.image == nil {
+            // fill out details panel only if it's a received image.
+            fileNameLabel.text = content.fileName ?? "undefined"
+            contentTypeLabel.text = content.contentType ?? "undefined"
+            var sizeString = "?? KB"
+            if let size = content.size {
+                sizeString = UiUtils.bytesToHumanSize(size)
+            }
+            if let width = content.width, let height = content.height {
+                sizeString += "; \(width)×\(height)"
+            }
+            sizeLabel.text = sizeString
         }
-        if let width = content.width, let height = content.height {
-            sizeString += "; \(width)×\(height)"
-        }
-        sizeLabel.text = sizeString
+
         setInterfaceColors()
     }
 
