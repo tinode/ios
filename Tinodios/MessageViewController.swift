@@ -266,6 +266,9 @@ class MessageViewController: UIViewController {
             edgesForExtendedLayout = []
         }
 
+        // Receive notifications from ImagePreviewController that an image is ready to be sent.
+        NotificationCenter.default.addObserver(self, selector: #selector(sendImage(notification:)), name: Notification.Name("SendImageMessage"), object: nil)
+
         // Collection View setup
         collectionView.keyboardDismissMode = .interactive
         collectionView.alwaysBounceVertical = true
@@ -375,6 +378,12 @@ class MessageViewController: UIViewController {
 
     @objc func loadNextPage() {
         self.interactor?.loadNextPage()
+    }
+
+    // This notification is sent by ImagePreviewController when the user presses the send image button.
+    @objc func sendImage(notification: NSNotification){
+        guard let msg = notification.object as? Drafty else { return }
+        _ = interactor?.sendMessage(content: msg)
     }
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {

@@ -30,8 +30,6 @@ class ImagePreviewController : UIViewController, UIScrollViewDelegate {
 
     var previewContent: ImagePreviewContent? = nil
 
-    var interactor: (MessageBusinessLogic & MessageDataStore)?
-
     override func viewDidLoad() {
         super.viewDidLoad()
         setup()
@@ -122,13 +120,13 @@ class ImagePreviewController : UIViewController, UIScrollViewDelegate {
 }
 
 extension ImagePreviewController : SendImageBarDelegate {
-    func sendImageBar(caption: String?) -> Bool? {
+    func sendImageBar(caption: String?) {
         let mimeType: String = previewContent?.contentType == "image/png" ?  "image/png" : "image/jpeg"
 
         // Ensure image size in bytes and linear dimensions are under the limits.
-        guard let image = previewContent?.image?.resize(width: UiUtils.kMaxBitmapSize, height: UiUtils.kMaxBitmapSize, clip: false)?.resize(byteSize: MessageViewController.kMaxInbandAttachmentSize, asMimeType: mimeType) else { return false }
+        guard let image = previewContent?.image?.resize(width: UiUtils.kMaxBitmapSize, height: UiUtils.kMaxBitmapSize, clip: false)?.resize(byteSize: MessageViewController.kMaxInbandAttachmentSize, asMimeType: mimeType) else { return }
 
-        guard let bits = image.pixelData(forMimeType: mimeType) else { return false }
+        guard let bits = image.pixelData(forMimeType: mimeType) else { return }
 
         let width = Int(image.size.width * image.scale)
         let height = Int(image.size.height * image.scale)
@@ -138,10 +136,10 @@ extension ImagePreviewController : SendImageBarDelegate {
         if let caption = caption, caption.count > 0 {
             msg = msg.appendLineBreak().append(Drafty(plainText: caption))
         }
-        return interactor?.sendMessage(content: msg)
-    }
 
-    func sendImageBar(textChangedTo text: String) {
-        interactor?.sendTypingNotification()
+        // This notification is received by the MessageViewController.
+        NotificationCenter.default.post(name: Notification.Name("SendImageMessage"), object: msg)
+        // Return to MessageViewController.
+        navigationController?.popViewController(animated: true)
     }
 }

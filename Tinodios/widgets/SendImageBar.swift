@@ -8,8 +8,7 @@
 import UIKit
 
 protocol SendImageBarDelegate: class {
-    func sendImageBar(caption: String?) -> Bool?
-    func sendImageBar(textChangedTo: String)
+    func sendImageBar(caption: String?)
 }
 
 class SendImageBar: UIView {
@@ -33,10 +32,9 @@ class SendImageBar: UIView {
 
     @IBAction func send(_ sender: UIButton) {
         let caption = inputField.text.trimmingCharacters(in: .whitespacesAndNewlines)
-        if delegate?.sendImageBar(caption: caption) ?? false {
-            inputField.text = nil
-            textViewDidChange(inputField)
-        }
+        delegate?.sendImageBar(caption: caption)
+        inputField.text = nil
+        textViewDidChange(inputField)
     }
 
     // MARK: - Constants
@@ -114,8 +112,6 @@ class SendImageBar: UIView {
 extension SendImageBar: UITextViewDelegate {
 
     func textViewDidChange(_ textView: UITextView) {
-        delegate?.sendImageBar(textChangedTo: textView.text)
-
         let size = CGSize(width: frame.width - Constants.inputFieldInsetLeading - Constants.inputFieldInsetTrailing, height: .greatestFiniteMagnitude)
         let fittingSize = inputField.sizeThatFits(size)
 
