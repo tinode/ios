@@ -42,7 +42,7 @@
                         <userDefinedRuntimeAttribute type="color" keyPath="placeholderColor">
                             <color key="value" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         </userDefinedRuntimeAttribute>
-                        <userDefinedRuntimeAttribute type="string" keyPath="placeholderText" value="AbCd..."/>
+                        <userDefinedRuntimeAttribute type="string" keyPath="placeholderText" value="Image caption"/>
                     </userDefinedRuntimeAttributes>
                 </textView>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LQB-Eu-unW" userLabel="sendButton">

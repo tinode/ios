@@ -48,7 +48,7 @@ class ImagePreviewController : UIViewController, UIScrollViewDelegate {
         scrollView.maximumZoomScale = 8.0
 
         // FIXME: Replace blank UIImage() with a "broken image" icon.
-        imageView.image = content.image != nil ? content.image : (UIImage(data: imageBits) ?? UIImage())
+        imageView.image = content.image != nil ? content.image : (UIImage(data: imageBits) ?? UIImage(named: "broken-image"))
 
         fileNameLabel.text = content.fileName ?? "undefined"
         contentTypeLabel.text = content.contentType ?? "undefined"

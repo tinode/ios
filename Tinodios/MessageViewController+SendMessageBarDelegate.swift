@@ -79,16 +79,20 @@ extension MessageViewController : UIDocumentPickerDelegate {
 
 extension MessageViewController : ImagePickerDelegate {
     func didSelect(image: UIImage?, mimeType mime: String?, fileName fname: String?) {
-        let mimeType: String = mime == "image/png" ?  mime! : "image/jpeg"
+        var width = 0, height = 0
+        if let image = image {
+            width = Int(image.size.width * image.scale)
+            height = Int(image.size.height * image.scale)
+        }
+        let content = ImagePreviewContent(
+            image: image,
+            imageBits: nil,
+            fileName: fname,
+            contentType: mime,
+            size: 0,
+            width: width,
+            height: height)
 
-        // Ensure image size in bytes and linear dimensions are under the limits.
-        guard let image = image?.resize(width: UiUtils.kMaxBitmapSize, height: UiUtils.kMaxBitmapSize, clip: false)?.resize(byteSize: MessageViewController.kMaxInbandAttachmentSize, asMimeType: mimeType) else { return }
-
-        guard let bits = image.pixelData(forMimeType: mime) else { return }
-
-        let width = Int(image.size.width * image.scale)
-        let height = Int(image.size.height * image.scale)
-        let content = Drafty.parse(content: " ")
-        _ = interactor?.sendMessage(content: content.insertImage(at: 0, mime: mimeType, bits: bits, width: width, height: height, fname: fname ?? "unnamed_image"))
+        performSegue(withIdentifier: "ShowImagePreview", sender: content)
     }
 }
