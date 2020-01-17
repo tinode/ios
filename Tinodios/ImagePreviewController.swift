@@ -9,6 +9,7 @@
 import UIKit
 
 struct ImagePreviewContent {
+    let image: UIImage?
     let imageBits: Data?
     let fileName: String?
     let contentType: String?
@@ -24,6 +25,7 @@ class ImagePreviewController : UIViewController, UIScrollViewDelegate {
     @IBOutlet weak var contentTypeLabel: UILabel!
     @IBOutlet weak var fileNameLabel: UILabel!
     @IBOutlet weak var sizeLabel: UILabel!
+    @IBOutlet weak var imageDetailsPanel: UIStackView!
 
     var previewContent: ImagePreviewContent? = nil
 
@@ -84,6 +86,5 @@ class ImagePreviewController : UIViewController, UIScrollViewDelegate {
         } catch {
             print("Failed to save image as \(destinationURL): \(error.localizedDescription)")
         }
-
     }
 }

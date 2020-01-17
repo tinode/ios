@@ -118,7 +118,6 @@
                 </view>
             </subviews>
             <constraints>
-                <constraint firstItem="bxx-m5-ifU" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="4" id="39Q-GL-PEN"/>
                 <constraint firstItem="yZd-O5-BVm" firstAttribute="trailing" secondItem="UC5-i1-la2" secondAttribute="trailing" id="4wH-hZ-eCL"/>
                 <constraint firstItem="yZd-O5-BVm" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="94X-fH-5hi"/>
                 <constraint firstItem="LQB-Eu-unW" firstAttribute="trailing" secondItem="bxx-m5-ifU" secondAttribute="trailing" constant="-4" id="C9M-dY-tg9"/>

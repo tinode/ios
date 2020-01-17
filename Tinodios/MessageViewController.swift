@@ -1209,6 +1209,7 @@ extension MessageViewController : MessageCellDelegate {
         guard let entity = msg.content?.entities?[0], let bits = entity.data?["val"]?.asData() else { return }
 
         let content = ImagePreviewContent(
+            image: nil,
             imageBits: bits,
             fileName: entity.data?["name"]?.asString(),
             contentType: entity.data?["mime"]?.asString(),

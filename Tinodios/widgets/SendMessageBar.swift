@@ -30,7 +30,7 @@ class SendMessageBar: UIView {
     @IBOutlet weak var inputField: PlaceholderTextView!
     @IBOutlet weak var inputFieldHeight: NSLayoutConstraint!
 
-    // Overlay for writing diabled. Hidden by default.
+    // Overlay for writing disabled. Hidden by default.
     @IBOutlet weak var allDisabledView: UIView!
     // Message "Peer's messaging is disabled. Enable". Not installed by default.
     @IBOutlet weak var peerMessagingDisabledView: UIStackView!
