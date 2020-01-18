@@ -10,8 +10,12 @@ import UIKit
 import TinodeSDK
 
 struct ImagePreviewContent {
-    let image: UIImage?
-    let imageBits: Data?
+    enum ImageContent {
+        case uiimage(UIImage)
+        case rawdata(Data)
+    }
+
+    let image: ImageContent
     let fileName: String?
     let contentType: String?
     let size: Int64?
@@ -38,20 +42,19 @@ class ImagePreviewController : UIViewController, UIScrollViewDelegate {
     private func setup() {
         guard let content = self.previewContent else { return }
 
-        if content.image != nil {
-            imageView.image = content.image
+        switch content.image {
+        case .uiimage(let image):
+            imageView.image = image
 
             sendImageBar.delegate = self
             // Hide [Save image] button.
             navigationItem.rightBarButtonItem = nil
             // Hide image details panel.
             imageDetailsPanel.bounds = CGRect()
-        } else {
-            if let bits = content.imageBits {
-                imageView.image = UIImage(data: bits)
-            }
+        case .rawdata(let bits):
+            imageView.image = UIImage(data: bits)
 
-            // fill out details panel only if it's a received image.
+            // Fill out details panel for the received image.
             fileNameLabel.text = content.fileName ?? "undefined"
             contentTypeLabel.text = content.contentType ?? "undefined"
             var sizeString = "?? KB"
@@ -110,7 +113,15 @@ class ImagePreviewController : UIViewController, UIScrollViewDelegate {
     }
 
     @IBAction func saveImageButtonClicked(_ sender: Any) {
-        guard let content = previewContent, let imageBits = content.imageBits else { return }
+        guard let content = previewContent else { return }
+
+        let imageBits: Data
+        switch content.image {
+        case .rawdata(let bits):
+            imageBits = bits
+        default:
+            return
+        }
 
         let picturesUrl: URL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
         let destinationURL = picturesUrl.appendingPathComponent(content.fileName ?? Utils.uniqueFilename(forMime: content.contentType))
@@ -126,10 +137,17 @@ class ImagePreviewController : UIViewController, UIScrollViewDelegate {
 
 extension ImagePreviewController : SendImageBarDelegate {
     func sendImageBar(caption: String?) {
+        let originalImage: UIImage
+        switch previewContent?.image {
+        case .uiimage(let img):
+            originalImage = img
+        default:
+            return
+        }
         let mimeType = previewContent?.contentType == "image/png" ?  "image/png" : "image/jpeg"
 
         // Ensure image size in bytes and linear dimensions are under the limits.
-        guard let image = previewContent?.image?.resize(width: UiUtils.kMaxBitmapSize, height: UiUtils.kMaxBitmapSize, clip: false)?.resize(byteSize: MessageViewController.kMaxInbandAttachmentSize, asMimeType: mimeType) else { return }
+        guard let image = originalImage.resize(width: UiUtils.kMaxBitmapSize, height: UiUtils.kMaxBitmapSize, clip: false)?.resize(byteSize: MessageViewController.kMaxInbandAttachmentSize, asMimeType: mimeType) else { return }
 
         guard let bits = image.pixelData(forMimeType: mimeType) else { return }
 

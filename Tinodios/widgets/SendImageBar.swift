@@ -14,7 +14,6 @@ protocol SendImageBarDelegate: class {
 class SendImageBar: UIView {
 
     // MARK: Action delegate
-
     weak var delegate: SendImageBarDelegate?
 
     // MARK: IBOutlets
@@ -22,14 +21,13 @@ class SendImageBar: UIView {
     @IBOutlet weak var inputField: PlaceholderTextView!
     @IBOutlet weak var inputFieldHeight: NSLayoutConstraint!
 
-    // Overlay for writing disabled. Hidden by default.
+    // Overlay for 'writing disabled'. Hidden by default.
     @IBOutlet weak var allDisabledView: UIView!
 
     // MARK: Properties
     weak var foregroundView: UIView?
 
     // MARK: IBActions
-
     @IBAction func send(_ sender: UIButton) {
         let caption = inputField.text.trimmingCharacters(in: .whitespacesAndNewlines)
         delegate?.sendImageBar(caption: caption)
@@ -45,7 +43,6 @@ class SendImageBar: UIView {
     }
 
     // MARK: - Private properties
-
     private var inputFieldMaxHeight: CGFloat = 120
 
     // MARK: - Initializers
@@ -102,7 +99,6 @@ class SendImageBar: UIView {
     }
 
     /// MARK: - Subviews handling
-
     public func toggleNotAvailableOverlay(visible: Bool) {
         allDisabledView.isHidden = !visible
         isUserInteractionEnabled = !visible

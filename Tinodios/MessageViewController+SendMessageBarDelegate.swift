@@ -79,14 +79,13 @@ extension MessageViewController : UIDocumentPickerDelegate {
 
 extension MessageViewController : ImagePickerDelegate {
     func didSelect(image: UIImage?, mimeType mime: String?, fileName fname: String?) {
-        var width = 0, height = 0
-        if let image = image {
-            width = Int(image.size.width * image.scale)
-            height = Int(image.size.height * image.scale)
-        }
+        guard let image = image else { return }
+
+        let width = Int(image.size.width * image.scale)
+        let height = Int(image.size.height * image.scale)
+
         let content = ImagePreviewContent(
-            image: image,
-            imageBits: nil,
+            image: ImagePreviewContent.ImageContent.uiimage(image),
             fileName: fname,
             contentType: mime,
             size: 0,
