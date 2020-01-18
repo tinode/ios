@@ -144,7 +144,7 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
     /// Parses provided content string using markdown-like markup.
     ///
     /// - Parameters:
-    ///     - content: a string with optional markwon-style markup
+    ///     - content: a string with optional markdown-style markup
     public init(content: String) {
         let that = Drafty.parse(content: content)
 
@@ -155,7 +155,7 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
 
     /// Initializes Drafty without parsing the text string.
     /// - Parameters:
-    ///     - text: text body
+    ///     - plainText: text body
     public init(plainText: String) {
         txt = plainText
     }
@@ -609,7 +609,7 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
         fmt!.append(Style(tp: "BR", at: txt.count, len: 1))
         txt += " "
 
-        return self;
+        return self
     }
 
     /// Append one Drafty document to another.
@@ -618,7 +618,7 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
         let len = txt.count
         txt += that.txt
 
-        if let that_fmt = that.fmt {
+        if let thatFmt = that.fmt {
             if fmt == nil {
                 fmt = []
             }
@@ -627,15 +627,15 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
                 ent = []
             }
 
-            for src in that_fmt {
+            for src in thatFmt {
                 let style = Style()
                 style.at = src.at + len
                 style.len = src.len
                 if src.tp != nil {
                     style.tp = src.tp
-                } else if let that_ent = that.ent {
+                } else if let thatEnt = that.ent {
                     style.key = ent!.count
-                    ent!.append(that_ent[src.key ?? 0])
+                    ent!.append(thatEnt[src.key ?? 0])
                 }
                 fmt!.append(style)
             }

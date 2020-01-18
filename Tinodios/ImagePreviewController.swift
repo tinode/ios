@@ -39,20 +39,18 @@ class ImagePreviewController : UIViewController, UIScrollViewDelegate {
         guard let content = self.previewContent else { return }
 
         if content.image != nil {
+            imageView.image = content.image
+
             sendImageBar.delegate = self
             // Hide [Save image] button.
             navigationItem.rightBarButtonItem = nil
             // Hide image details panel.
             imageDetailsPanel.bounds = CGRect()
-        }
+        } else {
+            if let bits = content.imageBits {
+                imageView.image = UIImage(data: bits)
+            }
 
-        scrollView.minimumZoomScale = 1.0
-        scrollView.maximumZoomScale = 8.0
-
-        // Try to use image first, if not create image from bits, if unsuccessful use broken-image icon.
-        imageView.image = content.image != nil ? content.image : (content.imageBits != nil ? (UIImage(data: content.imageBits!) ?? UIImage(named: "broken-image")) : UIImage(named: "broken-image"))
-
-        if content.image == nil {
             // fill out details panel only if it's a received image.
             fileNameLabel.text = content.fileName ?? "undefined"
             contentTypeLabel.text = content.contentType ?? "undefined"
@@ -65,6 +63,13 @@ class ImagePreviewController : UIViewController, UIScrollViewDelegate {
             }
             sizeLabel.text = sizeString
         }
+
+        if imageView.image == nil {
+            imageView.image = UIImage(named: "broken-image")
+        }
+
+        scrollView.minimumZoomScale = 1.0
+        scrollView.maximumZoomScale = 8.0
 
         setInterfaceColors()
     }
@@ -121,7 +126,7 @@ class ImagePreviewController : UIViewController, UIScrollViewDelegate {
 
 extension ImagePreviewController : SendImageBarDelegate {
     func sendImageBar(caption: String?) {
-        let mimeType: String = previewContent?.contentType == "image/png" ?  "image/png" : "image/jpeg"
+        let mimeType = previewContent?.contentType == "image/png" ?  "image/png" : "image/jpeg"
 
         // Ensure image size in bytes and linear dimensions are under the limits.
         guard let image = previewContent?.image?.resize(width: UiUtils.kMaxBitmapSize, height: UiUtils.kMaxBitmapSize, clip: false)?.resize(byteSize: MessageViewController.kMaxInbandAttachmentSize, asMimeType: mimeType) else { return }
