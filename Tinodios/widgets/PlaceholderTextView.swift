@@ -24,12 +24,24 @@ import UIKit
 
     // MARK: IB variables
 
-    @IBInspectable var placeholderText: String = Constants.defaultPlaceholderText
+    @IBInspectable var placeholderText: String = Constants.defaultPlaceholderText {
+        didSet {
+            if isShowingPlaceholder {
+                text = placeholderText
+            }
+        }
+    }
 
     var mainTextColor: UIColor = Constants.defaultTextColorLight
-    @IBInspectable var placeholderColor: UIColor = Constants.defaultPlaceholderColorLight
+    @IBInspectable var placeholderColor: UIColor? {
+        didSet {
+            if isShowingPlaceholder {
+                textColor = placeholderColor
+            }
+        }
+    }
 
-    // MARK: overrired UITextView variables
+    // MARK: overridden UITextView variables
 
     override var text: String! {
         didSet {
@@ -103,7 +115,7 @@ import UIKit
     private func textEmptyHandler() {
         if text.isEmpty {
             isShowingPlaceholder = true
-            textColor = placeholderColor
+            textColor = placeholderColor ?? Constants.defaultPlaceholderColorLight
             text = placeholderText
         }
     }

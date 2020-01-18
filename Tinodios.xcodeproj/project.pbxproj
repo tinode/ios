@@ -60,6 +60,8 @@
 		B0125999229C982900688FCE /* ContactViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B0125997229C982900688FCE /* ContactViewCell.xib */; };
 		B012599C229CEBE600688FCE /* SelectedMemberViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B012599A229CEBE600688FCE /* SelectedMemberViewCell.swift */; };
 		B012599D229CEBE600688FCE /* SelectedMemberViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B012599B229CEBE600688FCE /* SelectedMemberViewCell.xib */; };
+		B0133AE323D1AADF00C813CA /* SendImageBar.xib in Resources */ = {isa = PBXBuildFile; fileRef = B0133AE223D1AADF00C813CA /* SendImageBar.xib */; };
+		B0133AE523D1ACBD00C813CA /* SendImageBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0133AE423D1ACBC00C813CA /* SendImageBar.swift */; };
 		B01C693F22F87B5C003C0AA7 /* SignupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B01C693E22F87B5C003C0AA7 /* SignupViewController.swift */; };
 		B02F5C8B22679BC80079A97E /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = B02F5C8A22679BC80079A97E /* ImagePicker.swift */; };
 		B031BE552263075E004160AE /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = B031BE542263075E004160AE /* Settings.bundle */; };
@@ -179,6 +181,8 @@
 		B0125997229C982900688FCE /* ContactViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ContactViewCell.xib; sourceTree = "<group>"; };
 		B012599A229CEBE600688FCE /* SelectedMemberViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectedMemberViewCell.swift; sourceTree = "<group>"; };
 		B012599B229CEBE600688FCE /* SelectedMemberViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SelectedMemberViewCell.xib; sourceTree = "<group>"; };
+		B0133AE223D1AADF00C813CA /* SendImageBar.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SendImageBar.xib; sourceTree = "<group>"; };
+		B0133AE423D1ACBC00C813CA /* SendImageBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendImageBar.swift; sourceTree = "<group>"; };
 		B01C693E22F87B5C003C0AA7 /* SignupViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignupViewController.swift; sourceTree = "<group>"; };
 		B02F5C8A22679BC80079A97E /* ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
 		B031BE542263075E004160AE /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
@@ -371,6 +375,8 @@
 				0A9A39D423B02CF500C70FF7 /* CircularProgressView.swift */,
 				B012599A229CEBE600688FCE /* SelectedMemberViewCell.swift */,
 				B012599B229CEBE600688FCE /* SelectedMemberViewCell.xib */,
+				B0133AE423D1ACBC00C813CA /* SendImageBar.swift */,
+				B0133AE223D1AADF00C813CA /* SendImageBar.xib */,
 				B0DF032E2282FF46000F9492 /* SendMessageBar.swift */,
 				B0DF032C2282EE8A000F9492 /* SendMessageBar.xib */,
 				0A11912C22F03E3100A1BBA1 /* TagsEditView.swift */,
@@ -474,6 +480,7 @@
 				B0125999229C982900688FCE /* ContactViewCell.xib in Resources */,
 				B031BE552263075E004160AE /* Settings.bundle in Resources */,
 				0AE7339C22C33FEF0089C8D8 /* ChatListViewCell.xib in Resources */,
+				B0133AE323D1AADF00C813CA /* SendImageBar.xib in Resources */,
 				B0DF032D2282EE8A000F9492 /* SendMessageBar.xib in Resources */,
 				0A0380E221B3CC8200A3FA0E /* LaunchScreen.storyboard in Resources */,
 				B012599D229CEBE600688FCE /* SelectedMemberViewCell.xib in Resources */,
@@ -695,6 +702,7 @@
 				0A0016E921E736CD00088188 /* MessagePresenter.swift in Sources */,
 				B0F98C8322E381C300444121 /* MessageMenuItem.swift in Sources */,
 				B0A612B1228C85C300569DFE /* MessageViewLayout.swift in Sources */,
+				B0133AE523D1ACBD00C813CA /* SendImageBar.swift in Sources */,
 				B012599C229CEBE600688FCE /* SelectedMemberViewCell.swift in Sources */,
 				0AEE8BEE226456080022EC3F /* UiUtils.swift in Sources */,
 				0AC33D032293C7A00060D263 /* NewGroupViewController.swift in Sources */,

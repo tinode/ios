@@ -1035,6 +1035,7 @@
                     <connections>
                         <outlet property="contentTypeLabel" destination="YLX-fZ-c26" id="zWK-Sk-I6s"/>
                         <outlet property="fileNameLabel" destination="HIs-n4-sFa" id="5GW-qc-Z37"/>
+                        <outlet property="imageDetailsPanel" destination="eCa-bi-iM4" id="aVf-Il-grN"/>
                         <outlet property="imageView" destination="y5c-FK-NKi" id="EqZ-5f-czR"/>
                         <outlet property="scrollView" destination="nsH-Au-05U" id="uHR-16-dPi"/>
                         <outlet property="sizeLabel" destination="eVu-vx-CU8" id="2yD-VU-ewV"/>

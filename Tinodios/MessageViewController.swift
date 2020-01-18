@@ -266,6 +266,9 @@ class MessageViewController: UIViewController {
             edgesForExtendedLayout = []
         }
 
+        // Receive notifications from ImagePreviewController that an image is ready to be sent.
+        NotificationCenter.default.addObserver(self, selector: #selector(sendImage(notification:)), name: Notification.Name("SendImageMessage"), object: nil)
+
         // Collection View setup
         collectionView.keyboardDismissMode = .interactive
         collectionView.alwaysBounceVertical = true
@@ -375,6 +378,12 @@ class MessageViewController: UIViewController {
 
     @objc func loadNextPage() {
         self.interactor?.loadNextPage()
+    }
+
+    // This notification is sent by ImagePreviewController when the user presses the send image button.
+    @objc func sendImage(notification: NSNotification){
+        guard let msg = notification.object as? Drafty else { return }
+        _ = interactor?.sendMessage(content: msg)
     }
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -1202,14 +1211,13 @@ extension MessageViewController : MessageCellDelegate {
     }
 
     private func showImagePreview(in cell: MessageCell) {
-        // FIXME: create and use "broken image" preview instead of returning.
-
+        // TODO: maybe pass nil to show "broken image" preview instead of returning.
         guard let index = messageSeqIdIndex[cell.seqId] else { return }
         let msg = messages[index]
         guard let entity = msg.content?.entities?[0], let bits = entity.data?["val"]?.asData() else { return }
 
         let content = ImagePreviewContent(
-            imageBits: bits,
+            image: ImagePreviewContent.ImageContent.rawdata(bits),
             fileName: entity.data?["name"]?.asString(),
             contentType: entity.data?["mime"]?.asString(),
             size: Int64(bits.count),

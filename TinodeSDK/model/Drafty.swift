@@ -144,13 +144,20 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
     /// Parses provided content string using markdown-like markup.
     ///
     /// - Parameters:
-    ///     - content: a string with optional markwon-style markup
+    ///     - content: a string with optional markdown-style markup
     public init(content: String) {
         let that = Drafty.parse(content: content)
 
         self.txt = that.txt
         self.fmt = that.fmt
         self.ent = that.ent
+    }
+
+    /// Initializes Drafty without parsing the text string.
+    /// - Parameters:
+    ///     - plainText: text body
+    public init(plainText: String) {
+        txt = plainText
     }
 
     /// Initializes Drafty with text and formatting obeject without parsing the text string.
@@ -592,7 +599,50 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
         return self
     }
 
+    /// Append line break 'BR' to Darfty document
+    /// - Returns: 'self' Drafty object.
+    public func appendLineBreak() -> Drafty {
+        if fmt == nil {
+            fmt = []
+        }
 
+        fmt!.append(Style(tp: "BR", at: txt.count, len: 1))
+        txt += " "
+
+        return self
+    }
+
+    /// Append one Drafty document to another.
+    /// - Returns: 'self' Drafty object.
+    public func append(_ that: Drafty) -> Drafty {
+        let len = txt.count
+        txt += that.txt
+
+        if let thatFmt = that.fmt {
+            if fmt == nil {
+                fmt = []
+            }
+
+            if that.ent != nil && ent == nil {
+                ent = []
+            }
+
+            for src in thatFmt {
+                let style = Style()
+                style.at = src.at + len
+                style.len = src.len
+                if src.tp != nil {
+                    style.tp = src.tp
+                } else if let thatEnt = that.ent {
+                    style.key = ent!.count
+                    ent!.append(thatEnt[src.key ?? 0])
+                }
+                fmt!.append(style)
+            }
+        }
+
+        return self
+    }
 
     /// Insert button into Drafty document.
     ///
