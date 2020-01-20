@@ -267,7 +267,7 @@ class MessageViewController: UIViewController {
         }
 
         // Receive notifications from ImagePreviewController that an image is ready to be sent.
-        NotificationCenter.default.addObserver(self, selector: #selector(sendImage(notification:)), name: Notification.Name("SendImageMessage"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(sendDraftyMessage(notification:)), name: Notification.Name("SendDraftyMessage"), object: nil)
 
         // Collection View setup
         collectionView.keyboardDismissMode = .interactive
@@ -381,7 +381,7 @@ class MessageViewController: UIViewController {
     }
 
     // This notification is sent by ImagePreviewController when the user presses the send image button.
-    @objc func sendImage(notification: NSNotification){
+    @objc func sendDraftyMessage(notification: NSNotification){
         guard let msg = notification.object as? Drafty else { return }
         _ = interactor?.sendMessage(content: msg)
     }
@@ -394,6 +394,9 @@ class MessageViewController: UIViewController {
         case "ShowImagePreview":
             let destinationVC = segue.destination as! ImagePreviewController
             destinationVC.previewContent = (sender as! ImagePreviewContent)
+        case "ShowFilePreview":
+            let destinationVC = segue.destination as! FilePreviewController
+            destinationVC.previewContent = (sender as! FilePreviewContent)
         default:
             break
         }

@@ -65,12 +65,15 @@ extension MessageViewController : UIDocumentPickerDelegate {
                 UiUtils.showToast(message: "The file size exceeds the limit \(UiUtils.bytesToHumanSize(Int64(MessageViewController.kMaxAttachmentSize)))")
                 return
             }
-            if bits.count > MessageViewController.kMaxInbandAttachmentSize {
-                self.interactor?.uploadFile(filename: fname, refurl: urls[0], mimeType: mimeType, data: bits)
-            } else {
-                print("Got data count=\(bits.count), fname='\(fname)', mime: \(mimeType ?? "nil")")
-                _ = interactor?.sendMessage(content: Drafty().attachFile(mime: mimeType, bits: bits, fname: fname))
-            }
+
+            let content = FilePreviewContent(
+                data: bits,
+                refurl: urls[0],
+                fileName: fname,
+                contentType: mimeType,
+                size: bits.count
+            )
+            performSegue(withIdentifier: "ShowFilePreview", sender: content)
         } catch {
             Cache.log.error("MessageVC - failed to read file: %@", error.localizedDescription)
         }
