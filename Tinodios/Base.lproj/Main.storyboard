@@ -1049,7 +1049,7 @@
         <!--File Preview-->
         <scene sceneID="ySR-OD-pz6">
             <objects>
-                <viewController storyboardIdentifier="FilePreviewController" title="File Preview" id="ZTN-Oj-COh" userLabel="File Preview" customClass="FindViewController" customModule="Tinodios" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="FilePreviewController" title="File Preview" id="ZTN-Oj-COh" userLabel="File Preview" customClass="FilePreviewController" customModule="Tinodios" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Dp3-FD-Rba">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -1142,6 +1142,9 @@
                                                 <integer key="value" value="16"/>
                                             </userDefinedRuntimeAttribute>
                                         </userDefinedRuntimeAttributes>
+                                        <connections>
+                                            <action selector="sendFileAttachment:" destination="ZTN-Oj-COh" eventType="touchUpInside" id="fb6-4q-a9f"/>
+                                        </connections>
                                     </button>
                                 </subviews>
                                 <constraints>
@@ -1161,6 +1164,12 @@
                         <viewLayoutGuide key="safeArea" id="nxQ-Yu-JC5"/>
                     </view>
                     <navigationItem key="navigationItem" id="4rl-Ty-Uro" userLabel="Go Back"/>
+                    <connections>
+                        <outlet property="contentTypeLabel" destination="C6Z-tO-4g8" id="Wbq-cR-2I2"/>
+                        <outlet property="fileNameLabel" destination="6rW-B5-NCp" id="UKh-2P-PhS"/>
+                        <outlet property="imageView" destination="UUY-VO-981" id="vgO-PN-RVw"/>
+                        <outlet property="sizeLabel" destination="wfA-TG-Chj" id="aXH-sE-x8Y"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="qqe-To-fWT" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>

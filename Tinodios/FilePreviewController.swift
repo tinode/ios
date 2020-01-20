@@ -23,6 +23,13 @@ class FilePreviewController : UIViewController, UIScrollViewDelegate {
     @IBOutlet weak var fileNameLabel: UILabel!
     @IBOutlet weak var sizeLabel: UILabel!
 
+    @IBAction func sendFileAttachment(_ sender: UIButton) {
+        // This notification is received by the MessageViewController.
+        NotificationCenter.default.post(name: Notification.Name("SendAttachment"), object: msg)
+        // Return to MessageViewController.
+        navigationController?.popViewController(animated: true)
+    }
+
     var previewContent: FilePreviewContent? = nil
 
     override func viewDidLoad() {
@@ -63,17 +70,10 @@ class FilePreviewController : UIViewController, UIScrollViewDelegate {
         }
     }
 
-    func sendFileBar() {
-        // This notification is received by the MessageViewController.
-        NotificationCenter.default.post(name: Notification.Name("SendAttachment"), object: msg)
-        // Return to MessageViewController.
-        navigationController?.popViewController(animated: true)
-    }
-
     // Get material icon name from mime type.
     // If more icons become available in material icons, add them to this mime-to-icon mapping.
-    static let kMimeToIcon: [String:String] = [:]
-    static let kDefaultIcon = "document"
+    static let kMimeToIcon = ["text": "file-text-125", "image": "file-image-125", "video": "file-video-125", "audio": "file-audio-125"]
+    static let kDefaultIcon = "file-125"
     private static func iconFromMime(_ mime: String?) -> String {
         guard let mime = mime else { return FilePreviewController.kDefaultIcon }
 
