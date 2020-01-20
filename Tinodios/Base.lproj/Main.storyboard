@@ -1118,17 +1118,17 @@
                                 </subviews>
                             </stackView>
                             <stackView opaque="NO" contentMode="scaleToFill" alignment="center" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="8SZ-VE-tDC" userLabel="Send bar">
-                                <rect key="frame" x="4" y="631" width="367" height="32"/>
+                                <rect key="frame" x="16" y="619" width="343" height="32"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="IeU-Us-Foc" userLabel="Spacer">
-                                        <rect key="frame" x="0.0" y="15.5" width="327" height="1"/>
+                                        <rect key="frame" x="0.0" y="15.5" width="303" height="1"/>
                                         <color key="backgroundColor" systemColor="separatorColor" red="0.23529411759999999" green="0.23529411759999999" blue="0.26274509800000001" alpha="0.28999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="1" id="sC0-v6-dke"/>
                                         </constraints>
                                     </view>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LBd-NU-F3v" userLabel="sendButton">
-                                        <rect key="frame" x="335" y="0.0" width="32" height="32"/>
+                                        <rect key="frame" x="311" y="0.0" width="32" height="32"/>
                                         <color key="backgroundColor" red="0.25098039220000001" green="0.75294117650000003" blue="0.25098039220000001" alpha="1" colorSpace="calibratedRGB"/>
                                         <constraints>
                                             <constraint firstAttribute="width" secondItem="LBd-NU-F3v" secondAttribute="height" multiplier="1:1" id="1OE-sr-8aS"/>
@@ -1153,10 +1153,10 @@
                             </stackView>
                         </subviews>
                         <constraints>
-                            <constraint firstItem="8SZ-VE-tDC" firstAttribute="leading" secondItem="nxQ-Yu-JC5" secondAttribute="leading" constant="4" id="HS5-bJ-2Rw"/>
+                            <constraint firstItem="8SZ-VE-tDC" firstAttribute="leading" secondItem="nxQ-Yu-JC5" secondAttribute="leading" constant="16" id="HS5-bJ-2Rw"/>
                             <constraint firstItem="UUY-VO-981" firstAttribute="centerX" secondItem="Dp3-FD-Rba" secondAttribute="centerX" id="VQO-4l-dHg"/>
-                            <constraint firstItem="nxQ-Yu-JC5" firstAttribute="trailing" secondItem="8SZ-VE-tDC" secondAttribute="trailing" constant="4" id="b2D-iR-zLU"/>
-                            <constraint firstItem="nxQ-Yu-JC5" firstAttribute="bottom" secondItem="8SZ-VE-tDC" secondAttribute="bottom" constant="4" id="cVI-XE-OUn"/>
+                            <constraint firstItem="nxQ-Yu-JC5" firstAttribute="trailing" secondItem="8SZ-VE-tDC" secondAttribute="trailing" constant="16" id="b2D-iR-zLU"/>
+                            <constraint firstItem="nxQ-Yu-JC5" firstAttribute="bottom" secondItem="8SZ-VE-tDC" secondAttribute="bottom" constant="16" id="cVI-XE-OUn"/>
                             <constraint firstItem="Qcu-Fy-LAo" firstAttribute="top" secondItem="UUY-VO-981" secondAttribute="bottom" constant="8" symbolic="YES" id="lzg-Do-xdU"/>
                             <constraint firstItem="Qcu-Fy-LAo" firstAttribute="centerX" secondItem="Dp3-FD-Rba" secondAttribute="centerX" id="mFm-Uo-0p3"/>
                             <constraint firstItem="UUY-VO-981" firstAttribute="centerY" secondItem="Dp3-FD-Rba" secondAttribute="centerY" id="vqz-oM-UaC"/>
