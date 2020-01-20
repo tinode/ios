@@ -1,5 +1,5 @@
 //
-//  ImagePreviewController.swift
+//  FilePreviewController.swift
 //  Tinodios
 //
 //  Copyright © 2019-2020 Tinode. All rights reserved.
@@ -43,7 +43,7 @@ class FilePreviewController : UIViewController, UIScrollViewDelegate {
         // Set icon appropriate for mime type
         imageView.image = UIImage(named: FilePreviewController.iconFromMime(previewContent?.contentType))
 
-        // Fill out details panel for the received image.
+        // Fill out attachment details.
         fileNameLabel.text = content.fileName ?? "undefined"
         contentTypeLabel.text = content.contentType ?? "undefined"
         var sizeString = "?? KB"
@@ -70,7 +70,7 @@ class FilePreviewController : UIViewController, UIScrollViewDelegate {
         }
     }
 
-    // Get material icon name from mime type.
+    // Get icon name from mime type.
     // If more icons become available in material icons, add them to this mime-to-icon mapping.
     static let kMimeToIcon = ["text": "file-text-125", "image": "file-image-125", "video": "file-video-125", "audio": "file-audio-125"]
     static let kDefaultIcon = "file-125"
