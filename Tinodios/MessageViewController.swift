@@ -392,11 +392,10 @@ class MessageViewController: UIViewController {
     @objc func sendAttachment(notification: NSNotification) {
         guard let content = notification.object as? FilePreviewContent else { return }
 
-        if bits.count > MessageViewController.kMaxInbandAttachmentSize {
-            self.interactor?.uploadFile(filename: fname, refurl: urls[0], mimeType: mimeType, data: bits)
+        if content.data.count > MessageViewController.kMaxInbandAttachmentSize {
+            self.interactor?.uploadFile(filename: content.fileName, refurl: content.refUrl, mimeType: content.contentType, data: content.data)
         } else {
-            print("Got data count=\(bits.count), fname='\(fname)', mime: \(mimeType ?? "nil")")
-            _ = interactor?.sendMessage(content: Drafty().attachFile(mime: mimeType, bits: bits, fname: fname))
+            _ = interactor?.sendMessage(content: Drafty().attachFile(mime: content.contentType, bits: content.data, fname: content.fileName))
         }
     }
 
