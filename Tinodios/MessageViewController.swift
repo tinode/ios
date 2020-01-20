@@ -269,6 +269,9 @@ class MessageViewController: UIViewController {
         // Receive notifications from ImagePreviewController that an image is ready to be sent.
         NotificationCenter.default.addObserver(self, selector: #selector(sendDraftyMessage(notification:)), name: Notification.Name("SendDraftyMessage"), object: nil)
 
+        // Receive notifications from FilePreviewController with an attachment to upload or send.
+        NotificationCenter.default.addObserver(self, selector: #selector(sendAttachment(notification:)), name: Notification.Name("SendAttachment"), object: nil)
+
         // Collection View setup
         collectionView.keyboardDismissMode = .interactive
         collectionView.alwaysBounceVertical = true
@@ -381,9 +384,20 @@ class MessageViewController: UIViewController {
     }
 
     // This notification is sent by ImagePreviewController when the user presses the send image button.
-    @objc func sendDraftyMessage(notification: NSNotification){
+    @objc func sendDraftyMessage(notification: NSNotification) {
         guard let msg = notification.object as? Drafty else { return }
         _ = interactor?.sendMessage(content: msg)
+    }
+
+    @objc func sendAttachment(notification: NSNotification) {
+        guard let content = notification.object as? FilePreviewContent else { return }
+
+        if bits.count > MessageViewController.kMaxInbandAttachmentSize {
+            self.interactor?.uploadFile(filename: fname, refurl: urls[0], mimeType: mimeType, data: bits)
+        } else {
+            print("Got data count=\(bits.count), fname='\(fname)', mime: \(mimeType ?? "nil")")
+            _ = interactor?.sendMessage(content: Drafty().attachFile(mime: mimeType, bits: bits, fname: fname))
+        }
     }
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {

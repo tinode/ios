@@ -9,8 +9,8 @@ import UIKit
 import TinodeSDK
 
 struct FilePreviewContent {
-    let data: Data?
-    let refurl: URL?
+    let data: Data
+    let refUrl: URL?
     let fileName: String?
     let contentType: String?
     let size: Int64?
@@ -34,7 +34,7 @@ class FilePreviewController : UIViewController, UIScrollViewDelegate {
         guard let content = self.previewContent else { return }
 
         // Set icon appropriate for mime type
-        imageView.image = UIImage(named: "broken-image")
+        imageView.image = UIImage(named: FilePreviewController.iconFromMime(previewContent?.contentType))
 
         // Fill out details panel for the received image.
         fileNameLabel.text = content.fileName ?? "undefined"
@@ -64,28 +64,28 @@ class FilePreviewController : UIViewController, UIScrollViewDelegate {
     }
 
     func sendFileBar() {
-
-        if bits.count > MessageViewController.kMaxInbandAttachmentSize {
-            self.interactor?.uploadFile(filename: fname, refurl: urls[0], mimeType: mimeType, data: bits)
-        } else {
-            print("Got data count=\(bits.count), fname='\(fname)', mime: \(mimeType ?? "nil")")
-            _ = interactor?.sendMessage(content: Drafty().attachFile(mime: mimeType, bits: bits, fname: fname))
-        }
-
-        var msg = Drafty(plainText: "").attachFile(mime: <#T##String?#>, bits: <#T##Data#>, fname: <#T##String?#>)
-
         // This notification is received by the MessageViewController.
-        NotificationCenter.default.post(name: Notification.Name("SendDraftyMessage"), object: msg)
+        NotificationCenter.default.post(name: Notification.Name("SendAttachment"), object: msg)
         // Return to MessageViewController.
         navigationController?.popViewController(animated: true)
     }
 
     // Get material icon name from mime type.
-    private static func iconFromMime(_ mime: String?) {
-      // If more icons become available in material icons, add them to this mime-to-icon mapping.
-      const mimeToIcon = {default: 'insert_drive_file', image: 'image', text: 'description', video: 'theaters'};
+    // If more icons become available in material icons, add them to this mime-to-icon mapping.
+    static let kMimeToIcon: [String:String] = [:]
+    static let kDefaultIcon = "document"
+    private static func iconFromMime(_ mime: String?) -> String {
+        guard let mime = mime else { return FilePreviewController.kDefaultIcon }
 
-      return mimeToIcon[mime] || mimeToIcon[(mime || '').split('/')[0]] || mimeToIcon['default'];
+        if let icon = FilePreviewController.kMimeToIcon[mime] {
+            return icon
+        }
+
+        let parts = mime.split(separator: "/")
+        if let icon = FilePreviewController.kMimeToIcon[String(parts[0])] {
+            return icon
+        }
+
+        return FilePreviewController.kDefaultIcon
     }
-
 }

@@ -68,7 +68,7 @@ extension MessageViewController : UIDocumentPickerDelegate {
 
             let content = FilePreviewContent(
                 data: bits,
-                refurl: urls[0],
+                refUrl: urls[0],
                 fileName: fname,
                 contentType: mimeType,
                 size: bits.count
