@@ -1054,69 +1054,81 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="UUY-VO-981" userLabel="File Icon">
-                                <rect key="frame" x="123.5" y="269.5" width="128" height="128"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="128" id="rso-Ui-Cer"/>
-                                    <constraint firstAttribute="height" constant="128" id="yK1-R1-GYO"/>
-                                </constraints>
-                            </imageView>
-                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="Qcu-Fy-LAo" userLabel="File Details">
-                                <rect key="frame" x="67" y="405.5" width="241" height="77.5"/>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="aye-Np-bUN" userLabel="Info Container">
+                                <rect key="frame" x="0.0" y="96" width="375" height="507"/>
                                 <subviews>
-                                    <stackView opaque="NO" contentMode="scaleToFill" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="AFV-iW-xv9" userLabel="FileName">
-                                        <rect key="frame" x="0.0" y="0.0" width="241" height="20.5"/>
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="UUY-VO-981" userLabel="File Icon">
+                                        <rect key="frame" x="123.5" y="189.5" width="128" height="128"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="128" id="rso-Ui-Cer"/>
+                                            <constraint firstAttribute="height" constant="128" id="yK1-R1-GYO"/>
+                                        </constraints>
+                                    </imageView>
+                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="Qcu-Fy-LAo" userLabel="File Details">
+                                        <rect key="frame" x="67" y="325.5" width="241" height="77.5"/>
                                         <subviews>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="File name:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kSc-xN-hqx">
-                                                <rect key="frame" x="0.0" y="0.0" width="81.5" height="20.5"/>
-                                                <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="17"/>
-                                                <nil key="textColor"/>
-                                                <nil key="highlightedColor"/>
-                                            </label>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" text="placeholder_file_name" textAlignment="right" lineBreakMode="middleTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6rW-B5-NCp">
-                                                <rect key="frame" x="89.5" y="0.0" width="151.5" height="20.5"/>
-                                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
-                                                <nil key="textColor"/>
-                                                <nil key="highlightedColor"/>
-                                            </label>
-                                        </subviews>
-                                    </stackView>
-                                    <stackView opaque="NO" contentMode="scaleToFill" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="5qE-Mu-2Xh" userLabel="FileType">
-                                        <rect key="frame" x="0.0" y="28.5" width="241" height="20.5"/>
-                                        <subviews>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Content type:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OeG-Kx-gwG">
-                                                <rect key="frame" x="0.0" y="0.0" width="109.5" height="20.5"/>
-                                                <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="17"/>
-                                                <nil key="textColor"/>
-                                                <nil key="highlightedColor"/>
-                                            </label>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" text="image/jpeg" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="C6Z-tO-4g8" userLabel="image/jpeg">
-                                                <rect key="frame" x="117.5" y="0.0" width="123.5" height="20.5"/>
-                                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
-                                                <nil key="textColor"/>
-                                                <nil key="highlightedColor"/>
-                                            </label>
-                                        </subviews>
-                                    </stackView>
-                                    <stackView opaque="NO" contentMode="scaleToFill" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="TMX-h8-rQO" userLabel="Size">
-                                        <rect key="frame" x="0.0" y="57" width="241" height="20.5"/>
-                                        <subviews>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Size: " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="moa-6V-LhX">
-                                                <rect key="frame" x="0.0" y="0.0" width="43" height="20.5"/>
-                                                <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="17"/>
-                                                <nil key="textColor"/>
-                                                <nil key="highlightedColor"/>
-                                            </label>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" text="128x365; 35KB" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wfA-TG-Chj">
-                                                <rect key="frame" x="51" y="0.0" width="190" height="20.5"/>
-                                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
-                                                <nil key="textColor"/>
-                                                <nil key="highlightedColor"/>
-                                            </label>
+                                            <stackView opaque="NO" contentMode="scaleToFill" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="AFV-iW-xv9" userLabel="FileName">
+                                                <rect key="frame" x="0.0" y="0.0" width="241" height="20.5"/>
+                                                <subviews>
+                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="File name:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kSc-xN-hqx">
+                                                        <rect key="frame" x="0.0" y="0.0" width="81.5" height="20.5"/>
+                                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="17"/>
+                                                        <nil key="textColor"/>
+                                                        <nil key="highlightedColor"/>
+                                                    </label>
+                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" text="placeholder_file_name" textAlignment="right" lineBreakMode="middleTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6rW-B5-NCp">
+                                                        <rect key="frame" x="89.5" y="0.0" width="151.5" height="20.5"/>
+                                                        <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                                        <nil key="textColor"/>
+                                                        <nil key="highlightedColor"/>
+                                                    </label>
+                                                </subviews>
+                                            </stackView>
+                                            <stackView opaque="NO" contentMode="scaleToFill" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="5qE-Mu-2Xh" userLabel="FileType">
+                                                <rect key="frame" x="0.0" y="28.5" width="241" height="20.5"/>
+                                                <subviews>
+                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Content type:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OeG-Kx-gwG">
+                                                        <rect key="frame" x="0.0" y="0.0" width="109.5" height="20.5"/>
+                                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="17"/>
+                                                        <nil key="textColor"/>
+                                                        <nil key="highlightedColor"/>
+                                                    </label>
+                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" text="image/jpeg" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="C6Z-tO-4g8" userLabel="image/jpeg">
+                                                        <rect key="frame" x="117.5" y="0.0" width="123.5" height="20.5"/>
+                                                        <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                                        <nil key="textColor"/>
+                                                        <nil key="highlightedColor"/>
+                                                    </label>
+                                                </subviews>
+                                            </stackView>
+                                            <stackView opaque="NO" contentMode="scaleToFill" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="TMX-h8-rQO" userLabel="Size">
+                                                <rect key="frame" x="0.0" y="57" width="241" height="20.5"/>
+                                                <subviews>
+                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Size: " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="moa-6V-LhX">
+                                                        <rect key="frame" x="0.0" y="0.0" width="43" height="20.5"/>
+                                                        <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="17"/>
+                                                        <nil key="textColor"/>
+                                                        <nil key="highlightedColor"/>
+                                                    </label>
+                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" text="128x365; 35KB" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wfA-TG-Chj">
+                                                        <rect key="frame" x="51" y="0.0" width="190" height="20.5"/>
+                                                        <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                                        <nil key="textColor"/>
+                                                        <nil key="highlightedColor"/>
+                                                    </label>
+                                                </subviews>
+                                            </stackView>
                                         </subviews>
                                     </stackView>
                                 </subviews>
-                            </stackView>
+                                <color key="backgroundColor" systemColor="secondarySystemFillColor" red="0.47058823529999999" green="0.47058823529999999" blue="0.50196078430000002" alpha="0.16" colorSpace="custom" customColorSpace="sRGB"/>
+                                <constraints>
+                                    <constraint firstItem="UUY-VO-981" firstAttribute="centerY" secondItem="aye-Np-bUN" secondAttribute="centerY" id="4Rf-l0-U6i"/>
+                                    <constraint firstItem="UUY-VO-981" firstAttribute="centerX" secondItem="aye-Np-bUN" secondAttribute="centerX" id="A6y-T4-vNf"/>
+                                    <constraint firstItem="Qcu-Fy-LAo" firstAttribute="top" secondItem="UUY-VO-981" secondAttribute="bottom" constant="8" symbolic="YES" id="P2k-HP-L3k"/>
+                                    <constraint firstItem="Qcu-Fy-LAo" firstAttribute="centerX" secondItem="aye-Np-bUN" secondAttribute="centerX" id="WbR-UR-MQE"/>
+                                </constraints>
+                            </view>
                             <stackView opaque="NO" contentMode="scaleToFill" alignment="center" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="8SZ-VE-tDC" userLabel="Send bar">
                                 <rect key="frame" x="16" y="619" width="343" height="32"/>
                                 <subviews>
@@ -1152,14 +1164,15 @@
                                 </constraints>
                             </stackView>
                         </subviews>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
-                            <constraint firstItem="8SZ-VE-tDC" firstAttribute="leading" secondItem="nxQ-Yu-JC5" secondAttribute="leading" constant="16" id="HS5-bJ-2Rw"/>
-                            <constraint firstItem="UUY-VO-981" firstAttribute="centerX" secondItem="Dp3-FD-Rba" secondAttribute="centerX" id="VQO-4l-dHg"/>
-                            <constraint firstItem="nxQ-Yu-JC5" firstAttribute="trailing" secondItem="8SZ-VE-tDC" secondAttribute="trailing" constant="16" id="b2D-iR-zLU"/>
-                            <constraint firstItem="nxQ-Yu-JC5" firstAttribute="bottom" secondItem="8SZ-VE-tDC" secondAttribute="bottom" constant="16" id="cVI-XE-OUn"/>
-                            <constraint firstItem="Qcu-Fy-LAo" firstAttribute="top" secondItem="UUY-VO-981" secondAttribute="bottom" constant="8" symbolic="YES" id="lzg-Do-xdU"/>
-                            <constraint firstItem="Qcu-Fy-LAo" firstAttribute="centerX" secondItem="Dp3-FD-Rba" secondAttribute="centerX" id="mFm-Uo-0p3"/>
-                            <constraint firstItem="UUY-VO-981" firstAttribute="centerY" secondItem="Dp3-FD-Rba" secondAttribute="centerY" id="vqz-oM-UaC"/>
+                            <constraint firstItem="nxQ-Yu-JC5" firstAttribute="trailing" secondItem="aye-Np-bUN" secondAttribute="trailing" id="AXa-oP-TC0"/>
+                            <constraint firstItem="8SZ-VE-tDC" firstAttribute="leading" secondItem="nxQ-Yu-JC5" secondAttribute="leading" constant="16" id="Avp-hW-bMJ"/>
+                            <constraint firstItem="aye-Np-bUN" firstAttribute="leading" secondItem="nxQ-Yu-JC5" secondAttribute="leading" id="FM1-U7-UPk"/>
+                            <constraint firstItem="aye-Np-bUN" firstAttribute="top" secondItem="nxQ-Yu-JC5" secondAttribute="top" id="HRA-0h-TSe"/>
+                            <constraint firstItem="aye-Np-bUN" firstAttribute="bottom" secondItem="nxQ-Yu-JC5" secondAttribute="bottom" constant="-64" id="Tjk-LF-s4Z"/>
+                            <constraint firstItem="nxQ-Yu-JC5" firstAttribute="bottom" secondItem="8SZ-VE-tDC" secondAttribute="bottom" constant="16" id="ow9-TN-T66"/>
+                            <constraint firstItem="nxQ-Yu-JC5" firstAttribute="trailing" secondItem="8SZ-VE-tDC" secondAttribute="trailing" constant="16" id="rWp-18-lgp"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="nxQ-Yu-JC5"/>
                     </view>
@@ -1173,7 +1186,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="qqe-To-fWT" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="4726" y="-673"/>
+            <point key="canvasLocation" x="4725.6000000000004" y="-673.31334332833592"/>
         </scene>
         <!--TopicInfoViewController-->
         <scene sceneID="mxu-ZQ-Gyc">
