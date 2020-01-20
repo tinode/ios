@@ -13,28 +13,28 @@ struct FilePreviewContent {
     let refUrl: URL?
     let fileName: String?
     let contentType: String?
-    let size: Int
+    let size: Int?
 }
 
 class FilePreviewController : UIViewController, UIScrollViewDelegate {
+
+    var previewContent: FilePreviewContent? = nil
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        setup()
+    }
 
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var contentTypeLabel: UILabel!
     @IBOutlet weak var fileNameLabel: UILabel!
     @IBOutlet weak var sizeLabel: UILabel!
 
-    var previewContent: FilePreviewContent? = nil
-
     @IBAction func sendFileAttachment(_ sender: UIButton) {
         // This notification is received by the MessageViewController.
         NotificationCenter.default.post(name: Notification.Name("SendAttachment"), object: previewContent)
         // Return to MessageViewController.
         navigationController?.popViewController(animated: true)
-    }
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        setup()
     }
 
     private func setup() {
@@ -48,7 +48,7 @@ class FilePreviewController : UIViewController, UIScrollViewDelegate {
         contentTypeLabel.text = content.contentType ?? "undefined"
         var sizeString = "?? KB"
         if let size = content.size {
-            sizeString = UiUtils.bytesToHumanSize(size)
+            sizeString = UiUtils.bytesToHumanSize(Int64(size))
         }
         sizeLabel.text = sizeString
 
