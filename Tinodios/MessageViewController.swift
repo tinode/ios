@@ -23,8 +23,11 @@ protocol MessageDisplayLogic: class {
 }
 
 class MessageViewController: UIViewController {
-    // MARK: static parameters
+    // Other controllers may send these notification to MessageViewController which will execute corresponding send message action.
+    public static let kNotificationSendDraftyMessage = "SendDraftyMessage"
+    public static let kNotificationSendAttachment = "SendAttachment"
 
+    // MARK: static parameters
     private enum Constants {
         /// Size of the avatar in the nav bar in small state.
         static let kNavBarAvatarSmallState: CGFloat = 32
@@ -267,10 +270,10 @@ class MessageViewController: UIViewController {
         }
 
         // Receive notifications from ImagePreviewController that an image is ready to be sent.
-        NotificationCenter.default.addObserver(self, selector: #selector(sendDraftyMessage(notification:)), name: Notification.Name("SendDraftyMessage"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(sendDraftyMessage(notification:)), name: Notification.Name(MessageViewController.kNotificationSendDraftyMessage), object: nil)
 
         // Receive notifications from FilePreviewController with an attachment to upload or send.
-        NotificationCenter.default.addObserver(self, selector: #selector(sendAttachment(notification:)), name: Notification.Name("SendAttachment"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(sendAttachment(notification:)), name: Notification.Name(MessageViewController.kNotificationSendAttachment), object: nil)
 
         // Collection View setup
         collectionView.keyboardDismissMode = .interactive

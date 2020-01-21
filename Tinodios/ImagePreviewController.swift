@@ -161,7 +161,7 @@ extension ImagePreviewController : SendImageBarDelegate {
         }
 
         // This notification is received by the MessageViewController.
-        NotificationCenter.default.post(name: Notification.Name("SendDraftyMessage"), object: msg)
+        NotificationCenter.default.post(name: Notification.Name(MessageViewController.kNotificationSendDraftyMessage), object: msg)
         // Return to MessageViewController.
         navigationController?.popViewController(animated: true)
     }
