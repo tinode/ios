@@ -23,8 +23,11 @@ protocol MessageDisplayLogic: class {
 }
 
 class MessageViewController: UIViewController {
-    // MARK: static parameters
+    // Other controllers may send these notification to MessageViewController which will execute corresponding send message action.
+    public static let kNotificationSendDraftyMessage = "SendDraftyMessage"
+    public static let kNotificationSendAttachment = "SendAttachment"
 
+    // MARK: static parameters
     private enum Constants {
         /// Size of the avatar in the nav bar in small state.
         static let kNavBarAvatarSmallState: CGFloat = 32
@@ -267,7 +270,10 @@ class MessageViewController: UIViewController {
         }
 
         // Receive notifications from ImagePreviewController that an image is ready to be sent.
-        NotificationCenter.default.addObserver(self, selector: #selector(sendImage(notification:)), name: Notification.Name("SendImageMessage"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(sendDraftyMessage(notification:)), name: Notification.Name(MessageViewController.kNotificationSendDraftyMessage), object: nil)
+
+        // Receive notifications from FilePreviewController with an attachment to upload or send.
+        NotificationCenter.default.addObserver(self, selector: #selector(sendAttachment(notification:)), name: Notification.Name(MessageViewController.kNotificationSendAttachment), object: nil)
 
         // Collection View setup
         collectionView.keyboardDismissMode = .interactive
@@ -381,9 +387,19 @@ class MessageViewController: UIViewController {
     }
 
     // This notification is sent by ImagePreviewController when the user presses the send image button.
-    @objc func sendImage(notification: NSNotification){
+    @objc func sendDraftyMessage(notification: NSNotification) {
         guard let msg = notification.object as? Drafty else { return }
         _ = interactor?.sendMessage(content: msg)
+    }
+
+    @objc func sendAttachment(notification: NSNotification) {
+        guard let content = notification.object as? FilePreviewContent else { return }
+
+        if content.data.count > MessageViewController.kMaxInbandAttachmentSize {
+            self.interactor?.uploadFile(filename: content.fileName, refurl: content.refUrl, mimeType: content.contentType, data: content.data)
+        } else {
+            _ = interactor?.sendMessage(content: Drafty().attachFile(mime: content.contentType, bits: content.data, fname: content.fileName))
+        }
     }
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -394,6 +410,9 @@ class MessageViewController: UIViewController {
         case "ShowImagePreview":
             let destinationVC = segue.destination as! ImagePreviewController
             destinationVC.previewContent = (sender as! ImagePreviewContent)
+        case "ShowFilePreview":
+            let destinationVC = segue.destination as! FilePreviewController
+            destinationVC.previewContent = (sender as! FilePreviewContent)
         default:
             break
         }

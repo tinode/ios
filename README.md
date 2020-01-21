@@ -2,9 +2,7 @@
 
 iOS client for [Tinode](https://github.com/tinode/chat) in Swift.
 
-Status: work in progress.
-
-The immediate goal is to have a basic end-to-end working application prototype that one will be able to install and use.
+Status: beta. Usable and mostly stable but bugs may happen.
 
 <a href="https://apps.apple.com/us/app/tinode/id1483763538"><img src="app-store.svg" height=36></a>
 
