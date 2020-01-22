@@ -194,7 +194,6 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         return true
     }
     func sendReadNotification() {
-        topic?.noteRecv()
         topic?.noteRead()
     }
     func sendTypingNotification() {

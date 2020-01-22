@@ -835,14 +835,16 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
         }
     }
     public func routeData(data: MsgServerData) {
+        setSeq(seq: data.getSeq)
+        touched = data.ts
         if let s = store {
             if s.msgReceived(topic: self, sub: getSubscription(for: data.from), msg: data) > 0 {
+                print("sending note upon receipt")
                 noteRecv()
             }
         } else {
             noteRecv()
         }
-        setSeq(seq: data.getSeq)
         listener?.onData(data: data)
     }
 
