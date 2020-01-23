@@ -16,6 +16,8 @@ class LoginViewController: UIViewController {
     @IBOutlet weak var userNameTextEdit: UITextField!
     @IBOutlet weak var passwordTextEdit: UITextField!
     @IBOutlet weak var scrollView: UIScrollView!
+    @IBOutlet var passwordVisibility: [UIButton]!
+    private var passwordVisible: Bool = false
 
     static let kTokenKey = "co.tinode.token"
 
@@ -82,9 +84,11 @@ class LoginViewController: UIViewController {
         // If active text field is hidden by the keyboard, scroll it into view.
         var visibleRect = self.view.frame
         visibleRect.size.height -= keyboardSize.height
-        if let activeField = [userNameTextEdit, passwordTextEdit].first(where: { $0.isFirstResponder }) {
-            if visibleRect.contains(activeField.frame.origin) {
-                let scrollPoint = CGPoint(x: 0, y: activeField.frame.origin.y - keyboardSize.height)
+        if let activeField = [userNameTextEdit, passwordTextEdit].first(where: { $0.isFirstResponder }),
+            // passwordTextField is embedded in a text view (in order to display password visibility switches).
+            let origin = (activeField === passwordTextEdit! ? activeField.superview : activeField)?.frame.origin {
+            if visibleRect.contains(origin) {
+                let scrollPoint = CGPoint(x: 0, y: origin.y - keyboardSize.height)
                 scrollView.setContentOffset(scrollPoint, animated: true)
             }
         }
@@ -97,6 +101,14 @@ class LoginViewController: UIViewController {
 
     @objc func textFieldDidChange(_ textField: UITextField) {
         UiUtils.clearTextFieldError(textField)
+    }
+
+    @IBAction func passwordVisibilityClicked(_ sender: Any) {
+        passwordTextEdit.isSecureTextEntry = passwordVisible
+        passwordVisible = !passwordVisible
+        for v in passwordVisibility {
+            v.isHidden = !v.isHidden
+        }
     }
 
     @IBAction func loginClicked(_ sender: Any) {

@@ -16,7 +16,9 @@ class SignupViewController: UITableViewController {
     @IBOutlet weak var nameTextField: UITextField!
     @IBOutlet weak var emailPhoneTextField: UITextField!
     @IBOutlet weak var signUpButton: UIButton!
+    @IBOutlet var passwordVisibility: [UIButton]!
 
+    private var passwordVisible: Bool = false
     var imagePicker: ImagePicker!
     var uploadedAvatar: Bool = false
 
@@ -40,6 +42,14 @@ class SignupViewController: UITableViewController {
     @IBAction func addAvatarClicked(_ sender: Any) {
         // Get avatar image
         self.imagePicker.present(from: self.view)
+    }
+
+    @IBAction func passwordVisibilityChanged(_ sender: Any) {
+        passwordTextField.isSecureTextEntry = passwordVisible
+        passwordVisible = !passwordVisible
+        for v in passwordVisibility {
+            v.isHidden = !v.isHidden
+        }
     }
 
     @IBAction func signUpClicked(_ sender: Any) {
