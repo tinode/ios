@@ -25,6 +25,8 @@ class SignupViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        UiUtils.adjustPasswordVisibilitySwitchColor(for: passwordVisibility, setColor: .darkGray)
+
         self.imagePicker = ImagePicker(presentationController: self, delegate: self, editable: true)
 
         // Listen to text change events to clear the possible error from earlier attempt.

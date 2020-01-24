@@ -497,6 +497,15 @@ class UiUtils {
         }
         alert.show(over: viewController)
     }
+
+    // Sets tint color on the password visibility switch buttons.
+    public static func adjustPasswordVisibilitySwitchColor(
+        for switches: [UIButton], setColor color: UIColor) {
+        switches.forEach {
+            $0.tintColor = color
+            $0.setImage($0.imageView?.image?.withRenderingMode(.alwaysTemplate), for: .normal)
+        }
+    }
 }
 
 extension UIViewController {

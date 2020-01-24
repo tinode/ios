@@ -93,25 +93,25 @@
                                                         </connections>
                                                     </textField>
                                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="kUP-kl-SzZ" userLabel="eye">
-                                                        <rect key="frame" x="200" y="5" width="30" height="30"/>
+                                                        <rect key="frame" x="210" y="10" width="20" height="20"/>
                                                         <constraints>
-                                                            <constraint firstAttribute="height" constant="30" id="4Bc-Ry-Mc4"/>
-                                                            <constraint firstAttribute="width" constant="30" id="iH8-2Q-1Sf"/>
+                                                            <constraint firstAttribute="height" constant="20" id="4Bc-Ry-Mc4"/>
+                                                            <constraint firstAttribute="width" constant="20" id="iH8-2Q-1Sf"/>
                                                         </constraints>
                                                         <color key="tintColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                        <state key="normal" image="eye.fill" catalog="system"/>
+                                                        <state key="normal" image="eye-30"/>
                                                         <connections>
                                                             <action selector="passwordVisibilityClicked:" destination="Lui-0V-oqF" eventType="touchUpInside" id="kdd-W8-8bU"/>
                                                         </connections>
                                                     </button>
                                                     <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Qf5-ud-WtI" userLabel="invisible">
-                                                        <rect key="frame" x="200" y="5" width="30" height="30"/>
+                                                        <rect key="frame" x="210" y="10" width="20" height="20"/>
                                                         <constraints>
-                                                            <constraint firstAttribute="width" constant="30" id="QIF-fi-VQe"/>
-                                                            <constraint firstAttribute="height" constant="30" id="u38-UB-abK"/>
+                                                            <constraint firstAttribute="width" constant="20" id="QIF-fi-VQe"/>
+                                                            <constraint firstAttribute="height" constant="20" id="u38-UB-abK"/>
                                                         </constraints>
                                                         <color key="tintColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                        <state key="normal" image="eye.slash.fill" catalog="system"/>
+                                                        <state key="normal" image="invisible-30"/>
                                                         <connections>
                                                             <action selector="passwordVisibilityClicked:" destination="Lui-0V-oqF" eventType="touchUpInside" id="Yrm-YU-b5U"/>
                                                         </connections>
@@ -361,27 +361,25 @@
                                                     <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" secureTextEntry="YES" smartDashesType="no" smartInsertDeleteType="no" smartQuotesType="no" textContentType="password"/>
                                                 </textField>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Lbr-pr-fEn" userLabel="eye">
-                                                    <rect key="frame" x="319" y="10" width="30" height="30"/>
+                                                    <rect key="frame" x="329" y="15" width="20" height="20"/>
                                                     <constraints>
-                                                        <constraint firstAttribute="width" constant="30" id="CUU-fG-vo8"/>
-                                                        <constraint firstAttribute="height" constant="30" id="MUJ-OG-3Y0"/>
+                                                        <constraint firstAttribute="width" constant="20" id="CUU-fG-vo8"/>
+                                                        <constraint firstAttribute="height" constant="20" id="MUJ-OG-3Y0"/>
                                                     </constraints>
                                                     <color key="tintColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                    <state key="normal" image="eye.fill" catalog="system"/>
+                                                    <state key="normal" image="eye-30"/>
                                                     <connections>
                                                         <action selector="passwordVisibilityChanged:" destination="YmQ-cB-rjH" eventType="touchUpInside" id="1Nm-Zq-K7n"/>
                                                     </connections>
                                                 </button>
                                                 <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wBH-qF-T4u" userLabel="invisible">
-                                                    <rect key="frame" x="319" y="10" width="30" height="30"/>
+                                                    <rect key="frame" x="329" y="15" width="20" height="20"/>
                                                     <constraints>
-                                                        <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="30" id="4lz-rL-O74"/>
-                                                        <constraint firstAttribute="height" constant="30" id="9pa-yU-y4U"/>
-                                                        <constraint firstAttribute="width" constant="30" id="CpN-aO-z52"/>
-                                                        <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="30" id="WHj-sK-fXG"/>
+                                                        <constraint firstAttribute="height" constant="20" id="9pa-yU-y4U"/>
+                                                        <constraint firstAttribute="width" constant="20" id="CpN-aO-z52"/>
                                                     </constraints>
                                                     <color key="tintColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                    <state key="normal" image="eye.slash.fill" catalog="system"/>
+                                                    <state key="normal" image="invisible-30"/>
                                                     <connections>
                                                         <action selector="passwordVisibilityChanged:" destination="YmQ-cB-rjH" eventType="touchUpInside" id="uH0-AZ-sHk"/>
                                                     </connections>
@@ -477,6 +475,7 @@
                         <outlet property="passwordTextField" destination="ZQy-2N-acy" id="KBw-uB-kPL"/>
                         <outlet property="signUpButton" destination="Rv6-qQ-FqW" id="WMA-4n-H8P"/>
                         <outletCollection property="passwordVisibility" destination="wBH-qF-T4u" collectionClass="NSMutableArray" id="DCY-Jz-h1u"/>
+                        <outletCollection property="passwordVisibility" destination="Lbr-pr-fEn" collectionClass="NSMutableArray" id="IRj-iW-HIj"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="c7Y-7Y-fzb" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -2346,8 +2345,8 @@
         <image name="delete-message-22" width="22.5" height="22.5"/>
         <image name="edit-48" width="48" height="48"/>
         <image name="email-25" width="25" height="25"/>
-        <image name="eye.fill" catalog="system" width="64" height="38"/>
-        <image name="eye.slash.fill" catalog="system" width="64" height="40"/>
+        <image name="eye-30" width="30" height="30"/>
+        <image name="invisible-30" width="30" height="30"/>
         <image name="invite-24" width="24" height="24"/>
         <image name="logo-ios" width="288" height="288"/>
         <image name="new-chat-24" width="24" height="24"/>
@@ -2360,7 +2359,7 @@
         <image name="tags-24" width="24" height="24"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="Qbx-cO-rju"/>
+        <segue reference="qx3-Cj-zCP"/>
         <segue reference="Fnn-wi-PrS"/>
     </inferredMetricsTieBreakers>
 </document>
