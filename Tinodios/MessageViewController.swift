@@ -146,8 +146,6 @@ class MessageViewController: UIViewController {
     // TODO: this is ugly. Move this to MVC+SendMessageBarDelegate.swift
     var imagePicker: ImagePicker?
 
-    private var noteTimer: Timer? = nil
-
     // Messages to be displayed
     var messages: [Message] = []
     // For updating individual messages, we need:
@@ -336,10 +334,6 @@ class MessageViewController: UIViewController {
         self.setInterfaceColors()
     }
 
-    @objc private func processNotifications() {
-        self.interactor?.sendReadNotification()
-    }
-
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
@@ -347,22 +341,7 @@ class MessageViewController: UIViewController {
         
         self.interactor?.attachToTopic(interactively: true)
         self.interactor?.loadMessages()
-        self.interactor?.sendReadNotification()
-        if #available(iOS 10, *) {
-            self.noteTimer = Timer.scheduledTimer(
-                withTimeInterval: 1,
-                repeats: true,
-                block: { _ in
-                    //self.interactor?.sendReadNotification()
-                    self.processNotifications()
-                })
-        } else {
-            // Fallback on earlier versions
-            self.noteTimer = Timer.scheduledTimer(
-                timeInterval: 1,
-                target: self,
-                selector: #selector(self.processNotifications), userInfo: nil, repeats: true)
-        }
+        self.interactor?.sendReadNotification(explicitSeq: nil)
         self.applyTopicPermissions()
     }
     // Continue listening for events even when the VC isn't visible.
@@ -375,12 +354,6 @@ class MessageViewController: UIViewController {
     //        self.interactor?.cleanup()
     //    }
     // }
-
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
-
-        self.noteTimer?.invalidate()
-    }
 
     @objc func loadNextPage() {
         self.interactor?.loadNextPage()

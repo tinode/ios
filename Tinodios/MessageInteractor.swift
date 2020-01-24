@@ -18,7 +18,7 @@ protocol MessageBusinessLogic: class {
     func leaveTopic()
 
     func sendMessage(content: Drafty) -> Bool
-    func sendReadNotification()
+    func sendReadNotification(explicitSeq: Int?)
     func sendTypingNotification()
     func enablePeersMessaging()
     func acceptInvitation()
@@ -193,8 +193,8 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         }
         return true
     }
-    func sendReadNotification() {
-        topic?.noteRead()
+    func sendReadNotification(explicitSeq: Int? = nil) {
+        topic?.noteRead(explicitSeq: explicitSeq)
     }
     func sendTypingNotification() {
         topic?.noteKeyPress()
@@ -392,6 +392,11 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
     }
     override func onData(data: MsgServerData?) {
         self.loadMessages()
+        if let from = data?.from, let seq = data?.seq, !Cache.getTinode().isMe(uid: from) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1)) {
+                self.sendReadNotification(explicitSeq: seq)
+            }
+        }
     }
     override func onPres(pres: MsgServerPres) {
         self.presenter?.applyTopicPermissions(withError: nil)
