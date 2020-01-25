@@ -341,7 +341,7 @@ class MessageViewController: UIViewController {
         
         self.interactor?.attachToTopic(interactively: true)
         self.interactor?.loadMessages()
-        self.interactor?.sendReadNotification(explicitSeq: nil)
+        self.interactor?.sendReadNotification(explicitSeq: nil, when: .now())
         self.applyTopicPermissions()
     }
     // Continue listening for events even when the VC isn't visible.

@@ -18,7 +18,7 @@ protocol MessageBusinessLogic: class {
     func leaveTopic()
 
     func sendMessage(content: Drafty) -> Bool
-    func sendReadNotification(explicitSeq: Int?)
+    func sendReadNotification(explicitSeq: Int?, when deadline: DispatchTime)
     func sendTypingNotification()
     func enablePeersMessaging()
     func acceptInvitation()
@@ -66,6 +66,9 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
     // The new value for the variables below will be updated to info.seq.
     private var lastSeenRecv: Int?
     private var lastSeenRead: Int?
+
+    // How many read notifications are currently scheduled to be sent.
+    private var readNotificationsInFlight = 0
 
     @discardableResult
     func setup(topicName: String?) -> Bool {
@@ -193,8 +196,18 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         }
         return true
     }
-    func sendReadNotification(explicitSeq: Int? = nil) {
-        topic?.noteRead(explicitSeq: explicitSeq)
+    func sendReadNotification(explicitSeq: Int? = nil, when deadline: DispatchTime = .now()) {
+        readNotificationsInFlight += 1
+        messageInteractorQueue.asyncAfter(deadline: deadline) { [weak self] in
+            // Don't send a notification if more notifications are pending. This avoids the case of acking
+            // every {data} message in a large batch.
+            // It may pose a problem if a later message is acked first (msg[1].seq > msg[2].seq), but that
+            // should not happen.
+            if self?.readNotificationsInFlight == 1 {
+                self?.topic?.noteRead(explicitSeq: explicitSeq)
+            }
+            self?.readNotificationsInFlight -= 1
+        }
     }
     func sendTypingNotification() {
         topic?.noteKeyPress()
@@ -393,9 +406,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
     override func onData(data: MsgServerData?) {
         self.loadMessages()
         if let from = data?.from, let seq = data?.seq, !Cache.getTinode().isMe(uid: from) {
-            DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1)) {
-                self.sendReadNotification(explicitSeq: seq)
-            }
+            sendReadNotification(explicitSeq: seq, when: .now() + .seconds(1))
         }
     }
     override func onPres(pres: MsgServerPres) {
