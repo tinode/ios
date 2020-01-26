@@ -776,22 +776,33 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
     }
 
     @discardableResult
-    private func note(what: NoteType) -> Int {
+    private func note(what: NoteType, fromMe: Bool = true, explicitSeq: Int? = nil) -> Int {
         var result = 0
         switch what {
         case .kRecv:
             let seq = description!.getSeq
             if description!.getRecv < seq {
-                tinode!.noteRecv(topic: name, seq: seq)
+                if !fromMe {
+                    tinode!.noteRecv(topic: name, seq: seq)
+                }
                 result = seq
                 description!.recv = seq
             }
         case .kRead:
             let seq = description!.getSeq
-            if description!.getRead < seq {
-                tinode!.noteRead(topic: name, seq: seq)
-                result = seq
-                description!.read = seq
+            if explicitSeq != nil || description!.getRead < seq {
+                if !fromMe {
+                    tinode!.noteRead(topic: name, seq: explicitSeq ?? seq)
+                }
+                if let eseq = explicitSeq {
+                    if description!.getRead < eseq {
+                        result = eseq
+                        description!.read = eseq
+                    }
+                } else {
+                    result = seq
+                    description!.read = seq
+                }
             }
         case .kKeyPress:
             if lastKeyPress.addingTimeInterval(kIntervalBetweenKeyPresses) < Date() {
@@ -803,16 +814,20 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
     }
 
     @discardableResult
-    public func noteRead() -> Int {
-        let result = note(what: .kRead)
-        store?.setRead(topic: self, read: result)
+    public func noteRead(explicitSeq: Int? = nil) -> Int {
+        let result = note(what: .kRead, fromMe: false, explicitSeq: explicitSeq)
+        if result > 0 {
+            store?.setRead(topic: self, read: result)
+        }
         return result
     }
 
     @discardableResult
-    public func noteRecv() -> Int {
-        let result = note(what: .kRecv)
-        store?.setRecv(topic: self, recv: result)
+    public func noteRecv(fromMe: Bool) -> Int {
+        let result = note(what: .kRecv, fromMe: fromMe)
+        if result > 0 {
+            store?.setRecv(topic: self, recv: result)
+        }
         return result
     }
 
@@ -839,11 +854,10 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
         touched = data.ts
         if let s = store {
             if s.msgReceived(topic: self, sub: getSubscription(for: data.from), msg: data) > 0 {
-                print("sending note upon receipt")
-                noteRecv()
+                noteRecv(fromMe: tinode!.isMe(uid: data.from))
             }
         } else {
-            noteRecv()
+            noteRecv(fromMe: tinode!.isMe(uid: data.from))
         }
         listener?.onData(data: data)
     }
@@ -1082,6 +1096,7 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
             return
         }
         setSeq(seq: seq)
+        touched = ctrl.ts
         if id > 0, let s = store {
             if s.msgDelivered(topic: self, dbMessageId: id,
                               timestamp: ctrl.ts, seq: seq) {
