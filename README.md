@@ -39,7 +39,7 @@ Status: beta. Usable and mostly stable but bugs may happen.
 
 * Previews not generated for videos, audio, links or docs.
 * Typing indicators.
-* No support for multiple servers.
+* No support for switching between multiple backends.
 * Mentions, hashtags.
 * Replying or forwarding messages.
 * End-to-End encryption.
