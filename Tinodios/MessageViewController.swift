@@ -805,7 +805,7 @@ extension MessageViewController {
 
     // Should avatars be shown at all for any message?
     func avatarsVisible(message: Message) -> Bool {
-        return topic!.isGrpType && !isFromCurrentSender(message: message)
+        return (topic?.isGrpType ?? false) && !isFromCurrentSender(message: message)
     }
 
     // Show avatar in the given message
@@ -955,7 +955,7 @@ extension MessageViewController : MessageViewLayoutDelegate {
         let height: CGFloat
         if isNewDateLabelVisible(at: indexPath) {
             height = Constants.kNewDateLabelHeight
-        } else if !topic!.isGrpType && !isPreviousMessageSameSender(at: indexPath) {
+        } else if !(topic?.isGrpType ?? false) && !isPreviousMessageSameSender(at: indexPath) {
             height = Constants.kAdditionalP2PVerticalCellSpacing
         } else {
             height = 0
