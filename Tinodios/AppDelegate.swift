@@ -88,6 +88,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     @discardableResult
     private func fetchData(for topicName: String, seq: Int) -> UIBackgroundFetchResult {
         let tinode = Cache.getTinode()
+        guard tinode.isConnectionAuthenticated || Utils.connectAndLoginSync() else {
+            return .failed
+        }
         var topic: DefaultComTopic
         var builder: DefaultComTopic.MetaGetBuilder
         if !tinode.isTopicTracked(topicName: topicName) {
@@ -123,20 +126,50 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return .failed
     }
 
+    // Synchronously fetches description for topic |topicName|
+    // (and saves the description locally).
+    @discardableResult
+    private func fetchDesc(for topicName: String) -> UIBackgroundFetchResult {
+        let tinode = Cache.getTinode()
+        guard tinode.isConnectionAuthenticated || Utils.connectAndLoginSync() else {
+            return .failed
+        }
+        // If we have topic data, we are done.
+        guard !tinode.isTopicTracked(topicName: topicName) else {
+            return .noData
+        }
+        do {
+            if let msg = try tinode.getMeta(topic: topicName, query: MsgGetMeta.desc())?.getResult(),
+                (msg.ctrl?.code ?? 500) < 300 {
+                return .newData
+            }
+        } catch {
+            Cache.log.error("Failed to fetch topic description for [%@]: %@", topicName, error.localizedDescription)
+        }
+        return .failed
+    }
+
     // Application woken up in the background (e.g. for data fetch).
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any],
                      fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
         let state = application.applicationState
-        guard let topicName = userInfo["topic"] as? String, !topicName.isEmpty, let seqStr = userInfo["seq"] as? String, let seq = Int(seqStr) else {
+        guard let topicName = userInfo["topic"] as? String, !topicName.isEmpty else {
             completionHandler(.failed)
             return
         }
         if state == .background || (state == .inactive && !self.appIsStarting) {
-            // Fetch data in the background.
-            if Cache.getTinode().isConnectionAuthenticated || Utils.connectAndLoginSync() {
+            let what = userInfo["what"] as? String
+            if what == nil || what == "msg" {
+                // New message.
+                guard let seqStr = userInfo["seq"] as? String, let seq = Int(seqStr) else {
+                    completionHandler(.failed)
+                    return
+                }
+                // Fetch data in the background.
                 completionHandler(fetchData(for: topicName, seq: seq))
-            } else {
-                completionHandler(.failed)
+            } else if what == "sub" {
+                // New subscription.
+                completionHandler(fetchDesc(for: topicName))
             }
         } else if state == .inactive && self.appIsStarting {
             // User tapped notification.
