@@ -260,6 +260,9 @@ public class MsgGetMeta: CustomStringConvertible, Encodable {
     public static func sub() -> MsgGetMeta {
         return MsgGetMeta(what: kSub)
     }
+    public static func desc() -> MsgGetMeta {
+        return MsgGetMeta(what: kDesc)
+    }
 }
 
 public class MetaSetDesc<P: Encodable, R: Encodable>: Encodable {
