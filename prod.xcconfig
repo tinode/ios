@@ -12,4 +12,3 @@ USE_TLS = YES
 
 // App Settings
 APP_NAME = Tinode
-APP_BUNDLE_ID = co.tinode.tinodios
