@@ -93,7 +93,8 @@ public class BaseDb {
         self.topicDb!.createTable()
         self.subscriberDb!.createTable()
         self.messageDb!.createTable()
-        try! self.db!.run("PRAGMA foreign_key_check")
+        // Enable foreign key enforcement.
+        try! self.db!.run("PRAGMA foreign_keys = ON")
 
         self.account = self.accountDb!.getActiveAccount()
     }
