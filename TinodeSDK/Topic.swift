@@ -567,11 +567,7 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
         subsLastUpdated = loaded.max(by: {(s1, s2) -> Bool in
             ((s1.updated ?? Date.distantPast) < (s2.updated ?? Date.distantPast))
         })?.updated
-        let filtered = loaded.filter { $0.user != nil }
-        if filtered.count != loaded.count {
-            Tinode.log.error("Some subscriptions missing user field (topic %@)", self.name)
-        }
-        subs = (Dictionary(uniqueKeysWithValues: filtered.map { ($0.user, $0) }) as! [String : Subscription<SP, SR>])
+        subs = (Dictionary(uniqueKeysWithValues: loaded.map { ($0.user, $0) }) as! [String : Subscription<SP, SR>])
         return subs!.count
     }
 
