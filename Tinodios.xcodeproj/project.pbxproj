@@ -971,7 +971,7 @@
 				0A0380E521B3CC8200A3FA0E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		0A0380E621B3CC8200A3FA0E /* Build configuration list for PBXNativeTarget "Tinodios" */ = {
 			isa = XCConfigurationList;
@@ -980,7 +980,7 @@
 				0A0380E821B3CC8200A3FA0E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		0ACE9E7D23813A1D006BE575 /* Build configuration list for PBXNativeTarget "TinodiosNSExtension" */ = {
 			isa = XCConfigurationList;
@@ -989,7 +989,7 @@
 				0ACE9E7C23813A1D006BE575 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
 	};
