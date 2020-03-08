@@ -709,7 +709,11 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
 
             sub = newsub
         } else {
-            sub = getSubscription(for: newsub.user)
+            guard let user = newsub.user else {
+                Tinode.log.error("Subscription missing user field (topic %@), uniqueId: %@", self.name, newsub.uniqueId ?? "NONE")
+                return
+            }
+            sub = getSubscription(for: user)
             if sub != nil {
                 _ = sub!.merge(sub: newsub)
                 store?.subUpdate(topic: self, sub: sub!)

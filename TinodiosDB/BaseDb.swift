@@ -11,7 +11,7 @@ import TinodeSDK
 
 public class BaseDb {
     // Current database schema version. Increment on schema changes.
-    public static let kSchemaVersion: Int32 = 103
+    public static let kSchemaVersion: Int32 = 104
 
     // Onject statuses.
     // Status undefined/not set.
@@ -93,6 +93,8 @@ public class BaseDb {
         self.topicDb!.createTable()
         self.subscriberDb!.createTable()
         self.messageDb!.createTable()
+        // Enable foreign key enforcement.
+        try! self.db!.run("PRAGMA foreign_keys = ON")
 
         self.account = self.accountDb!.getActiveAccount()
     }
