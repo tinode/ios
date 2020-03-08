@@ -70,6 +70,10 @@ public class UserDb {
         return self.insert(uid: sub.user ?? sub.topic, updated: sub.updated, serializedPub: sub.serializePub())
     }
     private func insert(uid: String?, updated: Date?, serializedPub: String?) -> Int64 {
+        guard let uid = uid, !uid.isEmpty else {
+            BaseDb.log.error("UserDb - attempting to insert a record with an empty uid")
+            return -1
+        }
         do {
             let rowid = try db.run(
                 self.table.insert(
