@@ -84,7 +84,7 @@ public class UserDb {
             ))
             return rowid
         } catch {
-            BaseDb.log.error("UserDb - insert operation failed: uid = %@, error = %@", uid ?? "", error.localizedDescription)
+            BaseDb.log.error("UserDb - insert operation failed: uid = %@, error = %@", uid, error.localizedDescription)
             return -1
         }
     }
