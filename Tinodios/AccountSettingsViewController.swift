@@ -15,6 +15,7 @@ class AccountSettingsViewController: UITableViewController {
     @IBOutlet weak var topicTitleTextView: UITextView!
     @IBOutlet weak var avatarImage: RoundImageView!
     @IBOutlet weak var loadAvatarButton: UIButton!
+    @IBOutlet weak var incognitoModeSwitch: UISwitch!
     @IBOutlet weak var sendReadReceiptsSwitch: UISwitch!
     @IBOutlet weak var sendTypingNotificationsSwitch: UISwitch!
     @IBOutlet weak var myUIDLabel: UILabel!
@@ -167,6 +168,10 @@ class AccountSettingsViewController: UITableViewController {
             )
         }, disabledPermissions: "ODS")
     }
+
+    @IBAction func incognitoModeClicked(_ sender: Any) {
+    }
+    
     @IBAction func readReceiptsClicked(_ sender: Any) {
         UserDefaults.standard.set(self.sendReadReceiptsSwitch.isOn, forKey: Utils.kTinodePrefReadReceipts)
     }
