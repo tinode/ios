@@ -134,7 +134,7 @@ public class PromisedReply<Value> {
     }
     @discardableResult
     public func then(onSuccess successHandler: SuccessHandler,
-                     onFailure failureHandler: FailureHandler = nil) throws -> PromisedReply<Value>? {
+                     onFailure failureHandler: FailureHandler = nil) throws -> PromisedReply<Value> {
         return try queue.sync {
             // start critical section
             guard nextPromise == nil else {
@@ -152,9 +152,9 @@ public class PromisedReply<Value> {
                 case .waiting: break
                 }
             } catch {
-                nextPromise = PromisedReply<Value>(error: error)
+                self.nextPromise = PromisedReply<Value>(error: error)
             }
-            return nextPromise
+            return self.nextPromise!
         }
     }
     @discardableResult

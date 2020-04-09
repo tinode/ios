@@ -9,6 +9,13 @@ import Foundation
 
 
 open class MeTopic<DP: Codable & Mergeable>: Topic<DP, PrivateType, DP, PrivateType> {
+    open class MeListener: Topic<DP, PrivateType, DP, PrivateType>.Listener {
+        // Called when user credentials are updated.
+        open func onCredUpdated(cred: [Credential]?) {}
+    }
+
+    private var credentials: [Credential]? = nil
+
     public init(tinode: Tinode?, l: MeTopic<DP>.Listener?) {
         super.init(tinode: tinode, name: Tinode.kTopicMe, l: l)
     }
@@ -23,6 +30,47 @@ open class MeTopic<DP: Codable & Mergeable>: Topic<DP, PrivateType, DP, PrivateT
     override func loadSubs() -> Int {
         // Don't attempt to load subscriptions: 'me' subscriptions are stored as topics.
         return 0
+    }
+
+    public var creds: [Credential]? {
+        get { return credentials }
+    }
+
+    public func delCredential(meth: String, val: String) -> PromisedReply<ServerMessage> {
+        let tnd = tinode!
+        if !tnd.isConnected {
+            return PromisedReply(error: TinodeError.notConnected("Cannot delete credential: not connected"))
+        }
+
+        if !attached {
+            return PromisedReply(error: TinodeError.notSubscribed("Subscribe first"))
+        }
+
+        let cred = Credential(meth: meth, val: val)
+        return try! tnd.delCredential(cred: cred).then(
+            onSuccess: { [weak self] msg in
+                let idx = self?.find(cred: cred, anyUnconfirmed: false) ?? -1
+                if idx >= 0 {
+                    self?.credentials?.remove(at: idx)
+                }
+
+                // Notify listeners
+                (self?.listener as! MeListener).onCredUpdated(cred: self?.creds)
+                return nil
+            },
+            onFailure: nil)
+    }
+
+    private func find(cred other: Credential, anyUnconfirmed: Bool) -> Int {
+        guard let creds = credentials else { return -1 }
+        var i = 0
+        for c in creds {
+            if c.meth == other.meth && ((anyUnconfirmed && !c.isDone) || c.val == other.val) {
+                return i
+            }
+            i += 1
+        }
+        return -1
     }
 
     override public func topicLeft(unsub: Bool?, code: Int?, reason: String?) {
@@ -192,5 +240,59 @@ open class MeTopic<DP: Codable & Mergeable>: Topic<DP, PrivateType, DP, PrivateT
             }
         }
         listener?.onSubsUpdated()
+    }
+
+    private func processOneCred(_ cred: Credential) {
+        guard cred.meth != nil else { return }
+
+        if cred.val != nil {
+            if credentials == nil {
+                // Empty list. Creade list with one new element.
+                credentials = [cred]
+            } else {
+                // Try finding this credential among confirmed or not.
+                var idx = find(cred: cred, anyUnconfirmed: false)
+                if idx < 0 {
+                    // Not found.
+                    if !cred.isDone {
+                        // Unconfirmed credential replaces previous unconfirmed credential of the same method.
+                        idx = find(cred: cred, anyUnconfirmed: true)
+                        if idx >= 0 {
+                            // Remove previous unconfirmed credential.
+                            credentials!.remove(at: idx)
+                        }
+                    }
+                    credentials!.append(cred)
+                } else {
+                    // Found. Maybe change 'done' status.
+                    credentials?[idx].done = true
+                }
+            }
+        } else if cred.resp != nil && credentials != nil {
+            // Handle credential confirmation.
+            let idx = find(cred: cred, anyUnconfirmed: true)
+            if idx >= 0 {
+                credentials?[idx].done = true
+            }
+        }
+    }
+
+    override internal func routeMetaCred(cred: Credential) {
+        processOneCred(cred)
+
+        (listener as! MeListener).onCredUpdated(cred: creds)
+    }
+
+    override internal func routeMetaCred(cred: [Credential]) {
+        var newCreds: [Credential] = []
+        for c in cred {
+            if c.meth != nil && c.val != nil {
+                newCreds.append(c)
+            }
+        }
+        credentials = newCreds
+
+        // Notify listeners
+        (listener as! MeListener).onCredUpdated(cred: creds)
     }
 }

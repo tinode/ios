@@ -12,6 +12,14 @@ import UIKit
 
 class AccountSettingsViewController: UITableViewController {
 
+    private static let kSectionPersonal = 0
+    private static let kSectionNotifications = 1
+    private static let kSectionTags = 2
+    private static let kSectionContacts = 3
+    private static let kSectionActions = 4
+    private static let kSectionPermissions = 5
+    private static let kSectionGeneral = 6
+
     @IBOutlet weak var topicTitleTextView: UITextView!
     @IBOutlet weak var avatarImage: RoundImageView!
     @IBOutlet weak var loadAvatarButton: UIButton!
@@ -102,6 +110,7 @@ class AccountSettingsViewController: UITableViewController {
         let versionCode = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "0"
         self.appVersion.text = "\(version) (\(versionCode))"
     }
+
     private func reloadData() {
         // Title.
         self.topicTitleTextView.text = me.pub?.fn ?? "Unknown"
@@ -126,7 +135,10 @@ class AccountSettingsViewController: UITableViewController {
         self.authPermissionsLabel.sizeToFit()
         self.anonPermissionsLabel.text = me.defacs?.getAnon() ?? ""
         self.anonPermissionsLabel.sizeToFit()
+
+        self.manageTags.detailTextLabel?.text = me.tags?.joined(separator: " ,")
     }
+
     @objc
     func accountNameTapped(sender: UITapGestureRecognizer) {
         let alert = UIAlertController(title: "Edit account name", message: nil, preferredStyle: .alert)
@@ -143,6 +155,7 @@ class AccountSettingsViewController: UITableViewController {
         }))
         self.present(alert, animated: true)
     }
+
     private func getAcsAndPermissionsChangeType(for sender: UIView) -> (AcsHelper?, UiUtils.PermissionsChangeType?) {
         if sender === authUsersPermissions {
             return (me.defacs?.auth, .updateAuth)
@@ -152,6 +165,7 @@ class AccountSettingsViewController: UITableViewController {
         }
         return (nil, nil)
     }
+
     @objc
     func permissionsTapped(sender: UITapGestureRecognizer) {
         guard let v = sender.view else {
@@ -181,7 +195,7 @@ class AccountSettingsViewController: UITableViewController {
                 onFailure: { err in
                     self.incognitoModeSwitch.isOn = !isChecked
                     return nil
-                })?.thenFinally(finally: {
+                }).thenFinally(finally: {
                     DispatchQueue.main.async { self.reloadData() }
                 })
         } catch TinodeError.notConnected(_) {
@@ -195,9 +209,11 @@ class AccountSettingsViewController: UITableViewController {
     @IBAction func readReceiptsClicked(_ sender: Any) {
         UserDefaults.standard.set(self.sendReadReceiptsSwitch.isOn, forKey: Utils.kTinodePrefReadReceipts)
     }
+
     @IBAction func typingNotificationsClicked(_ sender: Any) {
         UserDefaults.standard.set(self.sendTypingNotificationsSwitch.isOn, forKey: Utils.kTinodePrefTypingNotifications)
     }
+
     @IBAction func loadAvatarClicked(_ sender: Any) {
         imagePicker.present(from: self.view)
     }
@@ -205,6 +221,7 @@ class AccountSettingsViewController: UITableViewController {
     @objc func manageTagsClicked(sender: UITapGestureRecognizer) {
         UiUtils.presentManageTagsEditDialog(over: self, forTopic: self.me)
     }
+
     @objc func addContactClicked(sender: UIGestureRecognizer) {
         let alert = UIAlertController(title: "Add contact", message: "Enter email or phone number", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
@@ -339,6 +356,7 @@ class AccountSettingsViewController: UITableViewController {
                 return nil
             })
     }
+
     private func updateTitle(newTitle: String?) {
         guard let newTitle = newTitle else { return }
         let pub = me.pub == nil ? VCard(fn: nil, avatar: nil as Data?) : me.pub!.copy()
@@ -352,6 +370,7 @@ class AccountSettingsViewController: UITableViewController {
             },
             onFailure: UiUtils.ToastFailureHandler)
     }
+
     private func logout() {
         Cache.log.info("AccountSettingsVC - logging out")
         UiUtils.logoutAndRouteToLoginVC()
@@ -382,4 +401,33 @@ extension AccountSettingsViewController: MFMailComposeViewControllerDelegate {
             UiUtils.showToast(message: "Failed to send email: \(err.localizedDescription)")
         }
     }
+}
+
+extension AccountSettingsViewController {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if section == AccountSettingsViewController.kSectionContacts {
+            return me.creds == nil ? 1 : (me.creds?.count ?? 0) + 1
+        }
+        return super.tableView(tableView, numberOfRowsInSection: section)
+    }
+
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        if indexPath.section != AccountSettingsViewController.kSectionContacts {
+            return super.tableView(tableView, cellForRowAt: indexPath)
+        }
+
+        if indexPath.row == 0 {
+            // [Add another] button cell.
+            return super.tableView(tableView, cellForRowAt: indexPath)
+        }
+
+        // Cells with contacts.
+        let cell = tableView.dequeueReusableCell(withIdentifier: "defaultCell") ?? UITableViewCell(style: .default, reuseIdentifier: "defaultCell")
+
+        cell.textLabel?.text = me.creds![indexPath.row - 1].description
+        cell.textLabel?.sizeToFit()
+
+        return cell
+    }
+
 }

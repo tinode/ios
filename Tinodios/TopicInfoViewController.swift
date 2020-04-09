@@ -218,7 +218,7 @@ class TopicInfoViewController: UITableViewController {
                 onFailure: { err in
                     self.mutedSwitch.isOn = !isChecked
                     return nil
-                })?.thenFinally(finally: {
+                }).thenFinally(finally: {
                     DispatchQueue.main.async { self.reloadData() }
                 })
         } catch TinodeError.notConnected(_) {

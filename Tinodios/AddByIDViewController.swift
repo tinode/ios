@@ -52,7 +52,7 @@ class AddByIDViewController: UIViewController {
         // FIXME: this generates an unnecessary network call which fetches topic description.
         // The description is discarded and re-requested as a part of the subsequent {sub} call.
         // Either get rid of the {get} call or save the returned description.
-        let getMeta = MsgGetMeta(desc: MetaGetDesc(), sub: nil, data: nil, del: nil, tags: false)
+        let getMeta = MsgGetMeta(desc: MetaGetDesc(), sub: nil, data: nil, del: nil, tags: false, cred: false)
         _ = try? tinode.getMeta(topic: id, query: getMeta)?.then(
             onSuccess: { [weak self] msg in
                 // Valid topic id.
@@ -72,7 +72,7 @@ class AddByIDViewController: UIViewController {
                     }
                 }
                 return nil
-            })?.thenFinally(finally: { [weak self] in
+            }).thenFinally(finally: { [weak self] in
                 DispatchQueue.main.async {
                     self?.okayButton.isEnabled = true
                 }

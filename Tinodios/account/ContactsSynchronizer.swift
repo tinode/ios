@@ -140,15 +140,9 @@ class ContactsSynchronizer {
                 _ = try tinode.subscribe(to: Tinode.kTopicFnd, set: MsgSetMeta<Int, Int>?(nil), get: nil, background: false)?.getResult()
                 //let q: Int? = nil
                 let metaDesc: MetaSetDesc<Int, String> = MetaSetDesc(pub: nil, priv: contacts)
-                let setMeta: MsgSetMeta<Int, String> = MsgSetMeta<Int, String>(
-                    desc: metaDesc, sub: nil, tags: nil, cred: nil)
-                _ = try tinode.setMeta(
-                    for: Tinode.kTopicFnd,
-                    meta: setMeta)?.getResult()
-                let meta = MsgGetMeta(
-                    desc: nil,
-                    sub: MetaGetSub(user: nil, ims: lastSyncMarker, limit: nil),
-                    data: nil, del: nil, tags: false)
+                let setMeta: MsgSetMeta<Int, String> = MsgSetMeta<Int, String>(desc: metaDesc, sub: nil, tags: nil, cred: nil)
+                _ = try tinode.setMeta(for: Tinode.kTopicFnd, meta: setMeta)?.getResult()
+                let meta = MsgGetMeta(desc: nil, sub: MetaGetSub(user: nil, ims: lastSyncMarker, limit: nil), data: nil, del: nil, tags: false, cred: false)
                 if let future = tinode.getMeta(topic: Tinode.kTopicFnd, query: meta) {
                     if try future.waitResult() {
                         let pkt = try! future.getResult()

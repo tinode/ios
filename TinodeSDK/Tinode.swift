@@ -1200,30 +1200,41 @@ public class Tinode {
         guard let msgId = msg.del?.id else { return nil }
         return sendWithPromise(payload: msg, with: msgId)
     }
-    func delMessage(topicName: String?, fromId: Int, toId: Int?, hard: Bool) -> PromisedReply<ServerMessage>? {
+    func delMessage(topicName: String, fromId: Int, toId: Int?, hard: Bool) -> PromisedReply<ServerMessage>? {
         return sendDeleteMessage(
             msg: ClientMessage<Int, Int>(
                 del: MsgClientDel(id: getNextMsgId(),
                                   topic: topicName,
                                   from: fromId, to: toId, hard: hard)))
     }
-    func delMessage(topicName: String?, ranges: [MsgRange]?, hard: Bool) -> PromisedReply<ServerMessage>? {
+    func delMessage(topicName: String, ranges: [MsgRange]?, hard: Bool) -> PromisedReply<ServerMessage>? {
         return sendDeleteMessage(
             msg: ClientMessage<Int, Int>(
                 del: MsgClientDel(id: getNextMsgId(),
                                   topic: topicName, ranges: ranges, hard: hard)))
     }
-    func delMessage(topicName: String?, msgId: Int, hard: Bool) -> PromisedReply<ServerMessage>? {
+    func delMessage(topicName: String, msgId: Int, hard: Bool) -> PromisedReply<ServerMessage>? {
         return sendDeleteMessage(
             msg: ClientMessage<Int, Int>(
                 del: MsgClientDel(id: getNextMsgId(),
                                   topic: topicName, msgId: msgId, hard: hard)))
     }
-    func delSubscription(topicName: String?, user: String?) -> PromisedReply<ServerMessage>? {
+    func delSubscription(topicName: String, user: String?) -> PromisedReply<ServerMessage>? {
         return sendDeleteMessage(
             msg: ClientMessage<Int, Int>(
                 del: MsgClientDel(id: getNextMsgId(),
                                   topic: topicName, user: user)))
+    }
+
+    /// Low-level request to delete a credential. Use {@link MeTopic#delCredential(String, String)} ()} instead.
+    ///
+    /// - Parameters
+    ///  - cred  credential to delete.
+    /// - Returns: PromisedReply of the reply ctrl message
+    func delCredential(cred: Credential) -> PromisedReply<ServerMessage> {
+        let msgId = getNextMsgId()
+        let msg = ClientMessage<Int, Int>(del: MsgClientDel(id: msgId, cred: cred))
+        return sendWithPromise(payload: msg, with: msgId)
     }
 
     /// Low-level request to delete topic. Use {@link Topic#delete()} instead.
@@ -1231,7 +1242,7 @@ public class Tinode {
     /// - Parameters:
     ///   - topicName: name of the topic to delete
     /// - Returns: PromisedReply of the reply ctrl message
-    func delTopic(topicName: String?) -> PromisedReply<ServerMessage>? {
+    func delTopic(topicName: String) -> PromisedReply<ServerMessage>? {
         let msgId = getNextMsgId()
         let msg = ClientMessage<Int, Int>(del: MsgClientDel(id: msgId, topic: topicName))
         return sendWithPromise(payload: msg, with: msgId)
