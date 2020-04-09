@@ -286,20 +286,17 @@ public class Tinode {
     // Queue to execute state-mutating operations on.
     private let operationsQueue = DispatchQueue(label: "co.tinode.operations")
 
-    public func baseURL(useWebsocketProtocol: Bool) -> URL? {
-        guard !hostName.isEmpty else { return nil }
-        return hostURL(useWebsocketProtocol: useWebsocketProtocol)?.appendingPathComponent("v\(kProtocolVersion)")
-    }
     public func hostURL(useWebsocketProtocol: Bool) -> URL? {
         guard !hostName.isEmpty else { return nil }
         let protocolString = useTLS ? (useWebsocketProtocol ? "wss://" : "https://") : (useWebsocketProtocol ? "ws://" : "http://")
         let urlString = "\(protocolString)\(hostName)/"
         return URL(string: urlString)
     }
+    public func baseURL(useWebsocketProtocol: Bool) -> URL? {
+        return hostURL(useWebsocketProtocol: useWebsocketProtocol)?.appendingPathComponent("v\(kProtocolVersion)")
+    }
     public func channelsURL(useWebsocketProtocol: Bool) -> URL? {
-        guard var b = baseURL(useWebsocketProtocol: useWebsocketProtocol) else { return nil }
-        b.appendPathComponent("/channels")
-        return b
+        return baseURL(useWebsocketProtocol: useWebsocketProtocol)?.appendingPathComponent("/channels")
     }
     public var isConnected: Bool {
         get {

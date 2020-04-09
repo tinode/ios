@@ -192,7 +192,7 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
         }
     }
 
-    fileprivate weak var tinode: Tinode? = nil
+    internal weak var tinode: Tinode? = nil
     public var name: String = ""
     public var isNew: Bool {
         get { return Topic.isNewByName(name: name)}
@@ -293,7 +293,7 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
     public var attached = false
     weak public var listener: Listener? = nil
     // Cache of topic subscribers indexed by userID
-    fileprivate var subs: [String:Subscription<SP,SR>]? = nil
+    internal var subs: [String:Subscription<SP,SR>]? = nil
     public var tags: [String]? = nil
     private var lastKeyPress: Date = Date(timeIntervalSince1970: 0)
 
@@ -603,7 +603,7 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
         subs?.removeValue(forKey: sub.user!)
     }
 
-    fileprivate func update(sub: Subscription<SP, SR>) {
+    internal func update(sub: Subscription<SP, SR>) {
         var changed = false
         if self.lastSeen == nil {
             self.lastSeen = sub.seen
@@ -618,23 +618,23 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
             self.online = o
         }
     }
-    fileprivate func update(desc: Description<DP, DR>) {
+    internal func update(desc: Description<DP, DR>) {
         if description?.merge(desc: desc) ?? false {
             store?.topicUpdate(topic: self)
         }
     }
-    fileprivate func update(tags: [String]) {
+    internal func update(tags: [String]) {
         self.tags = tags
         store?.topicUpdate(topic: self)
     }
-    fileprivate func update(desc: MetaSetDesc<DP, DR>) {
+    internal func update(desc: MetaSetDesc<DP, DR>) {
         if self.description?.merge(desc: desc) ?? false {
             self.store?.topicUpdate(topic: self)
         }
     }
     // Topic sent an update to description or subscription, got a confirmation, now
     // update local data with the new info.
-    fileprivate func update(ctrl: MsgServerCtrl, meta: MsgSetMeta<DP, DR>) {
+    internal func update(ctrl: MsgServerCtrl, meta: MsgSetMeta<DP, DR>) {
         if let desc = meta.desc {
             self.update(desc: desc)
             if let d = self.description {
@@ -654,7 +654,7 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
             self.listener?.onMetaTags(tags: tags)
         }
     }
-    fileprivate func update(acsMap: [String:String]?, sub: MetaSetSub) {
+    internal func update(acsMap: [String:String]?, sub: MetaSetSub) {
         var user = sub.user
         var acs: Acs
         if let acsMap = acsMap {
@@ -692,7 +692,7 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
             _ = self.store?.subNew(topic: self, sub: sub2)
         }
     }
-    fileprivate func addSubToCache(sub: Subscription<SP, SR>) {
+    internal func addSubToCache(sub: Subscription<SP, SR>) {
         guard let user = sub.user else { return }
 
         if subs == nil {
@@ -732,7 +732,7 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
         listener?.onData(data: nil)
     }
 
-    fileprivate func routeMetaSub(meta: MsgServerMeta) {
+    internal func routeMetaSub(meta: MsgServerMeta) {
         if let metaSubs = meta.sub as? Array<Subscription<SP, SR>> {
             for newsub in metaSubs {
                 processSub(newsub: newsub)
@@ -910,6 +910,11 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
     public func setSubscription(sub: MetaSetSub) -> PromisedReply<ServerMessage>? {
         return setMeta(meta: MsgSetMeta(desc: nil, sub: sub, tags: nil, cred: nil))
     }
+
+    public func updateMode(update: String) -> PromisedReply<ServerMessage>? {
+        return updateMode(uid: nil, update: update)
+    }
+
     public func updateMode(uid: String?, update: String) -> PromisedReply<ServerMessage>? {
         var uid = uid
         let sub = getSubscription(for: uid ?? tinode?.myUid)
@@ -926,6 +931,7 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
         }
         return PromisedReply<ServerMessage>(value: ServerMessage())
     }
+
     public func updateMuted(muted: Bool) -> PromisedReply<ServerMessage>? {
         return updateMode(uid: nil, update: muted ? "-P" : "+P")
     }
@@ -1225,250 +1231,5 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
             result = self.publish(content: msg.content!, head: msg.head, msgId: msgId)
         }
         return result
-    }
-}
-
-open class MeTopic<DP: Codable & Mergeable>: Topic<DP, PrivateType, DP, PrivateType> {
-    public init(tinode: Tinode?, l: MeTopic<DP>.Listener?) {
-        super.init(tinode: tinode, name: Tinode.kTopicMe, l: l)
-    }
-    public init(tinode: Tinode?, desc: Description<DP, PrivateType>) {
-        super.init(tinode: tinode, name: Tinode.kTopicMe, desc: desc)
-    }
-
-    override public var subsUpdated: Date? {
-        get { return tinode?.topicsUpdated }
-    }
-
-    override func loadSubs() -> Int {
-        // Don't attempt to load subscriptions: 'me' subscriptions are stored as topics.
-        return 0
-    }
-    override public func topicLeft(unsub: Bool?, code: Int?, reason: String?) {
-        super.topicLeft(unsub: unsub, code: code, reason: reason)
-        if let topics = tinode?.getTopics() {
-            for t in topics {
-                t.online = false
-            }
-        }
-    }
-    override public func routePres(pres: MsgServerPres) {
-        let what = MsgServerPres.parseWhat(what: pres.what)
-        if what == .kTerm {
-            // The 'me' topic itself is detached. Mark as unsubscribed.
-            super.routePres(pres: pres)
-            return
-        }
-
-        if what == .kUpd && Tinode.kTopicMe == pres.src {
-            // Me's desc was updated, fetch the updated version.
-            getMeta(query: getMetaGetBuilder().withDesc().build())
-            return
-        }
-
-        // "what":"tags" has src == nil
-        if let topic = pres.src != nil ? tinode!.getTopic(topicName: pres.src!) : nil {
-            switch what {
-            case .kOn: // topic came online
-                topic.online = true
-            case .kOff: // topic went offline
-                topic.online = false
-                topic.lastSeen = LastSeen(when: Date(), ua: nil)
-            case .kMsg: // new message received
-                topic.seq = pres.seq
-                if pres.act == nil || tinode!.isMe(uid: pres.act!) {
-                    assignRead(to: topic, read: pres.seq)
-                }
-                topic.touched = Date()
-            case .kUpd: // pub/priv updated
-                getMeta(query: getMetaGetBuilder().withSub(user: pres.src).build())
-            case .kAcs: // access mode changed
-                if topic.updateAccessMode(ac: pres.dacs) {
-                    self.store?.topicUpdate(topic: topic)
-                }
-            case .kUa: // user agent changed
-                topic.lastSeen = LastSeen(when: Date(), ua: pres.ua)
-            case .kRecv: // user's other session marked some messages as received
-                assignRecv(to: topic, recv: pres.seq)
-            case .kRead: // user's other session marked some messages as read
-                assignRead(to: topic, read: pres.seq)
-            case .kGone:
-                // If topic is unknown (==nil), then we don't care to unregister it.
-                topic.persist(false)
-                tinode!.stopTrackingTopic(topicName: pres.src!)
-            case .kDel: // messages deleted
-                // Explicitly ignored: 'me' topic has no messages.
-                break
-            default:
-                Tinode.log.error("ME.pres message - unknown what: %@", String(describing: pres.what))
-            }
-        } else {
-            // New topic
-            switch what {
-            case .kAcs:
-                let acs = Acs()
-                acs.update(from: pres.dacs)
-                if acs.isModeDefined {
-                    getMeta(query: getMetaGetBuilder().withSub(user: pres.src).build())
-                } else {
-                    Tinode.log.error("ME.acs - unexpected access mode: %@", String(describing: pres.dacs))
-                }
-            case .kTags:
-                // Account tags updated
-                getMeta(query: getMetaGetBuilder().withTags().build())
-            default:
-                Tinode.log.error("ME.pres - topic not found: what = %@, src = %@",
-                                 String(describing: pres.what), String(describing: pres.src))
-            }
-        }
-
-        if (what == MsgServerPres.What.kGone) {
-            listener?.onSubsUpdated()
-        }
-        listener?.onPres(pres: pres)
-    }
-
-    fileprivate func assignRecv(to topic: TopicProto, recv seq: Int?) {
-        if (topic.recv ?? -1) < (seq ?? -1) {
-            topic.recv = seq
-            self.store?.setRecv(topic: topic, recv: seq!)
-        }
-    }
-
-    fileprivate func assignRead(to topic: TopicProto, read seq: Int?) {
-        if (topic.read ?? -1) < (seq ?? -1) {
-            topic.read = seq
-            self.store?.setRead(topic: topic, read: topic.read!)
-            assignRecv(to: topic, recv: topic.read)
-        }
-    }
-
-    override fileprivate func routeMetaSub(meta: MsgServerMeta) {
-        if let metaSubs = meta.sub as? Array<Subscription<DP, PrivateType>> {
-            for sub in metaSubs {
-                if let topic = tinode!.getTopic(topicName: sub.topic!) {
-                    if sub.deleted != nil {
-                        topic.persist(false)
-                        tinode!.stopTrackingTopic(topicName: sub.topic!)
-                    } else {
-                        if let t = topic as? DefaultTopic {
-                            t.update(sub: sub as! Subscription<VCard, PrivateType>)
-                        } else if let t = topic as? DefaultMeTopic {
-                            t.update(sub: sub as! Subscription<VCard, PrivateType>)
-                        } /*else if let t = topic as? DefaultFndTopic {
-                            t.update(sub: sub)
-                        } */
-                        else {
-                            Tinode.log.fault("ME.routeMetaSub - failed to update topic %@", String(describing: topic))
-                            assert(false)
-                        }
-                    }
-                } else if sub.deleted == nil {
-                    let topic = tinode!.newTopic(sub: sub)
-                    topic.persist(true)
-                }
-                listener?.onMetaSub(sub: sub)
-            }
-        }
-        listener?.onSubsUpdated()
-    }
-}
-public class FndTopic<SP: Codable>: Topic<String, String, SP, Array<String>> {
-    init(tinode: Tinode?) {
-        super.init(tinode: tinode, name: Tinode.kTopicFnd)
-    }
-
-    @discardableResult
-    override public func setMeta(meta: MsgSetMeta<String, String>) -> PromisedReply<ServerMessage>? {
-        if self.subs != nil {
-            self.subs!.removeAll()
-            self.subs = nil
-            self.subsLastUpdated = nil
-            self.listener?.onSubsUpdated()
-        }
-        return super.setMeta(meta: meta)
-    }
-
-    override func routeMetaSub(meta: MsgServerMeta) {
-        if let subscriptions = meta.sub {
-            for upd in subscriptions {
-                var sub = getSubscription(for: upd.uniqueId)
-                if sub != nil {
-                    _ = sub!.merge(sub: upd as! Subscription<SP, [String]>)
-                } else {
-                    sub = upd as? Subscription<SP, [String]>
-                    self.addSubToCache(sub: sub!)
-                }
-                self.listener?.onMetaSub(sub: sub!)
-            }
-        }
-        self.listener?.onSubsUpdated()
-    }
-
-    override public func getSubscriptions() -> [Subscription<SP, Array<String>>]? {
-        guard let v = subs?.values else { return nil }
-        return Array(v)
-    }
-
-    override func addSubToCache(sub: Subscription<SP, [String]>) {
-        guard let unique = sub.user ?? sub.topic else { return }
-
-        if subs == nil {
-            subs = [:]
-        }
-        subs![unique] = sub
-    }
-}
-
-public class ComTopic<DP: Codable & Mergeable>: Topic<DP, PrivateType, DP, PrivateType> {
-    override init(tinode: Tinode?, name: String, l: Listener?) {
-        super.init(tinode: tinode, name: name, l: l)
-    }
-    override init(tinode: Tinode?, sub: Subscription<DP, PrivateType>) {
-        super.init(tinode: tinode, sub: sub)
-    }
-    override init(tinode: Tinode?, name: String, desc: Description<DP, PrivateType>) {
-        super.init(tinode: tinode, name: name, desc: desc)
-    }
-    public convenience init(in tinode: Tinode?, forwardingEventsTo l: Listener? = nil) {
-        self.init(tinode: tinode!, name: Tinode.kTopicNew + tinode!.nextUniqueString(), l: l)
-    }
-
-    public override var isArchived: Bool {
-        guard let archived = priv?["arch"] else { return false }
-        switch archived {
-        case .bool(let x):
-            return x
-        default:
-            return false
-        }
-    }
-
-    public var comment: String? {
-        return priv?.comment
-    }
-
-    public var peer: Subscription<DP, PrivateType>? {
-        guard isP2PType else { return nil }
-        return self.getSubscription(for: self.name)
-    }
-
-    override public func getSubscription(for key: String?) -> Subscription<DP, PrivateType>? {
-        guard let sub = super.getSubscription(for: key) else { return nil }
-        if isP2PType && sub.pub == nil {
-            sub.pub = self.name == key ? self.pub : tinode?.getMeTopic()?.pub as? DP
-        }
-        return sub
-    }
-
-    public func updateArchived(archived: Bool) -> PromisedReply<ServerMessage>? {
-        var priv = PrivateType()
-        priv.archived = archived
-        let meta = MsgSetMeta<DP, PrivateType>(
-            desc: MetaSetDesc(pub: nil, priv: priv),
-            sub: nil,
-            tags: nil,
-            cred: nil)
-        return setMeta(meta: meta)
     }
 }

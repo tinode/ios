@@ -15,9 +15,11 @@ class AccountSettingsViewController: UITableViewController {
     @IBOutlet weak var topicTitleTextView: UITextView!
     @IBOutlet weak var avatarImage: RoundImageView!
     @IBOutlet weak var loadAvatarButton: UIButton!
+
     @IBOutlet weak var incognitoModeSwitch: UISwitch!
     @IBOutlet weak var sendReadReceiptsSwitch: UISwitch!
     @IBOutlet weak var sendTypingNotificationsSwitch: UISwitch!
+
     @IBOutlet weak var myUIDLabel: UILabel!
 
     @IBOutlet weak var authUsersPermissions: UITableViewCell!
@@ -55,7 +57,7 @@ class AccountSettingsViewController: UITableViewController {
 
         UiUtils.setupTapRecognizer(
             forView: topicTitleTextView,
-            action: #selector(AccountSettingsViewController.topicTitleTapped),
+            action: #selector(AccountSettingsViewController.accountNameTapped),
             actionTarget: self)
         UiUtils.setupTapRecognizer(
             forView: authUsersPermissions,
@@ -105,6 +107,8 @@ class AccountSettingsViewController: UITableViewController {
         self.topicTitleTextView.text = me.pub?.fn ?? "Unknown"
         // Read notifications and typing indicator checkboxes.
         let userDefaults = UserDefaults.standard
+
+        self.incognitoModeSwitch.setOn(me.isMuted, animated: false)
         self.sendReadReceiptsSwitch.setOn(
             userDefaults.bool(forKey: Utils.kTinodePrefReadReceipts),
             animated: false)
@@ -124,7 +128,7 @@ class AccountSettingsViewController: UITableViewController {
         self.anonPermissionsLabel.sizeToFit()
     }
     @objc
-    func topicTitleTapped(sender: UITapGestureRecognizer) {
+    func accountNameTapped(sender: UITapGestureRecognizer) {
         let alert = UIAlertController(title: "Edit account name", message: nil, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
         alert.addTextField(configurationHandler: { textField in
@@ -170,6 +174,22 @@ class AccountSettingsViewController: UITableViewController {
     }
 
     @IBAction func incognitoModeClicked(_ sender: Any) {
+        let isChecked = incognitoModeSwitch.isOn
+        do {
+            try self.me.updateMuted(muted: isChecked)?.then(
+                onSuccess: UiUtils.ToastSuccessHandler,
+                onFailure: { err in
+                    self.incognitoModeSwitch.isOn = !isChecked
+                    return nil
+                })?.thenFinally(finally: {
+                    DispatchQueue.main.async { self.reloadData() }
+                })
+        } catch TinodeError.notConnected(_) {
+            incognitoModeSwitch.isOn = !isChecked
+            UiUtils.showToast(message: "You are offline.")
+        } catch {
+            incognitoModeSwitch.isOn = !isChecked
+        }
     }
     
     @IBAction func readReceiptsClicked(_ sender: Any) {
