@@ -157,11 +157,11 @@ public class PromisedReply<Value> {
         }
     }
     @discardableResult
-    public func thenApply(onSuccess successHandler: SuccessHandler) -> PromisedReply<Value>? {
+    public func thenApply(onSuccess successHandler: SuccessHandler) -> PromisedReply<Value> {
         return then(onSuccess: successHandler, onFailure: nil)
     }
     @discardableResult
-    public func thenCatch(onFailure failureHandler: FailureHandler) -> PromisedReply<Value>? {
+    public func thenCatch(onFailure failureHandler: FailureHandler) -> PromisedReply<Value> {
         return then(onSuccess: nil, onFailure: failureHandler)
     }
 

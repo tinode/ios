@@ -32,9 +32,9 @@ public class Credential: Codable, Equatable, CustomStringConvertible {
     public static let kMethEmail = "email"
     public static let kMethPhone = "tel"
     // Confirmation method: email, phone, captcha.
-    var meth: String? = nil
+    public var meth: String? = nil
     // Credential to be confirmed, e.g. email or a phone number.
-    var val: String? = nil
+    public var val: String? = nil
     // Confirmation response, such as '123456'.
     var resp: String? = nil
     // Confirmation parameters.

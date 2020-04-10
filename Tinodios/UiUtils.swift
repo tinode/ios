@@ -118,7 +118,7 @@ class UiUtils {
             me!.listener = meListener
         }
         let get = me!.getMetaGetBuilder().withDesc().withSub().withTags().withCred().build()
-        return me!.subscribe(set: nil, get: get)?.thenCatch(onFailure: { err in
+        return me!.subscribe(set: nil, get: get).thenCatch(onFailure: { err in
             Cache.log.error("ME topic subscription error: %@", err.localizedDescription)
             if let e = err as? TinodeError {
                 if case TinodeError.serverResponseError(let code, let text, _) = e {
@@ -348,6 +348,7 @@ class UiUtils {
         tap.cancelsTouchesInView = false
         view.addGestureRecognizer(tap)
     }
+    @discardableResult
     public static func ToastFailureHandler(err: Error) -> PromisedReply<ServerMessage>? {
         DispatchQueue.main.async {
             if let e = err as? TinodeError, case .notConnected = e {
@@ -358,6 +359,7 @@ class UiUtils {
         }
         return nil
     }
+    @discardableResult
     public static func ToastSuccessHandler(msg: ServerMessage?) -> PromisedReply<ServerMessage>? {
         if let ctrl = msg?.ctrl, ctrl.code >= 300 {
             DispatchQueue.main.async {
@@ -414,7 +416,7 @@ class UiUtils {
     @discardableResult
     public static func setTopicData(
         forTopic topic: DefaultTopic, pub: VCard?, priv: PrivateType?) -> PromisedReply<ServerMessage>? {
-        return topic.setDescription(pub: pub, priv: priv)?.then(
+        return topic.setDescription(pub: pub, priv: priv).then(
             onSuccess: UiUtils.ToastSuccessHandler,
             onFailure: UiUtils.ToastFailureHandler)
     }
@@ -473,7 +475,7 @@ class UiUtils {
         }
         let alert = TagsEditDialogViewController(with: tags)
         alert.completionHandler = { newTags in
-            topic.setMeta(meta: MsgSetMeta(desc: nil, sub: nil, tags: newTags, cred: nil))?.thenCatch(onFailure: UiUtils.ToastFailureHandler)
+            topic.setMeta(meta: MsgSetMeta(desc: nil, sub: nil, tags: newTags, cred: nil)).thenCatch(onFailure: UiUtils.ToastFailureHandler)
         }
         alert.show(over: viewController)
     }

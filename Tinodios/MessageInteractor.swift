@@ -128,10 +128,10 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         if topic.isOwner {
             builder = builder.withTags()
         }
-        topic.subscribe(set: nil, get: builder.build())?.then(
+        topic.subscribe(set: nil, get: builder.build()).then(
                 onSuccess: { [weak self] _ in
                     self?.messageInteractorQueue.async {
-                        self?.topic?.syncAll()?.then(
+                        self?.topic?.syncAll().then(
                             onSuccess: { [weak self] _ in
                                 self?.loadMessages()
                                 return nil
@@ -176,7 +176,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         defer {
             loadMessages()
         }
-        topic.publish(content: content)?.then(
+        topic.publish(content: content).then(
             onSuccess: { [weak self] msg in
                 self?.loadMessages()
                 return nil
@@ -241,7 +241,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         }
         if !loadNextPageInternal() && !StoredTopic.isAllDataLoaded(topic: t) {
             t.getMeta(query:t.getMetaGetBuilder()
-                .withEarlierData(limit: MessageInteractor.kMessagesPerPage).build())?
+                .withEarlierData(limit: MessageInteractor.kMessagesPerPage).build())
                 .thenFinally(finally: { [weak self] in
                     self?.presenter?.endRefresh()
                 })
@@ -250,7 +250,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         }
     }
     func deleteMessage(seqId: Int) {
-        topic?.delMessage(id: seqId, hard: false)?.then(
+        topic?.delMessage(id: seqId, hard: false).then(
             onSuccess: { [weak self] msg in
                 self?.loadMessages()
                 return nil
@@ -266,11 +266,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         guard am.given?.update(from: "+RW") ?? false else {
             return
         }
-        topic?.setMeta(meta: MsgSetMeta(
-            desc: nil,
-            sub: MetaSetSub(user: topic?.name, mode: am.givenString),
-            tags: nil,
-            cred: nil))?.thenCatch(onFailure: UiUtils.ToastFailureHandler)
+        topic?.setMeta(meta: MsgSetMeta(desc: nil, sub: MetaSetSub(user: topic?.name, mode: am.givenString), tags: nil, cred: nil)).thenCatch(onFailure: UiUtils.ToastFailureHandler)
     }
 
     func acceptInvitation() {
@@ -279,7 +275,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         if topic.isP2PType {
             // For P2P topics change 'given' permission of the peer too.
             // In p2p topics the other user has the same name as the topic.
-            response = response?.then(
+            response = response.then(
                 onSuccess: { msg in
                     _ = topic.setMeta(meta: MsgSetMeta(
                         desc: nil,
@@ -291,13 +287,13 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                 onFailure: UiUtils.ToastFailureHandler
             )
         }
-        response?.thenApply(onSuccess: { msg in
+        response.thenApply(onSuccess: { msg in
             self.presenter?.applyTopicPermissions(withError: nil)
             return nil
         })
     }
     func ignoreInvitation() {
-        self.topic?.delete()?.thenFinally(
+        self.topic?.delete().thenFinally(
             finally: {
                 self.presenter?.dismiss()
             })
@@ -307,8 +303,8 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         guard let origAm = self.topic?.accessMode else { return }
         let am = Acs(from: origAm)
         guard am.want?.update(from: "-JP") ?? false else { return }
-        self.topic?.setMeta(meta: MsgSetMeta(desc: nil, sub: MetaSetSub(mode: am.wantString), tags: nil, cred: nil))?
-            .thenCatch(onFailure: UiUtils.ToastFailureHandler)?
+        self.topic?.setMeta(meta: MsgSetMeta(desc: nil, sub: MetaSetSub(mode: am.wantString), tags: nil, cred: nil))
+            .thenCatch(onFailure: UiUtils.ToastFailureHandler)
             .thenFinally(
                 finally: {
                     self.presenter?.dismiss()
@@ -367,7 +363,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                         mime: mimeType, fname: filename,
                         refurl: srvUrl, size: data.count) {
                         _ = topic.store?.msgReady(topic: topic, dbMessageId: msgId, data: content)
-                        topic.syncOne(msgId: msgId)?.thenFinally(finally: {
+                        topic.syncOne(msgId: msgId).thenFinally(finally: {
                             interactor?.loadMessages()
                         })
                         success = true

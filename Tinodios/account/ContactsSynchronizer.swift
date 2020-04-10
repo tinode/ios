@@ -135,31 +135,31 @@ class ContactsSynchronizer {
                 tinode.setAutoLoginWithToken(token: token)
                 _ = try tinode.connectDefault()?.getResult()
 
-                _ = try tinode.loginToken(token: token, creds: nil)?.getResult()
+                _ = try tinode.loginToken(token: token, creds: nil).getResult()
                 // Generic params don't matter.
-                _ = try tinode.subscribe(to: Tinode.kTopicFnd, set: MsgSetMeta<Int, Int>?(nil), get: nil, background: false)?.getResult()
+                _ = try tinode.subscribe(to: Tinode.kTopicFnd, set: MsgSetMeta<Int, Int>?(nil), get: nil, background: false).getResult()
                 //let q: Int? = nil
                 let metaDesc: MetaSetDesc<Int, String> = MetaSetDesc(pub: nil, priv: contacts)
                 let setMeta: MsgSetMeta<Int, String> = MsgSetMeta<Int, String>(desc: metaDesc, sub: nil, tags: nil, cred: nil)
-                _ = try tinode.setMeta(for: Tinode.kTopicFnd, meta: setMeta)?.getResult()
+                _ = try tinode.setMeta(for: Tinode.kTopicFnd, meta: setMeta).getResult()
                 let meta = MsgGetMeta(desc: nil, sub: MetaGetSub(user: nil, ims: lastSyncMarker, limit: nil), data: nil, del: nil, tags: false, cred: false)
-                if let future = tinode.getMeta(topic: Tinode.kTopicFnd, query: meta) {
-                    if try future.waitResult() {
-                        let pkt = try! future.getResult()
-                        guard let subs = pkt?.meta?.sub else { return }
-                        for sub in subs {
-                            if Tinode.topicTypeByName(name: sub.user) == .p2p {
-                                if (lastSyncMarker ?? Date.distantPast) < (sub.updated ?? Date.distantPast) {
-                                    lastSyncMarker = sub.updated
-                                }
-                                contactsManager.processSubscription(sub: sub)
+                let future = tinode.getMeta(topic: Tinode.kTopicFnd, query: meta)
+                if try future.waitResult() {
+                    let pkt = try! future.getResult()
+                    guard let subs = pkt?.meta?.sub else { return }
+                    for sub in subs {
+                        if Tinode.topicTypeByName(name: sub.user) == .p2p {
+                            if (lastSyncMarker ?? Date.distantPast) < (sub.updated ?? Date.distantPast) {
+                                lastSyncMarker = sub.updated
                             }
-                        }
-                        if lastSyncMarker != nil {
-                            serverSyncMarker = lastSyncMarker
+                            contactsManager.processSubscription(sub: sub)
                         }
                     }
+                    if lastSyncMarker != nil {
+                        serverSyncMarker = lastSyncMarker
+                    }
                 }
+
                 success = true
             } catch {
                 Cache.log.error("ContactsSynchronizer - sync failure: %@", error.localizedDescription)

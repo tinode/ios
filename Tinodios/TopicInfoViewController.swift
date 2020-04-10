@@ -212,7 +212,7 @@ class TopicInfoViewController: UITableViewController {
 
     @IBAction func mutedSwitched(_ sender: Any) {
         let isChecked = mutedSwitch.isOn
-        topic.updateMuted(muted: isChecked)?.then(
+        topic.updateMuted(muted: isChecked).then(
             onSuccess: UiUtils.ToastSuccessHandler,
             onFailure: { err in
                 self.mutedSwitch.isOn = !isChecked
@@ -319,7 +319,7 @@ class TopicInfoViewController: UITableViewController {
     }
 
     private func deleteTopic() {
-        topic.delete()?.then(
+        topic.delete().then(
             onSuccess: { msg in
                 DispatchQueue.main.async {
                     let storyboard = UIStoryboard(name: "Main", bundle: nil)
@@ -333,7 +333,7 @@ class TopicInfoViewController: UITableViewController {
     }
 
     private func blockContact() {
-        topic.updateMode(uid: nil, update: "-JP")?.then(
+        topic.updateMode(uid: nil, update: "-JP").then(
             onSuccess: { msg in
                 DispatchQueue.main.async {
                     let storyboard = UIStoryboard(name: "Main", bundle: nil)
@@ -375,7 +375,7 @@ class TopicInfoViewController: UITableViewController {
 
     @objc func deleteMessagesClicked(sender: UITapGestureRecognizer) {
         let handler: (Bool) -> Void = { (hard: Bool) -> Void in
-            self.topic?.delMessages(hard: hard)?.thenCatch(onFailure: UiUtils.ToastFailureHandler)
+            self.topic?.delMessages(hard: hard).thenCatch(onFailure: UiUtils.ToastFailureHandler)
         }
 
         let alert = UIAlertController(title: "Clear all messages?", message: nil, preferredStyle: .alert)
@@ -652,7 +652,7 @@ extension TopicInfoViewController {
             case .ban:
                 ban = true
             }
-            self.topic.eject(user: uid, ban: ban)?.then(
+            self.topic.eject(user: uid, ban: ban).then(
                 onSuccess: self.promiseSuccessHandler,
                 onFailure: UiUtils.ToastFailureHandler)
         }))
@@ -693,7 +693,7 @@ extension TopicInfoViewController {
                 UiUtils.showToast(message: "Can't make this user owner.")
                 return
             }
-            self.topic.updateMode(uid: uid, update: "+O")?.then(
+            self.topic.updateMode(uid: uid, update: "+O").then(
                 onSuccess: self.promiseSuccessHandler,
                 onFailure: UiUtils.ToastFailureHandler)
         }))
@@ -723,10 +723,10 @@ extension TopicInfoViewController: EditMembersDelegate {
 
     func editMembersDidEndEditing(_: UIView, added: [String], removed: [String]) {
          for uid in added {
-            topic.invite(user: uid, in: nil)?.thenCatch(onFailure: UiUtils.ToastFailureHandler)
+            topic.invite(user: uid, in: nil).thenCatch(onFailure: UiUtils.ToastFailureHandler)
          }
          for uid in removed {
-            topic.eject(user: uid, ban: false)?.thenCatch(onFailure: UiUtils.ToastFailureHandler)
+            topic.eject(user: uid, ban: false).thenCatch(onFailure: UiUtils.ToastFailureHandler)
          }
     }
 

@@ -97,7 +97,7 @@ class SignupViewController: UITableViewController {
                         return tinode.createAccountBasic(
                             uname: login, pwd: pwd, login: true,
                             tags: nil, desc: desc, creds: creds)
-            })?.thenApply(
+            }).thenApply(
                 onSuccess: { [weak self] msg in
                     if let ctrl = msg?.ctrl, ctrl.code >= 300, ctrl.text.contains("validate credentials") {
                         DispatchQueue.main.async {
@@ -111,14 +111,14 @@ class SignupViewController: UITableViewController {
                         UiUtils.routeToChatListVC()
                     }
                     return nil
-            })?.thenCatch(
+            }).thenCatch(
                 onFailure: { err in
                     DispatchQueue.main.async {
                         UiUtils.showToast(message: "Failed to create account: \(err.localizedDescription)")
                     }
                     tinode.disconnect()
                     return nil
-            })?.thenFinally(finally: { [weak self] in
+            }).thenFinally(finally: { [weak self] in
                 guard let signupVC = self else { return }
                 DispatchQueue.main.async {
                     signupVC.signUpButton.isUserInteractionEnabled = true

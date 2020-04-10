@@ -122,7 +122,7 @@ class FindInteractor: FindBusinessLogic {
         let tinode = Cache.getTinode()
         var topic: DefaultComTopic?
         if !tinode.isTopicTracked(topicName: topicName) {
-            topic = tinode.newTopic(for: topicName, with: nil) as? DefaultComTopic
+            topic = tinode.newTopic(for: topicName) as? DefaultComTopic
             topic?.pub = sub.pub
             topic?.persist(true)
         } else {

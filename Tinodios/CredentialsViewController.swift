@@ -56,7 +56,7 @@ class CredentialsViewController : UIViewController {
         var creds = [Credential]()
         creds.append(c)
 
-        tinode.loginToken(token: token, creds: creds)?
+        tinode.loginToken(token: token, creds: creds)
             .thenApply(onSuccess: { msg in
                 if let ctrl = msg?.ctrl, ctrl.code >= 300 {
                     DispatchQueue.main.async {

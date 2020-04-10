@@ -9,13 +9,16 @@ import Foundation
 
 
 open class MeTopic<DP: Codable & Mergeable>: Topic<DP, PrivateType, DP, PrivateType> {
-    open class MeListener: Topic<DP, PrivateType, DP, PrivateType>.Listener {
+    open class Listener: Topic<DP, PrivateType, DP, PrivateType>.Listener {
         // Called when user credentials are updated.
         open func onCredUpdated(cred: [Credential]?) {}
     }
 
     private var credentials: [Credential]? = nil
 
+    public init(tinode: Tinode?) {
+        super.init(tinode: tinode, name: Tinode.kTopicMe, l: nil)
+    }
     public init(tinode: Tinode?, l: MeTopic<DP>.Listener?) {
         super.init(tinode: tinode, name: Tinode.kTopicMe, l: l)
     }
@@ -34,6 +37,13 @@ open class MeTopic<DP: Codable & Mergeable>: Topic<DP, PrivateType, DP, PrivateT
 
     public var creds: [Credential]? {
         get { return credentials }
+    }
+
+    public func delCredential(_ cred: Credential) -> PromisedReply<ServerMessage> {
+        guard let meth = cred.meth, let val = cred.val else {
+            return PromisedReply(error: TinodeError.invalidArgument("Credential contains unset values"))
+        }
+        return delCredential(meth: meth, val: val)
     }
 
     public func delCredential(meth: String, val: String) -> PromisedReply<ServerMessage> {
@@ -55,7 +65,7 @@ open class MeTopic<DP: Codable & Mergeable>: Topic<DP, PrivateType, DP, PrivateT
                 }
 
                 // Notify listeners
-                (self?.listener as! MeListener).onCredUpdated(cred: self?.creds)
+                (self?.listener as! Listener).onCredUpdated(cred: self?.creds)
                 return nil
             })
     }
@@ -81,7 +91,7 @@ open class MeTopic<DP: Codable & Mergeable>: Topic<DP, PrivateType, DP, PrivateT
         }
     }
 
-    override public func updateMode(update: String) -> PromisedReply<ServerMessage>? {
+    override public func updateMode(update: String) -> PromisedReply<ServerMessage> {
         var acs = accessMode
         if acs == nil {
            acs = Acs()
@@ -279,7 +289,7 @@ open class MeTopic<DP: Codable & Mergeable>: Topic<DP, PrivateType, DP, PrivateT
     override internal func routeMetaCred(cred: Credential) {
         processOneCred(cred)
 
-        (listener as! MeListener).onCredUpdated(cred: creds)
+        (listener as! Listener).onCredUpdated(cred: creds)
     }
 
     override internal func routeMetaCred(cred: [Credential]) {
@@ -292,6 +302,6 @@ open class MeTopic<DP: Codable & Mergeable>: Topic<DP, PrivateType, DP, PrivateT
         credentials = newCreds
 
         // Notify listeners
-        (listener as! MeListener).onCredUpdated(cred: creds)
+        (listener as! Listener).onCredUpdated(cred: creds)
     }
 }

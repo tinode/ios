@@ -173,7 +173,7 @@ class NewGroupViewController: UITableViewController {
         topic.pub = VCard(fn: name, avatar: avatar)
         topic.priv = ["comment": .string(subtitle)] // No need to use Tinode.kNullValue here
         topic.tags = tags
-        topic.subscribe()?.then(
+        topic.subscribe().then(
             onSuccess: { msg in
                 for u in members {
                     topic.invite(user: u, in: nil)

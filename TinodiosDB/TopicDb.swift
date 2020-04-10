@@ -191,7 +191,7 @@ public class TopicDb {
             return nil
         }
         //let t = Tinode.newTopic(for: topicName, with: nil)
-        let t = Tinode.newTopic(withTinode: tinode, forTopic: topicName, withListener: nil)
+        let t = Tinode.newTopic(withTinode: tinode, forTopic: topicName)
         self.deserializeTopic(topic: t, row: row)
         return t
     }

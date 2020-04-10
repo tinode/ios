@@ -189,7 +189,7 @@ class AccountSettingsViewController: UITableViewController {
 
     @IBAction func incognitoModeClicked(_ sender: Any) {
         let isChecked = incognitoModeSwitch.isOn
-        self.me.updateMuted(muted: isChecked)?.then(
+        self.me.updateMuted(muted: isChecked).then(
             onSuccess: UiUtils.ToastSuccessHandler,
             onFailure: { err in
                 self.incognitoModeSwitch.isOn = !isChecked
@@ -235,7 +235,7 @@ class AccountSettingsViewController: UITableViewController {
                         credMsg = nil
                     }
                     if let credential = credMsg {
-                        self.me.setMeta(meta: MsgSetMeta(desc: nil, sub: nil, tags: nil, cred: credential))?.thenCatch(onFailure: UiUtils.ToastFailureHandler)
+                        self.me.setMeta(meta: MsgSetMeta(desc: nil, sub: nil, tags: nil, cred: credential)).thenCatch(onFailure: UiUtils.ToastFailureHandler)
                     }
                 }
         }))
@@ -335,7 +335,7 @@ class AccountSettingsViewController: UITableViewController {
             }
             return
         }
-        tinode.updateAccountBasic(uid: nil, username: userName, password: newPassword)?.then(
+        tinode.updateAccountBasic(uid: nil, username: userName, password: newPassword).then(
             onSuccess: nil,
             onFailure: { err in
                 DispatchQueue.main.async {
@@ -413,9 +413,45 @@ extension AccountSettingsViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: "defaultCell") ?? UITableViewCell(style: .default, reuseIdentifier: "defaultCell")
 
         cell.textLabel?.text = me.creds![indexPath.row - 1].description
+        cell.selectionStyle = .none
         cell.textLabel?.sizeToFit()
 
         return cell
     }
 
+    override func tableView(_ tableView: UITableView, indentationLevelForRowAt indexPath: IndexPath) -> Int {
+        if indexPath.section == AccountSettingsViewController.kSectionContacts && indexPath.row > 0 {
+            return 0
+        }
+        return super.tableView(tableView, indentationLevelForRowAt: indexPath)
+    }
+
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        if indexPath.section == AccountSettingsViewController.kSectionContacts && indexPath.row > 0 {
+            return tableView.rowHeight
+        }
+
+        return super.tableView(tableView, heightForRowAt: indexPath)
+    }
+
+    // Enable swipe to delete credentials.
+    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        return indexPath.section == AccountSettingsViewController.kSectionContacts && indexPath.row > 0
+    }
+
+    // Actual handling of swipes.
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            guard let cred = me.creds?[indexPath.row - 1] else { return }
+            self.me.delCredential(cred).then(
+                onSuccess: { [weak self] _ in
+                    DispatchQueue.main.async { self?.reloadData() }
+                    return nil
+                },
+                onFailure: { err in
+                    UiUtils.ToastFailureHandler(err: err)
+                    return nil
+                })
+        }
+    }
 }

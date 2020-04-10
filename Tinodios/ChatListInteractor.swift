@@ -152,7 +152,7 @@ class ChatListInteractor: ChatListBusinessLogic, ChatListDataStore {
 
     func deleteTopic(_ name: String) {
         let topic = Cache.getTinode().getTopic(topicName: name) as! DefaultComTopic
-        topic.delete()?.then(
+        topic.delete().then(
             onSuccess: { [weak self] msg in
                 self?.loadAndPresentTopics()
                 return nil
