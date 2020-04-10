@@ -745,12 +745,7 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
         self.update(tags: tags)
         listener?.onMetaTags(tags: tags)
     }
-    internal func routeMetaCred(cred: [Credential]) {
-        // Do nothing. All processing is in MeTopic in an overridden method.
-    }
-    internal func routeMetaCred(cred: Credential) {
-        // Do nothing. All processing is in MeTopic in an overridden method.
-    }
+
     public func routeMeta(meta: MsgServerMeta) {
         if meta.desc != nil {
             routeMetaDesc(meta: meta)
@@ -766,9 +761,6 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
         }
         if meta.tags != nil {
             routeMetaTags(tags: meta.tags!)
-        }
-        if meta.cred != nil {
-            routeMetaCred(cred: meta.cred!)
         }
         // update listener
         listener?.onMeta(meta: meta)

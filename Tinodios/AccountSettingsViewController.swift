@@ -136,7 +136,7 @@ class AccountSettingsViewController: UITableViewController {
         self.anonPermissionsLabel.text = me.defacs?.getAnon() ?? ""
         self.anonPermissionsLabel.sizeToFit()
 
-        self.manageTags.detailTextLabel?.text = me.tags?.joined(separator: " ,")
+        self.manageTags.detailTextLabel?.text = me.tags?.joined(separator: ", ")
     }
 
     @objc
@@ -193,8 +193,7 @@ class AccountSettingsViewController: UITableViewController {
             onSuccess: UiUtils.ToastSuccessHandler,
             onFailure: { err in
                 self.incognitoModeSwitch.isOn = !isChecked
-                UiUtils.showToast(message: "You are offline.")
-                return nil
+                return UiUtils.ToastFailureHandler(err: err)
             }).thenFinally(finally: {
                 DispatchQueue.main.async { self.reloadData() }
             }
@@ -217,13 +216,14 @@ class AccountSettingsViewController: UITableViewController {
         UiUtils.presentManageTagsEditDialog(over: self, forTopic: self.me)
     }
 
-    @objc func addContactClicked(sender: UIGestureRecognizer) {
+    @objc func addContactClicked(sender: UITapGestureRecognizer) {
         let alert = UIAlertController(title: "Add contact", message: "Enter email or phone number", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
         alert.addTextField(configurationHandler: nil)
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
         alert.addAction(UIAlertAction(
             title: "OK", style: .default,
             handler: { action in
+                var success = false
                 if let cred = ValidatedCredential.parse(from: alert.textFields?.first?.text) {
                     let credMsg: Credential?
                     switch cred {
@@ -235,8 +235,29 @@ class AccountSettingsViewController: UITableViewController {
                         credMsg = nil
                     }
                     if let credential = credMsg {
-                        self.me.setMeta(meta: MsgSetMeta(desc: nil, sub: nil, tags: nil, cred: credential)).thenCatch(onFailure: UiUtils.ToastFailureHandler)
+                        success = true
+                        self.me.setMeta(meta: MsgSetMeta(desc: nil, sub: nil, tags: nil, cred: credential)).then(
+                            onSuccess: { [weak self] _ in
+                                DispatchQueue.main.async {
+                                    UiUtils.showToast(message: "Confirmaition message sent to \(credential.val!)", level: .info)
+                                    if let count = self?.me.creds?.count {
+                                        let indexPath = IndexPath(row: count, section: AccountSettingsViewController.kSectionContacts)
+                                        self?.tableView.insertRows(at: [indexPath], with: .automatic)
+                                    }
+                                }
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+                                    // Update tags
+                                    self?.reloadData()
+                                }
+                                return nil
+                            },
+                            onFailure: UiUtils.ToastFailureHandler)
                     }
+                }
+                if !success {
+                   DispatchQueue.main.async {
+                       UiUtils.showToast(message: "Entered text is neither email nor phone number.")
+                   }
                 }
         }))
         self.present(alert, animated: true)
@@ -410,12 +431,19 @@ extension AccountSettingsViewController {
         }
 
         // Cells with contacts.
-        let cell = tableView.dequeueReusableCell(withIdentifier: "defaultCell") ?? UITableViewCell(style: .default, reuseIdentifier: "defaultCell")
+        let cell = tableView.dequeueReusableCell(withIdentifier: "defaultCell") ?? UITableViewCell(style: .value1, reuseIdentifier: "defaultCell")
 
-        cell.textLabel?.text = me.creds![indexPath.row - 1].description
+        let cred = me.creds![indexPath.row - 1]
+
+        cell.textLabel?.text = cred.description
         cell.selectionStyle = .none
         cell.textLabel?.sizeToFit()
 
+        if !cred.isDone {
+            cell.detailTextLabel?.text = "confirm"
+        } else {
+            cell.detailTextLabel?.text = ""
+        }
         return cell
     }
 
@@ -434,6 +462,18 @@ extension AccountSettingsViewController {
         return super.tableView(tableView, heightForRowAt: indexPath)
     }
 
+    // Handle tap on a row with contact
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if indexPath.section != AccountSettingsViewController.kSectionContacts || indexPath.row == 0 {
+            super.tableView(tableView, didSelectRowAt: indexPath)
+            return
+        }
+        tableView.deselectRow(at: indexPath, animated:  true)
+
+        guard let cred = me.creds?[indexPath.row - 1], !cred.isDone else { return }
+        print("Enter validation code here")
+    }
+
     // Enable swipe to delete credentials.
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
         return indexPath.section == AccountSettingsViewController.kSectionContacts && indexPath.row > 0
@@ -445,7 +485,13 @@ extension AccountSettingsViewController {
             guard let cred = me.creds?[indexPath.row - 1] else { return }
             self.me.delCredential(cred).then(
                 onSuccess: { [weak self] _ in
-                    DispatchQueue.main.async { self?.reloadData() }
+                    DispatchQueue.main.async {
+                        tableView.deleteRows(at: [indexPath], with: .fade)
+                    }
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+                        // Update tags
+                        self?.reloadData()
+                    }
                     return nil
                 },
                 onFailure: { err in

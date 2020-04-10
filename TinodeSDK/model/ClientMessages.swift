@@ -54,7 +54,7 @@ public class Credential: Codable, Equatable, CustomStringConvertible {
         self.params = params
     }
 
-    var isDone: Bool {
+    public var isDone: Bool {
         get {
             return done ?? false
         }
@@ -441,8 +441,9 @@ public class MsgClientDel: Encodable {
     let delseq: [MsgRange]?
     let user: String?
     let hard: Bool?
+    let cred: Credential?
 
-    init(id: String?, topic: String?, what: String?, ranges: [MsgRange]?, user: String?, hard: Bool?) {
+    init(id: String?, topic: String?, what: String?, ranges: [MsgRange]?, user: String?, cred: Credential?, hard: Bool?) {
         self.id = id
         self.topic = topic
         self.what = what
@@ -451,44 +452,45 @@ public class MsgClientDel: Encodable {
         self.delseq = what == MsgClientDel.kStrMsg ? ranges : nil
         self.user = what == MsgClientDel.kStrSub ? user : nil
         self.hard = (hard ?? false) ? true : nil
+        self.cred = cred
     }
 
-    /// Delete messages by list
+    /// Delete multiple message ranges.
     convenience init(id: String?, topic: String, ranges: [MsgRange]?, hard: Bool?) {
         self.init(id: id, topic: topic, what: MsgClientDel.kStrMsg,
                   ranges: ranges,
-                  user: nil, hard: hard)
+                  user: nil, cred: nil, hard: hard)
     }
-    /// Delete messages by range
+    /// Delete range of messages.
     convenience init(id: String?, topic: String, from: Int, to: Int?, hard: Bool?) {
         self.init(id: id, topic: topic, what: MsgClientDel.kStrMsg,
                   ranges: [MsgRange(low: from, hi: to)],
-                  user: nil, hard: hard)
+                  user: nil, cred: nil, hard: hard)
     }
 
     /// Delete message by id
     convenience init(id: String?, topic: String, msgId: Int, hard: Bool?) {
         self.init(id: id, topic: topic, what: MsgClientDel.kStrMsg,
                   ranges: [MsgRange(id: msgId)],
-                  user: nil, hard: hard)
+                  user: nil, cred: nil, hard: hard)
     }
 
     /// Delete topic
     convenience init(id: String?, topic: String) {
         self.init(id: id, topic: topic, what: MsgClientDel.kStrTopic,
-                  ranges: nil, user: nil, hard: nil)
+                  ranges: nil, user: nil, cred: nil, hard: nil)
     }
 
     /// Delete subscription
     convenience init(id: String?, topic: String, user: String?) {
         self.init(id: id, topic: topic, what: MsgClientDel.kStrSub,
-                  ranges: nil, user: user, hard: false)
+                  ranges: nil, user: user, cred: nil, hard: false)
     }
 
     /// Delete credential
     convenience init(id: String?, cred: Credential) {
         self.init(id: id, topic: Tinode.kTopicMe, what: MsgClientDel.kStrCred,
-                  ranges: nil, user: nil, hard: nil)
+                  ranges: nil, user: nil, cred: cred, hard: nil)
     }
 
 }

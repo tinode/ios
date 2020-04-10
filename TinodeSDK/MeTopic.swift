@@ -39,14 +39,11 @@ open class MeTopic<DP: Codable & Mergeable>: Topic<DP, PrivateType, DP, PrivateT
         get { return credentials }
     }
 
-    public func delCredential(_ cred: Credential) -> PromisedReply<ServerMessage> {
-        guard let meth = cred.meth, let val = cred.val else {
-            return PromisedReply(error: TinodeError.invalidArgument("Credential contains unset values"))
-        }
-        return delCredential(meth: meth, val: val)
+    public func delCredential(meth: String, val: String) -> PromisedReply<ServerMessage> {
+        return delCredential(Credential(meth: meth, val: val))
     }
 
-    public func delCredential(meth: String, val: String) -> PromisedReply<ServerMessage> {
+    public func delCredential(_ cred: Credential) -> PromisedReply<ServerMessage> {
         let tnd = tinode!
         if !tnd.isConnected {
             return PromisedReply(error: TinodeError.notConnected("Cannot delete credential: not connected"))
@@ -56,7 +53,6 @@ open class MeTopic<DP: Codable & Mergeable>: Topic<DP, PrivateType, DP, PrivateT
             return PromisedReply(error: TinodeError.notSubscribed("Subscribe first"))
         }
 
-        let cred = Credential(meth: meth, val: val)
         return tnd.delCredential(cred: cred).then(
             onSuccess: { [weak self] msg in
                 let idx = self?.find(cred: cred, anyUnconfirmed: false) ?? -1
@@ -128,6 +124,22 @@ open class MeTopic<DP: Codable & Mergeable>: Topic<DP, PrivateType, DP, PrivateT
             accessMode = acs
             self.store?.topicUpdate(topic: self)
         }
+    }
+
+    override internal func update(ctrl: MsgServerCtrl, meta: MsgSetMeta<DP, PrivateType>) {
+        super.update(ctrl: ctrl, meta: meta)
+        if let cred = meta.cred {
+            routeMetaCred(cred: cred)
+
+            (listener as? MeTopic.Listener)?.onCredUpdated(cred: [cred])
+        }
+    }
+
+    override public func routeMeta(meta: MsgServerMeta) {
+        if let cred = meta.cred {
+            routeMetaCred(cred: cred)
+        }
+        super.routeMeta(meta: meta)
     }
 
     override public func routePres(pres: MsgServerPres) {
@@ -286,13 +298,13 @@ open class MeTopic<DP: Codable & Mergeable>: Topic<DP, PrivateType, DP, PrivateT
         }
     }
 
-    override internal func routeMetaCred(cred: Credential) {
+    internal func routeMetaCred(cred: Credential) {
         processOneCred(cred)
 
         (listener as! Listener).onCredUpdated(cred: creds)
     }
 
-    override internal func routeMetaCred(cred: [Credential]) {
+    internal func routeMetaCred(cred: [Credential]) {
         var newCreds: [Credential] = []
         for c in cred {
             if c.meth != nil && c.val != nil {
