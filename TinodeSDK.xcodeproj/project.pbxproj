@@ -34,6 +34,9 @@
 		0AAF8BEC23B70E2A00C9CFBB /* MsgRange.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AAF8BEB23B70E2A00C9CFBB /* MsgRange.swift */; };
 		94CD577D9DA889C043928B4C /* Pods_TinodeSDKTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF75C7301A406947462E1C7D /* Pods_TinodeSDKTests.framework */; };
 		9C88C579E43E9FD3687DD093 /* Pods_TinodeSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 679C08F81F0F4B80EE066C70 /* Pods_TinodeSDK.framework */; };
+		B0876010243F1C3E00B464D1 /* MeTopic.swift in Sources */ = {isa = PBXBuildFile; fileRef = B087600F243F1C3E00B464D1 /* MeTopic.swift */; };
+		B0876012243F1DD900B464D1 /* FndTopic.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0876011243F1DD900B464D1 /* FndTopic.swift */; };
+		B0876014243F1E4000B464D1 /* ComTopic.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0876013243F1E4000B464D1 /* ComTopic.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -79,6 +82,9 @@
 		15EB4A3618442D5E79FEAB59 /* Pods-TinodeSDK.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TinodeSDK.debug.xcconfig"; path = "Pods/Target Support Files/Pods-TinodeSDK/Pods-TinodeSDK.debug.xcconfig"; sourceTree = "<group>"; };
 		679C08F81F0F4B80EE066C70 /* Pods_TinodeSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TinodeSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		79834550805DF1A314040328 /* Pods-TinodeSDKTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TinodeSDKTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-TinodeSDKTests/Pods-TinodeSDKTests.debug.xcconfig"; sourceTree = "<group>"; };
+		B087600F243F1C3E00B464D1 /* MeTopic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeTopic.swift; sourceTree = "<group>"; };
+		B0876011243F1DD900B464D1 /* FndTopic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FndTopic.swift; sourceTree = "<group>"; };
+		B0876013243F1E4000B464D1 /* ComTopic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComTopic.swift; sourceTree = "<group>"; };
 		B0CD0F1036565AA6D7FCB418 /* Pods-TinodeSDK.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TinodeSDK.release.xcconfig"; path = "./Pods/Target Support Files/Pods-TinodeSDK/Pods-TinodeSDK.release.xcconfig"; sourceTree = "<group>"; };
 		B4211CF84B51039364CC4DD3 /* Pods-TinodeSDK.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TinodeSDK.debug.xcconfig"; path = "./Pods/Target Support Files/Pods-TinodeSDK/Pods-TinodeSDK.debug.xcconfig"; sourceTree = "<group>"; };
 		BF75C7301A406947462E1C7D /* Pods_TinodeSDKTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TinodeSDKTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -132,8 +138,11 @@
 			children = (
 				0A44B00F2244AB0F00A98866 /* model */,
 				0A431BF52244A14C00A837F7 /* AuthScheme.swift */,
+				B0876013243F1E4000B464D1 /* ComTopic.swift */,
 				0A431BF42244A14C00A837F7 /* Connection.swift */,
+				B0876011243F1DD900B464D1 /* FndTopic.swift */,
 				0A610452227563E200C6A9D2 /* Log.swift */,
+				B087600F243F1C3E00B464D1 /* MeTopic.swift */,
 				0A431BF22244A14C00A837F7 /* PromisedReply.swift */,
 				0A431BF32244A14C00A837F7 /* RFC3339Format.swift */,
 				0A431BF72244A14D00A837F7 /* Storage.swift */,
@@ -382,9 +391,11 @@
 				0A431BFD2244A14D00A837F7 /* User.swift in Sources */,
 				0A44B00C2244AAC500A98866 /* JSONValue.swift in Sources */,
 				0A610453227563E200C6A9D2 /* Log.swift in Sources */,
+				B0876012243F1DD900B464D1 /* FndTopic.swift in Sources */,
 				0AAF8BEC23B70E2A00C9CFBB /* MsgRange.swift in Sources */,
 				0A81B317236FA896009AF14B /* Types.swift in Sources */,
 				0A44B0052244AAC500A98866 /* ServerMessages.swift in Sources */,
+				B0876014243F1E4000B464D1 /* ComTopic.swift in Sources */,
 				0A431BFC2244A14D00A837F7 /* AuthScheme.swift in Sources */,
 				0A44B00E2244AAC500A98866 /* ClientMessages.swift in Sources */,
 				0A44B00A2244AAC500A98866 /* Acs.swift in Sources */,
@@ -400,6 +411,7 @@
 				0A431C002244A14D00A837F7 /* RFC3339Format.swift in Sources */,
 				0A44B00D2244AAC500A98866 /* AcsHelper.swift in Sources */,
 				0A431BFE2244A14D00A837F7 /* Storage.swift in Sources */,
+				B0876010243F1C3E00B464D1 /* MeTopic.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
