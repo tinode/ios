@@ -56,23 +56,19 @@ class CredentialsViewController : UIViewController {
         var creds = [Credential]()
         creds.append(c)
 
-        do {
-            try tinode.loginToken(token: token, creds: creds)?
-                .thenApply(onSuccess: { msg in
-                    if let ctrl = msg?.ctrl, ctrl.code >= 300 {
-                        DispatchQueue.main.async {
-                            UiUtils.showToast(message: "Verification failure: \(ctrl.code) \(ctrl.text)")
-                        }
-                    } else {
-                        if let token = tinode.authToken {
-                            tinode.setAutoLoginWithToken(token: token)
-                        }
-                        UiUtils.routeToChatListVC()
+        tinode.loginToken(token: token, creds: creds)?
+            .thenApply(onSuccess: { msg in
+                if let ctrl = msg?.ctrl, ctrl.code >= 300 {
+                    DispatchQueue.main.async {
+                        UiUtils.showToast(message: "Verification failure: \(ctrl.code) \(ctrl.text)")
                     }
-                    return nil
-                })
-        } catch {
-            Cache.log.error("CredentialsVC - loginToken failed: %@", error.localizedDescription)
-        }
+                } else {
+                    if let token = tinode.authToken {
+                        tinode.setAutoLoginWithToken(token: token)
+                    }
+                    UiUtils.routeToChatListVC()
+                }
+                return nil
+            })
     }
 }

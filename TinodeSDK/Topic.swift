@@ -520,7 +520,7 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
         guard tnd.isConnectionAuthenticated else {
             return PromisedReply(error: TinodeError.invalidState("Connection is not authenticated.") )
         }
-        return try! tnd.subscribe(to: name, set: set, get: get, background: background)?.then(
+        return tnd.subscribe(to: name, set: set, get: get, background: background)?.then(
             onSuccess: { [weak self] msg in
                 let isAttached = self?.attached ?? false
                 if !isAttached {
@@ -778,7 +778,7 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
     @discardableResult
     public func delete() -> PromisedReply<ServerMessage>? {
         // Delete works even if the topic is not attached.
-        return try! tinode!.delTopic(topicName: name)?.then(
+        return tinode!.delTopic(topicName: name)?.then(
             onSuccess: { msg in
                 self.topicLeft(unsub: true, code: msg?.ctrl?.code, reason: msg?.ctrl?.text)
                 self.tinode!.stopTrackingTopic(topicName: self.name)
@@ -881,17 +881,13 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
     }
 
     public func setMeta(meta: MsgSetMeta<DP, DR>) -> PromisedReply<ServerMessage>? {
-        do {
-            return try tinode?.setMeta(for: self.name, meta: meta)?.thenApply(
-                onSuccess: { msg in
-                    if let ctrl = msg?.ctrl, ctrl.code < 300 {
-                        self.update(ctrl: ctrl, meta: meta)
-                    }
-                    return nil
-                })
-        } catch {
-            return nil
-        }
+        return tinode?.setMeta(for: self.name, meta: meta)?.thenApply(
+            onSuccess: { msg in
+                if let ctrl = msg?.ctrl, ctrl.code < 300 {
+                    self.update(ctrl: ctrl, meta: meta)
+                }
+                return nil
+            })
     }
     public func setDescription(desc: MetaSetDesc<DP, DR>) -> PromisedReply<ServerMessage>? {
         return setMeta(meta: MsgSetMeta<DP, DR>(desc: desc, sub: nil, tags: nil, cred: nil))
@@ -967,25 +963,18 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
         if isNew {
             return PromisedReply<ServerMessage>(error: TopicError.notSynchronized)
         }
-        do {
-            let metaSetSub = MetaSetSub(user: uid, mode: mode)
-            //metaSetSub.user = uid
-            //metaSetSub.mode = mode
-            let future = setMeta(meta: MsgSetMeta(desc: nil, sub: metaSetSub, tags: nil, cred: nil))
-            return try future?.thenApply(
-                onSuccess: { [weak self] msg in
-                    if let topic = self {
-                        topic.store?.subUpdate(topic: topic, sub: sub!)
-                        topic.listener?.onMetaSub(sub: sub!)
-                        topic.listener?.onSubsUpdated()
-                    }
-                    return nil
-                })
-        } catch {
-            return PromisedReply<ServerMessage>(
-                error: TopicError.subscriptionFailure(
-                    error.localizedDescription))
-        }
+        let metaSetSub = MetaSetSub(user: uid, mode: mode)
+        //metaSetSub.user = uid
+        //metaSetSub.mode = mode
+        return setMeta(meta: MsgSetMeta(desc: nil, sub: metaSetSub, tags: nil, cred: nil))?.thenApply(
+            onSuccess: { [weak self] msg in
+                if let topic = self {
+                    topic.store?.subUpdate(topic: topic, sub: sub!)
+                    topic.listener?.onMetaSub(sub: sub!)
+                    topic.listener?.onSubsUpdated()
+                }
+                return nil
+            })
     }
     @discardableResult
     public func eject(user uid: String, ban: Bool) -> PromisedReply<ServerMessage>? {
@@ -1002,16 +991,13 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
             listener?.onSubsUpdated()
             return PromisedReply(error: TinodeError.notSynchronized)
         }
-        do {
-            return try tinode!.delSubscription(topicName: name, user: uid)?.then(
-                onSuccess: { msg in
-                    self.store?.subDelete(topic: self, sub: sub)
-                    self.removeSubFromCache(sub: sub)
-                    self.listener?.onSubsUpdated()
-                    return nil
-                },
-                onFailure: nil)
-        } catch { return nil }
+        return tinode!.delSubscription(topicName: name, user: uid)?.thenApply(
+            onSuccess: { msg in
+                self.store?.subDelete(topic: self, sub: sub)
+                self.removeSubFromCache(sub: sub)
+                self.listener?.onSubsUpdated()
+                return nil
+            })
     }
     public func routeInfo(info: MsgServerInfo) {
         if info.what != Tinode.kNoteKp {
@@ -1082,7 +1068,7 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
     @discardableResult
     public func leave(unsub: Bool? = false) -> PromisedReply<ServerMessage>? {
         if attached {
-            return try! tinode?.leave(topic: name, unsub: unsub)?
+            return tinode?.leave(topic: name, unsub: unsub)?
                 .thenApply(
                     onSuccess: { [weak self] msg in
                         guard let s = self else {
@@ -1132,7 +1118,7 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
         if content.isPlain && headers?["mime"] != nil {
             headers?.removeValue(forKey: "mime")
         }
-        return try! tinode!.publish(topic: name, head: headers, content: content)?.then(
+        return tinode!.publish(topic: name, head: headers, content: content)?.then(
             onSuccess: { [weak self] msg in
                 self?.processDelivery(ctrl: msg?.ctrl, id: msgId)
                 return nil
@@ -1151,7 +1137,7 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
         if attached {
             return publish(content: content, head: head, msgId: id)
         } else {
-            return try! subscribe()?.thenApply(
+            return subscribe()?.thenApply(
                 onSuccess: { [weak self] msg in
                     return self?.publish(content: content, head: head, msgId: id)
                 })?.thenCatch(onFailure: { [weak self] err in
@@ -1162,8 +1148,8 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
     }
     private func sendPendingDeletes(hard: Bool) -> PromisedReply<ServerMessage>? {
         if let pendingDeletes = self.store?.getQueuedMessageDeletes(topic: self, hard: hard), !pendingDeletes.isEmpty {
-            return try! self.tinode?.delMessage(
-                topicName: self.name, ranges: pendingDeletes, hard: hard)?.then(
+            return self.tinode?.delMessage(
+                topicName: self.name, ranges: pendingDeletes, hard: hard)?.thenApply(
                     onSuccess: { [weak self] msg in
                         if let id = msg?.ctrl?.getIntParam(for: "del"), let s = self {
                             s.clear = id
@@ -1171,7 +1157,7 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
                             _ = s.store?.msgDelete(topic: s, delete: id, deleteAllIn: pendingDeletes)
                         }
                         return nil
-                    }, onFailure: nil)
+                    })
         }
         return nil
     }
@@ -1179,19 +1165,15 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
     private func delMessages(from fromId: Int, to toId: Int, hard: Bool) -> PromisedReply<ServerMessage>? {
         store?.msgMarkToDelete(topic: self, from: fromId, to: toId, markAsHard: hard)
         if attached {
-            do {
-                return try tinode?.delMessage(topicName: self.name, fromId: fromId, toId: toId, hard: hard)?.then(
-                    onSuccess: { [weak self] msg in
-                        if let s = self, let delId = msg?.ctrl?.getIntParam(for: "del"), delId > 0 {
-                            s.clear = delId
-                            s.maxDel = delId
-                            s.store?.msgDelete(topic: s, delete: delId, deleteFrom: fromId, deleteTo: toId)
-                        }
-                        return nil
-                    })
-            } catch {
-                return PromisedReply<ServerMessage>(error: error)
-            }
+            return tinode?.delMessage(topicName: self.name, fromId: fromId, toId: toId, hard: hard)?.then(
+                onSuccess: { [weak self] msg in
+                    if let s = self, let delId = msg?.ctrl?.getIntParam(for: "del"), delId > 0 {
+                        s.clear = delId
+                        s.maxDel = delId
+                        s.store?.msgDelete(topic: s, delete: delId, deleteFrom: fromId, deleteTo: toId)
+                    }
+                    return nil
+                })
         }
         if tinode?.isConnected ?? false {
             return PromisedReply<ServerMessage>(error: TinodeError.notSubscribed("Not subscribed to topic."))

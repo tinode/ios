@@ -47,7 +47,7 @@ open class MeTopic<DP: Codable & Mergeable>: Topic<DP, PrivateType, DP, PrivateT
         }
 
         let cred = Credential(meth: meth, val: val)
-        return try! tnd.delCredential(cred: cred).then(
+        return tnd.delCredential(cred: cred).then(
             onSuccess: { [weak self] msg in
                 let idx = self?.find(cred: cred, anyUnconfirmed: false) ?? -1
                 if idx >= 0 {
@@ -57,8 +57,7 @@ open class MeTopic<DP: Codable & Mergeable>: Topic<DP, PrivateType, DP, PrivateT
                 // Notify listeners
                 (self?.listener as! MeListener).onCredUpdated(cred: self?.creds)
                 return nil
-            },
-            onFailure: nil)
+            })
     }
 
     private func find(cred other: Credential, anyUnconfirmed: Bool) -> Int {

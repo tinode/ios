@@ -178,32 +178,27 @@ class AccountSettingsViewController: UITableViewController {
             return
         }
         UiUtils.showPermissionsEditDialog(over: self, acs: acsUnwrapped, callback: { permissions in
-            _ = try? UiUtils.handlePermissionsChange(onTopic: self.me, forUid: nil, changeType: changeType, newPermissions: permissions)?.then(
+            UiUtils.handlePermissionsChange(onTopic: self.me, forUid: nil, changeType: changeType, newPermissions: permissions)?.then(
                 onSuccess: { msg in
                     DispatchQueue.main.async { self.reloadData() }
                         return nil
-                    }
+                }
             )
         }, disabledPermissions: "ODS")
     }
 
     @IBAction func incognitoModeClicked(_ sender: Any) {
         let isChecked = incognitoModeSwitch.isOn
-        do {
-            try self.me.updateMuted(muted: isChecked)?.then(
-                onSuccess: UiUtils.ToastSuccessHandler,
-                onFailure: { err in
-                    self.incognitoModeSwitch.isOn = !isChecked
-                    return nil
-                }).thenFinally(finally: {
-                    DispatchQueue.main.async { self.reloadData() }
-                })
-        } catch TinodeError.notConnected(_) {
-            incognitoModeSwitch.isOn = !isChecked
-            UiUtils.showToast(message: "You are offline.")
-        } catch {
-            incognitoModeSwitch.isOn = !isChecked
-        }
+        self.me.updateMuted(muted: isChecked)?.then(
+            onSuccess: UiUtils.ToastSuccessHandler,
+            onFailure: { err in
+                self.incognitoModeSwitch.isOn = !isChecked
+                UiUtils.showToast(message: "You are offline.")
+                return nil
+            }).thenFinally(finally: {
+                DispatchQueue.main.async { self.reloadData() }
+            }
+        )
     }
     
     @IBAction func readReceiptsClicked(_ sender: Any) {
@@ -240,14 +235,7 @@ class AccountSettingsViewController: UITableViewController {
                         credMsg = nil
                     }
                     if let credential = credMsg {
-                        do {
-                            try self.me.setMeta(
-                                meta: MsgSetMeta(desc: nil, sub: nil, tags: nil, cred: credential))?.thenCatch(onFailure: UiUtils.ToastFailureHandler)
-                        } catch {
-                            DispatchQueue.main.async {
-                                UiUtils.showToast(message: "Failed to add credential \(error.localizedDescription)")
-                            }
-                        }
+                        self.me.setMeta(meta: MsgSetMeta(desc: nil, sub: nil, tags: nil, cred: credential))?.thenCatch(onFailure: UiUtils.ToastFailureHandler)
                     }
                 }
         }))
@@ -347,7 +335,7 @@ class AccountSettingsViewController: UITableViewController {
             }
             return
         }
-        _ = try? tinode.updateAccountBasic(uid: nil, username: userName, password: newPassword)?.then(
+        tinode.updateAccountBasic(uid: nil, username: userName, password: newPassword)?.then(
             onSuccess: nil,
             onFailure: { err in
                 DispatchQueue.main.async {
@@ -363,7 +351,7 @@ class AccountSettingsViewController: UITableViewController {
         if pub.fn != newTitle {
             pub.fn = String(newTitle.prefix(UiUtils.kMaxTitleLength))
         }
-        _ = try? UiUtils.setTopicData(forTopic: self.me, pub: pub, priv: nil)?.then(
+        UiUtils.setTopicData(forTopic: self.me, pub: pub, priv: nil)?.then(
             onSuccess: { msg in
                 DispatchQueue.main.async { self.reloadData() }
                 return nil
@@ -384,7 +372,7 @@ extension AccountSettingsViewController: ImagePickerDelegate {
             Cache.log.debug("AccountSettingsVC - No image specified or failed to resize, skipping")
             return
         }
-        _ = try? UiUtils.updateAvatar(forTopic: self.me, image: image)?.then(
+        UiUtils.updateAvatar(forTopic: self.me, image: image)?.then(
             onSuccess: { msg in
                 DispatchQueue.main.async {
                     self.reloadData()

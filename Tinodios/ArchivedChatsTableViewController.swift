@@ -45,27 +45,24 @@ class ArchivedChatsTableViewController: UITableViewController {
         return cell
     }
     private func unarchiveTopic(topic: DefaultComTopic) {
-        do {
-            try topic.updateArchived(archived: false)?.then(
-                onSuccess: { [weak self] msg in
-                    DispatchQueue.main.async {
-                        if let vc = self {
-                            vc.reloadData()
-                            vc.tableView.reloadData()
-                            // If there are no more archived topics, close the view.
-                            if vc.topics.isEmpty {
-                                vc.navigationController?.popViewController(animated: true)
-                                vc.dismiss(animated: true, completion: nil)
-                            }
+        topic.updateArchived(archived: false)?.then(
+            onSuccess: { [weak self] msg in
+                DispatchQueue.main.async {
+                    if let vc = self {
+                        vc.reloadData()
+                        vc.tableView.reloadData()
+                        // If there are no more archived topics, close the view.
+                        if vc.topics.isEmpty {
+                            vc.navigationController?.popViewController(animated: true)
+                            vc.dismiss(animated: true, completion: nil)
                         }
                     }
-                    return nil
-                },
-                onFailure: UiUtils.ToastFailureHandler)
-        } catch {
-            UiUtils.showToast(message: "Failed to unarchive topic: \(error)")
-        }
+                }
+                return nil
+            },
+            onFailure: UiUtils.ToastFailureHandler)
     }
+
     override func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
         let unarchive = UITableViewRowAction(style: .normal, title: "Unarchive") { (action, indexPath) in
             let topic = self.topics[indexPath.row]

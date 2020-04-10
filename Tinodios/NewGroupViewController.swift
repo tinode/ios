@@ -173,22 +173,19 @@ class NewGroupViewController: UITableViewController {
         topic.pub = VCard(fn: name, avatar: avatar)
         topic.priv = ["comment": .string(subtitle)] // No need to use Tinode.kNullValue here
         topic.tags = tags
-        do {
-            try topic.subscribe()?.then(
-                onSuccess: { msg in
-                    for u in members {
-                        topic.invite(user: u, in: nil)
-                    }
-                    // Need to unsubscribe because routing to MessageVC (below)
-                    // will subscribe to the topic again.
-                    topic.leave()
-                    // Route to chat.
-                    self.presentChat(with: topic.name)
-                    return nil
-            },onFailure: UiUtils.ToastFailureHandler)
-        } catch {
-            UiUtils.showToast(message: "Failed to create group: \(error.localizedDescription)")
-        }
+        topic.subscribe()?.then(
+            onSuccess: { msg in
+                for u in members {
+                    topic.invite(user: u, in: nil)
+                }
+                // Need to unsubscribe because routing to MessageVC (below)
+                // will subscribe to the topic again.
+                topic.leave()
+                // Route to chat.
+                self.presentChat(with: topic.name)
+                return nil
+            },
+            onFailure: UiUtils.ToastFailureHandler)
     }
 }
 

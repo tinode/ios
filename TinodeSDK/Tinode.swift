@@ -556,7 +556,7 @@ public class Tinode {
     private func hello() -> PromisedReply<ServerMessage>? {
         let msgId = getNextMsgId()
         let msg = ClientMessage<Int, Int>(hi: MsgClientHi(id: msgId, ver: kVersion, ua: userAgent, dev: deviceToken, lang: kLocale))
-        return try! sendWithPromise(payload: msg, with: msgId).thenApply(
+        return sendWithPromise(payload: msg, with: msgId).thenApply(
             onSuccess: { [weak self] pkt in
                 guard let ctrl = pkt?.ctrl else {
                     throw TinodeError.invalidReply("Unexpected type of reply packet to hello")
@@ -743,7 +743,7 @@ public class Tinode {
         if !loginNow {
             return future
         }
-        return try! future.then(
+        return future.then(
             onSuccess: { [weak self] pkt in
                 try self?.loginSuccessful(ctrl: pkt?.ctrl)
                 return nil
@@ -812,7 +812,7 @@ public class Tinode {
             }
         }
         let msg = ClientMessage<Int, Int>(login: msgl)
-        return try! sendWithPromise(payload: msg, with: msgId).then(
+        return sendWithPromise(payload: msg, with: msgId).then(
             onSuccess: { [weak self] pkt in
                 self?.loginInProgress = false
                 try self?.loginSuccessful(ctrl: pkt?.ctrl)
@@ -890,7 +890,7 @@ public class Tinode {
     }
     public func logout() {
         // setDeviceToken is thread-safe.
-        try? setDeviceToken(token: Tinode.kNullValue)?.thenFinally {
+        setDeviceToken(token: Tinode.kNullValue)?.thenFinally {
             self.disconnect()
             self.myUid = nil
             self.store?.logout()
@@ -919,52 +919,50 @@ public class Tinode {
             let m = reconnecting ? "YES" : "NO"
             Tinode.log.info("Tinode connected: after reconnect - %@", m.description)
             let doLogin = tinode.autoLogin && tinode.loginCredentials != nil
-            do {
-                let future = try tinode.hello()?.then(onSuccess: { [weak self] pkt in
-                    guard let self = self else {
-                        throw TinodeError.invalidState("Missing Tinode instance in connection handler")
-                    }
-                    let tinode = self.tinode
-
-                    if let ctrl = pkt?.ctrl {
-                        tinode.timeAdjustment = Date().timeIntervalSince(ctrl.ts)
-                        // tinode store
-                        tinode.store?.setTimeAdjustment(adjustment: tinode.timeAdjustment)
-                        // listener
-                        tinode.listenerNotifier.onConnect(code: ctrl.code, reason: ctrl.text, params: ctrl.params)
-                    }
-                    if !doLogin {
-                        try self.resolveAllPromises(msg: pkt)
-                    }
-                    return nil
-                }, onFailure: { err in
-                    try self.rejectAllPromises(err: err)
-                    return nil
-                })
-                if doLogin {
-                    try future?.then(
-                        onSuccess: { [weak self] msg in
-                            if let t = self?.tinode, let cred = t.loginCredentials, !t.loginInProgress {
-                                return try t.login(
-                                    scheme: cred.scheme, secret: cred.secret, creds: nil)?.then(
-                                        onSuccess: { msg in
-                                            try self?.resolveAllPromises(msg: msg)
-                                            return nil
-                                        },
-                                        onFailure: { err in
-                                            try self?.rejectAllPromises(err: err)
-                                            return nil
-                                        })
-                            }
-                            return nil
-                        },
-                        onFailure: { [weak self] err in
-                            try self?.rejectAllPromises(err: err)
-                            return nil
-                        })
+            let future = tinode.hello()?.then(onSuccess: { [weak self] pkt in
+                guard let self = self else {
+                    throw TinodeError.invalidState("Missing Tinode instance in connection handler")
                 }
-            } catch {
-                Tinode.log.error("Connection error: %@", error.localizedDescription)
+                let tinode = self.tinode
+
+                if let ctrl = pkt?.ctrl {
+                    tinode.timeAdjustment = Date().timeIntervalSince(ctrl.ts)
+                    // tinode store
+                    tinode.store?.setTimeAdjustment(adjustment: tinode.timeAdjustment)
+                    // listener
+                    tinode.listenerNotifier.onConnect(code: ctrl.code, reason: ctrl.text, params: ctrl.params)
+                }
+                if !doLogin {
+                    try self.resolveAllPromises(msg: pkt)
+                }
+                return nil
+            }, onFailure: { err in
+                Tinode.log.error("Connection error: %@", err.localizedDescription)
+                try self.rejectAllPromises(err: err)
+                return nil
+            })
+            if doLogin {
+                future?.then(
+                    onSuccess: { [weak self] msg in
+                        if let t = self?.tinode, let cred = t.loginCredentials, !t.loginInProgress {
+                            return t.login(
+                                scheme: cred.scheme, secret: cred.secret, creds: nil)?.then(
+                                    onSuccess: { msg in
+                                        try self?.resolveAllPromises(msg: msg)
+                                        return nil
+                                    },
+                                    onFailure: { err in
+                                        try self?.rejectAllPromises(err: err)
+                                        return nil
+                                    })
+                        }
+                        return nil
+                    },
+                    onFailure: { [weak self] err in
+                        Tinode.log.error("Connection error: %@", err.localizedDescription)
+                        try self?.rejectAllPromises(err: err)
+                        return nil
+                    })
             }
         }
         func onMessage(with message: String) -> Void {
@@ -1113,7 +1111,7 @@ public class Tinode {
             deviceToken = Tinode.isNull(obj: token) ? nil : token
             let msgId = getNextMsgId()
             let msg = ClientMessage<Int, Int>(hi: MsgClientHi(id: msgId, dev: token))
-            return try? sendWithPromise(payload: msg, with: msgId)
+            return sendWithPromise(payload: msg, with: msgId)
                 .thenCatch(onFailure: { [weak self] err in
                     // Clear cached value on failure to allow for retries.
                     self?.deviceToken = nil

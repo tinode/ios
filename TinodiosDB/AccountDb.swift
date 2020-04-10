@@ -105,6 +105,7 @@ public class AccountDb {
         }
         return nil
     }
+    @discardableResult
     func saveDeviceToken(token: String?) -> Bool {
         let record = self.table.filter(self.active == 1)
         do {

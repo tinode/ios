@@ -59,19 +59,15 @@ class FindInteractor: FindBusinessLogic {
     }
     func attachToFndTopic() {
         let tinode = Cache.getTinode()
-        do {
-            try UiUtils.attachToFndTopic(
-                fndListener: self.fndListener)?.then(
-                    onSuccess: { [weak self] msg in
-                        self?.fndTopic = tinode.getOrCreateFndTopic()
-                        return nil
-                    },
-                    onFailure: { err in
-                        return nil
-                    })
-        } catch {
-            Cache.log.error("FindInteractor - failed to attach to fnd topic: %@", error.localizedDescription)
-        }
+        UiUtils.attachToFndTopic(fndListener: self.fndListener)?.then(
+                onSuccess: { [weak self] msg in
+                    self?.fndTopic = tinode.getOrCreateFndTopic()
+                    return nil
+                },
+                onFailure: { err in
+                    Cache.log.error("FindInteractor - failed to attach to fnd topic: %@", err.localizedDescription)
+                    return nil
+                })
 
     }
     func updateAndPresentRemoteContacts() {

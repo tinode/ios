@@ -53,7 +53,7 @@ class AddByIDViewController: UIViewController {
         // The description is discarded and re-requested as a part of the subsequent {sub} call.
         // Either get rid of the {get} call or save the returned description.
         let getMeta = MsgGetMeta(desc: MetaGetDesc(), sub: nil, data: nil, del: nil, tags: false, cred: false)
-        _ = try? tinode.getMeta(topic: id, query: getMeta)?.then(
+        tinode.getMeta(topic: id, query: getMeta)?.then(
             onSuccess: { [weak self] msg in
                 // Valid topic id.
                 if let desc = msg?.meta?.desc as? Description<VCard, PrivateType> {
@@ -63,7 +63,6 @@ class AddByIDViewController: UIViewController {
                 return nil
             },
             onFailure: { err in
-                print("err = \(err)")
                 if let e = err as? TinodeError {
                     if case TinodeError.serverResponseError(let code, let text, _) = e {
                         DispatchQueue.main.async {

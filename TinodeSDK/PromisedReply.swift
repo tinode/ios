@@ -133,12 +133,11 @@ public class PromisedReply<Value> {
         }
     }
     @discardableResult
-    public func then(onSuccess successHandler: SuccessHandler,
-                     onFailure failureHandler: FailureHandler = nil) throws -> PromisedReply<Value> {
-        return try queue.sync {
+    public func then(onSuccess successHandler: SuccessHandler, onFailure failureHandler: FailureHandler = nil) -> PromisedReply<Value> {
+        return queue.sync {
             // start critical section
             guard nextPromise == nil else {
-                throw PromisedReplyError.illegalStateError("Multiple calls to then are not supported")
+                fatalError("Multiple calls to then are not supported")
             }
             self.successHandler = successHandler
             self.failureHandler = failureHandler
@@ -158,18 +157,16 @@ public class PromisedReply<Value> {
         }
     }
     @discardableResult
-    public func thenApply(onSuccess successHandler: SuccessHandler)
-        throws -> PromisedReply<Value>? {
-        return try then(onSuccess: successHandler, onFailure: nil)
+    public func thenApply(onSuccess successHandler: SuccessHandler) -> PromisedReply<Value>? {
+        return then(onSuccess: successHandler, onFailure: nil)
     }
     @discardableResult
-    public func thenCatch(onFailure failureHandler: FailureHandler)
-        throws -> PromisedReply<Value>? {
-        return try then(onSuccess: nil, onFailure: failureHandler)
+    public func thenCatch(onFailure failureHandler: FailureHandler) -> PromisedReply<Value>? {
+        return then(onSuccess: nil, onFailure: failureHandler)
     }
 
-    public func thenFinally(finally: @escaping FinallyHandler) throws {
-        try then(
+    public func thenFinally(finally: @escaping FinallyHandler) {
+        then(
             onSuccess: {
                 msg in try finally()
                 return nil
