@@ -560,8 +560,8 @@ public class Tinode {
     private func hello() -> PromisedReply<ServerMessage> {
         let msgId = getNextMsgId()
         let msg = ClientMessage<Int, Int>(hi: MsgClientHi(id: msgId, ver: kVersion, ua: userAgent, dev: deviceToken, lang: kLocale))
-        return sendWithPromise(payload: msg, with: msgId).thenApply(
-            onSuccess: { [weak self] pkt in
+        return sendWithPromise(payload: msg, with: msgId)
+            .thenApply({ [weak self] pkt in
                 guard let ctrl = pkt?.ctrl else {
                     throw TinodeError.invalidReply("Unexpected type of reply packet to hello")
                 }
@@ -1112,13 +1112,13 @@ public class Tinode {
             deviceToken = Tinode.isNull(obj: token) ? nil : token
             let msgId = getNextMsgId()
             let msg = ClientMessage<Int, Int>(hi: MsgClientHi(id: msgId, dev: token))
-            return sendWithPromise(payload: msg, with: msgId).thenCatch(
-                onFailure: { [weak self] err in
+            return sendWithPromise(payload: msg, with: msgId)
+                .thenCatch { [weak self] err in
                     // Clear cached value on failure to allow for retries.
                     self?.deviceToken = nil
                     self?.store?.deviceToken = nil
                     return nil
-            })
+                }
         }
     }
 

@@ -157,15 +157,15 @@ public class PromisedReply<Value> {
         }
     }
     @discardableResult
-    public func thenApply(onSuccess successHandler: SuccessHandler) -> PromisedReply<Value> {
+    public func thenApply(_ successHandler: SuccessHandler) -> PromisedReply<Value> {
         return then(onSuccess: successHandler, onFailure: nil)
     }
     @discardableResult
-    public func thenCatch(onFailure failureHandler: FailureHandler) -> PromisedReply<Value> {
+    public func thenCatch(_ failureHandler: FailureHandler) -> PromisedReply<Value> {
         return then(onSuccess: nil, onFailure: failureHandler)
     }
 
-    public func thenFinally(finally: @escaping FinallyHandler) {
+    public func thenFinally(_ finally: @escaping FinallyHandler) {
         then(
             onSuccess: {
                 msg in try finally()
