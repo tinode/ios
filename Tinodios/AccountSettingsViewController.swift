@@ -194,10 +194,9 @@ class AccountSettingsViewController: UITableViewController {
             onFailure: { err in
                 self.incognitoModeSwitch.isOn = !isChecked
                 return UiUtils.ToastFailureHandler(err: err)
-            }).thenFinally(finally: {
+            }).thenFinally({
                 DispatchQueue.main.async { self.reloadData() }
-            }
-        )
+            })
     }
     
     @IBAction func readReceiptsClicked(_ sender: Any) {
@@ -259,6 +258,26 @@ class AccountSettingsViewController: UITableViewController {
                        UiUtils.showToast(message: "Entered text is neither email nor phone number.")
                    }
                 }
+        }))
+        self.present(alert, animated: true)
+    }
+
+    private func confirmCredentialClicked(meth: String, at indexPath: IndexPath) {
+        let alert = UIAlertController(title: "Confirm contact", message: "Enter confirmation code sent to you by \(meth):", preferredStyle: .alert)
+        alert.addTextField(configurationHandler: nil)
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(
+            title: "OK", style: .default,
+            handler: { action in
+                guard let code = alert.textFields?.first?.text else { return }
+                self.me.confirmCred(meth: meth, response: code)
+                    .thenApply { [weak self] _ in
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
+                            self?.tableView.reloadRows(at: [indexPath], with: .automatic)
+                        })
+                        return nil
+                    }
+                    .thenCatch(UiUtils.ToastFailureHandler)
         }))
         self.present(alert, animated: true)
     }
@@ -470,8 +489,9 @@ extension AccountSettingsViewController {
         }
         tableView.deselectRow(at: indexPath, animated:  true)
 
-        guard let cred = me.creds?[indexPath.row - 1], !cred.isDone else { return }
-        print("Enter validation code here")
+        guard let cred = me.creds?[indexPath.row - 1], !cred.isDone, cred.meth != nil else { return }
+
+        confirmCredentialClicked(meth: cred.meth!)
     }
 
     // Enable swipe to delete credentials.

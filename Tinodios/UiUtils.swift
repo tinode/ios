@@ -118,24 +118,25 @@ class UiUtils {
             me!.listener = meListener
         }
         let get = me!.getMetaGetBuilder().withDesc().withSub().withTags().withCred().build()
-        return me!.subscribe(set: nil, get: get).thenCatch(onFailure: { err in
-            Cache.log.error("ME topic subscription error: %@", err.localizedDescription)
-            if let e = err as? TinodeError {
-                if case TinodeError.serverResponseError(let code, let text, _) = e {
-                    switch code {
-                    case 404:
-                        UiUtils.logoutAndRouteToLoginVC()
-                    case 502:
-                        if text == "cluster unreachable" {
-                            Cache.getTinode().reconnectNow(interactively: false, reset: true)
+        return me!.subscribe(set: nil, get: get)
+            .thenCatch({ err in
+                Cache.log.error("ME topic subscription error: %@", err.localizedDescription)
+                if let e = err as? TinodeError {
+                    if case TinodeError.serverResponseError(let code, let text, _) = e {
+                        switch code {
+                        case 404:
+                            UiUtils.logoutAndRouteToLoginVC()
+                        case 502:
+                            if text == "cluster unreachable" {
+                                Cache.getTinode().reconnectNow(interactively: false, reset: true)
+                            }
+                        default:
+                            break
                         }
-                    default:
-                        break
                     }
                 }
-            }
-            return nil
-        })
+                return nil
+            })
     }
     public static func attachToFndTopic(fndListener: DefaultFndTopic.Listener?) -> PromisedReply<ServerMessage>? {
         let tinode = Cache.getTinode()
@@ -475,7 +476,8 @@ class UiUtils {
         }
         let alert = TagsEditDialogViewController(with: tags)
         alert.completionHandler = { newTags in
-            topic.setMeta(meta: MsgSetMeta(desc: nil, sub: nil, tags: newTags, cred: nil)).thenCatch(onFailure: UiUtils.ToastFailureHandler)
+            topic.setMeta(meta: MsgSetMeta(desc: nil, sub: nil, tags: newTags, cred: nil))
+                .thenCatch(UiUtils.ToastFailureHandler)
         }
         alert.show(over: viewController)
     }

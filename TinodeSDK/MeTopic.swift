@@ -7,8 +7,14 @@
 
 import Foundation
 
+public protocol MeTopicProto: TopicProto {
+    var creds: [Credential]? { get set }
+    func serializeCreds() -> String?
+    @discardableResult
+    func deserializeCreds(from data: String?) -> Bool
+}
 
-open class MeTopic<DP: Codable & Mergeable>: Topic<DP, PrivateType, DP, PrivateType> {
+open class MeTopic<DP: Codable & Mergeable>: Topic<DP, PrivateType, DP, PrivateType>, MeTopicProto {
     open class Listener: Topic<DP, PrivateType, DP, PrivateType>.Listener {
         // Called when user credentials are updated.
         open func onCredUpdated(cred: [Credential]?) {}
@@ -26,6 +32,18 @@ open class MeTopic<DP: Codable & Mergeable>: Topic<DP, PrivateType, DP, PrivateT
         super.init(tinode: tinode, name: Tinode.kTopicMe, desc: desc)
     }
 
+    public func serializeCreds() -> String? {
+        guard let c = self.creds else { return nil }
+        return Tinode.serializeObject(c)
+    }
+    public func deserializeCreds(from data: String?) -> Bool {
+        if let c: [Credential]? = Tinode.deserializeObject(from: data) {
+            self.creds = c
+            return true
+        }
+        return false
+    }
+
     override public var subsUpdated: Date? {
         get { return tinode?.topicsUpdated }
     }
@@ -37,6 +55,13 @@ open class MeTopic<DP: Codable & Mergeable>: Topic<DP, PrivateType, DP, PrivateT
 
     public var creds: [Credential]? {
         get { return credentials }
+        set {
+            if let c = newValue {
+                credentials = c.sorted(by: <)
+            } else {
+                credentials = nil
+            }
+        }
     }
 
     public func delCredential(meth: String, val: String) -> PromisedReply<ServerMessage> {
@@ -45,29 +70,28 @@ open class MeTopic<DP: Codable & Mergeable>: Topic<DP, PrivateType, DP, PrivateT
 
     public func delCredential(_ cred: Credential) -> PromisedReply<ServerMessage> {
         let tnd = tinode!
-        if !tnd.isConnected {
-            return PromisedReply(error: TinodeError.notConnected("Cannot delete credential: not connected"))
-        }
 
-        if !attached {
-            return PromisedReply(error: TinodeError.notSubscribed("Subscribe first"))
-        }
-
-        return tnd.delCredential(cred: cred).then(
-            onSuccess: { [weak self] msg in
+        return tnd.delCredential(cred: cred)
+            .thenApply { [weak self] msg in
                 let idx = self?.find(cred: cred, anyUnconfirmed: false) ?? -1
                 if idx >= 0 {
                     self?.credentials?.remove(at: idx)
+                    // No need to sort.
                 }
 
                 // Notify listeners
                 (self?.listener as! Listener).onCredUpdated(cred: self?.creds)
                 return nil
-            })
+            }
+    }
+
+    public func confirmCred(meth: String, response: String) ->PromisedReply<ServerMessage> {
+        let cred = Credential(meth: meth, val: nil, resp: response, params: nil)
+        return setMeta(meta: MsgSetMeta(desc: nil, sub: nil, tags: nil, cred: cred));
     }
 
     private func find(cred other: Credential, anyUnconfirmed: Bool) -> Int {
-        guard let creds = credentials else { return -1 }
+        guard let creds = creds else { return -1 }
         var i = 0
         for c in creds {
             if c.meth == other.meth && ((anyUnconfirmed && !c.isDone) || c.val == other.val) {
@@ -267,8 +291,8 @@ open class MeTopic<DP: Codable & Mergeable>: Topic<DP, PrivateType, DP, PrivateT
         guard cred.meth != nil else { return }
 
         if cred.val != nil {
-            if credentials == nil {
-                // Empty list. Creade list with one new element.
+            if creds == nil {
+                // Empty list. Create list with one new element.
                 credentials = [cred]
             } else {
                 // Try finding this credential among confirmed or not.
@@ -296,6 +320,8 @@ open class MeTopic<DP: Codable & Mergeable>: Topic<DP, PrivateType, DP, PrivateT
                 credentials?[idx].done = true
             }
         }
+        // Ensure predictable order.
+        credentials?.sort(by: <)
     }
 
     internal func routeMetaCred(cred: Credential) {
@@ -311,6 +337,9 @@ open class MeTopic<DP: Codable & Mergeable>: Topic<DP, PrivateType, DP, PrivateT
                 newCreds.append(c)
             }
         }
+
+        // Ensure predictable order of credentials.
+        newCreds.sort(by: <)
         credentials = newCreds
 
         // Notify listeners

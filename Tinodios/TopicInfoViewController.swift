@@ -220,7 +220,7 @@ class TopicInfoViewController: UITableViewController {
                     UiUtils.showToast(message: "You are offline.")
                 }
                 return nil
-            }).thenFinally(finally: {
+            }).thenFinally({
                 DispatchQueue.main.async { self.reloadData() }
             })
     }
@@ -375,7 +375,7 @@ class TopicInfoViewController: UITableViewController {
 
     @objc func deleteMessagesClicked(sender: UITapGestureRecognizer) {
         let handler: (Bool) -> Void = { (hard: Bool) -> Void in
-            self.topic?.delMessages(hard: hard).thenCatch(onFailure: UiUtils.ToastFailureHandler)
+            self.topic?.delMessages(hard: hard).thenCatch(UiUtils.ToastFailureHandler)
         }
 
         let alert = UIAlertController(title: "Clear all messages?", message: nil, preferredStyle: .alert)
@@ -723,10 +723,10 @@ extension TopicInfoViewController: EditMembersDelegate {
 
     func editMembersDidEndEditing(_: UIView, added: [String], removed: [String]) {
          for uid in added {
-            topic.invite(user: uid, in: nil).thenCatch(onFailure: UiUtils.ToastFailureHandler)
+            topic.invite(user: uid, in: nil).thenCatch(UiUtils.ToastFailureHandler)
          }
          for uid in removed {
-            topic.eject(user: uid, ban: false).thenCatch(onFailure: UiUtils.ToastFailureHandler)
+            topic.eject(user: uid, ban: false).thenCatch(UiUtils.ToastFailureHandler)
          }
     }
 

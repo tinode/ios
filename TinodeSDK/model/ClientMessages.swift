@@ -28,7 +28,7 @@ public class MsgClientHi : Encodable {
     }
 }
 
-public class Credential: Codable, Equatable, CustomStringConvertible {
+public class Credential: Codable, Comparable, CustomStringConvertible {
     public static let kMethEmail = "email"
     public static let kMethPhone = "tel"
     // Confirmation method: email, phone, captcha.
@@ -64,8 +64,12 @@ public class Credential: Codable, Equatable, CustomStringConvertible {
         return lhs.meth == rhs.meth && lhs.val == rhs.val
     }
 
+    public static func < (lhs: Credential, rhs: Credential) -> Bool {
+        "\(lhs.meth ?? "-"):\(lhs.val ?? "-"):\(rhs.done ?? false)" < "\(rhs.meth ?? "-"):\(rhs.val ?? "-"):\(rhs.done ?? false)"
+    }
+
     public var description: String {
-        get { return "\(meth ?? "null"):\(val ?? "null")" }
+        get { return "\(meth ?? "-"):\(val ?? "-")" }
     }
 }
 

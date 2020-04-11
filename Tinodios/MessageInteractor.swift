@@ -242,7 +242,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         if !loadNextPageInternal() && !StoredTopic.isAllDataLoaded(topic: t) {
             t.getMeta(query:t.getMetaGetBuilder()
                 .withEarlierData(limit: MessageInteractor.kMessagesPerPage).build())
-                .thenFinally(finally: { [weak self] in
+                .thenFinally({ [weak self] in
                     self?.presenter?.endRefresh()
                 })
         } else {
@@ -266,7 +266,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         guard am.given?.update(from: "+RW") ?? false else {
             return
         }
-        topic?.setMeta(meta: MsgSetMeta(desc: nil, sub: MetaSetSub(user: topic?.name, mode: am.givenString), tags: nil, cred: nil)).thenCatch(onFailure: UiUtils.ToastFailureHandler)
+        topic?.setMeta(meta: MsgSetMeta(desc: nil, sub: MetaSetSub(user: topic?.name, mode: am.givenString), tags: nil, cred: nil)).thenCatch(UiUtils.ToastFailureHandler)
     }
 
     func acceptInvitation() {
@@ -287,14 +287,14 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                 onFailure: UiUtils.ToastFailureHandler
             )
         }
-        response.thenApply(onSuccess: { msg in
+        response.thenApply({ msg in
             self.presenter?.applyTopicPermissions(withError: nil)
             return nil
         })
     }
     func ignoreInvitation() {
-        self.topic?.delete().thenFinally(
-            finally: {
+        self.topic?.delete()
+            .thenFinally({
                 self.presenter?.dismiss()
             })
     }
@@ -304,11 +304,10 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         let am = Acs(from: origAm)
         guard am.want?.update(from: "-JP") ?? false else { return }
         self.topic?.setMeta(meta: MsgSetMeta(desc: nil, sub: MetaSetSub(mode: am.wantString), tags: nil, cred: nil))
-            .thenCatch(onFailure: UiUtils.ToastFailureHandler)
-            .thenFinally(
-                finally: {
-                    self.presenter?.dismiss()
-                })
+            .thenCatch(UiUtils.ToastFailureHandler)
+            .thenFinally({
+                self.presenter?.dismiss()
+            })
     }
 
     static private func existingInteractor(for topicName: String?) -> MessageInteractor? {
@@ -363,9 +362,10 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                         mime: mimeType, fname: filename,
                         refurl: srvUrl, size: data.count) {
                         _ = topic.store?.msgReady(topic: topic, dbMessageId: msgId, data: content)
-                        topic.syncOne(msgId: msgId).thenFinally(finally: {
-                            interactor?.loadMessages()
-                        })
+                        topic.syncOne(msgId: msgId)
+                            .thenFinally({
+                                interactor?.loadMessages()
+                            })
                         success = true
                     }
                 })

@@ -52,6 +52,7 @@ public class TopicDb {
     public let maxLocalSeq: Expression<Int?>
     public let nextUnsentSeq: Expression<Int?>
     public let tags: Expression<String?>
+    public let creds: Expression<String?>
     public let pub: Expression<String?>
     public let priv: Expression<String?>
 
@@ -81,6 +82,7 @@ public class TopicDb {
         self.maxLocalSeq = Expression<Int?>("max_local_seq")
         self.nextUnsentSeq = Expression<Int?>("next_unsent_seq")
         self.tags = Expression<String?>("tags")
+        self.creds = Expression<String?>("creds")
         self.pub = Expression<String?>("pub")
         self.priv = Expression<String?>("priv")
     }
@@ -116,6 +118,7 @@ public class TopicDb {
             t.column(nextUnsentSeq)
 
             t.column(tags)
+            t.column(creds)
             t.column(pub)
             t.column(priv)
         })
@@ -137,6 +140,9 @@ public class TopicDb {
         topic.seq = row[self.seq]
         topic.clear = row[self.clear]
         topic.maxDel = row[self.maxDel] ?? 0
+        if topic is MeTopicProto {
+            (topic as! MeTopicProto).deserializeCreds(from: row[self.creds])
+        }
         topic.tags = row[self.tags]?.components(separatedBy: ",")
 
         topic.accessMode = Acs.deserialize(from: row[self.accessMode])
@@ -231,6 +237,7 @@ public class TopicDb {
                     nextUnsentSeq <- TopicDb.kUnsentIdStart,
 
                     tags <- topic.tags?.joined(separator: ","),
+                    creds <- topic is MeTopicProto ? (topic as! MeTopicProto).serializeCreds() : nil,
                     pub <- topic.serializePub(),
                     priv <- topic.serializePriv()
                 ))

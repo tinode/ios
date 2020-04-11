@@ -873,8 +873,7 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
     }
 
     public func setMeta(meta: MsgSetMeta<DP, DR>) -> PromisedReply<ServerMessage> {
-        return tinode!.setMeta(for: self.name, meta: meta).thenApply(
-            onSuccess: { msg in
+        return tinode!.setMeta(for: self.name, meta: meta).thenApply({ msg in
                 if let ctrl = msg?.ctrl, ctrl.code < 300 {
                     self.update(ctrl: ctrl, meta: meta)
                 }
@@ -958,15 +957,15 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
         let metaSetSub = MetaSetSub(user: uid, mode: mode)
         //metaSetSub.user = uid
         //metaSetSub.mode = mode
-        return setMeta(meta: MsgSetMeta(desc: nil, sub: metaSetSub, tags: nil, cred: nil)).thenApply(
-            onSuccess: { [weak self] msg in
+        return setMeta(meta: MsgSetMeta(desc: nil, sub: metaSetSub, tags: nil, cred: nil))
+            .thenApply { [weak self] msg in
                 if let topic = self {
                     topic.store?.subUpdate(topic: topic, sub: sub!)
                     topic.listener?.onMetaSub(sub: sub!)
                     topic.listener?.onSubsUpdated()
                 }
                 return nil
-            })
+            }
     }
     @discardableResult
     public func eject(user uid: String, ban: Bool) -> PromisedReply<ServerMessage> {
@@ -983,8 +982,7 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
             listener?.onSubsUpdated()
             return PromisedReply(error: TinodeError.notSynchronized)
         }
-        return tinode!.delSubscription(topicName: name, user: uid).thenApply(
-            onSuccess: { msg in
+        return tinode!.delSubscription(topicName: name, user: uid).thenApply({ msg in
                 self.store?.subDelete(topic: self, sub: sub)
                 self.removeSubFromCache(sub: sub)
                 self.listener?.onSubsUpdated()
@@ -1061,8 +1059,7 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
     public func leave(unsub: Bool? = false) -> PromisedReply<ServerMessage> {
         if attached {
             return tinode!.leave(topic: name, unsub: unsub)
-                .thenApply(
-                    onSuccess: { [weak self] msg in
+                .thenApply({ [weak self] msg in
                         guard let s = self else {
                             throw TinodeError.invalidState("Topic.self not available in result handler")
                         }
@@ -1129,10 +1126,10 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
         if attached {
             return publish(content: content, head: head, msgId: id)
         } else {
-            return subscribe().thenApply(
-                onSuccess: { [weak self] msg in
+            return subscribe()
+                .thenApply({ [weak self] msg in
                     return self?.publish(content: content, head: head, msgId: id)
-                }).thenCatch(onFailure: { [weak self] err in
+                }).thenCatch({ [weak self] err in
                     self?.store?.msgSyncing(topic: self!, dbMessageId: id, sync: false)
                     throw err
                 })
@@ -1141,8 +1138,8 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
     private func sendPendingDeletes(hard: Bool) -> PromisedReply<ServerMessage>? {
         if let pendingDeletes = self.store?.getQueuedMessageDeletes(topic: self, hard: hard), !pendingDeletes.isEmpty {
             return self.tinode!.delMessage(
-                topicName: self.name, ranges: pendingDeletes, hard: hard).thenApply(
-                    onSuccess: { [weak self] msg in
+                topicName: self.name, ranges: pendingDeletes, hard: hard)
+                .thenApply({ [weak self] msg in
                         if let id = msg?.ctrl?.getIntParam(for: "del"), let s = self {
                             s.clear = id
                             s.maxDel = id

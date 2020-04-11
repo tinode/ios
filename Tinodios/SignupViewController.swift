@@ -91,14 +91,13 @@ class SignupViewController: UITableViewController {
         creds.append(cred)
         UiUtils.toggleProgressOverlay(in: self, visible: true, title: "Registering...")
         do {
-            try tinode.connectDefault()?.thenApply(
-                    onSuccess: { pkt in
-                        print("Successfully connected, creating account")
-                        return tinode.createAccountBasic(
-                            uname: login, pwd: pwd, login: true,
-                            tags: nil, desc: desc, creds: creds)
-            }).thenApply(
-                onSuccess: { [weak self] msg in
+            try tinode.connectDefault()?
+                .thenApply({ pkt in
+                    print("Successfully connected, creating account")
+                    return tinode.createAccountBasic(
+                        uname: login, pwd: pwd, login: true,
+                        tags: nil, desc: desc, creds: creds)
+                }).thenApply({ [weak self] msg in
                     if let ctrl = msg?.ctrl, ctrl.code >= 300, ctrl.text.contains("validate credentials") {
                         DispatchQueue.main.async {
                             UiUtils.routeToCredentialsVC(in: self!.navigationController,
@@ -111,20 +110,19 @@ class SignupViewController: UITableViewController {
                         UiUtils.routeToChatListVC()
                     }
                     return nil
-            }).thenCatch(
-                onFailure: { err in
+                }).thenCatch({ err in
                     DispatchQueue.main.async {
                         UiUtils.showToast(message: "Failed to create account: \(err.localizedDescription)")
                     }
                     tinode.disconnect()
                     return nil
-            }).thenFinally(finally: { [weak self] in
-                guard let signupVC = self else { return }
-                DispatchQueue.main.async {
-                    signupVC.signUpButton.isUserInteractionEnabled = true
-                    UiUtils.toggleProgressOverlay(in: signupVC, visible: false)
-                }
-            })
+                }).thenFinally({ [weak self] in
+                    guard let signupVC = self else { return }
+                    DispatchQueue.main.async {
+                        signupVC.signUpButton.isUserInteractionEnabled = true
+                        UiUtils.toggleProgressOverlay(in: signupVC, visible: false)
+                    }
+                })
         } catch {
             tinode.disconnect()
             DispatchQueue.main.async {

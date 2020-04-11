@@ -71,7 +71,7 @@ class AddByIDViewController: UIViewController {
                     }
                 }
                 return nil
-            }).thenFinally(finally: { [weak self] in
+            }).thenFinally({ [weak self] in
                 DispatchQueue.main.async {
                     self?.okayButton.isEnabled = true
                 }
