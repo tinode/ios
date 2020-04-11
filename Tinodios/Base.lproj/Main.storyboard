@@ -37,10 +37,10 @@
                                 <rect key="frame" x="27.5" y="0.0" width="320" height="522"/>
                                 <subviews>
                                     <stackView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="247" axis="vertical" spacing="3" translatesAutoresizingMaskIntoConstraints="NO" id="mpq-rw-B1Z" userLabel="Content Stack">
-                                        <rect key="frame" x="40" y="16" width="240" height="343"/>
+                                        <rect key="frame" x="30" y="16" width="260" height="343"/>
                                         <subviews>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Rob-ty-RSP" userLabel="Logo area">
-                                                <rect key="frame" x="0.0" y="0.0" width="240" height="120"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="260" height="120"/>
                                                 <subviews>
                                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="749" verticalCompressionResistancePriority="749" image="logo-ios" translatesAutoresizingMaskIntoConstraints="NO" id="kjo-LF-vGk">
                                                         <rect key="frame" x="8" y="28" width="64" height="64"/>
@@ -50,7 +50,7 @@
                                                         </constraints>
                                                     </imageView>
                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="752" text="Tinode" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BS4-zj-4bf">
-                                                        <rect key="frame" x="80" y="38" width="140" height="44"/>
+                                                        <rect key="frame" x="80" y="38" width="160" height="44"/>
                                                         <fontDescription key="fontDescription" name="Avenir-Medium" family="Avenir" pointSize="32"/>
                                                         <color key="textColor" red="0.22352941176470587" green="0.28627450980392155" blue="0.6705882352941176" alpha="1" colorSpace="calibratedRGB"/>
                                                         <nil key="highlightedColor"/>
@@ -67,7 +67,7 @@
                                                 </constraints>
                                             </view>
                                             <textField opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="751" selected="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="User name" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="ZTD-e7-fNF">
-                                                <rect key="frame" x="0.0" y="123" width="240" height="40"/>
+                                                <rect key="frame" x="0.0" y="123" width="260" height="40"/>
                                                 <accessibility key="accessibilityConfiguration" hint="Login" identifier="usernameText" label="Login">
                                                     <accessibilityTraits key="traits" header="YES"/>
                                                 </accessibility>
@@ -78,10 +78,10 @@
                                                 <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" smartDashesType="no" smartQuotesType="no" textContentType="username"/>
                                             </textField>
                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="vPY-ED-Q8f">
-                                                <rect key="frame" x="0.0" y="166" width="240" height="40"/>
+                                                <rect key="frame" x="0.0" y="166" width="260" height="40"/>
                                                 <subviews>
                                                     <textField opaque="NO" contentMode="scaleToFill" horizontalCompressionResistancePriority="751" verticalCompressionResistancePriority="751" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Password" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="gLF-JR-ZfF">
-                                                        <rect key="frame" x="0.0" y="0.0" width="240" height="40"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="260" height="40"/>
                                                         <accessibility key="accessibilityConfiguration" hint="Password" identifier="passwordText" label="Password"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="40" id="An3-zR-ZWF"/>
@@ -118,10 +118,10 @@
                                                     </button>
                                                 </subviews>
                                                 <constraints>
-                                                    <constraint firstItem="kUP-kl-SzZ" firstAttribute="trailing" secondItem="gLF-JR-ZfF" secondAttribute="trailing" constant="-10" id="Plt-gh-StO"/>
+                                                    <constraint firstItem="kUP-kl-SzZ" firstAttribute="trailing" secondItem="gLF-JR-ZfF" secondAttribute="trailing" constant="-30" id="Plt-gh-StO"/>
                                                     <constraint firstItem="gLF-JR-ZfF" firstAttribute="width" secondItem="vPY-ED-Q8f" secondAttribute="width" id="Rcp-EQ-hXx"/>
                                                     <constraint firstItem="gLF-JR-ZfF" firstAttribute="centerY" secondItem="vPY-ED-Q8f" secondAttribute="centerY" id="UvP-pD-uwp"/>
-                                                    <constraint firstItem="Qf5-ud-WtI" firstAttribute="trailing" secondItem="gLF-JR-ZfF" secondAttribute="trailing" constant="-10" id="aWN-Wy-e1D"/>
+                                                    <constraint firstItem="Qf5-ud-WtI" firstAttribute="trailing" secondItem="gLF-JR-ZfF" secondAttribute="trailing" constant="-30" id="aWN-Wy-e1D"/>
                                                     <constraint firstItem="gLF-JR-ZfF" firstAttribute="centerX" secondItem="vPY-ED-Q8f" secondAttribute="centerX" id="bum-AF-beD"/>
                                                     <constraint firstItem="kUP-kl-SzZ" firstAttribute="centerY" secondItem="gLF-JR-ZfF" secondAttribute="centerY" id="d9x-qg-V02"/>
                                                     <constraint firstItem="gLF-JR-ZfF" firstAttribute="height" secondItem="vPY-ED-Q8f" secondAttribute="height" id="h73-7U-aiX"/>
@@ -129,7 +129,7 @@
                                                 </constraints>
                                             </view>
                                             <button opaque="NO" contentMode="right" verticalCompressionResistancePriority="751" contentHorizontalAlignment="right" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="q6T-TC-n42">
-                                                <rect key="frame" x="0.0" y="209" width="240" height="32"/>
+                                                <rect key="frame" x="0.0" y="209" width="260" height="32"/>
                                                 <fontDescription key="fontDescription" type="system" weight="light" pointSize="16"/>
                                                 <state key="normal" title="Forgot password?">
                                                     <color key="titleColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -139,7 +139,7 @@
                                                 </connections>
                                             </button>
                                             <button opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="751" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="TvF-F9-blO">
-                                                <rect key="frame" x="0.0" y="244" width="240" height="36"/>
+                                                <rect key="frame" x="0.0" y="244" width="260" height="36"/>
                                                 <fontDescription key="fontDescription" type="system" weight="medium" pointSize="20"/>
                                                 <state key="normal" title="Sign In"/>
                                                 <connections>
@@ -147,7 +147,7 @@
                                                 </connections>
                                             </button>
                                             <button opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="751" contentHorizontalAlignment="center" contentVerticalAlignment="bottom" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1tv-os-KfJ">
-                                                <rect key="frame" x="0.0" y="283" width="240" height="60"/>
+                                                <rect key="frame" x="0.0" y="283" width="260" height="60"/>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="60" id="46f-6h-yBT"/>
                                                 </constraints>
@@ -159,18 +159,18 @@
                                             </button>
                                         </subviews>
                                         <constraints>
-                                            <constraint firstAttribute="width" constant="240" id="1Uv-h5-EvQ"/>
+                                            <constraint firstAttribute="width" constant="260" id="1Uv-h5-EvQ"/>
                                         </constraints>
                                     </stackView>
                                 </subviews>
                                 <constraints>
                                     <constraint firstItem="mpq-rw-B1Z" firstAttribute="centerX" secondItem="7rS-xG-6h7" secondAttribute="centerX" id="D9f-Kx-OJU"/>
-                                    <constraint firstAttribute="trailing" secondItem="mpq-rw-B1Z" secondAttribute="trailing" constant="40" id="DbT-Ev-XnI"/>
+                                    <constraint firstAttribute="trailing" secondItem="mpq-rw-B1Z" secondAttribute="trailing" constant="30" id="DbT-Ev-XnI"/>
                                     <constraint firstAttribute="bottom" secondItem="mpq-rw-B1Z" secondAttribute="bottom" constant="40" id="G7o-Rz-I8A"/>
                                     <constraint firstAttribute="width" constant="320" id="Oys-cW-axq"/>
                                     <constraint firstItem="mpq-rw-B1Z" firstAttribute="top" secondItem="7rS-xG-6h7" secondAttribute="top" constant="16" id="TFv-Mp-ajD"/>
                                     <constraint firstAttribute="height" constant="522" id="WKa-2C-SfL"/>
-                                    <constraint firstItem="mpq-rw-B1Z" firstAttribute="leading" secondItem="7rS-xG-6h7" secondAttribute="leading" constant="40" id="kzS-Si-7D8"/>
+                                    <constraint firstItem="mpq-rw-B1Z" firstAttribute="leading" secondItem="7rS-xG-6h7" secondAttribute="leading" constant="30" id="kzS-Si-7D8"/>
                                 </constraints>
                             </scrollView>
                         </subviews>
@@ -362,7 +362,7 @@
                                                     <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" secureTextEntry="YES" smartDashesType="no" smartInsertDeleteType="no" smartQuotesType="no" textContentType="password"/>
                                                 </textField>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Lbr-pr-fEn" userLabel="eye">
-                                                    <rect key="frame" x="329" y="15" width="20" height="20"/>
+                                                    <rect key="frame" x="309" y="15" width="20" height="20"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" constant="20" id="CUU-fG-vo8"/>
                                                         <constraint firstAttribute="height" constant="20" id="MUJ-OG-3Y0"/>
@@ -374,7 +374,7 @@
                                                     </connections>
                                                 </button>
                                                 <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wBH-qF-T4u" userLabel="invisible">
-                                                    <rect key="frame" x="329" y="15" width="20" height="20"/>
+                                                    <rect key="frame" x="309" y="15" width="20" height="20"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="20" id="9pa-yU-y4U"/>
                                                         <constraint firstAttribute="width" constant="20" id="CpN-aO-z52"/>
@@ -391,9 +391,9 @@
                                                 <constraint firstItem="wBH-qF-T4u" firstAttribute="centerY" secondItem="ZQy-2N-acy" secondAttribute="centerY" id="8WC-RB-LYA"/>
                                                 <constraint firstItem="ZQy-2N-acy" firstAttribute="leading" secondItem="y4X-ec-onf" secondAttribute="leadingMargin" id="IlJ-NW-XhT"/>
                                                 <constraint firstItem="Lbr-pr-fEn" firstAttribute="centerY" secondItem="ZQy-2N-acy" secondAttribute="centerY" id="Yzg-AM-3Y8"/>
-                                                <constraint firstItem="Lbr-pr-fEn" firstAttribute="trailing" secondItem="ZQy-2N-acy" secondAttribute="trailing" constant="-10" id="pwN-Fl-Saw"/>
+                                                <constraint firstItem="Lbr-pr-fEn" firstAttribute="trailing" secondItem="ZQy-2N-acy" secondAttribute="trailing" constant="-30" id="pwN-Fl-Saw"/>
                                                 <constraint firstAttribute="trailingMargin" secondItem="ZQy-2N-acy" secondAttribute="trailing" id="wNm-iH-3j9"/>
-                                                <constraint firstItem="wBH-qF-T4u" firstAttribute="trailing" secondItem="ZQy-2N-acy" secondAttribute="trailing" constant="-10" id="wiu-WY-Had"/>
+                                                <constraint firstItem="wBH-qF-T4u" firstAttribute="trailing" secondItem="ZQy-2N-acy" secondAttribute="trailing" constant="-30" id="wiu-WY-Had"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>

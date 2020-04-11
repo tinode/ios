@@ -238,12 +238,18 @@ class UiUtils {
         return maxLength > 0 ? String(text.prefix(maxLength)) : text
     }
     public static func markTextFieldAsError(_ field: UITextField) {
-        field.rightViewMode = .always
-        let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 28, height: 20))
-        imageView.image = UIImage(named: "important-32")
+        let imageView = UIImageView(image: UIImage(named: "important-32"))
         imageView.contentMode = .scaleAspectFit
+        imageView.frame = CGRect(x: 0, y: 0, width: 24, height: 24)
         imageView.tintColor = .red
-        field.rightView = imageView
+        // Padding around the icon
+        let padding: CGFloat = 4
+        // Create the view that would act as the padding
+        let rightView = UIView(frame: CGRect(x: 0, y: 0, // keep this as 0, 0
+            width: imageView.frame.width + padding, height: imageView.frame.height))
+        rightView.addSubview(imageView)
+        field.rightViewMode = .always
+        field.rightView = rightView
     }
     public static func clearTextFieldError(_ field: UITextField) {
         field.rightViewMode = .never

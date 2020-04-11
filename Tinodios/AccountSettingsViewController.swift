@@ -275,6 +275,10 @@ class AccountSettingsViewController: UITableViewController {
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
                             self?.tableView.reloadRows(at: [indexPath], with: .automatic)
                         })
+                        DispatchQueue.main.async {
+                            UiUtils.showToast(message: "Confirmed successfully", level: .info)
+                            self?.reloadData()
+                        }
                         return nil
                     }
                     .thenCatch(UiUtils.ToastFailureHandler)
@@ -491,7 +495,7 @@ extension AccountSettingsViewController {
 
         guard let cred = me.creds?[indexPath.row - 1], !cred.isDone, cred.meth != nil else { return }
 
-        confirmCredentialClicked(meth: cred.meth!)
+        confirmCredentialClicked(meth: cred.meth!, at: indexPath)
     }
 
     // Enable swipe to delete credentials.

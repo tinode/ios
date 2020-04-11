@@ -123,8 +123,7 @@ class LoginViewController: UIViewController {
         UiUtils.toggleProgressOverlay(in: self, visible: true, title: "Logging in...")
         do {
             try tinode.connectDefault()?
-                .then(
-                    onSuccess: { pkt in
+                .thenApply({ pkt in
                         return tinode.loginBasic(uname: userName, password: password)
                     })
                 .then(
