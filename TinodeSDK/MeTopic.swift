@@ -73,7 +73,8 @@ open class MeTopic<DP: Codable & Mergeable>: Topic<DP, PrivateType, DP, PrivateT
 
         return tnd.delCredential(cred: cred)
             .thenApply { [weak self] msg in
-                let idx = self?.find(cred: cred, anyUnconfirmed: false) ?? -1
+                guard let idx = self?.findCredIndex(cred: cred, anyUnconfirmed: false) else { return nil }
+
                 if idx >= 0 {
                     self?.credentials?.remove(at: idx)
                     // No need to sort.
@@ -90,16 +91,11 @@ open class MeTopic<DP: Codable & Mergeable>: Topic<DP, PrivateType, DP, PrivateT
         return setMeta(meta: MsgSetMeta(desc: nil, sub: nil, tags: nil, cred: cred));
     }
 
-    private func find(cred other: Credential, anyUnconfirmed: Bool) -> Int {
+    private func findCredIndex(cred other: Credential, anyUnconfirmed: Bool) -> Int {
         guard let creds = creds else { return -1 }
-        var i = 0
-        for c in creds {
-            if c.meth == other.meth && ((anyUnconfirmed && !c.isDone) || c.val == other.val) {
-                return i
-            }
-            i += 1
-        }
-        return -1
+        return creds.firstIndex {
+            $0.meth == other.meth && ((anyUnconfirmed && !$0.isDone) || $0.val == other.val)
+        } ?? -1
     }
 
     override public func topicLeft(unsub: Bool?, code: Int?, reason: String?) {
@@ -296,12 +292,12 @@ open class MeTopic<DP: Codable & Mergeable>: Topic<DP, PrivateType, DP, PrivateT
                 credentials = [cred]
             } else {
                 // Try finding this credential among confirmed or not.
-                var idx = find(cred: cred, anyUnconfirmed: false)
+                var idx = findCredIndex(cred: cred, anyUnconfirmed: false)
                 if idx < 0 {
                     // Not found.
                     if !cred.isDone {
                         // Unconfirmed credential replaces previous unconfirmed credential of the same method.
-                        idx = find(cred: cred, anyUnconfirmed: true)
+                        idx = findCredIndex(cred: cred, anyUnconfirmed: true)
                         if idx >= 0 {
                             // Remove previous unconfirmed credential.
                             credentials!.remove(at: idx)
@@ -315,7 +311,7 @@ open class MeTopic<DP: Codable & Mergeable>: Topic<DP, PrivateType, DP, PrivateT
             }
         } else if cred.resp != nil && credentials != nil {
             // Handle credential confirmation.
-            let idx = find(cred: cred, anyUnconfirmed: true)
+            let idx = findCredIndex(cred: cred, anyUnconfirmed: true)
             if idx >= 0 {
                 credentials?[idx].done = true
             }
