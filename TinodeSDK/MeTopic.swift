@@ -306,7 +306,7 @@ open class MeTopic<DP: Codable & Mergeable>: Topic<DP, PrivateType, DP, PrivateT
                     credentials!.append(cred)
                 } else {
                     // Found. Maybe change 'done' status.
-                    credentials?[idx].done = true
+                    credentials?[idx].done = cred.isDone
                 }
             }
         } else if cred.resp != nil && credentials != nil {
