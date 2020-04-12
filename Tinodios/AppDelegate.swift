@@ -95,7 +95,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         var builder: DefaultComTopic.MetaGetBuilder
         if !tinode.isTopicTracked(topicName: topicName) {
             // New topic. Create it.
-            guard let t = tinode.newTopic(for: topicName, with: nil) as? DefaultComTopic else {
+            guard let t = tinode.newTopic(for: topicName) as? DefaultComTopic else {
                 return .failed
             }
             topic = t
@@ -115,12 +115,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 topic.leave()
             }
         }
-        if let msg = try? topic.subscribe(
-            set: nil,
-            get: builder
-                .withLaterData(limit: 10)
-                .withDel().build(),
-            background: true)?.getResult(), (msg.ctrl?.code ?? 500) < 300 {
+        if let msg = try? topic.subscribe(set: nil, get: builder.withLaterData(limit: 10).withDel().build(), background: true).getResult(), (msg.ctrl?.code ?? 500) < 300 {
             return .newData
         }
         return .failed
@@ -139,7 +134,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             return .noData
         }
         do {
-            if let msg = try tinode.getMeta(topic: topicName, query: MsgGetMeta.desc())?.getResult(),
+            if let msg = try tinode.getMeta(topic: topicName, query: MsgGetMeta.desc()).getResult(),
                 (msg.ctrl?.code ?? 500) < 300 {
                 return .newData
             }

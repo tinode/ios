@@ -14,7 +14,7 @@ public class FndTopic<SP: Codable>: Topic<String, String, SP, Array<String>> {
     }
 
     @discardableResult
-    override public func setMeta(meta: MsgSetMeta<String, String>) -> PromisedReply<ServerMessage>? {
+    override public func setMeta(meta: MsgSetMeta<String, String>) -> PromisedReply<ServerMessage> {
         if self.subs != nil {
             self.subs!.removeAll()
             self.subs = nil

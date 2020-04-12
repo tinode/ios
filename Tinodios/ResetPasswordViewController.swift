@@ -73,17 +73,17 @@ class ResetPasswordViewController : UIViewController {
         UiUtils.toggleProgressOverlay(in: self, visible: true, title: "Requesting...")
         do {
             try tinode.connectDefault()?
-                .thenApply(onSuccess: { _ in
+                .thenApply({ _ in
                     return tinode.requestResetPassword(method: credential.methodName(), newValue: normalized)
-                })?
-                .thenApply(onSuccess: { _ in
+                })
+                .thenApply({ _ in
                     DispatchQueue.main.async { UiUtils.showToast(message: "Message with instructions sent to the provided address.") }
                     DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1)) { [weak self] in
                         self?.navigationController?.popViewController(animated: true)
                     }
                     return nil
-                })?
-                .thenCatch(onFailure: UiUtils.ToastFailureHandler)?
+                })
+                .thenCatch(UiUtils.ToastFailureHandler)
                 .thenFinally {
                     UiUtils.toggleProgressOverlay(in: self, visible: false)
                 }

@@ -136,7 +136,7 @@ class MessageViewController: UIViewController {
             let tinode = Cache.getTinode()
             topic = tinode.getTopic(topicName: topicName!) as? DefaultComTopic
             if topic == nil {
-                topic = tinode.newTopic(for: topicName!, with: nil) as? DefaultComTopic
+                topic = tinode.newTopic(for: topicName!) as? DefaultComTopic
             }
         }
     }

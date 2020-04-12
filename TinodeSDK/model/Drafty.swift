@@ -776,9 +776,20 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
         }
 
         var spans: [Span] = []
+        let maxIndex = txt.count
         for aFmt in fmt! {
-            aFmt.len = max(aFmt.len, 0)
-            aFmt.at = max(aFmt.at, -1)
+            if aFmt.len < 0 {
+                // Invalid length
+                continue
+            }
+            if aFmt.at < 0 {
+                // Attachment
+                aFmt.at = -1
+                aFmt.len = 1
+            } else if (aFmt.at + aFmt.len >= maxIndex) {
+                // Out of bounds span.
+                continue
+            }
             if aFmt.tp == nil || aFmt.tp!.isEmpty {
                 spans.append(Span(start: aFmt.at, end: aFmt.at + aFmt.len, index: aFmt.key ?? 0))
             } else {

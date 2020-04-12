@@ -123,10 +123,9 @@ class LoginViewController: UIViewController {
         UiUtils.toggleProgressOverlay(in: self, visible: true, title: "Logging in...")
         do {
             try tinode.connectDefault()?
-                .then(
-                    onSuccess: { pkt in
+                .thenApply({ pkt in
                         return tinode.loginBasic(uname: userName, password: password)
-                    })?
+                    })
                 .then(
                     onSuccess: { [weak self] pkt in
                         Cache.log.info("LoginVC - login successful for %@", tinode.myUid!)
@@ -158,7 +157,7 @@ class LoginViewController: UIViewController {
                         }
                         _ = tinode.logout()
                         return nil
-                    })?.thenFinally { [weak self] in
+                    }).thenFinally { [weak self] in
                         guard let loginVC = self else { return }
                         DispatchQueue.main.async {
                             UiUtils.toggleProgressOverlay(in: loginVC, visible: false)

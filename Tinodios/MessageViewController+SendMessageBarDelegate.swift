@@ -13,8 +13,8 @@ extension MessageViewController : SendMessageBarDelegate {
     static let kMaxInbandAttachmentSize = 1 << 17
     static let kMaxAttachmentSize = 1 << 23
 
-    func sendMessageBar(sendText: String) -> Bool? {
-        return interactor?.sendMessage(content: Drafty(content: sendText))
+    func sendMessageBar(sendText: String) {
+        interactor?.sendMessage(content: Drafty(content: sendText))
     }
 
     func sendMessageBar(attachment: Bool) {

@@ -118,8 +118,8 @@ class UiUtils {
             me!.listener = meListener
         }
         let get = me!.getMetaGetBuilder().withDesc().withSub().withTags().withCred().build()
-        do {
-            return try me!.subscribe(set: nil, get: get)?.thenCatch(onFailure: { err in
+        return me!.subscribe(set: nil, get: get)
+            .thenCatch({ err in
                 Cache.log.error("ME topic subscription error: %@", err.localizedDescription)
                 if let e = err as? TinodeError {
                     if case TinodeError.serverResponseError(let code, let text, _) = e {
@@ -137,10 +137,6 @@ class UiUtils {
                 }
                 return nil
             })
-        } catch {
-            Cache.log.error("Error when subscribing to ME topic: %@", error.localizedDescription)
-            return nil
-        }
     }
     public static func attachToFndTopic(fndListener: DefaultFndTopic.Listener?) -> PromisedReply<ServerMessage>? {
         let tinode = Cache.getTinode()
@@ -242,12 +238,18 @@ class UiUtils {
         return maxLength > 0 ? String(text.prefix(maxLength)) : text
     }
     public static func markTextFieldAsError(_ field: UITextField) {
-        field.rightViewMode = .always
-        let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 28, height: 20))
-        imageView.image = UIImage(named: "important-32")
+        let imageView = UIImageView(image: UIImage(named: "important-32"))
         imageView.contentMode = .scaleAspectFit
+        imageView.frame = CGRect(x: 0, y: 0, width: 24, height: 24)
         imageView.tintColor = .red
-        field.rightView = imageView
+        // Padding around the icon
+        let padding: CGFloat = 4
+        // Create the view that would act as the padding
+        let rightView = UIView(frame: CGRect(x: 0, y: 0, // keep this as 0, 0
+            width: imageView.frame.width + padding, height: imageView.frame.height))
+        rightView.addSubview(imageView)
+        field.rightViewMode = .always
+        field.rightView = rightView
     }
     public static func clearTextFieldError(_ field: UITextField) {
         field.rightViewMode = .never
@@ -353,7 +355,8 @@ class UiUtils {
         tap.cancelsTouchesInView = false
         view.addGestureRecognizer(tap)
     }
-    public static func ToastFailureHandler(err: Error) throws -> PromisedReply<ServerMessage>? {
+    @discardableResult
+    public static func ToastFailureHandler(err: Error) -> PromisedReply<ServerMessage>? {
         DispatchQueue.main.async {
             if let e = err as? TinodeError, case .notConnected = e {
                 UiUtils.showToast(message: "You are offline.")
@@ -363,7 +366,8 @@ class UiUtils {
         }
         return nil
     }
-    public static func ToastSuccessHandler(msg: ServerMessage?) throws -> PromisedReply<ServerMessage>? {
+    @discardableResult
+    public static func ToastSuccessHandler(msg: ServerMessage?) -> PromisedReply<ServerMessage>? {
         if let ctrl = msg?.ctrl, ctrl.code >= 300 {
             DispatchQueue.main.async {
                 UiUtils.showToast(message: "Something went wrong: \(ctrl.code) - \(ctrl.text)", level: .warning)
@@ -383,36 +387,32 @@ class UiUtils {
     @discardableResult
     public static func handlePermissionsChange(onTopic topic: DefaultTopic, forUid uid: String?, changeType: PermissionsChangeType, newPermissions: String)
         -> PromisedReply<ServerMessage>? {
-        do {
-            var reply: PromisedReply<ServerMessage>? = nil
-            switch changeType {
-            case .updateSelfSub:
-                reply = topic.updateMode(uid: nil, update: newPermissions)
-            case .updateSub:
-                reply = topic.updateMode(uid: uid, update: newPermissions)
-            case .updateAuth:
-                reply = topic.updateDefacs(auth: newPermissions, anon: nil)
-            case .updateAnon:
-                reply = topic.updateDefacs(auth: nil, anon: newPermissions)
-            }
-            return try reply?.then(
-                onSuccess: { msg in
-                    if let ctrl = msg?.ctrl, ctrl.code >= 300 {
-                        DispatchQueue.main.async {
-                            UiUtils.showToast(message: "Permissions not modified: \(ctrl.text) (\(ctrl.code))", level: .warning)
-                        }
-                    }
-                    return nil
-                },
-                onFailure: { err in
-                    DispatchQueue.main.async {
-                        UiUtils.showToast(message: "Error changing permissions: \(err.localizedDescription)")
-                    }
-                    return nil
-                })
-        } catch {
-            return nil
+        var reply: PromisedReply<ServerMessage>? = nil
+        switch changeType {
+        case .updateSelfSub:
+            reply = topic.updateMode(uid: nil, update: newPermissions)
+        case .updateSub:
+            reply = topic.updateMode(uid: uid, update: newPermissions)
+        case .updateAuth:
+            reply = topic.updateDefacs(auth: newPermissions, anon: nil)
+        case .updateAnon:
+            reply = topic.updateDefacs(auth: nil, anon: newPermissions)
         }
+        return reply?.then(
+            onSuccess: { msg in
+                if let ctrl = msg?.ctrl, ctrl.code >= 300 {
+                    DispatchQueue.main.async {
+                        UiUtils.showToast(message: "Permissions not modified: \(ctrl.text) (\(ctrl.code))", level: .warning)
+                    }
+                }
+                return nil
+            },
+            onFailure: { err in
+                DispatchQueue.main.async {
+                    UiUtils.showToast(message: "Error changing permissions: \(err.localizedDescription)")
+                }
+                return nil
+            })
     }
     @discardableResult
     public static func updateAvatar(forTopic topic: DefaultTopic, image: UIImage) -> PromisedReply<ServerMessage>? {
@@ -423,14 +423,9 @@ class UiUtils {
     @discardableResult
     public static func setTopicData(
         forTopic topic: DefaultTopic, pub: VCard?, priv: PrivateType?) -> PromisedReply<ServerMessage>? {
-        do {
-            return try topic.setDescription(pub: pub, priv: priv)?.then(
-                onSuccess: UiUtils.ToastSuccessHandler,
-                onFailure: UiUtils.ToastFailureHandler)
-        } catch {
-            UiUtils.showToast(message: "Error changing public data \(error)")
-            return nil
-        }
+        return topic.setDescription(pub: pub, priv: priv).then(
+            onSuccess: UiUtils.ToastSuccessHandler,
+            onFailure: UiUtils.ToastFailureHandler)
     }
 
     public static func topViewController(rootViewController: UIViewController?) -> UIViewController? {
@@ -487,20 +482,14 @@ class UiUtils {
         }
         let alert = TagsEditDialogViewController(with: tags)
         alert.completionHandler = { newTags in
-            do {
-                try topic.setMeta(meta: MsgSetMeta(desc: nil, sub: nil, tags: newTags, cred: nil))?.thenCatch(onFailure: UiUtils.ToastFailureHandler)
-            } catch {
-                DispatchQueue.main.async {
-                    UiUtils.showToast(message: "Failed to update tags \(error.localizedDescription)")
-                }
-            }
+            topic.setMeta(meta: MsgSetMeta(desc: nil, sub: nil, tags: newTags, cred: nil))
+                .thenCatch(UiUtils.ToastFailureHandler)
         }
         alert.show(over: viewController)
     }
 
     // Sets tint color on the password visibility switch buttons.
-    public static func adjustPasswordVisibilitySwitchColor(
-        for switches: [UIButton], setColor color: UIColor) {
+    public static func adjustPasswordVisibilitySwitchColor(for switches: [UIButton], setColor color: UIColor) {
         switches.forEach {
             $0.tintColor = color
             $0.setImage($0.imageView?.image?.withRenderingMode(.alwaysTemplate), for: .normal)

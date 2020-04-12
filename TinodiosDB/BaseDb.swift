@@ -11,7 +11,7 @@ import TinodeSDK
 
 public class BaseDb {
     // Current database schema version. Increment on schema changes.
-    public static let kSchemaVersion: Int32 = 104
+    public static let kSchemaVersion: Int32 = 105
 
     // Onject statuses.
     // Status undefined/not set.

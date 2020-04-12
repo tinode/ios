@@ -17,7 +17,7 @@ protocol MessageBusinessLogic: class {
     func cleanup()
     func leaveTopic()
 
-    func sendMessage(content: Drafty) -> Bool
+    func sendMessage(content: Drafty)
     func sendReadNotification(explicitSeq: Int?, when deadline: DispatchTime)
     func sendTypingNotification()
     func enablePeersMessaging()
@@ -120,81 +120,81 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
             tinode.reconnectNow(interactively: interactively, reset: false)
             return false
         }
-        do {
-            var builder = topic.getMetaGetBuilder()
-                .withDesc()
-                .withSub()
-                .withLaterData(limit: MessageInteractor.kMessagesPerPage)
-                .withDel()
-            if topic.isOwner {
-                builder = builder.withTags()
-            }
-            try topic.subscribe(set: nil, get: builder.build())?.then(
-                    onSuccess: { [weak self] _ in
-                        self?.messageInteractorQueue.async {
-                            do {
-                                try _ = self?.topic?.syncAll()?.thenApply(onSuccess: { [weak self] _ in
-                                    self?.loadMessages()
-                                    return nil
-                                })
-                            } catch {
-                                Cache.log.error("MessageInteractor - Failed to send pending messages: %@", error.localizedDescription)
-                            }
-                        }
-                        if self?.topicId == -1 {
-                            self?.topicId = BaseDb.getInstance().topicDb?.getId(topic: self?.topicName)
-                        }
-                        self?.loadMessages()
-                        self?.presenter?.applyTopicPermissions(withError: nil)
-                        return nil
-                    },
-                    onFailure: { [weak self] err in
-                        let tinode = Cache.getTinode()
-                        let errorMsg = "Failed to subscribe to topic: \(err.localizedDescription)"
-                        if tinode.isConnected {
-                            DispatchQueue.main.async {
-                                UiUtils.showToast(message: errorMsg)
-                            }
-                        } else {
-                            Cache.log.error("MessageInteractor: %@", errorMsg)
-                        }
-                        switch err {
-                        case TinodeError.notConnected(_):
-                            tinode.reconnectNow(interactively: false, reset: false)
-                        default:
-                            self?.presenter?.applyTopicPermissions(withError: err)
-                        }
-                        return nil
-                    })
-        } catch TinodeError.notConnected(let errorMsg) {
-            Cache.log.error("MessageInteractor - Tinode isn't connected: %@", errorMsg)
-        } catch {
-            Cache.log.error("MessageInteractor - error subscribing to topic: %@", error.localizedDescription)
+        var builder = topic.getMetaGetBuilder()
+            .withDesc()
+            .withSub()
+            .withLaterData(limit: MessageInteractor.kMessagesPerPage)
+            .withDel()
+        if topic.isOwner {
+            builder = builder.withTags()
         }
+        topic.subscribe(set: nil, get: builder.build()).then(
+                onSuccess: { [weak self] _ in
+                    self?.messageInteractorQueue.async {
+                        self?.topic?.syncAll().then(
+                            onSuccess: { [weak self] _ in
+                                self?.loadMessages()
+                                return nil
+                            },
+                            onFailure: { err in
+                                Cache.log.error("MessageInteractor - Failed to send pending messages: %@", err.localizedDescription)
+                                return nil
+                            }
+                        )
+                    }
+                    if self?.topicId == -1 {
+                        self?.topicId = BaseDb.getInstance().topicDb?.getId(topic: self?.topicName)
+                    }
+                    self?.loadMessages()
+                    self?.presenter?.applyTopicPermissions(withError: nil)
+                    return nil
+                },
+                onFailure: { [weak self] err in
+                    let tinode = Cache.getTinode()
+                    let errorMsg = "Failed to subscribe to topic: \(err.localizedDescription)"
+                    if tinode.isConnected {
+                        DispatchQueue.main.async {
+                            UiUtils.showToast(message: errorMsg)
+                        }
+                    } else {
+                        Cache.log.error("MessageInteractor: %@", errorMsg)
+                    }
+                    switch err {
+                    case TinodeError.notConnected(_):
+                        tinode.reconnectNow(interactively: false, reset: false)
+                    default:
+                        self?.presenter?.applyTopicPermissions(withError: err)
+                    }
+                    return nil
+                })
+
         return false
     }
 
-    func sendMessage(content: Drafty) -> Bool {
-        guard let topic = self.topic else { return false }
+    func sendMessage(content: Drafty) {
+        guard let topic = self.topic else { return }
         defer {
             loadMessages()
         }
-        do {
-            _ = try topic.publish(content: content)?.then(
-                onSuccess: { [weak self] msg in
-                    self?.loadMessages()
-                    return nil
-                },
-                onFailure: UiUtils.ToastFailureHandler)
-        } catch TinodeError.notConnected {
-            DispatchQueue.main.async { UiUtils.showToast(message: "You are offline.") }
-            Cache.getTinode().reconnectNow(interactively: false, reset: false)
-            return false
-        } catch {
-            DispatchQueue.main.async { UiUtils.showToast(message: "Message not sent.") }
-            return false
-        }
-        return true
+        topic.publish(content: content).then(
+            onSuccess: { [weak self] msg in
+                self?.loadMessages()
+                return nil
+            },
+            onFailure: { err in
+                Cache.log.error("sendMessage error: %@", err.localizedDescription)
+                if let e = err as? TinodeError {
+                    switch e {
+                    case .notConnected(_):
+                        DispatchQueue.main.async { UiUtils.showToast(message: "You are offline.") }
+                        Cache.getTinode().reconnectNow(interactively: false, reset: false)
+                    default:
+                        DispatchQueue.main.async { UiUtils.showToast(message: "Message not sent.") }
+                    }
+                }
+                return nil
+            }
+        )
     }
     func sendReadNotification(explicitSeq: Int? = nil, when deadline: DispatchTime) {
         readNotificationsInFlight += 1
@@ -240,41 +240,23 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
             return
         }
         if !loadNextPageInternal() && !StoredTopic.isAllDataLoaded(topic: t) {
-            do {
-                try t.getMeta(query:
-                    t.getMetaGetBuilder()
-                        .withEarlierData(
-                            limit: MessageInteractor.kMessagesPerPage)
-                        .build())?.then(
-                            onSuccess: { [weak self] msg in
-                                self?.presenter?.endRefresh()
-                                return nil
-                            },
-                            onFailure: { [weak self] err in
-                                self?.presenter?.endRefresh()
-                                return nil
-                            })
-            } catch {
-                self.presenter?.endRefresh()
-            }
+            t.getMeta(query:t.getMetaGetBuilder()
+                .withEarlierData(limit: MessageInteractor.kMessagesPerPage).build())
+                .thenFinally({ [weak self] in
+                    self?.presenter?.endRefresh()
+                })
         } else {
             self.presenter?.endRefresh()
         }
     }
     func deleteMessage(seqId: Int) {
-        do {
-            try topic?.delMessage(id: seqId, hard: false)?.then(
-                onSuccess: { [weak self] msg in
-                    self?.loadMessages()
-                    return nil
-                },
-                onFailure: UiUtils.ToastFailureHandler)
-            self.loadMessages()
-        } catch TinodeError.notConnected(_) {
-            UiUtils.showToast(message: "You are offline")
-        } catch {
-            UiUtils.showToast(message: "Action failed: \(error.localizedDescription)")
-        }
+        topic?.delMessage(id: seqId, hard: false).then(
+            onSuccess: { [weak self] msg in
+                self?.loadMessages()
+                return nil
+            },
+            onFailure: UiUtils.ToastFailureHandler)
+        self.loadMessages()
     }
 
     func enablePeersMessaging() {
@@ -284,65 +266,50 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         guard am.given?.update(from: "+RW") ?? false else {
             return
         }
-        do {
-            try topic?.setMeta(meta: MsgSetMeta(
-                desc: nil,
-                sub: MetaSetSub(user: topic?.name, mode: am.givenString),
-                tags: nil,
-                cred: nil))?.thenCatch(onFailure: UiUtils.ToastFailureHandler)
-        } catch TinodeError.notConnected(_) {
-            UiUtils.showToast(message: "You are offline")
-        } catch {
-            UiUtils.showToast(message: "Action failed: \(error.localizedDescription)")
-        }
+        topic?.setMeta(meta: MsgSetMeta(desc: nil, sub: MetaSetSub(user: topic?.name, mode: am.givenString), tags: nil, cred: nil)).thenCatch(UiUtils.ToastFailureHandler)
     }
+
     func acceptInvitation() {
         guard let topic = self.topic, let mode = self.topic?.accessMode?.givenString else { return }
         var response = topic.setMeta(meta: MsgSetMeta(desc: nil, sub: MetaSetSub(mode: mode), tags: nil, cred: nil))
         if topic.isP2PType {
             // For P2P topics change 'given' permission of the peer too.
             // In p2p topics the other user has the same name as the topic.
-            do {
-                response = try response?.thenApply(onSuccess: { msg in
+            response = response.then(
+                onSuccess: { msg in
                     _ = topic.setMeta(meta: MsgSetMeta(
                         desc: nil,
                         sub: MetaSetSub(user: topic.name, mode: mode),
                         tags: nil,
                         cred: nil))
                     return nil
-                })
-            } catch TinodeError.notConnected(_) {
-                UiUtils.showToast(message: "You are offline")
-            } catch {
-                UiUtils.showToast(message: "Operation failed \(error.localizedDescription)")
-            }
+                },
+                onFailure: UiUtils.ToastFailureHandler
+            )
         }
-        _ = try? response?.thenApply(onSuccess: { msg in
+        response.thenApply({ msg in
             self.presenter?.applyTopicPermissions(withError: nil)
             return nil
         })
     }
     func ignoreInvitation() {
-        _ = try? self.topic?.delete()?.thenFinally(
-            finally: {
+        self.topic?.delete()
+            .thenFinally({
                 self.presenter?.dismiss()
             })
     }
+
     func blockTopic() {
         guard let origAm = self.topic?.accessMode else { return }
         let am = Acs(from: origAm)
         guard am.want?.update(from: "-JP") ?? false else { return }
-        do {
-            try self.topic?.setMeta(meta: MsgSetMeta(desc: nil, sub: MetaSetSub(mode: am.wantString), tags: nil, cred: nil))?.thenFinally(
-                finally: {
-                    self.presenter?.dismiss()
-                })
-        } catch TinodeError.notConnected(_) {
-            UiUtils.showToast(message: "You are offline")
-        } catch {
-            UiUtils.showToast(message: "Operation failed \(error.localizedDescription)")
-        }
+        self.topic?.setMeta(meta: MsgSetMeta(desc: nil, sub: MetaSetSub(mode: am.wantString), tags: nil, cred: nil))
+            .thenCatch(UiUtils.ToastFailureHandler)
+            .thenFinally({
+                self.presenter?.dismiss()
+            })
     }
+
     static private func existingInteractor(for topicName: String?) -> MessageInteractor? {
         // Must be called on main thread.
         guard let topicName = topicName else { return nil }
@@ -356,6 +323,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         }
         return nil
     }
+
     func uploadFile(filename: String?, refurl: URL?, mimeType: String?, data: Data?) {
         guard let filename = filename, let mimeType = mimeType, let data = data, let topic = topic else { return }
         guard let content = try? Drafty().attachFile(mime: mimeType,
@@ -394,9 +362,10 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                         mime: mimeType, fname: filename,
                         refurl: srvUrl, size: data.count) {
                         _ = topic.store?.msgReady(topic: topic, dbMessageId: msgId, data: content)
-                        _ = try? topic.syncOne(msgId: msgId)?.thenFinally(finally: {
-                            interactor?.loadMessages()
-                        })
+                        topic.syncOne(msgId: msgId)
+                            .thenFinally({
+                                interactor?.loadMessages()
+                            })
                         success = true
                     }
                 })

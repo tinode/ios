@@ -73,9 +73,10 @@ public class MsgServerMeta: Decodable {
     public let sub: [SubscriptionProto]?
     public let del: DelValues?
     public let tags: [String]?
+    public let cred: [Credential]?
 
     private enum CodingKeys: String, CodingKey  {
-        case id, topic, ts, desc, sub, del, tags
+        case id, topic, ts, desc, sub, del, tags, cred
     }
     required public init (from decoder: Decoder) throws {
         let container =  try decoder.container (keyedBy: CodingKeys.self)
@@ -84,6 +85,7 @@ public class MsgServerMeta: Decodable {
         ts = try? container.decode(Date.self, forKey: .ts)
         del = try? container.decode(DelValues.self, forKey: .del)
         tags = try? container.decode(Array<String>.self, forKey: .tags)
+        cred = try? container.decode(Array<Credential>.self, forKey: .cred)
         if topic == Tinode.kTopicMe {
             desc = try? container.decode(DefaultDescription.self, forKey: .desc)
             sub = try? container.decode(Array<DefaultSubscription>.self, forKey: .sub)

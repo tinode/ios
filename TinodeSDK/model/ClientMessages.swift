@@ -28,17 +28,19 @@ public class MsgClientHi : Encodable {
     }
 }
 
-public class Credential: Encodable {
+public class Credential: Codable, Comparable, CustomStringConvertible {
     public static let kMethEmail = "email"
     public static let kMethPhone = "tel"
     // Confirmation method: email, phone, captcha.
-    var meth: String? = nil
+    public var meth: String? = nil
     // Credential to be confirmed, e.g. email or a phone number.
-    var val: String? = nil
+    public var val: String? = nil
     // Confirmation response, such as '123456'.
     var resp: String? = nil
     // Confirmation parameters.
     var params: [String:String]? = nil
+    // If credential is confirmed
+    var done: Bool? = nil
 
     public init(meth: String, val: String) {
         self.meth = meth
@@ -50,6 +52,24 @@ public class Credential: Encodable {
         self.val = val
         self.resp = resp
         self.params = params
+    }
+
+    public var isDone: Bool {
+        get {
+            return done ?? false
+        }
+    }
+
+    public static func == (lhs: Credential, rhs: Credential) -> Bool {
+        return lhs.meth == rhs.meth && lhs.val == rhs.val
+    }
+
+    public static func < (lhs: Credential, rhs: Credential) -> Bool {
+        "\(lhs.meth ?? "-"):\(lhs.val ?? "-"):\(rhs.done ?? false)" < "\(rhs.meth ?? "-"):\(rhs.val ?? "-"):\(rhs.done ?? false)"
+    }
+
+    public var description: String {
+        get { return "\(meth ?? "-"):\(val ?? "-")" }
     }
 }
 
@@ -153,6 +173,7 @@ public class MsgGetMeta: CustomStringConvertible, Encodable {
     static let kData = "data"
     static let kDel = "del"
     static let kTags = "tags"
+    static let kCred = "cred"
 
     private var set = 0
 
@@ -182,19 +203,23 @@ public class MsgGetMeta: CustomStringConvertible, Encodable {
             " sub=[\(sub_str)]," +
             " data=[\(data_str)]," +
             " del=[\(del_str)]" +
-        " tags=[\((set & MsgGetMeta.kTagsSet) != 0 ? "set" : "null")]"
+            " tags=[\((set & MsgGetMeta.kTagsSet) != 0 ? "set" : "null")]" +
+            " cred=[\((set & MsgGetMeta.kCredSet) != 0 ? "set" : "null")]"
     }
 
     init() {
         self.what = "\(MsgGetMeta.kDesc) \(MsgGetMeta.kData) \(MsgGetMeta.kDel) \(MsgGetMeta.kTags)"
     }
-    public init(desc: MetaGetDesc?, sub: MetaGetSub?, data: MetaGetData?, del: MetaGetData?, tags: Bool) {
+    public init(desc: MetaGetDesc?, sub: MetaGetSub?, data: MetaGetData?, del: MetaGetData?, tags: Bool, cred: Bool) {
         self.desc = desc
         self.sub = sub
         self.data = data
         self.del = del
         if tags {
             self.set = MsgGetMeta.kTagsSet
+        }
+        if cred {
+            self.set |= MsgGetMeta.kCredSet
         }
         buildWhat()
     }
@@ -214,6 +239,9 @@ public class MsgGetMeta: CustomStringConvertible, Encodable {
         }
         if (self.set & MsgGetMeta.kTagsSet) != 0 {
             parts.append(MsgGetMeta.kTags)
+        }
+        if (self.set & MsgGetMeta.kCredSet) != 0 {
+            parts.append(MsgGetMeta.kCred)
         }
         self.what = parts.joined(separator: " ")
     }
@@ -410,14 +438,16 @@ public class MsgClientDel: Encodable {
     static let kStrTopic = "topic"
     static let kStrMsg = "msg"
     static let kStrSub = "sub"
+    static let kStrCred = "cred"
     let id: String?
     let topic: String?
     let what: String?
     let delseq: [MsgRange]?
     let user: String?
     let hard: Bool?
+    let cred: Credential?
 
-    init(id: String?, topic: String?, what: String?, ranges: [MsgRange]?, user: String?, hard: Bool?) {
+    init(id: String?, topic: String?, what: String?, ranges: [MsgRange]?, user: String?, cred: Credential?, hard: Bool?) {
         self.id = id
         self.topic = topic
         self.what = what
@@ -426,39 +456,47 @@ public class MsgClientDel: Encodable {
         self.delseq = what == MsgClientDel.kStrMsg ? ranges : nil
         self.user = what == MsgClientDel.kStrSub ? user : nil
         self.hard = (hard ?? false) ? true : nil
+        self.cred = cred
     }
 
-    /// Delete messages by list
-    convenience init(id: String?, topic: String?, ranges: [MsgRange]?, hard: Bool?) {
+    /// Delete multiple message ranges.
+    convenience init(id: String?, topic: String, ranges: [MsgRange]?, hard: Bool?) {
         self.init(id: id, topic: topic, what: MsgClientDel.kStrMsg,
                   ranges: ranges,
-                  user: nil, hard: hard)
+                  user: nil, cred: nil, hard: hard)
     }
-    /// Delete messages by range
-    convenience init(id: String?, topic: String?, from: Int, to: Int?, hard: Bool?) {
+    /// Delete range of messages.
+    convenience init(id: String?, topic: String, from: Int, to: Int?, hard: Bool?) {
         self.init(id: id, topic: topic, what: MsgClientDel.kStrMsg,
                   ranges: [MsgRange(low: from, hi: to)],
-                  user: nil, hard: hard)
+                  user: nil, cred: nil, hard: hard)
     }
 
     /// Delete message by id
-    convenience init(id: String?, topic: String?, msgId: Int, hard: Bool?) {
+    convenience init(id: String?, topic: String, msgId: Int, hard: Bool?) {
         self.init(id: id, topic: topic, what: MsgClientDel.kStrMsg,
                   ranges: [MsgRange(id: msgId)],
-                  user: nil, hard: hard)
+                  user: nil, cred: nil, hard: hard)
     }
 
     /// Delete topic
-    convenience init(id: String?, topic: String?) {
+    convenience init(id: String?, topic: String) {
         self.init(id: id, topic: topic, what: MsgClientDel.kStrTopic,
-                  ranges: nil, user: nil, hard: nil)
+                  ranges: nil, user: nil, cred: nil, hard: nil)
     }
 
     /// Delete subscription
-    convenience init(id: String?, topic: String?, user: String?) {
+    convenience init(id: String?, topic: String, user: String?) {
         self.init(id: id, topic: topic, what: MsgClientDel.kStrSub,
-                  ranges: nil, user: user, hard: false)
+                  ranges: nil, user: user, cred: nil, hard: false)
     }
+
+    /// Delete credential
+    convenience init(id: String?, cred: Credential) {
+        self.init(id: id, topic: Tinode.kTopicMe, what: MsgClientDel.kStrCred,
+                  ranges: nil, user: nil, cred: cred, hard: nil)
+    }
+
 }
 
 public class ClientMessage<Pu: Encodable, Pr: Encodable> : Encodable {

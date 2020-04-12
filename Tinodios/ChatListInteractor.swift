@@ -88,23 +88,20 @@ class ChatListInteractor: ChatListBusinessLogic, ChatListDataStore {
         guard meTopic == nil || !meTopic!.attached else {
             return
         }
-        do {
-            try UiUtils.attachToMeTopic(meListener: self.meListener)?.then(
-                onSuccess: { [weak self] msg in
-                    self?.loadAndPresentTopics()
-                    self?.meTopic = tinode.getMeTopic()
-                    return nil
-                }, onFailure: { [weak self] err in
-                    if let e = err as? TinodeError, case .serverResponseError(let code, _, _) = e {
-                        if code == 404 {
-                            self?.router?.routeToLogin()
-                        }
+
+        UiUtils.attachToMeTopic(meListener: self.meListener)?.then(
+            onSuccess: { [weak self] msg in
+                self?.loadAndPresentTopics()
+                self?.meTopic = tinode.getMeTopic()
+                return nil
+            }, onFailure: { [weak self] err in
+                if let e = err as? TinodeError, case .serverResponseError(let code, _, _) = e {
+                    if code == 401 || code==403 || code == 404 {
+                        self?.router?.routeToLogin()
                     }
-                    return nil
-                })
-        } catch {
-            self.router?.routeToLogin()
-        }
+                }
+                return nil
+            })
     }
     func leaveMeTopic() {
         if self.meTopic?.attached ?? false {
@@ -155,25 +152,29 @@ class ChatListInteractor: ChatListBusinessLogic, ChatListDataStore {
 
     func deleteTopic(_ name: String) {
         let topic = Cache.getTinode().getTopic(topicName: name) as! DefaultComTopic
-        do {
-            try topic.delete()?.then(onSuccess: { [weak self] msg in
+        topic.delete().then(
+            onSuccess: { [weak self] msg in
                 self?.loadAndPresentTopics()
                 return nil
-            })
-        } catch {
-            Cache.log.error("ChatListInteractor - Delete op failed for topic: %@", name)
-        }
+            },
+            onFailure: { _ in
+                Cache.log.error("ChatListInteractor - Delete op failed for topic: %@", name)
+                return nil
+            }
+        )
     }
 
     func changeArchivedStatus(forTopic name: String, archived: Bool) {
         let topic = Cache.getTinode().getTopic(topicName: name) as! DefaultComTopic
-        do {
-            try topic.updateArchived(archived: archived)?.then(onSuccess: { [weak self] msg in
+        topic.updateArchived(archived: archived)?.then(
+            onSuccess: { [weak self] msg in
                 self?.loadAndPresentTopics()
+                    return nil
+                },
+            onFailure: { _ in
+                Cache.log.error("ChatListInteractor - Archive/Unarchive op failed for topic: %@", name)
                 return nil
-            })
-        } catch {
-            Cache.log.error("ChatListInteractor - Archive/Unarchive op failed for topic: %@", name)
-        }
+            }
+        )
     }
 }

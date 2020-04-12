@@ -8,7 +8,7 @@
 import UIKit
 
 protocol SendMessageBarDelegate: class {
-    func sendMessageBar(sendText: String) -> Bool?
+    func sendMessageBar(sendText: String)
 
     func sendMessageBar(attachment: Bool)
 
@@ -60,10 +60,9 @@ class SendMessageBar: UIView {
         if msg.isEmpty {
             return
         }
-        if delegate?.sendMessageBar(sendText: msg) ?? false {
-            inputField.text = nil
-            textViewDidChange(inputField)
-        }
+        delegate?.sendMessageBar(sendText: msg)
+        inputField.text = nil
+        textViewDidChange(inputField)
     }
 
     @IBAction func enablePeerMessagingClicked(_ sender: Any) {

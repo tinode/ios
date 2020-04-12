@@ -212,21 +212,17 @@ class TopicInfoViewController: UITableViewController {
 
     @IBAction func mutedSwitched(_ sender: Any) {
         let isChecked = mutedSwitch.isOn
-        do {
-            try topic.updateMuted(muted: isChecked)?.then(
-                onSuccess: UiUtils.ToastSuccessHandler,
-                onFailure: { err in
-                    self.mutedSwitch.isOn = !isChecked
-                    return nil
-                })?.thenFinally(finally: {
-                    DispatchQueue.main.async { self.reloadData() }
-                })
-        } catch TinodeError.notConnected(_) {
-            mutedSwitch.isOn = !isChecked
-            UiUtils.showToast(message: "You are offline.")
-        } catch {
-            mutedSwitch.isOn = !isChecked
-        }
+        topic.updateMuted(muted: isChecked).then(
+            onSuccess: UiUtils.ToastSuccessHandler,
+            onFailure: { err in
+                self.mutedSwitch.isOn = !isChecked
+                if let e = err as? TinodeError, case .notConnected(_) = e {
+                    UiUtils.showToast(message: "You are offline.")
+                }
+                return nil
+            }).thenFinally({
+                DispatchQueue.main.async { self.reloadData() }
+            })
     }
 
     @objc
@@ -273,7 +269,7 @@ class TopicInfoViewController: UITableViewController {
             }
         }
         if pub != nil || priv != nil {
-            try? UiUtils.setTopicData(forTopic: topic, pub: pub, priv: priv)?.thenFinally {
+            UiUtils.setTopicData(forTopic: topic, pub: pub, priv: priv)?.thenFinally {
                 DispatchQueue.main.async { self.reloadData() }
             }
         }
@@ -286,7 +282,7 @@ class TopicInfoViewController: UITableViewController {
         }
         UiUtils.showPermissionsEditDialog(over: self, acs: acs, callback: {
             permissions in
-            _ = try? UiUtils.handlePermissionsChange(onTopic: self.topic, forUid: uid, changeType: changeType, newPermissions: permissions)?.then(onSuccess: self.promiseSuccessHandler)
+            UiUtils.handlePermissionsChange(onTopic: self.topic, forUid: uid, changeType: changeType, newPermissions: permissions)?.then(onSuccess: self.promiseSuccessHandler)
         }, disabledPermissions: disabledPermissions)
     }
 
@@ -323,29 +319,8 @@ class TopicInfoViewController: UITableViewController {
     }
 
     private func deleteTopic() {
-        do {
-            try topic.delete()?.then(
-                onSuccess: { msg in
-                    DispatchQueue.main.async {
-                        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-                        let destinationVC = storyboard.instantiateViewController(withIdentifier: "ChatsNavigator") as! UINavigationController
-
-                        self.show(destinationVC, sender: nil)
-                    }
-                    return nil
-                },
-                onFailure: UiUtils.ToastFailureHandler)
-        } catch TinodeError.notConnected(let e) {
-            UiUtils.showToast(message: "You are offline \(e)")
-        } catch {
-            UiUtils.showToast(message: "Action failed \(error)")
-        }
-    }
-
-    private func blockContact() {
-        do {
-            try topic.updateMode(uid: nil, update: "-JP")?.then(
-                onSuccess: { msg in
+        topic.delete().then(
+            onSuccess: { msg in
                 DispatchQueue.main.async {
                     let storyboard = UIStoryboard(name: "Main", bundle: nil)
                     let destinationVC = storyboard.instantiateViewController(withIdentifier: "ChatsNavigator") as! UINavigationController
@@ -355,11 +330,19 @@ class TopicInfoViewController: UITableViewController {
                 return nil
             },
             onFailure: UiUtils.ToastFailureHandler)
-        } catch TinodeError.notConnected(let e) {
-            UiUtils.showToast(message: "You are offline \(e)")
-        } catch {
-            UiUtils.showToast(message: "Action failed \(error)")
-        }
+    }
+
+    private func blockContact() {
+        topic.updateMode(uid: nil, update: "-JP").then(
+            onSuccess: { msg in
+                DispatchQueue.main.async {
+                    let storyboard = UIStoryboard(name: "Main", bundle: nil)
+                    let destinationVC = storyboard.instantiateViewController(withIdentifier: "ChatsNavigator") as! UINavigationController
+                    self.show(destinationVC, sender: nil)
+                }
+                return nil
+            },
+            onFailure: UiUtils.ToastFailureHandler)
     }
 
     private func reportTopic(reason: String) {
@@ -392,11 +375,7 @@ class TopicInfoViewController: UITableViewController {
 
     @objc func deleteMessagesClicked(sender: UITapGestureRecognizer) {
         let handler: (Bool) -> Void = { (hard: Bool) -> Void in
-            do {
-                try self.topic?.delMessages(hard: hard)?.thenCatch(onFailure: UiUtils.ToastFailureHandler)
-            } catch {
-                UiUtils.showToast(message: "Failed to delete messages: \(error)")
-            }
+            self.topic?.delMessages(hard: hard).thenCatch(UiUtils.ToastFailureHandler)
         }
 
         let alert = UIAlertController(title: "Clear all messages?", message: nil, preferredStyle: .alert)
@@ -673,7 +652,7 @@ extension TopicInfoViewController {
             case .ban:
                 ban = true
             }
-            _ = try? self.topic.eject(user: uid, ban: ban)?.then(
+            self.topic.eject(user: uid, ban: ban).then(
                 onSuccess: self.promiseSuccessHandler,
                 onFailure: UiUtils.ToastFailureHandler)
         }))
@@ -714,13 +693,9 @@ extension TopicInfoViewController {
                 UiUtils.showToast(message: "Can't make this user owner.")
                 return
             }
-            do {
-                try self.topic.updateMode(uid: uid, update: "+O")?.then(
-                    onSuccess: self.promiseSuccessHandler,
-                    onFailure: UiUtils.ToastFailureHandler)
-            } catch {
-                UiUtils.showToast(message: "Operation failed \(error).")
-            }
+            self.topic.updateMode(uid: uid, update: "+O").then(
+                onSuccess: self.promiseSuccessHandler,
+                onFailure: UiUtils.ToastFailureHandler)
         }))
         let topicTitle = self.topic.pub?.fn ?? "Unknown"
         let title = sub.pub?.fn ?? "Unknown"
@@ -748,10 +723,10 @@ extension TopicInfoViewController: EditMembersDelegate {
 
     func editMembersDidEndEditing(_: UIView, added: [String], removed: [String]) {
          for uid in added {
-            _ = try? topic.invite(user: uid, in: nil)?.thenCatch(onFailure: UiUtils.ToastFailureHandler)
+            topic.invite(user: uid, in: nil).thenCatch(UiUtils.ToastFailureHandler)
          }
          for uid in removed {
-            _ = try? topic.eject(user: uid, ban: false)?.thenCatch(onFailure: UiUtils.ToastFailureHandler)
+            topic.eject(user: uid, ban: false).thenCatch(UiUtils.ToastFailureHandler)
          }
     }
 
@@ -765,7 +740,6 @@ extension TopicInfoViewController: ImagePickerDelegate {
         guard let image = image?.resize(width: UiUtils.kAvatarSize, height: UiUtils.kAvatarSize, clip: true) else {
             return
         }
-        _ = try? UiUtils.updateAvatar(forTopic: self.topic, image: image)?.then(
-            onSuccess: self.promiseSuccessHandler)
+        UiUtils.updateAvatar(forTopic: self.topic, image: image)?.then(onSuccess: self.promiseSuccessHandler)
     }
 }
