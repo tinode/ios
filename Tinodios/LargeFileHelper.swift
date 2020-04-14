@@ -81,13 +81,8 @@ class LargeFileHelper: NSObject {
         let footer = LargeFileHelper.kLineEnd + LargeFileHelper.kTwoHyphens + LargeFileHelper.kBoundary + LargeFileHelper.kTwoHyphens + LargeFileHelper.kLineEnd
         newData.append(contentsOf: footer.utf8)
 
-        var tempDir: URL
-        if #available(iOS 10.0, *) {
-            tempDir = FileManager.default.temporaryDirectory
-        } else {
-            // Fallback on earlier versions
-            tempDir = URL(string: NSTemporaryDirectory().appending("/dummy"))!
-        }
+        var tempDir = FileManager.default.temporaryDirectory
+
         let localFileName = UUID().uuidString
         let localURL = tempDir.appendingPathComponent("throwaway-\(localFileName)")
         try? newData.write(to: localURL)

@@ -440,13 +440,11 @@ extension MessageViewController: MessageDisplayLogic {
         navBarAvatarView.set(icon: icon, title: title, id: topicName, online: online)
         navBarAvatarView.bounds = CGRect(x: 0, y: 0, width: Constants.kNavBarAvatarSmallState, height: Constants.kNavBarAvatarSmallState)
 
-        if #available(iOS 10, *) {
-            navBarAvatarView.translatesAutoresizingMaskIntoConstraints = false
-            NSLayoutConstraint.activate([
-                    navBarAvatarView.heightAnchor.constraint(equalToConstant: Constants.kNavBarAvatarSmallState),
-                    navBarAvatarView.widthAnchor.constraint(equalTo: navBarAvatarView.heightAnchor)
-                ])
-        }
+        navBarAvatarView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+                navBarAvatarView.heightAnchor.constraint(equalToConstant: Constants.kNavBarAvatarSmallState),
+                navBarAvatarView.widthAnchor.constraint(equalTo: navBarAvatarView.heightAnchor)
+            ])
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: navBarAvatarView)
     }
 
@@ -1058,11 +1056,7 @@ extension MessageViewController : MessageCellDelegate {
             return
         }
 
-        if #available(iOS 10, *) {
-            UIApplication.shared.open(url)
-        } else {
-            UIApplication.shared.openURL(url)
-        }
+        UIApplication.shared.open(url)
     }
 
     // TODO: remove as unused
