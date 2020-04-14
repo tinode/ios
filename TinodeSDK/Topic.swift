@@ -461,7 +461,7 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
         return false
     }
 
-    public func getMetaGetBuilder() -> MetaGetBuilder {
+    public func metaGetBuilder() -> MetaGetBuilder {
         // Ensure the topic is fully initialized before any get requests are issued.
         if subs == nil {
             loadSubs()
@@ -489,7 +489,7 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
                 sub: nil,
                 tags: self.tags, cred: nil)
         } else {
-            getMsg = getMetaGetBuilder()
+            getMsg = metaGetBuilder()
                 .withDesc().withData().withSub().withTags().build()
         }
         return subscribe(set: setMsg, get: getMsg)
@@ -768,9 +768,9 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
 
     /// Delete topic
     @discardableResult
-    public func delete() -> PromisedReply<ServerMessage> {
+    public func delete(hard: Bool) -> PromisedReply<ServerMessage> {
         // Delete works even if the topic is not attached.
-        return tinode!.delTopic(topicName: name).then(
+        return tinode!.delTopic(topicName: name, hard: hard).then(
             onSuccess: { msg in
                 self.topicLeft(unsub: true, code: msg?.ctrl?.code, reason: msg?.ctrl?.text)
                 self.tinode!.stopTrackingTopic(topicName: self.name)
@@ -899,7 +899,7 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
 
     public func updateAccessMode(ac: AccessChange?) -> Bool {
         if description!.acs == nil {
-            description!.acs = Acs(from: nil as Acs?)
+            description!.acs = Acs()
         }
         return description!.acs!.update(from: ac)
     }
@@ -1041,7 +1041,7 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
                 let acs = Acs(from: nil as Acs?)
                 acs.update(from: pres.dacs)
                 if acs.isModeDefined {
-                    getMeta(query: getMetaGetBuilder().withSub(user: pres.src).build())
+                    getMeta(query: metaGetBuilder().withSub(user: pres.src).build())
                 }
             }
         default:

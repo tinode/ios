@@ -196,7 +196,6 @@ public class TopicDb {
         guard let topicName = row[self.topic] else {
             return nil
         }
-        //let t = Tinode.newTopic(for: topicName, with: nil)
         let t = Tinode.newTopic(withTinode: tinode, forTopic: topicName)
         self.deserializeTopic(topic: t, row: row)
         return t

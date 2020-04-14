@@ -58,6 +58,8 @@ public protocol Storage: class {
 
     func logout()
 
+    func deleteAccount(_ uid: String)
+
     func setMyUid(uid: String, credMethods: [String]?)
 
     // Server time minus local time.

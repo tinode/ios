@@ -480,15 +480,21 @@ public class MsgClientDel: Encodable {
     }
 
     /// Delete topic
-    convenience init(id: String?, topic: String) {
+    convenience init(id: String?, topic: String, hard: Bool) {
         self.init(id: id, topic: topic, what: MsgClientDel.kStrTopic,
-                  ranges: nil, user: nil, cred: nil, hard: nil)
+                  ranges: nil, user: nil, cred: nil, hard: hard)
+    }
+
+    /// Delete current user.
+    convenience init(id: String?, hard: Bool) {
+        self.init(id: id, topic: nil, what: MsgClientDel.kStrTopic,
+                  ranges: nil, user: nil, cred: nil, hard: hard)
     }
 
     /// Delete subscription
     convenience init(id: String?, topic: String, user: String?) {
         self.init(id: id, topic: topic, what: MsgClientDel.kStrSub,
-                  ranges: nil, user: user, cred: nil, hard: false)
+                  ranges: nil, user: user, cred: nil, hard: nil)
     }
 
     /// Delete credential

@@ -120,7 +120,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
             tinode.reconnectNow(interactively: interactively, reset: false)
             return false
         }
-        var builder = topic.getMetaGetBuilder()
+        var builder = topic.metaGetBuilder()
             .withDesc()
             .withSub()
             .withLaterData(limit: MessageInteractor.kMessagesPerPage)
@@ -240,7 +240,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
             return
         }
         if !loadNextPageInternal() && !StoredTopic.isAllDataLoaded(topic: t) {
-            t.getMeta(query:t.getMetaGetBuilder()
+            t.getMeta(query:t.metaGetBuilder()
                 .withEarlierData(limit: MessageInteractor.kMessagesPerPage).build())
                 .thenFinally({ [weak self] in
                     self?.presenter?.endRefresh()

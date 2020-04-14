@@ -74,24 +74,33 @@ class LoginViewController: UIViewController {
 
     @objc func keyboardWillShow(_ notification: Notification) {
         let userInfo: NSDictionary = notification.userInfo! as NSDictionary
-        let keyboardSize = (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as! NSValue).cgRectValue.size
+        let keyboardScreenEndFrame = (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as! NSValue).cgRectValue
 
-        let tabbarHeight = tabBarController?.tabBar.frame.size.height ?? 0
-        let toolbarHeight = navigationController?.toolbar.frame.size.height ?? 0
-        let bottomInset = keyboardSize.height - tabbarHeight - toolbarHeight
+        let keyboardViewEndFrame = view.convert(keyboardScreenEndFrame, from: view.window)
+
+        let bottomInset: CGFloat
+        if #available(iOS 11.0, *) {
+            bottomInset = keyboardViewEndFrame.height - view.safeAreaInsets.bottom
+        } else {
+            let tabbarHeight = tabBarController?.tabBar.frame.size.height ?? 0
+            let toolbarHeight = navigationController?.toolbar.frame.size.height ?? 0
+            bottomInset = keyboardViewEndFrame.height - tabbarHeight - toolbarHeight
+        }
 
         scrollView.contentInset.bottom = bottomInset
         scrollView.scrollIndicatorInsets.bottom = bottomInset
 
-        // If active text field is hidden by the keyboard, scroll it into view.
-        var visibleRect = self.view.frame
-        visibleRect.size.height -= keyboardSize.height
-        if let activeField = [userNameTextEdit, passwordTextEdit].first(where: { $0.isFirstResponder }),
-            // passwordTextField is embedded in a text view (in order to display password visibility switches).
-            let origin = (activeField === passwordTextEdit! ? activeField.superview : activeField)?.frame.origin {
-            if visibleRect.contains(origin) {
-                let scrollPoint = CGPoint(x: 0, y: origin.y - keyboardSize.height)
-                scrollView.setContentOffset(scrollPoint, animated: true)
+        if #available(iOS 11.0, *) {} else {
+            // If active text field is hidden by the keyboard, scroll it into view.
+            var visibleRect = view.frame
+            visibleRect.size.height -= bottomInset
+            if let activeField = [userNameTextEdit, passwordTextEdit].first(where: { $0.isFirstResponder }),
+                // passwordTextField is embedded in a text view (in order to display password visibility switches).
+                let origin = (activeField === passwordTextEdit! ? activeField.superview : activeField)?.frame.origin {
+                if visibleRect.contains(origin) {
+                    let scrollPoint = CGPoint(x: 0, y: origin.y - bottomInset)
+                    scrollView.setContentOffset(scrollPoint, animated: true)
+                }
             }
         }
     }

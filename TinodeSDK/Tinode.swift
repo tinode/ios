@@ -1206,20 +1206,17 @@ public class Tinode {
     func delMessage(topicName: String, ranges: [MsgRange]?, hard: Bool) -> PromisedReply<ServerMessage> {
         return sendDeleteMessage(
             msg: ClientMessage<Int, Int>(
-                del: MsgClientDel(id: getNextMsgId(),
-                                  topic: topicName, ranges: ranges, hard: hard)))
+                del: MsgClientDel(id: getNextMsgId(), topic: topicName, ranges: ranges, hard: hard)))
     }
     func delMessage(topicName: String, msgId: Int, hard: Bool) -> PromisedReply<ServerMessage> {
         return sendDeleteMessage(
             msg: ClientMessage<Int, Int>(
-                del: MsgClientDel(id: getNextMsgId(),
-                                  topic: topicName, msgId: msgId, hard: hard)))
+                del: MsgClientDel(id: getNextMsgId(), topic: topicName, msgId: msgId, hard: hard)))
     }
     func delSubscription(topicName: String, user: String?) -> PromisedReply<ServerMessage> {
         return sendDeleteMessage(
             msg: ClientMessage<Int, Int>(
-                del: MsgClientDel(id: getNextMsgId(),
-                                  topic: topicName, user: user)))
+                del: MsgClientDel(id: getNextMsgId(), topic: topicName, user: user)))
     }
 
     /// Low-level request to delete a credential. Use {@link MeTopic#delCredential(String, String)} ()} instead.
@@ -1233,14 +1230,31 @@ public class Tinode {
         return sendWithPromise(payload: msg, with: msgId)
     }
 
+    /// Request to delete account of the current user.
+    /// - Parameters
+    ///  - hard hard-delete user
+    /// - Returns: PromisedReply of the reply ctrl message
+    public func delCurrentUser(hard: Bool) -> PromisedReply<ServerMessage> {
+        let msgId = getNextMsgId()
+        let msg = ClientMessage<Int, Int>(del: MsgClientDel(id: msgId, hard: hard))
+        return sendWithPromise(payload: msg, with: msgId).thenApply{ [weak self] _ in
+            guard let this = self else { return nil }
+            this.disconnect()
+            this.store?.deleteAccount(this.myUid!)
+            this.myUid = nil
+            return nil
+        }
+    }
+
     /// Low-level request to delete topic. Use {@link Topic#delete()} instead.
     ///
     /// - Parameters:
     ///   - topicName: name of the topic to delete
+    ///   - hard: hard-delete topic
     /// - Returns: PromisedReply of the reply ctrl message
-    func delTopic(topicName: String) -> PromisedReply<ServerMessage> {
+    func delTopic(topicName: String, hard: Bool) -> PromisedReply<ServerMessage> {
         let msgId = getNextMsgId()
-        let msg = ClientMessage<Int, Int>(del: MsgClientDel(id: msgId, topic: topicName))
+        let msg = ClientMessage<Int, Int>(del: MsgClientDel(id: msgId, topic: topicName, hard: hard))
         return sendWithPromise(payload: msg, with: msgId)
     }
 

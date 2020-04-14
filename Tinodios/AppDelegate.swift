@@ -99,12 +99,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 return .failed
             }
             topic = t
-            builder = topic.getMetaGetBuilder().withDesc().withSub()
+            builder = topic.metaGetBuilder().withDesc().withSub()
         } else {
             // Existing topic.
             guard let t = tinode.getTopic(topicName: topicName) as? DefaultComTopic else { return .failed }
             topic = t
-            builder = topic.getMetaGetBuilder()
+            builder = topic.metaGetBuilder()
         }
 
         if (topic.recv ?? 0) >= seq {

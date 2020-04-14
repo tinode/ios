@@ -132,7 +132,7 @@ open class MeTopic<DP: Codable & Mergeable>: Topic<DP, PrivateType, DP, PrivateT
         }
 
         var changed = false
-        var acs = accessMode
+        var acs = self.accessMode
         if acs == nil {
             acs = newAcs
             changed = true
@@ -141,7 +141,7 @@ open class MeTopic<DP: Codable & Mergeable>: Topic<DP, PrivateType, DP, PrivateT
         }
 
         if changed {
-            accessMode = acs
+            self.accessMode = acs
             self.store?.topicUpdate(topic: self)
         }
     }
@@ -172,11 +172,11 @@ open class MeTopic<DP: Codable & Mergeable>: Topic<DP, PrivateType, DP, PrivateT
 
         if what == .kUpd && Tinode.kTopicMe == pres.src {
             // Me's desc was updated, fetch the updated version.
-            getMeta(query: getMetaGetBuilder().withDesc().build())
+            getMeta(query: metaGetBuilder().withDesc().build())
             return
         }
 
-        // "what":"tags" has src == nil
+        // "what":"tags" may have src == nil
         if let topic = pres.src != nil ? tinode!.getTopic(topicName: pres.src!) : nil {
             switch what {
             case .kOn: // topic came online
@@ -191,7 +191,7 @@ open class MeTopic<DP: Codable & Mergeable>: Topic<DP, PrivateType, DP, PrivateT
                 }
                 topic.touched = Date()
             case .kUpd: // pub/priv updated
-                getMeta(query: getMetaGetBuilder().withSub(user: pres.src).build())
+                getMeta(query: metaGetBuilder().withSub(user: pres.src).build())
             case .kAcs: // access mode changed
                 if topic.updateAccessMode(ac: pres.dacs) {
                     self.store?.topicUpdate(topic: topic)
@@ -213,19 +213,21 @@ open class MeTopic<DP: Codable & Mergeable>: Topic<DP, PrivateType, DP, PrivateT
                 Tinode.log.error("ME.pres message - unknown what: %@", String(describing: pres.what))
             }
         } else {
-            // New topic
+            // nil (me) or a previously unknown topic
             switch what {
             case .kAcs:
-                let acs = Acs()
-                acs.update(from: pres.dacs)
-                if acs.isModeDefined {
-                    getMeta(query: getMetaGetBuilder().withSub(user: pres.src).build())
-                } else {
-                    Tinode.log.error("ME.acs - unexpected access mode: %@", String(describing: pres.dacs))
+                if pres.src != nil && pres.src != Tinode.kTopicMe {
+                    let acs = Acs()
+                    acs.update(from: pres.dacs)
+                    if acs.isModeDefined {
+                        getMeta(query: metaGetBuilder().withSub(user: pres.src).build())
+                    } else {
+                        Tinode.log.error("ME.acs - unexpected access mode: %@", String(describing: pres.dacs))
+                    }
                 }
             case .kTags:
                 // Account tags updated
-                getMeta(query: getMetaGetBuilder().withTags().build())
+                getMeta(query: metaGetBuilder().withTags().build())
             default:
                 Tinode.log.error("ME.pres - topic not found: what = %@, src = %@",
                                  String(describing: pres.what), String(describing: pres.src))

@@ -488,9 +488,10 @@ extension AccountSettingsViewController {
     // Handle tap on a row with contact
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.section != AccountSettingsViewController.kSectionContacts || indexPath.row == 0 {
-            super.tableView(tableView, didSelectRowAt: indexPath)
+            // Don't call super.tableView.
             return
         }
+
         tableView.deselectRow(at: indexPath, animated:  true)
 
         guard let cred = me.creds?[indexPath.row - 1], !cred.isDone, cred.meth != nil else { return }

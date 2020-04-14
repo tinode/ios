@@ -37,6 +37,10 @@ public class SqlStore : Storage {
         self.dbh?.logout()
     }
 
+    public func deleteAccount(_ uid: String) {
+        //TODO: implement
+    }
+
     public func setMyUid(uid: String, credMethods: [String]?) {
         self.dbh?.setUid(uid: uid, credMethods: credMethods)
     }
