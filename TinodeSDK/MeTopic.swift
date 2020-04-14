@@ -323,7 +323,7 @@ open class MeTopic<DP: Codable & Mergeable>: Topic<DP, PrivateType, DP, PrivateT
     internal func routeMetaCred(cred: Credential) {
         processOneCred(cred)
 
-        (listener as! Listener).onCredUpdated(cred: creds)
+        (listener as? Listener)?.onCredUpdated(cred: creds)
     }
 
     internal func routeMetaCred(cred: [Credential]) {
@@ -339,6 +339,6 @@ open class MeTopic<DP: Codable & Mergeable>: Topic<DP, PrivateType, DP, PrivateT
         credentials = newCreds
 
         // Notify listeners
-        (listener as! Listener).onCredUpdated(cred: creds)
+        (listener as? Listener)?.onCredUpdated(cred: creds)
     }
 }
