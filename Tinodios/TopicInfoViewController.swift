@@ -319,7 +319,7 @@ class TopicInfoViewController: UITableViewController {
     }
 
     private func deleteTopic() {
-        topic.delete().then(
+        topic.delete(hard: true).then(
             onSuccess: { msg in
                 DispatchQueue.main.async {
                     let storyboard = UIStoryboard(name: "Main", bundle: nil)

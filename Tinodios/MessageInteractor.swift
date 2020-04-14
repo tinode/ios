@@ -293,7 +293,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         })
     }
     func ignoreInvitation() {
-        self.topic?.delete()
+        self.topic?.delete(hard: true)
             .thenFinally({
                 self.presenter?.dismiss()
             })
