@@ -81,7 +81,7 @@ class LargeFileHelper: NSObject {
         let footer = LargeFileHelper.kLineEnd + LargeFileHelper.kTwoHyphens + LargeFileHelper.kBoundary + LargeFileHelper.kTwoHyphens + LargeFileHelper.kLineEnd
         newData.append(contentsOf: footer.utf8)
 
-        var tempDir = FileManager.default.temporaryDirectory
+        let tempDir = FileManager.default.temporaryDirectory
 
         let localFileName = UUID().uuidString
         let localURL = tempDir.appendingPathComponent("throwaway-\(localFileName)")

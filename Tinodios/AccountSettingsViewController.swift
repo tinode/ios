@@ -348,11 +348,11 @@ class AccountSettingsViewController: UITableViewController {
     }
 
     @objc func termsOfUseClicked(sender: UITapGestureRecognizer) {
-        UIApplication.shared.openURL(URL(string: "https://tinode.co/terms.html")!)
+        UIApplication.shared.open(URL(string: "https://tinode.co/terms.html")!)
     }
 
     @objc func privacyPolicyClicked(sender: UITapGestureRecognizer) {
-        UIApplication.shared.openURL(URL(string: "https://tinode.co/privacy.html")!)
+        UIApplication.shared.open(URL(string: "https://tinode.co/privacy.html")!)
     }
 
     @objc func contactUsClicked(sender: UITapGestureRecognizer) {
