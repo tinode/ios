@@ -40,6 +40,7 @@ class AccountSettingsViewController: UITableViewController {
 
     @IBOutlet weak var actionChangePassword: UITableViewCell!
     @IBOutlet weak var actionLogOut: UITableViewCell!
+    @IBOutlet weak var actionDeleteAccount: UITableViewCell!
 
     weak var tinode: Tinode!
     weak var me: DefaultMeTopic!
@@ -90,6 +91,10 @@ class AccountSettingsViewController: UITableViewController {
         UiUtils.setupTapRecognizer(
             forView: actionLogOut,
             action: #selector(AccountSettingsViewController.logoutClicked),
+            actionTarget: self)
+        UiUtils.setupTapRecognizer(
+            forView: actionDeleteAccount,
+            action: #selector(AccountSettingsViewController.deleteAccountClicked),
             actionTarget: self)
         UiUtils.setupTapRecognizer(
             forView: privacyPolicy,
@@ -347,6 +352,17 @@ class AccountSettingsViewController: UITableViewController {
         self.present(alert, animated: true)
     }
 
+    @objc func deleteAccountClicked(sender: UITapGestureRecognizer) {
+        let alert = UIAlertController(title: nil, message: "Are you sure you want to delete your account? It cannot be undone.", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(
+            title: "Delete", style: .default,
+            handler: { action in
+                self.deleteAccount()
+            }))
+        self.present(alert, animated: true)
+    }
+
     @objc func termsOfUseClicked(sender: UITapGestureRecognizer) {
         UIApplication.shared.open(URL(string: "https://tinode.co/terms.html")!)
     }
@@ -406,6 +422,14 @@ class AccountSettingsViewController: UITableViewController {
     private func logout() {
         Cache.log.info("AccountSettingsVC - logging out")
         UiUtils.logoutAndRouteToLoginVC()
+    }
+
+    private func deleteAccount() {
+        Cache.log.info("AccountSettingsVC - deleting account")
+        tinode.delCurrentUser(hard: true).thenApply { _ in
+            UiUtils.logoutAndRouteToLoginVC()
+            return nil
+        }
     }
 }
 
