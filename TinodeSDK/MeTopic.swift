@@ -20,6 +20,13 @@ open class MeTopic<DP: Codable & Mergeable>: Topic<DP, PrivateType, DP, PrivateT
         open func onCredUpdated(cred: [Credential]?) {}
     }
 
+    open class MetaGetBuilder: Topic<DP, PrivateType, DP, PrivateType>.MetaGetBuilder {
+        public func withCred() -> MetaGetBuilder {
+            meta.setCred()
+            return self
+        }
+    }
+
     private var credentials: [Credential]? = nil
 
     public init(tinode: Tinode?) {
@@ -42,6 +49,10 @@ open class MeTopic<DP: Codable & Mergeable>: Topic<DP, PrivateType, DP, PrivateT
             return true
         }
         return false
+    }
+
+    override public func metaGetBuilder() -> MetaGetBuilder {
+        return MetaGetBuilder(parent: self)
     }
 
     override public var subsUpdated: Date? {
@@ -73,15 +84,18 @@ open class MeTopic<DP: Codable & Mergeable>: Topic<DP, PrivateType, DP, PrivateT
 
         return tnd.delCredential(cred: cred)
             .thenApply { [weak self] msg in
-                guard let idx = self?.findCredIndex(cred: cred, anyUnconfirmed: false) else { return nil }
+                guard let me = self else { return nil }
 
+                let idx = me.findCredIndex(cred: cred, anyUnconfirmed: false)
                 if idx >= 0 {
-                    self?.credentials?.remove(at: idx)
+                    me.credentials?.remove(at: idx)
                     // No need to sort.
-                }
 
-                // Notify listeners
-                (self?.listener as! Listener).onCredUpdated(cred: self?.creds)
+                    me.store?.topicUpdate(topic: me)
+
+                    // Notify listeners
+                    (me.listener as! Listener).onCredUpdated(cred: me.creds)
+                }
                 return nil
             }
     }
@@ -288,10 +302,12 @@ open class MeTopic<DP: Codable & Mergeable>: Topic<DP, PrivateType, DP, PrivateT
     private func processOneCred(_ cred: Credential) {
         guard cred.meth != nil else { return }
 
+        var changed = false
         if cred.val != nil {
             if creds == nil {
                 // Empty list. Create list with one new element.
                 credentials = [cred]
+                changed = true
             } else {
                 // Try finding this credential among confirmed or not.
                 var idx = findCredIndex(cred: cred, anyUnconfirmed: false)
@@ -310,16 +326,22 @@ open class MeTopic<DP: Codable & Mergeable>: Topic<DP, PrivateType, DP, PrivateT
                     // Found. Maybe change 'done' status.
                     credentials?[idx].done = cred.isDone
                 }
+                changed = true
             }
         } else if cred.resp != nil && credentials != nil {
             // Handle credential confirmation.
             let idx = findCredIndex(cred: cred, anyUnconfirmed: true)
             if idx >= 0 {
                 credentials?[idx].done = true
+                changed = true
             }
         }
-        // Ensure predictable order.
-        credentials?.sort(by: <)
+        if changed {
+            // Ensure predictable order.
+            credentials?.sort(by: <)
+
+            store?.topicUpdate(topic: self)
+        }
     }
 
     internal func routeMetaCred(cred: Credential) {

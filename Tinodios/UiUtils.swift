@@ -110,7 +110,7 @@ class UiUtils {
         } else {
             me!.listener = meListener
         }
-        let get = me!.metaGetBuilder().withDesc().withSub().withTags().withCred().build()
+        let get = me!.metaGetBuilder().withCred().withDesc().withSub().withTags().build()
         return me!.subscribe(set: nil, get: get)
             .thenCatch({ err in
                 Cache.log.error("ME topic subscription error: %@", err.localizedDescription)

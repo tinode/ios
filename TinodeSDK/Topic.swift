@@ -118,7 +118,7 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
         open func onContUpdate(sub: Subscription<SP, SR>) {}
     }
 
-    public class MetaGetBuilder {
+    open class MetaGetBuilder {
         let topic: TopicProto
         var meta: MsgGetMeta
 
@@ -181,10 +181,6 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
         }
         public func withTags() -> MetaGetBuilder {
             meta.setTags()
-            return self
-        }
-        public func withCred() -> MetaGetBuilder {
-            meta.setCred()
             return self
         }
         public func build() -> MsgGetMeta {
