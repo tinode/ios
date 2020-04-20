@@ -66,6 +66,7 @@ class Cache {
                     let appVersion: String = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as! String
                     let appName = "Tinodios/" + appVersion
                     let dbh = BaseDb.getInstance()
+                    // FIXME: Get and use current UI language from Bundle.main.preferredLocalizations.first
                     tinode = Tinode(for: appName,
                                     authenticateWith: Cache.kApiKey,
                                     persistDataIn: dbh.sqlStore)
