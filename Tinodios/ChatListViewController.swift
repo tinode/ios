@@ -53,7 +53,7 @@ class ChatListViewController: UITableViewController, ChatListDisplayLogic {
         archivedChatsFooter = UIView(frame: CGRect(x: 0, y: 0, width: tableView.frame.width, height: ChatListViewController.kFooterHeight))
         archivedChatsFooter!.backgroundColor = tableView.backgroundColor
         let button = UIButton(frame: CGRect(x: 0, y: 0, width: tableView.frame.width, height: ChatListViewController.kFooterHeight))
-        button.setTitle("Archived Chats", for: .normal)
+        button.setTitle(NSLocalizedString("Archived Chats", comment: "View title"), for: .normal)
         button.setTitleColor(UIColor.darkGray, for: .normal)
         button.titleLabel?.font = button.titleLabel?.font.withSize(15)
         button.addTarget(self, action: #selector(navigateToArchive), for: .touchUpInside)
@@ -64,7 +64,7 @@ class ChatListViewController: UITableViewController, ChatListDisplayLogic {
     private func toggleFooter(visible: Bool) {
         let count = numArchivedTopics > 9 ? "9+" : String(numArchivedTopics)
         let button = tableView.tableFooterView!.subviews[0] as! UIButton
-        button.setTitle("Archived Chats (\(count))", for: .normal)
+        button.setTitle(String(format: NSLocalizedString("Archived Chats (%d)", comment: "Button to open chat archive"), count), for: .normal)
         archivedChatsFooter!.isHidden = !visible
         tableView.tableFooterView = archivedChatsFooter
     }
@@ -177,11 +177,11 @@ extension ChatListViewController {
 
     override func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
         // Delete item at indexPath
-        let delete = UITableViewRowAction(style: .destructive, title: "Delete") { (action, indexPath) in
+        let delete = UITableViewRowAction(style: .destructive, title: NSLocalizedString("Delete", comment: "Swipe action")) { (action, indexPath) in
             let topic = self.topics[indexPath.row]
             self.interactor?.deleteTopic(topic.name)
         }
-        let archive = UITableViewRowAction(style: .normal, title: "Archive") { (action, indexPath) in
+        let archive = UITableViewRowAction(style: .normal, title: NSLocalizedString("Archive", comment: "Swipe action")) { (action, indexPath) in
             let topic = self.topics[indexPath.row]
             self.interactor?.changeArchivedStatus(
                 forTopic: topic.name, archived: !topic.isArchived)
@@ -203,7 +203,7 @@ extension ChatListViewController {
         if show {
             let rect = CGRect(x: 0, y: 0, width: view.bounds.width, height: view.bounds.height)
             let messageLabel = UILabel(frame: rect)
-            messageLabel.text = "You have no chats\n\n¯\\_(ツ)_/¯"
+            messageLabel.text = NSLocalizedString("You have no chats\n\n¯\\_(ツ)_/¯", comment: "Placeholder when no chats found")
             messageLabel.textColor = .darkGray
             messageLabel.numberOfLines = 0
             messageLabel.textAlignment = .center

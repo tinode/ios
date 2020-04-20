@@ -129,7 +129,7 @@ class LoginViewController: UIViewController {
         guard !userName.isEmpty && !password.isEmpty else { return }
 
         let tinode = Cache.getTinode()
-        UiUtils.toggleProgressOverlay(in: self, visible: true, title: "Logging in...")
+        UiUtils.toggleProgressOverlay(in: self, visible: true, title: NSLocalizedString("Logging in...", comment: "Login progress text"))
         do {
             try tinode.connectDefault()?
                 .thenApply({ pkt in
@@ -157,7 +157,7 @@ class LoginViewController: UIViewController {
                         if let tinodeErr = err as? TinodeError {
                             toastMsg = "Tinode: \(tinodeErr.description)"
                         } else if let nwErr = err as? SwiftWebSocket.WebSocketError {
-                            toastMsg = "Couldn't connect to server: \(nwErr)"
+                            toastMsg = String(format: NSLocalizedString("Couldn't connect to server: %@", comment: "Error message"), nwErr.localizedDescription)
                         } else {
                             toastMsg = err.localizedDescription
                         }

@@ -55,8 +55,8 @@ class ImagePreviewController : UIViewController, UIScrollViewDelegate {
             imageView.image = UIImage(data: bits)
 
             // Fill out details panel for the received image.
-            fileNameLabel.text = content.fileName ?? "undefined"
-            contentTypeLabel.text = content.contentType ?? "undefined"
+            fileNameLabel.text = content.fileName ?? NSLocalizedString("undefined", comment: "Placeholder for missing file name")
+            contentTypeLabel.text = content.contentType ?? NSLocalizedString("undefined", comment: "Placeholder for missing file type")
             var sizeString = "?? KB"
             if let size = content.size {
                 sizeString = UiUtils.bytesToHumanSize(size)
@@ -130,7 +130,7 @@ class ImagePreviewController : UIViewController, UIScrollViewDelegate {
             try imageBits.write(to: destinationURL)
             UiUtils.presentFileSharingVC(for: destinationURL)
         } catch {
-            print("Failed to save image as \(destinationURL): \(error.localizedDescription)")
+            Cache.log.info("Failed to save image as %@: %@", destinationURL.absoluteString, error.localizedDescription)
         }
     }
 }

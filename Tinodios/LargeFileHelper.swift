@@ -207,7 +207,6 @@ extension LargeFileHelper: URLSessionDownloadDelegate {
             UiUtils.presentFileSharingVC(for: destinationURL)
         } catch {
             Cache.log.error("LargeFileHelper - could not copy file to disk: %@", error.localizedDescription)
-            print("Could not copy file to disk: \(error.localizedDescription)")
         }
     }
 }

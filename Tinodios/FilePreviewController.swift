@@ -44,8 +44,8 @@ class FilePreviewController : UIViewController, UIScrollViewDelegate {
         imageView.image = UIImage(named: FilePreviewController.iconFromMime(previewContent?.contentType))
 
         // Fill out attachment details.
-        fileNameLabel.text = content.fileName ?? "undefined"
-        contentTypeLabel.text = content.contentType ?? "undefined"
+        fileNameLabel.text = content.fileName ?? NSLocalizedString("undefined", comment: "Placeholder for missing file name")
+        contentTypeLabel.text = content.contentType ?? NSLocalizedString("undefined", comment: "Placeholder for missing file type")
         var sizeString = "?? KB"
         if let size = content.size {
             sizeString = UiUtils.bytesToHumanSize(Int64(size))

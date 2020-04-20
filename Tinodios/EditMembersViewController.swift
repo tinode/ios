@@ -73,7 +73,7 @@ class EditMembersViewController: UIViewController, UITableViewDataSource {
                 selectedContacts.append(IndexPath(row: contacts.count - 1, section: 0))
             }
         }
-        self.navigationItem.title = "Manage members"
+        self.navigationItem.title = NSLocalizedString("Manage members", comment: "View title")
     }
     func addUser(with uniqueId: String) {
         self.selectedIds.insert(uniqueId)
