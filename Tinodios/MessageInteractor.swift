@@ -151,7 +151,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                 },
                 onFailure: { [weak self] err in
                     let tinode = Cache.getTinode()
-                    let errorMsg = "Failed to subscribe to topic: \(err.localizedDescription)"
+                    let errorMsg = String(format: NSLocalizedString("Failed to subscribe to topic: %@", comment: "Error message"), err.localizedDescription)
                     if tinode.isConnected {
                         DispatchQueue.main.async {
                             UiUtils.showToast(message: errorMsg)
@@ -186,10 +186,10 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                 if let e = err as? TinodeError {
                     switch e {
                     case .notConnected(_):
-                        DispatchQueue.main.async { UiUtils.showToast(message: "You are offline.") }
+                        DispatchQueue.main.async { UiUtils.showToast(message: NSLocalizedString("You are offline.", comment: "Error message")) }
                         Cache.getTinode().reconnectNow(interactively: false, reset: false)
                     default:
-                        DispatchQueue.main.async { UiUtils.showToast(message: "Message not sent.") }
+                        DispatchQueue.main.async { UiUtils.showToast(message: NSLocalizedString("Message not sent.", comment: "Error message")) }
                     }
                 }
                 return nil

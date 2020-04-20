@@ -154,15 +154,15 @@ extension LargeFileHelper: URLSessionTaskDelegate {
         }
         Cache.log.debug("LargeFileHelper - finished task: id = %@, topicId = %@", taskId, upload.topicId)
         guard let response = task.response as? HTTPURLResponse else {
-            uploadError = TinodeError.invalidState("Upload failed (\(upload.topicId)). No server response.")
+            uploadError = TinodeError.invalidState(String(format: NSLocalizedString("Upload failed (%@). No server response.", comment: "Error message"), upload.topicId))
             return
         }
         guard response.statusCode == 200 else {
-            uploadError = TinodeError.invalidState("Upload failed (\(upload.topicId)): response code \(response.statusCode).")
+            uploadError = TinodeError.invalidState(String(format: NSLocalizedString("Upload failed (%@): response code %d.", comment: "Error message"), upload.topicId, response.statusCode))
             return
         }
         guard !upload.responseData.isEmpty else {
-            uploadError = TinodeError.invalidState("Upload failed (\(upload.topicId)): empty response body.")
+            uploadError = TinodeError.invalidState(String(format: NSLocalizedString("Upload failed (%@): empty response body.", comment: "Error message"), upload.topicId))
             return
         }
         do {

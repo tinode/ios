@@ -409,24 +409,24 @@ extension MessageViewController: MessageDisplayLogic {
     private func showInvitationDialog() {
         guard self.presentedViewController == nil else { return }
         let attrs = [ NSAttributedString.Key.font: UIFont.systemFont(ofSize: 20.0) ]
-        let title = NSAttributedString(string: "New Chat", attributes: attrs)
+        let title = NSAttributedString(string: NSLocalizedString("New Chat", comment: "View title"), attributes: attrs)
         let alert = UIAlertController(
             title: nil,
-            message: "You are invited to start a new chat. What would you like?",
+            message: NSLocalizedString("You are invited to start a new chat. What would you like?", comment: "Call to action"),
             preferredStyle: .actionSheet)
         alert.setValue(title, forKey: "attributedTitle")
         alert.addAction(UIAlertAction(
-            title: "Accept", style: .default,
+            title: NSLocalizedString("Accept", comment: "Invite reaction button"), style: .default,
             handler: { action in
                 self.interactor?.acceptInvitation()
         }))
         alert.addAction(UIAlertAction(
-            title: "Ignore", style: .default,
+            title: NSLocalizedString("Ignore", comment: "Invite reaction button"), style: .default,
             handler: { action in
                 self.interactor?.ignoreInvitation()
         }))
         alert.addAction(UIAlertAction(
-            title: "Block", style: .default,
+            title: NSLocalizedString("Block", comment: "Invite reaction button"), style: .default,
             handler: { action in
                 self.interactor?.blockTopic()
         }))
@@ -435,7 +435,7 @@ extension MessageViewController: MessageDisplayLogic {
 
     func updateTitleBar(icon: UIImage?, title: String?, online: Bool) {
         assert(Thread.isMainThread)
-        self.navigationItem.title = title ?? "Undefined"
+        self.navigationItem.title = title ?? NSLocalizedString("Undefined", comment: "Undefined chat name")
 
         navBarAvatarView.set(icon: icon, title: title, id: topicName, online: online)
         navBarAvatarView.bounds = CGRect(x: 0, y: 0, width: Constants.kNavBarAvatarSmallState, height: Constants.kNavBarAvatarSmallState)
@@ -709,7 +709,7 @@ extension MessageViewController: UICollectionViewDataSource {
         if let sub = topic?.getSubscription(for: message.from), let pub = sub.pub {
             senderName = pub.fn
         }
-        senderName = senderName ?? "Unknown \(message.from ?? "none")"
+        senderName = senderName ?? String(format: NSLocalizedString("Unknown %@", comment: "Sender with missing name"), message.from ?? "none")
 
         return NSAttributedString(string: senderName!, attributes: [
             NSAttributedString.Key.font: Constants.kSenderNameFont,
@@ -1076,8 +1076,8 @@ extension MessageViewController : MessageCellDelegate {
         }
 
         // Set up the shared UIMenuController
-        let copyMenuItem = MessageMenuItem(title: "Copy", action: #selector(copyMessageContent(sender:)), seqId: cell.seqId)
-        let deleteMenuItem = MessageMenuItem(title: "Delete", action: #selector(deleteMessage(sender:)), seqId: cell.seqId)
+        let copyMenuItem = MessageMenuItem(title: NSLocalizedString("Copy", comment: "Menu item"), action: #selector(copyMessageContent(sender:)), seqId: cell.seqId)
+        let deleteMenuItem = MessageMenuItem(title: NSLocalizedString("Delete", comment: "Menu item"), action: #selector(deleteMessage(sender:)), seqId: cell.seqId)
         UIMenuController.shared.menuItems = [copyMenuItem, deleteMenuItem]
 
         // Tell the menu controller the first responder's frame and its super view
@@ -1109,7 +1109,7 @@ extension MessageViewController : MessageCellDelegate {
         if let sub = topic?.getSubscription(for: msg.from), let pub = sub.pub {
             senderName = pub.fn
         }
-        senderName = senderName ?? "Unknown \(msg.from ?? "none")"
+        senderName = senderName ?? String(format: NSLocalizedString("Unknown %@", comment: ""), msg.from ?? "none")
         UIPasteboard.general.string = "[\(senderName!)]: \(msg.content?.string ?? ""); \(RelativeDateFormatter.shared.shortDate(from: msg.ts))"
     }
 
@@ -1139,7 +1139,7 @@ extension MessageViewController : MessageCellDelegate {
                 query![item.name] = item.value
             }
         }
-        let newMsg = Drafty(content: query?["title"] ?? "undefined")
+        let newMsg = Drafty(content: query?["title"] ?? NSLocalizedString("undefined", comment: "Button with missing text"))
         var json: [String : JSONValue] = [:]
         // {"seq":6,"resp":{"yes":1}}
         if let name = query?["name"], let val = query?["val"] {

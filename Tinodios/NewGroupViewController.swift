@@ -140,7 +140,7 @@ class NewGroupViewController: UITableViewController {
         let tinode = Cache.getTinode()
         let members = selectedMembers.filter { !tinode.isMe(uid: $0) }
         if members.isEmpty {
-            UiUtils.showToast(message: "Select at least one group member")
+            UiUtils.showToast(message: NSLocalizedString("Select at least one group member", comment: "Error message"))
             return
         }
         // Optional
@@ -154,7 +154,7 @@ class NewGroupViewController: UITableViewController {
     private func toggleNoSelectedMembersNote(on show: Bool) {
         if show {
             let messageLabel = UILabel(frame: CGRect(x: 0, y: 0, width: tableView.bounds.width, height: tableView.bounds.height))
-            messageLabel.text = "No members selected"
+            messageLabel.text = NSLocalizedString("No members selected", comment: "Placeholder when no members are selected")
             messageLabel.textColor = .gray
             messageLabel.numberOfLines = 0
             messageLabel.textAlignment = .center

@@ -199,7 +199,7 @@ class TopicInfoViewController: UITableViewController {
             // FIXME: reload just the members section.
             tableView.reloadData()
         } else {
-            peerNameLabel?.text = topic.pub?.fn ?? "Unknown"
+            peerNameLabel?.text = topic.pub?.fn ?? NSLocalizedString("Unknown", comment: "Missing P2P name")
             myPermissionsLabel?.text = acs?.wantString
             let sub = topic.getSubscription(for: self.topic.name)
             peerPermissionsLabel?.text = sub?.acs?.givenString
@@ -217,7 +217,7 @@ class TopicInfoViewController: UITableViewController {
             onFailure: { err in
                 self.mutedSwitch.isOn = !isChecked
                 if let e = err as? TinodeError, case .notConnected(_) = e {
-                    UiUtils.showToast(message: "You are offline.")
+                    UiUtils.showToast(message: NSLocalizedString("You are offline.", comment: "Error message"))
                 }
                 return nil
             }).thenFinally({
@@ -227,24 +227,24 @@ class TopicInfoViewController: UITableViewController {
 
     @objc
     func topicTitleTapped(sender: UITapGestureRecognizer) {
-        let alert = UIAlertController(title: "Edit Topic", message: nil, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        let alert = UIAlertController(title: NSLocalizedString("Edit Topic", comment: "Alert title"), message: nil, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Alert button"), style: .cancel, handler: nil))
         if topic.isOwner {
             alert.addTextField(configurationHandler: { textField in
-                textField.placeholder = "Name of the group"
+                textField.placeholder = NSLocalizedString("Name of the group", comment: "Alert placeholder")
                 textField.text = self.topic?.pub?.fn ?? ""
                 textField.borderStyle = .none
                 textField.font = UIFont.preferredFont(forTextStyle: .body)
             })
         }
         alert.addTextField(configurationHandler: { textField in
-            textField.placeholder = "Additional info (private)"
+            textField.placeholder = NSLocalizedString("Additional info (private)", comment: "Alert placeholder")
             textField.text = self.topic?.comment ?? ""
             textField.borderStyle = .none
             textField.font = UIFont.preferredFont(forTextStyle: .body)
         })
         alert.addAction(UIAlertAction(
-            title: "OK", style: .default,
+            title: NSLocalizedString("OK", comment: "Alert button"), style: .default,
             handler: { action in
                 let textFields = alert.textFields!
                 let newTitle = self.topic.isOwner ? textFields[0].text : nil
@@ -305,7 +305,7 @@ class TopicInfoViewController: UITableViewController {
                 }
                 changePermissions(acs: acs.want, uid: nil, changeType: .updateSelfSub, disabledPermissions: disabled)
             } else {
-                print("Access mode is nil")
+                Cache.log.error("Access mode is nil")
             }
         case actionPeerPermissions:
             changePermissions(acs: topic.getSubscription(for: self.topic.name)?.acs?.given, uid: topic.name, changeType: .updateSub, disabledPermissions: "ASDO")
