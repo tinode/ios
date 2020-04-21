@@ -59,7 +59,7 @@ class ResetPasswordViewController : UIViewController {
         let input = UiUtils.ensureDataInTextField(credentialTextField)
         guard let credential = ValidatedCredential.parse(from: input.lowercased()) else {
             UiUtils.markTextFieldAsError(self.credentialTextField)
-            UiUtils.showToast(message: "Enter a valid credential (phone or email).")
+            UiUtils.showToast(message: NSLocalizedString("Enter a valid credential (phone or email).", comment: "Toast error message"))
             return
         }
         let normalized: String
@@ -70,14 +70,14 @@ class ResetPasswordViewController : UIViewController {
         }
 
         let tinode = Cache.getTinode()
-        UiUtils.toggleProgressOverlay(in: self, visible: true, title: "Requesting...")
+        UiUtils.toggleProgressOverlay(in: self, visible: true, title: NSLocalizedString("Requesting...", comment: "Progress overlay"))
         do {
             try tinode.connectDefault()?
                 .thenApply({ _ in
                     return tinode.requestResetPassword(method: credential.methodName(), newValue: normalized)
                 })
                 .thenApply({ _ in
-                    DispatchQueue.main.async { UiUtils.showToast(message: "Message with instructions sent to the provided address.") }
+                    DispatchQueue.main.async { UiUtils.showToast(message: NSLocalizedString("Message with instructions sent to the provided address.", comment: "Toast info")) }
                     DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1)) { [weak self] in
                         self?.navigationController?.popViewController(animated: true)
                     }
@@ -89,7 +89,7 @@ class ResetPasswordViewController : UIViewController {
                 }
         } catch {
             UiUtils.toggleProgressOverlay(in: self, visible: false)
-            UiUtils.showToast(message: "Request failed: \(error.localizedDescription)")
+            UiUtils.showToast(message: String(format: NSLocalizedString("Request failed: %@", comment: "Error message"), error.localizedDescription))
         }
     }
 }

@@ -89,7 +89,7 @@ class SignupViewController: UITableViewController {
         let cred = Credential(meth: method!, val: credential)
         var creds = [Credential]()
         creds.append(cred)
-        UiUtils.toggleProgressOverlay(in: self, visible: true, title: "Registering...")
+        UiUtils.toggleProgressOverlay(in: self, visible: true, title: NSLocalizedString("Registering...", comment: "Progress overlay"))
         do {
             try tinode.connectDefault()?
                 .thenApply { pkt in
@@ -112,7 +112,7 @@ class SignupViewController: UITableViewController {
                 }.thenCatch { err in
                     Cache.log.error("Failed to create account: %@", err.localizedDescription)
                     DispatchQueue.main.async {
-                        UiUtils.showToast(message: "Failed to create account: \(err.localizedDescription)")
+                        UiUtils.showToast(message: String(format: NSLocalizedString("Failed to create account: %@", comment: "Error message"), err.localizedDescription))
                     }
                     tinode.disconnect()
                     return nil
@@ -126,7 +126,7 @@ class SignupViewController: UITableViewController {
         } catch {
             tinode.disconnect()
             DispatchQueue.main.async {
-                UiUtils.showToast(message: "Failed to create account: \(error.localizedDescription)")
+                UiUtils.showToast(message: String(format: NSLocalizedString("Failed to create account: %@", comment: "Error message"), error.localizedDescription))
                 self.signUpButton.isUserInteractionEnabled = true
                 UiUtils.toggleProgressOverlay(in: self, visible: false)
             }

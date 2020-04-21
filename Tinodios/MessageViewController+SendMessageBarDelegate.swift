@@ -62,7 +62,7 @@ extension MessageViewController : UIDocumentPickerDelegate {
                 mimeType = unmanaged?.takeRetainedValue() as String?
             }
             guard bits.count <= MessageViewController.kMaxAttachmentSize else {
-                UiUtils.showToast(message: "The file size exceeds the limit \(UiUtils.bytesToHumanSize(Int64(MessageViewController.kMaxAttachmentSize)))")
+                UiUtils.showToast(message: String(format: NSLocalizedString("The file size exceeds the limit %@", comment: "Error message"), UiUtils.bytesToHumanSize(Int64(MessageViewController.kMaxAttachmentSize))))
                 return
             }
 

@@ -118,7 +118,7 @@ class AccountSettingsViewController: UITableViewController {
 
     private func reloadData() {
         // Title.
-        self.topicTitleTextView.text = me.pub?.fn ?? "Unknown"
+        self.topicTitleTextView.text = me.pub?.fn ?? NSLocalizedString("Unknown", comment: "Placeholder for missing user name")
         // Read notifications and typing indicator checkboxes.
         let userDefaults = UserDefaults.standard
 
@@ -146,13 +146,13 @@ class AccountSettingsViewController: UITableViewController {
 
     @objc
     func accountNameTapped(sender: UITapGestureRecognizer) {
-        let alert = UIAlertController(title: "Edit account name", message: nil, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        let alert = UIAlertController(title: NSLocalizedString("Edit account name", comment: "Alert title"), message: nil, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Alert action"), style: .cancel, handler: nil))
         alert.addTextField(configurationHandler: { textField in
-            textField.placeholder = "Full name, e.g. John Doe"
+            textField.placeholder = NSLocalizedString("Full name, e.g. John Doe", comment: "User name prompt")
             textField.text = self.me?.pub?.fn ?? ""
         })
-        alert.addAction(UIAlertAction(title: "OK", style: .default,
+        alert.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: "Alert action"), style: .default,
                                       handler: { action in
             if let name = alert.textFields?.first?.text {
                 self.updateTitle(newTitle: name)
@@ -221,11 +221,11 @@ class AccountSettingsViewController: UITableViewController {
     }
 
     @objc func addContactClicked(sender: UITapGestureRecognizer) {
-        let alert = UIAlertController(title: "Add contact", message: "Enter email or phone number", preferredStyle: .alert)
+        let alert = UIAlertController(title: NSLocalizedString("Add contact", comment: "Alert title"), message: NSLocalizedString("Enter email or phone number", comment: "Alert message"), preferredStyle: .alert)
         alert.addTextField(configurationHandler: nil)
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+            alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: ""), style: .cancel, handler: nil))
         alert.addAction(UIAlertAction(
-            title: "OK", style: .default,
+            title: NSLocalizedString("OK", comment: ""), style: .default,
             handler: { action in
                 var success = false
                 if let cred = ValidatedCredential.parse(from: alert.textFields?.first?.text) {
@@ -243,7 +243,7 @@ class AccountSettingsViewController: UITableViewController {
                         self.me.setMeta(meta: MsgSetMeta(desc: nil, sub: nil, tags: nil, cred: credential)).then(
                             onSuccess: { [weak self] _ in
                                 DispatchQueue.main.async {
-                                    UiUtils.showToast(message: "Confirmaition message sent to \(credential.val!)", level: .info)
+                                    UiUtils.showToast(message: String(format: NSLocalizedString("Confirmaition message sent to %@", comment: "Info message"), credential.val!), level: .info)
                                     if let count = self?.me.creds?.count {
                                         let indexPath = IndexPath(row: count, section: AccountSettingsViewController.kSectionContacts)
                                         self?.tableView.insertRows(at: [indexPath], with: .automatic)
@@ -260,7 +260,7 @@ class AccountSettingsViewController: UITableViewController {
                 }
                 if !success {
                    DispatchQueue.main.async {
-                       UiUtils.showToast(message: "Entered text is neither email nor phone number.")
+                    UiUtils.showToast(message: NSLocalizedString("Entered text is neither email nor phone number.", comment: "Error message"))
                    }
                 }
         }))
@@ -268,11 +268,11 @@ class AccountSettingsViewController: UITableViewController {
     }
 
     private func confirmCredentialClicked(meth: String, at indexPath: IndexPath) {
-        let alert = UIAlertController(title: "Confirm contact", message: "Enter confirmation code sent to you by \(meth):", preferredStyle: .alert)
+        let alert = UIAlertController(title: NSLocalizedString("Confirm contact", comment: "Alert title"), message: String(format: NSLocalizedString("Enter confirmation code sent to you by %@", comment: "Alert prompt"), meth), preferredStyle: .alert)
         alert.addTextField(configurationHandler: nil)
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: ""), style: .cancel, handler: nil))
         alert.addAction(UIAlertAction(
-            title: "OK", style: .default,
+            title: NSLocalizedString("OK", comment: ""), style: .default,
             handler: { action in
                 guard let code = alert.textFields?.first?.text else { return }
                 self.me.confirmCred(meth: meth, response: code)
@@ -281,7 +281,7 @@ class AccountSettingsViewController: UITableViewController {
                             self?.tableView.reloadRows(at: [indexPath], with: .automatic)
                         })
                         DispatchQueue.main.async {
-                            UiUtils.showToast(message: "Confirmed successfully", level: .info)
+                            UiUtils.showToast(message: NSLocalizedString("Confirmed successfully", comment: "Toast info message"), level: .info)
                             self?.reloadData()
                         }
                         return nil
@@ -292,10 +292,10 @@ class AccountSettingsViewController: UITableViewController {
     }
 
     @objc func changePasswordClicked(sender: UITapGestureRecognizer) {
-        let alert = UIAlertController(title: "Change Password", message: nil, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        let alert = UIAlertController(title: NSLocalizedString("Change Password", comment: "Alert title"), message: nil, preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: ""), style: .cancel, handler: nil))
         alert.addTextField(configurationHandler: { textField in
-            textField.placeholder = "Enter new password"
+            textField.placeholder = NSLocalizedString("Enter new password", comment: "Alert prompt")
             textField.isSecureTextEntry = true
 
             let iconNames = ["eye-30", "invisible-30"]
@@ -321,7 +321,7 @@ class AccountSettingsViewController: UITableViewController {
             textField.rightViewMode = .always
         })
         alert.addAction(UIAlertAction(
-            title: "OK", style: .default,
+            title: NSLocalizedString("OK", comment: ""), style: .default,
             handler: { action in
                 if let newPassword = alert.textFields?.first?.text {
                     self.updatePassword(with: newPassword)
@@ -342,10 +342,10 @@ class AccountSettingsViewController: UITableViewController {
     }
 
     @objc func logoutClicked(sender: UITapGestureRecognizer) {
-        let alert = UIAlertController(title: nil, message: "Are you sure you want to log out?", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        let alert = UIAlertController(title: nil, message: NSLocalizedString("Are you sure you want to log out?", comment: "Warning in logout alert"), preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: ""), style: .cancel, handler: nil))
         alert.addAction(UIAlertAction(
-            title: "OK", style: .default,
+            title: NSLocalizedString("OK", comment: ""), style: .default,
             handler: { action in
                 self.logout()
             }))
@@ -353,10 +353,10 @@ class AccountSettingsViewController: UITableViewController {
     }
 
     @objc func deleteAccountClicked(sender: UITapGestureRecognizer) {
-        let alert = UIAlertController(title: nil, message: "Are you sure you want to delete your account? It cannot be undone.", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        let alert = UIAlertController(title: nil, message: NSLocalizedString("Are you sure you want to delete your account? It cannot be undone.", comment: "Warning in delete account alert"), preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: ""), style: .cancel, handler: nil))
         alert.addAction(UIAlertAction(
-            title: "Delete", style: .default,
+            title: NSLocalizedString("Delete", comment: "Alert action"), style: .default,
             handler: { action in
                 self.deleteAccount()
             }))
@@ -378,20 +378,20 @@ class AccountSettingsViewController: UITableViewController {
             mail.setToRecipients(["mailto:info@tinode.co"])
             present(mail, animated: true)
         } else {
-            UiUtils.showToast(message: "Cannot send email: functionality not accessible.")
+            UiUtils.showToast(message: NSLocalizedString("Cannot send email: functionality not accessible.", comment: "Error message"))
         }
     }
 
     private func updatePassword(with newPassword: String) {
         guard newPassword.count >= 4 else {
             DispatchQueue.main.async {
-                UiUtils.showToast(message: "Password too short")
+                UiUtils.showToast(message: NSLocalizedString("Password too short", comment: "Error message"))
             }
             return
         }
         guard let userName = Utils.getSavedLoginUserName() else {
             DispatchQueue.main.async {
-                UiUtils.showToast(message: "Login info missing...")
+                UiUtils.showToast(message: NSLocalizedString("Login info missing...", comment: "Error message"))
             }
             return
         }
@@ -399,7 +399,7 @@ class AccountSettingsViewController: UITableViewController {
             onSuccess: nil,
             onFailure: { err in
                 DispatchQueue.main.async {
-                    UiUtils.showToast(message: "Could not change password: \(err.localizedDescription))")
+                    UiUtils.showToast(message: String(format: NSLocalizedString("Could not change password: %@", comment: "Error message"), err.localizedDescription))
                 }
                 return nil
             })
@@ -436,7 +436,6 @@ class AccountSettingsViewController: UITableViewController {
 extension AccountSettingsViewController: ImagePickerDelegate {
     func didSelect(image: UIImage?, mimeType: String?, fileName: String?) {
         guard let image = image?.resize(width: CGFloat(UiUtils.kAvatarSize), height: CGFloat(UiUtils.kAvatarSize), clip: true) else {
-            print("No image specified or failed to resize - skipping")
             Cache.log.debug("AccountSettingsVC - No image specified or failed to resize, skipping")
             return
         }
@@ -487,7 +486,7 @@ extension AccountSettingsViewController {
         cell.textLabel?.sizeToFit()
 
         if !cred.isDone {
-            cell.detailTextLabel?.text = "confirm"
+            cell.detailTextLabel?.text = NSLocalizedString("confirm", comment: "Button text")
         } else {
             cell.detailTextLabel?.text = ""
         }

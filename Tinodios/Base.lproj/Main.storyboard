@@ -623,6 +623,9 @@
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
+                                                    <attributedString key="userComments">
+                                                        <fragment content="Label for incognito mode switch"/>
+                                                    </attributedString>
                                                 </label>
                                             </subviews>
                                             <constraints>

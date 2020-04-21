@@ -60,7 +60,7 @@ class CredentialsViewController : UIViewController {
             .thenApply({ msg in
                 if let ctrl = msg?.ctrl, ctrl.code >= 300 {
                     DispatchQueue.main.async {
-                        UiUtils.showToast(message: "Verification failure: \(ctrl.code) \(ctrl.text)")
+                        UiUtils.showToast(message: String(format: NSLocalizedString("Verification failure: %d %@", comment: "Error message"), ctrl.code, ctrl.text))
                     }
                 } else {
                     if let token = tinode.authToken {

@@ -237,7 +237,7 @@ class RelativeDateFormatter {
     private let formatter = DateFormatter()
 
     func dateOnly(from date: Date?, style: DateFormatter.Style = .medium) -> String {
-        guard let date = date else { return "Never ??:??" }
+        guard let date = date else { return NSLocalizedString("Never ??:??", comment: "Invalid date") }
 
         formatter.timeStyle = .none
         formatter.dateStyle = style
@@ -265,7 +265,7 @@ class RelativeDateFormatter {
 
     // Incrementally longer formatting of a date.
     func shortDate(from date: Date?) -> String {
-        guard let date = date else { return "Never ??:??" }
+        guard let date = date else { return NSLocalizedString("Never ??:??", comment: "Invalid date") }
 
         let now = Date()
         if Calendar.current.isDate(date, equalTo: now, toGranularity: .year) {
@@ -345,7 +345,7 @@ extension StoredMessage {
         var newAttr: [NSAttributedString.Key : Any] = attr ?? [:]
         newAttr[.baselineOffset] = (icon.bounds.height - textFont.pointSize) / 2 - textFont.descender / 2
         newAttr[.font] = textFont
-        second.append(NSAttributedString(string: "  Content deleted", attributes: newAttr))
+        second.append(NSAttributedString(string: NSLocalizedString("  Content deleted", comment: "Replacement for chat message with no content"), attributes: newAttr))
         second.endEditing()
         return second
     }

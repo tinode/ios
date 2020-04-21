@@ -66,7 +66,7 @@ class AddByIDViewController: UIViewController {
                 if let e = err as? TinodeError {
                     if case TinodeError.serverResponseError(let code, let text, _) = e {
                         DispatchQueue.main.async {
-                            UiUtils.showToast(message: "Invalid topic id: \(code) \(text)")
+                            UiUtils.showToast(message: String(format: NSLocalizedString("Invalid group ID: %d (%@)", comment: "Error message"), code, text))
                         }
                     }
                 }

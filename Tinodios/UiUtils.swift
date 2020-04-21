@@ -23,7 +23,7 @@ class UiTinodeEventListener : TinodeEventListener {
         if connected {
             // If we just got disconnected, display the connection lost message.
             DispatchQueue.main.async {
-                UiUtils.showToast(message: "Connection to server lost.")
+                UiUtils.showToast(message: NSLocalizedString("Connection to server lost.", comment: "Toast notification"))
             }
         }
         connected = false
@@ -352,9 +352,9 @@ class UiUtils {
     public static func ToastFailureHandler(err: Error) -> PromisedReply<ServerMessage>? {
         DispatchQueue.main.async {
             if let e = err as? TinodeError, case .notConnected = e {
-                UiUtils.showToast(message: "You are offline.")
+                UiUtils.showToast(message: NSLocalizedString("You are offline.", comment: "Toast notification"))
             } else {
-                UiUtils.showToast(message: "Action failed: \(err)")
+                UiUtils.showToast(message: String(format: NSLocalizedString("Action failed: %@", comment: "Toast notification"), err.localizedDescription))
             }
         }
         return nil
@@ -363,7 +363,7 @@ class UiUtils {
     public static func ToastSuccessHandler(msg: ServerMessage?) -> PromisedReply<ServerMessage>? {
         if let ctrl = msg?.ctrl, ctrl.code >= 300 {
             DispatchQueue.main.async {
-                UiUtils.showToast(message: "Something went wrong: \(ctrl.code) - \(ctrl.text)", level: .warning)
+                UiUtils.showToast(message: String(format: NSLocalizedString("Something went wrong: %d (%s)", comment: "Toast notification"), ctrl.code, ctrl.text), level: .warning)
             }
         }
         return nil
@@ -395,14 +395,14 @@ class UiUtils {
             onSuccess: { msg in
                 if let ctrl = msg?.ctrl, ctrl.code >= 300 {
                     DispatchQueue.main.async {
-                        UiUtils.showToast(message: "Permissions not modified: \(ctrl.text) (\(ctrl.code))", level: .warning)
+                        UiUtils.showToast(message: String(format: NSLocalizedString("Permissions not modified: %d (%s)", comment: "Toast notification"), ctrl.code, ctrl.text), level: .warning)
                     }
                 }
                 return nil
             },
             onFailure: { err in
                 DispatchQueue.main.async {
-                    UiUtils.showToast(message: "Error changing permissions: \(err.localizedDescription)")
+                    UiUtils.showToast(message: String(format: NSLocalizedString("Error changing permissions: %@", comment: "Toast notification"), err.localizedDescription))
                 }
                 return nil
             })
@@ -449,7 +449,7 @@ class UiUtils {
     public static func toggleProgressOverlay(in parent: UIViewController, visible: Bool, title: String? = nil) {
         DispatchQueue.main.async {
             if visible {
-                let alert = UIAlertController(title: nil, message: title ?? "Please wait...", preferredStyle: .alert)
+                let alert = UIAlertController(title: nil, message: title ?? NSLocalizedString("Please wait...", comment: "Progress overlay"), preferredStyle: .alert)
 
                 let loadingIndicator = UIActivityIndicatorView(frame: CGRect(x: 10, y: 5, width: 50, height: 50))
                 loadingIndicator.hidesWhenStopped = true
@@ -470,7 +470,7 @@ class UiUtils {
         // DefaultMeTopic (AccountSettingsVC) and DefaultComTopic (TopicInfoVC).
         guard let topic = topic as? Topic<VCard, PrivateType, VCard, PrivateType> else { return }
         guard let tags = topic.tags else {
-            DispatchQueue.main.async { UiUtils.showToast(message: "Tags missing.")}
+            DispatchQueue.main.async { UiUtils.showToast(message: NSLocalizedString("Tags missing.", comment: "Toast notification"))}
             return
         }
         let alert = TagsEditDialogViewController(with: tags)

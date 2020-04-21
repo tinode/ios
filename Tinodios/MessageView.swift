@@ -92,7 +92,7 @@ extension MessageView {
     public func toggleNoMessagesNote(on show: Bool) {
         if show {
             let messageLabel = UILabel(frame: CGRect(x: 0, y: 0, width: self.bounds.size.width, height: self.bounds.size.height))
-            messageLabel.text = "No messages in the conversation"
+            messageLabel.text = NSLocalizedString("No messages in the conversation", comment: "Placeholder in empty chat")
             messageLabel.textColor = .darkGray
             messageLabel.numberOfLines = 0
             messageLabel.textAlignment = .center
@@ -134,7 +134,7 @@ extension MessageView {
 
         // "No access to messages" text.
         let noAccessLabel = UILabel()
-        noAccessLabel.text = "No access to messages"
+        noAccessLabel.text = NSLocalizedString("No access to messages", comment: "No read access in chat")
         noAccessLabel.numberOfLines = 0
         noAccessLabel.textAlignment = .center
         noAccessLabel.font = UIFont.preferredFont(forTextStyle: .headline)

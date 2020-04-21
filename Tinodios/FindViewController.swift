@@ -45,10 +45,10 @@ class FindViewController: UITableViewController, FindDisplayLogic {
         let placeholderText: String
         let placeholderFontSize: CGFloat
         if authStatus == .authorized {
-            placeholderText = "Search by tags"
+            placeholderText = NSLocalizedString("Search by tags", comment: "Placeholder prompt")
             placeholderFontSize = 17
         } else {
-            placeholderText = "Search functionality limited. Grant Contacts permission."
+            placeholderText = NSLocalizedString("Search functionality limited. Grant Contacts permission.", comment: "Error message when permissions are missing")
             placeholderFontSize = 10
         }
         searchController.searchBar.textField?.attributedPlaceholder =
@@ -160,17 +160,17 @@ class FindViewController: UITableViewController, FindDisplayLogic {
     }
 
     @IBAction func inviteActionClicked(_ sender: Any) {
-        let inviteSubject = "Check out Tindroid Messenger"
-        let inviteBody = "Check out Tindroid Messenger: https://tinode.co/"
+        let inviteSubject = NSLocalizedString("Check out Tinode Messenger", comment: "Invitation subject")
+        let inviteBody = NSLocalizedString("Check out Tinode Messenger: https://tinode.co/", comment: "Invitation body")
         let attrs = [ NSAttributedString.Key.font: UIFont.systemFont(ofSize: 20.0) ]
-        let dialogTitle = NSAttributedString(string: "Invite", attributes: attrs)
+        let dialogTitle = NSAttributedString(string: NSLocalizedString("Invite", comment: "Dialog title: call to action"), attributes: attrs)
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         alert.setValue(dialogTitle, forKey: "attributedTitle")
-        alert.addAction(UIAlertAction(title: "Copy to clipboard", style: .default, handler: { action in
+        alert.addAction(UIAlertAction(title: NSLocalizedString("Copy to clipboard", comment: "Alert action"), style: .default, handler: { action in
             let pasteboard = UIPasteboard.general
             pasteboard.string = inviteBody
         }))
-        alert.addAction(UIAlertAction(title: "Email", style: .default, handler: { action in
+        alert.addAction(UIAlertAction(title: NSLocalizedString("Email", comment: "Alert action"), style: .default, handler: { action in
             if MFMailComposeViewController.canSendMail() {
                 let mailVC = MFMailComposeViewController()
                 mailVC.mailComposeDelegate = self
@@ -179,10 +179,10 @@ class FindViewController: UITableViewController, FindDisplayLogic {
 
                 self.present(mailVC, animated: true)
             } else {
-                UiUtils.showToast(message: "No access to email")
+                UiUtils.showToast(message: NSLocalizedString("No access to email", comment: "Error message"))
             }
         }))
-        alert.addAction(UIAlertAction(title: "Messages", style: .default, handler: { action in
+        alert.addAction(UIAlertAction(title: NSLocalizedString("Messages", comment: "Alert action"), style: .default, handler: { action in
             if MFMessageComposeViewController.canSendText() {
                 let messageVC = MFMessageComposeViewController()
                 messageVC.messageComposeDelegate = self
@@ -190,7 +190,7 @@ class FindViewController: UITableViewController, FindDisplayLogic {
 
                 self.present(messageVC, animated: true)
             } else {
-                UiUtils.showToast(message: "No access to messages")
+                UiUtils.showToast(message: NSLocalizedString("No access to messages", comment: "Toast error message"))
             }
         }))
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
@@ -212,8 +212,8 @@ class FindViewController: UITableViewController, FindDisplayLogic {
     }
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch section {
-        case FindViewController.kLocalContactsSection: return "Local Contacts"
-        case FindViewController.kRemoteContactsSection: return "Directory"
+        case FindViewController.kLocalContactsSection: return NSLocalizedString("Local Contacts", comment: "Section title")
+        case FindViewController.kRemoteContactsSection: return NSLocalizedString("Directory", comment: "Section title")
         default: return nil
         }
     }
@@ -320,7 +320,7 @@ extension FindViewController: ContactViewCellDelegate {
         if indexPath.section == FindViewController.kRemoteContactsSection {
             // Save topic and user.
             guard interactor?.saveRemoteTopic(from: remoteContacts[indexPath.row]) ?? false else {
-                UiUtils.showToast(message: "Failed to save topic and contact info.")
+                UiUtils.showToast(message: NSLocalizedString("Failed to save group and contact info.", comment: "Error message"))
                 return
             }
         }
