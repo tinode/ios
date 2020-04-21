@@ -644,7 +644,7 @@ extension TopicInfoViewController {
                                         message: String) {
         guard let uid = uid else { return }
         let alert = UIAlertController(title: nil, message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { action in
+        alert.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: "Alert action"), style: .default, handler: { action in
             var ban: Bool
             switch memberAction {
             case .remove:
@@ -656,7 +656,7 @@ extension TopicInfoViewController {
                 onSuccess: self.promiseSuccessHandler,
                 onFailure: UiUtils.ToastFailureHandler)
         }))
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Alert action"), style: .cancel, handler: nil))
         self.present(alert, animated: true)
     }
 
@@ -672,44 +672,44 @@ extension TopicInfoViewController {
             return
         }
 
-        let alert = UIAlertController(title: sub.pub?.fn ?? "Unknown", message: nil, preferredStyle: .actionSheet)
-        alert.addAction(UIAlertAction(title: "Send message", style: .default, handler: { action in
+        let alert = UIAlertController(title: sub.pub?.fn ?? NSLocalizedString("Unknown", comment: ""), message: nil, preferredStyle: .actionSheet)
+        alert.addAction(UIAlertAction(title: NSLocalizedString("Send message", comment: "Alert action"), style: .default, handler: { action in
             if let topic = sub.user {
                 self.presentChatReplacingCurrentVC(with: topic)
             } else {
-                UiUtils.showToast(message: "Topic name missing")
+                UiUtils.showToast(message: NSLocalizedString("Topic name missing", comment: "Toast notification"))
             }
         }))
-        alert.addAction(UIAlertAction(title: "Change permissions", style: .default, handler: { action in
+        alert.addAction(UIAlertAction(title: NSLocalizedString("Change permissions", comment: "Alert action"), style: .default, handler: { action in
             guard let acsUnwrapped = sub.acs?.given, acsUnwrapped.isDefined else {
-                UiUtils.showToast(message: "Can't change permissions for this user.")
+                UiUtils.showToast(message: NSLocalizedString("Can't change permissions for this user.", comment: "Toast notification"))
                 return
             }
             self.changePermissions(acs: acsUnwrapped, uid: sub.user, changeType: .updateSub, disabledPermissions: nil)
 
         }))
-        alert.addAction(UIAlertAction(title: "Make owner", style: .default, handler: { action in
+        alert.addAction(UIAlertAction(title: NSLocalizedString("Make owner", comment: "Alert action"), style: .default, handler: { action in
             guard let uid = sub.user else {
-                UiUtils.showToast(message: "Can't make this user owner.")
+                UiUtils.showToast(message: NSLocalizedString("Can't make this user owner.", comment: "Toast notification"))
                 return
             }
             self.topic.updateMode(uid: uid, update: "+O").then(
                 onSuccess: self.promiseSuccessHandler,
                 onFailure: UiUtils.ToastFailureHandler)
         }))
-        let topicTitle = self.topic.pub?.fn ?? "Unknown"
-        let title = sub.pub?.fn ?? "Unknown"
-        alert.addAction(UIAlertAction(title: "Remove", style: .default, handler: { action in
+        let topicTitle = self.topic.pub?.fn ?? NSLocalizedString("Unknown", comment: "")
+        let title = sub.pub?.fn ?? NSLocalizedString("Unknown", comment: "")
+        alert.addAction(UIAlertAction(title: NSLocalizedString("Remove", comment: "Alert action"), style: .default, handler: { action in
             self.showConfirmationDialog(
                 forAction: .remove, withUid: sub.user,
-                message: "Remove \(title) from \(topicTitle)?")
+                message: String(format: NSLocalizedString("Remove %@ from %@?", comment: "Confirmation"), title, topicTitle))
         }))
-        alert.addAction(UIAlertAction(title: "Block", style: .default, handler: { action in
+        alert.addAction(UIAlertAction(title: NSLocalizedString("Block", comment: "Alert action"), style: .default, handler: { action in
             self.showConfirmationDialog(
                 forAction: .ban, withUid: sub.user,
-                message: "Remove and ban \(title) from \(topicTitle)?")
+                message: String(format: NSLocalizedString("Remove and ban %@ from %@?", comment: "Confirmation"), title, topicTitle))
         }))
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Alert action"), style: .cancel, handler: nil))
         self.present(alert, animated: true)
     }
 }
