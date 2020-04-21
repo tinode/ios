@@ -147,12 +147,12 @@ class AccountSettingsViewController: UITableViewController {
     @objc
     func accountNameTapped(sender: UITapGestureRecognizer) {
         let alert = UIAlertController(title: NSLocalizedString("Edit account name", comment: "Alert title"), message: nil, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Alert action button"), style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Alert action"), style: .cancel, handler: nil))
         alert.addTextField(configurationHandler: { textField in
             textField.placeholder = NSLocalizedString("Full name, e.g. John Doe", comment: "User name prompt")
             textField.text = self.me?.pub?.fn ?? ""
         })
-        alert.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: "Alert action button"), style: .default,
+        alert.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: "Alert action"), style: .default,
                                       handler: { action in
             if let name = alert.textFields?.first?.text {
                 self.updateTitle(newTitle: name)
@@ -356,7 +356,7 @@ class AccountSettingsViewController: UITableViewController {
         let alert = UIAlertController(title: nil, message: NSLocalizedString("Are you sure you want to delete your account? It cannot be undone.", comment: "Warning in delete account alert"), preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: ""), style: .cancel, handler: nil))
         alert.addAction(UIAlertAction(
-            title: NSLocalizedString("Delete", comment: "Alert button"), style: .default,
+            title: NSLocalizedString("Delete", comment: "Alert action"), style: .default,
             handler: { action in
                 self.deleteAccount()
             }))

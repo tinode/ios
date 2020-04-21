@@ -160,8 +160,8 @@ class FindViewController: UITableViewController, FindDisplayLogic {
     }
 
     @IBAction func inviteActionClicked(_ sender: Any) {
-        let inviteSubject = NSLocalizedString("Check out Tindroid Messenger", comment: "Invitation subject")
-        let inviteBody = NSLocalizedString("Check out Tindroid Messenger: https://tinode.co/", comment: "Invitation body")
+        let inviteSubject = NSLocalizedString("Check out Tinode Messenger", comment: "Invitation subject")
+        let inviteBody = NSLocalizedString("Check out Tinode Messenger: https://tinode.co/", comment: "Invitation body")
         let attrs = [ NSAttributedString.Key.font: UIFont.systemFont(ofSize: 20.0) ]
         let dialogTitle = NSAttributedString(string: NSLocalizedString("Invite", comment: "Dialog title: call to action"), attributes: attrs)
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
@@ -320,7 +320,7 @@ extension FindViewController: ContactViewCellDelegate {
         if indexPath.section == FindViewController.kRemoteContactsSection {
             // Save topic and user.
             guard interactor?.saveRemoteTopic(from: remoteContacts[indexPath.row]) ?? false else {
-                UiUtils.showToast(message: NSLocalizedString("Failed to save topic and contact info.", comment: "Error message"))
+                UiUtils.showToast(message: NSLocalizedString("Failed to save group and contact info.", comment: "Error message"))
                 return
             }
         }

@@ -179,12 +179,12 @@ class TopicInfoViewController: UITableViewController {
     }
 
     private func reloadData() {
-        topicTitleTextView.text = topic.pub?.fn ?? "Unknown"
+        topicTitleTextView.text = topic.pub?.fn ?? NSLocalizedString("Unknown", comment: "Placeholder for missing user name")
         topicTitleTextView.sizeToFit()
         topicIDLabel.text = topic?.name
         topicIDLabel.sizeToFit()
         let subtitle = topic.comment ?? ""
-        topicSubtitleTextView.text = !subtitle.isEmpty ? subtitle : "Private info: not set"
+        topicSubtitleTextView.text = !subtitle.isEmpty ? subtitle : NSLocalizedString("Private info: not set", comment: "Placeholder text in editor")
         topicSubtitleTextView.sizeToFit()
         avatarImage.set(icon: topic.pub?.photo?.image(), title: topic.pub?.fn, id: topic?.name)
         avatarImage.letterTileFont = self.avatarImage.letterTileFont.withSize(CGFloat(50))
@@ -199,7 +199,7 @@ class TopicInfoViewController: UITableViewController {
             // FIXME: reload just the members section.
             tableView.reloadData()
         } else {
-            peerNameLabel?.text = topic.pub?.fn ?? NSLocalizedString("Unknown", comment: "Missing P2P name")
+            peerNameLabel?.text = topic.pub?.fn ?? NSLocalizedString("Unknown", comment: "Placeholder for missing user name")
             myPermissionsLabel?.text = acs?.wantString
             let sub = topic.getSubscription(for: self.topic.name)
             peerPermissionsLabel?.text = sub?.acs?.givenString
@@ -217,7 +217,7 @@ class TopicInfoViewController: UITableViewController {
             onFailure: { err in
                 self.mutedSwitch.isOn = !isChecked
                 if let e = err as? TinodeError, case .notConnected(_) = e {
-                    UiUtils.showToast(message: NSLocalizedString("You are offline.", comment: "Error message"))
+                    UiUtils.showToast(message: NSLocalizedString("You are offline.", comment: "Toast notification"))
                 }
                 return nil
             }).thenFinally({
@@ -227,8 +227,8 @@ class TopicInfoViewController: UITableViewController {
 
     @objc
     func topicTitleTapped(sender: UITapGestureRecognizer) {
-        let alert = UIAlertController(title: NSLocalizedString("Edit Topic", comment: "Alert title"), message: nil, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Alert button"), style: .cancel, handler: nil))
+        let alert = UIAlertController(title: NSLocalizedString("Edit Group", comment: "Alert title"), message: nil, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Alert action"), style: .cancel, handler: nil))
         if topic.isOwner {
             alert.addTextField(configurationHandler: { textField in
                 textField.placeholder = NSLocalizedString("Name of the group", comment: "Alert placeholder")
@@ -244,7 +244,7 @@ class TopicInfoViewController: UITableViewController {
             textField.font = UIFont.preferredFont(forTextStyle: .body)
         })
         alert.addAction(UIAlertAction(
-            title: NSLocalizedString("OK", comment: "Alert button"), style: .default,
+            title: NSLocalizedString("OK", comment: "Alert action"), style: .default,
             handler: { action in
                 let textFields = alert.textFields!
                 let newTitle = self.topic.isOwner ? textFields[0].text : nil
@@ -358,13 +358,13 @@ class TopicInfoViewController: UITableViewController {
 
     @objc func deleteGroupClicked(sender: UITapGestureRecognizer) {
         guard topic.isOwner else {
-            UiUtils.showToast(message: "Only Owner can delete group")
+            UiUtils.showToast(message: NSLocalizedString("Only Owner can delete group", comment: "Toast notification"))
             return
         }
-        let alert = UIAlertController(title: "Delete the group?", message: nil, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        let alert = UIAlertController(title: NSLocalizedString("Delete the group?", comment: "Alert title"), message: nil, preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Alert action"), style: .cancel, handler: nil))
         alert.addAction(UIAlertAction(
-            title: "Delete", style: .destructive,
+            title: NSLocalizedString("Delete", comment: "Alert action"), style: .destructive,
             handler: { action in self.deleteTopic() }))
         present(alert, animated: true)
     }
@@ -378,65 +378,65 @@ class TopicInfoViewController: UITableViewController {
             self.topic?.delMessages(hard: hard).thenCatch(UiUtils.ToastFailureHandler)
         }
 
-        let alert = UIAlertController(title: "Clear all messages?", message: nil, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        let alert = UIAlertController(title: NSLocalizedString("Clear all messages?", comment: "Alert title"), message: nil, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Alert action"), style: .cancel, handler: nil))
         if topic.isDeleter {
             alert.addAction(UIAlertAction(
-                title: "For all", style: .destructive,
+                title: NSLocalizedString("For all", comment: "Alert action qualifier as in 'Delete for all'"), style: .destructive,
                 handler: { action in handler(true) }))
         }
         alert.addAction(UIAlertAction(
-            title: topic.isDeleter ? "For me" : "OK", style: .destructive,
+            title: topic.isDeleter ? NSLocalizedString("For me", comment: "Alert action 'Delete for me'") : NSLocalizedString("OK", comment: "Alert action"), style: .destructive,
             handler: { action in handler(false) }))
         present(alert, animated: true)
     }
 
     @objc func leaveConversationClicked(sender: UITapGestureRecognizer) {
-        let alert = UIAlertController(title: "Leave the conversation?", message: nil, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        let alert = UIAlertController(title: NSLocalizedString("Leave the conversation?", comment: "Alert title"), message: nil, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Alert action"), style: .cancel, handler: nil))
         alert.addAction(UIAlertAction(
-            title: "Leave", style: .destructive,
+            title: NSLocalizedString("Leave", comment: "Alert action"), style: .destructive,
             handler: { action in self.deleteTopic() }))
         present(alert, animated: true)
     }
 
     @objc func leaveGroupClicked(sender: UITapGestureRecognizer) {
         guard !topic.isOwner else {
-            UiUtils.showToast(message: "Owner cannot leave the group")
+            UiUtils.showToast(message: NSLocalizedString("Owner cannot leave the group", comment: "Toast notification"))
             return
         }
 
-        let alert = UIAlertController(title: "Leave the group?", message: nil, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        let alert = UIAlertController(title: NSLocalizedString("Leave the group?", comment: "Alert title"), message: nil, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Alert action"), style: .cancel, handler: nil))
         alert.addAction(UIAlertAction(
-            title: "Leave", style: .destructive,
+            title: NSLocalizedString("Leave", comment: "Alert action"), style: .destructive,
             handler: { action in self.deleteTopic() }))
         present(alert, animated: true)
     }
 
     @objc func blockContactClicked(sender: UITapGestureRecognizer) {
-        let alert = UIAlertController(title: "Block contact?", message: nil, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        let alert = UIAlertController(title: NSLocalizedString("Block contact?", comment: "Alert action"), message: nil, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Alert action"), style: .cancel, handler: nil))
         alert.addAction(UIAlertAction(
-            title: "Block", style: .destructive,
+            title: NSLocalizedString("Block", comment: "Alert action"), style: .destructive,
             handler: { action in self.blockContact() }))
         present(alert, animated: true)
     }
 
     @objc func reportContactClicked(sender: UITapGestureRecognizer) {
-        let alert = UIAlertController(title: "Report contact?", message: "Also block and remove all messages", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        let alert = UIAlertController(title: NSLocalizedString("Report contact?", comment: "Alert title"), message: NSLocalizedString("Also block and remove all messages", comment: "Alert explanation"), preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Alert action"), style: .cancel, handler: nil))
         alert.addAction(UIAlertAction(
-            title: "Report", style: .destructive,
+            title: NSLocalizedString("Report", comment: "Alert action"), style: .destructive,
             handler: { action in self.reportTopic(reason: "TODO") }))
         present(alert, animated: true)
     }
 
     @objc func reportGroupClicked(sender: UITapGestureRecognizer) {
-        let alert = UIAlertController(title: "Report Group?", message: "Also block and remove all messages", preferredStyle: .alert)
+        let alert = UIAlertController(title: NSLocalizedString("Report Group?", comment: "Alert title"), message: NSLocalizedString("Also block and remove all messages", comment: "Alert explanation"), preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
         alert.addAction(UIAlertAction(
-            title: "Report", style: .destructive,
+            title: NSLocalizedString("Report", comment: "Alert action"), style: .destructive,
             handler: { action in self.reportTopic(reason: "TODO") }))
         present(alert, animated: true)
     }
@@ -615,7 +615,7 @@ extension TopicInfoViewController {
         let pub = sub.pub
 
         cell.avatar.set(icon: pub?.photo?.image(), title: pub?.fn, id: uid)
-        cell.title.text = isMe ? "You" : (pub?.fn ?? "Unknown")
+        cell.title.text = isMe ? NSLocalizedString("You", comment: "This is 'you'") : (pub?.fn ?? NSLocalizedString("Unknown", comment: "Placeholder for missing user name"))
         cell.title.sizeToFit()
         cell.subtitle.text = sub.acs?.givenString
         for l in cell.statusLabels {
@@ -672,7 +672,7 @@ extension TopicInfoViewController {
             return
         }
 
-        let alert = UIAlertController(title: sub.pub?.fn ?? NSLocalizedString("Unknown", comment: ""), message: nil, preferredStyle: .actionSheet)
+        let alert = UIAlertController(title: sub.pub?.fn ?? NSLocalizedString("Unknown", comment: "Placeholder for missing user name"), message: nil, preferredStyle: .actionSheet)
         alert.addAction(UIAlertAction(title: NSLocalizedString("Send message", comment: "Alert action"), style: .default, handler: { action in
             if let topic = sub.user {
                 self.presentChatReplacingCurrentVC(with: topic)
@@ -697,8 +697,8 @@ extension TopicInfoViewController {
                 onSuccess: self.promiseSuccessHandler,
                 onFailure: UiUtils.ToastFailureHandler)
         }))
-        let topicTitle = self.topic.pub?.fn ?? NSLocalizedString("Unknown", comment: "")
-        let title = sub.pub?.fn ?? NSLocalizedString("Unknown", comment: "")
+        let topicTitle = self.topic.pub?.fn ?? NSLocalizedString("Unknown", comment: "Placeholder for missing topic name")
+        let title = sub.pub?.fn ?? NSLocalizedString("Unknown", comment: "Placeholder for missing user name")
         alert.addAction(UIAlertAction(title: NSLocalizedString("Remove", comment: "Alert action"), style: .default, handler: { action in
             self.showConfirmationDialog(
                 forAction: .remove, withUid: sub.user,
