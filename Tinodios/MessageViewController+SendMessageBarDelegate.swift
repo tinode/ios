@@ -10,7 +10,8 @@ import MobileCoreServices
 import TinodeSDK
 
 extension MessageViewController : SendMessageBarDelegate {
-    static let kMaxInbandAttachmentSize = 1 << 17
+    // 256K server limit decreased by base64 overhead (3/4) minus 1024 overhead.
+    static let kMaxInbandAttachmentSize = (1 << 18) * 3 / 4 - 1024
     static let kMaxAttachmentSize = 1 << 23
 
     func sendMessageBar(sendText: String) {
