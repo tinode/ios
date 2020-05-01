@@ -940,7 +940,7 @@ public class Tinode {
             }, onFailure: { err in
                 Tinode.log.error("Connection error: %@", err.localizedDescription)
                 try self.rejectAllPromises(err: err)
-                return nil
+                return PromisedReply<ServerMessage>(error: err)
             })
             if doLogin {
                 future.then(
@@ -954,7 +954,7 @@ public class Tinode {
                                     },
                                     onFailure: { err in
                                         try self?.rejectAllPromises(err: err)
-                                        return nil
+                                        return PromisedReply<ServerMessage>(error: err)
                                     })
                         }
                         return nil
@@ -962,7 +962,7 @@ public class Tinode {
                     onFailure: { [weak self] err in
                         Tinode.log.error("Connection error: %@", err.localizedDescription)
                         try self?.rejectAllPromises(err: err)
-                        return nil
+                        return PromisedReply<ServerMessage>(error: err)
                     })
             }
         }
