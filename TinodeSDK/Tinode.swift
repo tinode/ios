@@ -920,7 +920,7 @@ public class Tinode {
             let m = reconnecting ? "YES" : "NO"
             Tinode.log.info("Tinode connected: after reconnect - %@", m.description)
             let doLogin = tinode.autoLogin && tinode.loginCredentials != nil
-            let future = tinode.hello().then(onSuccess: { [weak self] pkt in
+            let future = tinode.hello().thenApply({ [weak self] pkt in
                 guard let self = self else {
                     throw TinodeError.invalidState("Missing Tinode instance in connection handler")
                 }
@@ -937,34 +937,28 @@ public class Tinode {
                     try self.resolveAllPromises(msg: pkt)
                 }
                 return nil
-            }, onFailure: { err in
-                Tinode.log.error("Connection error: %@", err.localizedDescription)
-                try self.rejectAllPromises(err: err)
-                return nil
             })
             if doLogin {
-                future.then(
-                    onSuccess: { [weak self] msg in
-                        if let t = self?.tinode, let cred = t.loginCredentials, !t.loginInProgress {
-                            return t.login(
-                                scheme: cred.scheme, secret: cred.secret, creds: nil).then(
-                                    onSuccess: { msg in
-                                        try self?.resolveAllPromises(msg: msg)
-                                        return nil
-                                    },
-                                    onFailure: { err in
-                                        try self?.rejectAllPromises(err: err)
-                                        return nil
-                                    })
-                        }
-                        return nil
-                    },
-                    onFailure: { [weak self] err in
-                        Tinode.log.error("Connection error: %@", err.localizedDescription)
-                        try self?.rejectAllPromises(err: err)
-                        return nil
-                    })
+                future.thenApply({ [weak self] msg in
+                    if let t = self?.tinode, let cred = t.loginCredentials, !t.loginInProgress {
+                        return t.login(
+                            scheme: cred.scheme, secret: cred.secret, creds: nil).then(
+                                onSuccess: { msg in
+                                    try self?.resolveAllPromises(msg: msg)
+                                    return nil
+                                },
+                                onFailure: { err in
+                                    Tinode.log.error("Login error: %@", err.localizedDescription)
+                                    return PromisedReply<ServerMessage>(error: err)
+                                })
+                    }
+                    return nil
+                })
             }
+            future.thenCatch({ err in
+                Tinode.log.error("Connection error: %@", err.localizedDescription)
+                return PromisedReply<ServerMessage>(error: err)
+            })
         }
         func onMessage(with message: String) -> Void {
             Log.default.debug("in: %@", message)
