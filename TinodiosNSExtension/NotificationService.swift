@@ -41,11 +41,6 @@ class NotificationService: UNNotificationServiceExtension {
             let store = BaseDb.getInstance().sqlStore!
 
             let userInfo = bestAttemptContent.userInfo
-            // TODO: handle silent pushes instead of ignoring them.
-            let silent = userInfo["silent"] as? String
-            if silent == "true" {
-                return
-            }
             guard let topic = userInfo["topic"] as? String, !topic.isEmpty,
                 let xfrom = userInfo["xfrom"] as? String, !xfrom.isEmpty else { return }
             let action = userInfo["what"] as? String ?? "msg"
