@@ -144,6 +144,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return .failed
     }
 
+    // Notification received. Process it.
     // Application woken up in the background (e.g. for data fetch).
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any],
                      fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
@@ -175,6 +176,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
     }
 
+    // Tapped on a web link. See if it's an app link.
     func application(_ application: UIApplication,
                      continue userActivity: NSUserActivity,
                      restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
@@ -194,6 +196,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 @available(iOS 10.0, *)
 extension AppDelegate: UNUserNotificationCenterDelegate {
+    // Notification received. Process it.
     // Called when the app is in the foreground.
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
         let userInfo = notification.request.content.userInfo
@@ -205,10 +208,13 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
             DispatchQueue.global(qos: .background).async {
                 self.fetchData(for: topicName, seq: seq)
             }
-            completionHandler([.alert, .badge, .sound])
+            // If the push notification is silent, do not present the alert.
+            let isSilent = userInfo["silent"] as? String == "true"
+            completionHandler(!isSilent ? [.alert, .badge, .sound] : [])
         }
     }
 
+    // User tapped on notification.
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
         print(response)
         let userInfo = response.notification.request.content.userInfo
