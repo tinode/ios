@@ -62,11 +62,11 @@ class Utils {
             Utils.kTinodePrefTypingNotifications: true
         ])
 
-        let (hostName, _, _) = SettingsHelper.getConnectionSettings()
+        let (hostName, _, _) = ConnectionSettingsHelper.getConnectionSettings()
         if hostName == nil {
             // If hostname is nil, sync values to defaults
-            SettingsHelper.setHostName(Bundle.main.object(forInfoDictionaryKey: "HOST_NAME") as? String)
-            SettingsHelper.setUseTLS(Bundle.main.object(forInfoDictionaryKey: "USE_TLS") as? String)
+            ConnectionSettingsHelper.setHostName(Bundle.main.object(forInfoDictionaryKey: "HOST_NAME") as? String)
+            ConnectionSettingsHelper.setUseTLS(Bundle.main.object(forInfoDictionaryKey: "USE_TLS") as? String)
         }
     }
 
@@ -295,7 +295,7 @@ extension URL {
 
 extension Tinode {
     func connectDefault() throws -> PromisedReply<ServerMessage>? {
-        let (hostName, useTLS, _) = SettingsHelper.getConnectionSettings()
+        let (hostName, useTLS, _) = ConnectionSettingsHelper.getConnectionSettings()
         Cache.log.debug("Connecting to %@, secure %@", hostName ?? Cache.kHostName, useTLS ?? Cache.kUseTLS ? "YES" : "NO")
         return try connect(to: (hostName ?? Cache.kHostName), useTLS: (useTLS ?? Cache.kUseTLS))
     }

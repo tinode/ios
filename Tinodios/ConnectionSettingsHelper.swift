@@ -7,7 +7,7 @@
 
 import Foundation
 
-class SettingsHelper {
+class ConnectionSettingsHelper {
 
     struct SettingsBundleKeys {
         static let hostName = "host_name_preference"
