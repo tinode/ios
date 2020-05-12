@@ -508,7 +508,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <sections>
-                            <tableViewSection id="P7i-RC-Gc7">
+                            <tableViewSection id="P7i-RC-Gc7" userLabel="Avatar and name">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" rowHeight="144" id="8sz-zY-Qdf" userLabel="Avatar">
                                         <rect key="frame" x="0.0" y="17.666666030883789" width="414" height="144"/>
@@ -548,7 +548,7 @@
                                                                 </userDefinedRuntimeAttribute>
                                                             </userDefinedRuntimeAttributes>
                                                             <connections>
-                                                                <action selector="addAvatarClicked:" destination="YmQ-cB-rjH" eventType="touchUpInside" id="fno-aj-B0Z"/>
+                                                                <action selector="loadAvatarClicked:" destination="4dd-0I-UFm" eventType="touchUpInside" id="6Q4-ds-Y4c"/>
                                                             </connections>
                                                         </button>
                                                     </subviews>
@@ -681,6 +681,14 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="Personal" id="hUo-8f-ZiA"/>
+                    <connections>
+                        <outlet property="avatarImage" destination="8A4-Ce-iQK" id="sYy-uw-R1l"/>
+                        <outlet property="loadAvatarButton" destination="Svo-WC-LXa" id="cvl-Ii-fAB"/>
+                        <outlet property="manageContacts" destination="WNR-81-Xt2" id="ng9-fo-gP1"/>
+                        <outlet property="manageTags" destination="Nl1-fA-AeA" id="6Pk-dU-WhH"/>
+                        <outlet property="myUIDLabel" destination="bvN-my-ZPi" id="ele-Pq-Pjj"/>
+                        <outlet property="userNameTextView" destination="P7i-RC-Gc7" id="ImC-yQ-3vE"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="6eD-cG-WUH" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
@@ -855,7 +863,7 @@
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" image="user-96" id="u5c-eJ-ozp">
+                                                <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" image="user-96" id="u5c-eJ-ozp" customClass="RoundImageView" customModule="Tinodios" customModuleProvider="target">
                                                     <rect key="frame" x="20" y="0.0" width="80.333333333333314" height="80"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                 </imageView>
@@ -958,23 +966,9 @@
                         </connections>
                     </tableView>
                     <connections>
-                        <outlet property="actionChangePassword" destination="wqh-Iw-MIx" id="bVh-1B-zei"/>
-                        <outlet property="actionDeleteAccount" destination="prj-Re-cc5" id="mV7-OV-FJl"/>
-                        <outlet property="actionLogOut" destination="bX9-hY-HLX" id="uVg-eB-jC1"/>
-                        <outlet property="anonPermissionsLabel" destination="bZv-2Q-BI9" id="lIM-Jk-yhF"/>
-                        <outlet property="anonUsersPermissions" destination="OkX-G2-xm9" id="b5l-zX-5Nv"/>
-                        <outlet property="appVersion" destination="71p-KF-hSv" id="Mf5-e6-L6f"/>
-                        <outlet property="authPermissionsLabel" destination="Un9-ds-iQd" id="yCA-fm-wZz"/>
-                        <outlet property="authUsersPermissions" destination="Uu3-eu-2fB" id="ZsL-sY-cm1"/>
-                        <outlet property="contactUs" destination="xAE-zC-NgY" id="MQm-eQ-TYY"/>
-                        <outlet property="incognitoModeSwitch" destination="wci-5i-bDm" id="mdm-xs-6NE"/>
-                        <outlet property="manageContacts" destination="WNR-81-Xt2" id="OIf-NA-VBd"/>
-                        <outlet property="manageTags" destination="Nl1-fA-AeA" id="026-Q1-Dcm"/>
-                        <outlet property="myUIDLabel" destination="bvN-my-ZPi" id="7XE-tB-UYG"/>
-                        <outlet property="privacyPolicy" destination="vYu-dw-9yV" id="uvR-CN-32f"/>
-                        <outlet property="sendReadReceiptsSwitch" destination="99b-Gg-AoJ" id="0NJ-8w-DeH"/>
-                        <outlet property="sendTypingNotificationsSwitch" destination="nfV-KL-o3A" id="I1c-n8-QPj"/>
-                        <outlet property="termsOfUse" destination="OvL-1Y-CP4" id="7qA-5A-DZN"/>
+                        <outlet property="avatarImageView" destination="u5c-eJ-ozp" id="htK-xX-5e2"/>
+                        <outlet property="subtitleLabel" destination="yL1-ka-zNK" id="xfd-on-MaD"/>
+                        <outlet property="userNameLabel" destination="TCK-gb-1BS" id="3Zh-ly-ESQ"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="6Ca-WU-bxc" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -2068,9 +2062,6 @@
                                             <subviews>
                                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="wci-5i-bDm" userLabel="Incognito mode switch">
                                                     <rect key="frame" x="345" y="6.6666666666666679" width="51" height="31.000000000000004"/>
-                                                    <connections>
-                                                        <action selector="incognitoModeClicked:" destination="Pnk-9m-ZVg" eventType="valueChanged" id="cOM-SY-krE"/>
-                                                    </connections>
                                                 </switch>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Incognito mode" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xyg-ee-0pd" userLabel="Incognito mode">
                                                     <rect key="frame" x="20" y="11.666666666666664" width="317" height="21"/>
@@ -2100,9 +2091,6 @@
                                             <subviews>
                                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="99b-Gg-AoJ" userLabel="Read Receipts Switch">
                                                     <rect key="frame" x="345" y="6.6666666666666679" width="51" height="31.000000000000004"/>
-                                                    <connections>
-                                                        <action selector="readReceiptsClicked:" destination="Pnk-9m-ZVg" eventType="valueChanged" id="hnA-MU-Kxx"/>
-                                                    </connections>
                                                 </switch>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Send read receipts" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="geh-gC-6qO">
                                                     <rect key="frame" x="20" y="11.666666666666664" width="317" height="21"/>
@@ -2129,9 +2117,6 @@
                                             <subviews>
                                                 <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="nfV-KL-o3A" userLabel="Typing Notifications Switch">
                                                     <rect key="frame" x="345" y="6.6666666666666679" width="51" height="31.000000000000004"/>
-                                                    <connections>
-                                                        <action selector="typingNotificationsClicked:" destination="Pnk-9m-ZVg" eventType="valueChanged" id="TEJ-7O-eoc"/>
-                                                    </connections>
                                                 </switch>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Send typing notifications" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4ll-eW-b8Z">
                                                     <rect key="frame" x="20" y="11.666666666666664" width="317" height="21"/>
