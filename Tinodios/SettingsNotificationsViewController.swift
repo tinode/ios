@@ -47,7 +47,7 @@ class SettingsNotificationsViewController: UITableViewController {
         self.me.updateMuted(muted: isChecked).then(
             onSuccess: UiUtils.ToastSuccessHandler,
             onFailure: { err in
-                self.incognitoModeSwitch.isOn = !isChecked
+                DispatchQueue.main.async { self.incognitoModeSwitch.isOn = !isChecked }
                 return UiUtils.ToastFailureHandler(err: err)
             }).thenFinally({
                 DispatchQueue.main.async { self.reloadData() }

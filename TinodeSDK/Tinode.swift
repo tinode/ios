@@ -920,7 +920,7 @@ public class Tinode {
             let m = reconnecting ? "YES" : "NO"
             Tinode.log.info("Tinode connected: after reconnect - %@", m.description)
             let doLogin = tinode.autoLogin && tinode.loginCredentials != nil
-            let future = tinode.hello().thenApply({ [weak self] pkt in
+            var future = tinode.hello().thenApply({ [weak self] pkt in
                 guard let self = self else {
                     throw TinodeError.invalidState("Missing Tinode instance in connection handler")
                 }
@@ -939,7 +939,7 @@ public class Tinode {
                 return nil
             })
             if doLogin {
-                future.thenApply({ [weak self] msg in
+                future = future.thenApply({ [weak self] msg in
                     if let t = self?.tinode, let cred = t.loginCredentials, !t.loginInProgress {
                         return t.login(
                             scheme: cred.scheme, secret: cred.secret, creds: nil).then(

@@ -14,7 +14,7 @@ class SettingsPersonalViewController: UITableViewController {
     private static let kSectionContacts = 1
     private static let kSectionTags = 2
 
-    @IBOutlet weak var userNameTextView: UITextView!
+    @IBOutlet weak var userNameLabel: UILabel!
     @IBOutlet weak var avatarImage: RoundImageView!
     @IBOutlet weak var loadAvatarButton: UIButton!
 
@@ -43,7 +43,7 @@ class SettingsPersonalViewController: UITableViewController {
         self.me = self.tinode.getMeTopic()!
 
         UiUtils.setupTapRecognizer(
-            forView: userNameTextView,
+            forView: userNameLabel,
             action: #selector(SettingsPersonalViewController.userNameTapped),
             actionTarget: self)
         UiUtils.setupTapRecognizer(
@@ -60,7 +60,7 @@ class SettingsPersonalViewController: UITableViewController {
 
     private func reloadData() {
         // Title.
-        self.userNameTextView.text = me.pub?.fn ?? NSLocalizedString("Unknown", comment: "Placeholder for missing user name")
+        self.userNameLabel.text = me.pub?.fn ?? NSLocalizedString("Unknown", comment: "Placeholder for missing user name")
 
         // My UID/Address label.
         self.myUIDLabel.text = self.tinode.myUid
@@ -88,7 +88,7 @@ class SettingsPersonalViewController: UITableViewController {
         alert.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: "Alert action"), style: .default,
                                       handler: { action in
             if let name = alert.textFields?.first?.text {
-                self.updateTitle(newTitle: name)
+                self.updateUserName(name)
             }
         }))
         self.present(alert, animated: true)
@@ -169,11 +169,11 @@ class SettingsPersonalViewController: UITableViewController {
         self.present(alert, animated: true)
     }
 
-    private func updateTitle(newTitle: String?) {
-        guard let newTitle = newTitle else { return }
+    private func updateUserName(_ userName: String?) {
+        guard let userName = userName else { return }
         let pub = me.pub == nil ? VCard(fn: nil, avatar: nil as Data?) : me.pub!.copy()
-        if pub.fn != newTitle {
-            pub.fn = String(newTitle.prefix(UiUtils.kMaxTitleLength))
+        if pub.fn != userName {
+            pub.fn = String(userName.prefix(UiUtils.kMaxTitleLength))
         }
         UiUtils.setTopicData(forTopic: self.me, pub: pub, priv: nil)?.then(
             onSuccess: { msg in
