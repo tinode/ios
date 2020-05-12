@@ -1,5 +1,5 @@
 //
-//  SettingsGeneralViewController.swift
+//  SettingsPersonalViewController.swift
 //  Tinodios
 //
 //  Copyright © 2020 Tinode. All rights reserved.
