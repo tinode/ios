@@ -140,9 +140,7 @@ public class TopicDb {
         topic.seq = row[self.seq]
         topic.clear = row[self.clear]
         topic.maxDel = row[self.maxDel] ?? 0
-        if topic is MeTopicProto {
-            (topic as! MeTopicProto).deserializeCreds(from: row[self.creds])
-        }
+        (topic as? MeTopicProto)?.deserializeCreds(from: row[self.creds])
         topic.tags = row[self.tags]?.components(separatedBy: ",")
 
         topic.accessMode = Acs.deserialize(from: row[self.accessMode])
@@ -236,7 +234,7 @@ public class TopicDb {
                     nextUnsentSeq <- TopicDb.kUnsentIdStart,
 
                     tags <- topic.tags?.joined(separator: ","),
-                    creds <- topic is MeTopicProto ? (topic as! MeTopicProto).serializeCreds() : nil,
+                    creds <- (topic as? MeTopicProto)?.serializeCreds(),
                     pub <- topic.serializePub(),
                     priv <- topic.serializePriv()
                 ))
@@ -278,6 +276,9 @@ public class TopicDb {
         setters.append(self.accessMode <- topic.accessMode?.serialize())
         setters.append(self.defacs <- topic.defacs?.serialize())
         setters.append(self.tags <- topic.tags?.joined(separator: ","))
+        if let topic = topic as? MeTopicProto {
+            setters.append(self.creds <- topic.serializeCreds())
+        }
         setters.append(self.pub <- topic.serializePub())
         setters.append(self.priv <- topic.serializePriv())
         if let touched = topic.touched {

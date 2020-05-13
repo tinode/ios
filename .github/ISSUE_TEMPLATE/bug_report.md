@@ -1,8 +1,8 @@
 ---
 name: Bug report
-about: Create a report to help us improve
+about: Create a report to help us improve Tinode
 title: ''
-labels: ''
+labels: 'bug'
 assignees: ''
 
 ---
@@ -25,7 +25,7 @@ If applicable, add screenshots to help explain your problem.
 
 **Tinodios (please complete the following information):**
  - Version [e.g. 0.16.3-rc2]
- - Device [e.g. iPhone Emulator or iPhone 8]
+ - Device [e.g. Simulator or iPhone 8]
  - iOS version, [e.g. 13.2.3 (17B111)]
 
 **Server**

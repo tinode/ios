@@ -44,7 +44,7 @@ open class MeTopic<DP: Codable & Mergeable>: Topic<DP, PrivateType, DP, PrivateT
         return Tinode.serializeObject(c)
     }
     public func deserializeCreds(from data: String?) -> Bool {
-        if let c: [Credential]? = Tinode.deserializeObject(from: data) {
+        if let c: [Credential] = Tinode.deserializeObject(from: data) {
             self.creds = c
             return true
         }
@@ -336,6 +336,7 @@ open class MeTopic<DP: Codable & Mergeable>: Topic<DP, PrivateType, DP, PrivateT
                 changed = true
             }
         }
+
         if changed {
             // Ensure predictable order.
             credentials?.sort(by: <)
@@ -361,8 +362,9 @@ open class MeTopic<DP: Codable & Mergeable>: Topic<DP, PrivateType, DP, PrivateT
         // Ensure predictable order of credentials.
         newCreds.sort(by: <)
         credentials = newCreds
-
-        // Notify listeners
+        // Save update to DB.
+        store?.topicUpdate(topic: self)
+        // Notify listeners.
         (listener as? Listener)?.onCredUpdated(cred: creds)
     }
 }
