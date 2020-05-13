@@ -157,9 +157,9 @@ class ChatListInteractor: ChatListBusinessLogic, ChatListDataStore {
                 self?.loadAndPresentTopics()
                 return nil
             },
-            onFailure: { _ in
+            onFailure: { err in
                 Cache.log.error("ChatListInteractor - Delete op failed for topic: %@", name)
-                return nil
+                return UiUtils.ToastFailureHandler(err: err)
             }
         )
     }
