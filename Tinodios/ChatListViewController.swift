@@ -64,7 +64,7 @@ class ChatListViewController: UITableViewController, ChatListDisplayLogic {
     private func toggleFooter(visible: Bool) {
         let count = numArchivedTopics > 9 ? "9+" : String(numArchivedTopics)
         let button = tableView.tableFooterView!.subviews[0] as! UIButton
-        button.setTitle(String(format: NSLocalizedString("Archived Chats (%d)", comment: "Button to open chat archive"), count), for: .normal)
+        button.setTitle(String(format: NSLocalizedString("Archived Chats (%@)", comment: "Button to open chat archive"), count), for: .normal)
         archivedChatsFooter!.isHidden = !visible
         tableView.tableFooterView = archivedChatsFooter
     }
