@@ -71,6 +71,8 @@ class SettingsPersonalViewController: UITableViewController {
         self.avatarImage.letterTileFont = self.avatarImage.letterTileFont.withSize(CGFloat(50))
 
         self.manageTags.detailTextLabel?.text = me.tags?.joined(separator: ", ")
+
+        self.tableView.reloadSections([SettingsPersonalViewController.kSectionContacts], with: .automatic)
     }
 
     @IBAction func loadAvatarClicked(_ sender: Any) {
