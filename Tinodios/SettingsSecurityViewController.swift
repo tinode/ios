@@ -182,14 +182,13 @@ class SettingsSecurityViewController: UITableViewController {
             }
             return
         }
-        tinode.updateAccountBasic(uid: nil, username: userName, password: newPassword).then(
-            onSuccess: nil,
-            onFailure: { err in
+        tinode.updateAccountBasic(uid: nil, username: userName, password: newPassword)
+            .thenCatch { err in
                 DispatchQueue.main.async {
                     UiUtils.showToast(message: String(format: NSLocalizedString("Could not change password: %@", comment: "Error message"), err.localizedDescription))
                 }
                 return nil
-            })
+            }
     }
 
     private func logout() {
@@ -199,9 +198,11 @@ class SettingsSecurityViewController: UITableViewController {
 
     private func deleteAccount() {
         Cache.log.info("SettingsSecurityVC - deleting account")
-        tinode.delCurrentUser(hard: true).thenApply { _ in
-            UiUtils.logoutAndRouteToLoginVC()
-            return nil
-        }
+        tinode.delCurrentUser(hard: true)
+            .thenApply { _ in
+                UiUtils.logoutAndRouteToLoginVC()
+                return nil
+            }
+            .thenCatch(UiUtils.ToastFailureHandler)
     }
 }
