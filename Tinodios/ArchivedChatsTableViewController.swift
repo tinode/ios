@@ -20,7 +20,7 @@ class ArchivedChatsTableViewController: UITableViewController {
 
     private func reloadData() {
         self.topics = Cache.getTinode().getFilteredTopics(filter: {(topic: TopicProto) in
-            return topic.topicType.matches(TopicType.user) && topic.isArchived
+            return topic.topicType.matches(TopicType.user) && topic.isArchived && topic.isJoiner
         })?.map {
             // Must succeed.
             $0 as! DefaultComTopic
@@ -46,7 +46,7 @@ class ArchivedChatsTableViewController: UITableViewController {
     }
     private func unarchiveTopic(topic: DefaultComTopic) {
         topic.updateArchived(archived: false)?.then(
-            onSuccess: { [weak self] msg in
+            onSuccess: { [weak self] _ in
                 DispatchQueue.main.async {
                     if let vc = self {
                         vc.reloadData()

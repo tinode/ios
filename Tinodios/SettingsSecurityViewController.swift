@@ -18,6 +18,8 @@ class SettingsSecurityViewController: UITableViewController {
     @IBOutlet weak var actionLogOut: UITableViewCell!
     @IBOutlet weak var actionDeleteAccount: UITableViewCell!
 
+    @IBOutlet weak var actionBlockedContacts: UITableViewCell!
+
     weak var tinode: Tinode!
     weak var me: DefaultMeTopic!
 
@@ -64,6 +66,18 @@ class SettingsSecurityViewController: UITableViewController {
         self.authPermissionsLabel.sizeToFit()
         self.anonPermissionsLabel.text = me.defacs?.getAnon() ?? ""
         self.anonPermissionsLabel.sizeToFit()
+
+        if self.tinode.countFilteredTopics(filter: { topic in return topic.isBlocked }) > 0 {
+            self.actionBlockedContacts.isUserInteractionEnabled = false
+            self.actionBlockedContacts.textLabel?.isEnabled = false
+            self.actionBlockedContacts.imageView?.tintColor = UIColor.gray
+            self.actionBlockedContacts.accessoryType = .none
+        } else {
+            self.actionBlockedContacts.isUserInteractionEnabled = true
+            self.actionBlockedContacts.textLabel?.isEnabled = true
+            self.actionBlockedContacts.imageView?.tintColor = UIColor.darkText
+            self.actionBlockedContacts.accessoryType = .disclosureIndicator
+        }
     }
 
     private func getAcsAndPermissionsChangeType(for sender: UIView) -> (AcsHelper?, UiUtils.PermissionsChangeType?) {

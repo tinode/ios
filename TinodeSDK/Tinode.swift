@@ -1174,16 +1174,27 @@ public class Tinode {
         return Array(topics.values)
     }
     public func getFilteredTopics(filter: ((TopicProto) -> Bool)?) -> Array<TopicProto>? {
-        var result: Array<TopicProto>
-        if filter == nil {
-            result = topics.values.compactMap { $0 }
-        } else {
-            result = topics.values.filter { (topic) -> Bool in
-                return filter!(topic)
-            }
+        guard let filter = filter else {
+            return topics.values.compactMap { $0 }
+        }
+
+        var result = topics.values.filter { (topic) -> Bool in
+            return filter(topic)
         }
         result.sort(by: { ($0.touched ?? Date.distantPast) > ($1.touched ?? Date.distantPast) })
         return result
+    }
+
+    public func countFilteredTopics(filter: ((TopicProto) -> Bool)?) -> Int {
+        guard let filter = filter else { return topics.count }
+
+        var count = 0
+        topics.values.forEach { topic in
+            if filter(topic) {
+                count += 1
+            }
+        }
+        return count
     }
 
     private func sendDeleteMessage(msg: ClientMessage<Int, Int>) -> PromisedReply<ServerMessage> {
