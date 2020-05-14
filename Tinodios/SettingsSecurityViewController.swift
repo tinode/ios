@@ -67,12 +67,15 @@ class SettingsSecurityViewController: UITableViewController {
         self.anonPermissionsLabel.text = me.defacs?.getAnon() ?? ""
         self.anonPermissionsLabel.sizeToFit()
 
-        if self.tinode.countFilteredTopics(filter: { topic in return topic.isBlocked }) > 0 {
+        if self.tinode.countFilteredTopics(filter: { topic in
+            return topic.topicType.matches(TopicType.user) && !topic.isJoiner }) == 0 {
+            // No blocked contacts, disable cell.
             self.actionBlockedContacts.isUserInteractionEnabled = false
             self.actionBlockedContacts.textLabel?.isEnabled = false
             self.actionBlockedContacts.imageView?.tintColor = UIColor.gray
             self.actionBlockedContacts.accessoryType = .none
         } else {
+            // Some blocked contacts, enable cell.
             self.actionBlockedContacts.isUserInteractionEnabled = true
             self.actionBlockedContacts.textLabel?.isEnabled = true
             self.actionBlockedContacts.imageView?.tintColor = UIColor.darkText

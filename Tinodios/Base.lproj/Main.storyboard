@@ -2056,14 +2056,13 @@
         <scene sceneID="1Qp-ui-CDn">
             <objects>
                 <tableViewController id="B0l-J0-jm9" userLabel="ArchivedChats" customClass="ArchivedChatsTableViewController" customModule="Tinodios" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="60" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="1" id="Cq0-Zq-kcv">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="60" estimatedRowHeight="-1" sectionHeaderHeight="-1" sectionFooterHeight="1" id="Cq0-Zq-kcv">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <view key="tableFooterView" contentMode="scaleToFill" id="xIw-r0-6Pv" userLabel="Footer to hide separators for empty rows">
-                            <rect key="frame" x="0.0" y="20" width="414" height="0.0"/>
+                            <rect key="frame" x="0.0" y="0.0" width="414" height="0.0"/>
                             <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
-                            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             <accessibility key="accessibilityConfiguration" label="Footer">
                                 <accessibilityTraits key="traits" notEnabled="YES"/>
                             </accessibility>
@@ -2082,6 +2081,33 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="hjG-K0-Ksm" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="2972" y="-673"/>
+        </scene>
+        <!--Blocked Contacts-->
+        <scene sceneID="aiA-jY-1nc">
+            <objects>
+                <tableViewController id="1lo-eH-gcA" customClass="BlockedContactsTableViewController" customModule="Tinodios" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" allowsSelection="NO" rowHeight="60" estimatedRowHeight="-1" sectionHeaderHeight="-1" sectionFooterHeight="1" id="nva-Q6-irQ">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <view key="tableHeaderView" contentMode="scaleToFill" id="gxo-uv-IJM" userLabel="Footer">
+                            <rect key="frame" x="0.0" y="0.0" width="414" height="0.0"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        </view>
+                        <connections>
+                            <outlet property="dataSource" destination="1lo-eH-gcA" id="Eyp-z4-q6D"/>
+                            <outlet property="delegate" destination="1lo-eH-gcA" id="giY-YE-V8E"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" title="Blocked Contacts" id="hTR-e8-PeX"/>
+                    <connections>
+                        <outlet property="chatListTableView" destination="nva-Q6-irQ" id="PMp-Gw-pid"/>
+                    </connections>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="srA-vF-Gzn" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-623" y="1734"/>
         </scene>
         <!--Notifications-->
         <scene sceneID="oTf-QO-rd0">
@@ -2202,36 +2228,6 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ubc-Co-Cit" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-622" y="878"/>
-        </scene>
-        <!--Blocked Contacts-->
-        <scene sceneID="aiA-jY-1nc">
-            <objects>
-                <tableViewController id="1lo-eH-gcA" customClass="BlockedContactsTableViewController" customModule="Tinodios" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" allowsSelection="NO" rowHeight="60" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="1" id="nva-Q6-irQ">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
-                        <view key="tableHeaderView" contentMode="scaleToFill" id="sOC-YQ-xoy" userLabel="Footer to hide separators for empty rows">
-                            <rect key="frame" x="0.0" y="20" width="414" height="0.0"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
-                            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                            <accessibility key="accessibilityConfiguration" label="Footer">
-                                <accessibilityTraits key="traits" notEnabled="YES"/>
-                            </accessibility>
-                        </view>
-                        <connections>
-                            <outlet property="dataSource" destination="1lo-eH-gcA" id="Eyp-z4-q6D"/>
-                            <outlet property="delegate" destination="1lo-eH-gcA" id="giY-YE-V8E"/>
-                        </connections>
-                    </tableView>
-                    <navigationItem key="navigationItem" title="Blocked Contacts" id="hTR-e8-PeX"/>
-                    <connections>
-                        <outlet property="chatListTableView" destination="nva-Q6-irQ" id="PMp-Gw-pid"/>
-                    </connections>
-                </tableViewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="srA-vF-Gzn" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="-623" y="1734"/>
         </scene>
         <!--Help and About-->
         <scene sceneID="6mu-Dd-9Q7">
@@ -2683,7 +2679,7 @@
     </scenes>
     <inferredMetricsTieBreakers>
         <segue reference="Qbx-cO-rju"/>
-        <segue reference="11u-RR-BAc"/>
+        <segue reference="Fnn-wi-PrS"/>
         <segue reference="VPg-gx-wIb"/>
     </inferredMetricsTieBreakers>
     <resources>

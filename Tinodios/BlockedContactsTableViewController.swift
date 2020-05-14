@@ -15,6 +15,7 @@ class BlockedContactsTableViewController: UITableViewController {
     private var topics: [DefaultComTopic] = []
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.tableView.tableFooterView = UIView(frame: .zero)
         self.chatListTableView.register(UINib(nibName: "ChatListViewCell", bundle: nil), forCellReuseIdentifier: "ChatListViewCell")
         self.reloadData()
     }

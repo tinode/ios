@@ -7,13 +7,17 @@
 
 import Foundation
 
-public class Acs: Codable, Equatable {
+public class Acs: Codable, CustomStringConvertible, Equatable {
     public enum Side {
         case mode, want, given
     }
     public var given: AcsHelper?
     public var want: AcsHelper?
     public var mode: AcsHelper?
+
+    public var description: String {
+        return "w: '\(want?.description ?? "")', g: '\(given?.description ?? "")', m: '\(mode?.description ?? "")'"
+    }
 
     /// The value is neither nil nor Invalid. None is considered to be defined.
     public var isModeDefined: Bool {

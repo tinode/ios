@@ -7,7 +7,7 @@
 
 import Foundation
 
-public class AcsHelper: Codable, Equatable {
+public class AcsHelper: Codable, CustomStringConvertible, Equatable {
     enum AcsError: Error {
         case invalidValue
     }
