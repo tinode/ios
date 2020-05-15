@@ -157,10 +157,7 @@ class ChatListInteractor: ChatListBusinessLogic, ChatListDataStore {
                 self?.loadAndPresentTopics()
                 return nil
             },
-            onFailure: { _ in
-                Cache.log.error("ChatListInteractor - Delete op failed for topic: %@", name)
-                return nil
-            }
+            onFailure: UiUtils.ToastFailureHandler
         )
     }
 
@@ -169,12 +166,9 @@ class ChatListInteractor: ChatListBusinessLogic, ChatListDataStore {
         topic.updateArchived(archived: archived)?.then(
             onSuccess: { [weak self] msg in
                 self?.loadAndPresentTopics()
-                    return nil
-                },
-            onFailure: { err in
-                Cache.log.error("ChatListInteractor - Archive/Unarchive op failed for topic: %@", name)
-                return UiUtils.ToastFailureHandler(err: err)
-            }
+                return nil
+            },
+            onFailure: UiUtils.ToastFailureHandler
         )
     }
 }

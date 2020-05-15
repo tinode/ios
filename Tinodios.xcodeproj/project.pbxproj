@@ -72,6 +72,7 @@
 		B09C564C2469756B00D6615D /* SettingsNotificationsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B09C564B2469756B00D6615D /* SettingsNotificationsViewController.swift */; };
 		B09C564E246975F700D6615D /* SettingsHelpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B09C564D246975F700D6615D /* SettingsHelpViewController.swift */; };
 		B09C5650246976AC00D6615D /* SettingsSecurityViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B09C564F246976AC00D6615D /* SettingsSecurityViewController.swift */; };
+		B09C5652246C0E6B00D6615D /* BlockedContactsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B09C5651246C0E6B00D6615D /* BlockedContactsTableViewController.swift */; };
 		B0A612AF228B08EC00569DFE /* RichTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0A612AE228B08EC00569DFE /* RichTextView.swift */; };
 		B0A612B1228C85C300569DFE /* MessageViewLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0A612B0228C85C300569DFE /* MessageViewLayout.swift */; };
 		B0A612B3228EDC7B00569DFE /* DraftyButtonAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0A612B2228EDC7B00569DFE /* DraftyButtonAttachment.swift */; };
@@ -201,6 +202,7 @@
 		B09C564B2469756B00D6615D /* SettingsNotificationsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsNotificationsViewController.swift; sourceTree = "<group>"; };
 		B09C564D246975F700D6615D /* SettingsHelpViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsHelpViewController.swift; sourceTree = "<group>"; };
 		B09C564F246976AC00D6615D /* SettingsSecurityViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsSecurityViewController.swift; sourceTree = "<group>"; };
+		B09C5651246C0E6B00D6615D /* BlockedContactsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockedContactsTableViewController.swift; sourceTree = "<group>"; };
 		B0A612AE228B08EC00569DFE /* RichTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RichTextView.swift; sourceTree = "<group>"; };
 		B0A612B0228C85C300569DFE /* MessageViewLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageViewLayout.swift; sourceTree = "<group>"; };
 		B0A612B2228EDC7B00569DFE /* DraftyButtonAttachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DraftyButtonAttachment.swift; sourceTree = "<group>"; };
@@ -286,6 +288,7 @@
 				0ACB5F0D22097651008FE740 /* ChatListPresenter.swift */,
 				0ACB5F0F22097665008FE740 /* ChatListRouter.swift */,
 				0A0380D921B3CC8100A3FA0E /* ChatListViewController.swift */,
+				B09C5651246C0E6B00D6615D /* BlockedContactsTableViewController.swift */,
 				B031BE5622631304004160AE /* ConnectionSettingsHelper.swift */,
 				7DDADC5321D5C2E6009733B5 /* CredentialsViewController.swift */,
 				0A36776822B09C1900724873 /* EditMembersViewController.swift */,
@@ -666,6 +669,7 @@
 				FA37AD24238B0D6F00301261 /* KeyboardInfo.swift in Sources */,
 				0A9A39D523B02CF500C70FF7 /* CircularProgressView.swift in Sources */,
 				0AE50D4822156A5B0021F7B7 /* FindPresenter.swift in Sources */,
+				B09C5652246C0E6B00D6615D /* BlockedContactsTableViewController.swift in Sources */,
 				B09C564E246975F700D6615D /* SettingsHelpViewController.swift in Sources */,
 				B0DF03312283FFD8000F9492 /* PlaceholderTextView.swift in Sources */,
 				0A35BA9E22836CCF00AA5E2F /* ContactsSynchronizer.swift in Sources */,

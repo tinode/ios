@@ -322,10 +322,7 @@ class TopicInfoViewController: UITableViewController {
         topic.delete(hard: true).then(
             onSuccess: { msg in
                 DispatchQueue.main.async {
-                    let storyboard = UIStoryboard(name: "Main", bundle: nil)
-                    let destinationVC = storyboard.instantiateViewController(withIdentifier: "ChatsNavigator") as! UINavigationController
-
-                    self.show(destinationVC, sender: nil)
+                    self.performSegue(withIdentifier: "TopicInfo2Chats", sender: nil)
                 }
                 return nil
             },
@@ -336,9 +333,7 @@ class TopicInfoViewController: UITableViewController {
         topic.updateMode(uid: nil, update: "-JP").then(
             onSuccess: { msg in
                 DispatchQueue.main.async {
-                    let storyboard = UIStoryboard(name: "Main", bundle: nil)
-                    let destinationVC = storyboard.instantiateViewController(withIdentifier: "ChatsNavigator") as! UINavigationController
-                    self.show(destinationVC, sender: nil)
+                    self.performSegue(withIdentifier: "TopicInfo2Chats", sender: nil)
                 }
                 return nil
             },

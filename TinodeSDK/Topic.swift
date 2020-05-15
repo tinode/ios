@@ -34,6 +34,7 @@ public protocol TopicProto: class {
     var missingMessageRange: MsgRange? { get }
     var isArchived: Bool { get }
     var isJoiner: Bool { get }
+    var isBlocked: Bool { get }
     var isReader: Bool { get }
     var isMuted: Bool { get }
     var unread: Int { get }
@@ -349,6 +350,9 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
     }
     public var isJoiner: Bool {
         return description?.acs?.isJoiner ?? false
+    }
+    public var isBlocked: Bool {
+        return !(description?.acs?.isJoiner(for: Acs.Side.given) ?? false)
     }
     public var isDeleter: Bool {
         return description?.acs?.isDeleter ?? false
