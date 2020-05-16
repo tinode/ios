@@ -120,11 +120,12 @@ class SettingsPersonalViewController: UITableViewController {
                     }
                     if let credential = credMsg {
                         success = true
+                        let oldCount = self.me.creds?.count ?? 0
                         self.me.setMeta(meta: MsgSetMeta(desc: nil, sub: nil, tags: nil, cred: credential)).then(
                             onSuccess: { [weak self] _ in
                                 DispatchQueue.main.async {
                                     UiUtils.showToast(message: String(format: NSLocalizedString("Confirmaition message sent to %@", comment: "Info message"), credential.val!), level: .info)
-                                    if let count = self?.me.creds?.count {
+                                    if let count = self?.me.creds?.count, count > oldCount {
                                         let indexPath = IndexPath(row: count, section: SettingsPersonalViewController.kSectionContacts)
                                         self?.tableView.insertRows(at: [indexPath], with: .automatic)
                                     }
@@ -211,7 +212,7 @@ extension SettingsPersonalViewController {
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if indexPath.section != SettingsPersonalViewController.kSectionContacts {
+        guard indexPath.section == SettingsPersonalViewController.kSectionContacts else {
             return super.tableView(tableView, cellForRowAt: indexPath)
         }
 
