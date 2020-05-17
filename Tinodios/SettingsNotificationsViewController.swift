@@ -19,8 +19,8 @@ class SettingsNotificationsViewController: UITableViewController {
         super.viewDidLoad()
         setup()
     }
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
 
         reloadData()
     }

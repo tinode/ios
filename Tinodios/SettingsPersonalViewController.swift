@@ -32,8 +32,8 @@ class SettingsPersonalViewController: UITableViewController {
         setup()
     }
 
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
 
         reloadData()
     }
@@ -72,7 +72,9 @@ class SettingsPersonalViewController: UITableViewController {
 
         self.manageTags.detailTextLabel?.text = me.tags?.joined(separator: ", ")
 
+        self.tableView.beginUpdates()
         self.tableView.reloadSections([SettingsPersonalViewController.kSectionContacts], with: .automatic)
+        self.tableView.endUpdates()
     }
 
     @IBAction func loadAvatarClicked(_ sender: Any) {
