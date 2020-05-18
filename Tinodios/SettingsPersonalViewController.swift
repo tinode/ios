@@ -32,8 +32,8 @@ class SettingsPersonalViewController: UITableViewController {
         setup()
     }
 
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
 
         reloadData()
     }
@@ -72,9 +72,10 @@ class SettingsPersonalViewController: UITableViewController {
 
         self.manageTags.detailTextLabel?.text = me.tags?.joined(separator: ", ")
 
-        self.tableView.beginUpdates()
-        self.tableView.reloadSections([SettingsPersonalViewController.kSectionContacts], with: .automatic)
-        self.tableView.endUpdates()
+        // Note: tableView.reloadSections() would be better but
+        // it makes the [Add another] contact button disappear.
+        // Likely due to this: https://stackoverflow.com/questions/3132135/initally-visible-cells-gets-invisible-after-calling-reloadsectionswithrowanimat
+        self.tableView.reloadData()
     }
 
     @IBAction func loadAvatarClicked(_ sender: Any) {
@@ -289,10 +290,7 @@ extension SettingsPersonalViewController {
                     }
                     return nil
                 },
-                onFailure: { err in
-                    UiUtils.ToastFailureHandler(err: err)
-                    return nil
-                })
+                onFailure: UiUtils.ToastFailureHandler)
         }
     }
 }
