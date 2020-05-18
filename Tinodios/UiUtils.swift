@@ -271,7 +271,10 @@ class UiUtils {
     ///  - message: message to display
     ///  - duration: duration of display in seconds.
     public static func showToast(message: String, duration: TimeInterval = 3.0, level: ToastLevel = .error) {
-        guard let parent = UIApplication.shared.windows.last else { return }
+        guard let parent = UIApplication.shared.keyWindow else {
+            print("parent is not set")
+            return
+        }
 
         let iconSize: CGFloat = 32
         let spacing: CGFloat = 8

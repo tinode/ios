@@ -143,9 +143,7 @@ class SettingsPersonalViewController: UITableViewController {
                     }
                 }
                 if !success {
-                   DispatchQueue.main.async {
                     UiUtils.showToast(message: NSLocalizedString("Entered text is neither email nor phone number.", comment: "Error message"))
-                   }
                 }
         }))
         self.present(alert, animated: true)
