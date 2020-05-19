@@ -23,6 +23,8 @@ xcuserdata
 *.xccheckout
 *.xcscmblueprint
 GoogleService-Info.plist
+Tinodios/GoogleService-Info-Development.plist
+Tinodios/GoogleService-Info-Production.plist
 
 ## Obj-C/Swift specific
 *.hmap
