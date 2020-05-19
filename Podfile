@@ -16,7 +16,7 @@ def sdk_pods
 end
 
 def db_pods
-    pod 'SQLite.swift', '~> 0.12.0'
+    pod 'SQLite.swift', '~> 0.12.2'
 end
 
 def ui_pods

@@ -59,6 +59,19 @@ public final class PhoneNumberKit: NSObject {
     public func parse(_ numberStrings: [String], withRegion region: String = PhoneNumberKit.defaultRegionCode(), ignoreType: Bool = false, shouldReturnFailedEmptyNumbers: Bool = false) -> [PhoneNumber] {
         return self.parseManager.parseMultiple(numberStrings, withRegion: region, ignoreType: ignoreType, shouldReturnFailedEmptyNumbers: shouldReturnFailedEmptyNumbers)
     }
+    
+    // MARK: Checking
+    
+    /// Checks if a number string is a valid PhoneNumber object
+    ///
+    /// - Parameters:
+    ///   - numberString: the raw number string.
+    ///   - region: ISO 639 compliant region code.
+    ///   - ignoreType: Avoids number type checking for faster performance.
+    /// - Returns: Bool
+    public func isValidPhoneNumber(_ numberString: String, withRegion region: String = PhoneNumberKit.defaultRegionCode(), ignoreType: Bool = false) -> Bool {
+        return (try? self.parse(numberString, withRegion: region, ignoreType: ignoreType)) != nil
+    }
 
     // MARK: Formatting
 
@@ -217,7 +230,7 @@ public final class PhoneNumberKit: NSObject {
     ///
     /// - returns: A computed value for the user's current region - based on the iPhone's carrier and if not available, the device region.
     public class func defaultRegionCode() -> String {
-#if os(iOS)
+#if os(iOS) && !targetEnvironment(simulator) && !targetEnvironment(macCatalyst)
         let networkInfo = CTTelephonyNetworkInfo()
         let carrier = networkInfo.subscriberCellularProvider
         if let isoCountryCode = carrier?.isoCountryCode {
@@ -247,3 +260,17 @@ public final class PhoneNumberKit: NSObject {
         return data
     }
 }
+
+#if canImport(UIKit)
+extension PhoneNumberKit {
+
+    /// Configuration for the CountryCodePicker presented from PhoneNumberTextField if `withDefaultPickerUI` is `true`
+    public enum CountryCodePicker {
+        /// Common Country Codes are shown below the Current section in the CountryCodePicker by default
+        public static var commonCountryCodes: [String] = []
+
+        /// When the Picker is shown from the textfield it is presented modally
+        public static var forceModalPresentation: Bool = false
+    }
+}
+#endif

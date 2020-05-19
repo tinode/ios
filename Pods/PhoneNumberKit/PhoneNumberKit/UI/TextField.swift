@@ -6,20 +6,22 @@
 //  Copyright © 2015 Roy Marmelstein. All rights reserved.
 //
 
+#if canImport(UIKit)
+
 import Foundation
 import UIKit
 
 /// Custom text field that formats phone numbers
 open class PhoneNumberTextField: UITextField, UITextFieldDelegate {
-    public let phoneNumberKit: PhoneNumberKit!
+    public let phoneNumberKit: PhoneNumberKit
 
     public lazy var flagButton = UIButton()
 
     /// Override setText so number will be automatically formatted when setting text by code
     open override var text: String? {
         set {
-            if isPartialFormatterEnabled, newValue != nil {
-                let formattedNumber = partialFormatter.formatPartial(newValue! as String)
+            if isPartialFormatterEnabled, let newValue = newValue {
+                let formattedNumber = partialFormatter.formatPartial(newValue)
                 super.text = formattedNumber
             } else {
                 super.text = newValue
@@ -58,9 +60,9 @@ open class PhoneNumberTextField: UITextField, UITextFieldDelegate {
         didSet {
             self.partialFormatter.withPrefix = self.withPrefix
             if self.withPrefix == false {
-                self.keyboardType = UIKeyboardType.numberPad
+                self.keyboardType = .numberPad
             } else {
-                self.keyboardType = UIKeyboardType.phonePad
+                self.keyboardType = .phonePad
             }
             if self.withExamplePlaceholder {
                 self.updatePlaceholder()
@@ -84,6 +86,20 @@ open class PhoneNumberTextField: UITextField, UITextFieldDelegate {
                 attributedPlaceholder = nil
             }
         }
+    }
+
+    private var _withDefaultPickerUI: Bool = false {
+        didSet {
+            if #available(iOS 11.0, *), flagButton.actions(forTarget: self, forControlEvent: .touchUpInside) == nil {
+                flagButton.addTarget(self, action: #selector(didPressFlagButton), for: .touchUpInside)
+            }
+        }
+    }
+
+    @available(iOS 11.0, *)
+    public var withDefaultPickerUI: Bool {
+        get { _withDefaultPickerUI }
+        set { _withDefaultPickerUI = newValue }
     }
 
     public var isPartialFormatterEnabled = true
@@ -205,7 +221,7 @@ open class PhoneNumberTextField: UITextField, UITextFieldDelegate {
 
     func setup() {
         self.autocorrectionType = .no
-        self.keyboardType = UIKeyboardType.phonePad
+        self.keyboardType = .phonePad
         super.delegate = self
     }
 
@@ -232,11 +248,19 @@ open class PhoneNumberTextField: UITextField, UITextFieldDelegate {
     open func updatePlaceholder() {
         guard self.withExamplePlaceholder else { return }
         if isEditing, !(self.text ?? "").isEmpty { return } // No need to update a placeholder while the placeholder isn't showing
-        let format = self.withPrefix ? PhoneNumberFormat.international : .national
+        
+        let format: PhoneNumberFormat
+        if self.currentRegion == "RU" {
+            format = self.withPrefix ? PhoneNumberFormat.national : .international
+        } else {
+            format = self.withPrefix ? PhoneNumberFormat.international : .national
+        }
+                
         let example = self.phoneNumberKit.getFormattedExampleNumber(forCountry: self.currentRegion, withFormat: format, withPrefix: self.withPrefix) ?? "12345678"
 
         let font = self.font ?? UIFont.preferredFont(forTextStyle: .body)
         let ph = NSMutableAttributedString(string: example, attributes: [.font: font])
+        #if compiler(>=5.1)
         if #available(iOS 13.0, *), self.withPrefix {
             // because the textfield will automatically handle insert & removal of the international prefix we make the
             // prefix darker to indicate non default behaviour to users, this behaviour currently only happens on iOS 13
@@ -246,8 +270,32 @@ open class PhoneNumberTextField: UITextField, UITextFieldDelegate {
             ph.addAttribute(.foregroundColor, value: UIColor.secondaryLabel, range: NSRange(..<firstSpaceIndex, in: example))
             ph.addAttribute(.foregroundColor, value: UIColor.tertiaryLabel, range: NSRange(firstSpaceIndex..., in: example))
         }
+        #endif
         self.attributedPlaceholder = ph
     }
+
+    @available(iOS 11.0, *)
+    @objc func didPressFlagButton() {
+        guard withDefaultPickerUI else { return }
+        let vc = CountryCodePickerViewController(phoneNumberKit: phoneNumberKit)
+        vc.delegate = self
+        if let nav = containingViewController?.navigationController, !PhoneNumberKit.CountryCodePicker.forceModalPresentation {
+            nav.pushViewController(vc, animated: true)
+        } else {
+            let nav = UINavigationController(rootViewController: vc)
+            containingViewController?.present(nav, animated: true)
+        }
+    }
+
+    /// containingViewController looks at the responder chain to find the view controller nearest to itself
+    var containingViewController: UIViewController? {
+        var responder: UIResponder? = self
+        while !(responder is UIViewController) && responder != nil {
+            responder = responder?.next
+        }
+        return (responder as? UIViewController)
+    }
+
 
     // MARK: Phone number formatting
 
@@ -382,6 +430,7 @@ open class PhoneNumberTextField: UITextField, UITextFieldDelegate {
             let text = textField.text,
             text == internationalPrefix(for: countryCode) {
             textField.text = ""
+            sendActions(for: .editingChanged)
             self.updateFlag()
             self.updatePlaceholder()
         }
@@ -396,3 +445,23 @@ open class PhoneNumberTextField: UITextField, UITextFieldDelegate {
         return self._delegate?.textFieldShouldReturn?(textField) ?? true
     }
 }
+
+@available(iOS 11.0, *)
+extension PhoneNumberTextField: CountryCodePickerDelegate {
+
+    func countryCodePickerViewControllerDidPickCountry(_ country: CountryCodePickerViewController.Country) {
+        text = isEditing ? "+" + country.prefix : ""
+        _defaultRegion = country.code
+        partialFormatter.defaultRegion = country.code
+        updateFlag()
+        updatePlaceholder()
+
+        if let nav = containingViewController?.navigationController {
+            nav.popViewController(animated: true)
+        } else {
+            containingViewController?.dismiss(animated: true)
+        }
+    }
+}
+
+#endif
