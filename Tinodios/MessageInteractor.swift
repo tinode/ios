@@ -197,7 +197,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         )
     }
     func sendReadNotification(explicitSeq: Int? = nil, when deadline: DispatchTime) {
-        readNotificationsInFlight += 1
+        messageInteractorQueue.sync { readNotificationsInFlight += 1 }
         messageInteractorQueue.asyncAfter(deadline: deadline) { [weak self] in
             // Don't send a notification if more notifications are pending. This avoids the case of acking
             // every {data} message in a large batch.
