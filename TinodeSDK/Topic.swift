@@ -200,7 +200,9 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
             return description?.updated
         }
         set {
-            description?.updated = newValue
+            if let nv = newValue, nv > (description?.updated ?? Date.distantPast) {
+                description?.updated = nv
+            }
         }
     }
 
@@ -209,7 +211,9 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
             return description?.touched
         }
         set {
-            description?.touched = newValue
+            if let nv = newValue, nv > (description?.touched ?? Date.distantPast) {
+                description?.touched = nv
+            }
         }
     }
 
