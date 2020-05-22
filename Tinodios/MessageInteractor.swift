@@ -67,8 +67,10 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
     private var lastSeenRecv: Int?
     private var lastSeenRead: Int?
 
-    // How many read notifications are currently scheduled to be sent.
-    private var readNotificationsInFlight = 0
+    // Maximum seq id of the currently scheduled read notifications.
+    // -1 stands for no notifications in flight.
+    //  0 means a notification without an explicit seq id has been requested.
+    private var maxReadNoteSeqIdInFligth = -1
 
     @discardableResult
     func setup(topicName: String?) -> Bool {
@@ -197,16 +199,25 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         )
     }
     func sendReadNotification(explicitSeq: Int? = nil, when deadline: DispatchTime) {
-        messageInteractorQueue.sync { readNotificationsInFlight += 1 }
-        messageInteractorQueue.asyncAfter(deadline: deadline) { [weak self] in
-            // Don't send a notification if more notifications are pending. This avoids the case of acking
-            // every {data} message in a large batch.
-            // It may pose a problem if a later message is acked first (msg[1].seq > msg[2].seq), but that
-            // should not happen.
-            if self?.readNotificationsInFlight == 1 {
-                self?.topic?.noteRead(explicitSeq: explicitSeq)
+        // We don't send a notification if more notifications are pending.
+        // This avoids the case of acking every {data} message in a large batch.
+        // However, we send the max seq id in the batch.
+        var doScheduleNotification = false
+        messageInteractorQueue.sync {
+            if self.maxReadNoteSeqIdInFligth < 0 {
+                // Currently, no notifications are scheduled.
+                doScheduleNotification = true
             }
-            self?.readNotificationsInFlight -= 1
+            let es = explicitSeq ?? 0
+            if es > self.maxReadNoteSeqIdInFligth {
+                self.maxReadNoteSeqIdInFligth = es
+            }
+        }
+        guard doScheduleNotification else { return }
+        messageInteractorQueue.asyncAfter(deadline: deadline) { [weak self] in
+            guard let explicitSeq = self?.maxReadNoteSeqIdInFligth else { return }
+            self?.topic?.noteRead(explicitSeq: explicitSeq > 0 ? explicitSeq : nil)
+            self?.maxReadNoteSeqIdInFligth = -1
         }
     }
     func sendTypingNotification() {
