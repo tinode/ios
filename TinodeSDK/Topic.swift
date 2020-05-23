@@ -548,7 +548,7 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
             onFailure: { [weak self] err in
                 if let e = err as? TinodeError, (self?.isNew ?? false),
                     case TinodeError.serverResponseError(let code, _, _) = e {
-                    if code >= 400 && code < 500 {
+                    if ServerMessage.kStatusBadRequest <= code && code < ServerMessage.kStatusInternalServerError {
                         self?.tinode?.stopTrackingTopic(topicName: name)
                         self?.persist(false)
                     }
@@ -878,11 +878,11 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
 
     public func setMeta(meta: MsgSetMeta<DP, DR>) -> PromisedReply<ServerMessage> {
         return tinode!.setMeta(for: self.name, meta: meta).thenApply({ msg in
-                if let ctrl = msg?.ctrl, ctrl.code < 300 {
-                    self.update(ctrl: ctrl, meta: meta)
-                }
-                return nil
-            })
+            if let ctrl = msg?.ctrl, ctrl.code < ServerMessage.kStatusMultipleChoices {
+                self.update(ctrl: ctrl, meta: meta)
+            }
+            return nil
+        })
     }
     public func setDescription(desc: MetaSetDesc<DP, DR>) -> PromisedReply<ServerMessage> {
         return setMeta(meta: MsgSetMeta<DP, DR>(desc: desc, sub: nil, tags: nil, cred: nil))
@@ -938,7 +938,7 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
     @discardableResult
     public func invite(user uid: String, in mode: String?) -> PromisedReply<ServerMessage> {
         var sub = getSubscription(for: uid)
-        if sub != nil {// : Subscription<SP, SR>
+        if sub != nil {
             sub!.acs?.given = mode != nil ? AcsHelper(str: mode) : nil
         } else {
             let subUnwrapped = Subscription<SP, SR>()
@@ -959,8 +959,6 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
             return PromisedReply<ServerMessage>(error: TopicError.notSynchronized)
         }
         let metaSetSub = MetaSetSub(user: uid, mode: mode)
-        //metaSetSub.user = uid
-        //metaSetSub.mode = mode
         return setMeta(meta: MsgSetMeta(desc: nil, sub: metaSetSub, tags: nil, cred: nil))
             .thenApply { [weak self] msg in
                 if let topic = self {
@@ -1025,7 +1023,7 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
         case .kDel:
             routeMetaDel(clear: pres.clear!, delseq: pres.delseq!)
         case .kTerm:
-            topicLeft(unsub: false, code: 500, reason: "term")
+            topicLeft(unsub: false, code: ServerMessage.kStatusInternalServerError, reason: "term")
         case .kAcs:
             if let sub = getSubscription(for: pres.src) {
                 sub.updateAccessMode(ac: pres.dacs)

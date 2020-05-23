@@ -160,7 +160,7 @@ public class Tinode {
         @objc private func expireFutures() {
             futuresQueue.sync {
                 let expirationThreshold = Date().addingTimeInterval(TimeInterval(-ConcurrentFuturesMap.kFutureTimeout))
-                let error = TinodeError.serverResponseError(504, "timeout", nil)
+                let error = TinodeError.serverResponseError(ServerMessage.kStatusGatewayTimeout, "timeout", nil)
                 var expiredKeys = [String]()
                 for (id, f) in futuresDict {
                     if f.creationTimestamp < expirationThreshold {
@@ -366,10 +366,8 @@ public class Tinode {
             for t in allTopics {
                 t.store = s
                 topics[t.name] = t
-                if let updated = t.updated {
-                    if topicsUpdated == nil || topicsUpdated! < updated {
-                        topicsUpdated = updated
-                    }
+                if let updated = t.updated, topicsUpdated ?? Date.distantPast < updated {
+                    topicsUpdated = updated
                 }
             }
             topicsLoaded = true
@@ -457,14 +455,14 @@ public class Tinode {
             listenerNotifier.onCtrlMessage(ctrl: ctrl)
             if let id = ctrl.id {
                 if let r = futures.removeValue(forKey: id) {
-                    if ctrl.code >= 200 && ctrl.code < 400 {
+                    if ServerMessage.kStatusOk <= ctrl.code && ctrl.code < ServerMessage.kStatusBadRequest {
                         try r.resolve(result: serverMsg)
                     } else {
                         try r.reject(error: TinodeError.serverResponseError(ctrl.code, ctrl.text, ctrl.getStringParam(for: "what")))
                     }
                 }
             }
-            if ctrl.code == 205 && ctrl.text == "evicted" {
+            if ctrl.code == ServerMessage.kStatusResetContent && ctrl.text == "evicted" {
                 if let topicName = ctrl.topic, let topic = getTopic(topicName: topicName) {
                     topic.topicLeft(unsub: ctrl.getBoolParam(for: "unsub") ?? false, code: ctrl.code, reason: ctrl.text)
                 }
@@ -491,7 +489,6 @@ public class Tinode {
 
             listenerNotifier.onMetaMessage(meta: meta)
             try resolveWithPacket(id: meta.id, pkt: serverMsg)
-            //if t != nil
         } else if let data = serverMsg.data {
             if let t = getTopic(topicName: data.topic!) {
                 t.routeData(data: data)
@@ -755,7 +752,7 @@ public class Tinode {
             onFailure: { [weak self] err in
                 if let e = err as? TinodeError {
                     if case TinodeError.serverResponseError(let code, let text, _) = e {
-                        if code >= 400 && code < 500 {
+                        if ServerMessage.kStatusBadRequest <= code && code < ServerMessage.kStatusInternalServerError {
                             // todo:
                             // clear auth data.
                         }
@@ -824,7 +821,7 @@ public class Tinode {
                 self?.loginInProgress = false
                 if let e = err as? TinodeError {
                     if case TinodeError.serverResponseError(let code, let text, _) = e {
-                        if code >= 400 && code < 500 {
+                        if ServerMessage.kStatusBadRequest <= code && code < ServerMessage.kStatusInternalServerError {
                             // todo:
                             // clear auth data.
                             self?.loginCredentials = nil
@@ -845,13 +842,13 @@ public class Tinode {
         let newUid = ctrl.getStringParam(for: "user")
         if let curUid = myUid, curUid != newUid {
             logout()
-            listenerNotifier.onLogin(code: 400, text: "UID mismatch")
+            listenerNotifier.onLogin(code: ServerMessage.kStatusBadRequest, text: "UID mismatch")
             return
         }
         myUid = newUid
         authToken = ctrl.getStringParam(for: "token")
         // auth expires
-        if ctrl.code < 300 {
+        if ctrl.code < ServerMessage.kStatusMultipleChoices {
             store?.myUid = newUid
             // Load topics if not yet loaded.
             loadTopics()
@@ -860,7 +857,7 @@ public class Tinode {
                 store?.setMyUid(uid: newUid!, credMethods: meth)
             }
         }
-        isConnectionAuthenticated = 200...299 ~= ctrl.code
+        isConnectionAuthenticated = ServerMessage.kStatusOk..<ServerMessage.kStatusMultipleChoices ~= ctrl.code
         listenerNotifier.onLogin(code: ctrl.code, text: ctrl.text)
     }
     private func updateAccountSecret(uid: String?, scheme: String, secret: String) -> PromisedReply<ServerMessage> {
@@ -904,7 +901,7 @@ public class Tinode {
         serverVersion = nil
         isConnectionAuthenticated = false
         for t in topics.values {
-            t.topicLeft(unsub: false, code: 503, reason: "disconnected")
+            t.topicLeft(unsub: false, code: ServerMessage.kStatusServiceUnavailable, reason: "disconnected")
         }
         listenerNotifier.onDisconnect(byServer: isServerOriginated, code: code, reason: reason)
     }

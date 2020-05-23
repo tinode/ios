@@ -177,6 +177,15 @@ public class MsgServerInfo: Decodable {
 }
 
 public class ServerMessage: Decodable {
+    public static let kStatusOk                  = 200 // RFC 7231, 6.3.1
+    public static let kStatusResetContent        = 205 // RFC 7231, 6.3.6
+    public static let kStatusMultipleChoices     = 300 // RFC 7231, 6.4.1
+    public static let kStatusBadRequest          = 400 // RFC 7231, 6.5.1
+    public static let kStatusUnauthorized        = 401 // RFC 7235, 3.1
+    public static let kStatusInternalServerError = 500 // RFC 7231, 6.6.1
+    public static let kStatusServiceUnavailable  = 503 // RFC 7231, 6.6.4
+    public static let kStatusGatewayTimeout      = 504 // RFC 7231, 6.6.5
+
     public var ctrl: MsgServerCtrl?
     public var meta: MsgServerMeta?
     public var data: MsgServerData?
