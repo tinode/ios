@@ -27,14 +27,19 @@ class Utils {
         return UserDefaults.standard.string(forKey: Utils.kTinodePrefLastLogin)
     }
 
-    public static func getAuthToken() -> String? {
+    private static func appDidRunBefore() -> Bool {
         let userDefaults = UserDefaults.standard
         guard userDefaults.bool(forKey: Utils.kTinodeHasRunBefore) else {
             // Clear the app keychain.
             KeychainWrapper.standard.removeAllKeys()
             userDefaults.set(true, forKey: Utils.kTinodeHasRunBefore)
-            return nil
+            return false
         }
+        return true
+    }
+
+    public static func getAuthToken() -> String? {
+        guard Utils.appDidRunBefore() else { return nil }
         return KeychainWrapper.standard.string(
             forKey: LoginViewController.kTokenKey, withAccessibility: .afterFirstUnlock)
     }
@@ -67,6 +72,9 @@ class Utils {
             // If hostname is nil, sync values to defaults
             ConnectionSettingsHelper.setHostName(Bundle.main.object(forInfoDictionaryKey: "HOST_NAME") as? String)
             ConnectionSettingsHelper.setUseTLS(Bundle.main.object(forInfoDictionaryKey: "USE_TLS") as? String)
+        }
+        if !Utils.appDidRunBefore() {
+            Cache.log.info("App started for the first time.")
         }
     }
 
