@@ -19,8 +19,6 @@ class LoginViewController: UIViewController {
     @IBOutlet var passwordVisibility: [UIButton]!
     private var passwordVisible: Bool = false
 
-    static let kTokenKey = "co.tinode.token"
-
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -138,7 +136,7 @@ class LoginViewController: UIViewController {
                 .then(
                     onSuccess: { [weak self] pkt in
                         Cache.log.info("LoginVC - login successful for %@", tinode.myUid!)
-                        Utils.saveAuthToken(for: userName, token: tinode.authToken)
+                        Utils.saveAuthToken(for: userName, token: tinode.authToken, expires: tinode.authTokenExpires)
                         if let token = tinode.authToken {
                             tinode.setAutoLoginWithToken(token: token)
                         }

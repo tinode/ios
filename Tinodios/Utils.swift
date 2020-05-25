@@ -19,6 +19,10 @@ class Utils {
     static let kTinodePrefTypingNotifications = "tinodePrefTypingNoficications"
     static let kTinodePrefLastLogin = "tinodeLastLogin"
 
+    // Keys we store in keychain.
+    static let kTokenKey = "co.tinode.token"
+    static let kTokenExpiryKey = "co.tinode.token_expiry"
+
     static var phoneNumberKit: PhoneNumberKit = {
         return PhoneNumberKit()
     }()
@@ -41,7 +45,13 @@ class Utils {
     public static func getAuthToken() -> String? {
         guard Utils.appDidRunBefore() else { return nil }
         return KeychainWrapper.standard.string(
-            forKey: LoginViewController.kTokenKey, withAccessibility: .afterFirstUnlock)
+            forKey: Utils.kTokenKey, withAccessibility: .afterFirstUnlock)
+    }
+
+    public static func getAuthTokenExpiryDate() -> Date? {
+        guard let expString = KeychainWrapper.standard.string(
+            forKey: Utils.kTokenExpiryKey, withAccessibility: .afterFirstUnlock) else { return nil }
+        return Formatter.rfc3339.date(from: expString)
     }
 
     public static func removeAuthToken() {
@@ -50,12 +60,19 @@ class Utils {
         KeychainWrapper.standard.removeAllKeys()
     }
 
-    public static func saveAuthToken(for userName: String, token: String?) {
+    public static func saveAuthToken(for userName: String, token: String?, expires expiryDate: Date?) {
         UserDefaults.standard.set(userName, forKey: Utils.kTinodePrefLastLogin)
         if let token = token, !token.isEmpty {
-            let tokenSaveSuccessful = KeychainWrapper.standard.set(token, forKey: LoginViewController.kTokenKey, withAccessibility: .afterFirstUnlock)
-            if !tokenSaveSuccessful {
+            if !KeychainWrapper.standard.set(token, forKey: Utils.kTokenKey, withAccessibility: .afterFirstUnlock) {
                 Cache.log.error("Could not save auth token")
+            }
+            if let expiryDate = expiryDate {
+                KeychainWrapper.standard.set(
+                    Formatter.rfc3339.string(from: expiryDate),
+                    forKey: Utils.kTokenExpiryKey,
+                    withAccessibility: .afterFirstUnlock)
+            } else {
+                KeychainWrapper.standard.removeObject(forKey: Utils.kTokenExpiryKey)
             }
         }
     }
@@ -155,6 +172,12 @@ class Utils {
             Cache.log.error("Connect&Login Sync - missing auth token")
             return false
         }
+        if let tokenExpires = Utils.getAuthTokenExpiryDate(), tokenExpires < Date() {
+            // Token has expired.
+            // TODO: treat tokenExpires == nil as a reason to reject.
+            Cache.log.error("Connect&Login Sync - auth token expired")
+            return false
+        }
         Cache.log.info("Connect&Login Sync - will attempt to login (user name: %@)", userName)
         let tinode = Cache.getTinode()
         var success = false
@@ -169,7 +192,7 @@ class Utils {
                 case 0..<300:
                     Cache.log.info("Connect&Login Sync - login successful for: %@", tinode.myUid!)
                     if tinode.authToken != token {
-                        Utils.saveAuthToken(for: userName, token: tinode.authToken)
+                        Utils.saveAuthToken(for: userName, token: tinode.authToken, expires: tinode.authTokenExpires)
                     }
                 case 409:
                     Cache.log.info("Connect&Login Sync - already authenticated.")

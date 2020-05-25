@@ -10,14 +10,14 @@ import Foundation
 // Date extensions.
 // From: https://stackoverflow.com/questions/46458487/how-to-convert-a-date-string-with-optional-fractional-seconds-using-codable-in-s
 extension Formatter {
-    static let rfc3339: DateFormatter = {
+    public static let rfc3339: DateFormatter = {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "en_US_POSIX")
         formatter.dateFormat = "yyyy'-'MM'-'dd'T'HH':'mm':'ss.SSS'Z'"
         formatter.timeZone = TimeZone(secondsFromGMT: 0)
         return formatter
     }()
-    static let rfc3339short: DateFormatter = {
+    public static let rfc3339short: DateFormatter = {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "en_US_POSIX")
         formatter.dateFormat = "yyyy'-'MM'-'dd'T'HH':'mm':'ss'Z'"

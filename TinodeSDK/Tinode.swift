@@ -269,6 +269,7 @@ public class Tinode {
     public var myUid: String?
     public var deviceToken: String?
     public var authToken: String?
+    public var authTokenExpires: Date?
     public var nameCounter = 0
     public var store: Storage? = nil
     private var listenerNotifier = ListenerNotifier()
@@ -843,22 +844,29 @@ public class Tinode {
         if let curUid = myUid, curUid != newUid {
             logout()
             listenerNotifier.onLogin(code: ServerMessage.kStatusBadRequest, text: "UID mismatch")
-            return
+            throw TinodeError.invalidState(
+                "UID mismatch: received '\(newUid ?? "")', expected '\(curUid)'")
         }
         myUid = newUid
+
         authToken = ctrl.getStringParam(for: "token")
+        authTokenExpires = authToken != nil ?
+            Formatter.rfc3339.date(from: ctrl.getStringParam(for: "expires") ?? "") : nil
+
         // auth expires
         if ctrl.code < ServerMessage.kStatusMultipleChoices {
+            isConnectionAuthenticated = true
             store?.myUid = newUid
+            setAutoLoginWithToken(token: authToken!)
             // Load topics if not yet loaded.
             loadTopics()
+            listenerNotifier.onLogin(code: ctrl.code, text: ctrl.text)
         } else {
+            isConnectionAuthenticated = false
             if let meth = ctrl.getStringArray(for: "cred") {
                 store?.setMyUid(uid: newUid!, credMethods: meth)
             }
         }
-        isConnectionAuthenticated = ServerMessage.kStatusOk..<ServerMessage.kStatusMultipleChoices ~= ctrl.code
-        listenerNotifier.onLogin(code: ctrl.code, text: ctrl.text)
     }
     private func updateAccountSecret(uid: String?, scheme: String, secret: String) -> PromisedReply<ServerMessage> {
         return account(uid: uid, scheme: scheme, secret: secret, loginNow: false, tags: nil, desc: nil as MetaSetDesc<Int, Int>?, creds: nil)
