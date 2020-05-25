@@ -705,6 +705,21 @@ public class Tinode {
             creds: creds)
     }
 
+    private func handleAuthenticationError(error: Error) {
+        if let e = error as? TinodeError {
+            if case TinodeError.serverResponseError(let code, let text, _) = e {
+                if ServerMessage.kStatusBadRequest <= code && code < ServerMessage.kStatusInternalServerError {
+                    // clear auth data.
+                    self.loginCredentials = nil
+                    self.authToken = nil
+                    self.authTokenExpires = nil
+                }
+                self.isConnectionAuthenticated = false
+                self.listenerNotifier.onLogin(code: code, text: text)
+            }
+        }
+    }
+
     /// Create new account. Connection must be established prior to calling this method.
     ///
     /// - Parameters:
@@ -751,16 +766,7 @@ public class Tinode {
                 return nil
             },
             onFailure: { [weak self] err in
-                if let e = err as? TinodeError {
-                    if case TinodeError.serverResponseError(let code, let text, _) = e {
-                        if ServerMessage.kStatusBadRequest <= code && code < ServerMessage.kStatusInternalServerError {
-                            // todo:
-                            // clear auth data.
-                        }
-                        self?.isConnectionAuthenticated = false
-                        self?.listenerNotifier.onLogin(code: code, text: text)
-                    }
-                }
+                self?.handleAuthenticationError(error: err)
                 return PromisedReply<ServerMessage>(error: err)
             })
     }
@@ -820,18 +826,7 @@ public class Tinode {
             },
             onFailure: { [weak self] err in
                 self?.loginInProgress = false
-                if let e = err as? TinodeError {
-                    if case TinodeError.serverResponseError(let code, let text, _) = e {
-                        if ServerMessage.kStatusBadRequest <= code && code < ServerMessage.kStatusInternalServerError {
-                            // todo:
-                            // clear auth data.
-                            self?.loginCredentials = nil
-                            self?.authToken = nil
-                        }
-                        self?.isConnectionAuthenticated = false
-                        self?.listenerNotifier.onLogin(code: code, text: text)
-                    }
-                }
+                self?.handleAuthenticationError(error: err)
                 return PromisedReply<ServerMessage>(error: err)
             })
     }
