@@ -325,10 +325,14 @@ extension URL {
 }
 
 extension Tinode {
-    func connectDefault() throws -> PromisedReply<ServerMessage>? {
+    public static func getConnectionParams() -> (String, Bool) {
         let (hostName, useTLS, _) = ConnectionSettingsHelper.getConnectionSettings()
-        Cache.log.debug("Connecting to %@, secure %@", hostName ?? Cache.kHostName, useTLS ?? Cache.kUseTLS ? "YES" : "NO")
-        return try connect(to: (hostName ?? Cache.kHostName), useTLS: (useTLS ?? Cache.kUseTLS))
+        return (hostName ?? Cache.kHostName, useTLS ?? Cache.kUseTLS)
+    }
+    func connectDefault() throws -> PromisedReply<ServerMessage>? {
+        let (hostName, useTLS) = Tinode.getConnectionParams()
+        Cache.log.debug("Connecting to %@, secure %@", hostName, useTLS ? "YES" : "NO")
+        return try connect(to: hostName, useTLS: useTLS)
     }
 }
 

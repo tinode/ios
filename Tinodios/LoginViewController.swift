@@ -155,7 +155,8 @@ class LoginViewController: UIViewController {
                         if let tinodeErr = err as? TinodeError {
                             toastMsg = "Tinode: \(tinodeErr.description)"
                         } else if let nwErr = err as? SwiftWebSocket.WebSocketError {
-                            toastMsg = String(format: NSLocalizedString("Couldn't connect to server: %@", comment: "Error message"), nwErr.localizedDescription)
+                            let (hostName, _) = Tinode.getConnectionParams()
+                            toastMsg = String(format: NSLocalizedString("Couldn't connect to server at %@: %@", comment: "Error message"), hostName, nwErr.localizedDescription)
                         } else {
                             toastMsg = err.localizedDescription
                         }
