@@ -90,7 +90,7 @@
 "Could not change password: %@" = "无法更改密码：%@";
 
 /* Error message */
-"Couldn't connect to server: %@" = "无法连接到服务器：%@";
+"Couldn't connect to server at %@: %@" = "无法连接到服务器 (%@)：%@";
 
 /* Alert action
    Menu item
