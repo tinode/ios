@@ -12,6 +12,7 @@ import Foundation
 public enum JSONValue: Codable, Equatable {
     case string(String)
     case int(Int)
+    case int64(Int64)
     case double(Double)
     case bool(Bool)
     case dict([String: JSONValue])
@@ -24,6 +25,8 @@ public enum JSONValue: Codable, Equatable {
         case .bool(let v):
             try container.encode(v)
         case .int(let v):
+            try container.encode(v)
+        case .int64(let v):
             try container.encode(v)
         case .string(let v):
             try container.encode(v)
@@ -44,6 +47,8 @@ public enum JSONValue: Codable, Equatable {
             self = .string(value)
         } else if let value = try? container.decode(Int.self) {
             self = .int(value)
+        } else if let value = try? container.decode(Int64.self) {
+            self = .int64(value)
         } else if let value = try? container.decode(Double.self) {
             self = .double(value)
         } else if let value = try? container.decode(Bool.self) {
@@ -73,6 +78,17 @@ public enum JSONValue: Codable, Equatable {
     public func asInt() -> Int? {
         switch self {
         case .int(let val):
+            return val
+        default:
+            return nil
+        }
+    }
+
+    public func asInt64() -> Int64? {
+        switch self {
+        case .int(let val):
+            return Int64(val)
+        case .int64(let val):
             return val
         default:
             return nil

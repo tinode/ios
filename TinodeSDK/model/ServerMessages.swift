@@ -47,6 +47,12 @@ public class MsgServerCtrl: Decodable {
         }
         return nil
     }
+
+    public func getInt64Param(for key: String) -> Int64? {
+        guard let val = params?[key] else { return nil }
+        return val.asInt64()
+    }
+
     public func getStringDict(for key: String) -> [String:String]? {
         if case .dict(let  v)? = params?[key] {
             return v.mapValues { (value) -> String? in

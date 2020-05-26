@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import TinodeSDK
 import UIKit
 
 class TagsEditDialogViewController: UIViewController {
@@ -39,7 +40,12 @@ class TagsEditDialogViewController: UIViewController {
         cancelButton.addBorder(side: .right, color: TagsEditDialogViewController.kButtonBorderColor, width: 1)
         okButton.addBorder(side: .top, color: TagsEditDialogViewController.kButtonBorderColor, width: 1)
 
+        let maxTagCount = Cache.getTinode().getServerLimit(for: Tinode.kMaxTagCount, withDefault: 16)
         tagsEditView.fontSize = 17
+        tagsEditView.onShouldAcceptTag = { v in
+            // Make sure we don't add more than maxTagCount.
+            return v.tagViews.count < maxTagCount
+        }
         tagsEditView.onVerifyTag = { (_, tag) in
             return Utils.isValidTag(tag: tag)
         }

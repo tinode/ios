@@ -120,6 +120,12 @@ public class Tinode {
     public static let kTopicGrpPrefix = "grp"
     public static let kTopicUsrPrefix = "usr"
 
+    // Keys for server-provided limits.
+    public static let kMaxMessageSize = "maxMessageSize"
+    public static let kMaxSubscriberCount = "maxSubscriberCount"
+    public static let kMaxTagCount = "maxTagCount"
+    public static let kMaxFileUploadSize = "maxFileUploadSize"
+
     public static let kNoteKp = "kp"
     public static let kNoteRead = "read"
     public static let kNoteRecv = "recv"
@@ -263,6 +269,7 @@ public class Tinode {
     private var futures = ConcurrentFuturesMap()
     public var serverVersion: String?
     public var serverBuild: String?
+    private var serverLimits: [String:Int64]?
     private var connectionListener: TinodeConnectionListener? = nil
     public var timeAdjustment: TimeInterval = 0
     public var isConnectionAuthenticated = false
@@ -427,6 +434,10 @@ public class Tinode {
         }
     }
 
+    public func getServerLimit(for key: String, withDefault defVal: Int64) -> Int64 {
+        return self.serverLimits?[key] ?? defVal
+    }
+
     private func getNextMsgId() -> String {
         nextMsgId += 1
         return String(nextMsgId)
@@ -500,6 +511,7 @@ public class Tinode {
             if let topicName = pres.topic {
                 if let t = getTopic(topicName: topicName) {
                     t.routePres(pres: pres)
+                    // For P2P topics presence is addressed to 'me' only. Forward it to the actual topic, if it's found.
                     if topicName == Tinode.kTopicMe, case .p2p = Tinode.topicTypeByName(name: pres.src) {
                         if let forwardTo = getTopic(topicName: pres.src!) {
                             forwardTo.routePres(pres: pres)
@@ -563,9 +575,18 @@ public class Tinode {
                 guard let ctrl = pkt?.ctrl else {
                     throw TinodeError.invalidReply("Unexpected type of reply packet to hello")
                 }
+                guard let tn = self else { return nil }
                 if !(ctrl.params?.isEmpty ?? true) {
-                    self?.serverVersion = ctrl.getStringParam(for: "ver")
-                    self?.serverBuild = ctrl.getStringParam(for: "build")
+                    tn.serverVersion = ctrl.getStringParam(for: "ver")
+                    tn.serverBuild = ctrl.getStringParam(for: "build")
+                    tn.serverLimits = [:]
+                    for k in [Tinode.kMaxMessageSize, Tinode.kMaxSubscriberCount, Tinode.kMaxTagCount, Tinode.kMaxFileUploadSize] {
+                        if let v = ctrl.getInt64Param(for: k) {
+                            tn.serverLimits![k] = v
+                        } else {
+                            Tinode.log.error("Server limit missing for key %@", k)
+                        }
+                    }
                 }
                 return nil
         })
