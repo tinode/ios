@@ -385,7 +385,7 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
         guard let subs = subs, let me = tinode?.myUid, let seq = seq, seq > 0 else { return 0 }
         return  subs.reduce(0, { (count, tuple) -> Int in
             let (key, sub) = tuple
-            if key != me && ((read ? sub.read : sub.recv) ?? Int.max) >= seq {
+            if key != me && (read ? sub.getRead : sub.getRecv) >= seq {
                 return count + 1
             }
             return count
