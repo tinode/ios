@@ -20,17 +20,17 @@ public class StoredMessage : MsgServerData, Message {
     public var isDraft: Bool { get { return status == BaseDb.kStatusDraft } }
     public var isReady: Bool { get { return status == BaseDb.kStatusQueued } }
     public var isDeleted: Bool {
-        get { return status == BaseDb.kStatusDeletedHard || status == BaseDb.kStatusDeletedSoft || status == BaseDb.kStatusDeletedSynced }
+        return status == BaseDb.kStatusDeletedHard || status == BaseDb.kStatusDeletedSoft || status == BaseDb.kStatusDeletedSynced
     }
     public func isDeleted(hard: Bool) -> Bool {
         return hard ?
             status == BaseDb.kStatusDeletedHard :
             status == BaseDb.kStatusDeletedSoft
     }
-    public var isSynced: Bool { get { return status == BaseDb.kStatusSynced } }
+    public var isSynced: Bool { return status == BaseDb.kStatusSynced }
 
     /// Message has not been delivered to the server yet.
-    public var isPending: Bool { get { return status == nil || status! <= BaseDb.kStatusSending } }
+    public var isPending: Bool { return status == nil || status! <= BaseDb.kStatusSending }
 
     /// Cached representation of message content as attributed string.
     public var cachedContent: NSAttributedString?

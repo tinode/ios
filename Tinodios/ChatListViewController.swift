@@ -24,9 +24,7 @@ class ChatListViewController: UITableViewController, ChatListDisplayLogic {
     var interactor: ChatListBusinessLogic?
     var topics: [DefaultComTopic] = []
     var archivedTopics: [DefaultComTopic]? = nil
-    var numArchivedTopics: Int {
-        get { return archivedTopics?.count ?? 0 }
-    }
+    var numArchivedTopics: Int { return archivedTopics?.count ?? 0 }
 
     // Index of contacts: name => position in topics
     var rowIndex: [String : Int] = [:]

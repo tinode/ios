@@ -55,9 +55,7 @@ public class Credential: Codable, Comparable, CustomStringConvertible {
     }
 
     public var isDone: Bool {
-        get {
-            return done ?? false
-        }
+        return done ?? false
     }
 
     public static func == (lhs: Credential, rhs: Credential) -> Bool {
@@ -69,7 +67,7 @@ public class Credential: Codable, Comparable, CustomStringConvertible {
     }
 
     public var description: String {
-        get { return "\(meth ?? "-"):\(val ?? "-")" }
+        return "\(meth ?? "-"):\(val ?? "-")"
     }
 }
 

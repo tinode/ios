@@ -56,7 +56,7 @@ open class MeTopic<DP: Codable & Mergeable>: Topic<DP, PrivateType, DP, PrivateT
     }
 
     override public var subsUpdated: Date? {
-        get { return tinode?.topicsUpdated }
+        return tinode?.topicsUpdated
     }
 
     override func loadSubs() -> Int {

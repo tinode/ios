@@ -79,31 +79,29 @@ public class Subscription<SP: Codable, SR: Codable>: SubscriptionProto {
 
     public var acs: Acs?
     public var read: Int? = 0
-    public var getRead: Int { get { return read ?? 0 } }
+    public var getRead: Int { return read ?? 0 }
     public var recv: Int? = 0
-    public var getRecv: Int { get { return recv ?? 0 } }
+    public var getRecv: Int { return recv ?? 0 }
     public var priv: SR?
     public var online: Bool?
 
     public var topic: String?
     public var seq: Int? = 0
-    public var getSeq: Int { get { return seq ?? 0 } }
+    public var getSeq: Int { return seq ?? 0 }
     public var clear: Int? = 0
-    public var getClear: Int { get { return clear ?? 0 } }
+    public var getClear: Int { return clear ?? 0 }
     public var pub: SP?
     public var seen: LastSeen?
     public var payload: Payload? = nil
 
     public var uniqueId: String? {
-        get {
-            if topic == nil {
-                return user
-            }
-            if user == nil {
-                return topic
-            }
-            return topic! + ":" + user!
+        if topic == nil {
+            return user
         }
+        if user == nil {
+            return topic
+        }
+        return topic! + ":" + user!
     }
 
     private enum CodingKeys : String, CodingKey {

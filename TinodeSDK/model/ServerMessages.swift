@@ -112,9 +112,7 @@ open class MsgServerData : Decodable {
     public var from: String?
     public var ts: Date?
     public var seq: Int?
-    public var getSeq: Int {
-        get { return seq ?? 0 }
-    }
+    public var getSeq: Int { return seq ?? 0 }
     // todo: make it drafty
     public var content: Drafty?
     public init() {}

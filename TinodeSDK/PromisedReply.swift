@@ -54,13 +54,11 @@ public class PromisedReply<Value> {
         case rejected(Error)
 
         var isDone: Bool {
-            get {
-                switch self {
-                case .resolved, .rejected:
-                    return true
-                default:
-                    return false
-                }
+            switch self {
+            case .resolved, .rejected:
+                return true
+            default:
+                return false
             }
         }
     }
@@ -73,21 +71,15 @@ public class PromisedReply<Value> {
     private var queue = DispatchQueue(label: "co.tinode.promise")
     private(set) var creationTimestamp: Date = Date()
     var isResolved: Bool {
-        get {
-            if case .resolved = state { return true }
-            return false
-        }
+        if case .resolved = state { return true }
+        return false
     }
     var isRejected: Bool {
-        get {
-            if case .rejected = state { return true }
-            return false
-        }
+        if case .rejected = state { return true }
+        return false
     }
     var isDone: Bool {
-        get {
-            return state.isDone
-        }
+        return state.isDone
     }
 
     public init() {

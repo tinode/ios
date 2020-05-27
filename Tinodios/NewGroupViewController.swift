@@ -21,11 +21,7 @@ class NewGroupViewController: UITableViewController {
 
     private var selectedContacts: [ContactHolder] = []
     private var selectedUids = Set<String>()
-    var selectedMembers: Array<String> {
-        get {
-            return selectedUids.map { $0 }
-        }
-    }
+    var selectedMembers: Array<String> { return selectedUids.map { $0 } }
 
     private var imageUploaded: Bool = false
 

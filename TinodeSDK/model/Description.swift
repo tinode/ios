@@ -20,14 +20,14 @@ public class Description<DP: Codable & Mergeable, DR: Codable & Mergeable>: Desc
     var defacs: Defacs? = nil
     var acs: Acs? = nil
     var seq: Int? = 0
-    var getSeq: Int { get { return seq ?? 0 } }
+    var getSeq: Int { return seq ?? 0 }
     // Values reported by the current user as read and received
     var read: Int? = 0
-    var getRead: Int { get { return read ?? 0 } }
+    var getRead: Int { return read ?? 0 }
     var recv: Int? = 0
-    var getRecv: Int { get { return recv ?? 0 } }
+    var getRecv: Int { return recv ?? 0 }
     var clear: Int? = 0
-    var getClear: Int { get { return clear ?? 0} }
+    var getClear: Int { return clear ?? 0 }
 
     var pub: DP? = nil
     var priv: DR? = nil

@@ -192,7 +192,7 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
     internal weak var tinode: Tinode? = nil
     public var name: String = ""
     public var isNew: Bool {
-        get { return Topic.isNewByName(name: name)}
+        return Topic.isNewByName(name: name)
     }
 
     public var updated: Date? {
@@ -262,15 +262,13 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
     }
 
     public var unread: Int {
-        get {
-            let unread = (description?.seq ?? 0) - (description?.read ?? 0)
-            return unread > 0 ? unread : 0
-        }
+        let unread = (description?.seq ?? 0) - (description?.read ?? 0)
+        return unread > 0 ? unread : 0
     }
 
     public var subsLastUpdated: Date? = nil
     public var subsUpdated: Date? {
-        get { return subsLastUpdated }
+        return subsLastUpdated
     }
     public var accessMode: Acs? {
         get { return description?.acs }

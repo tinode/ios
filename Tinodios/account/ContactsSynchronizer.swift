@@ -172,8 +172,6 @@ class ContactsSynchronizer {
 extension CNPhoneNumber {
     // Hack: simply filters out all non-digit characters.
     var naiveE164: String {
-        get {
-            return self.value(forKey: "unformattedInternationalStringValue") as? String ?? ""
-        }
+        return self.value(forKey: "unformattedInternationalStringValue") as? String ?? ""
     }
 }

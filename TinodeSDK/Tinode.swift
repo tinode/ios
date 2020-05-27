@@ -310,12 +310,10 @@ public class Tinode {
         return baseURL(useWebsocketProtocol: useWebsocketProtocol)?.appendingPathComponent("/channels")
     }
     public var isConnected: Bool {
-        get {
-            if let c = connection, c.isConnected {
-                return true
-            }
-            return false
+        if let c = connection, c.isConnected {
+            return true
         }
+        return false
     }
 
     // String -> Topic
@@ -429,9 +427,7 @@ public class Tinode {
     }
 
     public var userAgent: String {
-        get {
-            return "\(appName) (iOS \(OsVersion); \(kLocale)); tinode-swift/\(kLibVersion)"
-        }
+        return "\(appName) (iOS \(OsVersion); \(kLocale)); tinode-swift/\(kLibVersion)"
     }
 
     public func getServerLimit(for key: String, withDefault defVal: Int64) -> Int64 {
@@ -915,6 +911,7 @@ public class Tinode {
         setDeviceToken(token: Tinode.kNullValue).thenFinally {
             self.disconnect()
             self.myUid = nil
+            self.serverLimits = nil
             self.store?.logout()
         }
     }

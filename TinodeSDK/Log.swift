@@ -22,12 +22,9 @@ open class Log {
         self.prefix = "[" + subsystem + "] "
     }
     func log(type: LogType, message: StaticString, _ args: [CVarArg]) {
-        #if DEBUG
-            let shouldLog = true
-        #else
-            let shouldLog = type != .debug
+        #if !DEBUG
+            guard type != .debug else { return }
         #endif
-        guard shouldLog else { return }
         let msg = self.prefix + message.description
         withVaList(args) {
             NSLogv(msg, $0)

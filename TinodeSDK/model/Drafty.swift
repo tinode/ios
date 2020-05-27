@@ -86,11 +86,9 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
     public var ent: [Entity]?
 
     public var isReferenceAttachment: Bool {
-        get {
-            guard let ent = ent, ent.count == 1 else { return false }
-            let e = ent[0]
-            return e.tp == "EX" && e.data?["ref"] != nil
-        }
+        guard let ent = ent, ent.count == 1 else { return false }
+        let e = ent[0]
+        return e.tp == "EX" && e.data?["ref"] != nil
     }
 
     /// Initializes empty object
@@ -447,9 +445,7 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
 
     /// Convert Drafty to plain text
     public var string: String {
-        get {
-            return txt
-        }
+        return txt
     }
 
     // Make sure Drafty is properly initialized for entity insertion.

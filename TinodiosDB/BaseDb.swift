@@ -48,9 +48,11 @@ public class BaseDb {
     public var messageDb: MessageDb? = nil
     var account: StoredAccount? = nil
     var isCredValidationRequired: Bool {
-        get { return !(self.account?.credMethods?.isEmpty ?? true) }
+        return !(self.account?.credMethods?.isEmpty ?? true)
     }
-    public var isReady: Bool { get { return self.account != nil && !self.isCredValidationRequired } }
+    public var isReady: Bool {
+        return self.account != nil && !self.isCredValidationRequired
+    }
 
     internal static let log = TinodeSDK.Log(subsystem: BaseDb.kBundleId)
 
@@ -121,7 +123,7 @@ public class BaseDb {
         return uid == acctUid
     }
     var uid: String? {
-        get { return self.account?.uid }
+        return self.account?.uid
     }
     func setUid(uid: String?, credMethods: [String]?) {
         guard let uid = uid else {

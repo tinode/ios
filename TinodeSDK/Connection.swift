@@ -34,17 +34,13 @@ public class Connection {
     fileprivate let kConnectionTimeout = 3000
 
     var isConnected: Bool {
-        get {
-            guard let conn = webSocketConnection else { return false }
-            return conn.readyState == .open
-        }
+        guard let conn = webSocketConnection else { return false }
+        return conn.readyState == .open
     }
 
     var isWaitingToConnect: Bool {
-        get {
-            guard let conn = webSocketConnection else { return false }
-            return conn.readyState == .connecting
-        }
+        guard let conn = webSocketConnection else { return false }
+        return conn.readyState == .connecting
     }
 
     private var webSocketConnection: WebSocket?
