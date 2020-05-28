@@ -196,6 +196,27 @@ public class Tinode {
         }
     }
 
+    // A simple thread-safe wrapper around Dictionary<String, T>.
+    private class ConcurrentMap<T> {
+        private var internalMap = [String:T]()
+        private let opsQueue = DispatchQueue(label: "co.tinode.map-ops")
+
+        var values: Dictionary<String, T>.Values {
+            opsQueue.sync { return internalMap.values }
+        }
+        var count: Int {
+            opsQueue.sync { return internalMap.count }
+        }
+
+        subscript(key: String) -> T? {
+            get { return opsQueue.sync { return internalMap[key] } }
+            set { opsQueue.sync { internalMap[key] = newValue } }
+        }
+        func removeValue(forKey key: String) -> T? {
+            return opsQueue.sync { return internalMap.removeValue(forKey: key) }
+        }
+    }
+
     // Forwards events to all subscribed listeners.
     private class ListenerNotifier: TinodeEventListener {
         private var listeners: [TinodeEventListener] = []
@@ -316,9 +337,8 @@ public class Tinode {
         return false
     }
 
-    // String -> Topic
-    var topics: [String: TopicProto] = [:]
-    var users: [String: UserProto] = [:]
+    private var topics = ConcurrentMap<TopicProto>()
+    private var users = ConcurrentMap<UserProto>()
 
     public static let jsonEncoder: JSONEncoder = {
         let encoder = JSONEncoder()
