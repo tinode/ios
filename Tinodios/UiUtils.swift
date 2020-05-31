@@ -271,7 +271,9 @@ class UiUtils {
     ///  - message: message to display
     ///  - duration: duration of display in seconds.
     public static func showToast(message: String, duration: TimeInterval = 3.0, level: ToastLevel = .error) {
-        guard let parent = UIApplication.shared.keyWindow else {
+        // Grab the last window (instead the key window) so we can show
+        // the toast over they keyboard when it's presented.
+        guard let parent = UIApplication.shared.windows.last else {
             print("parent is not set")
             return
         }

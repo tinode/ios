@@ -50,11 +50,24 @@ extension MessageViewController : SendMessageBarDelegate {
 extension MessageViewController : UIDocumentPickerDelegate {
     func documentPickerWasCancelled(_ controller: UIDocumentPickerViewController) {
         controller.dismiss(animated: true, completion: nil)
+        // NOTE(Apple's bug, Tinode's hack):
+        // When UIDocumentPickerDelegate is dismissed it keeps the keyboard window
+        // active. If then we show a toast, the keyboard window is counted "last"
+        // in the window stack and we attempt to present the toast over it.
+        // In reality, though, the window turns out at the bottom of the stack
+        // and thus the toast ends up covered by the key window and never presented
+        // to the user.
+        // sendMessageBar.becomeFirstResponder() "fixes" the window stack.
+        // This is UGLY because it pops the keyboard. Find a better solution.
+        (self.inputAccessoryView as? SendMessageBar)?.inputField.becomeFirstResponder()
     }
 
     func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
         // Convert file to Data and attach to message
         do {
+            // See comment in documentPickerWasCancelled().
+            (self.inputAccessoryView as? SendMessageBar)?.inputField.becomeFirstResponder()
+
             let bits = try Data(contentsOf: urls[0], options: .mappedIfSafe)
             let fname = urls[0].lastPathComponent
             var mimeType: String? = nil
@@ -62,8 +75,11 @@ extension MessageViewController : UIDocumentPickerDelegate {
                 let unmanaged = UTTypeCopyPreferredTagWithClass(uti as CFString, kUTTagClassMIMEType)
                 mimeType = unmanaged?.takeRetainedValue() as String?
             }
-            guard bits.count <= MessageViewController.kMaxAttachmentSize else {
-                UiUtils.showToast(message: String(format: NSLocalizedString("The file size exceeds the limit %@", comment: "Error message"), UiUtils.bytesToHumanSize(Int64(MessageViewController.kMaxAttachmentSize))))
+            let maxAttachmentSize = Cache.getTinode().getServerLimit(
+                for: Tinode.kMaxFileUploadSize,
+                withDefault: Int64(MessageViewController.kMaxAttachmentSize))
+            guard bits.count <= maxAttachmentSize else {
+                UiUtils.showToast(message: String(format: NSLocalizedString("The file size exceeds the limit %@", comment: "Error message"), UiUtils.bytesToHumanSize(maxAttachmentSize)))
                 return
             }
 
