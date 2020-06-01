@@ -467,7 +467,7 @@ extension MessageViewController: MessageDisplayLogic {
         assert(Thread.isMainThread)
 
         let oldData = self.messages
-        let newData: [StoredMessage] = messages.reversed()
+        let newData: [StoredMessage] = messages
 
         // Both empty: no change.
         guard !oldData.isEmpty || !newData.isEmpty else { return }
