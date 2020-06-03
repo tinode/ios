@@ -198,6 +198,9 @@
 		B05ACEB222FDAB5200276713 /* ResetPasswordViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResetPasswordViewController.swift; sourceTree = "<group>"; };
 		B0762A9F244EE94300385B65 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Main.strings; sourceTree = "<group>"; };
 		B079062423EEA0C90019ED75 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		B0941BC42487CEE100A891B7 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Main.strings; sourceTree = "<group>"; };
+		B0941BC52487CEE100A891B7 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
+		B0941BC62487CEE100A891B7 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Localizable.strings; sourceTree = "<group>"; };
 		B09C56492469362A00D6615D /* SettingsPersonalViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsPersonalViewController.swift; sourceTree = "<group>"; };
 		B09C564B2469756B00D6615D /* SettingsNotificationsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsNotificationsViewController.swift; sourceTree = "<group>"; };
 		B09C564D246975F700D6615D /* SettingsHelpViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsHelpViewController.swift; sourceTree = "<group>"; };
@@ -481,6 +484,7 @@
 				en,
 				Base,
 				"zh-Hans",
+				es,
 			);
 			mainGroup = 0A0380CB21B3CC8100A3FA0E;
 			productRefGroup = 0A0380D521B3CC8100A3FA0E /* Products */;
@@ -731,6 +735,7 @@
 				0A0380DC21B3CC8100A3FA0E /* Base */,
 				B0CF83DD244DFB1C00E79D22 /* zh-Hans */,
 				B0762A9F244EE94300385B65 /* en */,
+				B0941BC42487CEE100A891B7 /* es */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";
@@ -740,6 +745,7 @@
 			children = (
 				0A0380E121B3CC8200A3FA0E /* Base */,
 				B36DC000235D850000724348 /* zh-Hans */,
+				B0941BC52487CEE100A891B7 /* es */,
 			);
 			name = LaunchScreen.storyboard;
 			sourceTree = "<group>";
@@ -749,6 +755,7 @@
 			children = (
 				B0CF83E1244E074A00E79D22 /* en */,
 				B0CF83E3244E074E00E79D22 /* zh-Hans */,
+				B0941BC62487CEE100A891B7 /* es */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
