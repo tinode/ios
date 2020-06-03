@@ -229,7 +229,8 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
             if let messages = BaseDb.getInstance().messageDb?.query(
                     topicId: self.topicId,
                     pageCount: self.pagesToLoad,
-                    pageSize: MessageInteractor.kMessagesPerPage) {
+                    pageSize: MessageInteractor.kMessagesPerPage,
+                    descending: false) {
                 self.messages = messages
                 self.presenter?.presentMessages(messages: messages)
             }

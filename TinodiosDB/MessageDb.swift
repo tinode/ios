@@ -288,10 +288,10 @@ public class MessageDb {
         sm.content = Drafty.deserialize(from: r[self.content])
         return sm
     }
-    public func query(topicId: Int64?, pageCount: Int, pageSize: Int) -> [StoredMessage]? {
+    public func query(topicId: Int64?, pageCount: Int, pageSize: Int, descending: Bool = true) -> [StoredMessage]? {
         let queryTable = self.table
             .filter(self.topicId == topicId)
-            .order(self.seq.desc)
+            .order(descending ? self.seq.desc : self.seq.asc)
             .limit(pageCount * pageSize)
         do {
             var messages = [StoredMessage]()
