@@ -1,0 +1,365 @@
+/* Class = "UILabel"; text = "Block Contact"; ObjectID = "07M-9x-zBK"; */
+"07M-9x-zBK.text" = "Bloquear contacto";
+
+/* Class = "UITabBarItem"; title = "New Group"; ObjectID = "0Fx-rq-hiS"; */
+"0Fx-rq-hiS.title" = "Nuevo grupo";
+
+/* Class = "UILabel"; text = "Size:"; ObjectID = "12g-Mq-Ht6"; */
+"12g-Mq-Ht6.text" = "Tamaño:";
+
+/* Class = "UIButton"; normalTitle = "Sign Up"; ObjectID = "1tv-os-KfJ"; */
+"1tv-os-KfJ.normalTitle" = "Regístrate";
+
+/* Class = "UITableViewSection"; headerTitle = "Group Members"; ObjectID = "26s-2T-nI0"; */
+"26s-2T-nI0.headerTitle" = "Miembros del grupo";
+
+/* Class = "UITableViewSection"; headerTitle = "Notifications"; ObjectID = "3gX-G0-wiF"; */
+"3gX-G0-wiF.headerTitle" = "Notificaciones";
+
+/* Class = "UIBarButtonItem"; title = "Item"; ObjectID = "3zN-CC-6bS"; */
+"3zN-CC-6bS.title" = "Item";
+
+/* Class = "UILabel"; text = "Send typing notifications"; ObjectID = "4ll-eW-b8Z"; */
+"4ll-eW-b8Z.text" = "Enviar notificaciones de escritura";
+
+/* Class = "UILabel"; text = "placeholder_file_name"; ObjectID = "6rW-B5-NCp"; */
+"6rW-B5-NCp.text" = "placeholder_file_name";
+
+/* Class = "UILabel"; text = "1.0.0 (222)"; ObjectID = "71p-KF-hSv"; */
+"71p-KF-hSv.text" = "1.0.0 (222)";
+
+/* Class = "UILabel"; text = "Delete Messages"; ObjectID = "7EV-I9-csz"; */
+"7EV-I9-csz.text" = "Eliminar mensajes";
+
+/* Class = "UILabel"; text = "Log out"; ObjectID = "8RW-nB-5t3"; */
+"8RW-nB-5t3.text" = "Cerrar sesión";
+
+/* Class = "UILabel"; text = "Anonymous users"; ObjectID = "8wo-Rg-iTZ"; */
+"8wo-Rg-iTZ.text" = "Usuarios anónimos";
+
+/* Class = "UILabel"; text = "Contact us"; ObjectID = "9Lj-hp-MkL"; */
+"9Lj-hp-MkL.text" = "Contáctanos";
+
+/* Class = "UILabel"; text = "Terms of use"; ObjectID = "9dk-JW-5z0"; */
+"9dk-JW-5z0.text" = "Términos de uso";
+
+/* Class = "UILabel"; text = "Authenticated users"; ObjectID = "9gO-eS-keH"; */
+"9gO-eS-keH.text" = "Usuarios autenticados";
+
+/* Class = "UINavigationItem"; title = "Settings"; ObjectID = "9mf-og-8Hl"; */
+"9mf-og-8Hl.title" = "Ajustes";
+
+/* Class = "UILabel"; text = "N"; ObjectID = "9rO-zX-bOn"; */
+"9rO-zX-bOn.text" = "N";
+
+/* Class = "UILabel"; text = "App Version"; ObjectID = "AXP-O2-x5k"; */
+"AXP-O2-x5k.text" = "Versión de la app";
+
+/* Class = "UILabel"; text = "Muted"; ObjectID = "AoI-xo-VbS"; */
+"AoI-xo-VbS.text" = "Silenciado";
+
+/* Class = "UILabel"; text = "Tinode"; ObjectID = "BS4-zj-4bf"; */
+"BS4-zj-4bf.text" = "Tinode";
+
+/* Class = "UILabel"; text = "image/jpeg"; ObjectID = "C6Z-tO-4g8"; */
+"C6Z-tO-4g8.text" = "image/jpeg";
+
+/* Class = "UITextView"; text = "Topic subtitle (private)"; ObjectID = "D3z-yf-zJA"; */
+"D3z-yf-zJA.text" = "Subtítulo del tema (privado)";
+
+/* Class = "UILabel"; text = "Address"; ObjectID = "D6H-jy-Zh4"; */
+"D6H-jy-Zh4.text" = "Dirección";
+
+/* Class = "UIButton"; normalTitle = "OK"; ObjectID = "DMQ-om-04T"; */
+"DMQ-om-04T.normalTitle" = "OK";
+
+/* Class = "UITextField"; placeholder = "Additional info (private)"; ObjectID = "Do2-Ue-UdA"; */
+"Do2-Ue-UdA.placeholder" = "Información adicional (privado)";
+
+/* Class = "UILabel"; text = "Add members"; ObjectID = "FeF-3T-sWp"; */
+"FeF-3T-sWp.text" = "Añadir miembros";
+
+/* Class = "UILabel"; text = "Delete account"; ObjectID = "Fjs-5K-JCI"; */
+"Fjs-5K-JCI.text" = "Eliminar cuenta";
+
+/* Class = "UITableViewSection"; headerTitle = "Default Permissions"; ObjectID = "H78-sG-L0j"; */
+"H78-sG-L0j.headerTitle" = "Permisos predeterminados";
+
+/* Class = "UILabel"; text = "placeholder_file_name"; ObjectID = "HIs-n4-sFa"; */
+"HIs-n4-sFa.text" = "placeholder_file_name";
+
+/* Class = "UITableViewSection"; headerTitle = "Actions"; ObjectID = "HwV-ri-EBc"; */
+"HwV-ri-EBc.headerTitle" = "Acciones";
+
+/* Class = "UILabel"; text = "Confirmation code"; ObjectID = "JlG-TH-asZ"; */
+"JlG-TH-asZ.text" = "Código de confirmación";
+
+/* Class = "UINavigationItem"; title = "Image Preview"; ObjectID = "JpP-JB-AWY"; */
+"JpP-JB-AWY.title" = "Vista previa de la imagen";
+
+/* Class = "UILabel"; text = "Subtitle"; ObjectID = "K7L-Uc-b68"; */
+"K7L-Uc-b68.text" = "Subtítulo";
+
+/* Class = "UINavigationItem"; title = "Edit Members"; ObjectID = "LRu-ae-drd"; */
+"LRu-ae-drd.title" = "Editar miembros";
+
+/* Class = "UIBarButtonItem"; title = "New Chat"; ObjectID = "LVG-dB-flA"; */
+"LVG-dB-flA.title" = "Nuevo chat";
+
+/* Class = "UILabel"; text = "Content type:"; ObjectID = "OeG-Kx-gwG"; */
+"OeG-Kx-gwG.text" = "Tipo de contenido:";
+
+/* Class = "UILabel"; text = "Address"; ObjectID = "OwU-2N-QQV"; */
+"OwU-2N-QQV.text" = "Dirección";
+
+/* Class = "UITableViewController"; title = "Account Settings"; ObjectID = "Pnk-9m-ZVg"; */
+"Pnk-9m-ZVg.title" = "Ajustes de la cuenta";
+
+/* Class = "UILabel"; text = "Topic or user ID"; ObjectID = "RA0-dx-dSp"; */
+"RA0-dx-dSp.text" = "Tema o ID de usuario";
+
+/* Class = "UINavigationItem"; title = "Tinode"; ObjectID = "Rgo-YL-uPZ"; */
+"Rgo-YL-uPZ.title" = "Tinode";
+
+/* Class = "UIButton"; normalTitle = "Sign up"; ObjectID = "Rv6-qQ-FqW"; */
+"Rv6-qQ-FqW.normalTitle" = "Regístrate";
+
+/* Class = "UITabBarItem"; title = "By ID"; ObjectID = "T7l-iC-Rs6"; */
+"T7l-iC-Rs6.title" = "Por ID";
+
+/* Class = "UILabel"; text = "Leave Group"; ObjectID = "TRR-fA-HKj"; */
+"TRR-fA-HKj.text" = "Dejar el grupo";
+
+/* Class = "UIButton"; normalTitle = "Sign In"; ObjectID = "TvF-F9-blO"; */
+"TvF-F9-blO.normalTitle" = "Iniciar sesión";
+
+/* Class = "UITableViewController"; title = "Find Controller"; ObjectID = "UgX-En-K1m"; */
+"UgX-En-K1m.title" = "Encontrar controlador";
+
+/* Class = "UILabel"; text = "Anonymous users"; ObjectID = "Ukl-EW-zMS"; */
+"Ukl-EW-zMS.text" = "Usuarios anónimos";
+
+/* Class = "UILabel"; text = "N"; ObjectID = "Un9-ds-iQd"; */
+"Un9-ds-iQd.text" = "N";
+
+/* Class = "UILabel"; text = "image/jpeg"; ObjectID = "YLX-fZ-c26"; */
+"YLX-fZ-c26.text" = "image/jpeg";
+
+/* Class = "UILabel"; text = "Get reset code by email or phone"; ObjectID = "Ykj-eb-phs"; */
+"Ykj-eb-phs.text" = "Obtenga el código de recuperación por correo electrónico o teléfono";
+
+/* Class = "UITableViewController"; title = "SignUp"; ObjectID = "YmQ-cB-rjH"; */
+"YmQ-cB-rjH.title" = "Regístrate";
+
+/* Class = "UITableViewSection"; headerTitle = "Notifications"; ObjectID = "ZEt-A4-kIu"; */
+"ZEt-A4-kIu.headerTitle" = "Notificaciones";
+
+/* Class = "UITextField"; placeholder = "Password"; ObjectID = "ZQy-2N-acy"; */
+"ZQy-2N-acy.placeholder" = "Contraseña";
+
+/* Class = "UITextField"; accessibilityHint = "Login"; ObjectID = "ZTD-e7-fNF"; */
+"ZTD-e7-fNF.accessibilityHint" = "Entrar";
+
+/* Class = "UITextField"; accessibilityLabel = "Login"; ObjectID = "ZTD-e7-fNF"; */
+"ZTD-e7-fNF.accessibilityLabel" = "Entrar";
+
+/* Class = "UITextField"; placeholder = "User name"; ObjectID = "ZTD-e7-fNF"; */
+"ZTD-e7-fNF.placeholder" = "Nombre de usuario";
+
+/* Class = "UIViewController"; title = "File Preview"; ObjectID = "ZTN-Oj-COh"; */
+"ZTN-Oj-COh.title" = "Vista previa del archivo";
+
+/* Class = "UILabel"; text = "Privacy policy"; ObjectID = "Zn8-7V-BcX"; */
+"Zn8-7V-BcX.text" = "Política de privacidad";
+
+/* Class = "UIViewController"; title = "Image Preview"; ObjectID = "a2m-CR-0Zc"; */
+"a2m-CR-0Zc.title" = "Vista previa de la imagen";
+
+/* Class = "UILabel"; text = "GROUP MEMBERS"; ObjectID = "a45-p0-44d"; */
+"a45-p0-44d.text" = "MIEMBROS DEL GRUPO";
+
+/* Class = "UILabel"; text = "File name:"; ObjectID = "aA7-FA-fcf"; */
+"aA7-FA-fcf.text" = "Nombre del archivo:";
+
+/* Class = "UIButton"; normalTitle = "Confirm"; ObjectID = "aFc-MO-QyO"; */
+"aFc-MO-QyO.normalTitle" = "Confirmar";
+
+/* Class = "UILabel"; text = "N"; ObjectID = "aMv-to-Vu2"; */
+"aMv-to-Vu2.text" = "N";
+
+/* Class = "UITextView"; text = "User name"; ObjectID = "bFa-Y7-bbT"; */
+"bFa-Y7-bbT.text" = "Nombre de usuario";
+
+/* Class = "UILabel"; text = "N"; ObjectID = "bZv-2Q-BI9"; */
+"bZv-2Q-BI9.text" = "N";
+
+/* Class = "UITableViewSection"; headerTitle = "Contacts"; ObjectID = "bvE-OV-sy1"; */
+"bvE-OV-sy1.headerTitle" = "Contactos";
+
+/* Class = "UILabel"; text = " MyUID"; ObjectID = "bvN-my-ZPi"; */
+"bvN-my-ZPi.text" = " MiUID";
+
+/* Class = "UILabel"; text = "Manage"; ObjectID = "eHa-mE-ZbY"; */
+"eHa-mE-ZbY.text" = "Gestionar";
+
+/* Class = "UILabel"; text = "128x365; 35KB"; ObjectID = "eVu-vx-CU8"; */
+"eVu-vx-CU8.text" = "128x365; 35KB";
+
+/* Class = "UILabel"; text = "Add another"; ObjectID = "fLh-oI-CRP"; */
+"fLh-oI-CRP.text" = "Añadir contacto";
+
+/* Class = "UINavigationItem"; title = "Archived chats"; ObjectID = "fP4-sa-3Wz"; */
+"fP4-sa-3Wz.title" = "Chats archivados";
+
+/* Class = "UILabel"; text = "ALL USERS"; ObjectID = "ftJ-J6-tqx"; */
+"ftJ-J6-tqx.text" = "TODOS LOS USUARIOS";
+
+/* Class = "UITextField"; accessibilityHint = "Password"; ObjectID = "gLF-JR-ZfF"; */
+"gLF-JR-ZfF.accessibilityHint" = "Contraseña";
+
+/* Class = "UITextField"; accessibilityLabel = "Password"; ObjectID = "gLF-JR-ZfF"; */
+"gLF-JR-ZfF.accessibilityLabel" = "Contraseña";
+
+/* Class = "UITextField"; placeholder = "Password"; ObjectID = "gLF-JR-ZfF"; */
+"gLF-JR-ZfF.placeholder" = "Contraseña";
+
+/* Class = "UILabel"; text = "Send read receipts"; ObjectID = "geh-gC-6qO"; */
+"geh-gC-6qO.text" = "Enviar recibos de lectura";
+
+/* Class = "UINavigationItem"; title = "New chat"; ObjectID = "hZA-k4-xku"; */
+"hZA-k4-xku.title" = "Nuevo chat";
+
+/* Class = "UIButton"; normalTitle = "Request"; ObjectID = "i0f-S8-O1v"; */
+"i0f-S8-O1v.normalTitle" = "Solicitud";
+
+/* Class = "UITextView"; text = "Topic title (public)"; ObjectID = "ity-bg-zqr"; */
+"ity-bg-zqr.text" = "Título del tema (público)";
+
+/* Class = "UILabel"; text = "Add Members"; ObjectID = "jZE-Vv-ggf"; */
+"jZE-Vv-ggf.text" = "Añadir miembros";
+
+/* Class = "UITableViewSection"; headerTitle = "Tags (Content Discovery)"; ObjectID = "jal-tR-OpF"; */
+"jal-tR-OpF.headerTitle" = "Etiquetas (descubrimiento de contenido)";
+
+/* Class = "UITextField"; placeholder = "Name of the group"; ObjectID = "kDN-bf-JDL"; */
+"kDN-bf-JDL.placeholder" = "Nombre del grupo";
+
+/* Class = "UITableViewSection"; headerTitle = "Permissions"; ObjectID = "kJw-Pr-jNc"; */
+"kJw-Pr-jNc.headerTitle" = "Permisos";
+
+/* Class = "UILabel"; text = "File name:"; ObjectID = "kSc-xN-hqx"; */
+"kSc-xN-hqx.text" = "Nombre del archivo:";
+
+/* Class = "UILabel"; text = "Content type:"; ObjectID = "kiu-a5-pT6"; */
+"kiu-a5-pT6.text" = "Tipo de contenido:";
+
+/* Class = "UIButton"; normalTitle = "Add Avatar"; ObjectID = "lIy-Lk-DvY"; */
+"lIy-Lk-DvY.normalTitle" = "Subir avatar";
+
+/* Class = "UITableViewSection"; headerTitle = "Group Members"; ObjectID = "lJB-qW-1zX"; */
+"lJB-qW-1zX.headerTitle" = "Miembros del grupo";
+
+/* Class = "UIViewController"; title = "Reset Password"; ObjectID = "lq5-3O-Yva"; */
+"lq5-3O-Yva.title" = "Restablecer contraseña";
+
+/* Class = "UILabel"; text = "N"; ObjectID = "mTa-Ke-dom"; */
+"mTa-Ke-dom.text" = "N";
+
+/* Class = "UILabel"; text = "Size: "; ObjectID = "moa-6V-LhX"; */
+"moa-6V-LhX.text" = "Tamaño: ";
+
+/* Class = "UIViewController"; title = "Chats"; ObjectID = "n9d-hv-55K"; */
+"n9d-hv-55K.title" = "Chats";
+
+/* Class = "UITextField"; placeholder = "Login"; ObjectID = "nho-5Y-Mt8"; */
+"nho-5Y-Mt8.placeholder" = "Iniciar sesión";
+
+/* Class = "UILabel"; text = "No results"; ObjectID = "ntt-8z-Ay2"; */
+"ntt-8z-Ay2.text" = "No hay resultados";
+
+/* Class = "UINavigationController"; title = "ChatsNavigationController"; ObjectID = "oDj-ht-EO8"; */
+"oDj-ht-EO8.title" = "ChatsNavigationController";
+
+/* Class = "UINavigationItem"; title = "Confirm credentials"; ObjectID = "oER-Xi-WOZ"; */
+"oER-Xi-WOZ.title" = "Confirmar credenciales";
+
+/* Class = "UINavigationController"; title = "StartNavigationController"; ObjectID = "oPa-Qr-HlP"; */
+"oPa-Qr-HlP.title" = "StartNavigationController";
+
+/* Class = "UILabel"; text = "TopicID"; ObjectID = "om5-K5-yRq"; */
+"om5-K5-yRq.text" = "ID del tema";
+
+/* Class = "UITableViewSection"; headerTitle = "General"; ObjectID = "out-KF-2FK"; */
+"out-KF-2FK.headerTitle" = "General";
+
+/* Class = "UIButton"; normalTitle = "¿Olvidaste tu contraseña?"; ObjectID = "q6T-TC-n42"; */
+"q6T-TC-n42.normalTitle" = "¿Olvidaste tu contraseña?";
+
+/* Class = "UITabBarController"; title = "New chat"; ObjectID = "qBo-ye-avT"; */
+"qBo-ye-avT.title" = "Nuevo chat";
+
+/* Class = "UILabel"; text = "Report Group"; ObjectID = "qaR-VW-Rfy"; */
+"qaR-VW-Rfy.text" = "Reportar grupo";
+
+/* Class = "UILabel"; text = "Change password"; ObjectID = "qvs-D4-f94"; */
+"qvs-D4-f94.text" = "Cambiar contraseña";
+
+/* Class = "UILabel"; text = "Manage Tags"; ObjectID = "r8j-wT-BLF"; */
+"r8j-wT-BLF.text" = "Gestionar etiquetas";
+
+/* Class = "UITableViewSection"; headerTitle = "Actions"; ObjectID = "raq-d6-2nI"; */
+"raq-d6-2nI.headerTitle" = "Acciones";
+
+/* Class = "UIBarButtonItem"; title = "Profile"; ObjectID = "rlG-v4-QUc"; */
+"rlG-v4-QUc.title" = "Perfil";
+
+/* Class = "UITabBarItem"; title = "Find"; ObjectID = "rqZ-eR-8TP"; */
+"rqZ-eR-8TP.title" = "Encontrar";
+
+/* Class = "UILabel"; text = "N"; ObjectID = "s6S-ku-F63"; */
+"s6S-ku-F63.text" = "N";
+
+/* Class = "UILabel"; text = "John Doe"; ObjectID = "syF-Vp-vRc"; */
+"syF-Vp-vRc.text" = "Juan González Hernández";
+
+/* Class = "UILabel"; text = "Leave Conversation"; ObjectID = "t2m-Xv-gTF"; */
+"t2m-Xv-gTF.text" = "Dejar conversación";
+
+/* Class = "UIView"; accessibilityLabel = "Footer"; ObjectID = "te7-Jx-ztq"; */
+"te7-Jx-ztq.accessibilityLabel" = "Pie";
+
+/* Class = "UILabel"; text = "Report Contact"; ObjectID = "ub9-mK-yqf"; */
+"ub9-mK-yqf.text" = "Reportar contacto";
+
+/* Class = "UILabel"; text = "Yours"; ObjectID = "wPJ-94-8aV"; */
+"wPJ-94-8aV.text" = "Yours";
+
+/* Class = "UINavigationItem"; title = "Reset Password"; ObjectID = "wWt-TO-3We"; */
+"wWt-TO-3We.title" = "Restablecer la contraseña";
+
+/* Class = "UILabel"; text = "Authenticated users"; ObjectID = "wd7-ah-oJu"; */
+"wd7-ah-oJu.text" = "Usuarios autenticados";
+
+/* Class = "UILabel"; text = "128x365; 35KB"; ObjectID = "wfA-TG-Chj"; */
+"wfA-TG-Chj.text" = "128x365; 35KB";
+
+/* Class = "UIView"; accessibilityLabel = "Footer"; ObjectID = "xIw-r0-6Pv"; */
+"xIw-r0-6Pv.accessibilityLabel" = "Footer";
+
+/* Class = "UITextField"; placeholder = "usr123aBcDef"; ObjectID = "xmn-wq-Hpr"; */
+"xmn-wq-Hpr.placeholder" = "usr123aBcDef";
+
+/* Class = "UILabel"; text = "Incognito mode"; ObjectID = "xyg-ee-0pd"; Note = "Label for incognito mode switch"; */
+"xyg-ee-0pd.text" = "Modo incógnito";
+
+/* Class = "UITextField"; placeholder = "First and last name"; ObjectID = "yKx-xt-rdn"; */
+"yKx-xt-rdn.placeholder" = "Nombres y apellidos";
+
+/* Class = "UILabel"; text = "Delete Group"; ObjectID = "z6C-JF-Mnb"; */
+"z6C-JF-Mnb.text" = "Eliminar grupo";
+
+/* Class = "UITableViewSection"; headerTitle = "Default Permissions"; ObjectID = "zW8-KF-N8J"; */
+"zW8-KF-N8J.headerTitle" = "Permisos predeterminados";
+
+/* Class = "UITextField"; placeholder = "Email or phone number"; ObjectID = "zmL-3Y-R2r"; */
+"zmL-3Y-R2r.placeholder" = "Correo electrónico o número de teléfono";
