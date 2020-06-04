@@ -129,7 +129,7 @@ class LoginViewController: UIViewController {
         let tinode = Cache.getTinode()
         UiUtils.toggleProgressOverlay(in: self, visible: true, title: NSLocalizedString("Logging in...", comment: "Login progress text"))
         do {
-            try tinode.connectDefault(inBackground false)?
+            try tinode.connectDefault(inBackground: false)?
                 .thenApply({ pkt in
                         return tinode.loginBasic(uname: userName, password: password)
                     })

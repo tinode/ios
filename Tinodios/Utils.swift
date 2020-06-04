@@ -163,7 +163,7 @@ class Utils {
         return ProcessInfo.processInfo.globallyUniqueString + "." + (ext ?? "bin")
     }
 
-    public static func connectAndLoginSync(inBackground bkg: bool) -> Bool {
+    public static func connectAndLoginSync(inBackground bkg: Bool) -> Bool {
         guard let userName = Utils.getSavedLoginUserName(), !userName.isEmpty else {
             Cache.log.error("Connect&Login Sync - missing user name")
             return false
