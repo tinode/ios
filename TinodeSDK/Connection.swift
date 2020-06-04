@@ -54,6 +54,8 @@ public class Connection {
     private var reconnecting: Bool = false
     private var backoffSteps = ExpBackoffSteps()
     private var reconnectClosure: DispatchWorkItem? = nil
+    // Opaque parameter passed to onConnect. Used once then discarded.
+    private var param: Any?
 
     init(open url: URL, with apiKey: String, notify listener: ConnectionListener?) {
         self.apiKey = apiKey
@@ -76,7 +78,9 @@ public class Connection {
             self.backoffSteps.reset()
             let r = self.reconnecting
             self.reconnecting = false
-            self.connectionListener?.onConnect(reconnecting: r)
+            let p = self.param
+            self.param = nil
+            self.connectionListener?.onConnect(reconnecting: r, param: p)
         }
         webSocketConnection!.event.error = { error in
             self.connectionListener?.onError(error: error)
@@ -132,8 +136,9 @@ public class Connection {
             execute: reconnectClosure!)
     }
     @discardableResult
-    func connect(reconnectAutomatically: Bool = true) throws -> Bool {
+    func connect(reconnectAutomatically: Bool = true, withParam param: Any?) throws -> Bool {
         self.autoreconnect = reconnectAutomatically
+        self.param = param
         if self.autoreconnect && self.reconnecting {
             // If we are trying to reconnect, do it now
             // (we simply reset the exp backoff steps).
@@ -160,7 +165,7 @@ public class Connection {
 }
 
 protocol ConnectionListener {
-    func onConnect(reconnecting: Bool) -> Void
+    func onConnect(reconnecting: Bool, param: Any?) -> Void
     func onMessage(with message: String) -> Void
     func onDisconnect(isServerOriginated: Bool, code: Int, reason: String) -> Void
     func onError(error: Error) -> Void

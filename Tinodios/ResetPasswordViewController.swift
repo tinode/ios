@@ -72,7 +72,7 @@ class ResetPasswordViewController : UIViewController {
         let tinode = Cache.getTinode()
         UiUtils.toggleProgressOverlay(in: self, visible: true, title: NSLocalizedString("Requesting...", comment: "Progress overlay"))
         do {
-            try tinode.connectDefault()?
+            try tinode.connectDefault(inBackground: false)?
                 .thenApply({ _ in
                     return tinode.requestResetPassword(method: credential.methodName(), newValue: normalized)
                 })

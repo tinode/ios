@@ -496,12 +496,9 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
         }
         return subscribe(set: setMsg, get: getMsg)
     }
+
     @discardableResult
     public func subscribe(set: MsgSetMeta<DP, DR>?, get: MsgGetMeta?) -> PromisedReply<ServerMessage> {
-        return subscribe(set: set, get: get, background: false)
-    }
-    @discardableResult
-    public func subscribe(set: MsgSetMeta<DP, DR>?, get: MsgGetMeta?, background: Bool) -> PromisedReply<ServerMessage> {
         if attached {
             // If the topic is already attached and the user
             // does not attempt to set or get any data,
@@ -522,7 +519,7 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
         guard tnd.isConnectionAuthenticated else {
             return PromisedReply(error: TinodeError.invalidState("Connection is not authenticated.") )
         }
-        return tnd.subscribe(to: name, set: set, get: get, background: background).then(
+        return tnd.subscribe(to: name, set: set, get: get).then(
             onSuccess: { [weak self] msg in
                 let isAttached = self?.attached ?? false
                 if !isAttached {

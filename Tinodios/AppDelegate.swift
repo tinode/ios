@@ -33,9 +33,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 UiUtils.routeToChatListVC()
             }
         }
-        // Try to connect and log in in the background.
+        // Try to connect and login in the background.
         DispatchQueue.global(qos: .userInitiated).async {
-            if !Utils.connectAndLoginSync() {
+            if !Utils.connectAndLoginSync(inBackground: false) {
                 UiUtils.logoutAndRouteToLoginVC()
             }
         }
@@ -88,7 +88,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     @discardableResult
     private func fetchData(for topicName: String, seq: Int) -> UIBackgroundFetchResult {
         let tinode = Cache.getTinode()
-        guard tinode.isConnectionAuthenticated || Utils.connectAndLoginSync() else {
+        guard tinode.isConnectionAuthenticated || Utils.connectAndLoginSync(inBackground: true) else {
             return .failed
         }
         var topic: DefaultComTopic
@@ -115,7 +115,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 topic.leave()
             }
         }
-        if let msg = try? topic.subscribe(set: nil, get: builder.withLaterData(limit: 10).withDel().build(), background: true).getResult(), (msg.ctrl?.code ?? 500) < 300 {
+        if let msg = try? topic.subscribe(set: nil, get: builder.withLaterData(limit: 10).withDel().build()).getResult(), (msg.ctrl?.code ?? 500) < 300 {
             return .newData
         }
         return .failed
@@ -225,7 +225,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
             return
         }
         DispatchQueue.global(qos: .userInitiated).async {
-            if !Utils.connectAndLoginSync() {
+            if !Utils.connectAndLoginSync(inBackground: false) {
                 UiUtils.logoutAndRouteToLoginVC()
             } else {
                 UiUtils.routeToMessageVC(forTopic: topicName)

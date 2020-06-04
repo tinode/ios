@@ -133,11 +133,11 @@ class ContactsSynchronizer {
             let tinode = Cache.getTinode()
             do {
                 tinode.setAutoLoginWithToken(token: token)
-                _ = try tinode.connectDefault()?.getResult()
+                _ = try tinode.connectDefault(inBackground: true)?.getResult()
 
                 _ = try tinode.loginToken(token: token, creds: nil).getResult()
                 // Generic params don't matter.
-                _ = try tinode.subscribe(to: Tinode.kTopicFnd, set: MsgSetMeta<Int, Int>?(nil), get: nil, background: false).getResult()
+                _ = try tinode.subscribe(to: Tinode.kTopicFnd, set: MsgSetMeta<Int, Int>?(nil), get: nil).getResult()
                 //let q: Int? = nil
                 let metaDesc: MetaSetDesc<Int, String> = MetaSetDesc(pub: nil, priv: contacts)
                 let setMeta: MsgSetMeta<Int, String> = MsgSetMeta<Int, String>(desc: metaDesc, sub: nil, tags: nil, cred: nil)
