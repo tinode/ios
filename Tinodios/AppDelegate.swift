@@ -126,7 +126,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     @discardableResult
     private func fetchDesc(for topicName: String) -> UIBackgroundFetchResult {
         let tinode = Cache.getTinode()
-        guard tinode.isConnectionAuthenticated || Utils.connectAndLoginSync() else {
+        guard tinode.isConnectionAuthenticated || Utils.connectAndLoginSync(inBackground: true) else {
             return .failed
         }
         // If we have topic data, we are done.
