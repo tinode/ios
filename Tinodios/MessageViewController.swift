@@ -103,6 +103,13 @@ class MessageViewController: UIViewController {
         // Carve out for timestamp and delivery marker in the bottom-right corner.
         static let kIncomingMetadataCarveout = "     "
         static let kOutgoingMetadataCarveout = "       "
+
+        // Thresholds for tracking update batch stats/UI refresh.
+        // When too many messages (batch) come in a quick succession,
+        // we refresh the UI in full in order to avoid UI glitches.
+        static let kUpdateBatchFullRefreshThreshold = 5
+        // Max time difference between successive messages to count them as one batch.
+        static let kUpdateBatchTimeDeltaThresholdMs : Int64 = 300
     }
 
     /// The `sendMessageBar` is used as the `inputAccessoryView` in the view controller.
@@ -158,6 +165,11 @@ class MessageViewController: UIViewController {
     // var cellSizeCache: [CGSize?] = []
 
     var isInitialLayout = true
+
+    // Size of the present update batch.
+    private var updateBatchSize = 0
+    // Last message received timestamp - for tracking batches.
+    private var lastMessageReceived = Date.distantPast
 
     private var textSizeHelper = TextSizeHelper()
 
@@ -483,7 +495,17 @@ extension MessageViewController: MessageDisplayLogic {
             return dict
         }
 
-        if oldData.isEmpty || newData.isEmpty {
+        // Update batch stats.
+        let now = Date()
+        let delta = newData.count - oldData.count
+        if now.millisecondsSince1970 > self.lastMessageReceived.millisecondsSince1970 + Constants.kUpdateBatchTimeDeltaThresholdMs {
+            self.updateBatchSize = delta
+        } else {
+            self.updateBatchSize += delta
+        }
+        self.lastMessageReceived = now
+
+        if oldData.isEmpty || newData.isEmpty || self.updateBatchSize > Constants.kUpdateBatchFullRefreshThreshold {
             self.messages = newData
             collectionView.reloadSections(IndexSet(integer: 0))
             collectionView.layoutIfNeeded()
