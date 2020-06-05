@@ -91,7 +91,7 @@ class SignupViewController: UITableViewController {
         creds.append(cred)
         UiUtils.toggleProgressOverlay(in: self, visible: true, title: NSLocalizedString("Registering...", comment: "Progress overlay"))
         do {
-            try tinode.connectDefault()?
+            try tinode.connectDefault(inBackground: false)?
                 .thenApply { pkt in
                     return tinode.createAccountBasic(
                         uname: login, pwd: pwd, login: true,

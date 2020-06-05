@@ -163,7 +163,7 @@ class Utils {
         return ProcessInfo.processInfo.globallyUniqueString + "." + (ext ?? "bin")
     }
 
-    public static func connectAndLoginSync() -> Bool {
+    public static func connectAndLoginSync(inBackground bkg: Bool) -> Bool {
         guard let userName = Utils.getSavedLoginUserName(), !userName.isEmpty else {
             Cache.log.error("Connect&Login Sync - missing user name")
             return false
@@ -184,7 +184,7 @@ class Utils {
         do {
             tinode.setAutoLoginWithToken(token: token)
             // Tinode.connect() will automatically log in.
-            let msg = try tinode.connectDefault()?.getResult()
+            let msg = try tinode.connectDefault(inBackground: bkg)?.getResult()
             if let code = msg?.ctrl?.code {
                 // Assuming success by default.
                 success = true
@@ -329,10 +329,10 @@ extension Tinode {
         let (hostName, useTLS, _) = ConnectionSettingsHelper.getConnectionSettings()
         return (hostName ?? Cache.kHostName, useTLS ?? Cache.kUseTLS)
     }
-    func connectDefault() throws -> PromisedReply<ServerMessage>? {
+    func connectDefault(inBackground bkg: Bool) throws -> PromisedReply<ServerMessage>? {
         let (hostName, useTLS) = Tinode.getConnectionParams()
         Cache.log.debug("Connecting to %@, secure %@", hostName, useTLS ? "YES" : "NO")
-        return try connect(to: hostName, useTLS: useTLS)
+        return try connect(to: hostName, useTLS: useTLS, inBackground: bkg)
     }
 }
 

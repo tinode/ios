@@ -15,16 +15,18 @@ public class MsgClientHi : Encodable {
     // Push notification token.
     let dev: String?
     let lang: String?
+    let bkg: Bool?
 
-    init(id: String?, ver: String?, ua: String?, dev: String?, lang: String?) {
+    init(id: String?, ver: String?, ua: String?, dev: String?, lang: String?, background: Bool) {
         self.id = id
         self.ver = ver
         self.ua = ua
         self.dev = dev
         self.lang = lang
+        self.bkg = background ? true : nil
     }
     convenience init(id: String, dev: String) {
-        self.init(id: id, ver: nil, ua: nil, dev: dev, lang: nil)
+        self.init(id: id, ver: nil, ua: nil, dev: dev, lang: nil, background: false)
     }
 }
 
@@ -343,13 +345,11 @@ public class MsgSetMeta<Pu: Encodable, Pr: Encodable>: Encodable {
 public class MsgClientSub<Pu: Encodable, Pr: Encodable>: Encodable {
     var id: String?
     var topic: String?
-    var bkg: Bool?
     var set: MsgSetMeta<Pu, Pr>?
     var get: MsgGetMeta?
-    init(id: String?, topic: String?, set: MsgSetMeta<Pu, Pr>?, get: MsgGetMeta?, background: Bool) {
+    init(id: String?, topic: String?, set: MsgSetMeta<Pu, Pr>?, get: MsgGetMeta?) {
         self.id = id
         self.topic = topic
-        self.bkg = background ? true : nil
         self.set = set
         self.get = get
     }

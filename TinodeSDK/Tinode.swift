@@ -583,9 +583,9 @@ public class Tinode {
         return future
     }
 
-    private func hello() -> PromisedReply<ServerMessage> {
+    private func hello(inBackground bkg: Bool) -> PromisedReply<ServerMessage> {
         let msgId = getNextMsgId()
-        let msg = ClientMessage<Int, Int>(hi: MsgClientHi(id: msgId, ver: kVersion, ua: userAgent, dev: deviceToken, lang: kLocale))
+        let msg = ClientMessage<Int, Int>(hi: MsgClientHi(id: msgId, ver: kVersion, ua: userAgent, dev: deviceToken, lang: kLocale, background: bkg))
         return sendWithPromise(payload: msg, with: msgId)
             .thenApply({ [weak self] pkt in
                 guard let ctrl = pkt?.ctrl else {
@@ -620,7 +620,7 @@ public class Tinode {
      * Stop tracking the topic: remove it from in-memory cache.
      */
     public func stopTrackingTopic(topicName: String) {
-        topics.removeValue(forKey: topicName)
+        _ = topics.removeValue(forKey: topicName)
     }
 
     /**
@@ -954,11 +954,11 @@ public class Tinode {
         init(tinode: Tinode) {
             self.tinode = tinode
         }
-        func onConnect(reconnecting: Bool) -> Void {
+        func onConnect(reconnecting: Bool, param: Any?) -> Void {
             let m = reconnecting ? "YES" : "NO"
             Tinode.log.info("Tinode connected: after reconnect - %@", m.description)
             let doLogin = tinode.autoLogin && tinode.loginCredentials != nil
-            var future = tinode.hello().thenApply({ [weak self] pkt in
+            var future = tinode.hello(inBackground: param as? Bool ?? false).thenApply({ [weak self] pkt in
                 guard let self = self else {
                     throw TinodeError.invalidState("Missing Tinode instance in connection handler")
                 }
@@ -1044,18 +1044,18 @@ public class Tinode {
         }
     }
 
-    @discardableResult
-    public func connect(to hostName: String, useTLS: Bool) throws -> PromisedReply<ServerMessage>? {
-        try operationsQueue.sync {
-            return try connectThreadUnsafe(to: hostName, useTLS: useTLS)
-        }
-    }
-
     private func resetMsgId() {
         nextMsgId = 0xffff + Int((Float(arc4random()) / Float(UInt32.max)) * 0xffff)
     }
 
-    private func connectThreadUnsafe(to hostName: String, useTLS: Bool) throws -> PromisedReply<ServerMessage>? {
+    @discardableResult
+    public func connect(to hostName: String, useTLS: Bool, inBackground bkg: Bool) throws -> PromisedReply<ServerMessage>? {
+        try operationsQueue.sync {
+            return try connectThreadUnsafe(to: hostName, useTLS: useTLS, inBackground: bkg)
+        }
+    }
+
+    private func connectThreadUnsafe(to hostName: String, useTLS: Bool, inBackground bkg: Bool) throws -> PromisedReply<ServerMessage>? {
         if isConnected {
             Tinode.log.debug("Tinode is already connected")
             return PromisedReply<ServerMessage>(value: ServerMessage())
@@ -1074,14 +1074,14 @@ public class Tinode {
         }
         let connectedPromise = PromisedReply<ServerMessage>()
         connectionListener!.addPromise(promise: connectedPromise)
-        try connection!.connect()
+        try connection!.connect(withParam: bkg)
         return connectedPromise
     }
 
     // Connect with saved connection params (host name and tls settings).
     @discardableResult
-    private func connect() throws -> PromisedReply<ServerMessage>? {
-        return try connectThreadUnsafe(to: self.hostName, useTLS: self.useTLS)
+    private func connect(inBackground bkg: Bool) throws -> PromisedReply<ServerMessage>? {
+        return try connectThreadUnsafe(to: self.hostName, useTLS: self.useTLS, inBackground: bkg)
     }
 
     // Make sure connection is either already established or being established:
@@ -1097,7 +1097,7 @@ public class Tinode {
             var reconnectInteractive = interactively
             if connection == nil {
                 do {
-                    try connect()
+                    try connect(inBackground: false)
                     return true
                 } catch {
                     Tinode.log.error("Couldn't connect to server: %@", error.localizedDescription)
@@ -1118,7 +1118,7 @@ public class Tinode {
             // autoreconnect is not enabled.
             if reconnectInteractive || !connection!.isWaitingToConnect {
                 do {
-                    try connection!.connect(reconnectAutomatically: true)
+                    try connection!.connect(reconnectAutomatically: true, withParam: nil)
                     return true
                 } catch {
                     return false
@@ -1154,15 +1154,14 @@ public class Tinode {
         }
     }
 
-    public func subscribe<Pu: Codable, Pr: Codable>(to topicName: String, set: MsgSetMeta<Pu, Pr>?, get: MsgGetMeta?, background: Bool) -> PromisedReply<ServerMessage> {
+    public func subscribe<Pu: Codable, Pr: Codable>(to topicName: String, set: MsgSetMeta<Pu, Pr>?, get: MsgGetMeta?) -> PromisedReply<ServerMessage> {
         let msgId = getNextMsgId()
         let msg = ClientMessage<Pu, Pr>(
             sub: MsgClientSub(
                 id: msgId,
                 topic: topicName,
                 set: set,
-                get: get,
-                background: background))
+                get: get))
         return sendWithPromise(payload: msg, with: msgId)
     }
 
