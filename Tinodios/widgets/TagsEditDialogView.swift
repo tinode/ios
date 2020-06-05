@@ -63,7 +63,6 @@ class TagsEditDialogViewController: UIViewController {
     }
 
     @IBAction func okayClicked(_ sender: Any) {
-        print("okay clicked")
         let newTags = tagsEditView.tags
         if !newTags.elementsEqual(initialTags) {
             completionHandler?(newTags)

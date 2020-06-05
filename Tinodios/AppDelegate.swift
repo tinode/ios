@@ -216,7 +216,6 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
 
     // User tapped on notification.
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
-        print(response)
         let userInfo = response.notification.request.content.userInfo
         defer { completionHandler() }
         guard let topicName = userInfo["topic"] as? String, !topicName.isEmpty else { return }
@@ -235,9 +234,6 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
 }
 
 extension AppDelegate: MessagingDelegate {
-    func messaging(_ messaging: Messaging, didReceive remoteMessage: MessagingRemoteMessage) {
-        Cache.log.info("Received data message: %@", remoteMessage.appData)
-    }
     func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String) {
         // Update token. Send to the app server.
         Cache.getTinode().setDeviceToken(token: fcmToken)

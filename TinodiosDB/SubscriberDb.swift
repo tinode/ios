@@ -246,7 +246,7 @@ public class SubscriberDb {
             }
             return subscriptions
         } catch {
-            print("failed to read subscriptions \(error)")
+            BaseDb.log.error("SubscriberDb - failed to read subscriptions: %@", error.localizedDescription)
             return nil
         }
     }

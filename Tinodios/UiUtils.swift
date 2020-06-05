@@ -274,7 +274,7 @@ class UiUtils {
         // Grab the last window (instead the key window) so we can show
         // the toast over they keyboard when it's presented.
         guard let parent = UIApplication.shared.windows.last else {
-            print("parent is not set")
+            Cache.log.error("UiUtils.showToast - parent window not set")
             return
         }
 

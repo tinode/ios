@@ -68,7 +68,7 @@ public class BaseDb {
         do {
             self.db = try SQLite.Connection(self.pathToDatabase)
         } catch {
-            print(error.localizedDescription)
+            BaseDb.log.error("BaseDb - init failed: %@", error.localizedDescription)
         }
         assert(self.db != nil)
 
@@ -83,7 +83,8 @@ public class BaseDb {
         self.messageDb = MessageDb(self.db!, baseDb: self)
 
         if self.db!.schemaVersion != BaseDb.kSchemaVersion {
-            print("Schema has changed from \(self.db?.schemaVersion ?? -1) to \(BaseDb.kSchemaVersion)")
+            BaseDb.log.info("BaseDb - schema has changed from %d to %d",
+                            (self.db?.schemaVersion ?? -1), BaseDb.kSchemaVersion)
             // Delete database if schema has changed.
             self.dropDb()
 

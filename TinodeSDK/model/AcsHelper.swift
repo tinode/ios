@@ -151,7 +151,8 @@ public class AcsHelper: Codable, CustomStringConvertible, Equatable {
             // Invalid value may be recived from the network. Invalid network data should not crash the client.
             try a = AcsHelper.update(original: a, updateWith: umode)
         } catch {
-            print("Failed to parse access mode \(umode) \(error)")
+            Tinode.log.error("AcsHelper.update - failed to parse access mode: '%@' - %@",
+                             umode, error.localizedDescription)
         }
         return a != olda
     }

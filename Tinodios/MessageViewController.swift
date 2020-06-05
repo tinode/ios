@@ -1065,10 +1065,10 @@ extension MessageViewController : MessageCellDelegate {
                 handleButtonPost(in: cell, using: url)
             case "/small-attachment":
                 handleSmallAttachment(in: cell, using: url)
-                print("small attachment - \(url)")
+                Cache.log.debug("MessageViewController - small attachment: %@", url.description)
             case "/large-attachment":
                 handleLargeAttachment(in: cell, using: url)
-                print("large attachment - \(url)")
+                Cache.log.debug("MessageViewController - large attachment: %@", url.description)
             case "/preview-image":
                 showImagePreview(in: cell)
             default:
