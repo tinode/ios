@@ -1,8 +1,8 @@
-FRAMEWORK_SEARCH_PATHS = $(inherited) "${PODS_CONFIGURATION_BUILD_DIR}/SwiftWebSocket-iOS10.0"
+FRAMEWORK_SEARCH_PATHS = $(inherited) "${PODS_CONFIGURATION_BUILD_DIR}/SwiftWebSocket"
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) COCOAPODS=1
-HEADER_SEARCH_PATHS = $(inherited) "${PODS_CONFIGURATION_BUILD_DIR}/SwiftWebSocket-iOS10.0/SwiftWebSocket.framework/Headers"
+HEADER_SEARCH_PATHS = $(inherited) "${PODS_CONFIGURATION_BUILD_DIR}/SwiftWebSocket/SwiftWebSocket.framework/Headers"
 LD_RUNPATH_SEARCH_PATHS = $(inherited) '@executable_path/Frameworks' '@loader_path/Frameworks' '@executable_path/../../Frameworks'
-OTHER_CFLAGS = $(inherited) -isystem "${PODS_CONFIGURATION_BUILD_DIR}/SwiftWebSocket-iOS10.0/SwiftWebSocket.framework/Headers" -iframework "${PODS_CONFIGURATION_BUILD_DIR}/SwiftWebSocket-iOS10.0"
+OTHER_CFLAGS = $(inherited) -isystem "${PODS_CONFIGURATION_BUILD_DIR}/SwiftWebSocket/SwiftWebSocket.framework/Headers" -iframework "${PODS_CONFIGURATION_BUILD_DIR}/SwiftWebSocket"
 OTHER_LDFLAGS = $(inherited) -l"z" -framework "SwiftWebSocket"
 OTHER_SWIFT_FLAGS = $(inherited) -D COCOAPODS
 PODS_BUILD_DIR = ${BUILD_DIR}
