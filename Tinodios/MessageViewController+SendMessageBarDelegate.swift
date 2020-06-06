@@ -73,7 +73,7 @@ extension MessageViewController : UIDocumentPickerDelegate {
             var mimeType: String? = nil
             if let uti = try urls[0].resourceValues(forKeys: [.typeIdentifierKey]).typeIdentifier {
                 let unmanaged = UTTypeCopyPreferredTagWithClass(uti as CFString, kUTTagClassMIMEType)
-                mimeType = unmanaged?.takeRetainedValue() as String?
+                mimeType = unmanaged?.takeRetainedValue() as String? ?? "application/octet-stream"
             }
             let maxAttachmentSize = Cache.getTinode().getServerLimit(
                 for: Tinode.kMaxFileUploadSize,

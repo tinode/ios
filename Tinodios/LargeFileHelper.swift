@@ -33,7 +33,7 @@ class Upload {
 }
 
 class LargeFileHelper: NSObject {
-    static let kBoundary = "*****\(Int64(Date().timeIntervalSince1970 as Double * 1000))*****"
+    static let kBoundary = "*****\(Date().millisecondsSince1970)*****"
     static let kTwoHyphens = "--"
     static let kLineEnd = "\r\n"
 
@@ -173,7 +173,6 @@ extension LargeFileHelper: URLSessionTaskDelegate {
         }
     }
     func urlSession(_ session: URLSession, task: URLSessionTask, didSendBodyData: Int64, totalBytesSent: Int64, totalBytesExpectedToSend: Int64) {
-        Thread.sleep(forTimeInterval: 0.1)
         if let t = task.taskDescription, let upload = activeUploads[t] {
             let progress: Float = totalBytesExpectedToSend > 0 ?
                 Float(totalBytesSent) / Float(totalBytesExpectedToSend) : 0
