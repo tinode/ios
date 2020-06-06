@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16096" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="oPa-Qr-HlP">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16097" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="oPa-Qr-HlP">
     <device id="retina5_5" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
@@ -1314,8 +1314,10 @@
                             <constraint firstItem="aye-Np-bUN" firstAttribute="leading" secondItem="nxQ-Yu-JC5" secondAttribute="leading" id="FM1-U7-UPk"/>
                             <constraint firstItem="aye-Np-bUN" firstAttribute="top" secondItem="nxQ-Yu-JC5" secondAttribute="top" id="HRA-0h-TSe"/>
                             <constraint firstItem="aye-Np-bUN" firstAttribute="bottom" secondItem="nxQ-Yu-JC5" secondAttribute="bottom" constant="-64" id="Tjk-LF-s4Z"/>
+                            <constraint firstItem="Qcu-Fy-LAo" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="nxQ-Yu-JC5" secondAttribute="leading" constant="50" id="edC-Xv-mk7"/>
                             <constraint firstItem="nxQ-Yu-JC5" firstAttribute="bottom" secondItem="8SZ-VE-tDC" secondAttribute="bottom" constant="16" id="ow9-TN-T66"/>
                             <constraint firstItem="nxQ-Yu-JC5" firstAttribute="trailing" secondItem="8SZ-VE-tDC" secondAttribute="trailing" constant="16" id="rWp-18-lgp"/>
+                            <constraint firstItem="nxQ-Yu-JC5" firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="Qcu-Fy-LAo" secondAttribute="trailing" constant="50" id="yJ5-4w-9zE"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="nxQ-Yu-JC5"/>
                     </view>
