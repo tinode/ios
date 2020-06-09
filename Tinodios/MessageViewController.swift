@@ -171,6 +171,11 @@ class MessageViewController: UIViewController {
     // Last message received timestamp - for tracking batches.
     private var lastMessageReceived = Date.distantPast
 
+    // The two below indicate whether to send typing notifications and read receipts.
+    // Determined by the user specified account notifications settings.
+    internal var sendTypingNotifications = false
+    internal var sendReadReceipts = false
+
     private var textSizeHelper = TextSizeHelper()
 
     // MARK: initializers
@@ -223,13 +228,18 @@ class MessageViewController: UIViewController {
         interactor.presenter = presenter
         presenter.viewController = self
 
+        // Notifications settings.
+        let userDefaults = UserDefaults.standard
+        self.sendTypingNotifications = userDefaults.bool(forKey: Utils.kTinodePrefTypingNotifications)
+        self.sendReadReceipts = userDefaults.bool(forKey: Utils.kTinodePrefReadReceipts)
+
         self.interactor = interactor
         addAppStateObservers()
     }
 
     @objc
     func appBecameActive() {
-        self.interactor?.setup(topicName: topicName)
+        self.interactor?.setup(topicName: topicName, sendReadReceipts: self.sendReadReceipts)
         self.interactor?.attachToTopic(interactively: true)
     }
     @objc
@@ -324,7 +334,8 @@ class MessageViewController: UIViewController {
 
         self.setInterfaceColors()
 
-        if (self.interactor?.setup(topicName: self.topicName) ?? false) {
+        if (self.interactor?.setup(topicName: self.topicName,
+                                   sendReadReceipts: self.sendReadReceipts) ?? false) {
             self.interactor?.loadMessages()
         }
     }
@@ -350,7 +361,7 @@ class MessageViewController: UIViewController {
         super.viewDidAppear(animated)
 
         collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: sendMessageBar.frame.height, right: 0)
-        
+
         self.interactor?.attachToTopic(interactively: true)
         self.interactor?.loadMessages()
         self.interactor?.sendReadNotification(explicitSeq: nil, when: .now() + .seconds(1))

@@ -37,7 +37,9 @@ extension MessageViewController : SendMessageBarDelegate {
         imagePicker?.present(from: self.view)
     }
     func sendMessageBar(textChangedTo text: String) {
-        interactor?.sendTypingNotification()
+        if self.sendTypingNotifications {
+            interactor?.sendTypingNotification()
+        }
     }
 
     func sendMessageBar(enablePeersMessaging: Bool) {

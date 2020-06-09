@@ -11,7 +11,7 @@ import TinodiosDB
 
 protocol MessageBusinessLogic: class {
     @discardableResult
-    func setup(topicName: String?) -> Bool
+    func setup(topicName: String?, sendReadReceipts: Bool) -> Bool
     @discardableResult
     func attachToTopic(interactively: Bool) -> Bool
     func cleanup()
@@ -30,8 +30,6 @@ protocol MessageBusinessLogic: class {
 protocol MessageDataStore {
     var topicName: String? { get set }
     var topic: DefaultComTopic? { get set }
-    @discardableResult
-    func setup(topicName: String?) -> Bool
     func loadMessages()
     func loadNextPage()
     func deleteMessage(seqId: Int)
@@ -72,8 +70,11 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
     //  0 means a notification without an explicit seq id has been requested.
     private var maxReadNoteSeqIdInFligth = -1
 
+    // User provided setting for sending read notifications.
+    private var sendReadReceipts = false
+
     @discardableResult
-    func setup(topicName: String?) -> Bool {
+    func setup(topicName: String?, sendReadReceipts: Bool) -> Bool {
         guard let topicName = topicName else { return false }
         self.topicName = topicName
         self.topicId = BaseDb.getInstance().topicDb?.getId(topic: topicName)
@@ -93,6 +94,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         self.lastSeenRead = self.topic?.read
         self.lastSeenRecv = self.topic?.recv
         self.topic?.listener = self
+        self.sendReadReceipts = sendReadReceipts
         return self.topic != nil
     }
     func cleanup() {
@@ -199,6 +201,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         )
     }
     func sendReadNotification(explicitSeq: Int? = nil, when deadline: DispatchTime) {
+        guard self.sendReadReceipts else { return }
         // We don't send a notification if more notifications are pending.
         // This avoids the case of acking every {data} message in a large batch.
         // However, we send the max seq id in the batch.
