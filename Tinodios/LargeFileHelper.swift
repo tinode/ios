@@ -54,7 +54,7 @@ class LargeFileHelper: NSObject {
     public static func createUploadKey(topicId: String, msgId: Int64) -> String {
         return "\(topicId)-\(msgId)"
     }
-    // TODO: make background uploads work.
+
     func startUpload(filename: String, mimetype: String, d: Data, topicId: String, msgId: Int64,
                      progressCallback: @escaping (Float) -> Void,
                      completionCallback: @escaping (ServerMessage?, Error?) -> Void) {

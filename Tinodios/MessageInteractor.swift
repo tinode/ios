@@ -328,15 +328,19 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
     static private func existingInteractor(for topicName: String?) -> MessageInteractor? {
         // Must be called on main thread.
         guard let topicName = topicName else { return nil }
-        guard let window = UIApplication.shared.keyWindow, let navVC = window.rootViewController as? UINavigationController else {
-            return nil
-        }
-        for controller in navVC.viewControllers {
-            if let messageVC = controller as? MessageViewController, messageVC.topicName == topicName {
-                return messageVC.interactor as? MessageInteractor
+        var result: MessageInteractor? = nil
+        DispatchQueue.main.sync {
+            guard let window = UIApplication.shared.keyWindow, let navVC = window.rootViewController as? UINavigationController else {
+                return
+            }
+            for controller in navVC.viewControllers {
+                if let messageVC = controller as? MessageViewController, messageVC.topicName == topicName {
+                    result = messageVC.interactor as? MessageInteractor
+                    return
+                }
             }
         }
-        return nil
+        return result
     }
 
     func uploadFile(filename: String?, refurl: URL?, mimeType: String?, data: Data?) {

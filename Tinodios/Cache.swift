@@ -78,12 +78,9 @@ class Cache {
     }
     private func getLargeFileHelper(withIdentifier identifier: String?) -> LargeFileHelper {
         if largeFileHelper == nil {
-            if let id = identifier {
-                let config = URLSessionConfiguration.background(withIdentifier: id)
-                largeFileHelper = LargeFileHelper(config: config)
-            } else {
-                largeFileHelper = LargeFileHelper()
-            }
+            let id = identifier ?? "tinode-\(Date().millisecondsSince1970)"
+            let config = URLSessionConfiguration.background(withIdentifier: id)
+            largeFileHelper = LargeFileHelper(config: config)
         }
         return largeFileHelper!
     }
