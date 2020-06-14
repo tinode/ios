@@ -363,12 +363,12 @@ public class MessageDb {
                     self.table[self.seq] > 1 &&
                     messages2[self.seq] == nil)
 
-        guard let hi = try? db.scalar(hiQuery.select(self.seq.max)) else {
+        guard let hi = try? db.scalar(hiQuery.select(self.table[self.seq].max)) else {
             // No gap is found.
             return nil
         }
-        // Find the first present message with ID less than the 'high'.
-        let seqExpr = self.high ?? (self.seq + 1)
+        // Find the first present message with ID less than the 'hi'.
+        let seqExpr = (self.high - 1) ?? self.seq
         let lowQuery = self.table
             .filter(self.topicId == topicId && self.seq < hi)
         let low: Int

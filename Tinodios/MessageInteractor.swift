@@ -233,9 +233,9 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                     topicId: self.topicId,
                     pageCount: self.pagesToLoad,
                     pageSize: MessageInteractor.kMessagesPerPage,
-                    descending: false) {
-                self.messages = messages
-                self.presenter?.presentMessages(messages: messages)
+                    descending: true) {
+                self.messages = messages.reversed()
+                self.presenter?.presentMessages(messages: self.messages)
             }
         }
     }
