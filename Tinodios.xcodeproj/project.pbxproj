@@ -425,7 +425,6 @@
 				0A0380D221B3CC8100A3FA0E /* Resources */,
 				0A431C052244A26200A837F7 /* Embed Frameworks */,
 				A5A27E48338DE610B94531E7 /* [CP] Embed Pods Frameworks */,
-				B094C9A92313C1F100C98B64 /* Crashlytics script */,
 				B094C9AA2315841E00C98B64 /* Assign build version from git */,
 				B0BC2B5423589CE100BEEB4B /* Assign DefaultValue in app preferences */,
 				0ACE9E7A23813A1D006BE575 /* Embed App Extensions */,
@@ -563,25 +562,6 @@
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Tinodios/Pods-Tinodios-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
-		};
-		B094C9A92313C1F100C98B64 /* Crashlytics script */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"$(SRCROOT)/$(BUILT_PRODUCTS_DIR)/$(INFOPLIST_PATH)",
-			);
-			name = "Crashlytics script";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Fabric/run\"\n";
 		};
 		B094C9AA2315841E00C98B64 /* Assign build version from git */ = {
 			isa = PBXShellScriptBuildPhase;
