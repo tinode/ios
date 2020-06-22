@@ -64,6 +64,17 @@ class ContactsSynchronizer {
     }
     public var permissionsChangedCallback: ((CNAuthorizationStatus) -> Void)?
 
+    public init() {
+        // Watch contact book changes.
+        NotificationCenter.default.addObserver(
+                self, selector: #selector(contactStoreDidChange), name: .CNContactStoreDidChange, object: nil)
+    }
+
+    @objc func contactStoreDidChange(notification: NSNotification) {
+        Cache.log.info("Contact change: notification %@", notification)
+        self.run()
+    }
+
     private func fetchContacts() -> [ContactHolder2]? {
         let keysToFetch: [CNKeyDescriptor] = [
             CNContactFormatter.descriptorForRequiredKeys(for: .fullName),
@@ -138,7 +149,6 @@ class ContactsSynchronizer {
                 _ = try tinode.loginToken(token: token, creds: nil).getResult()
                 // Generic params don't matter.
                 _ = try tinode.subscribe(to: Tinode.kTopicFnd, set: MsgSetMeta<Int, Int>?(nil), get: nil).getResult()
-                //let q: Int? = nil
                 let metaDesc: MetaSetDesc<Int, String> = MetaSetDesc(pub: nil, priv: contacts)
                 let setMeta: MsgSetMeta<Int, String> = MsgSetMeta<Int, String>(desc: metaDesc, sub: nil, tags: nil, cred: nil)
                 _ = try tinode.setMeta(for: Tinode.kTopicFnd, meta: setMeta).getResult()
