@@ -71,6 +71,8 @@ class Cache {
                                     authenticateWith: Cache.kApiKey,
                                     persistDataIn: dbh.sqlStore)
                     tinode!.OsVersion = UIDevice.current.systemVersion
+                    // Tell contacts synchronizer to attempt to synchronize contacts.
+                    ContactsSynchronizer.default.appBecameActive()
                 }
             }
         }

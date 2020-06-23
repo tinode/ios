@@ -68,11 +68,24 @@ class ContactsSynchronizer {
         // Watch contact book changes.
         NotificationCenter.default.addObserver(
                 self, selector: #selector(contactStoreDidChange), name: .CNContactStoreDidChange, object: nil)
+        NotificationCenter.default.addObserver(
+            self, selector: #selector(self.appBecameActive),
+            name: UIApplication.didBecomeActiveNotification,
+            object: nil)
     }
 
     @objc func contactStoreDidChange(notification: NSNotification) {
         Cache.log.info("Contact change: notification %@", notification)
         self.run()
+    }
+
+    @objc
+    func appBecameActive() {
+        if self.authStatus == .authorized {
+            self.run()
+        } else {
+            Cache.log.debug("Can't perform contact sync: unauthorized")
+        }
     }
 
     private func fetchContacts() -> [ContactHolder2]? {
