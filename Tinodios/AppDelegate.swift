@@ -108,6 +108,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             builder = topic.metaGetBuilder()
         }
 
+        guard !topic.attached else {
+            // No need to fetch: topic is already subscribed and got data through normal channel.
+            return .noData
+        }
         if (topic.recv ?? 0) >= seq {
             return .noData
         }
