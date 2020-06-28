@@ -116,8 +116,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             return .noData
         }
         defer {
-            if topic.attached {
-                topic.leave()
+            // Data messages are sent asynchronously right after ctrl message.
+            // Give them 1 second to arrive - so we reply back with {note recv}.
+            DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1)) {
+                if topic.attached {
+                    topic.leave()
+                }
             }
         }
         if let msg = try? topic.subscribe(set: nil, get: builder.withLaterData(limit: 10).withDel().build()).getResult(), (msg.ctrl?.code ?? 500) < 300 {
