@@ -173,6 +173,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             } else if what == "sub" {
                 // New subscription.
                 completionHandler(fetchDesc(for: topicName))
+            } else {
+                Cache.log.error("Invalid 'what' value ['%@'] in push notification for topic '%@'", what!, topicName)
+                completionHandler(.failed)
             }
         } else if state == .inactive && self.appIsStarting {
             // User tapped notification.
@@ -207,7 +210,12 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     // Called when the app is in the foreground.
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
         let userInfo = notification.request.content.userInfo
-        guard let topicName = userInfo["topic"] as? String, !topicName.isEmpty, let seqStr = userInfo["seq"] as? String, let seq = Int(seqStr) else { return }
+        let what = userInfo["what"] as? String
+        // Only handling "msg" notifications. New subscriptions ("sub" notifications) in the foreground
+        // will be handled automatically by Tinode SDK.
+        guard let topicName = userInfo["topic"] as? String, !topicName.isEmpty,
+            what == nil || what == "msg",
+            let seqStr = userInfo["seq"] as? String, let seq = Int(seqStr) else { return }
         if let messageVC = UiUtils.topViewController(rootViewController: UIApplication.shared.keyWindow?.rootViewController) as? MessageViewController, messageVC.topicName == topicName {
             // We are already in the correct topic. Do not present the notification.
             completionHandler([])
