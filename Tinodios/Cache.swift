@@ -13,14 +13,6 @@ import Firebase
 class Cache {
     private static let `default` = Cache()
 
-    #if DEBUG
-        public static let kHostName = "127.0.0.1:6060" // localhost
-        public static let kUseTLS = false
-    #else
-        public static let kHostName = "api.tinode.co" // production cluster
-        public static let kUseTLS = true
-    #endif
-
     private static let kApiKey = "AQEAAAABAAD_rAp4DJh05a1HAwFT3A6K"
 
     private var tinode: Tinode? = nil

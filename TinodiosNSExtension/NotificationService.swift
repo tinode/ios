@@ -45,6 +45,14 @@ class NotificationService: UNNotificationServiceExtension {
                 let xfrom = userInfo["xfrom"] as? String, !xfrom.isEmpty else { return }
             let action = userInfo["what"] as? String ?? "msg"
             let user = store.userGet(uid: xfrom) as? DefaultUser
+            /*
+            if user == nil {
+                if Tinodios.Utils.fetchDesc(for: xfrom) == .newData {
+                    print("123")
+                }
+                
+            }
+ */
             let senderName = user?.pub?.fn ?? "Unknown"
             switch Tinode.topicTypeByName(name: topic) {
             case .p2p:

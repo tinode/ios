@@ -145,7 +145,7 @@ class UiUtils {
         Cache.log.info("UiUtils - Invalidating cache and logging out.")
         BaseDb.getInstance().logout()
         Cache.invalidate()
-        Utils.removeAuthToken()
+        SharedUtils.removeAuthToken()
         UiUtils.routeToLoginVC()
     }
 

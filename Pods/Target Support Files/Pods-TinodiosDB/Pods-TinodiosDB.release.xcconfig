@@ -1,9 +1,9 @@
-FRAMEWORK_SEARCH_PATHS = $(inherited) "${PODS_CONFIGURATION_BUILD_DIR}/SQLite.swift"
+FRAMEWORK_SEARCH_PATHS = $(inherited) "${PODS_CONFIGURATION_BUILD_DIR}/SQLite.swift" "${PODS_CONFIGURATION_BUILD_DIR}/SwiftKeychainWrapper"
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) COCOAPODS=1
-HEADER_SEARCH_PATHS = $(inherited) "${PODS_CONFIGURATION_BUILD_DIR}/SQLite.swift/SQLite.framework/Headers"
+HEADER_SEARCH_PATHS = $(inherited) "${PODS_CONFIGURATION_BUILD_DIR}/SQLite.swift/SQLite.framework/Headers" "${PODS_CONFIGURATION_BUILD_DIR}/SwiftKeychainWrapper/SwiftKeychainWrapper.framework/Headers"
 LD_RUNPATH_SEARCH_PATHS = $(inherited) '@executable_path/Frameworks' '@loader_path/Frameworks' '@executable_path/../../Frameworks'
-OTHER_CFLAGS = $(inherited) -isystem "${PODS_CONFIGURATION_BUILD_DIR}/SQLite.swift/SQLite.framework/Headers" -iframework "${PODS_CONFIGURATION_BUILD_DIR}/SQLite.swift"
-OTHER_LDFLAGS = $(inherited) -l"sqlite3" -framework "SQLite"
+OTHER_CFLAGS = $(inherited) -isystem "${PODS_CONFIGURATION_BUILD_DIR}/SQLite.swift/SQLite.framework/Headers" -isystem "${PODS_CONFIGURATION_BUILD_DIR}/SwiftKeychainWrapper/SwiftKeychainWrapper.framework/Headers" -iframework "${PODS_CONFIGURATION_BUILD_DIR}/SQLite.swift" -iframework "${PODS_CONFIGURATION_BUILD_DIR}/SwiftKeychainWrapper"
+OTHER_LDFLAGS = $(inherited) -l"sqlite3" -framework "SQLite" -framework "SwiftKeychainWrapper"
 OTHER_SWIFT_FLAGS = $(inherited) -D COCOAPODS
 PODS_BUILD_DIR = ${BUILD_DIR}
 PODS_CONFIGURATION_BUILD_DIR = ${PODS_BUILD_DIR}/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)

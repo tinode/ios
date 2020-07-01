@@ -8,6 +8,7 @@
 import Foundation
 import Contacts
 import TinodeSDK
+import TinodiosDB
 
 class ContactsSynchronizer {
     private class ContactHolder2 {
@@ -149,7 +150,7 @@ class ContactsSynchronizer {
     private func synchronizeInternal() {
         var success = false
         let contactsManager = ContactsManager.default
-        let t0 = Utils.getAuthToken()
+        let t0 = SharedUtils.getAuthToken()
         if let token = t0, !token.isEmpty, let contacts = self.fetchContacts(), !contacts.isEmpty {
             Cache.log.info("ContactsSynchronizer - starting sync.")
             let contacts: String = contactsToQueryString(contacts: contacts)

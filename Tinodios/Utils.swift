@@ -8,92 +8,13 @@
 import Foundation
 import MobileCoreServices
 import PhoneNumberKit
-import SwiftKeychainWrapper
-import SwiftWebSocket
 import TinodeSDK
 import TinodiosDB
 
-class Utils {
-    static let kTinodeHasRunBefore = "tinodeHasRunBefore"
-    static let kTinodePrefReadReceipts = "tinodePrefSendReadReceipts"
-    static let kTinodePrefTypingNotifications = "tinodePrefTypingNoficications"
-    static let kTinodePrefLastLogin = "tinodeLastLogin"
-
-    // Keys we store in keychain.
-    static let kTokenKey = "co.tinode.token"
-    static let kTokenExpiryKey = "co.tinode.token_expiry"
-
+public class Utils {
     static var phoneNumberKit: PhoneNumberKit = {
         return PhoneNumberKit()
     }()
-
-    public static func getSavedLoginUserName() -> String? {
-        return UserDefaults.standard.string(forKey: Utils.kTinodePrefLastLogin)
-    }
-
-    private static func appDidRunBefore() -> Bool {
-        let userDefaults = UserDefaults.standard
-        guard userDefaults.bool(forKey: Utils.kTinodeHasRunBefore) else {
-            // Clear the app keychain.
-            KeychainWrapper.standard.removeAllKeys()
-            userDefaults.set(true, forKey: Utils.kTinodeHasRunBefore)
-            return false
-        }
-        return true
-    }
-
-    public static func getAuthToken() -> String? {
-        guard Utils.appDidRunBefore() else { return nil }
-        return KeychainWrapper.standard.string(
-            forKey: Utils.kTokenKey, withAccessibility: .afterFirstUnlock)
-    }
-
-    public static func getAuthTokenExpiryDate() -> Date? {
-        guard let expString = KeychainWrapper.standard.string(
-            forKey: Utils.kTokenExpiryKey, withAccessibility: .afterFirstUnlock) else { return nil }
-        return Formatter.rfc3339.date(from: expString)
-    }
-
-    public static func removeAuthToken() {
-        let userDefaults = UserDefaults.standard
-        userDefaults.removeObject(forKey: Utils.kTinodePrefLastLogin)
-        KeychainWrapper.standard.removeAllKeys()
-    }
-
-    public static func saveAuthToken(for userName: String, token: String?, expires expiryDate: Date?) {
-        UserDefaults.standard.set(userName, forKey: Utils.kTinodePrefLastLogin)
-        if let token = token, !token.isEmpty {
-            if !KeychainWrapper.standard.set(token, forKey: Utils.kTokenKey, withAccessibility: .afterFirstUnlock) {
-                Cache.log.error("Could not save auth token")
-            }
-            if let expiryDate = expiryDate {
-                KeychainWrapper.standard.set(
-                    Formatter.rfc3339.string(from: expiryDate),
-                    forKey: Utils.kTokenExpiryKey,
-                    withAccessibility: .afterFirstUnlock)
-            } else {
-                KeychainWrapper.standard.removeObject(forKey: Utils.kTokenExpiryKey)
-            }
-        }
-    }
-
-    public static func registerUserDefaults() {
-        /// Here you can give default values to your UserDefault keys
-        UserDefaults.standard.register(defaults: [
-            Utils.kTinodePrefReadReceipts: true,
-            Utils.kTinodePrefTypingNotifications: true
-        ])
-
-        let (hostName, _, _) = ConnectionSettingsHelper.getConnectionSettings()
-        if hostName == nil {
-            // If hostname is nil, sync values to defaults
-            ConnectionSettingsHelper.setHostName(Bundle.main.object(forInfoDictionaryKey: "HOST_NAME") as? String)
-            ConnectionSettingsHelper.setUseTLS(Bundle.main.object(forInfoDictionaryKey: "USE_TLS") as? String)
-        }
-        if !Utils.appDidRunBefore() {
-            Cache.log.info("App started for the first time.")
-        }
-    }
 
     // Calculate difference between two arrays of messages. Returns a tuple of insertion indexes and deletion indexes.
     // First the deletion indexes are applied to the old array. Then insertions are applied to the remaining array.
@@ -161,55 +82,6 @@ class Utils {
             ext = UTTypeCopyPreferredTagWithClass(uti, kUTTagClassFilenameExtension)?.takeUnretainedValue() as String?
         }
         return ProcessInfo.processInfo.globallyUniqueString + "." + (ext ?? "bin")
-    }
-
-    public static func connectAndLoginSync(inBackground bkg: Bool) -> Bool {
-        guard let userName = Utils.getSavedLoginUserName(), !userName.isEmpty else {
-            Cache.log.error("Connect&Login Sync - missing user name")
-            return false
-        }
-        guard let token = Utils.getAuthToken(), !token.isEmpty else {
-            Cache.log.error("Connect&Login Sync - missing auth token")
-            return false
-        }
-        if let tokenExpires = Utils.getAuthTokenExpiryDate(), tokenExpires < Date() {
-            // Token has expired.
-            // TODO: treat tokenExpires == nil as a reason to reject.
-            Cache.log.error("Connect&Login Sync - auth token expired")
-            return false
-        }
-        Cache.log.info("Connect&Login Sync - will attempt to login (user name: %@)", userName)
-        let tinode = Cache.getTinode()
-        var success = false
-        do {
-            tinode.setAutoLoginWithToken(token: token)
-            // Tinode.connect() will automatically log in.
-            let msg = try tinode.connectDefault(inBackground: bkg)?.getResult()
-            if let code = msg?.ctrl?.code {
-                // Assuming success by default.
-                success = true
-                switch code {
-                case 0..<300:
-                    Cache.log.info("Connect&Login Sync - login successful for: %@", tinode.myUid!)
-                    if tinode.authToken != token {
-                        Utils.saveAuthToken(for: userName, token: tinode.authToken, expires: tinode.authTokenExpires)
-                    }
-                case 409:
-                    Cache.log.info("Connect&Login Sync - already authenticated.")
-                case 500..<600:
-                    Cache.log.error("Connect&Login Sync - server error on login: %d", code)
-                default:
-                    success = false
-                }
-            }
-        } catch SwiftWebSocket.WebSocketError.network(let e)  {
-            // No network connection.
-            Cache.log.debug("Connect&Login Sync [network] - could not connect to Tinode: %@", e)
-            success = true
-        } catch {
-            Cache.log.error("Connect&Login Sync - failed to automatically login to Tinode: %@", error.localizedDescription)
-        }
-        return success
     }
 }
 
@@ -321,18 +193,6 @@ extension URL {
     public func extractQueryParam(withName name: String) -> String? {
         let components = URLComponents(url: self, resolvingAgainstBaseURL: false)
         return components?.queryItems?.first(where: { $0.name == name })?.value
-    }
-}
-
-extension Tinode {
-    public static func getConnectionParams() -> (String, Bool) {
-        let (hostName, useTLS, _) = ConnectionSettingsHelper.getConnectionSettings()
-        return (hostName ?? Cache.kHostName, useTLS ?? Cache.kUseTLS)
-    }
-    func connectDefault(inBackground bkg: Bool) throws -> PromisedReply<ServerMessage>? {
-        let (hostName, useTLS) = Tinode.getConnectionParams()
-        Cache.log.debug("Connecting to %@, secure %@", hostName, useTLS ? "YES" : "NO")
-        return try connect(to: hostName, useTLS: useTLS, inBackground: bkg)
     }
 }
 

@@ -8,8 +8,9 @@
 import UIKit
 import os
 import SwiftKeychainWrapper
-import TinodeSDK
 import SwiftWebSocket
+import TinodeSDK
+import TinodiosDB
 
 class LoginViewController: UIViewController {
 
@@ -136,7 +137,7 @@ class LoginViewController: UIViewController {
                 .then(
                     onSuccess: { [weak self] pkt in
                         Cache.log.info("LoginVC - login successful for %@", tinode.myUid!)
-                        Utils.saveAuthToken(for: userName, token: tinode.authToken, expires: tinode.authTokenExpires)
+                        SharedUtils.saveAuthToken(for: userName, token: tinode.authToken, expires: tinode.authTokenExpires)
                         if let token = tinode.authToken {
                             tinode.setAutoLoginWithToken(token: token)
                         }

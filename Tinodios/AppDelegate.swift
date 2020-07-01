@@ -23,7 +23,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var appIsStarting: Bool = false
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        Utils.registerUserDefaults()
+        SharedUtils.registerUserDefaults()
         let baseDb = BaseDb.getInstance()
         if baseDb.isReady {
             // When the app launch after user tap on notification (originally was not running / not in background).
@@ -36,7 +36,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         // Try to connect and login in the background.
         DispatchQueue.global(qos: .userInitiated).async {
-            if !Utils.connectAndLoginSync(inBackground: false) {
+            if !SharedUtils.connectAndLoginSync(using: Cache.getTinode(), inBackground: false) {
                 UiUtils.logoutAndRouteToLoginVC()
             }
         }
@@ -83,74 +83,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationWillTerminate(_ application: UIApplication) {
         application.applicationIconBadgeNumber = Cache.totalUnreadCount()
     }
-
-    // Synchronously connects to topic |topicName| and fetches its messages
-    // if the last received message was prior to |seq|.
-    @discardableResult
-    private func fetchData(for topicName: String, seq: Int) -> UIBackgroundFetchResult {
-        let tinode = Cache.getTinode()
-        guard tinode.isConnectionAuthenticated || Utils.connectAndLoginSync(inBackground: true) else {
-            return .failed
-        }
-        var topic: DefaultComTopic
-        var builder: DefaultComTopic.MetaGetBuilder
-        if !tinode.isTopicTracked(topicName: topicName) {
-            // New topic. Create it.
-            guard let t = tinode.newTopic(for: topicName) as? DefaultComTopic else {
-                return .failed
-            }
-            topic = t
-            builder = topic.metaGetBuilder().withDesc().withSub()
-        } else {
-            // Existing topic.
-            guard let t = tinode.getTopic(topicName: topicName) as? DefaultComTopic else { return .failed }
-            topic = t
-            builder = topic.metaGetBuilder()
-        }
-
-        guard !topic.attached else {
-            // No need to fetch: topic is already subscribed and got data through normal channel.
-            return .noData
-        }
-        if (topic.recv ?? 0) >= seq {
-            return .noData
-        }
-        if let msg = try? topic.subscribe(set: nil, get: builder.withLaterData(limit: 10).withDel().build()).getResult(), (msg.ctrl?.code ?? 500) < 300 {
-            // Data messages are sent asynchronously right after ctrl message.
-            // Give them 1 second to arrive - so we reply back with {note recv}.
-            DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1)) {
-                if topic.attached {
-                    topic.leave()
-                }
-            }
-            return .newData
-        }
-        return .failed
+    /*
+    func application(_ application: UIApplication, performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+        var userInfo: [String: String] = [:]
+        userInfo["topic"] = "usrPKFoLbHvIMA"
+        userInfo["what"] = "sub"
+        self.application(application, didReceiveRemoteNotification: userInfo, fetchCompletionHandler: completionHandler)
     }
-
-    // Synchronously fetches description for topic |topicName|
-    // (and saves the description locally).
-    @discardableResult
-    private func fetchDesc(for topicName: String) -> UIBackgroundFetchResult {
-        let tinode = Cache.getTinode()
-        guard tinode.isConnectionAuthenticated || Utils.connectAndLoginSync(inBackground: true) else {
-            return .failed
-        }
-        // If we have topic data, we are done.
-        guard !tinode.isTopicTracked(topicName: topicName) else {
-            return .noData
-        }
-        do {
-            if let msg = try tinode.getMeta(topic: topicName, query: MsgGetMeta.desc()).getResult(),
-                (msg.ctrl?.code ?? 500) < 300 {
-                return .newData
-            }
-        } catch {
-            Cache.log.error("Failed to fetch topic description for [%@]: %@", topicName, error.localizedDescription)
-        }
-        return .failed
-    }
-
+*/
     // Notification received. Process it.
     // Application woken up in the background (e.g. for data fetch).
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any],
@@ -169,10 +109,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     return
                 }
                 // Fetch data in the background.
-                completionHandler(fetchData(for: topicName, seq: seq))
+                completionHandler(SharedUtils.fetchData(using: Cache.getTinode(), for: topicName, seq: seq))
             } else if what == "sub" {
                 // New subscription.
-                completionHandler(fetchDesc(for: topicName))
+                completionHandler(SharedUtils.fetchDesc(using: Cache.getTinode(), for: topicName))
             } else {
                 Cache.log.error("Invalid 'what' value ['%@'] in push notification for topic '%@'", what!, topicName)
                 completionHandler(.failed)
@@ -221,7 +161,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
             completionHandler([])
         } else {
             DispatchQueue.global(qos: .background).async {
-                self.fetchData(for: topicName, seq: seq)
+                SharedUtils.fetchData(using: Cache.getTinode(), for: topicName, seq: seq)
             }
             // If the push notification is silent, do not present the alert.
             let isSilent = userInfo["silent"] as? String == "true"
@@ -234,12 +174,13 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         let userInfo = response.notification.request.content.userInfo
         defer { completionHandler() }
         guard let topicName = userInfo["topic"] as? String, !topicName.isEmpty else { return }
-        if Cache.getTinode().isConnectionAuthenticated {
+        let tinode = Cache.getTinode()
+        if tinode.isConnectionAuthenticated {
             UiUtils.routeToMessageVC(forTopic: topicName)
             return
         }
         DispatchQueue.global(qos: .userInitiated).async {
-            if !Utils.connectAndLoginSync(inBackground: false) {
+            if !SharedUtils.connectAndLoginSync(using: tinode, inBackground: false) {
                 UiUtils.logoutAndRouteToLoginVC()
             } else {
                 UiUtils.routeToMessageVC(forTopic: topicName)

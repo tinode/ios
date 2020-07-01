@@ -6,6 +6,7 @@
 //
 
 import TinodeSDK
+import TinodiosDB
 import UIKit
 
 class SettingsSecurityViewController: UITableViewController {
@@ -193,7 +194,7 @@ class SettingsSecurityViewController: UITableViewController {
             }
             return
         }
-        guard let userName = Utils.getSavedLoginUserName() else {
+        guard let userName = SharedUtils.getSavedLoginUserName() else {
             DispatchQueue.main.async {
                 UiUtils.showToast(message: NSLocalizedString("Login info missing...", comment: "Error message"))
             }

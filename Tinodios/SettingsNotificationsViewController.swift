@@ -6,6 +6,7 @@
 //
 
 import TinodeSDK
+import TinodiosDB
 import UIKit
 
 class SettingsNotificationsViewController: UITableViewController {
@@ -31,14 +32,12 @@ class SettingsNotificationsViewController: UITableViewController {
 
     private func reloadData() {
         // Read notifications and typing indicator checkboxes.
-        let userDefaults = UserDefaults.standard
-
         self.incognitoModeSwitch.setOn(me.isMuted, animated: false)
         self.sendReadReceiptsSwitch.setOn(
-            userDefaults.bool(forKey: Utils.kTinodePrefReadReceipts),
+            SharedUtils.kAppDefaults.bool(forKey: SharedUtils.kTinodePrefReadReceipts),
             animated: false)
         self.sendTypingNotificationsSwitch.setOn(
-            userDefaults.bool(forKey: Utils.kTinodePrefTypingNotifications),
+            SharedUtils.kAppDefaults.bool(forKey: SharedUtils.kTinodePrefTypingNotifications),
             animated: false)
     }
 
@@ -55,10 +54,10 @@ class SettingsNotificationsViewController: UITableViewController {
     }
 
     @IBAction func readReceiptsClicked(_ sender: Any) {
-        UserDefaults.standard.set(self.sendReadReceiptsSwitch.isOn, forKey: Utils.kTinodePrefReadReceipts)
+        SharedUtils.kAppDefaults.set(self.sendReadReceiptsSwitch.isOn, forKey: SharedUtils.kTinodePrefReadReceipts)
     }
 
     @IBAction func typingNotificationsClicked(_ sender: Any) {
-        UserDefaults.standard.set(self.sendTypingNotificationsSwitch.isOn, forKey: Utils.kTinodePrefTypingNotifications)
+        SharedUtils.kAppDefaults.set(self.sendTypingNotificationsSwitch.isOn, forKey: SharedUtils.kTinodePrefTypingNotifications)
     }
 }

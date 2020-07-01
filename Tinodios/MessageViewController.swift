@@ -229,9 +229,8 @@ class MessageViewController: UIViewController {
         presenter.viewController = self
 
         // Notifications settings.
-        let userDefaults = UserDefaults.standard
-        self.sendTypingNotifications = userDefaults.bool(forKey: Utils.kTinodePrefTypingNotifications)
-        self.sendReadReceipts = userDefaults.bool(forKey: Utils.kTinodePrefReadReceipts)
+        self.sendTypingNotifications = SharedUtils.kAppDefaults.bool(forKey: SharedUtils.kTinodePrefTypingNotifications)
+        self.sendReadReceipts = SharedUtils.kAppDefaults.bool(forKey: SharedUtils.kTinodePrefReadReceipts)
 
         self.interactor = interactor
         addAppStateObservers()

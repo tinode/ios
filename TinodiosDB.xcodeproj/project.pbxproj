@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0ACD8F7824AC579700043871 /* SharedUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACD8F7724AC579700043871 /* SharedUtils.swift */; };
+		0ACD8F7A24AC6EAC00043871 /* ConnectionSettingsHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACD8F7924AC5DAB00043871 /* ConnectionSettingsHelper.swift */; };
 		0ACE9E552381342B006BE575 /* TinodiosDB.h in Headers */ = {isa = PBXBuildFile; fileRef = 0ACE9E532381342B006BE575 /* TinodiosDB.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		0ACE9E662381356B006BE575 /* StoredMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACE9E632381356B006BE575 /* StoredMessage.swift */; };
 		0ACE9E672381356B006BE575 /* TopicDb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACE9E642381356B006BE575 /* TopicDb.swift */; };
@@ -21,6 +23,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0ACD8F7724AC579700043871 /* SharedUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedUtils.swift; sourceTree = "<group>"; };
+		0ACD8F7924AC5DAB00043871 /* ConnectionSettingsHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionSettingsHelper.swift; sourceTree = "<group>"; };
+		0ACD8F7B24AC704C00043871 /* Pods_TinodeSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Pods_TinodeSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		0ACE9E502381342B006BE575 /* TinodiosDB.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = TinodiosDB.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		0ACE9E532381342B006BE575 /* TinodiosDB.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TinodiosDB.h; sourceTree = "<group>"; };
 		0ACE9E542381342B006BE575 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -80,6 +85,8 @@
 				0ACE9E622381356B006BE575 /* SubscriberDb.swift */,
 				0ACE9E642381356B006BE575 /* TopicDb.swift */,
 				0ACE9E5E2381356A006BE575 /* UserDb.swift */,
+				0ACD8F7924AC5DAB00043871 /* ConnectionSettingsHelper.swift */,
+				0ACD8F7724AC579700043871 /* SharedUtils.swift */,
 				0ACE9E532381342B006BE575 /* TinodiosDB.h */,
 				0ACE9E542381342B006BE575 /* Info.plist */,
 			);
@@ -98,6 +105,7 @@
 		A7B5FF80AC9DCD9EA52A1668 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				0ACD8F7B24AC704C00043871 /* Pods_TinodeSDK.framework */,
 				0ACE9E822381418A006BE575 /* TinodeSDK.framework */,
 				2B351FFA61AB7A59DE7E76A0 /* Pods_TinodiosDB.framework */,
 			);
@@ -209,8 +217,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0ACD8F7A24AC6EAC00043871 /* ConnectionSettingsHelper.swift in Sources */,
 				0ACE9E6C2381356B006BE575 /* AccountDb.swift in Sources */,
 				0ACE9E6B2381356B006BE575 /* BaseDb.swift in Sources */,
+				0ACD8F7824AC579700043871 /* SharedUtils.swift in Sources */,
 				0ACE9E662381356B006BE575 /* StoredMessage.swift in Sources */,
 				0ACE9E6A2381356B006BE575 /* UserDb.swift in Sources */,
 				0ACE9E692381356B006BE575 /* MessageDb.swift in Sources */,
@@ -352,6 +362,12 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/SQLite.swift\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/SwiftKeychainWrapper\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/SwiftWebSocket\"",
+				);
 				INFOPLIST_FILE = TinodiosDB/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
@@ -379,6 +395,12 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/SQLite.swift\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/SwiftKeychainWrapper\"",
+					"\"${PODS_CONFIGURATION_BUILD_DIR}/SwiftWebSocket\"",
+				);
 				INFOPLIST_FILE = TinodiosDB/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;

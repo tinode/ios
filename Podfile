@@ -17,10 +17,10 @@ end
 
 def db_pods
     pod 'SQLite.swift', '~> 0.12.2'
+    pod 'SwiftKeychainWrapper', '~> 3.2'
 end
 
 def ui_pods
-    pod 'SwiftKeychainWrapper', '~> 3.2'
     pod 'Firebase/Messaging'
     pod 'Firebase/Analytics'
     pod 'PhoneNumberKit', '~> 3.1'
