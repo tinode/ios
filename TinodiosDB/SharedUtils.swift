@@ -16,6 +16,9 @@ public class SharedUtils {
     static public let kTinodePrefReadReceipts = "tinodePrefSendReadReceipts"
     static public let kTinodePrefTypingNotifications = "tinodePrefTypingNoficications"
 
+    // App Tinode api key.
+    private static let kApiKey = "AQEAAAABAAD_rAp4DJh05a1HAwFT3A6K"
+
     static public let kAppDefaults = UserDefaults(suiteName: BaseDb.kAppGroupId)!
     static let kAppKeychain = KeychainWrapper(serviceName: "co.tinode.tinodios", accessGroup: BaseDb.kAppGroupId)
 
@@ -77,6 +80,19 @@ public class SharedUtils {
                 SharedUtils.kAppKeychain.removeObject(forKey: SharedUtils.kTokenExpiryKey)
             }
         }
+    }
+
+    /// Creates a Tinode instance backed by the local starage.
+    public static func createTinode() -> Tinode {
+        let appVersion: String = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as! String
+        let appName = "Tinodios/" + appVersion
+        let dbh = BaseDb.getInstance()
+        // FIXME: Get and use current UI language from Bundle.main.preferredLocalizations.first
+        let tinode = Tinode(for: appName,
+                            authenticateWith: SharedUtils.kApiKey,
+                            persistDataIn: dbh.sqlStore)
+        tinode.OsVersion = UIDevice.current.systemVersion
+        return tinode
     }
 
     public static func registerUserDefaults() {

@@ -13,8 +13,6 @@ import Firebase
 class Cache {
     private static let `default` = Cache()
 
-    private static let kApiKey = "AQEAAAABAAD_rAp4DJh05a1HAwFT3A6K"
-
     private var tinode: Tinode? = nil
     private var timer = RepeatingTimer(timeInterval: 60 * 60 * 4) // Once every 4 hours.
     private var largeFileHelper: LargeFileHelper? = nil
@@ -55,14 +53,7 @@ class Cache {
         if tinode == nil {
             queue.sync {
                 if tinode == nil {
-                    let appVersion: String = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as! String
-                    let appName = "Tinodios/" + appVersion
-                    let dbh = BaseDb.getInstance()
-                    // FIXME: Get and use current UI language from Bundle.main.preferredLocalizations.first
-                    tinode = Tinode(for: appName,
-                                    authenticateWith: Cache.kApiKey,
-                                    persistDataIn: dbh.sqlStore)
-                    tinode!.OsVersion = UIDevice.current.systemVersion
+                    tinode = SharedUtils.createTinode()
                     // Tell contacts synchronizer to attempt to synchronize contacts.
                     ContactsSynchronizer.default.appBecameActive()
                 }

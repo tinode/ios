@@ -6,14 +6,16 @@
 //
 
 import UserNotifications
-import TinodiosDB
 import TinodeSDK
+import TinodiosDB
 
 @available(iOS 10, *)
 class NotificationService: UNNotificationServiceExtension {
 
     var contentHandler: ((UNNotificationContent) -> Void)?
     var bestAttemptContent: UNMutableNotificationContent?
+
+    let log = TinodeSDK.Log(subsystem: BaseDb.kBundleId)
 
     override func didReceive(_ request: UNNotificationRequest, withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void) {
         self.contentHandler = contentHandler
@@ -44,15 +46,21 @@ class NotificationService: UNNotificationServiceExtension {
             guard let topic = userInfo["topic"] as? String, !topic.isEmpty,
                 let xfrom = userInfo["xfrom"] as? String, !xfrom.isEmpty else { return }
             let action = userInfo["what"] as? String ?? "msg"
-            let user = store.userGet(uid: xfrom) as? DefaultUser
-            /*
+            var user = store.userGet(uid: xfrom) as? DefaultUser
             if user == nil {
-                if Tinodios.Utils.fetchDesc(for: xfrom) == .newData {
-                    print("123")
+                // If we don't have the user info, fetch it from the server.
+                let tinode = SharedUtils.createTinode()
+                self.log.info("Fetching desc from server for user %@.", xfrom)
+                if SharedUtils.fetchDesc(using: tinode, for: xfrom) == .newData {
+                    // Server replies asynchronously. Give the thread 1 second to receive and persist the data.
+                    Thread.sleep(forTimeInterval: 1)
+                    user = store.userGet(uid: xfrom) as? DefaultUser
+                } else {
+                    self.log.info("No new desc data fetched for %@.", xfrom)
                 }
-                
+                tinode.disconnect()
             }
- */
+
             let senderName = user?.pub?.fn ?? "Unknown"
             switch Tinode.topicTypeByName(name: topic) {
             case .p2p:
