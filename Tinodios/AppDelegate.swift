@@ -83,14 +83,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationWillTerminate(_ application: UIApplication) {
         application.applicationIconBadgeNumber = Cache.totalUnreadCount()
     }
-    /*
-    func application(_ application: UIApplication, performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-        var userInfo: [String: String] = [:]
-        userInfo["topic"] = "usrPKFoLbHvIMA"
-        userInfo["what"] = "sub"
-        self.application(application, didReceiveRemoteNotification: userInfo, fetchCompletionHandler: completionHandler)
-    }
-*/
+
     // Notification received. Process it.
     // Application woken up in the background (e.g. for data fetch).
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any],
