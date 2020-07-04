@@ -191,7 +191,7 @@ open class MeTopic<DP: Codable & Mergeable>: Topic<DP, PrivateType, DP, PrivateT
         }
 
         // "what":"tags" may have src == nil
-        if let topic = pres.src != nil ? tinode!.getTopic(topicName: pres.src!) : nil {
+        if let topic = tinode!.getTopic(topicName: pres.src ?? "") {
             switch what {
             case .kOn: // topic came online
                 topic.online = true
@@ -281,10 +281,7 @@ open class MeTopic<DP: Codable & Mergeable>: Topic<DP, PrivateType, DP, PrivateT
                             t.update(sub: sub as! Subscription<VCard, PrivateType>)
                         } else if let t = topic as? DefaultMeTopic {
                             t.update(sub: sub as! Subscription<VCard, PrivateType>)
-                        } /*else if let t = topic as? DefaultFndTopic {
-                            t.update(sub: sub)
-                        } */
-                        else {
+                        } else {
                             Tinode.log.fault("ME.routeMetaSub - failed to update topic %@", String(describing: topic))
                             assert(false)
                         }

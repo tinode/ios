@@ -31,7 +31,7 @@ public class Defacs: Codable, Equatable {
     private enum CodingKeys : String, CodingKey  {
         case auth, anon
     }
-    required public init (from decoder: Decoder) throws {
+    required public init(from decoder: Decoder) throws {
         let container =  try decoder.container (keyedBy: CodingKeys.self)
         if let authStr = try? container.decode(String.self, forKey: .auth) {
             setAuth(a: authStr)

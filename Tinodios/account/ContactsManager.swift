@@ -48,12 +48,9 @@ class ContactsManager {
         } else {
             if userId >= 0 {
                 // Existing contact.
-                // TODO: the assert should go away. This code is in active development.
-                // We need to catch potential issues with it.
-                assert(userDb.update(
-                    userId: userId,
-                    updated: sub.updated,
-                    serializedPub: sub.serializePub()))
+                if !userDb.update(userId: userId, updated: sub.updated, serializedPub: sub.serializePub()) {
+                    Cache.log.error("Could not update user db for userId [%d], subId [%@]", userId, subId)
+                }
             } else {
                 // New contact.
                 userDb.insert(sub: sub)
