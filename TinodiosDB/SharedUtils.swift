@@ -11,7 +11,8 @@ import SwiftWebSocket
 import TinodeSDK
 
 public class SharedUtils {
-    static public let kTinodeHasRunBefore = "tinodeHasRunBefore"
+    static public let kTinodeMetaVersion = "tinodeMetaVersion"
+
     static public let kTinodePrefLastLogin = "tinodeLastLogin"
     static public let kTinodePrefReadReceipts = "tinodePrefSendReadReceipts"
     static public let kTinodePrefTypingNotifications = "tinodePrefTypingNoficications"
@@ -26,6 +27,12 @@ public class SharedUtils {
     static let kTokenKey = "co.tinode.token"
     static let kTokenExpiryKey = "co.tinode.token_expiry"
 
+    // Application metadata version.
+    // Bump it up whenever you change the application metadata and
+    // want to force the user to re-login when the user installs
+    // this new application version.
+    static let kAppMetaVersion = 1
+
     // Default connection params.
     #if DEBUG
         public static let kHostName = "127.0.0.1:6060" // localhost
@@ -38,18 +45,20 @@ public class SharedUtils {
     public static func getSavedLoginUserName() -> String? {
         return SharedUtils.kAppDefaults.string(forKey: SharedUtils.kTinodePrefLastLogin)
     }
-    private static func appDidRunBefore() -> Bool {
-        guard SharedUtils.kAppDefaults.bool(forKey: SharedUtils.kTinodeHasRunBefore) else {
+    private static func appMetaVersionUpToDate() -> Bool {
+        let v = SharedUtils.kAppDefaults.integer(forKey: SharedUtils.kTinodeMetaVersion)
+        guard v == SharedUtils.kAppMetaVersion else {
+            BaseDb.log.error("App meta version does not match. Saved [%d] vs current [%d]", v, SharedUtils.kAppMetaVersion)
             // Clear the app keychain.
             SharedUtils.kAppKeychain.removeAllKeys()
-            SharedUtils.kAppDefaults.set(true, forKey: SharedUtils.kTinodeHasRunBefore)
+            SharedUtils.kAppDefaults.set(SharedUtils.kAppMetaVersion, forKey: SharedUtils.kTinodeMetaVersion)
             return false
         }
         return true
     }
 
     public static func getAuthToken() -> String? {
-        guard SharedUtils.appDidRunBefore() else { return nil }
+        guard SharedUtils.appMetaVersionUpToDate() else { return nil }
         return SharedUtils.kAppKeychain.string(
             forKey: SharedUtils.kTokenKey, withAccessibility: .afterFirstUnlock)
     }
@@ -108,7 +117,7 @@ public class SharedUtils {
             ConnectionSettingsHelper.setHostName(Bundle.main.object(forInfoDictionaryKey: "HOST_NAME") as? String)
             ConnectionSettingsHelper.setUseTLS(Bundle.main.object(forInfoDictionaryKey: "USE_TLS") as? String)
         }
-        if !SharedUtils.appDidRunBefore() {
+        if !SharedUtils.appMetaVersionUpToDate() {
             BaseDb.log.info("App started for the first time.")
         }
     }
