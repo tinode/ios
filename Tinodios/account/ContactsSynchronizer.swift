@@ -16,22 +16,14 @@ class ContactsSynchronizer {
         var imageThumbnail: Data? = nil
         var phones: [String]? = nil
         var emails: [String]? = nil
-        var ims: [String]? = nil
-
-        public static let kPhoneLabel = "tel:"
-        public static let kEmailLabel = "email:"
-        public static let kTinodeLabel = "tinode:"
 
         func toString() -> String {
             var vals = [String]()
             if let phones = self.phones {
-                vals += phones.map { ContactHolder2.kPhoneLabel + $0 }
+                vals += phones
             }
             if let emails = self.emails {
-                vals += emails.map { ContactHolder2.kEmailLabel + $0 }
-            }
-            if let ims = self.ims {
-                vals += ims.map { ContactHolder2.kTinodeLabel + $0 }
+                vals += emails
             }
             return vals.joined(separator: ",")
         }
@@ -93,7 +85,6 @@ class ContactsSynchronizer {
             CNContactFormatter.descriptorForRequiredKeys(for: .fullName),
             CNContactPhoneNumbersKey as CNKeyDescriptor,
             CNContactEmailAddressesKey as CNKeyDescriptor,
-            CNContactInstantMessageAddressesKey as CNKeyDescriptor,
             CNContactImageDataAvailableKey as CNKeyDescriptor,
             CNContactThumbnailImageDataKey as CNKeyDescriptor
         ]
@@ -115,9 +106,6 @@ class ContactsSynchronizer {
             contactHolder.imageThumbnail = systemContact.imageDataAvailable ? systemContact.thumbnailImageData : nil
             contactHolder.emails = systemContact.emailAddresses.map { String($0.value) }
             contactHolder.phones = systemContact.phoneNumbers.map { $0.value.naiveE164 }
-            contactHolder.ims = systemContact.instantMessageAddresses
-                .filter { $0.value.service == FindInteractor.kTinodeImProtocol  }
-                .map { $0.value.username }
             return contactHolder
         }
     }
