@@ -18,7 +18,7 @@ enum MessageDbError: Error {
 // * messages (both synchronized and not yet synchronized with the server).
 // * message deletion markers (synchronized and not yet synchronized).
 public class MessageDb {
-    private static let kTableName = "messages"
+    public static let kTableName = "messages"
     private let db: SQLite.Connection
 
     public var table: Table
@@ -163,13 +163,13 @@ public class MessageDb {
 
     // Deletes all messages in a given topic, no exceptions. Use only when deleting the topic.
     @discardableResult
-    func deleteAll(topicId: Int64) -> Bool {
+    func deleteAll(forTopic topicId: Int64) -> Bool {
         // Delete from messages where topic_id = topicId.
         let rows = self.table.filter(self.topicId == topicId)
         do {
             return try self.db.run(rows.delete()) > 0
         } catch {
-            BaseDb.log.error("MessageDb - deleteAll operation failed: topicId = %lld, error = %@", topicId, error.localizedDescription)
+            BaseDb.log.error("MessageDb - deleteAll(forTopic) operation failed: topicId = %lld, error = %@", topicId, error.localizedDescription)
             return false
         }
     }

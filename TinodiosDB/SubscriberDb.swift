@@ -21,7 +21,7 @@ enum SubscriberDbError: Error {
 }
 
 public class SubscriberDb {
-    private static let kTableName = "subscriptions"
+    public static let kTableName = "subscriptions"
     private let db: SQLite.Connection
 
     private var table: Table

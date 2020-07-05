@@ -436,6 +436,7 @@ public class MsgClientDel: Encodable {
     static let kStrTopic = "topic"
     static let kStrMsg = "msg"
     static let kStrSub = "sub"
+    static let kStrUser = "user"
     static let kStrCred = "cred"
     let id: String?
     let topic: String?
@@ -452,7 +453,7 @@ public class MsgClientDel: Encodable {
         // nil value will cause the field to be skipped
         // during serialization instead of sending 0/null/[].
         self.delseq = what == MsgClientDel.kStrMsg ? ranges : nil
-        self.user = what == MsgClientDel.kStrSub ? user : nil
+        self.user = what == MsgClientDel.kStrSub || what == MsgClientDel.kStrUser ? user : nil
         self.hard = (hard ?? false) ? true : nil
         self.cred = cred
     }
@@ -485,7 +486,7 @@ public class MsgClientDel: Encodable {
 
     /// Delete current user.
     convenience init(id: String?, hard: Bool) {
-        self.init(id: id, topic: nil, what: MsgClientDel.kStrTopic,
+        self.init(id: id, topic: nil, what: MsgClientDel.kStrUser,
                   ranges: nil, user: nil, cred: nil, hard: hard)
     }
 
