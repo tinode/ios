@@ -52,13 +52,12 @@ class ContactsSynchronizer {
     private static let kTinodeServerSyncMarker = "tinodeServerSyncMarker"
     private var serverSyncMarker: Date? {
         get {
-            let userDefaults = UserDefaults.standard
-            return userDefaults.object(
+            return SharedUtils.kAppDefaults.object(
                 forKey: ContactsSynchronizer.kTinodeServerSyncMarker) as? Date
         }
         set {
             if let v = newValue {
-                UserDefaults.standard.set(
+                SharedUtils.kAppDefaults.set(
                     v, forKey: ContactsSynchronizer.kTinodeServerSyncMarker)
             }
         }
