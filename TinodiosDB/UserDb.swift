@@ -15,7 +15,7 @@ public class StoredUser: Payload {
 }
 
 public class UserDb {
-    private static let kTableName = "users"
+    public static let kTableName = "users"
     private let db: SQLite.Connection
 
     public let table: Table
@@ -126,6 +126,17 @@ public class UserDb {
             return false
         }
     }
+
+    public func delete(forAccount accountId: Int64) -> Bool {
+        let record = self.table.filter(self.accountId == accountId)
+        do {
+            return try self.db.run(record.delete()) > 0
+        } catch {
+            BaseDb.log.error("UserDb - delete(forAccount) operation failed: accountId = %lld, error = %@", accountId, error.localizedDescription)
+            return false
+        }
+    }
+
     public func getId(for uid: String?) -> Int64 {
         guard let accountId = baseDb.account?.id else  {
             return -1

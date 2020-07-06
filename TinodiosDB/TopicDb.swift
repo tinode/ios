@@ -26,7 +26,7 @@ public class StoredTopic: Payload {
 }
 
 public class TopicDb {
-    private static let kTableName = "topics"
+    public static let kTableName = "topics"
     private static let kUnsentIdStart = 2000000000
     private let db: SQLite.Connection
 
@@ -390,6 +390,33 @@ public class TopicDb {
             BaseDb.log.error("TopicDb - delete operation failed: topicId = %lld, error = %@", recordId, error.localizedDescription)
             return false
         }
+    }
+
+    func deleteAll(forAccount accountId: Int64) -> Bool {
+        // Delete from messages and subscribers where topicIds belong to accountId.
+        guard let messageDb = self.baseDb.messageDb, let subscriberDb = self.baseDb.subscriberDb else { return false }
+        // Using raw sql here because SQLite.swift doesn't support nested queries:
+        // https://stackoverflow.com/questions/46033280/sqlite-swift-how-to-do-subquery
+        let messageDbSql =
+            "DELETE FROM " + MessageDb.kTableName +
+            " WHERE " + messageDb.topicId.template + " IN (" +
+            "SELECT " + self.id.template + " FROM " + TopicDb.kTableName +
+            " WHERE " + self.accountId.template + " = ?)"
+        let subscriberDbSql =
+            "DELETE FROM " + SubscriberDb.kTableName +
+            " WHERE " + subscriberDb.topicId.template + " IN (" +
+            "SELECT " + self.id.template + " FROM " + TopicDb.kTableName +
+            " WHERE " + self.accountId.template + " = ?)"
+        let topics = self.table.filter(self.accountId == accountId)
+        do {
+            try self.db.run(messageDbSql, accountId)
+            try self.db.run(subscriberDbSql, accountId)
+            try self.db.run(topics.delete())
+        } catch {
+            BaseDb.log.error("TopicDb - deleteAll(forAccount) operation failed: accountId = %lld, error = %@", accountId, error.localizedDescription)
+            return false
+        }
+        return true
     }
 
     func updateRead(for topicId: Int64, with value: Int) -> Bool {

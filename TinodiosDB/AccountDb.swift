@@ -20,7 +20,7 @@ public class StoredAccount {
 }
 
 public class AccountDb {
-    private static let kTableName = "accounts"
+    public static let kTableName = "accounts"
     private let db: SQLite.Connection
 
     public var table: Table
@@ -61,7 +61,7 @@ public class AccountDb {
     func deactivateAll() throws -> Int {
         return try self.db.run(self.table.update(self.active <- 0))
     }
-    private func getByUid(uid: String) -> StoredAccount? {
+    public func getByUid(uid: String) -> StoredAccount? {
         if let row = try? db.pluck(self.table.select(self.id, self.credMethods).filter(self.uid == uid)) {
             return StoredAccount(id: row[self.id], uid: uid, credMethods: row[self.credMethods]?.components(separatedBy: ","))
         }
@@ -98,6 +98,17 @@ public class AccountDb {
         }
         return result
     }
+
+    func delete(accountId: Int64) -> Bool {
+        let record = self.table.filter(self.id == accountId)
+        do {
+            return try self.db.run(record.delete()) > 0
+        } catch {
+            BaseDb.log.error("AccountDb - delete(accountId) operation failed: accountId = %lld, error = %@", accountId, error.localizedDescription)
+            return false
+        }
+    }
+
     func getActiveAccount() -> StoredAccount? {
         if let row = try? db.pluck(self.table.select(self.id, self.uid, self.credMethods).filter(self.active == 1)),
             let ruid = row[self.uid] {

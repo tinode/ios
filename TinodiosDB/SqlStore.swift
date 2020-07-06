@@ -38,7 +38,9 @@ public class SqlStore : Storage {
     }
 
     public func deleteAccount(_ uid: String) {
-        //TODO: implement
+        if !(self.dbh?.deleteUid(uid) ?? true) {
+            BaseDb.log.info("Account deletion did not succeed. Uid [%@]", uid)
+        }
     }
 
     public func setMyUid(uid: String, credMethods: [String]?) {
@@ -84,7 +86,7 @@ public class SqlStore : Storage {
         guard let st = topic.payload as? StoredTopic, let topicId = st.id else { return false }
         do {
             try dbh?.db?.savepoint("SqlStore.topicDelete") {
-                self.dbh?.messageDb?.deleteAll(topicId: topicId)
+                self.dbh?.messageDb?.deleteAll(forTopic: topicId)
                 self.dbh?.subscriberDb?.deleteForTopic(topicId: topicId)
                 self.dbh?.topicDb?.delete(recordId: topicId)
             }

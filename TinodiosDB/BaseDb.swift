@@ -146,6 +146,38 @@ public class BaseDb {
         _ = try? self.accountDb?.deactivateAll()
         self.setUid(uid: nil, credMethods: nil)
     }
+
+    public func deleteUid(_ uid: String) -> Bool {
+        var acc: StoredAccount?
+        if self.uid == uid {
+            acc = self.account
+            self.account = nil
+        } else {
+            acc = self.accountDb?.getByUid(uid: uid)
+        }
+        guard let acc2 = acc else {
+            BaseDb.log.error("Could not find account for uid [%@]", uid)
+            return false
+        }
+        do {
+            try self.db?.savepoint("BaseDb.deleteUid") {
+                if !(self.topicDb?.deleteAll(forAccount: acc2.id) ?? true) {
+                    BaseDb.log.error("Failed to clear topics/messages/subscribers for account id [%lld]", acc2.id)
+                }
+                if !(self.userDb?.delete(forAccount: acc2.id) ?? true) {
+                    BaseDb.log.error("Failed to clear users for account id [%lld]", acc2.id)
+                }
+                if !(self.accountDb?.delete(accountId: acc2.id) ?? true) {
+                    BaseDb.log.error("Failed to delete account for id [%lld]", acc2.id)
+                }
+            }
+        } catch {
+            BaseDb.log.error("BaseDb - deleteUid operation failed: uid = %@, error = %@", uid, error.localizedDescription)
+            return false
+        }
+        return true
+    }
+
     public static func updateCounter(db: SQLite.Connection, table: Table,
                                      usingIdColumn idColumn: Expression<Int64>, forId id: Int64,
                                      in column: Expression<Int?>, with value: Int) -> Bool {
