@@ -174,10 +174,11 @@ public class SqlStore : Storage {
         if let ss = sub?.payload as? StoredSubscription {
             topicId = ss.topicId ?? -1
             userId = ss.userId ?? -1
-        } else {
-            let st = topic.payload as! StoredTopic
+        } else if let st = topic.payload as? StoredTopic {
             topicId = st.id ?? -1
             userId = self.dbh?.userDb?.getId(for: msg.from) ?? -1
+        } else {
+            BaseDb.log.error("SqlStore - msgReceived: both subscription and topic are not persisted, quitting.")
         }
         guard topicId >= 0 && userId >= 0 else {
             return -1
