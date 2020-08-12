@@ -64,7 +64,7 @@ If you want to use the app with your own server and want push notification to wo
 
 * Register at https://firebase.google.com/, [set up the project](https://firebase.google.com/docs/ios/setup) if you have not done so already.
 * [Download your own](https://firebase.google.com/docs/cloud-messaging/ios/client) config file `GoogleService-Info.plist` and place it in the `Tinodios/` folder of your copy of the project. The config file contains keys specific to your Firebase/FCM registration.
-* Copy Google-provided server key to `tinode.conf`, see details [here](/tinode/chat/blob/master/docs/faq.md#q-how-to-setup-fcm-push-notifications).
+* Copy Google-provided server key to `tinode.conf`, see details [here](https://github.com/tinode/chat/blob/master/docs/faq.md#q-what-are-the-options-for-enabling-push-notifications).
 
 ## Translations
 
