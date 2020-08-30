@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16097" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="oPa-Qr-HlP">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16097.2" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="oPa-Qr-HlP">
     <device id="retina5_5" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
@@ -2551,12 +2551,41 @@
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="XtB-rR-vMV" userLabel="Channel">
+                                        <rect key="frame" x="0.0" y="330" width="414" height="50"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="XtB-rR-vMV" id="4Cx-Ve-DT5">
+                                            <rect key="frame" x="0.0" y="0.0" width="414" height="50"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="FgK-3p-qel" userLabel="Channel switch">
+                                                    <rect key="frame" x="345" y="9.6666666666666643" width="51" height="31"/>
+                                                </switch>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="This is a channel" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="skU-B7-Zed">
+                                                    <rect key="frame" x="28" y="14.666666666666664" width="309" height="21"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                    <attributedString key="userComments">
+                                                        <fragment content="Label for channel switch"/>
+                                                    </attributedString>
+                                                </label>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="skU-B7-Zed" firstAttribute="centerY" secondItem="4Cx-Ve-DT5" secondAttribute="centerY" id="12L-O8-vnc"/>
+                                                <constraint firstAttribute="trailing" secondItem="FgK-3p-qel" secondAttribute="trailing" constant="20" symbolic="YES" id="MS4-oU-6sc"/>
+                                                <constraint firstItem="FgK-3p-qel" firstAttribute="centerY" secondItem="4Cx-Ve-DT5" secondAttribute="centerY" id="aCr-O8-3xt"/>
+                                                <constraint firstItem="skU-B7-Zed" firstAttribute="leading" secondItem="4Cx-Ve-DT5" secondAttribute="leadingMargin" constant="8" id="cWz-M6-CHX"/>
+                                                <constraint firstItem="FgK-3p-qel" firstAttribute="leading" secondItem="skU-B7-Zed" secondAttribute="trailing" constant="8" symbolic="YES" id="tmp-r4-jyN"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
                                 </cells>
                             </tableViewSection>
                             <tableViewSection headerTitle="Group Members" id="26s-2T-nI0">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="FeF-3T-sWp" imageView="i4w-uL-EcP" style="IBUITableViewCellStyleDefault" id="IF5-Bs-9cB" userLabel="Add Members">
-                                        <rect key="frame" x="0.0" y="369" width="414" height="50"/>
+                                        <rect key="frame" x="0.0" y="419" width="414" height="50"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="IF5-Bs-9cB" id="uqg-aO-L4d">
                                             <rect key="frame" x="0.0" y="0.0" width="383" height="50"/>
@@ -2599,6 +2628,7 @@
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
                         <outlet property="avatarView" destination="IVi-b4-eb8" id="6nd-mH-AZe"/>
+                        <outlet property="channelSwitch" destination="FgK-3p-qel" id="dtw-7R-JuI"/>
                         <outlet property="groupNameTextField" destination="kDN-bf-JDL" id="Z8N-ve-nML"/>
                         <outlet property="privateTextField" destination="Do2-Ue-UdA" id="EYV-vV-p6S"/>
                         <outlet property="saveButtonItem" destination="sKP-e9-Xlo" id="Fnt-yq-h4A"/>
@@ -2607,7 +2637,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="slW-Wc-jxc" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1709" y="1734"/>
+            <point key="canvasLocation" x="1708.6956521739132" y="1733.967391304348"/>
         </scene>
         <!--By ID Controller-->
         <scene sceneID="AtY-x1-ZN9">
@@ -2680,7 +2710,7 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="Qbx-cO-rju"/>
+        <segue reference="qx3-Cj-zCP"/>
         <segue reference="Fnn-wi-PrS"/>
         <segue reference="VPg-gx-wIb"/>
     </inferredMetricsTieBreakers>

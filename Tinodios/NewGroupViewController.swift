@@ -18,6 +18,7 @@ class NewGroupViewController: UITableViewController {
     @IBOutlet weak var privateTextField: UITextField!
     @IBOutlet weak var tagsTextField: TagsEditView!
     @IBOutlet weak var avatarView: RoundImageView!
+    @IBOutlet weak var channelSwitch: UISwitch!
 
     private var selectedContacts: [ContactHolder] = []
     private var selectedUids = Set<String>()

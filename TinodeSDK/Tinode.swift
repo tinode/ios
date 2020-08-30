@@ -113,12 +113,14 @@ public protocol TinodeEventListener: class {
 public class Tinode {
     public static let kTopicNew = "new"
     public static let kUserNew = "new"
+    public static let kChannelNew = "nch"
     public static let kTopicMe = "me"
     public static let kTopicFnd = "fnd"
     public static let kTopicSys = "sys"
 
     public static let kTopicGrpPrefix = "grp"
     public static let kTopicUsrPrefix = "usr"
+    public static let kTopicChnPrefix = "chn"
 
     // Keys for server-provided limits.
     public static let kMaxMessageSize = "maxMessageSize"
@@ -699,7 +701,7 @@ public class Tinode {
             case kTopicFnd:
                 r = .fnd
             default:
-                if name.starts(with: kTopicGrpPrefix) || name.starts(with: kTopicNew) {
+                if name.starts(with: kTopicGrpPrefix) || name.starts(with: kTopicNew) || name.starts(with: kTopicChnPrefix) || name.starts(with: kChannelNew) {
                     r = .grp
                 } else if name.starts(with: kTopicUsrPrefix) {
                     r = .p2p
