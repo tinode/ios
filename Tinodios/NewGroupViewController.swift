@@ -144,7 +144,7 @@ class NewGroupViewController: UITableViewController {
         let privateInfo = String((privateTextField.text ?? "").trimmingCharacters(in: .whitespacesAndNewlines).prefix(UiUtils.kMaxTitleLength))
         guard !groupName.isEmpty else { return }
         let avatar = imageUploaded ? avatarView.image?.resize(width: CGFloat(Float(UiUtils.kAvatarSize)), height: CGFloat(Float(UiUtils.kAvatarSize)), clip: true) : nil
-        createGroupTopic(titled: groupName, subtitled: privateInfo, with: tagsTextField.tags, consistingOf: members, withAvatar: avatar)
+        createGroupTopic(titled: groupName, subtitled: privateInfo, with: tagsTextField.tags, consistingOf: members, withAvatar: avatar, asChannel: channelSwitch.isOn)
     }
 
     /// Show message that no members are selected.
@@ -164,9 +164,9 @@ class NewGroupViewController: UITableViewController {
         }
     }
 
-    private func createGroupTopic(titled name: String, subtitled subtitle: String, with tags: [String]?, consistingOf members: [String], withAvatar avatar: UIImage?) {
+    private func createGroupTopic(titled name: String, subtitled subtitle: String, with tags: [String]?, consistingOf members: [String], withAvatar avatar: UIImage?, asChannel isChannel: Bool) {
         let tinode = Cache.getTinode()
-        let topic = DefaultComTopic(in: tinode, forwardingEventsTo: nil)
+        let topic = DefaultComTopic(in: tinode, forwardingEventsTo: nil, isChannel: isChannel)
         topic.pub = VCard(fn: name, avatar: avatar)
         topic.priv = ["comment": .string(subtitle)] // No need to use Tinode.kNullValue here
         topic.tags = tags

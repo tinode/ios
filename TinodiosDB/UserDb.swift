@@ -16,6 +16,9 @@ public class StoredUser: Payload {
 
 public class UserDb {
     public static let kTableName = "users"
+    // Fake UID for "no user" user.
+    private static let kNoUser = "NONE"
+
     private let db: SQLite.Connection
 
     public let table: Table
@@ -70,10 +73,7 @@ public class UserDb {
         return self.insert(uid: sub.user ?? sub.topic, updated: sub.updated, serializedPub: sub.serializePub())
     }
     private func insert(uid: String?, updated: Date?, serializedPub: String?) -> Int64 {
-        guard let uid = uid, !uid.isEmpty else {
-            BaseDb.log.error("UserDb - attempting to insert a record with an empty uid")
-            return -1
-        }
+        let uid = (uid ?? "").isEmpty ? UserDb.kNoUser : uid!
         do {
             let rowid = try db.run(
                 self.table.insert(
@@ -141,6 +141,7 @@ public class UserDb {
         guard let accountId = baseDb.account?.id else  {
             return -1
         }
+        let uid = uid ?? UserDb.kNoUser
         if let row = try? db.pluck(self.table.select(self.id).filter(self.uid == uid && self.accountId == accountId)) {
             return row[self.id]
         }
@@ -156,9 +157,10 @@ public class UserDb {
         return user
     }
     public func readOne(uid: String?) -> UserProto? {
-        guard let uid = uid, let accountId = baseDb.account?.id else {
+        guard let accountId = baseDb.account?.id else {
             return nil
         }
+        let uid = uid ?? UserDb.kNoUser
         guard let row = try? db.pluck(self.table.filter(self.uid == uid && self.accountId == accountId)) else {
             return nil
         }
