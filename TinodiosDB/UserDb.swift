@@ -58,6 +58,7 @@ public class UserDb {
         })
         try! self.db.run(self.table.createIndex(accountId, uid, ifNotExists: true))
     }
+
     public func insert(user: UserProto?) -> Int64 {
         guard let user = user else { return 0 }
         let id = self.insert(uid: user.uid, updated: user.updated, serializedPub: user.serializePub())
@@ -67,12 +68,14 @@ public class UserDb {
         }
         return id
     }
+
     @discardableResult
     public func insert(sub: SubscriptionProto?) -> Int64 {
         guard let sub = sub else { return -1 }
         return self.insert(uid: sub.user ?? sub.topic, updated: sub.updated, serializedPub: sub.serializePub())
     }
-    private func insert(uid: String?, updated: Date?, serializedPub: String?) -> Int64 {
+
+    func insert(uid: String?, updated: Date?, serializedPub: String?) -> Int64 {
         let uid = (uid ?? "").isEmpty ? UserDb.kNoUser : uid!
         do {
             let rowid = try db.run(
@@ -88,16 +91,19 @@ public class UserDb {
             return -1
         }
     }
+
     @discardableResult
     public func update(user: UserProto?) -> Bool {
         guard let user = user, let su = user.payload as? StoredUser, let userId = su.id, userId > 0 else { return false }
         return self.update(userId: userId, updated: user.updated, serializedPub: user.serializePub())
     }
+
     @discardableResult
     public func update(sub: SubscriptionProto?) -> Bool {
         guard let st = sub?.payload as? StoredSubscription, let userId = st.userId else { return false }
         return self.update(userId: userId, updated: sub?.updated, serializedPub: sub?.serializePub())
     }
+
     @discardableResult
     public func update(userId: Int64, updated: Date?, serializedPub: String?) -> Bool {
         var setters = [Setter]()
@@ -116,6 +122,7 @@ public class UserDb {
             return false
         }
     }
+
     @discardableResult
     public func deleteRow(for id: Int64) -> Bool {
         let record = self.table.filter(self.id == id)
@@ -147,6 +154,7 @@ public class UserDb {
         }
         return -1
     }
+
     private func rowToUser(r: Row) -> UserProto? {
         let id = r[self.id]
         let updated = r[self.updated]
@@ -156,6 +164,7 @@ public class UserDb {
         user.payload = storedUser
         return user
     }
+
     public func readOne(uid: String?) -> UserProto? {
         guard let accountId = baseDb.account?.id else {
             return nil

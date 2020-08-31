@@ -32,6 +32,10 @@ public class ComTopic<DP: Codable & Mergeable>: Topic<DP, PrivateType, DP, Priva
         }
     }
 
+    public var isChannel: Bool {
+        return name.starts(with: Tinode.kTopicChnPrefix)
+    }
+
     public var comment: String? {
         return priv?.comment
     }
