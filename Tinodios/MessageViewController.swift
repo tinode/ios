@@ -835,7 +835,7 @@ extension MessageViewController {
 
     // Should avatars be shown at all for any message?
     func avatarsVisible(message: Message) -> Bool {
-        return (topic?.isGrpType ?? false) && !isFromCurrentSender(message: message)
+        return (topic?.isGrpType ?? false) && !(topic?.isChannel ?? false) && !isFromCurrentSender(message: message)
     }
 
     // Show avatar in the given message
@@ -1108,9 +1108,13 @@ extension MessageViewController : MessageCellDelegate {
         }
 
         // Set up the shared UIMenuController
-        let copyMenuItem = MessageMenuItem(title: NSLocalizedString("Copy", comment: "Menu item"), action: #selector(copyMessageContent(sender:)), seqId: cell.seqId)
-        let deleteMenuItem = MessageMenuItem(title: NSLocalizedString("Delete", comment: "Menu item"), action: #selector(deleteMessage(sender:)), seqId: cell.seqId)
-        UIMenuController.shared.menuItems = [copyMenuItem, deleteMenuItem]
+        var menuItems: [MessageMenuItem] = []
+        menuItems.append(MessageMenuItem(title: NSLocalizedString("Copy", comment: "Menu item"), action: #selector(copyMessageContent(sender:)), seqId: cell.seqId))
+        if !(topic?.isChannel ?? true) {
+            // Channel users cannot delete messages.
+            menuItems.append(MessageMenuItem(title: NSLocalizedString("Delete", comment: "Menu item"), action: #selector(deleteMessage(sender:)), seqId: cell.seqId))
+        }
+        UIMenuController.shared.menuItems = menuItems
 
         // Tell the menu controller the first responder's frame and its super view
         UIMenuController.shared.setTargetRect(cell.content.frame, in: cell.containerView)

@@ -17,8 +17,9 @@ public class ComTopic<DP: Codable & Mergeable>: Topic<DP, PrivateType, DP, Priva
     override init(tinode: Tinode?, name: String, desc: Description<DP, PrivateType>) {
         super.init(tinode: tinode, name: name, desc: desc)
     }
-    public convenience init(in tinode: Tinode?, forwardingEventsTo l: Listener? = nil) {
-        self.init(tinode: tinode!, name: Tinode.kTopicNew + tinode!.nextUniqueString(), l: l)
+    public convenience init(in tinode: Tinode?, forwardingEventsTo l: Listener? = nil, isChannel: Bool) {
+        let name = (isChannel ? Tinode.kChannelNew : Tinode.kTopicNew) + tinode!.nextUniqueString()
+        self.init(tinode: tinode!, name: name, l: l)
     }
 
     public override var isArchived: Bool {
@@ -29,6 +30,10 @@ public class ComTopic<DP: Codable & Mergeable>: Topic<DP, PrivateType, DP, Priva
         default:
             return false
         }
+    }
+
+    public var isChannel: Bool {
+        return name.starts(with: Tinode.kTopicChnPrefix)
     }
 
     public var comment: String? {

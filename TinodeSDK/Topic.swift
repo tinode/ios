@@ -435,7 +435,7 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
     }
 
     public static func isNewByName(name: String) -> Bool {
-        return name.starts(with: Tinode.kTopicNew)
+        return name.starts(with: Tinode.kTopicNew) || name.starts(with: Tinode.kChannelNew)
     }
     private func setName(name: String) {
         self.name = name

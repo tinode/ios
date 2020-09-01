@@ -175,12 +175,22 @@ public class SqlStore : Storage {
             topicId = ss.topicId ?? -1
             userId = ss.userId ?? -1
         } else if let st = topic.payload as? StoredTopic {
+            // Message from a new/unknown subscriber.
+
             topicId = st.id ?? -1
             userId = self.dbh?.userDb?.getId(for: msg.from) ?? -1
-        } else {
-            BaseDb.log.error("SqlStore - msgReceived: both subscription and topic are not persisted, quitting.")
+            if userId < 0 {
+                // Create a placeholder user to satisfy foreign key constraint.
+                if sub != nil {
+                    userId = self.dbh?.userDb?.insert(sub: sub) ?? -1
+                } else {
+                    userId = self.dbh?.userDb?.insert(uid: msg.from, updated: msg.ts, serializedPub: nil) ?? -1
+                }
+            }
         }
+
         guard topicId >= 0 && userId >= 0 else {
+            BaseDb.log.error("SqlStore - msgReceived: either user or topic not available, quitting.")
             return -1
         }
         let sm = StoredMessage(from: msg)

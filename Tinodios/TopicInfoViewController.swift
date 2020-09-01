@@ -477,7 +477,11 @@ extension TopicInfoViewController {
 
         if indexPath.section == TopicInfoViewController.kSectionActions {
             if indexPath.row == TopicInfoViewController.kSectionActionsManageTags && (!(topic?.isGrpType ?? false) || !(topic?.isOwner ?? false)) {
-                // P2P topic or not topic owner, hide [Manage Tags]
+                // P2P topic has no owner, hide [Manage Tags]
+                return CGFloat.leastNonzeroMagnitude
+            }
+            if indexPath.row == TopicInfoViewController.kSectionActionsDelMessages && (topic?.isChannel ?? false) {
+                // Channel readers cannot delete messages
                 return CGFloat.leastNonzeroMagnitude
             }
             if indexPath.row == TopicInfoViewController.kSectionActionsLeaveGroup && !(topic?.isGrpType ?? false) {
