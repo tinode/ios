@@ -1110,9 +1110,10 @@ extension MessageViewController : MessageCellDelegate {
         // Set up the shared UIMenuController
         var menuItems: [MessageMenuItem] = []
         menuItems.append(MessageMenuItem(title: NSLocalizedString("Copy", comment: "Menu item"), action: #selector(copyMessageContent(sender:)), seqId: cell.seqId))
-        if !(topic?.isChannel ?? false) {
+        if !(topic?.isChannel ?? true) {
             // Channel users cannot delete messages.
-            menuItems.append(MessageMenuItem(title: NSLocalizedString("Delete", comment: "Menu item"), action: #selector(deleteMessage(sender:)), seqId: cell.seqId))        }
+            menuItems.append(MessageMenuItem(title: NSLocalizedString("Delete", comment: "Menu item"), action: #selector(deleteMessage(sender:)), seqId: cell.seqId))
+        }
         UIMenuController.shared.menuItems = menuItems
 
         // Tell the menu controller the first responder's frame and its super view
