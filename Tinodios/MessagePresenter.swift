@@ -11,8 +11,8 @@ import UIKit
 import TinodiosDB
 
 protocol MessagePresentationLogic {
-    func updateTitleBar(icon: UIImage?, title: String?, online: Bool)
-    func setOnline(online: Bool)
+    func updateTitleBar(icon: UIImage?, title: String?, online: Bool?)
+    func setOnline(online: Bool?)
     func runTypingAnimation()
     func presentMessages(messages: [StoredMessage])
     func reloadMessages(fromSeqId loId: Int, toSeqId hiId: Int)
@@ -26,12 +26,12 @@ protocol MessagePresentationLogic {
 class MessagePresenter: MessagePresentationLogic {
     weak var viewController: MessageDisplayLogic?
 
-    func updateTitleBar(icon: UIImage?, title: String?, online: Bool) {
+    func updateTitleBar(icon: UIImage?, title: String?, online: Bool?) {
         DispatchQueue.main.async {
             self.viewController?.updateTitleBar(icon: icon, title: title, online: online)
         }
     }
-    func setOnline(online: Bool) {
+    func setOnline(online: Bool?) {
         DispatchQueue.main.async {
             self.viewController?.setOnline(online: online)
         }

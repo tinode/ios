@@ -51,6 +51,6 @@ class ChatListViewCell: UITableViewCell {
         iconMuted.isHidden = !topic.isMuted
 
         // Avatar image
-        icon.set(icon: topic.pub?.photo?.image(), title: topic.pub?.fn, id: topic.name, online: topic.online)
+        icon.set(icon: topic.pub?.photo?.image(), title: topic.pub?.fn, id: topic.name, online: topic.isChannel ? nil : topic.online)
     }
 }

@@ -89,7 +89,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         self.pagesToLoad = 1
 
         if let pub = self.topic?.pub {
-            self.presenter?.updateTitleBar(icon: pub.photo?.image(), title: pub.fn, online: self.topic?.online ?? false)
+            self.presenter?.updateTitleBar(icon: pub.photo?.image(), title: pub.fn, online: (topic?.isChannel ?? false) ? nil : self.topic?.online)
         }
         self.lastSeenRead = self.topic?.read
         self.lastSeenRecv = self.topic?.recv
@@ -133,7 +133,14 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
             builder = builder.withTags()
         }
         topic.subscribe(set: nil, get: builder.build()).then(
-                onSuccess: { [weak self] _ in
+                onSuccess: { [weak self] msg in
+                    if let ctrl = msg?.ctrl, ctrl.code == 303, let redirectTo = ctrl.getStringParam(for: "topic") {
+                        // Redirected to another topic
+                        self?.setup(topicName: redirectTo, sendReadReceipts: interactively)
+                        _ = self?.attachToTopic(interactively: interactively)
+                        return nil
+                    }
+
                     self?.messageInteractorQueue.async {
                         self?.topic?.syncAll().then(
                             onSuccess: { [weak self] _ in
@@ -401,7 +408,9 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         self.presenter?.applyTopicPermissions(withError: nil)
     }
     override func onOnline(online: Bool) {
-        self.presenter?.setOnline(online: online)
+        if !(self.topic?.isChannel ?? false) {
+            self.presenter?.setOnline(online: online)
+        }
     }
     override func onInfo(info: MsgServerInfo) {
         switch info.what {
@@ -437,7 +446,8 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
     override func onMetaDesc(desc: Description<VCard, PrivateType>) {
         self.presenter?.applyTopicPermissions(withError: nil)
         if let pub = topic?.pub {
-            self.presenter?.updateTitleBar(icon: pub.photo?.image(), title: pub.fn, online: self.topic?.online ?? false)
+            let online = (self.topic?.isChannel ?? false) ? nil : self.topic?.online
+            self.presenter?.updateTitleBar(icon: pub.photo?.image(), title: pub.fn, online: online)
         }
     }
 }
