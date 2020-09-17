@@ -194,17 +194,17 @@ public class MsgGetMeta: CustomStringConvertible, Encodable {
 
     public var description: String {
         //return
-        let desc_str = desc != nil ? String(describing: desc!) : "null"
-        let sub_str = sub != nil ? String(describing: sub!) : "null"
-        let data_str = data != nil ? String(describing: data!) : "null"
-        let del_str = del != nil ? String(describing: del!) : "null"
+        let desc_str = desc != nil ? String(describing: desc!) : "nil"
+        let sub_str = sub != nil ? String(describing: sub!) : "nil"
+        let data_str = data != nil ? String(describing: data!) : "nil"
+        let del_str = del != nil ? String(describing: del!) : "nil"
         return "[\(self.what)]" +
             " desc=[\(desc_str)]," +
             " sub=[\(sub_str)]," +
             " data=[\(data_str)]," +
             " del=[\(del_str)]" +
-            " tags=[\((set & MsgGetMeta.kTagsSet) != 0 ? "set" : "null")]" +
-            " cred=[\((set & MsgGetMeta.kCredSet) != 0 ? "set" : "null")]"
+            " tags=[\((set & MsgGetMeta.kTagsSet) != 0 ? "set" : "nil")]" +
+            " cred=[\((set & MsgGetMeta.kCredSet) != 0 ? "set" : "nil")]"
     }
 
     init() {

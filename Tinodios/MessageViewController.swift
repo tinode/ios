@@ -10,8 +10,9 @@ import TinodeSDK
 import TinodiosDB
 
 protocol MessageDisplayLogic: class {
-    func updateTitleBar(icon: UIImage?, title: String?, online: Bool)
-    func setOnline(online: Bool)
+    func switchTopic(topic: String?)
+    func updateTitleBar(icon: UIImage?, title: String?, online: Bool?)
+    func setOnline(online: Bool?)
     func runTypingAnimation()
     func displayChatMessages(messages: [StoredMessage])
     func reloadAllMessages()
@@ -455,7 +456,11 @@ extension MessageViewController: MessageDisplayLogic {
         self.present(alert, animated: true)
     }
 
-    func updateTitleBar(icon: UIImage?, title: String?, online: Bool) {
+    func switchTopic(topic: String?) {
+        topicName = topic
+    }
+
+    func updateTitleBar(icon: UIImage?, title: String?, online: Bool?) {
         assert(Thread.isMainThread)
         self.navigationItem.title = title ?? NSLocalizedString("Undefined", comment: "Undefined chat name")
 
@@ -470,7 +475,7 @@ extension MessageViewController: MessageDisplayLogic {
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: navBarAvatarView)
     }
 
-    func setOnline(online: Bool) {
+    func setOnline(online: Bool?) {
         assert(Thread.isMainThread)
         navBarAvatarView.setOnline(online: online)
     }

@@ -28,11 +28,17 @@ class AvatarWithOnlineIndicator: UIView {
         contentView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
     }
 
-    public func setOnline(online: Bool) {
+    /// Three states: true (show green dot), false (gray dot), nil (no dot).
+    public func setOnline(online: Bool?) {
+        guard let online = online else {
+            self.online.isHidden = true
+            return
+        }
+        self.online.isHidden = false
         self.online.backgroundColor = online ?
             UIColor.init(fromHexCode: 0xFF40C040) : UIColor.init(fromHexCode: 0xFFE0E0E0)
     }
-    public func set(icon: UIImage?, title: String?, id: String?, online: Bool) {
+    public func set(icon: UIImage?, title: String?, id: String?, online: Bool?) {
         self.avatar.set(icon: icon, title: title, id: id)
         self.setOnline(online: online)
     }

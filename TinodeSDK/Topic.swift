@@ -521,6 +521,10 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
         }
         return tnd.subscribe(to: name, set: set, get: get).then(
             onSuccess: { [weak self] msg in
+                if let code = msg?.ctrl?.code, code >= 300 {
+                    // 3XX: status unchanged.
+                    return nil
+                }
                 let isAttached = self?.attached ?? false
                 if !isAttached {
                     self?.attached = true
