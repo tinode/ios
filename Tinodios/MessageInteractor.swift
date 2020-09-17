@@ -135,7 +135,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         topic.subscribe(set: nil, get: builder.build()).then(
                 onSuccess: { [weak self] msg in
                     // Check for topic redirects.
-                    if let ctrl = msg?.ctrl, ctrl.code == 303 {
+                    if let ctrl = msg?.ctrl, ctrl.code == ServerMessage.kStatusSeeOther {
                         if let redirectTo = ctrl.getStringParam(for: "topic") {
                             // Redirected to another topic
                             self?.presenter?.switchTopic(topic: redirectTo)
