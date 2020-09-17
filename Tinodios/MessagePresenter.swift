@@ -11,6 +11,7 @@ import UIKit
 import TinodiosDB
 
 protocol MessagePresentationLogic {
+    func switchTopic(topic: String?)
     func updateTitleBar(icon: UIImage?, title: String?, online: Bool?)
     func setOnline(online: Bool?)
     func runTypingAnimation()
@@ -25,6 +26,12 @@ protocol MessagePresentationLogic {
 
 class MessagePresenter: MessagePresentationLogic {
     weak var viewController: MessageDisplayLogic?
+
+    func switchTopic(topic: String?) {
+        DispatchQueue.main.async {
+            self.viewController?.switchTopic(topic: topic)
+        }
+    }
 
     func updateTitleBar(icon: UIImage?, title: String?, online: Bool?) {
         DispatchQueue.main.async {

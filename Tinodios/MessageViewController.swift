@@ -10,6 +10,7 @@ import TinodeSDK
 import TinodiosDB
 
 protocol MessageDisplayLogic: class {
+    func switchTopic(topic: String?)
     func updateTitleBar(icon: UIImage?, title: String?, online: Bool?)
     func setOnline(online: Bool?)
     func runTypingAnimation()
@@ -453,6 +454,10 @@ extension MessageViewController: MessageDisplayLogic {
                 self.interactor?.blockTopic()
         }))
         self.present(alert, animated: true)
+    }
+
+    func switchTopic(topic: String?) {
+        topicName = topic
     }
 
     func updateTitleBar(icon: UIImage?, title: String?, online: Bool?) {

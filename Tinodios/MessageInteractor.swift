@@ -134,13 +134,16 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         }
         topic.subscribe(set: nil, get: builder.build()).then(
                 onSuccess: { [weak self] msg in
-                    if let ctrl = msg?.ctrl, ctrl.code == 303, let redirectTo = ctrl.getStringParam(for: "topic") {
-                        // Redirected to another topic
-                        self?.setup(topicName: redirectTo, sendReadReceipts: interactively)
-                        _ = self?.attachToTopic(interactively: interactively)
+                    // Check for topic redirects.
+                    if let ctrl = msg?.ctrl, ctrl.code == 303 {
+                        if let redirectTo = ctrl.getStringParam(for: "topic") {
+                            // Redirected to another topic
+                            self?.presenter?.switchTopic(topic: redirectTo)
+                            self?.setup(topicName: redirectTo, sendReadReceipts: interactively)
+                            _ = self?.attachToTopic(interactively: interactively)
+                        }
                         return nil
                     }
-
                     self?.messageInteractorQueue.async {
                         self?.topic?.syncAll().then(
                             onSuccess: { [weak self] _ in
