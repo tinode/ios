@@ -363,6 +363,24 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
         return false
     }
 
+    // Returns the maximum recv and read values across all subscriptions
+    // that are not "me" (this user).
+    public var maxRecvReadValues: (Int, Int) {
+        if subs == nil {
+            loadSubs()
+        }
+
+        guard let subs = subs, let me = tinode?.myUid else { return (0, 0) }
+        var maxRecv = 0, maxRead = 0
+        for (key, sub) in subs {
+            if key != me {
+                maxRead = max(maxRead, sub.getRead)
+                maxRecv = max(maxRecv, sub.getRecv)
+            }
+        }
+        return (maxRecv, maxRead)
+    }
+
     // Storage is owned by Tinode.
     weak public var store: Storage? = nil
     public var payload: Payload? = nil

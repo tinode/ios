@@ -91,8 +91,11 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         if let pub = self.topic?.pub {
             self.presenter?.updateTitleBar(icon: pub.photo?.image(), title: pub.fn, online: (topic?.isChannel ?? false) ? nil : self.topic?.online)
         }
-        self.lastSeenRead = self.topic?.read
-        self.lastSeenRecv = self.topic?.recv
+
+        if let (maxRecv, maxRead) = self.topic?.maxRecvReadValues {
+            self.lastSeenRead = maxRead
+            self.lastSeenRecv = maxRecv
+        }
         self.topic?.listener = self
         self.sendReadReceipts = sendReadReceipts
         return self.topic != nil
