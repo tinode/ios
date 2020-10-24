@@ -16,7 +16,7 @@
 
 #import "FIRInstanceID+Private.h"
 
-#import <FirebaseInstallations/FirebaseInstallations.h>
+#import "FirebaseInstallations/Source/Library/Private/FirebaseInstallationsInternal.h"
 
 #import <FirebaseInstanceID/FIRInstanceID_Private.h>
 #import "FIRInstanceIDAuthService.h"
@@ -31,7 +31,10 @@
 
 @end
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-implementations"
 @implementation FIRInstanceID (Private)
+#pragma clang diagnostic pop
 
 // This method just wraps our pre-configured auth service to make the request.
 // This method is only needed by first-party users, like Remote Config.
