@@ -164,7 +164,7 @@ class LoginViewController: UIViewController {
                         DispatchQueue.main.async {
                             UiUtils.showToast(message: toastMsg)
                         }
-                        _ = tinode.logout()
+                        tinode.logout()
                         return nil
                     }).thenFinally { [weak self] in
                         guard let loginVC = self else { return }
@@ -175,7 +175,7 @@ class LoginViewController: UIViewController {
             } catch {
                 UiUtils.toggleProgressOverlay(in: self, visible: false)
                 Cache.log.error("LoginVC - Failed to connect/login to Tinode: %@", error.localizedDescription)
-                _ = tinode.logout()
+                tinode.logout()
             }
     }
 }

@@ -165,7 +165,7 @@ import UIKit
         if width == 0 || height == 0 { return UIImage() }
         var font = letterTileFont
 
-        _ = UIGraphicsBeginImageContextWithOptions(CGSize(width: width, height: height), false, UIScreen.main.scale)
+        UIGraphicsBeginImageContextWithOptions(CGSize(width: width, height: height), false, UIScreen.main.scale)
         defer { UIGraphicsEndImageContext() }
         let context = UIGraphicsGetCurrentContext()!
 
