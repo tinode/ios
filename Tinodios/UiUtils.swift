@@ -78,11 +78,11 @@ class UiUtils {
         let application = UIApplication.shared
         let appDelegate = application.delegate as! AppDelegate
         guard !appDelegate.pushNotificationsConfigured else {
-            InstanceID.instanceID().instanceID { (result, error) in
+            Messaging.messaging().token { (token, error) in
               if let error = error {
-                Cache.log.debug("Error fetching remote Firebase instance ID: %@", error.localizedDescription)
-              } else if let result = result {
-                Cache.getTinode().setDeviceToken(token: result.token)
+                Cache.log.debug("Error fetching FCM registration token: %@", error.localizedDescription)
+              } else if let token = token {
+                Cache.getTinode().setDeviceToken(token: token)
               }
             }
             return
@@ -321,9 +321,8 @@ class UiUtils {
         label.sizeToFit()
 
         var toastHeight = max(min(label.frame.height + spacing * 3, maxMessageHeight), minMessageHeight)
-        if #available(iOS 11.0, *) {
-            toastHeight += parent.safeAreaInsets.bottom
-        }
+        toastHeight += parent.safeAreaInsets.bottom
+
         toastView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             toastView.leadingAnchor.constraint(equalTo: parent.leadingAnchor, constant: 0),

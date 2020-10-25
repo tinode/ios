@@ -85,16 +85,10 @@ class FindViewController: UITableViewController, FindDisplayLogic {
 
         searchController.delegate = self
         // The default is true.
-        searchController.dimsBackgroundDuringPresentation = false
+        searchController.obscuresBackgroundDuringPresentation = false
         // Monitor when the search button is tapped.
         searchController.searchBar.delegate = self
         self.definesPresentationContext = true
-        if #available(iOS 11, *) {
-            // Do nothing.
-        } else {
-            self.resolveNavbarOverlapConflict()
-            searchController.hidesNavigationBarDuringPresentation = false
-        }
 
         if !Cache.isContactSynchronizerActive() {
             Cache.synchronizeContactsPeriodically()
@@ -133,10 +127,6 @@ class FindViewController: UITableViewController, FindDisplayLogic {
 
     @objc
     func deviceRotated() {
-        if #available(iOS 11, *) {
-        } else {
-            self.resolveNavbarOverlapConflict()
-        }
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -146,11 +136,6 @@ class FindViewController: UITableViewController, FindDisplayLogic {
         self.interactor?.attachToFndTopic()
         self.interactor?.loadAndPresentContacts(searchQuery: nil)
         self.tabBarController?.navigationItem.rightBarButtonItem = inviteActionButtonItem
-        if #available(iOS 11, *) {
-            // Do nothing.
-        } else {
-            self.scrollToTop()
-        }
     }
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)

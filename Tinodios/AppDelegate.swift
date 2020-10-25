@@ -40,20 +40,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 UiUtils.logoutAndRouteToLoginVC()
             }
         }
-        if #available(iOS 12.0, *) {
-            DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + .seconds(10)) {
-                let reachability = NWPathMonitor()
-                reachability.start(queue: DispatchQueue.global(qos: .background))
-                reachability.pathUpdateHandler = { path in
-                    let tinode = Cache.getTinode()
-                    if path.status == .satisfied, !tinode.isConnected {
-                        Cache.log.info("NWPathMonitor: network available - reconnecting")
-                        tinode.reconnectNow(interactively: false, reset: false)
-                    }
+        DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + .seconds(10)) {
+            let reachability = NWPathMonitor()
+            reachability.start(queue: DispatchQueue.global(qos: .background))
+            reachability.pathUpdateHandler = { path in
+                let tinode = Cache.getTinode()
+                if path.status == .satisfied, !tinode.isConnected {
+                    Cache.log.info("NWPathMonitor: network available - reconnecting")
+                    tinode.reconnectNow(interactively: false, reset: false)
                 }
-                self.nwReachability = reachability
             }
-        }  // else TODO.
+            self.nwReachability = reachability
+        }
         return true
     }
 

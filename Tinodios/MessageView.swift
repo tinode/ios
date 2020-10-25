@@ -18,7 +18,7 @@ class MessageView: UICollectionView {
 
     public override init(frame: CGRect, collectionViewLayout layout: UICollectionViewLayout) {
         super.init(frame: frame, collectionViewLayout: layout)
-        if #available(iOS 12.0, *), traitCollection.userInterfaceStyle == .dark {
+        if traitCollection.userInterfaceStyle == .dark {
             backgroundColor = .black
         } else {
             backgroundColor = .white
@@ -118,19 +118,11 @@ extension MessageView {
         self.addSubview(blurEffectView)
 
         // Pin the edges to the superview edges.
-        if #available(iOS 11.0, *) {
-            NSLayoutConstraint.activate([
-                blurEffectView.topAnchor.constraint(equalTo: self.topAnchor),
-                blurEffectView.bottomAnchor.constraint(equalTo: self.safeAreaLayoutGuide.bottomAnchor),
-                blurEffectView.leadingAnchor.constraint(equalTo: self.safeAreaLayoutGuide.leadingAnchor),
-                blurEffectView.trailingAnchor.constraint(equalTo: self.safeAreaLayoutGuide.trailingAnchor)])
-        } else {
-            NSLayoutConstraint.activate([
-                blurEffectView.topAnchor.constraint(equalTo: self.topAnchor),
-                blurEffectView.bottomAnchor.constraint(equalTo: self.bottomAnchor),
-                blurEffectView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
-                blurEffectView.trailingAnchor.constraint(equalTo: self.trailingAnchor)])
-        }
+        NSLayoutConstraint.activate([
+            blurEffectView.topAnchor.constraint(equalTo: self.topAnchor),
+            blurEffectView.bottomAnchor.constraint(equalTo: self.safeAreaLayoutGuide.bottomAnchor),
+            blurEffectView.leadingAnchor.constraint(equalTo: self.safeAreaLayoutGuide.leadingAnchor),
+            blurEffectView.trailingAnchor.constraint(equalTo: self.safeAreaLayoutGuide.trailingAnchor)])
 
         // "No access to messages" text.
         let noAccessLabel = UILabel()

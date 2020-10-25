@@ -31,7 +31,7 @@ class MessageCell: UICollectionViewCell {
 
     public override init(frame: CGRect) {
         super.init(frame: frame)
-        if #available(iOS 12.0, *), traitCollection.userInterfaceStyle == .dark {
+        if traitCollection.userInterfaceStyle == .dark {
             backgroundColor = .black
         } else {
             backgroundColor = .white
@@ -42,7 +42,7 @@ class MessageCell: UICollectionViewCell {
 
     public required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
-        if #available(iOS 12.0, *), traitCollection.userInterfaceStyle == .dark {
+        if traitCollection.userInterfaceStyle == .dark {
             backgroundColor = .black
         } else {
             backgroundColor = .white
@@ -67,9 +67,7 @@ class MessageCell: UICollectionViewCell {
     var content: RichTextView = {
         let content = RichTextView()
         content.isUserInteractionEnabled = true
-        if #available(iOS 11.0, *) {
-            content.contentInsetAdjustmentBehavior = .never
-        }
+        content.contentInsetAdjustmentBehavior = .never
 
         content.isScrollEnabled = false
         content.isUserInteractionEnabled = true

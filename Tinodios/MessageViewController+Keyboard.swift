@@ -37,7 +37,7 @@ extension MessageViewController {
         let overlap: CGFloat
         // Try to use frameBegin and frameEnd, when all available content is taller
         // than viewport less send bar. This can be done only on newer iOS versions.
-        if #available(iOS 11, *), collectionView.contentSize.height > collectionView.bounds.height - inputAccessoryViewHeight {
+        if collectionView.contentSize.height > collectionView.bounds.height - inputAccessoryViewHeight {
             overlap = keyboardInfo.frameEnd.height - keyboardInfo.frameBegin.height
         } else {
             overlap =
@@ -61,10 +61,6 @@ extension MessageViewController {
     }
 
     private var bottomInset: CGFloat {
-        if #available(iOS 11.0, *) {
-            return collectionView.adjustedContentInset.bottom - collectionView.contentInset.bottom
-        } else {
-            return 0
-        }
+        return collectionView.adjustedContentInset.bottom - collectionView.contentInset.bottom
     }
 }

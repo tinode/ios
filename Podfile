@@ -1,5 +1,5 @@
 # Uncomment the next line to define a global platform for your project
-platform :ios, '10.0'
+platform :ios, '12.0'
 
 use_frameworks!
 
@@ -57,6 +57,13 @@ post_install do | installer |
     aggregate_target.xcconfigs.each do |config_name, config_file|
       xcconfig_path = aggregate_target.xcconfig_path(config_name)
       config_file.save_as(xcconfig_path)
+    end
+  end
+
+  # See explanation here: https://github.com/firebase/firebase-ios-sdk/issues/6533
+  installer.pods_project.targets.each do |target|
+    target.build_configurations.each do |config|
+      config.build_settings.delete 'IPHONEOS_DEPLOYMENT_TARGET'
     end
   end
 end
