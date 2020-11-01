@@ -49,6 +49,7 @@ public protocol TopicProto: class {
 
     func updateAccessMode(ac: AccessChange?) -> Bool
     func persist(_ on: Bool)
+    func setSetAndFetch(newSeq: Int?)
 
     func allMessagesReceived(count: Int?)
     func allSubsReceived()
@@ -1231,5 +1232,17 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
             result = self.publish(content: msg.content!, head: msg.head, msgId: msgId)
         }
         return result
+    }
+
+    public func setSetAndFetch(newSeq: Int?) {
+        guard let newSeq = newSeq, newSeq > description!.getSeq else { return }
+        let limit = newSeq - description!.getSeq
+        self.setSeq(seq: newSeq)
+        if !self.attached {
+            self.subscribe(set: nil, get: self.metaGetBuilder().withLaterData(limit: limit).build()).thenApply({ msg in
+                self.leave()
+                return nil
+            })
+        }
     }
 }

@@ -199,7 +199,7 @@ open class MeTopic<DP: Codable & Mergeable>: Topic<DP, PrivateType, DP, PrivateT
                 topic.online = false
                 topic.lastSeen = LastSeen(when: Date(), ua: nil)
             case .kMsg: // new message received
-                topic.seq = pres.seq
+                topic.setSetAndFetch(newSeq: pres.seq)
                 if pres.act == nil || tinode!.isMe(uid: pres.act!) {
                     assignRead(to: topic, read: pres.seq)
                 }
