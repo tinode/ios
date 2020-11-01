@@ -41,7 +41,7 @@ class DraftyButtonAttachment : NSTextAttachment {
 
     // Create button as image
     private func renderButtonImage(textRect: CGRect) -> UIImage {
-        _ = UIGraphicsBeginImageContextWithOptions(CGSize(width: bounds.width, height: bounds.height), false, UIScreen.main.scale)
+        UIGraphicsBeginImageContextWithOptions(CGSize(width: bounds.width, height: bounds.height), false, UIScreen.main.scale)
 
         defer { UIGraphicsEndImageContext() }
         let context = UIGraphicsGetCurrentContext()!

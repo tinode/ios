@@ -19,7 +19,7 @@ public class Utils {
     // Calculate difference between two arrays of messages. Returns a tuple of insertion indexes and deletion indexes.
     // First the deletion indexes are applied to the old array. Then insertions are applied to the remaining array.
     // Indexes should be applied in descending order.
-    public static func diffMessageArray(sortedOld old: [Message], sortedNew new: [Message]) -> (removed: [Int], inserted: [Int], mutated: [Int]) {
+    public static func diffMessageArray(sortedOld old: [Message], sortedNew new: [Message]) -> (inserted: [Int], removed: [Int], mutated: [Int]) {
         if old.isEmpty && new.isEmpty {
             return (inserted: [], removed: [], mutated: [])
         }
