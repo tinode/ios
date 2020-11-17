@@ -12,6 +12,8 @@ import TinodeSDK
 import UIKit
 
 // iOS's support for styled strings is much weaker than Android's and web. Some styles cannot be nested. They have to be constructed and applied all at once at the leaf level.
+
+/// Class which creates NSAttributedString with Drafty format applied.
 class AttributedStringFormatter: DraftyFormatter {
     typealias Node = AttributedStringFormatter.TreeNode
 
@@ -37,40 +39,56 @@ class AttributedStringFormatter: DraftyFormatter {
 
     // Inline image
     private func handleImage(from node: TreeNode, with attr: [String : JSONValue]?) {
-        guard let attr = attr, let bits = attr["val"]?.asData() else { return }
+        var attachment = Attachment(content: .image)
 
-        // FIXME: maybe cache result of converting Data to image.
-        // TODO: if image UIImage(data: bits) fails, use "broken image" icon from resources.
-        let attachment = Attachment(content: .image(UIImage(data: bits) ?? UIImage()), mime: attr["mime"]?.asString(), name: attr["name"]?.asString(), ref: nil, size: bits.count, width: attr["width"]?.asInt(), height: attr["height"]?.asInt())
+        if let attr = attr {
+            attachment.bits = attr["val"]?.asData()
+            attachment.mime = attr["mime"]?.asString()
+            attachment.name = attr["name"]?.asString()
+            attachment.ref = attr["ref"]?.asString()
+            attachment.size = attr["size"]?.asInt()
+            attachment.width = attr["width"]?.asInt()
+            attachment.height = attr["height"]?.asInt()
+        }
+
         node.attachment(attachment)
     }
 
     private func handleAttachment(from node: TreeNode, with attr: [String : JSONValue]?) {
-        guard let attr = attr else { return }
-        let mimeType =  attr["mime"]?.asString()
-        // Skip json attachments. They are not meant to be user-visible.
-        guard mimeType != "application/json" else { return }
+        if let attr = attr {
+            let mimeType =  attr["mime"]?.asString()
 
-        let filename = attr["name"]?.asString()
+            // Skip json attachments. They are not meant to be user-visible.
+            if mimeType == "application/json" {
+                return
+            }
 
-        if let bits = attr["val"]?.asData() {  // Inline attachments.
-            let attachment = Attachment(content: .data(bits), mime: mimeType, name: filename, ref: nil, size: bits.count, width: nil, height: nil)
+            let bits = attr["val"]?.asData()
+            let ref = attr["ref"]?.asString()
+
+            var attachment = Attachment(content: .data)
+            if (bits == nil) && (ref == nil) {
+                // Invalid attachment with no data.
+                attachment.content = .empty
+            }
+
+            attachment.bits = bits
+            attachment.ref = ref
+            attachment.mime = mimeType
+            attachment.name = attr["name"]?.asString()
+            attachment.size = attr["size"]?.asInt()
             node.attachment(attachment)
             return
         }
-        if let ref = attr["ref"]?.asString() {  // Large file attachments.
-            let attachment = Attachment(content: .dataref(ref), mime: mimeType, name: filename, ref: ref, size: attr["size"]?.asInt(), width: nil, height: nil)
-            node.attachment(attachment)
-            return
-        }
-        let attachment = Attachment(content: .empty, mime: mimeType, name: filename, ref: nil, size: nil, width: nil, height: nil)
-        node.attachment(attachment)
+
+        // Invalid attachment.
+        node.attachment(Attachment(content: .empty))
     }
 
     private func handleButton(from node: TreeNode, with attr: [String : JSONValue]?) {
         guard let urlStr = AttributedStringFormatter.buttonDataAsUri(face: node, attr: attr), let url = URL(string: urlStr) else { return }
 
-        let attachment = Attachment(content: .button(url), mime: nil, name: nil, ref: nil, size: nil, width: nil, height: nil)
+        let attachment = Attachment(content: .button, mime: nil, name: nil, ref: url.absoluteString, size: nil, width: nil, height: nil)
         node.attachment(attachment)
     }
 
@@ -201,15 +219,15 @@ class AttributedStringFormatter: DraftyFormatter {
     // File or image attachment.
     struct Attachment {
         enum AttachmentType {
-            case data(Data)
-            case dataref(String)
-            case image(UIImage)
-            case button(URL)
+            case data
+            case image
+            case button
             case empty
         }
 
         var content: AttachmentType
 
+        var bits: Data?
         var mime: String?
         var name: String?
         var ref: String?
@@ -325,8 +343,6 @@ class AttributedStringFormatter: DraftyFormatter {
                 return "[button]"
             case .empty:
                 fallthrough
-            case .dataref:
-                fallthrough
             case .data:
                 var fname = attachment.name ?? "unnamed"
                 if fname.count > 32 {
@@ -413,19 +429,57 @@ class AttributedStringFormatter: DraftyFormatter {
             return attributed
         }
 
+        //
+        private func staticImage(named: String, width: CGFloat, height: CGFloat) -> UIImage {
+            let image = UIImage(named: named)!
+            let dx = max((width - image.size.width) * 0.5, 0)
+            let dy = max((height - image.size.height) * 0.5, 0)
+            let size = CGSize(width: width, height: height)
+
+            /*
+            UIGraphicsBeginImageContextWithOptions(size, true, UIScreen.main.scale)
+            UIColor.gray.setFill()
+
+            image.draw(at: CGPoint(x: dx, y: dy))
+            let result = UIGraphicsGetImageFromCurrentImageContext()!
+            UIGraphicsEndImageContext()
+
+            return result
+             */
+
+            return UIGraphicsImageRenderer(size: size).image { rendererContext in
+                UIColor.gray.setFill()
+                rendererContext.fill(CGRect(origin: .zero, size: size))
+                image.draw(at: CGPoint(x: dx, y: dy))
+            }
+        }
+
         /// Create custom layout for attachments.
         private func attachmentToAttributed(_ attachment: Attachment, defaultAttrs attributes: [NSAttributedString.Key : Any], fontTraits: UIFontDescriptor.SymbolicTraits?, maxSize size: CGSize) -> NSAttributedString {
             switch attachment.content {
             // Image handling is easy.
-            case .image(let image):
+            case .image:
                 let wrapper = NSTextAttachment()
+                var image : UIImage
+                let scaledSize: CGSize
+                if let width = attachment.width, let height = attachment.height, width > 0 && height > 0 {
+                    // Sender provider valid width and height of the image.
+                    scaledSize = UiUtils.sizeUnder(original: CGSize(width: width, height: height), fitUnder: size, scale: 1, clip: false).dst
+                }
+
+                if let bits = attachment.bits {
+                    // FIXME: maybe cache result of converting Data to image.
+                    image = UIImage(data: bits) ?? staticImage(named: "broken-image", width: scaledSize.width, height: scaledSize.height)
+                } else {
+                    image = staticImage(named: "broken-image", width: scaledSize.width, height: scaledSize.height)
+                }
                 wrapper.image = image
-                let scaledSize = image.sizeUnder(maxWidth: size.width, maxHeight: size.height, clip: false).dst
+                let scaledSize = image.sizeUnder(size, clip: false).dst
                 wrapper.bounds = CGRect(origin: .zero, size: scaledSize)
                 return NSAttributedString(attachment: wrapper)
 
             // Button is also not too hard
-            case .button(let buttonUrl):
+            case .button:
                 let faceText = NSMutableAttributedString()
                 // Change color of text from default to link color.
                 var attrs = attributes
@@ -439,16 +493,11 @@ class AttributedStringFormatter: DraftyFormatter {
                 } else {
                     faceText.append(NSAttributedString(string: "button", attributes: attrs))
                 }
-                return NSAttributedString(attachment: DraftyButtonAttachment(face: faceText, data: buttonUrl))
+                return NSAttributedString(attachment: DraftyButtonAttachment(face: faceText, data: URL(string: attachment.ref!)))
 
-            // File attachment is harder: construct attributed string fr showing an attachment.
-            case .data(let bits):
-                return makeFileAttachmentString(attachment, withData: bits, withRef: nil, defaultAttrs: attributes, maxSize: size)
-
-            case .dataref(let ref):
-                return makeFileAttachmentString(attachment, withData: nil, withRef: ref, defaultAttrs: attributes, maxSize: size)
-            case .empty:
-                return makeFileAttachmentString(attachment, withData: nil, withRef: nil, defaultAttrs: attributes, maxSize: size)
+            // File attachment is harder: construct attributed string showing an attachment.
+            case .data, .empty:
+                return makeFileAttachmentString(attachment, withData: attachment.bits, withRef: attachment.ref, defaultAttrs: attributes, maxSize: size)
             }
         }
 

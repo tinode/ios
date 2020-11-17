@@ -7,7 +7,7 @@
 
 import UIKit
 
-// An attachment which draws a button-like image for use in Drafty forms.
+// An NSTextAttachment which draws a button-like image for use in Drafty forms.
 class DraftyButtonAttachment : NSTextAttachment {
     private enum Constants {
         // Mimumum button width in points
