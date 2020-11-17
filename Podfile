@@ -24,6 +24,7 @@ def ui_pods
     pod 'Firebase/Messaging'
     pod 'Firebase/Analytics'
     pod 'PhoneNumberKit', '~> 3.1'
+    pod 'Kingfisher', '~> 5.0'
 end
 
 target 'TinodeSDK' do
