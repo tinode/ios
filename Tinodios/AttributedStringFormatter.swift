@@ -153,7 +153,7 @@ class AttributedStringFormatter: DraftyFormatter {
             node = TreeNode(content: "\n")
         case "LN":
             if let urlString = attr?["url"]?.asString(), let url = NSURL(string: urlString), url.scheme == "https" || url.scheme == "http" {
-                span.style(cstyle: [NSAttributedString.Key.link: url])
+                node.style(cstyle: [NSAttributedString.Key.link: url])
             }
         case "MN": break // TODO: add fupport for @mentions
         case "HT": break // TODO: add support for #hashtangs
@@ -429,27 +429,26 @@ class AttributedStringFormatter: DraftyFormatter {
         }
 
         //
-        private func staticImage(named: String, width: CGFloat, height: CGFloat) -> UIImage {
-            let image = UIImage(named: named)!
-            let dx = max((width - image.size.width) * 0.5, 0)
-            let dy = max((height - image.size.height) * 0.5, 0)
+        private func placeholderImage(named: String, width: CGFloat, height: CGFloat) -> UIImage {
+            let icon = UIImage(named: named)!
+            let iconSize = CGSize(width: 24 * icon.scale, height: 24 * icon.scale)
+            let dx = max((width - iconSize.width) * 0.5, 0)
+            let dy = max((height - iconSize.height) * 0.5, 0)
             let size = CGSize(width: width, height: height)
 
-            /*
-            UIGraphicsBeginImageContextWithOptions(size, true, UIScreen.main.scale)
-            UIColor.gray.setFill()
-
-            image.draw(at: CGPoint(x: dx, y: dy))
-            let result = UIGraphicsGetImageFromCurrentImageContext()!
-            UIGraphicsEndImageContext()
-
-            return result
-             */
-
             return UIGraphicsImageRenderer(size: size).image { rendererContext in
-                UIColor.gray.setFill()
+                if #available(iOS 13, *) {
+                    UIColor.secondarySystemBackground.setFill()
+                } else {
+                    UIColor.systemGray.setFill()
+                }
                 rendererContext.fill(CGRect(origin: .zero, size: size))
-                image.draw(at: CGPoint(x: dx, y: dy))
+                if #available(iOS 13, *) {
+                    UIColor.secondaryLabel.setFill()
+                } else {
+                    UIColor.darkText.setFill()
+                }
+                icon.draw(in: CGRect(x: dx, y: dy, width: iconSize.width, height: iconSize.height))
             }
         }
 
@@ -478,7 +477,7 @@ class AttributedStringFormatter: DraftyFormatter {
                 let scaledSize: CGSize
                 if image == nil {
                     // No need to scale the stock image.
-                    image = staticImage(named: "broken-image", width: size.width, height: size.height)
+                    image = placeholderImage(named: "broken-image", width: size.width, height: size.height)
                     scaledSize = size
                 } else {
                     scaledSize = UiUtils.sizeUnder(original: originalSize, fitUnder: size, scale: 1, clip: false).dst
