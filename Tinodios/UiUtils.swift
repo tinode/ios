@@ -75,6 +75,8 @@ class UiUtils {
     static let kMaxBitmapSize: CGFloat = 1024
     // Maximum length of topic title or user name.
     static let kMaxTitleLength = 60
+    // Default dimensions of a bitmap when sender provided none
+    static let kDefaultBitmapSize: CGFloat = 256
 
     private static func setUpPushNotifications() {
         let application = UIApplication.shared
@@ -602,7 +604,7 @@ extension UIImage {
     ///       image keeps the original aspect ratio but is shrunk to be under the
     ///       maxWidth/maxHeight
     public func resize(width: CGFloat, height: CGFloat, clip: Bool) -> UIImage? {
-        let size = sizeUnder(maxWidth: width, maxHeight: height, clip: clip)
+        let size = sizeUnder(CGSize(width: width, height: height), clip: clip)
 
         // Don't mess with image if it does not need to be scaled.
         guard size.altered else { return self }
@@ -621,7 +623,7 @@ extension UIImage {
             let originalWidth = CGFloat(image.size.width * image.scale)
             let originalHeight = CGFloat(image.size.height * image.scale)
 
-            guard let newImage = UIImage.resizeImage(image: image, newSize: image.sizeUnder(maxWidth: originalWidth * UIImage.kScaleFactor, maxHeight: originalHeight * UIImage.kScaleFactor, clip: false)) else { return nil }
+            guard let newImage = UIImage.resizeImage(image: image, newSize: image.sizeUnder(CGSize(width: originalWidth * UIImage.kScaleFactor, height: originalHeight * UIImage.kScaleFactor), clip: false)) else { return nil }
             image = newImage
 
             guard let newBits = image.pixelData(forMimeType: mime) else { return nil }

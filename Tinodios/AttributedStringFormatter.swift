@@ -133,25 +133,24 @@ class AttributedStringFormatter: DraftyFormatter {
 
     // Construct a tree representing formatting styles and content.
     private func apply(tp: String?, attr: [String : JSONValue]?, children: [TreeNode]?, content: String?) -> TreeNode {
-
         // Create unstyled node
-        var span = TreeNode(text: content, nodes: children)
+        var node = TreeNode(text: content, nodes: children)
         switch tp {
         case "ST":
-            span.style(fontTraits: .traitBold)
+            node.style(fontTraits: .traitBold)
         case "EM":
-            span.style(fontTraits: .traitItalic)
+            node.style(fontTraits: .traitItalic)
         case "DL":
-            span.style(cstyle: [NSAttributedString.Key.strikethroughStyle: NSUnderlineStyle.single.rawValue])
+            node.style(cstyle: [NSAttributedString.Key.strikethroughStyle: NSUnderlineStyle.single.rawValue])
         case "CO":
             // .traitMonoSpace is not a real font trait. It cannot be applied to an arbitrary font. A real
             // monospaced font must be selected manually.
             let baseFont = defaultAttrs[.font] as! UIFont
             var attributes = defaultAttrs
             attributes[.font] = UIFont(name: "Courier", size: baseFont.pointSize)!
-            span.style(cstyle: attributes)
+            node.style(cstyle: attributes)
         case "BR":
-            span = TreeNode(content: "\n")
+            node = TreeNode(content: "\n")
         case "LN":
             if let urlString = attr?["url"]?.asString(), let url = NSURL(string: urlString), url.scheme == "https" || url.scheme == "http" {
                 span.style(cstyle: [NSAttributedString.Key.link: url])
@@ -161,21 +160,21 @@ class AttributedStringFormatter: DraftyFormatter {
         case "HD": break // Hidden/ignored text
         case "IM":
             // Inline image
-            handleImage(from: span, with: attr)
+            handleImage(from: node, with: attr)
         case "EX":
             // Attachment
-            handleAttachment(from: span, with: attr)
+            handleAttachment(from: node, with: attr)
         case "BN":
             // Button
-            handleButton(from: span, with: attr)
+            handleButton(from: node, with: attr)
         case "FM":
             // Form
-            if var children = span.children, !children.isEmpty {
+            if var children = node.children, !children.isEmpty {
                 // Add line breaks between form elements: each direct descendant is a paragraph.
                 for i in stride(from: children.count-1, to: 0, by: -1) {
                     children.insert(TreeNode(content: "\n"), at: i)
                 }
-                span.children = children
+                node.children = children
             }
         case "RW":
             // Form element formatting is dependent on element content.
@@ -184,7 +183,7 @@ class AttributedStringFormatter: DraftyFormatter {
         default:
             break // Unknown formatting, treat as plain text
         }
-        return span
+        return node
     }
 
     func apply(tp: String?, attr: [String : JSONValue]?, content: [AttributedStringFormatter.TreeNode]) -> AttributedStringFormatter.TreeNode {
@@ -460,21 +459,31 @@ class AttributedStringFormatter: DraftyFormatter {
             // Image handling is easy.
             case .image:
                 let wrapper = NSTextAttachment()
-                var image : UIImage
-                let scaledSize: CGSize
-                if let width = attachment.width, let height = attachment.height, width > 0 && height > 0 {
-                    // Sender provider valid width and height of the image.
-                    scaledSize = UiUtils.sizeUnder(original: CGSize(width: width, height: height), fitUnder: size, scale: 1, clip: false).dst
+                var image: UIImage?
+                if let bits = attachment.bits, let preveiw = UIImage(data: bits) {
+                    // FIXME: maybe cache result of converting Data to image.
+                    image = preveiw
                 }
 
-                if let bits = attachment.bits {
-                    // FIXME: maybe cache result of converting Data to image.
-                    image = UIImage(data: bits) ?? staticImage(named: "broken-image", width: scaledSize.width, height: scaledSize.height)
+                var originalSize: CGSize
+                if let width = attachment.width, let height = attachment.height, width > 0 && height > 0 {
+                    // Sender provider valid width and height of the image.
+                    originalSize = CGSize(width: width, height: height)
+                } else if let image = image {
+                    originalSize = image.size
                 } else {
-                    image = staticImage(named: "broken-image", width: scaledSize.width, height: scaledSize.height)
+                    originalSize = CGSize(width: UiUtils.kDefaultBitmapSize, height: UiUtils.kDefaultBitmapSize)
+                }
+
+                let scaledSize: CGSize
+                if image == nil {
+                    // No need to scale the stock image.
+                    image = staticImage(named: "broken-image", width: size.width, height: size.height)
+                    scaledSize = size
+                } else {
+                    scaledSize = UiUtils.sizeUnder(original: originalSize, fitUnder: size, scale: 1, clip: false).dst
                 }
                 wrapper.image = image
-                let scaledSize = image.sizeUnder(size, clip: false).dst
                 wrapper.bounds = CGRect(origin: .zero, size: scaledSize)
                 return NSAttributedString(attachment: wrapper)
 
