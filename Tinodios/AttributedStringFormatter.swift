@@ -7,9 +7,16 @@
 //  Converts Drafty instance into attributed text suitable for display in UITextView
 
 // For MIME -> UTI conversion
+import Kingfisher
 import MobileCoreServices
 import TinodeSDK
 import UIKit
+
+
+/// Reference to UIView to notify when the external image is downloaded.
+protocol DynamicDraftyContent : class {
+    func contentUpdated()
+}
 
 // iOS's support for styled strings is much weaker than Android's and web. Some styles cannot be nested. They have to be constructed and applied all at once at the leaf level.
 
@@ -32,6 +39,9 @@ class AttributedStringFormatter: DraftyFormatter {
     typealias CharacterStyle = [NSAttributedString.Key: Any]
 
     let defaultAttrs: [NSAttributedString.Key: Any]
+
+    // FIXME: this needs to be assigned.
+    weak var onContentUpdate: DynamicDraftyContent?
 
     init(withDefaultAttributes attrs: [NSAttributedString.Key: Any]) {
         defaultAttrs = attrs
@@ -237,6 +247,8 @@ class AttributedStringFormatter: DraftyFormatter {
 
     // Class representing Drafty as a tree of nodes with content and styles attached.
     class TreeNode : CustomStringConvertible {
+        // Link to parent class
+        weak var parent: AttributedStringFormatter!
 
         // A set of font traits to apply at the leaf level
         var cFont: UIFontDescriptor.SymbolicTraits?
@@ -429,20 +441,31 @@ class AttributedStringFormatter: DraftyFormatter {
         }
 
         //
-        private func placeholderImage(named: String, width: CGFloat, height: CGFloat) -> UIImage {
-            let icon = UIImage(named: named)!
-            let iconSize = CGSize(width: 24 * icon.scale, height: 24 * icon.scale)
-            let dx = max((width - iconSize.width) * 0.5, 0)
-            let dy = max((height - iconSize.height) * 0.5, 0)
+        private func placeholderImage(named: String, withBackground bg: UIImage?, width: CGFloat, height: CGFloat) -> UIImage {
             let size = CGSize(width: width, height: height)
+            let icon = UIImage(named: named)!
+            let result = UiUtils.sizeUnder(original: CGSize(width: 24 * icon.scale, height: 24 * icon.scale), fitUnder: size, scale: 1, clip: false)
+            let iconSize = result.dst
+            let dx = (size.width - iconSize.width) * 0.5
+            let dy = (size.height - iconSize.height) * 0.5
 
             return UIGraphicsImageRenderer(size: size).image { rendererContext in
+                // Draw solid gray background
+                let bgColor: UIColor
                 if #available(iOS 13, *) {
-                    UIColor.secondarySystemBackground.setFill()
+                    bgColor = UIColor.secondarySystemBackground
                 } else {
-                    UIColor.systemGray.setFill()
+                    bgColor = UIColor.systemGray
                 }
+                bgColor.setFill()
                 rendererContext.fill(CGRect(origin: .zero, size: size))
+
+                // Draw semi-transparent background image, if available.
+                if let bg = bg {
+                    bg.draw(in: CGRect(x: 0, y: 0, width: width, height: height), blendMode: .normal, alpha: 0.35)
+                }
+
+                // Draw icon.
                 if #available(iOS 13, *) {
                     UIColor.secondaryLabel.setFill()
                 } else {
@@ -461,6 +484,7 @@ class AttributedStringFormatter: DraftyFormatter {
                 var image: UIImage?
                 if let bits = attachment.bits, let preveiw = UIImage(data: bits) {
                     // FIXME: maybe cache result of converting Data to image.
+                    // KingfisherManager.shared.cache.store(T##image: KFCrossPlatformImage##KFCrossPlatformImage, forKey: T##String)
                     image = preveiw
                 }
 
@@ -476,14 +500,38 @@ class AttributedStringFormatter: DraftyFormatter {
 
                 let scaledSize: CGSize
                 if image == nil {
+                    let iconName = attachment.ref != nil ? "image-wait" : "broken-image"
                     // No need to scale the stock image.
-                    image = placeholderImage(named: "broken-image", width: size.width, height: size.height)
+                    wrapper.image = placeholderImage(named: iconName, withBackground: nil, width: size.width, height: size.height)
                     scaledSize = size
                 } else {
+                    wrapper.image = image
                     scaledSize = UiUtils.sizeUnder(original: originalSize, fitUnder: size, scale: 1, clip: false).dst
                 }
-                wrapper.image = image
+
                 wrapper.bounds = CGRect(origin: .zero, size: scaledSize)
+
+                let tinode = Cache.getTinode()
+                if let ref = attachment.ref, let url = URL(string: ref, relativeTo: tinode.baseURL(useWebsocketProtocol: false)) {
+                    let modifier = AnyModifier { request in
+                        var request = request
+                        LargeFileHelper.addCommonHeaders(to: &request, using: tinode)
+                        return request
+                    }
+                    KingfisherManager.shared.retrieveImage(with: url.downloadURL, options: [.requestModifier(modifier)], completionHandler: { result in
+                        switch result {
+                        case .success(let value):
+                            wrapper.image = value.image
+                        case .failure(let error):
+                            wrapper.image = self.placeholderImage(named: "broken-image", withBackground: image, width: size.width, height: size.height)
+                            Cache.log.info("Failed to download image '%@': %@", ref, error.localizedDescription)
+                        }
+                    })
+
+                    // Notify UIView that the AttributedString should be redwawn.
+                    self.parent?.onContentUpdate?.contentUpdated()
+                }
+
                 return NSAttributedString(attachment: wrapper)
 
             // Button is also not too hard
