@@ -444,10 +444,10 @@ class AttributedStringFormatter: DraftyFormatter {
                 let wrapper = url == nil ? NSTextAttachment() : AsyncTextAttachment(url: url!)
 
                 var image: UIImage?
-                if let bits = attachment.bits, let preveiw = UIImage(data: bits) {
+                if let bits = attachment.bits, let preview = UIImage(data: bits) {
                     // FIXME: maybe cache result of converting Data to image.
                     // KingfisherManager.shared.cache.store(T##image: KFCrossPlatformImage##KFCrossPlatformImage, forKey: T##String)
-                    image = preveiw
+                    image = preview
                 }
 
                 var originalSize: CGSize
