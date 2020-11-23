@@ -26,7 +26,7 @@ public class AsyncTextAttachment: NSTextAttachment {
     }
 
     required public init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        fatalError("not implemented")
     }
 
     public func startDownload(onError errorImage: UIImage) {

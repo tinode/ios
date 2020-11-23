@@ -6,7 +6,6 @@
 //
 //  Converts Drafty instance into attributed text suitable for display in UITextView
 
-import Kingfisher
 import MobileCoreServices // For MIME -> UTI conversion
 import TinodeSDK
 import UIKit
@@ -415,7 +414,7 @@ class AttributedStringFormatter: DraftyFormatter {
                 paragraph.lineSpacing = 0
                 paragraph.lineHeightMultiple = 0.8
                 second.addAttributes([NSAttributedString.Key.paragraphStyle : paragraph, NSAttributedString.Key.foregroundColor : Constants.kLinkColor,
-                    ], range: NSRange(location: 0, length: second.length))
+                ], range: NSRange(location: 0, length: second.length))
 
                 var baseUrl = URLComponents(string: "tinode://" + tinode.hostName)!
                 baseUrl.path = ref != nil ? "/large-attachment" : "/small-attachment"
