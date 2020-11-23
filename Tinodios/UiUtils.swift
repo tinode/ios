@@ -497,6 +497,41 @@ class UiUtils {
         }
     }
 
+    /// Generate image of a given size with an icon in the ceneter.
+    public static func placeholderImage(named: String, withBackground bg: UIImage?, width: CGFloat, height: CGFloat) -> UIImage {
+        let size = CGSize(width: width, height: height)
+        let icon = UIImage(named: named)!
+        let result = UiUtils.sizeUnder(original: CGSize(width: 24 * icon.scale, height: 24 * icon.scale), fitUnder: size, scale: 1, clip: false)
+        let iconSize = result.dst
+        let dx = (size.width - iconSize.width) * 0.5
+        let dy = (size.height - iconSize.height) * 0.5
+
+        return UIGraphicsImageRenderer(size: size).image { rendererContext in
+            // Draw solid gray background
+            let bgColor: UIColor
+            if #available(iOS 13, *) {
+                bgColor = UIColor.secondarySystemBackground
+            } else {
+                bgColor = UIColor.systemGray
+            }
+            bgColor.setFill()
+            rendererContext.fill(CGRect(origin: .zero, size: size))
+
+            // Draw semi-transparent background image, if available.
+            if let bg = bg {
+                bg.draw(in: CGRect(x: 0, y: 0, width: width, height: height), blendMode: .normal, alpha: 0.35)
+            }
+
+            // Draw icon.
+            if #available(iOS 13, *) {
+                UIColor.secondaryLabel.setFill()
+            } else {
+                UIColor.darkText.setFill()
+            }
+            icon.draw(in: CGRect(x: dx, y: dy, width: iconSize.width, height: iconSize.height))
+        }
+    }
+
     /// Calculate physical (not logical, i.e. UIImage.scale is factored in) linear dimensions
     /// for scaling image down to fit under a certain size.
     ///

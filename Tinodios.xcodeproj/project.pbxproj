@@ -78,6 +78,7 @@
 		B0A612B5229132CC00569DFE /* MessageBubbleDecorator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0A612B4229132CC00569DFE /* MessageBubbleDecorator.swift */; };
 		B0A612B72294289000569DFE /* MessageViewController+SendMessageBarDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0A612B62294288F00569DFE /* MessageViewController+SendMessageBarDelegate.swift */; };
 		B0BA208523D5D8CF00C59BD4 /* FilePreviewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0BA208423D5D8CF00C59BD4 /* FilePreviewController.swift */; };
+		B0BB539F256B14A1000FE949 /* AsyncTextAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0BB539E256B14A1000FE949 /* AsyncTextAttachment.swift */; };
 		B0C6A3C2229EDF14009B0B5D /* ImagePreviewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0C6A3C1229EDF14009B0B5D /* ImagePreviewController.swift */; };
 		B0CF83E0244E074A00E79D22 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = B0CF83E2244E074A00E79D22 /* Localizable.strings */; };
 		B0DF03172279F027000F9492 /* RoundImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0DF03162279F027000F9492 /* RoundImageView.swift */; };
@@ -210,6 +211,7 @@
 		B0A612B4229132CC00569DFE /* MessageBubbleDecorator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageBubbleDecorator.swift; sourceTree = "<group>"; };
 		B0A612B62294288F00569DFE /* MessageViewController+SendMessageBarDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MessageViewController+SendMessageBarDelegate.swift"; sourceTree = "<group>"; };
 		B0BA208423D5D8CF00C59BD4 /* FilePreviewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilePreviewController.swift; sourceTree = "<group>"; };
+		B0BB539E256B14A1000FE949 /* AsyncTextAttachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncTextAttachment.swift; sourceTree = "<group>"; };
 		B0BC2B5B235E0DB800BEEB4B /* Tinodios.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Tinodios.entitlements; sourceTree = "<group>"; };
 		B0C6A3C1229EDF14009B0B5D /* ImagePreviewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePreviewController.swift; sourceTree = "<group>"; };
 		B0CF83DD244DFB1C00E79D22 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Main.strings"; sourceTree = "<group>"; };
@@ -378,6 +380,7 @@
 		B0C496B022787C020084FA0D /* widgets */ = {
 			isa = PBXGroup;
 			children = (
+				B0BB539E256B14A1000FE949 /* AsyncTextAttachment.swift */,
 				0A8D945922BEF08100DC154E /* AvatarWithOnlineIndicator.swift */,
 				0A8D945722BEED3700DC154E /* AvatarWithOnlineIndicator.xib */,
 				0A8D945B22BF5B7F00DC154E /* AvatarWithOnlineIndicator+TypingAnimation.swift */,
@@ -648,6 +651,7 @@
 				0A95F4D4229BD95900AEF7D3 /* AccountSettingsViewController.swift in Sources */,
 				0A4E1D3022829C46006C0912 /* ContactsManager.swift in Sources */,
 				0ACB5F0E22097651008FE740 /* ChatListPresenter.swift in Sources */,
+				B0BB539F256B14A1000FE949 /* AsyncTextAttachment.swift in Sources */,
 				0A0380D821B3CC8100A3FA0E /* AppDelegate.swift in Sources */,
 				B05ACEB322FDAB5200276713 /* ResetPasswordViewController.swift in Sources */,
 				B0DF031F227C6898000F9492 /* PaddedLabel.swift in Sources */,
