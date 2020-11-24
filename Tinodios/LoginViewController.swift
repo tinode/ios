@@ -64,7 +64,7 @@ class LoginViewController: UIViewController {
     }
 
     private func setInterfaceColors() {
-        if #available(iOS 12.0, *), traitCollection.userInterfaceStyle == .dark {
+        if traitCollection.userInterfaceStyle == .dark {
             self.view.backgroundColor = .black
         } else {
             self.view.backgroundColor = .white
@@ -77,31 +77,10 @@ class LoginViewController: UIViewController {
 
         let keyboardViewEndFrame = view.convert(keyboardScreenEndFrame, from: view.window)
 
-        let bottomInset: CGFloat
-        if #available(iOS 11.0, *) {
-            bottomInset = keyboardViewEndFrame.height - view.safeAreaInsets.bottom
-        } else {
-            let tabbarHeight = tabBarController?.tabBar.frame.size.height ?? 0
-            let toolbarHeight = navigationController?.toolbar.frame.size.height ?? 0
-            bottomInset = keyboardViewEndFrame.height - tabbarHeight - toolbarHeight
-        }
+        let bottomInset = keyboardViewEndFrame.height - view.safeAreaInsets.bottom
 
         scrollView.contentInset.bottom = bottomInset
         scrollView.scrollIndicatorInsets.bottom = bottomInset
-
-        if #available(iOS 11.0, *) {} else {
-            // If active text field is hidden by the keyboard, scroll it into view.
-            var visibleRect = view.frame
-            visibleRect.size.height -= bottomInset
-            if let activeField = [userNameTextEdit, passwordTextEdit].first(where: { $0.isFirstResponder }),
-                // passwordTextField is embedded in a text view (in order to display password visibility switches).
-                let origin = (activeField === passwordTextEdit! ? activeField.superview : activeField)?.frame.origin {
-                if visibleRect.contains(origin) {
-                    let scrollPoint = CGPoint(x: 0, y: origin.y - bottomInset)
-                    scrollView.setContentOffset(scrollPoint, animated: true)
-                }
-            }
-        }
     }
 
     @objc func keyboardWillHide(_ notification: Notification) {

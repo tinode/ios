@@ -52,10 +52,11 @@ Status: beta. Usable and mostly stable but bugs may happen.
 
 ### Application
 
-* https://github.com/stephencelis/SQLite.swift for local persistence
-* https://github.com/jrendel/SwiftKeychainWrapper
-* https://github.com/marmelroy/PhoneNumberKit
-* Google Firebase for [push notifications](https://firebase.google.com/docs/cloud-messaging/ios/client) and [analytics](https://firebase.google.com/docs/analytics/get-started?platform=ios). See below.
+* [SQLite.swift](https://github.com/stephencelis/SQLite.swift) for convenience of SQLite use.
+* [SwiftKeychainWrapper](https://github.com/jrendel/SwiftKeychainWrapper) for convenience of Keychain access.
+* [PhoneNumberKit](https://github.com/marmelroy/PhoneNumberKit) for normalizing phone numbers.
+* [Kingfisher](https://github.com/onevcat/Kingfisher) for out-of-band image handling.
+* Google Firebase for [push notifications](https://firebase.google.com/docs/cloud-messaging/ios/client), [analytics](https://firebase.google.com/docs/analytics/get-started?platform=ios), and [crash reporting](https://firebase.google.com/docs/crashlytics/get-started?platform=ios). See below.
 
 
 ## Push notifications

@@ -93,13 +93,7 @@ extension ImagePicker: UIImagePickerControllerDelegate, UINavigationControllerDe
             return self.pickerController(picker, didSelect: nil, mimeType: nil, fileName: nil)
         }
 
-        let imageUrl: NSURL?
-        if #available(iOS 11.0, *) {
-            imageUrl = info[.imageURL] as? NSURL
-        } else {
-            // Fallback on earlier versions
-            imageUrl = info[.referenceURL] as? NSURL
-        }
+        let imageUrl = info[.imageURL] as? NSURL
 
         // Get mime type and file name
         let urlResourceValues = try? imageUrl?.resourceValues(forKeys: [.typeIdentifierKey, .nameKey])

@@ -47,7 +47,7 @@ class LargeFileHelper: NSObject {
         let config = URLSessionConfiguration.background(withIdentifier: Bundle.main.bundleIdentifier!)
         self.init(config: config)
     }
-    private static func addCommonHeaders(to request: inout URLRequest, using tinode: Tinode) {
+    public static func addCommonHeaders(to request: inout URLRequest, using tinode: Tinode) {
         request.addValue(tinode.apiKey, forHTTPHeaderField: "X-Tinode-APIKey")
         request.addValue("Token \(tinode.authToken!)", forHTTPHeaderField: "X-Tinode-Auth")
     }

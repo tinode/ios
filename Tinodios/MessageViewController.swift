@@ -282,12 +282,6 @@ class MessageViewController: UIViewController {
 
         // Appearance and behavior.
         extendedLayoutIncludesOpaqueBars = true
-        automaticallyAdjustsScrollViewInsets = false
-        if #available(iOS 11, *) {
-        } else {
-            // On iOS 9-10, make sure the content doesn't go behind the navbar.
-            edgesForExtendedLayout = []
-        }
 
         // Receive notifications from ImagePreviewController that an image is ready to be sent.
         NotificationCenter.default.addObserver(self, selector: #selector(sendDraftyMessage(notification:)), name: Notification.Name(MessageViewController.kNotificationSendDraftyMessage), object: nil)
@@ -296,6 +290,7 @@ class MessageViewController: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(sendAttachment(notification:)), name: Notification.Name(MessageViewController.kNotificationSendAttachment), object: nil)
 
         // Collection View setup
+        collectionView.contentInsetAdjustmentBehavior = .never
         collectionView.keyboardDismissMode = .interactive
         collectionView.alwaysBounceVertical = true
         collectionView.layoutMargins = Constants.kCollectionViewInset
@@ -307,18 +302,10 @@ class MessageViewController: UIViewController {
 
         // Setup UICollectionView constraints: fill the screen
         collectionView.translatesAutoresizingMaskIntoConstraints = false
-        let top: NSLayoutConstraint, trailing: NSLayoutConstraint, leading: NSLayoutConstraint, bottom: NSLayoutConstraint
-        if #available(iOS 11, *) {
-            top = collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: topLayoutGuide.length)
-            bottom = collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
-            leading = collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor)
-            trailing = collectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor)
-        } else {
-            top = collectionView.topAnchor.constraint(equalTo: view.topAnchor, constant: topLayoutGuide.length)
-            bottom = collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-            leading = collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor)
-            trailing = collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
-        }
+        let top = collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor) // FIXME: maybe it needs some spacing
+        let bottom = collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+        let leading = collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor)
+        let trailing = collectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor)
         NSLayoutConstraint.activate([top, bottom, trailing, leading])
     }
 
@@ -419,7 +406,7 @@ class MessageViewController: UIViewController {
     }
 
     private func setInterfaceColors() {
-        if #available(iOS 12, *), traitCollection.userInterfaceStyle == .dark {
+        if traitCollection.userInterfaceStyle == .dark {
             view.backgroundColor = .black
         } else {
             view.backgroundColor = .white
@@ -681,14 +668,14 @@ extension MessageViewController: UICollectionViewDataSource {
 
         cell.content.backgroundColor = nil
         if message.isDeleted {
-            if #available(iOS 12, *), traitCollection.userInterfaceStyle == .dark {
+            if traitCollection.userInterfaceStyle == .dark {
                 cell.containerView.backgroundColor = Constants.kDeletedMessageBubbleColorDark
             } else {
                 cell.containerView.backgroundColor = Constants.kDeletedMessageBubbleColorLight
             }
             cell.content.textColor = Constants.kDeletedMessageTextColor
         } else if isFromCurrentSender(message: message) {
-            if #available(iOS 12, *), traitCollection.userInterfaceStyle == .dark {
+            if traitCollection.userInterfaceStyle == .dark {
                 cell.containerView.backgroundColor = Constants.kOutgoingBubbleColorDark
                 cell.content.textColor = Constants.kOutgoingTextColorDark
             } else {
@@ -696,7 +683,7 @@ extension MessageViewController: UICollectionViewDataSource {
                 cell.content.textColor = Constants.kOutgoingTextColorDark
             }
         } else {
-            if #available(iOS 12, *), traitCollection.userInterfaceStyle == .dark {
+            if traitCollection.userInterfaceStyle == .dark {
                 cell.containerView.backgroundColor = Constants.kIncomingBubbleColorDark
                 cell.content.textColor = Constants.kIncomingTextColorDark
             } else {
@@ -1040,7 +1027,7 @@ extension MessageViewController : MessageViewLayoutDelegate {
         let textColor: UIColor
         if message.isDeleted {
             textColor = Constants.kDeletedMessageTextColor
-        } else if #available(iOS 12, *), traitCollection.userInterfaceStyle == .dark {
+        } else if traitCollection.userInterfaceStyle == .dark {
             textColor = isFromCurrentSender(message: message) ? Constants.kOutgoingTextColorDark : Constants.kIncomingTextColorDark
         } else {
             textColor = isFromCurrentSender(message: message) ? Constants.kOutgoingTextColorLight : Constants.kIncomingTextColorLight

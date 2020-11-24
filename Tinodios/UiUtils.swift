@@ -10,6 +10,8 @@ import Foundation
 import TinodiosDB
 import TinodeSDK
 
+public typealias ScalingData = (dst: CGSize, src: CGRect, altered: Bool)
+
 class UiTinodeEventListener : TinodeEventListener {
     private var connected: Bool = false
 
@@ -73,16 +75,18 @@ class UiUtils {
     static let kMaxBitmapSize: CGFloat = 1024
     // Maximum length of topic title or user name.
     static let kMaxTitleLength = 60
+    // Default dimensions of a bitmap when sender provided none
+    static let kDefaultBitmapSize: CGFloat = 256
 
     private static func setUpPushNotifications() {
         let application = UIApplication.shared
         let appDelegate = application.delegate as! AppDelegate
         guard !appDelegate.pushNotificationsConfigured else {
-            InstanceID.instanceID().instanceID { (result, error) in
+            Messaging.messaging().token { (token, error) in
               if let error = error {
-                Cache.log.debug("Error fetching remote Firebase instance ID: %@", error.localizedDescription)
-              } else if let result = result {
-                Cache.getTinode().setDeviceToken(token: result.token)
+                Cache.log.debug("Error fetching FCM registration token: %@", error.localizedDescription)
+              } else if let token = token {
+                Cache.getTinode().setDeviceToken(token: token)
               }
             }
             return
@@ -220,7 +224,6 @@ class UiUtils {
         }
     }
 
-
     // Get text from UITextField or mark the field red if the field is blank
     public static func ensureDataInTextField(_ field: UITextField, maxLength: Int = -1) -> String {
         let text = (field.text ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
@@ -230,6 +233,7 @@ class UiUtils {
         }
         return maxLength > 0 ? String(text.prefix(maxLength)) : text
     }
+
     public static func markTextFieldAsError(_ field: UITextField) {
         let imageView = UIImageView(image: UIImage(named: "important-32"))
         imageView.contentMode = .scaleAspectFit
@@ -321,9 +325,8 @@ class UiUtils {
         label.sizeToFit()
 
         var toastHeight = max(min(label.frame.height + spacing * 3, maxMessageHeight), minMessageHeight)
-        if #available(iOS 11.0, *) {
-            toastHeight += parent.safeAreaInsets.bottom
-        }
+        toastHeight += parent.safeAreaInsets.bottom
+
         toastView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             toastView.leadingAnchor.constraint(equalTo: parent.leadingAnchor, constant: 0),
@@ -493,6 +496,91 @@ class UiUtils {
             $0.setImage($0.imageView?.image?.withRenderingMode(.alwaysTemplate), for: .normal)
         }
     }
+
+    /// Generate image of a given size with an icon in the ceneter.
+    public static func placeholderImage(named: String, withBackground bg: UIImage?, width: CGFloat, height: CGFloat) -> UIImage {
+        let size = CGSize(width: width, height: height)
+        let icon = UIImage(named: named)!
+        let result = UiUtils.sizeUnder(original: CGSize(width: 24 * icon.scale, height: 24 * icon.scale), fitUnder: size, scale: 1, clip: false)
+        let iconSize = result.dst
+        let dx = (size.width - iconSize.width) * 0.5
+        let dy = (size.height - iconSize.height) * 0.5
+
+        return UIGraphicsImageRenderer(size: size).image { rendererContext in
+            // Draw solid gray background
+            let bgColor: UIColor
+            if #available(iOS 13, *) {
+                bgColor = UIColor.secondarySystemBackground
+            } else {
+                bgColor = UIColor.systemGray
+            }
+            bgColor.setFill()
+            rendererContext.fill(CGRect(origin: .zero, size: size))
+
+            // Draw semi-transparent background image, if available.
+            if let bg = bg {
+                bg.draw(in: CGRect(x: 0, y: 0, width: width, height: height), blendMode: .normal, alpha: 0.35)
+            }
+
+            // Draw icon.
+            if #available(iOS 13, *) {
+                UIColor.secondaryLabel.setFill()
+            } else {
+                UIColor.darkText.setFill()
+            }
+            icon.draw(in: CGRect(x: dx, y: dy, width: iconSize.width, height: iconSize.height))
+        }
+    }
+
+    /// Calculate physical (not logical, i.e. UIImage.scale is factored in) linear dimensions
+    /// for scaling image down to fit under a certain size.
+    ///
+    /// - Parameters:
+    ///     - width: width of the original image
+    ///     - height: height of the original image
+    ///     - maxWidth: maximum width of the image
+    ///     - maxHeight: maximum height of the image
+    ///     - scale: image scaling factor
+    ///     - clip: first crops the image to the new aspect ratio then shrinks it; otherwise the
+    ///       image keeps the original aspect ratio but is shrunk to be under the
+    ///       maxWidth/maxHeight
+    /// - Returns:
+    ///     a tuple which contains destination image sizes, source sizes and offsets
+    ///     into source (when 'clip' is true), an indicator that the new dimensions are different
+    ///     from the original.
+    public static func sizeUnder(original: CGSize, fitUnder: CGSize, scale: CGFloat, clip: Bool) -> ScalingData {
+        // Sanity check
+        assert(fitUnder.width > 0 && fitUnder.height > 0 && scale > 0, "Maxumum dimensions must be positive")
+
+        let originalWidth = CGFloat(original.width * scale)
+        let originalHeight = CGFloat(original.height * scale)
+
+        // scale? is [0,1): ~0 - very large original, =1: under the limits already.
+        let scaleX = min(originalWidth, fitUnder.width) / originalWidth
+        let scaleY = min(originalHeight, fitUnder.height) / originalHeight
+        // How much to scale the image
+        let scale = clip ?
+            // Scale as little as possible (large 'scale' == little change): only one dimension is below the limit, clip the other dimension; the image will have the new aspect ratio.
+            max(scaleX, scaleY) :
+            // Both width and height are below the limits: no clipping will occur, the image will keep the original aspect ratio.
+            min(scaleX, scaleY)
+
+        let dstSize = CGSize(width: max(1, min(fitUnder.width, originalWidth * scale)), height: max(1, min(fitUnder.height, originalHeight * scale)))
+
+        let srcWidth = max(1, dstSize.width / scale)
+        let srcHeight = max(1, dstSize.height / scale)
+
+        return (
+            dst: dstSize,
+            src: CGRect(
+                x: 0.5 * (originalWidth - srcWidth),
+                y: 0.5 * (originalHeight - srcHeight),
+                width: srcWidth,
+                height: srcHeight
+            ),
+            altered: originalWidth != dstSize.width || originalHeight != dstSize.height
+        )
+    }
 }
 
 extension UIViewController {
@@ -525,7 +613,6 @@ extension UITableViewController {
 
 extension UIImage {
     private static let kScaleFactor: CGFloat = 0.70710678118 // 1.0/SQRT(2)
-    public typealias ScalingData = (dst: CGSize, src: CGRect, altered: Bool)
 
     private static func resizeImage(image: UIImage, newSize size: ScalingData) -> UIImage? {
         // cropRect for cropping the original image to the required aspect ratio.
@@ -552,7 +639,7 @@ extension UIImage {
     ///       image keeps the original aspect ratio but is shrunk to be under the
     ///       maxWidth/maxHeight
     public func resize(width: CGFloat, height: CGFloat, clip: Bool) -> UIImage? {
-        let size = sizeUnder(maxWidth: width, maxHeight: height, clip: clip)
+        let size = sizeUnder(CGSize(width: width, height: height), clip: clip)
 
         // Don't mess with image if it does not need to be scaled.
         guard size.altered else { return self }
@@ -571,7 +658,7 @@ extension UIImage {
             let originalWidth = CGFloat(image.size.width * image.scale)
             let originalHeight = CGFloat(image.size.height * image.scale)
 
-            guard let newImage = UIImage.resizeImage(image: image, newSize: image.sizeUnder(maxWidth: originalWidth * UIImage.kScaleFactor, maxHeight: originalHeight * UIImage.kScaleFactor, clip: false)) else { return nil }
+            guard let newImage = UIImage.resizeImage(image: image, newSize: image.sizeUnder(CGSize(width: originalWidth * UIImage.kScaleFactor, height: originalHeight * UIImage.kScaleFactor), clip: false)) else { return nil }
             image = newImage
 
             guard let newBits = image.pixelData(forMimeType: mime) else { return nil }
@@ -594,39 +681,8 @@ extension UIImage {
     ///     a tuple which contains destination image sizes, source sizes and offsets
     ///     into source (when 'clip' is true), an indicator that the new dimensions are different
     ///     from the original.
-    public func sizeUnder(maxWidth: CGFloat, maxHeight: CGFloat, clip: Bool) -> ScalingData {
-
-        // Sanity check
-        assert(maxWidth > 0 && maxHeight > 0, "Maxumum dimensions must be positive")
-
-        let originalWidth = CGFloat(self.size.width * self.scale)
-        let originalHeight = CGFloat(self.size.height * self.scale)
-
-        // scale is [0,1): ~0 - very large original, =1: under the limits already.
-        let scaleX = min(originalWidth, maxWidth) / originalWidth
-        let scaleY = min(originalHeight, maxHeight) / originalHeight
-        // How much to scale the image
-        let scale = clip ?
-            // Scale as little as possible (large 'scale' == little change): only one dimension is below the limit, clip the other dimension; the image will have the new aspect ratio.
-            max(scaleX, scaleY) :
-            // Both width and height are below the limits: no clipping will occur, the image will keep the original aspect ratio.
-            min(scaleX, scaleY)
-
-        let dstSize = CGSize(width: min(maxWidth, originalWidth * scale), height: min(maxHeight, originalHeight * scale))
-
-        let srcWidth = dstSize.width / scale
-        let srcHeight = dstSize.height / scale
-
-        return (
-            dst: dstSize,
-            src: CGRect(
-                x: 0.5 * (originalWidth - srcWidth),
-                y: 0.5 * (originalHeight - srcHeight),
-                width: srcWidth,
-                height: srcHeight
-            ),
-            altered: originalWidth != dstSize.width || originalHeight != dstSize.height
-        )
+    public func sizeUnder(_ size: CGSize, clip: Bool) -> ScalingData {
+        return UiUtils.sizeUnder(original: CGSize(width: self.size.width, height: self.size.height), fitUnder: size, scale: self.scale, clip: clip)
     }
 
     public func pixelData(forMimeType mime: String?) -> Data? {

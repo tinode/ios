@@ -76,7 +76,7 @@ import UIKit
     }
 
     private func setColors() {
-        if #available(iOS 12.0, *), traitCollection.userInterfaceStyle == .dark {
+        if traitCollection.userInterfaceStyle == .dark {
             self.mainTextColor = Constants.defaultTextColorDark
             self.placeholderColor = Constants.defaultPlaceholderColorDark
         } else {

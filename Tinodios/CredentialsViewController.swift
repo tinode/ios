@@ -16,7 +16,7 @@ class CredentialsViewController : UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        if #available(iOS 12.0, *), traitCollection.userInterfaceStyle == .dark {
+        if traitCollection.userInterfaceStyle == .dark {
             self.view.backgroundColor = .black
         } else {
             self.view.backgroundColor = .white

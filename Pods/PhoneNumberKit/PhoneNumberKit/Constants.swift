@@ -3,7 +3,7 @@
 //  PhoneNumberKit
 //
 //  Created by Roy Marmelstein on 25/10/2015.
-//  Copyright © 2015 Roy Marmelstein. All rights reserved.
+//  Copyright © 2020 Roy Marmelstein. All rights reserved.
 //
 
 import Foundation
@@ -91,6 +91,11 @@ public enum PhoneNumberType: String, Codable {
     case uan
     case unknown
     case notParsed
+}
+
+public enum PossibleLengthType: String, Codable {
+  case national
+  case localOnly
 }
 
 // MARK: Constants

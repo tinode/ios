@@ -101,7 +101,7 @@ class ImagePreviewController : UIViewController, UIScrollViewDelegate {
     }
 
     private func setInterfaceColors() {
-        if #available(iOS 12.0, *), traitCollection.userInterfaceStyle == .dark {
+        if traitCollection.userInterfaceStyle == .dark {
             self.view.backgroundColor = .black
         } else {
             self.view.backgroundColor = .white

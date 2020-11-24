@@ -29,8 +29,8 @@ class Cache {
         if let tinode = Cache.default.tinode {
             Cache.default.timer.suspend()
             tinode.logout()
-            InstanceID.instanceID().deleteID { error in
-                Cache.log.debug("Failed to delete FCM instance id: %@", error.debugDescription)
+            Messaging.messaging().deleteToken { error in
+                Cache.log.debug("Failed to delete FCM token: %@", error.debugDescription)
             }
             Cache.default.tinode = nil
         }
