@@ -78,7 +78,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         guard let topicName = topicName else { return false }
         self.topicName = topicName
         self.topicId = BaseDb.getInstance().topicDb?.getId(topic: topicName)
-        let tinode = Cache.getTinode()
+        let tinode = Cache.tinode
         if self.tinodeEventListener == nil {
             self.tinodeEventListener = MessageEventListener(
                 interactor: self,
@@ -105,9 +105,9 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         if self.topic?.listener === self {
             self.topic?.listener = nil
         }
-        let tinode = Cache.getTinode()
+
         if let listener = self.tinodeEventListener {
-            tinode.removeListener(listener)
+            Cache.tinode.removeListener(listener)
         }
     }
     func leaveTopic() {
@@ -120,7 +120,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
             self.presenter?.applyTopicPermissions(withError: nil)
             return true
         }
-        let tinode = Cache.getTinode()
+        let tinode = Cache.tinode
         guard tinode.isConnectionAuthenticated else {
             // If connection is not ready, wait for completion.
             // MessageInteractor.attachToTopic() will be called again from the onLogin callback.
@@ -167,7 +167,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                     return nil
                 },
                 onFailure: { [weak self] err in
-                    let tinode = Cache.getTinode()
+                    let tinode = Cache.tinode
                     let errorMsg = String(format: NSLocalizedString("Failed to subscribe to topic: %@", comment: "Error message"), err.localizedDescription)
                     if tinode.isConnected {
                         DispatchQueue.main.async {
@@ -204,7 +204,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                     switch e {
                     case .notConnected(_):
                         DispatchQueue.main.async { UiUtils.showToast(message: NSLocalizedString("You are offline.", comment: "Toast notification")) }
-                        Cache.getTinode().reconnectNow(interactively: false, reset: false)
+                        Cache.tinode.reconnectNow(interactively: false, reset: false)
                     default:
                         DispatchQueue.main.async { UiUtils.showToast(message: NSLocalizedString("Message not sent.", comment: "Toast notification")) }
                     }
@@ -406,7 +406,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
     }
     override func onData(data: MsgServerData?) {
         self.loadMessages()
-        if let from = data?.from, let seq = data?.seq, !Cache.getTinode().isMe(uid: from) {
+        if let from = data?.from, let seq = data?.seq, !Cache.tinode.isMe(uid: from) {
             sendReadNotification(explicitSeq: seq, when: .now() + .seconds(1))
         }
     }

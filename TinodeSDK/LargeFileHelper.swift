@@ -6,10 +6,8 @@
 //
 
 import Foundation
-import UIKit
-import TinodeSDK
 
-class Upload {
+public class Upload {
     var url: URL
     var topicId: String
     var msgId: Int64 = 0
@@ -30,35 +28,43 @@ class Upload {
             cb(nil, TinodeError.invalidState("Topic \(topicId), msg id \(msgId): Could not finish upload. Cancelling."))
         }
     }
+
+    public func appendResponse(_ other: Data) {
+        self.responseData.append(other)
+    }
 }
 
-class LargeFileHelper: NSObject {
-    static let kBoundary = "*****\(Date().millisecondsSince1970)*****"
+public class LargeFileHelper: NSObject {
+    static let kBoundary = "*****\(Int64((Date().timeIntervalSince1970 * 1000.0).rounded()))*****"
     static let kTwoHyphens = "--"
     static let kLineEnd = "\r\n"
 
     var urlSession: URLSession!
     var activeUploads: [String : Upload] = [:]
-    init(config: URLSessionConfiguration) {
+    var tinode: Tinode!
+
+    init(with tinode: Tinode, sessionDelegate delegate: URLSessionDelegate, config: URLSessionConfiguration) {
         super.init()
-        self.urlSession = URLSession(configuration: config, delegate: self, delegateQueue: nil)
+        self.urlSession = URLSession(configuration: config, delegate: delegate, delegateQueue: nil)
+        self.tinode = tinode
     }
-    convenience override init() {
+    convenience init(with tinode: Tinode, sessionDelegate delegate: URLSessionDelegate) {
         let config = URLSessionConfiguration.background(withIdentifier: Bundle.main.bundleIdentifier!)
-        self.init(config: config)
+        self.init(with: tinode, sessionDelegate: delegate, config: config)
     }
+
     public static func addCommonHeaders(to request: inout URLRequest, using tinode: Tinode) {
         request.addValue(tinode.apiKey, forHTTPHeaderField: "X-Tinode-APIKey")
         request.addValue("Token \(tinode.authToken!)", forHTTPHeaderField: "X-Tinode-Auth")
     }
+
     public static func createUploadKey(topicId: String, msgId: Int64) -> String {
         return "\(topicId)-\(msgId)"
     }
 
-    func startUpload(filename: String, mimetype: String, d: Data, topicId: String, msgId: Int64,
+    public func startUpload(filename: String, mimetype: String, d: Data, topicId: String, msgId: Int64,
                      progressCallback: @escaping (Float) -> Void,
                      completionCallback: @escaping (ServerMessage?, Error?) -> Void) {
-        let tinode = Cache.getTinode()
         guard var url = tinode.baseURL(useWebsocketProtocol: false) else { return }
         url.appendPathComponent("file/u/")
         let upload = Upload(url: url)
@@ -69,7 +75,7 @@ class LargeFileHelper: NSObject {
         request.addValue(tinode.userAgent, forHTTPHeaderField: "User-Agent")
         request.addValue("multipart/form-data; boundary=\(LargeFileHelper.kBoundary)", forHTTPHeaderField: "Content-Type")
 
-        LargeFileHelper.addCommonHeaders(to: &request, using: tinode)
+        LargeFileHelper.addCommonHeaders(to: &request, using: self.tinode)
 
         var newData = Data()
         let header = LargeFileHelper.kTwoHyphens + LargeFileHelper.kBoundary + LargeFileHelper.kLineEnd +
@@ -99,7 +105,7 @@ class LargeFileHelper: NSObject {
         upload.task!.resume()
     }
 
-    func cancelUpload(topicId: String, msgId: Int64) -> Bool {
+    public func cancelUpload(topicId: String, msgId: Int64) -> Bool {
         let uploadKey = LargeFileHelper.createUploadKey(topicId: topicId, msgId: msgId)
         var upload = activeUploads[uploadKey]
         guard upload != nil else { return false }
@@ -109,37 +115,30 @@ class LargeFileHelper: NSObject {
         return true
     }
 
-    func startDownload(from url: URL) {
-        let tinode = Cache.getTinode()
+    public func startDownload(from url: URL) {
         var request = URLRequest(url: url)
-        LargeFileHelper.addCommonHeaders(to: &request, using: tinode)
+        LargeFileHelper.addCommonHeaders(to: &request, using: self.tinode)
 
         let task = urlSession.downloadTask(with: request)
         task.resume()
     }
+
+    public func getActiveUpload(for taskId: String) -> Upload? {
+        return self.activeUploads[taskId]
+    }
 }
 
-extension LargeFileHelper: URLSessionDelegate {
-    func urlSessionDidFinishEvents(forBackgroundURLSession session: URLSession) {
-        DispatchQueue.main.async {
-            if let appDelegate = UIApplication.shared.delegate as? AppDelegate,
-                let completionHandler = appDelegate.backgroundSessionCompletionHandler {
-                appDelegate.backgroundSessionCompletionHandler = nil
-                completionHandler()
-            }
-        }
-    }
-}
 extension LargeFileHelper: URLSessionDataDelegate {
-    func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive: Data) {
-        if let taskId = dataTask.taskDescription, let upload = activeUploads[taskId] {
-            upload.responseData.append(didReceive)
+    public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive: Data) {
+        if let taskId = dataTask.taskDescription, let upload = self.getActiveUpload(for: taskId) {
+            upload.appendResponse(didReceive)
         }
     }
 }
+
 extension LargeFileHelper: URLSessionTaskDelegate {
-    func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError: Error?) {
-        guard let taskId = task.taskDescription, let upload = activeUploads[taskId] else {
+    public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError: Error?) {
+        guard let taskId = task.taskDescription, let upload = self.getActiveUpload(for: taskId) else {
             return
         }
         activeUploads.removeValue(forKey: taskId)
@@ -152,7 +151,7 @@ extension LargeFileHelper: URLSessionTaskDelegate {
         guard uploadError == nil else {
             return
         }
-        Cache.log.debug("LargeFileHelper - finished task: id = %@, topicId = %@", taskId, upload.topicId)
+        Tinode.log.debug("LargeFileHelper - finished task: id = %@, topicId = %@", taskId, upload.topicId)
         guard let response = task.response as? HTTPURLResponse else {
             uploadError = TinodeError.invalidState(String(format: NSLocalizedString("Upload failed (%@). No server response.", comment: "Error message"), upload.topicId))
             return
@@ -172,40 +171,12 @@ extension LargeFileHelper: URLSessionTaskDelegate {
             return
         }
     }
-    func urlSession(_ session: URLSession, task: URLSessionTask, didSendBodyData: Int64, totalBytesSent: Int64, totalBytesExpectedToSend: Int64) {
-        if let t = task.taskDescription, let upload = activeUploads[t] {
+    public func urlSession(_ session: URLSession, task: URLSessionTask, didSendBodyData: Int64, totalBytesSent: Int64, totalBytesExpectedToSend: Int64) {
+        if let taskId = task.taskDescription, let upload = self.getActiveUpload(for: taskId) {
             let progress: Float = totalBytesExpectedToSend > 0 ?
                 Float(totalBytesSent) / Float(totalBytesExpectedToSend) : 0
             upload.progressCb?(progress)
         }
     }
 }
-// Downloads.
-extension LargeFileHelper: URLSessionDownloadDelegate {
-    func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask,
-                    didFinishDownloadingTo location: URL) {
-        guard downloadTask.error == nil else {
-            Cache.log.error("LargeFileHelper - download failed: %@", downloadTask.error!.localizedDescription)
-            return
-        }
 
-        guard let url = downloadTask.originalRequest?.url else { return }
-        let fn = url.extractQueryParam(withName: "origfn") ?? url.lastPathComponent
-
-        let documentsUrl: URL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-        let destinationURL = documentsUrl.appendingPathComponent(fn)
-
-        let fileManager = FileManager.default
-        do {
-            try fileManager.removeItem(at: destinationURL)
-        } catch {
-            // Non-fatal: file probably doesn't exist
-        }
-        do {
-            try fileManager.moveItem(at: location, to: destinationURL)
-            UiUtils.presentFileSharingVC(for: destinationURL)
-        } catch {
-            Cache.log.error("LargeFileHelper - could not copy file to disk: %@", error.localizedDescription)
-        }
-    }
-}

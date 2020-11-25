@@ -89,7 +89,7 @@ class TopicInfoViewController: UITableViewController {
     }
 
     private func setup() {
-        self.tinode = Cache.getTinode()
+        self.tinode = Cache.tinode
         self.topic = tinode.getTopic(topicName: topicName) as? DefaultComTopic
         guard self.topic != nil else {
             return
@@ -342,13 +342,12 @@ class TopicInfoViewController: UITableViewController {
 
     private func reportTopic(reason: String) {
         blockContact();
-        let tinode = Cache.getTinode()
         // Create and send spam report.
         let msg = Drafty().attachJSON([
             "action": JSONValue.string("report"),
             "target": JSONValue.string(self.topic.name)
             ])
-        _ = tinode.publish(topic: Tinode.kTopicSys, head: Tinode.draftyHeaders(for: msg), content: msg)
+        _ = Cache.tinode.publish(topic: Tinode.kTopicSys, head: Tinode.draftyHeaders(for: msg), content: msg)
     }
 
     @objc func deleteGroupClicked(sender: UITapGestureRecognizer) {

@@ -39,7 +39,7 @@ class SettingsPersonalViewController: UITableViewController {
     }
 
     private func setup() {
-        self.tinode = Cache.getTinode()
+        self.tinode = Cache.tinode
         self.me = self.tinode.getMeTopic()!
 
         UiUtils.setupTapRecognizer(

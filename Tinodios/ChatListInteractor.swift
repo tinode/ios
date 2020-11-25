@@ -46,7 +46,7 @@ class ChatListInteractor: ChatListBusinessLogic, ChatListDataStore {
         override func onMetaDesc(desc: Description<VCard, PrivateType>) {
             // Handle description for me topic:
             // add/update user info for ME.
-            if let uid = Cache.getTinode().myUid {
+            if let uid = Cache.tinode.myUid {
                 ContactsManager.default.processDescription(uid: uid, desc: desc)
             }
         }
@@ -84,7 +84,7 @@ class ChatListInteractor: ChatListBusinessLogic, ChatListDataStore {
     private var tinodeEventListener: ChatEventListener? = nil
 
     func attachToMeTopic() {
-        let tinode = Cache.getTinode()
+        let tinode = Cache.tinode
         guard meTopic == nil || !meTopic!.attached else {
             return
         }
@@ -114,7 +114,7 @@ class ChatListInteractor: ChatListBusinessLogic, ChatListDataStore {
         }
         self.meListener?.interactor = self
         self.meTopic?.listener = meListener
-        let tinode = Cache.getTinode()
+        let tinode = Cache.tinode
         if self.tinodeEventListener == nil {
             self.tinodeEventListener = ChatEventListener(
                 interactor: self,
@@ -126,13 +126,13 @@ class ChatListInteractor: ChatListBusinessLogic, ChatListDataStore {
         if self.meTopic?.listener === self.meListener {
             self.meTopic?.listener = nil
         }
-        let tinode = Cache.getTinode()
+        let tinode = Cache.tinode
         if let listener = self.tinodeEventListener {
             tinode.removeListener(listener)
         }
     }
     private func getTopics(archived: Bool) -> [DefaultComTopic]? {
-        return Cache.getTinode().getFilteredTopics(filter: {(topic: TopicProto) in
+        return Cache.tinode.getFilteredTopics(filter: {(topic: TopicProto) in
             return topic.topicType.matches(TopicType.user) && topic.isArchived == archived && topic.isJoiner
         })?.map {
             // Must succeed.
@@ -151,7 +151,7 @@ class ChatListInteractor: ChatListBusinessLogic, ChatListDataStore {
     }
 
     func deleteTopic(_ name: String) {
-        let topic = Cache.getTinode().getTopic(topicName: name) as! DefaultComTopic
+        let topic = Cache.tinode.getTopic(topicName: name) as! DefaultComTopic
         topic.delete(hard: true).then(
             onSuccess: { [weak self] msg in
                 self?.loadAndPresentTopics()
@@ -162,7 +162,7 @@ class ChatListInteractor: ChatListBusinessLogic, ChatListDataStore {
     }
 
     func changeArchivedStatus(forTopic name: String, archived: Bool) {
-        let topic = Cache.getTinode().getTopic(topicName: name) as! DefaultComTopic
+        let topic = Cache.tinode.getTopic(topicName: name) as! DefaultComTopic
         topic.updateArchived(archived: archived)?.then(
             onSuccess: { [weak self] msg in
                 self?.loadAndPresentTopics()

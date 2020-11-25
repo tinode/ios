@@ -14,7 +14,6 @@
 		0A0380DD21B3CC8100A3FA0E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0A0380DB21B3CC8100A3FA0E /* Main.storyboard */; };
 		0A0380DF21B3CC8200A3FA0E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0A0380DE21B3CC8200A3FA0E /* Assets.xcassets */; };
 		0A0380E221B3CC8200A3FA0E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0A0380E021B3CC8200A3FA0E /* LaunchScreen.storyboard */; };
-		0A0E940322D324F1006416F8 /* LargeFileHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A0E940222D324F1006416F8 /* LargeFileHelper.swift */; };
 		0A11912D22F03E3100A1BBA1 /* TagsEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A11912C22F03E3100A1BBA1 /* TagsEditView.swift */; };
 		0A2F81C6229677DD007E562C /* AddByIDViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2F81C5229677DD007E562C /* AddByIDViewController.swift */; };
 		0A35BA9E22836CCF00AA5E2F /* ContactsSynchronizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A35BA9D22836CCF00AA5E2F /* ContactsSynchronizer.swift */; };
@@ -79,6 +78,7 @@
 		B0A612B72294289000569DFE /* MessageViewController+SendMessageBarDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0A612B62294288F00569DFE /* MessageViewController+SendMessageBarDelegate.swift */; };
 		B0BA208523D5D8CF00C59BD4 /* FilePreviewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0BA208423D5D8CF00C59BD4 /* FilePreviewController.swift */; };
 		B0BB539F256B14A1000FE949 /* AsyncTextAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0BB539E256B14A1000FE949 /* AsyncTextAttachment.swift */; };
+		B0BB53C3256DD5C9000FE949 /* LargeFileHelperDelegates.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0BB53C2256DD5C9000FE949 /* LargeFileHelperDelegates.swift */; };
 		B0C6A3C2229EDF14009B0B5D /* ImagePreviewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0C6A3C1229EDF14009B0B5D /* ImagePreviewController.swift */; };
 		B0CF83E0244E074A00E79D22 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = B0CF83E2244E074A00E79D22 /* Localizable.strings */; };
 		B0DF03172279F027000F9492 /* RoundImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0DF03162279F027000F9492 /* RoundImageView.swift */; };
@@ -139,7 +139,6 @@
 		0A0380DE21B3CC8200A3FA0E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		0A0380E121B3CC8200A3FA0E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		0A0380E321B3CC8200A3FA0E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		0A0E940222D324F1006416F8 /* LargeFileHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LargeFileHelper.swift; sourceTree = "<group>"; };
 		0A11912C22F03E3100A1BBA1 /* TagsEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagsEditView.swift; sourceTree = "<group>"; };
 		0A2F81C5229677DD007E562C /* AddByIDViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddByIDViewController.swift; sourceTree = "<group>"; };
 		0A35BA9D22836CCF00AA5E2F /* ContactsSynchronizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsSynchronizer.swift; sourceTree = "<group>"; };
@@ -212,6 +211,7 @@
 		B0A612B62294288F00569DFE /* MessageViewController+SendMessageBarDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MessageViewController+SendMessageBarDelegate.swift"; sourceTree = "<group>"; };
 		B0BA208423D5D8CF00C59BD4 /* FilePreviewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilePreviewController.swift; sourceTree = "<group>"; };
 		B0BB539E256B14A1000FE949 /* AsyncTextAttachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncTextAttachment.swift; sourceTree = "<group>"; };
+		B0BB53C2256DD5C9000FE949 /* LargeFileHelperDelegates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LargeFileHelperDelegates.swift; sourceTree = "<group>"; };
 		B0BC2B5B235E0DB800BEEB4B /* Tinodios.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Tinodios.entitlements; sourceTree = "<group>"; };
 		B0C6A3C1229EDF14009B0B5D /* ImagePreviewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePreviewController.swift; sourceTree = "<group>"; };
 		B0CF83DD244DFB1C00E79D22 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Main.strings"; sourceTree = "<group>"; };
@@ -300,7 +300,7 @@
 				0AE50D4322156A250021F7B7 /* FindViewController.swift */,
 				B0C6A3C1229EDF14009B0B5D /* ImagePreviewController.swift */,
 				FA37AD23238B0D6F00301261 /* KeyboardInfo.swift */,
-				0A0E940222D324F1006416F8 /* LargeFileHelper.swift */,
+				B0BB53C2256DD5C9000FE949 /* LargeFileHelperDelegates.swift */,
 				0A6F260921BE51D800B9726E /* LoginViewController.swift */,
 				B0A612B4229132CC00569DFE /* MessageBubbleDecorator.swift */,
 				B0DF031C227C604C000F9492 /* MessageCell.swift */,
@@ -642,6 +642,7 @@
 				0A35BA9E22836CCF00AA5E2F /* ContactsSynchronizer.swift in Sources */,
 				B09C564A2469362A00D6615D /* SettingsPersonalViewController.swift in Sources */,
 				0A11912D22F03E3100A1BBA1 /* TagsEditView.swift in Sources */,
+				B0BB53C3256DD5C9000FE949 /* LargeFileHelperDelegates.swift in Sources */,
 				0A8D945A22BEF08100DC154E /* AvatarWithOnlineIndicator.swift in Sources */,
 				0A0016E721E7236900088188 /* MessageInteractor.swift in Sources */,
 				0A36776922B09C1900724873 /* EditMembersViewController.swift in Sources */,
@@ -684,7 +685,6 @@
 				B012599C229CEBE600688FCE /* SelectedMemberViewCell.swift in Sources */,
 				0AEE8BEE226456080022EC3F /* UiUtils.swift in Sources */,
 				0AC33D032293C7A00060D263 /* NewGroupViewController.swift in Sources */,
-				0A0E940322D324F1006416F8 /* LargeFileHelper.swift in Sources */,
 				0AE50D4622156A4B0021F7B7 /* FindInteractor.swift in Sources */,
 				0A8C8A4621E5E72D00D8751E /* MessageViewController.swift in Sources */,
 			);

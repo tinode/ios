@@ -362,7 +362,7 @@ class AttributedStringFormatter: DraftyFormatter {
              uti = kUTTypeData
              */
             // Using basic kUTTypeData to prevent iOS from displaying distorted previews.
-            let tinode = Cache.getTinode()
+            let tinode = Cache.tinode
             let baseFont = attributes[.font] as! UIFont
             // The attachment is valid if it contains either data or a link to download the data.
             let isValid = bits != nil || ref != nil
@@ -434,7 +434,7 @@ class AttributedStringFormatter: DraftyFormatter {
             switch attachment.content {
             // Image handling is easy.
             case .image:
-                let tinode = Cache.getTinode()
+                let tinode = Cache.tinode
                 let url: URL?
                 if let ref = attachment.ref {
                     url = URL(string: ref, relativeTo: tinode.baseURL(useWebsocketProtocol: false))
@@ -445,7 +445,7 @@ class AttributedStringFormatter: DraftyFormatter {
 
                 var image: UIImage?
                 if let bits = attachment.bits, let preview = UIImage(data: bits) {
-                    // FIXME: maybe cache result of converting Data to image.
+                    // FIXME: maybe cache result of converting Data to image (using topic+message_id as key).
                     // KingfisherManager.shared.cache.store(T##image: KFCrossPlatformImage##KFCrossPlatformImage, forKey: T##String)
                     image = preview
                 }

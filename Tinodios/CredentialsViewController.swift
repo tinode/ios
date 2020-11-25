@@ -30,7 +30,7 @@ class CredentialsViewController : UIViewController {
         if self.isMovingFromParent {
             // If the user's logged in and is voluntarily leaving the verification VC
             // by hitting the Back button.
-            let tinode = Cache.getTinode()
+            let tinode = Cache.tinode
             if tinode.isConnectionAuthenticated || tinode.myUid != nil {
                 tinode.logout()
             }
@@ -45,7 +45,7 @@ class CredentialsViewController : UIViewController {
             return
         }
 
-        let tinode = Cache.getTinode()
+        let tinode = Cache.tinode
 
         guard let token = tinode.authToken else {
             self.dismiss(animated: true, completion: nil)

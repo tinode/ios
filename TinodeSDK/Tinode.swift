@@ -1290,6 +1290,10 @@ public class Tinode {
         }
     }
 
+    public func getLargeFileHelper(sessionDelegate delegate: URLSessionDelegate) -> LargeFileHelper {
+        return LargeFileHelper(with: self, sessionDelegate: delegate)
+    }
+
     /// Low-level request to delete topic. Use {@link Topic#delete()} instead.
     ///
     /// - Parameters:

@@ -80,7 +80,7 @@ class SignupViewController: UITableViewController {
         }
 
         signUpButton.isUserInteractionEnabled = false
-        let tinode = Cache.getTinode()
+        let tinode = Cache.tinode
 
         let avatar = uploadedAvatar ? avatarImageView?.image?.resize(width: UiUtils.kAvatarSize, height: UiUtils.kAvatarSize, clip: true) : nil
         let vcard = VCard(fn: name, avatar: avatar)

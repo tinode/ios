@@ -38,8 +38,7 @@ class NewGroupViewController: UITableViewController {
         }
 
         // Add me to selectedUids and selectedContacts.
-        let tinode = Cache.getTinode()
-        if let myUid = tinode.myUid {
+        if let myUid = Cache.tinode.myUid {
             selectedContacts = ContactsManager.default.fetchContacts(withUids: [myUid]) ?? []
             if !selectedContacts.isEmpty {
                 selectedUids.insert(myUid)
@@ -129,7 +128,7 @@ class NewGroupViewController: UITableViewController {
 
     @IBAction func saveButtonClicked(_ sender: Any) {
         let groupName = UiUtils.ensureDataInTextField(groupNameTextField, maxLength: UiUtils.kMaxTitleLength)
-        let tinode = Cache.getTinode()
+        let tinode = Cache.tinode
         let members = selectedMembers.filter { !tinode.isMe(uid: $0) }
         if members.isEmpty {
             UiUtils.showToast(message: NSLocalizedString("Select at least one group member", comment: "Error message"))
@@ -160,8 +159,8 @@ class NewGroupViewController: UITableViewController {
     }
 
     private func createGroupTopic(titled name: String, subtitled subtitle: String, with tags: [String]?, consistingOf members: [String], withAvatar avatar: UIImage?, asChannel isChannel: Bool) {
-        let tinode = Cache.getTinode()
-        let topic = DefaultComTopic(in: tinode, forwardingEventsTo: nil, isChannel: isChannel)
+
+        let topic = DefaultComTopic(in: Cache.tinode, forwardingEventsTo: nil, isChannel: isChannel)
         topic.pub = VCard(fn: name, avatar: avatar)
         topic.priv = ["comment": .string(subtitle)] // No need to use Tinode.kNullValue here
         topic.tags = tags
@@ -217,7 +216,7 @@ extension NewGroupViewController: EditMembersDelegate {
     }
 
     func editMembersWillChangeState(_: UIView, uid: String, added: Bool, initiallySelected: Bool) -> Bool {
-        return !Cache.getTinode().isMe(uid: uid)
+        return !Cache.tinode.isMe(uid: uid)
     }
 }
 

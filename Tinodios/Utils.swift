@@ -21,13 +21,13 @@ public class Utils {
     // Indexes should be applied in descending order.
     public static func diffMessageArray(sortedOld old: [Message], sortedNew new: [Message]) -> (inserted: [Int], removed: [Int], mutated: [Int]) {
         if old.isEmpty && new.isEmpty {
-            return (removed: [], inserted: [], mutated: [])
+            return (inserted: [], removed: [], mutated: [])
         }
         if old.isEmpty {
-            return (removed: [], inserted: Array(0 ..< new.count), mutated: Array(0 ..< new.count))
+            return (inserted: Array(0 ..< new.count), removed: [], mutated: Array(0 ..< new.count))
         }
         if new.isEmpty {
-            return (removed: Array(0 ..< old.count), inserted: [], mutated: [])
+            return (inserted: [], removed: Array(0 ..< old.count), mutated: [])
         }
 
         var removed: [Int] = []
@@ -68,7 +68,7 @@ public class Utils {
             }
         }
 
-        return (removed: removed, inserted: inserted, mutated: mutated)
+        return (inserted: inserted, removed: removed, mutated: mutated)
     }
 
     public static func isValidTag(tag: String) -> Bool {

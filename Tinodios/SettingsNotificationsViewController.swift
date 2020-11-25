@@ -27,7 +27,7 @@ class SettingsNotificationsViewController: UITableViewController {
     }
 
     private func setup() {
-        self.me = Cache.getTinode().getMeTopic()!
+        self.me = Cache.tinode.getMeTopic()!
     }
 
     private func reloadData() {

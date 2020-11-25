@@ -141,7 +141,7 @@ class MessageViewController: UIViewController {
         didSet {
             topicType = Tinode.topicTypeByName(name: self.topicName)
             // Needed in order to get sender's avatar and display name
-            let tinode = Cache.getTinode()
+            let tinode = Cache.tinode
             topic = tinode.getTopic(topicName: topicName!) as? DefaultComTopic
             if topic == nil {
                 topic = tinode.newTopic(for: topicName!) as? DefaultComTopic
@@ -221,7 +221,7 @@ class MessageViewController: UIViewController {
     }
 
     private func setup() {
-        myUID = Cache.getTinode().myUid
+        myUID = Cache.tinode.myUid
         self.imagePicker = ImagePicker(presentationController: self, delegate: self, editable: false)
 
         let interactor = MessageInteractor()
@@ -378,7 +378,7 @@ class MessageViewController: UIViewController {
     @objc func sendAttachment(notification: NSNotification) {
         guard let content = notification.object as? FilePreviewContent else { return }
 
-        if content.data.count > MessageViewController.kMaxInbandAttachmentSize {
+        if content.data.count > Cache.tinode.getServerLimit(for: Tinode.kMaxMessageSize, withDefault: MessageViewController.kMaxInbandAttachmentSize) {
             self.interactor?.uploadFile(filename: content.fileName, refurl: content.refUrl, mimeType: content.contentType, data: content.data)
         } else {
             _ = interactor?.sendMessage(content: Drafty().attachFile(mime: content.contentType, bits: content.data, fname: content.fileName))

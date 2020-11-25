@@ -147,7 +147,7 @@ extension ImagePreviewController : SendImageBarDelegate {
         let mimeType = previewContent?.contentType == "image/png" ?  "image/png" : "image/jpeg"
 
         // Ensure image size in bytes and linear dimensions are under the limits.
-        guard let image = originalImage.resize(width: UiUtils.kMaxBitmapSize, height: UiUtils.kMaxBitmapSize, clip: false)?.resize(byteSize: MessageViewController.kMaxInbandAttachmentSize, asMimeType: mimeType) else { return }
+        guard let image = originalImage.resize(width: UiUtils.kMaxBitmapSize, height: UiUtils.kMaxBitmapSize, clip: false)?.resize(byteSize: Int(Cache.tinode.getServerLimit(for: Tinode.kMaxMessageSize, withDefault: MessageViewController.kMaxInbandAttachmentSize)), asMimeType: mimeType) else { return }
 
         guard let bits = image.pixelData(forMimeType: mimeType) else { return }
 
