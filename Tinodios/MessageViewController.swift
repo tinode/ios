@@ -369,19 +369,31 @@ class MessageViewController: UIViewController {
         self.interactor?.loadNextPage()
     }
 
-    // This notification is sent by ImagePreviewController when the user presses the send image button.
-    @objc func sendDraftyMessage(notification: NSNotification) {
-        guard let msg = notification.object as? Drafty else { return }
-        _ = interactor?.sendMessage(content: msg)
-    }
-
     @objc func sendAttachment(notification: NSNotification) {
-        guard let content = notification.object as? FilePreviewContent else { return }
+        let maxInbandSize = Cache.tinode.getServerLimit(for: Tinode.kMaxMessageSize, withDefault: MessageViewController.kMaxInbandAttachmentSize)
+        switch notification.object {
+        case let content as FilePreviewContent:
+            if content.data.count > maxInbandSize {
+                self.interactor?.uploadFile(UploadDef(filename: content.fileName, refurl: content.refUrl, mimeType: content.contentType, data: content.data))
+            } else {
+                _ = interactor?.sendMessage(content: Drafty().attachFile(mime: content.contentType, bits: content.data, fname: content.fileName))
+            }
+        case let content as ImagePreviewContent:
+            guard case let ImagePreviewContent.ImageContent.uiimage(image) = content.imgContent else { return }
 
-        if content.data.count > Cache.tinode.getServerLimit(for: Tinode.kMaxMessageSize, withDefault: MessageViewController.kMaxInbandAttachmentSize) {
-            self.interactor?.uploadFile(filename: content.fileName, refurl: content.refUrl, mimeType: content.contentType, data: content.data)
-        } else {
-            _ = interactor?.sendMessage(content: Drafty().attachFile(mime: content.contentType, bits: content.data, fname: content.fileName))
+            guard let data = image.pixelData(forMimeType: content.contentType) else { return }
+
+            if data.count > maxInbandSize {
+                self.interactor?.uploadImage(UploadDef(caption: content.caption, filename: content.fileName, mimeType: content.contentType, image: image, data: data))
+            } else {
+                let drafty = Drafty().insertImage(at: 0, mime: content.contentType, bits: data, width: content.width!, height: content.height!, fname: content.fileName)
+                if let caption = content.caption {
+                    _ = drafty.appendLineBreak().append(Drafty(plainText: caption))
+                }
+                _ = interactor?.sendMessage(content: drafty)
+            }
+        default:
+            break
         }
     }
 
@@ -1153,9 +1165,7 @@ extension MessageViewController : MessageCellDelegate {
     func didTapCancelUpload(in cell: MessageCell) {
         guard let topicId = self.topicName,
             let msgIdx = self.messageSeqIdIndex[cell.seqId] else { return }
-        if Cache.getLargeFileHelper().cancelUpload(
-            topicId: topicId, msgId: self.messages[msgIdx].msgId) {
-        }
+        _ = Cache.getLargeFileHelper().cancelUpload(topicId: topicId, msgId: self.messages[msgIdx].msgId)
     }
 
     private func handleButtonPost(in cell: MessageCell, using url: URL) {
@@ -1199,7 +1209,7 @@ extension MessageViewController : MessageCellDelegate {
         guard let data = MessageViewController.extractAttachment(from: cell), !data.isEmpty else { return }
         let downloadFrom = String(decoding: data[0], as: UTF8.self)
         guard var urlComps = URLComponents(string: downloadFrom) else { return }
-        if let filename = url.extractQueryParam(withName: "filename") {
+        if let filename = url.extractQueryParam(named: "filename") {
             urlComps.queryItems = [URLQueryItem(name: "origfn", value: filename)]
         }
         if let targetUrl = urlComps.url, targetUrl.scheme == "http" || targetUrl.scheme == "https" {
@@ -1212,7 +1222,7 @@ extension MessageViewController : MessageCellDelegate {
         guard let data = MessageViewController.extractAttachment(from: cell), !data.isEmpty else { return }
         let d = data[0]
         // FIXME: use actual mime instead of nil when generating file name.
-        let filename = url.extractQueryParam(withName: "filename") ?? Utils.uniqueFilename(forMime: nil)
+        let filename = url.extractQueryParam(named: "filename") ?? Utils.uniqueFilename(forMime: nil)
         let documentsUrl: URL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
         let destinationURL = documentsUrl.appendingPathComponent(filename)
         do {
@@ -1231,7 +1241,8 @@ extension MessageViewController : MessageCellDelegate {
         guard let entity = msg.content?.entities?[0], let bits = entity.data?["val"]?.asData() else { return }
 
         let content = ImagePreviewContent(
-            image: ImagePreviewContent.ImageContent.rawdata(bits),
+            imgContent: ImagePreviewContent.ImageContent.rawdata(bits),
+            caption: nil,
             fileName: entity.data?["name"]?.asString(),
             contentType: entity.data?["mime"]?.asString(),
             size: Int64(bits.count),

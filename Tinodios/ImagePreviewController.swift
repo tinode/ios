@@ -15,7 +15,8 @@ struct ImagePreviewContent {
         case rawdata(Data)
     }
 
-    let image: ImageContent
+    let imgContent: ImageContent
+    let caption: String?
     let fileName: String?
     let contentType: String?
     let size: Int64?
@@ -42,8 +43,9 @@ class ImagePreviewController : UIViewController, UIScrollViewDelegate {
     private func setup() {
         guard let content = self.previewContent else { return }
 
-        switch content.image {
+        switch content.imgContent {
         case .uiimage(let image):
+            // Image preview before sending.
             imageView.image = image
 
             sendImageBar.delegate = self
@@ -52,6 +54,7 @@ class ImagePreviewController : UIViewController, UIScrollViewDelegate {
             // Hide image details panel.
             imageDetailsPanel.bounds = CGRect()
         case .rawdata(let bits):
+            // Viewing received image.
             imageView.image = UIImage(data: bits)
 
             // Fill out details panel for the received image.
@@ -86,11 +89,11 @@ class ImagePreviewController : UIViewController, UIScrollViewDelegate {
 
     // This makes input bar visible.
     override var inputAccessoryView: UIView? {
-        return previewContent?.image != nil ? sendImageBar : super.inputAccessoryView
+        return previewContent?.imgContent != nil ? sendImageBar : super.inputAccessoryView
     }
 
     override var canBecomeFirstResponder: Bool {
-        return previewContent?.image != nil
+        return previewContent?.imgContent != nil
     }
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
@@ -114,14 +117,7 @@ class ImagePreviewController : UIViewController, UIScrollViewDelegate {
 
     @IBAction func saveImageButtonClicked(_ sender: Any) {
         guard let content = previewContent else { return }
-
-        let imageBits: Data
-        switch content.image {
-        case .rawdata(let bits):
-            imageBits = bits
-        default:
-            return
-        }
+        guard case let .rawdata(imageBits) = content.imgContent else { return }
 
         let picturesUrl: URL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
         let destinationURL = picturesUrl.appendingPathComponent(content.fileName ?? Utils.uniqueFilename(forMime: content.contentType))
@@ -137,31 +133,25 @@ class ImagePreviewController : UIViewController, UIScrollViewDelegate {
 
 extension ImagePreviewController : SendImageBarDelegate {
     func sendImageBar(caption: String?) {
-        let originalImage: UIImage
-        switch previewContent?.image {
-        case .uiimage(let img):
-            originalImage = img
-        default:
-            return
-        }
-        let mimeType = previewContent?.contentType == "image/png" ?  "image/png" : "image/jpeg"
+        guard let originalContent = self.previewContent else { return }
+        guard case let .uiimage(originalImage) = originalContent.imgContent else { return }
 
-        // Ensure image size in bytes and linear dimensions are under the limits.
-        guard let image = originalImage.resize(width: UiUtils.kMaxBitmapSize, height: UiUtils.kMaxBitmapSize, clip: false)?.resize(byteSize: Int(Cache.tinode.getServerLimit(for: Tinode.kMaxMessageSize, withDefault: MessageViewController.kMaxInbandAttachmentSize)), asMimeType: mimeType) else { return }
+        let mimeType = originalContent.contentType == "image/png" ?  "image/png" : "image/jpeg"
+        // Ensure image linear dimensions are under the limits.
+        guard let image = originalImage.resize(width: UiUtils.kMaxBitmapSize, height: UiUtils.kMaxBitmapSize, clip: false) else { return }
 
-        guard let bits = image.pixelData(forMimeType: mimeType) else { return }
-
-        let width = Int(image.size.width * image.scale)
-        let height = Int(image.size.height * image.scale)
-
-        var msg = Drafty(plainText: " ")
-            .insertImage(at: 0, mime: mimeType, bits: bits, width: width, height: height, fname: previewContent?.fileName)
-        if let caption = caption, caption.count > 0 {
-            msg = msg.appendLineBreak().append(Drafty(plainText: caption))
-        }
+        let content = ImagePreviewContent(
+            imgContent: ImagePreviewContent.ImageContent.uiimage(image),
+            caption: caption,
+            fileName: originalContent.fileName,
+            contentType: mimeType,
+            size: -1,
+            width: Int(image.size.width * image.scale),
+            height: Int(image.size.height * image.scale)
+        )
 
         // This notification is received by the MessageViewController.
-        NotificationCenter.default.post(name: Notification.Name(MessageViewController.kNotificationSendDraftyMessage), object: msg)
+        NotificationCenter.default.post(name: Notification.Name(MessageViewController.kNotificationSendAttachment), object: content)
         // Return to MessageViewController.
         navigationController?.popViewController(animated: true)
     }

@@ -190,9 +190,24 @@ class RelativeDateFormatter {
 }
 
 extension URL {
-    public func extractQueryParam(withName name: String) -> String? {
+    public func extractQueryParam(named name: String) -> String? {
         let components = URLComponents(url: self, resolvingAgainstBaseURL: false)
         return components?.queryItems?.first(where: { $0.name == name })?.value
+    }
+
+    // Attempt to convert the given URL to a relative URL using 'from' as the base.
+    func relativize(from base: URL) -> String {
+        // Ensure that both URLs share the scheme (protocol) and authority:
+        guard self.scheme == base.scheme && self.host == base.host && self.port == base.port &&
+                self.user == base.user && self.password == base.password else {
+            return self.absoluteString
+        }
+
+        guard let components = URLComponents(url: self, resolvingAgainstBaseURL: false) else {
+            return self.absoluteString
+        }
+
+        return "\(components.path)?\(components.query ?? "")"
     }
 }
 

@@ -24,7 +24,8 @@ protocol MessageBusinessLogic: class {
     func acceptInvitation()
     func ignoreInvitation()
     func blockTopic()
-    func uploadFile(filename: String?, refurl: URL?, mimeType: String?, data: Data?)
+    func uploadFile(_ def: UploadDef)
+    func uploadImage(_ def: UploadDef)
 }
 
 protocol MessageDataStore {
@@ -35,7 +36,24 @@ protocol MessageDataStore {
     func deleteMessage(seqId: Int)
 } 
 
+// Object to upload.
+struct UploadDef {
+    var caption: String?
+    var filename: String?
+    var refurl: URL?
+    var mimeType: String?
+    var image: UIImage?
+    var data: Data?
+    var width: Int?
+    var height: Int?
+}
+
 class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, MessageDataStore {
+    public enum AttachmentType: Int {
+        case file // File attachment
+        case image // Image attachment
+    }
+
     class MessageEventListener: UiTinodeEventListener {
         private weak var interactor: MessageBusinessLogic?
         init(interactor: MessageBusinessLogic?, connected: Bool) {
@@ -356,13 +374,26 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         return result
     }
 
-    func uploadFile(filename: String?, refurl: URL?, mimeType: String?, data: Data?) {
-        guard let filename = filename, let mimeType = mimeType, let data = data, let topic = topic else { return }
-        guard let content = try? Drafty().attachFile(mime: mimeType,
-                                                bits: nil,
-                                                fname: filename,
-                                                refurl: refurl,
-                                                size: data.count) else { return }
+    func uploadImage(_ def: UploadDef) {
+        uploadAttachment(type: .image, filename: def.filename, refurl: def.refurl, mimeType: def.mimeType, data: def.data, size: def.data.count, width: def.width, height: def.height)
+    }
+
+    func uploadFile(_ def: UploadDef) {
+        uploadAttachment(type: .file, filename: def.filename, refurl: def.refurl, mimeType: def.mimeType, data: def.data, size: def.data.count, width: nil, height: nil)
+    }
+
+    private func uploadAttachment(type: AttachmentType, filename: String?, refurl: URL?, mimeType: String?, data: Data, size: Int, width: Int?, height: Int?) {
+        guard let filename = filename, let mimeType = mimeType, let topic = topic else { return }
+        let draft: Drafty?
+        switch type {
+        case .file:
+            draft = MessageInteractor.draftyFile(filename: filename, refurl: refurl, mimeType: mimeType, data: data)
+        case .image:
+            draft = MessageInteractor.draftyImage(caption: "Image caption", filename: filename, refurl: refurl, mimeType: mimeType, data: data, width: width ?? 0, height: height ?? 0)
+        }
+
+        guard let content = draft else { return }
+
         if let msgId = topic.store?.msgDraft(topic: topic, data: content, head: Tinode.draftyHeaders(for: content)) {
             let helper = Cache.getLargeFileHelper()
             helper.startUpload(
@@ -404,6 +435,30 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
             self.loadMessages()
         }
     }
+
+    private static func draftyFile(filename: String?, refurl: URL?, mimeType: String?, data: Data) -> Drafty? {
+        return try? Drafty().attachFile(mime: mimeType, bits: nil, fname: filename, refurl: refurl, size: data.count)
+    }
+
+    private static func draftyImage(caption: String?, filename: String?, refurl: URL?, mimeType: String?, data: Data, width: Int, height: Int) -> Drafty? {
+
+        let content = Drafty(plainText: " ");
+        let ref: URL?
+        if let refurl = refurl, let base = Cache.tinode.baseURL(useWebsocketProtocol: false) {
+            ref = URL(string: refurl.relativize(from: base))
+        } else {
+            ref = nil
+        }
+
+        try? _ = content.insertImage(at: 0, mime: mimeType, bits: data, width: width, height: height, fname: filename, refurl: ref, size: data.count);
+
+        if let caption = caption, !caption.isEmpty {
+            _ = content.appendLineBreak().append(Drafty(plainText: caption))
+        }
+
+        return content
+    }
+
     override func onData(data: MsgServerData?) {
         self.loadMessages()
         if let from = data?.from, let seq = data?.seq, !Cache.tinode.isMe(uid: from) {

@@ -37,7 +37,6 @@
 		B0876010243F1C3E00B464D1 /* MeTopic.swift in Sources */ = {isa = PBXBuildFile; fileRef = B087600F243F1C3E00B464D1 /* MeTopic.swift */; };
 		B0876012243F1DD900B464D1 /* FndTopic.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0876011243F1DD900B464D1 /* FndTopic.swift */; };
 		B0876014243F1E4000B464D1 /* ComTopic.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0876013243F1E4000B464D1 /* ComTopic.swift */; };
-		B0BB53BE256DCE8B000FE949 /* LargeFileHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0BB53BD256DCE89000FE949 /* LargeFileHelper.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -86,7 +85,6 @@
 		B087600F243F1C3E00B464D1 /* MeTopic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeTopic.swift; sourceTree = "<group>"; };
 		B0876011243F1DD900B464D1 /* FndTopic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FndTopic.swift; sourceTree = "<group>"; };
 		B0876013243F1E4000B464D1 /* ComTopic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComTopic.swift; sourceTree = "<group>"; };
-		B0BB53BD256DCE89000FE949 /* LargeFileHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LargeFileHelper.swift; sourceTree = "<group>"; };
 		B0CD0F1036565AA6D7FCB418 /* Pods-TinodeSDK.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TinodeSDK.release.xcconfig"; path = "./Pods/Target Support Files/Pods-TinodeSDK/Pods-TinodeSDK.release.xcconfig"; sourceTree = "<group>"; };
 		B4211CF84B51039364CC4DD3 /* Pods-TinodeSDK.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TinodeSDK.debug.xcconfig"; path = "./Pods/Target Support Files/Pods-TinodeSDK/Pods-TinodeSDK.debug.xcconfig"; sourceTree = "<group>"; };
 		BF75C7301A406947462E1C7D /* Pods_TinodeSDKTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TinodeSDKTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -143,7 +141,6 @@
 				B0876013243F1E4000B464D1 /* ComTopic.swift */,
 				0A431BF42244A14C00A837F7 /* Connection.swift */,
 				B0876011243F1DD900B464D1 /* FndTopic.swift */,
-				B0BB53BD256DCE89000FE949 /* LargeFileHelper.swift */,
 				0A610452227563E200C6A9D2 /* Log.swift */,
 				B087600F243F1C3E00B464D1 /* MeTopic.swift */,
 				0A431BF22244A14C00A837F7 /* PromisedReply.swift */,
@@ -388,7 +385,6 @@
 			files = (
 				0A431BFD2244A14D00A837F7 /* User.swift in Sources */,
 				0A44B00C2244AAC500A98866 /* JSONValue.swift in Sources */,
-				B0BB53BE256DCE8B000FE949 /* LargeFileHelper.swift in Sources */,
 				0A610453227563E200C6A9D2 /* Log.swift in Sources */,
 				B0876012243F1DD900B464D1 /* FndTopic.swift in Sources */,
 				0AAF8BEC23B70E2A00C9CFBB /* MsgRange.swift in Sources */,

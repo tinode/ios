@@ -61,14 +61,16 @@ class Cache {
         }
         return tinodeInstance!
     }
+
     private func getLargeFileHelper(withIdentifier identifier: String?) -> LargeFileHelper {
         if largeFileHelper == nil {
             let id = identifier ?? "tinode-\(Date().millisecondsSince1970)"
             let config = URLSessionConfiguration.background(withIdentifier: id)
-            largeFileHelper = Cache.tinode.getLargeFileHelper(config: config)
+            largeFileHelper = LargeFileHelper(with: Cache.tinode, config: config)
         }
         return largeFileHelper!
     }
+
     public static func totalUnreadCount() -> Int {
         guard let topics = tinode.getTopics() else {
             return 0

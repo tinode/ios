@@ -105,7 +105,8 @@ extension MessageViewController : ImagePickerDelegate {
         let height = Int(image.size.height * image.scale)
 
         let content = ImagePreviewContent(
-            image: ImagePreviewContent.ImageContent.uiimage(image),
+            imgContent: ImagePreviewContent.ImageContent.uiimage(image),
+            caption: nil,
             fileName: fname,
             contentType: mime,
             size: 0,
