@@ -40,12 +40,11 @@ protocol MessageDataStore {
 struct UploadDef {
     var caption: String?
     var filename: String?
-    var refurl: URL?
     var mimeType: String?
     var image: UIImage?
-    var data: Data?
-    var width: Int?
-    var height: Int?
+    var data: Data
+    var width: CGFloat?
+    var height: CGFloat?
 }
 
 class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, MessageDataStore {
@@ -375,21 +374,46 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
     }
 
     func uploadImage(_ def: UploadDef) {
-        uploadAttachment(type: .image, filename: def.filename, refurl: def.refurl, mimeType: def.mimeType, data: def.data, size: def.data.count, width: def.width, height: def.height)
+        uploadAttachment(type: .image, def)
     }
 
     func uploadFile(_ def: UploadDef) {
-        uploadAttachment(type: .file, filename: def.filename, refurl: def.refurl, mimeType: def.mimeType, data: def.data, size: def.data.count, width: nil, height: nil)
+        uploadAttachment(type: .file, def)
     }
 
-    private func uploadAttachment(type: AttachmentType, filename: String?, refurl: URL?, mimeType: String?, data: Data, size: Int, width: Int?, height: Int?) {
-        guard let filename = filename, let mimeType = mimeType, let topic = topic else { return }
+    private func uploadAttachment(type: AttachmentType, _ def: UploadDef) {
+        guard let filename = def.filename, let mimeType = def.mimeType, let topic = topic else { return }
+
+        // Check if the attachment is too big even for out-of-band uploads.
+        if def.data.count > Cache.tinode.getServerLimit(for: Tinode.kMaxFileUploadSize, withDefault: MessageViewController.kMaxAttachmentSize) {
+            DispatchQueue.main.async {
+                UiUtils.showToast(message: NSLocalizedString("Attachment exceeds maximum size", comment: "Error message: attachment too large"))
+            }
+            return
+        }
+
+        // Giving fake URL to Drafty instead of Data which is not needed in DB anyway.
+        let ref = URL(string: "mid:uploading-\(filename)")!
         let draft: Drafty?
+        let previewData: Data?
         switch type {
         case .file:
-            draft = MessageInteractor.draftyFile(filename: filename, refurl: refurl, mimeType: mimeType, data: data)
+            draft = MessageInteractor.draftyFile(filename: filename, refurl: ref, mimeType: mimeType, data: nil)
+            previewData = nil
         case .image:
-            draft = MessageInteractor.draftyImage(caption: "Image caption", filename: filename, refurl: refurl, mimeType: mimeType, data: data, width: width ?? 0, height: height ?? 0)
+            let image = def.image!
+            let data: Data
+            if def.width! > UiUtils.kImagePreviewDimensions || def.height! > UiUtils.kImagePreviewDimensions {
+                // Generate tiny image preview.
+                let preview = image.resize(width: UiUtils.kImagePreviewDimensions, height: UiUtils.kImagePreviewDimensions, clip: false)
+                previewData = preview?.pixelData(forMimeType: mimeType)
+                data = previewData!
+            } else {
+                // The image is already tiny.
+                data = def.data
+                previewData = def.data
+            }
+            draft = MessageInteractor.draftyImage(caption: def.caption, filename: filename, refurl: ref, mimeType: mimeType, data: data, width: Int(def.width!), height: Int(def.height!), size: def.data.count)
         }
 
         guard let content = draft else { return }
@@ -397,7 +421,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         if let msgId = topic.store?.msgDraft(topic: topic, data: content, head: Tinode.draftyHeaders(for: content)) {
             let helper = Cache.getLargeFileHelper()
             helper.startUpload(
-                filename: filename, mimetype: mimeType, d: data,
+                filename: filename, mimetype: mimeType, d: def.data,
                 topicId: self.topicName!, msgId: msgId,
                 progressCallback: { [weak self] progress in
                     let interactor = self ?? MessageInteractor.existingInteractor(for: topic.name)
@@ -418,12 +442,19 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                         }
                         return
                     }
-                    guard let ctrl = serverMessage?.ctrl, ctrl.code == 200, let serverUrl = ctrl.getStringParam(for: "url") else {
+                    guard let ctrl = serverMessage?.ctrl, ctrl.code == 200, let srvUrl = URL(string: ctrl.getStringParam(for: "url") ?? "") else {
                         return
                     }
-                    if let srvUrl = URL(string: serverUrl), let content = try? Drafty().attachFile(
-                        mime: mimeType, fname: filename,
-                        refurl: srvUrl, size: data.count) {
+
+                    let draft: Drafty?
+                    switch type {
+                    case .file:
+                        draft = try? Drafty().attachFile(mime: mimeType, fname: filename, refurl: srvUrl, size: def.data.count)
+                    case .image:
+                        draft = MessageInteractor.draftyImage(caption: def.caption, filename: filename, refurl: srvUrl, mimeType: mimeType, data: previewData!, width: Int(def.width!), height: Int(def.height!), size: def.data.count)
+                    }
+
+                    if let content = draft {
                         _ = topic.store?.msgReady(topic: topic, dbMessageId: msgId, data: content)
                         topic.syncOne(msgId: msgId)
                             .thenFinally({
@@ -436,11 +467,11 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         }
     }
 
-    private static func draftyFile(filename: String?, refurl: URL?, mimeType: String?, data: Data) -> Drafty? {
-        return try? Drafty().attachFile(mime: mimeType, bits: nil, fname: filename, refurl: refurl, size: data.count)
+    private static func draftyFile(filename: String?, refurl: URL, mimeType: String?, data: Data?) -> Drafty? {
+        return try? Drafty().attachFile(mime: mimeType, bits: data, fname: filename, refurl: refurl, size: data?.count ?? 0)
     }
 
-    private static func draftyImage(caption: String?, filename: String?, refurl: URL?, mimeType: String?, data: Data, width: Int, height: Int) -> Drafty? {
+    private static func draftyImage(caption: String?, filename: String?, refurl: URL?, mimeType: String?, data: Data, width: Int, height: Int, size: Int) -> Drafty? {
 
         let content = Drafty(plainText: " ");
         let ref: URL?
@@ -450,7 +481,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
             ref = nil
         }
 
-        try? _ = content.insertImage(at: 0, mime: mimeType, bits: data, width: width, height: height, fname: filename, refurl: ref, size: data.count);
+        try? _ = content.insertImage(at: 0, mime: mimeType, bits: data, width: width, height: height, fname: filename, refurl: ref, size: size);
 
         if let caption = caption, !caption.isEmpty {
             _ = content.appendLineBreak().append(Drafty(plainText: caption))

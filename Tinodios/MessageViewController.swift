@@ -25,7 +25,6 @@ protocol MessageDisplayLogic: class {
 
 class MessageViewController: UIViewController {
     // Other controllers may send these notification to MessageViewController which will execute corresponding send message action.
-    public static let kNotificationSendDraftyMessage = "SendDraftyMessage"
     public static let kNotificationSendAttachment = "SendAttachment"
 
     // MARK: static parameters
@@ -283,9 +282,6 @@ class MessageViewController: UIViewController {
         // Appearance and behavior.
         extendedLayoutIncludesOpaqueBars = true
 
-        // Receive notifications from ImagePreviewController that an image is ready to be sent.
-        NotificationCenter.default.addObserver(self, selector: #selector(sendDraftyMessage(notification:)), name: Notification.Name(MessageViewController.kNotificationSendDraftyMessage), object: nil)
-
         // Receive notifications from FilePreviewController with an attachment to upload or send.
         NotificationCenter.default.addObserver(self, selector: #selector(sendAttachment(notification:)), name: Notification.Name(MessageViewController.kNotificationSendAttachment), object: nil)
 
@@ -374,7 +370,7 @@ class MessageViewController: UIViewController {
         switch notification.object {
         case let content as FilePreviewContent:
             if content.data.count > maxInbandSize {
-                self.interactor?.uploadFile(UploadDef(filename: content.fileName, refurl: content.refUrl, mimeType: content.contentType, data: content.data))
+                self.interactor?.uploadFile(UploadDef(filename: content.fileName, mimeType: content.contentType, data: content.data))
             } else {
                 _ = interactor?.sendMessage(content: Drafty().attachFile(mime: content.contentType, bits: content.data, fname: content.fileName))
             }
@@ -384,7 +380,7 @@ class MessageViewController: UIViewController {
             guard let data = image.pixelData(forMimeType: content.contentType) else { return }
 
             if data.count > maxInbandSize {
-                self.interactor?.uploadImage(UploadDef(caption: content.caption, filename: content.fileName, mimeType: content.contentType, image: image, data: data))
+                self.interactor?.uploadImage(UploadDef(caption: content.caption, filename: content.fileName, mimeType: content.contentType, image: image, data: data, width: image.size.width * image.scale, height: image.size.height * image.scale))
             } else {
                 let drafty = Drafty().insertImage(at: 0, mime: content.contentType, bits: data, width: content.width!, height: content.height!, fname: content.fileName)
                 if let caption = content.caption {

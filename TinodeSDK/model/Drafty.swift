@@ -470,7 +470,7 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
     ///     - fname: name of the file to suggest to the receiver.
     /// - Returns: 'self' Drafty object.
     public func insertImage(at: Int, mime: String?, bits: Data, width: Int, height: Int, fname: String?) -> Drafty {
-        return try! insertImage(at: at, mime: mime, bits: bits, width: width, height: height, fname: fname, refurl: nil, size: 0)
+        return try! insertImage(at: at, mime: mime, bits: bits, width: width, height: height, fname: fname, refurl: nil, size: bits.count)
     }
 
     /// Insert image either as a reference or inline.
