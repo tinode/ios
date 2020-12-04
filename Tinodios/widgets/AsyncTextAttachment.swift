@@ -41,7 +41,7 @@ public class AsyncTextAttachment: NSTextAttachment {
                 self.image = value.image
             case .failure(let error):
                 self.image = errorImage
-                Cache.log.info("Failed to download image '%@': %@", self.url.absoluteString, error.localizedDescription)
+                Cache.log.info("Failed to download image '%@': %d", self.url.absoluteString, error.errorCode)
             }
 
             DispatchQueue.main.async {

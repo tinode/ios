@@ -146,8 +146,8 @@ extension ImagePreviewController : SendImageBarDelegate {
             fileName: originalContent.fileName,
             contentType: mimeType,
             size: -1,
-            width: 0,
-            height: 0
+            width: Int(image.size.width * image.scale),
+            height: Int(image.size.height * image.scale)
         )
 
         // This notification is received by the MessageViewController.

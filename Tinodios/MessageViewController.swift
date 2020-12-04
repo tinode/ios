@@ -366,7 +366,8 @@ class MessageViewController: UIViewController {
     }
 
     @objc func sendAttachment(notification: NSNotification) {
-        let maxInbandSize = Cache.tinode.getServerLimit(for: Tinode.kMaxMessageSize, withDefault: MessageViewController.kMaxInbandAttachmentSize)
+        // Attachment size less base64 expansion and overhead.
+        let maxInbandSize = Cache.tinode.getServerLimit(for: Tinode.kMaxMessageSize, withDefault: MessageViewController.kMaxInbandAttachmentSize) * 3 / 4 - 1024
         switch notification.object {
         case let content as FilePreviewContent:
             if content.data.count > maxInbandSize {
@@ -378,11 +379,11 @@ class MessageViewController: UIViewController {
             guard case let ImagePreviewContent.ImageContent.uiimage(image) = content.imgContent else { return }
 
             guard let data = image.pixelData(forMimeType: content.contentType) else { return }
-
+            print("image size: \(data.count), max inband size: \(maxInbandSize)")
             if data.count > maxInbandSize {
                 self.interactor?.uploadImage(UploadDef(caption: content.caption, filename: content.fileName, mimeType: content.contentType, image: image, data: data, width: image.size.width * image.scale, height: image.size.height * image.scale))
             } else {
-                let drafty = Drafty().insertImage(at: 0, mime: content.contentType, bits: data, width: content.width!, height: content.height!, fname: content.fileName)
+                let drafty = Drafty(plainText: " ").insertImage(at: 0, mime: content.contentType, bits: data, width: content.width!, height: content.height!, fname: content.fileName)
                 if let caption = content.caption {
                     _ = drafty.appendLineBreak().append(Drafty(plainText: caption))
                 }

@@ -77,7 +77,9 @@ public class LargeFileHelper: NSObject {
 
     public static func addCommonHeaders(to request: inout URLRequest, using tinode: Tinode) {
         request.addValue(tinode.apiKey, forHTTPHeaderField: "X-Tinode-APIKey")
-        request.addValue("Token \(tinode.authToken!)", forHTTPHeaderField: "X-Tinode-Auth")
+        if tinode.isConnectionAuthenticated {
+            request.addValue("Token \(tinode.authToken!)", forHTTPHeaderField: "X-Tinode-Auth")
+        }
     }
 
     public static func createUploadKey(topicId: String, msgId: Int64) -> String {
