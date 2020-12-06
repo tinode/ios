@@ -393,7 +393,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         }
 
         // Giving fake URL to Drafty instead of Data which is not needed in DB anyway.
-        let ref = URL(string: "mid:uploading-\(filename)")!
+        let ref = URL(string: "mid:uploading/\(filename)")!
         let draft: Drafty?
         let previewData: Data?
         switch type {

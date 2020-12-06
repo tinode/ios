@@ -62,6 +62,8 @@
 		B0133AE323D1AADF00C813CA /* SendImageBar.xib in Resources */ = {isa = PBXBuildFile; fileRef = B0133AE223D1AADF00C813CA /* SendImageBar.xib */; };
 		B0133AE523D1ACBD00C813CA /* SendImageBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0133AE423D1ACBC00C813CA /* SendImageBar.swift */; };
 		B01C693F22F87B5C003C0AA7 /* SignupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B01C693E22F87B5C003C0AA7 /* SignupViewController.swift */; };
+		B026F243257C59CA003BA14B /* ProgressView.xib in Resources */ = {isa = PBXBuildFile; fileRef = B026F242257C59CA003BA14B /* ProgressView.xib */; };
+		B026F247257C5EFF003BA14B /* ProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B026F246257C5EFF003BA14B /* ProgressView.swift */; };
 		B02F5C8B22679BC80079A97E /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = B02F5C8A22679BC80079A97E /* ImagePicker.swift */; };
 		B031BE552263075E004160AE /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = B031BE542263075E004160AE /* Settings.bundle */; };
 		B05ACEB322FDAB5200276713 /* ResetPasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B05ACEB222FDAB5200276713 /* ResetPasswordViewController.swift */; };
@@ -191,6 +193,8 @@
 		B0133AE223D1AADF00C813CA /* SendImageBar.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SendImageBar.xib; sourceTree = "<group>"; };
 		B0133AE423D1ACBC00C813CA /* SendImageBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendImageBar.swift; sourceTree = "<group>"; };
 		B01C693E22F87B5C003C0AA7 /* SignupViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignupViewController.swift; sourceTree = "<group>"; };
+		B026F242257C59CA003BA14B /* ProgressView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ProgressView.xib; sourceTree = "<group>"; };
+		B026F246257C5EFF003BA14B /* ProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressView.swift; sourceTree = "<group>"; };
 		B02F5C8A22679BC80079A97E /* ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
 		B031BE542263075E004160AE /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		B05ACEB222FDAB5200276713 /* ResetPasswordViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResetPasswordViewController.swift; sourceTree = "<group>"; };
@@ -395,6 +399,8 @@
 				0A6AC321229FAA130025A4EC /* PermissionsEditView.xib */,
 				0A6AC323229FB0ED0025A4EC /* PermissionsEditViewController.swift */,
 				B0DF03302283FFD8000F9492 /* PlaceholderTextView.swift */,
+				B026F242257C59CA003BA14B /* ProgressView.xib */,
+				B026F246257C5EFF003BA14B /* ProgressView.swift */,
 				B0A612AE228B08EC00569DFE /* RichTextView.swift */,
 				B0DF03162279F027000F9492 /* RoundImageView.swift */,
 				0A9A39D423B02CF500C70FF7 /* CircularProgressView.swift */,
@@ -513,6 +519,7 @@
 				0A6AC322229FAA130025A4EC /* PermissionsEditView.xib in Resources */,
 				0A0380DF21B3CC8200A3FA0E /* Assets.xcassets in Resources */,
 				0A0380DD21B3CC8100A3FA0E /* Main.storyboard in Resources */,
+				B026F243257C59CA003BA14B /* ProgressView.xib in Resources */,
 				0A8D945822BEED3700DC154E /* AvatarWithOnlineIndicator.xib in Resources */,
 				0A4B11FC2373D6E400199310 /* TagsEditDialogView.xib in Resources */,
 			);
@@ -653,6 +660,7 @@
 				0A4E1D3022829C46006C0912 /* ContactsManager.swift in Sources */,
 				0ACB5F0E22097651008FE740 /* ChatListPresenter.swift in Sources */,
 				B0BB539F256B14A1000FE949 /* AsyncTextAttachment.swift in Sources */,
+				B026F247257C5EFF003BA14B /* ProgressView.swift in Sources */,
 				0A0380D821B3CC8100A3FA0E /* AppDelegate.swift in Sources */,
 				B05ACEB322FDAB5200276713 /* ResetPasswordViewController.swift in Sources */,
 				B0DF031F227C6898000F9492 /* PaddedLabel.swift in Sources */,

@@ -85,10 +85,9 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
     public var fmt: [Style]?
     public var ent: [Entity]?
 
-    public var isReferenceAttachment: Bool {
-        guard let ent = ent, ent.count == 1 else { return false }
-        let e = ent[0]
-        return e.tp == "EX" && e.data?["ref"] != nil
+    public var hasRefEntity: Bool {
+        guard let ent = ent, ent.count > 0 else { return false }
+        return ent.first(where: { $0.data?["ref"] != nil }) != nil
     }
 
     /// Initializes empty object

@@ -82,7 +82,7 @@ public class LargeFileHelper: NSObject {
         }
     }
 
-    public static func createUploadKey(topicId: String, msgId: Int64) -> String {
+    public static func uploadKeyFor(topicId: String, msgId: Int64) -> String {
         return "\(topicId)-\(msgId)"
     }
 
@@ -117,7 +117,7 @@ public class LargeFileHelper: NSObject {
         let localURL = tempDir.appendingPathComponent("throwaway-\(localFileName)")
         try? newData.write(to: localURL)
 
-        let uploadKey = LargeFileHelper.createUploadKey(topicId: topicId, msgId: msgId)
+        let uploadKey = LargeFileHelper.uploadKeyFor(topicId: topicId, msgId: msgId)
         upload.task = urlSession.uploadTask(with: request, fromFile: localURL)
         upload.task!.taskDescription = uploadKey
         upload.isUploading = true
@@ -130,7 +130,7 @@ public class LargeFileHelper: NSObject {
     }
 
     public func cancelUpload(topicId: String, msgId: Int64) -> Bool {
-        let uploadKey = LargeFileHelper.createUploadKey(topicId: topicId, msgId: msgId)
+        let uploadKey = LargeFileHelper.uploadKeyFor(topicId: topicId, msgId: msgId)
         var upload = activeUploads[uploadKey]
         guard upload != nil else { return false }
         activeUploads.removeValue(forKey: uploadKey)

@@ -269,7 +269,7 @@ class UiUtils {
         let roundTo: Int = bucket > 0 ? (count < 3 ? 2 : (count < 30 ? 1 : 0)) : 0
         let multiplier: Double = pow(10, Double(roundTo))
         let whole: Int = Int(count)
-        let fraction: String = roundTo > 1 ? "." + "\(round(count * multiplier))".suffix(roundTo) : ""
+        let fraction: String = roundTo > 1 ? "." + "\(Int(round(count * multiplier)))".suffix(roundTo) : ""
         return "\(whole)\(fraction) \(sizes[bucket])"
     }
 
@@ -759,6 +759,20 @@ extension UIImage {
         guard let newCGImage = ctx.makeImage() else { return nil }
 
         return UIImage(cgImage: newCGImage, scale: 1, orientation: .up)
+    }
+
+    /// Get default iOS icon for the given file name (the file does not need to exist).
+    /// It will likely return nil when running under simulator, but will likely work on a real device.
+    public class func defaultIcon(forMime mime: String, preferredWidth width: CGFloat) -> UIImage? {
+        let fileName = Utils.uniqueFilename(forMime: mime)
+        guard let url = URL(string: "file:///\(fileName)") else { return nil }
+        let ic = UIDocumentInteractionController(url: url)
+        let allIcons = ic.icons
+
+        let nearest = allIcons.enumerated().min(by: {
+            return abs($0.element.size.width - width) < abs($1.element.size.width - width)
+        })
+        return nearest?.element
     }
 }
 

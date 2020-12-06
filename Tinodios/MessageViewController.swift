@@ -846,7 +846,7 @@ extension MessageViewController {
 
     // Should we show upload progress bar for reference attachment messages?
     func shouldShowProgressBar(for message: Message) -> Bool {
-        return message.isDraft && (message.content?.isReferenceAttachment ?? false)
+        return message.isPending && (message.content?.hasRefEntity ?? false)
     }
 
     func isNewDateLabelVisible(at indexPath: IndexPath) -> Bool {
