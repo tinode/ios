@@ -105,7 +105,7 @@ class MessageCell: UICollectionViewCell {
         return label
     }()
 
-    var progressView = CircularProgressView()
+    var progressView = ProgressView()
 
     /// The `MessageCellDelegate` for the cell.
     weak var delegate: MessageCellDelegate?
@@ -138,6 +138,7 @@ class MessageCell: UICollectionViewCell {
         timestampLabel.text = nil
         deliveryMarker.image = nil
         avatarView.image = nil
+        progressView.isHidden = true
     }
 
     /// Handle tap gesture on contentView and its subviews.
@@ -150,7 +151,7 @@ class MessageCell: UICollectionViewCell {
         let touchLocation = gesture.location(in: self)
 
         switch true {
-        case progressView.stopButton.frame.contains(convert(touchLocation, to: progressView)):
+        case progressView.cancelButton.frame.contains(convert(touchLocation, to: progressView)):
             delegate?.didTapCancelUpload(in: self)
         case content.frame.contains(convert(touchLocation, to: containerView)):
             let url = content.getURLForTap(convert(touchLocation, to: content))

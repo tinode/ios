@@ -9,17 +9,23 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
-        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="ProgressView" customModule="Tinodios" customModuleProvider="target">
+            <connections>
+                <outlet property="cancelButton" destination="1q4-cg-lCo" id="Gwc-Z2-r97"/>
+                <outlet property="containerView" destination="iN0-l3-epB" id="e0C-VB-0vV"/>
+                <outlet property="progressView" destination="xvy-fN-BJT" id="6xa-kZ-fwz"/>
+            </connections>
+        </placeholder>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
-        <view contentMode="scaleToFill" id="iN0-l3-epB" customClass="ProgressView" customModule="Tinodios" customModuleProvider="target">
-            <rect key="frame" x="0.0" y="0.0" width="256" height="38"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB" userLabel="ContainerView">
+            <rect key="frame" x="0.0" y="0.0" width="256" height="30"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" progress="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="xvy-fN-BJT">
-                    <rect key="frame" x="0.0" y="17" width="218" height="4"/>
+                    <rect key="frame" x="0.0" y="13" width="218" height="4"/>
                 </progressView>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1q4-cg-lCo">
-                    <rect key="frame" x="226" y="4" width="30" height="30"/>
+                    <rect key="frame" x="226" y="0.0" width="30" height="30"/>
                     <constraints>
                         <constraint firstAttribute="width" secondItem="1q4-cg-lCo" secondAttribute="height" multiplier="1:1" id="FhC-0A-3KV"/>
                     </constraints>
@@ -36,11 +42,7 @@
                 <constraint firstItem="1q4-cg-lCo" firstAttribute="leading" secondItem="xvy-fN-BJT" secondAttribute="trailing" constant="8" symbolic="YES" id="uci-du-nhi"/>
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
-            <connections>
-                <outlet property="cancelButton" destination="1q4-cg-lCo" id="VHv-g3-p9I"/>
-                <outlet property="progressView" destination="xvy-fN-BJT" id="eBx-Bm-MHx"/>
-            </connections>
-            <point key="canvasLocation" x="-170" y="-135"/>
+            <point key="canvasLocation" x="-275" y="-125"/>
         </view>
     </objects>
     <resources>

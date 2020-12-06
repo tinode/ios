@@ -8,8 +8,9 @@
 import UIKit
 
 class ProgressView : UIView {
-    @IBOutlet weak var progressView: UIProgressView!
 
+    @IBOutlet weak var containerView: UIView!
+    @IBOutlet weak var progressView: UIProgressView!
     @IBOutlet weak var cancelButton: UIButton!
 
     override init(frame: CGRect) {
@@ -23,6 +24,9 @@ class ProgressView : UIView {
 
     private func loadNib() {
         Bundle.main.loadNibNamed("ProgressView", owner: self, options: nil)
+        addSubview(containerView)
+        containerView.frame = self.bounds
+        containerView.autoresizingMask = [.flexibleWidth]
     }
 
     @IBAction func cancelProgress(_ sender: Any) {
