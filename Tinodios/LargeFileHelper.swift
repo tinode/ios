@@ -57,7 +57,7 @@ public class Upload {
 }
 
 public class LargeFileHelper: NSObject {
-    static let kBoundary = "*****\(Int64((Date().timeIntervalSince1970 * 1000.0).rounded()))*****"
+    static let kBoundary = "*****\(Date().millisecondsSince1970)*****"
     static let kTwoHyphens = "--"
     static let kLineEnd = "\r\n"
 
