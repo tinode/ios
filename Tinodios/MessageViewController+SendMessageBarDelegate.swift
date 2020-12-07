@@ -10,9 +10,10 @@ import MobileCoreServices
 import TinodeSDK
 
 extension MessageViewController : SendMessageBarDelegate {
-    // 256K server limit decreased by base64 overhead (3/4) minus 1024 overhead.
-    static let kMaxInbandAttachmentSize = (1 << 18) * 3 / 4 - 1024
-    static let kMaxAttachmentSize = 1 << 23
+    // Default 256K server limit. Does not account for base64 compression and overhead.
+    static let kMaxInbandAttachmentSize: Int64 = 1 << 18
+    // Default upload size.
+    static let kMaxAttachmentSize: Int64 = 1 << 23
 
     func sendMessageBar(sendText: String) {
         interactor?.sendMessage(content: Drafty(content: sendText))
@@ -77,9 +78,7 @@ extension MessageViewController : UIDocumentPickerDelegate {
                 let unmanaged = UTTypeCopyPreferredTagWithClass(uti as CFString, kUTTagClassMIMEType)
                 mimeType = unmanaged?.takeRetainedValue() as String? ?? "application/octet-stream"
             }
-            let maxAttachmentSize = Cache.getTinode().getServerLimit(
-                for: Tinode.kMaxFileUploadSize,
-                withDefault: Int64(MessageViewController.kMaxAttachmentSize))
+            let maxAttachmentSize = Cache.tinode.getServerLimit(for: Tinode.kMaxFileUploadSize, withDefault: MessageViewController.kMaxAttachmentSize)
             guard bits.count <= maxAttachmentSize else {
                 UiUtils.showToast(message: String(format: NSLocalizedString("The file size exceeds the limit %@", comment: "Error message"), UiUtils.bytesToHumanSize(maxAttachmentSize)))
                 return
@@ -107,7 +106,8 @@ extension MessageViewController : ImagePickerDelegate {
         let height = Int(image.size.height * image.scale)
 
         let content = ImagePreviewContent(
-            image: ImagePreviewContent.ImageContent.uiimage(image),
+            imgContent: ImagePreviewContent.ImageContent.uiimage(image),
+            caption: nil,
             fileName: fname,
             contentType: mime,
             size: 0,

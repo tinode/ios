@@ -2,7 +2,6 @@
 //  AsyncTextAttachment.swift
 //  Tinodios
 //
-//  Created by Gene Sokolov on 22.11.2020.
 //  Copyright © 2020 Tinode. All rights reserved.
 //
 
@@ -32,7 +31,7 @@ public class AsyncTextAttachment: NSTextAttachment {
     public func startDownload(onError errorImage: UIImage) {
         let modifier = AnyModifier { request in
             var request = request
-            LargeFileHelper.addCommonHeaders(to: &request, using: Cache.getTinode())
+            LargeFileHelper.addCommonHeaders(to: &request, using: Cache.tinode)
             return request
         }
 
@@ -42,7 +41,7 @@ public class AsyncTextAttachment: NSTextAttachment {
                 self.image = value.image
             case .failure(let error):
                 self.image = errorImage
-                Cache.log.info("Failed to download image '%@': %@", self.url.absoluteString, error.localizedDescription)
+                Cache.log.info("Failed to download image '%@': %d", self.url.absoluteString, error.errorCode)
             }
 
             DispatchQueue.main.async {

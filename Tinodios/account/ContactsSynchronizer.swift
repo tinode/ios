@@ -142,7 +142,7 @@ class ContactsSynchronizer {
             Cache.log.info("ContactsSynchronizer - starting sync.")
             let contacts: String = contactsToQueryString(contacts: contacts)
             var lastSyncMarker = self.serverSyncMarker
-            let tinode = Cache.getTinode()
+            let tinode = Cache.tinode
             do {
                 tinode.setAutoLoginWithToken(token: token)
                 _ = try tinode.connectDefault(inBackground: true)?.getResult()

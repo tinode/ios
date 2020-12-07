@@ -83,7 +83,7 @@ class ContactsManager {
         if let uids = uids {
             users = userDb.read(uids: uids)
         } else {
-            guard let uid = Cache.getTinode().myUid else { return nil }
+            guard let uid = Cache.tinode.myUid else { return nil }
             users = userDb.readAll(for: uid)
         }
         // Turn users into contacts.

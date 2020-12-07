@@ -106,7 +106,7 @@ class LoginViewController: UIViewController {
 
         guard !userName.isEmpty && !password.isEmpty else { return }
 
-        let tinode = Cache.getTinode()
+        let tinode = Cache.tinode
         UiUtils.toggleProgressOverlay(in: self, visible: true, title: NSLocalizedString("Logging in...", comment: "Login progress text"))
         do {
             try tinode.connectDefault(inBackground: false)?

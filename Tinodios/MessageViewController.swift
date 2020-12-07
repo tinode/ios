@@ -25,7 +25,6 @@ protocol MessageDisplayLogic: class {
 
 class MessageViewController: UIViewController {
     // Other controllers may send these notification to MessageViewController which will execute corresponding send message action.
-    public static let kNotificationSendDraftyMessage = "SendDraftyMessage"
     public static let kNotificationSendAttachment = "SendAttachment"
 
     // MARK: static parameters
@@ -36,7 +35,7 @@ class MessageViewController: UIViewController {
         /// Size of the avatar in group topics.
         static let kAvatarSize: CGFloat = 30
 
-        static let kProgressCircleSize: CGFloat = 40
+        static let kProgressViewHeight: CGFloat = 30
 
         // Size of delivery marker (checkmarks etc)
         static let kDeliveryMarkerSize: CGFloat = 16
@@ -141,7 +140,7 @@ class MessageViewController: UIViewController {
         didSet {
             topicType = Tinode.topicTypeByName(name: self.topicName)
             // Needed in order to get sender's avatar and display name
-            let tinode = Cache.getTinode()
+            let tinode = Cache.tinode
             topic = tinode.getTopic(topicName: topicName!) as? DefaultComTopic
             if topic == nil {
                 topic = tinode.newTopic(for: topicName!) as? DefaultComTopic
@@ -221,7 +220,7 @@ class MessageViewController: UIViewController {
     }
 
     private func setup() {
-        myUID = Cache.getTinode().myUid
+        myUID = Cache.tinode.myUid
         self.imagePicker = ImagePicker(presentationController: self, delegate: self, editable: false)
 
         let interactor = MessageInteractor()
@@ -282,9 +281,6 @@ class MessageViewController: UIViewController {
 
         // Appearance and behavior.
         extendedLayoutIncludesOpaqueBars = true
-
-        // Receive notifications from ImagePreviewController that an image is ready to be sent.
-        NotificationCenter.default.addObserver(self, selector: #selector(sendDraftyMessage(notification:)), name: Notification.Name(MessageViewController.kNotificationSendDraftyMessage), object: nil)
 
         // Receive notifications from FilePreviewController with an attachment to upload or send.
         NotificationCenter.default.addObserver(self, selector: #selector(sendAttachment(notification:)), name: Notification.Name(MessageViewController.kNotificationSendAttachment), object: nil)
@@ -369,19 +365,32 @@ class MessageViewController: UIViewController {
         self.interactor?.loadNextPage()
     }
 
-    // This notification is sent by ImagePreviewController when the user presses the send image button.
-    @objc func sendDraftyMessage(notification: NSNotification) {
-        guard let msg = notification.object as? Drafty else { return }
-        _ = interactor?.sendMessage(content: msg)
-    }
-
     @objc func sendAttachment(notification: NSNotification) {
-        guard let content = notification.object as? FilePreviewContent else { return }
+        // Attachment size less base64 expansion and overhead.
+        let maxInbandSize = Cache.tinode.getServerLimit(for: Tinode.kMaxMessageSize, withDefault: MessageViewController.kMaxInbandAttachmentSize) * 3 / 4 - 1024
+        switch notification.object {
+        case let content as FilePreviewContent:
+            if content.data.count > maxInbandSize {
+                self.interactor?.uploadFile(UploadDef(filename: content.fileName, mimeType: content.contentType, data: content.data))
+            } else {
+                _ = interactor?.sendMessage(content: Drafty().attachFile(mime: content.contentType, bits: content.data, fname: content.fileName))
+            }
+        case let content as ImagePreviewContent:
+            guard case let ImagePreviewContent.ImageContent.uiimage(image) = content.imgContent else { return }
 
-        if content.data.count > MessageViewController.kMaxInbandAttachmentSize {
-            self.interactor?.uploadFile(filename: content.fileName, refurl: content.refUrl, mimeType: content.contentType, data: content.data)
-        } else {
-            _ = interactor?.sendMessage(content: Drafty().attachFile(mime: content.contentType, bits: content.data, fname: content.fileName))
+            guard let data = image.pixelData(forMimeType: content.contentType) else { return }
+            print("image size: \(data.count), max inband size: \(maxInbandSize)")
+            if data.count > maxInbandSize {
+                self.interactor?.uploadImage(UploadDef(caption: content.caption, filename: content.fileName, mimeType: content.contentType, image: image, data: data, width: image.size.width * image.scale, height: image.size.height * image.scale))
+            } else {
+                let drafty = Drafty(plainText: " ").insertImage(at: 0, mime: content.contentType, bits: data, width: content.width!, height: content.height!, fname: content.fileName)
+                if let caption = content.caption {
+                    _ = drafty.appendLineBreak().append(Drafty(plainText: caption))
+                }
+                _ = interactor?.sendMessage(content: drafty)
+            }
+        default:
+            break
         }
     }
 
@@ -565,7 +574,7 @@ extension MessageViewController: MessageDisplayLogic {
         assert(Thread.isMainThread)
         if let index = self.messageDbIdIndex[msgId],
             let cell = self.collectionView.cellForItem(at: IndexPath(row: index, section: 0)) as? MessageCell {
-            cell.progressView.setProgress(value: progress, withAnimation: false)
+            cell.progressView.setProgress(progress)
         }
     }
 
@@ -837,7 +846,7 @@ extension MessageViewController {
 
     // Should we show upload progress bar for reference attachment messages?
     func shouldShowProgressBar(for message: Message) -> Bool {
-        return message.isDraft && (message.content?.isReferenceAttachment ?? false)
+        return message.isPending && (message.content?.hasRefEntity ?? false)
     }
 
     func isNewDateLabelVisible(at indexPath: IndexPath) -> Bool {
@@ -870,7 +879,7 @@ extension MessageViewController : MessageViewLayoutDelegate {
 
         // Size of the message bubble.
         let showUploadProgress = shouldShowProgressBar(for: message)
-        let containerSize = calcContainerSize(for: message, avatarsVisible: hasAvatars, progressCircleVisible: showUploadProgress)
+        let containerSize = calcContainerSize(for: message, avatarsVisible: hasAvatars, progressVisible: showUploadProgress)
         // Get cell size.
         let cellSize = !isDeleted ? calcCellSize(forItemAt: indexPath) : containerSize
         attr.cellSpacing = Constants.kVerticalCellSpacing
@@ -905,7 +914,7 @@ extension MessageViewController : MessageViewLayoutDelegate {
         let contentInset =
             isDeleted ? Constants.kDeletedMessageContentInset :
             isOutgoing ? Constants.kOutgoingMessageContentInset : Constants.kIncomingMessageContentInset
-        attr.contentFrame = CGRect(x: contentInset.left, y: contentInset.top, width: attr.containerFrame.width - contentInset.left - contentInset.right - (showUploadProgress ? Constants.kProgressCircleSize : 0), height: attr.containerFrame.height - contentInset.top - contentInset.bottom)
+        attr.contentFrame = CGRect(x: contentInset.left, y: contentInset.top, width: attr.containerFrame.width - contentInset.left - contentInset.right, height: attr.containerFrame.height - contentInset.top - contentInset.bottom - (showUploadProgress ? Constants.kProgressViewHeight : 0))
 
         var rightEdge = CGPoint(x: attr.containerFrame.width - Constants.kDeliveryMarkerPadding, y: attr.containerFrame.height - Constants.kDeliveryMarkerSize)
         if isOutgoing {
@@ -925,13 +934,9 @@ extension MessageViewController : MessageViewLayoutDelegate {
         }
 
         if showUploadProgress {
-            let leftEdge = CGPoint(
-                x: attr.contentFrame.origin.x + attr.contentFrame.size.width,
-                y: attr.contentFrame.origin.y + attr.contentFrame.size.height / 2 - Constants.kProgressCircleSize / 2)
+            let origin = CGPoint(x: attr.contentFrame.origin.x, y: attr.contentFrame.origin.y + attr.contentFrame.size.height)
             attr.progressViewFrame =
-                CGRect(x: leftEdge.x, y: leftEdge.y,
-                       width: Constants.kProgressCircleSize,
-                       height: Constants.kProgressCircleSize)
+                CGRect(origin: origin, size: CGSize(width: attr.contentFrame.width, height: Constants.kProgressViewHeight))
         } else {
             attr.progressViewFrame = .zero
         }
@@ -949,9 +954,9 @@ extension MessageViewController : MessageViewLayoutDelegate {
 
         let message = messages[indexPath.item]
         let hasAvatars = avatarsVisible(message: message)
-        let showProgressCircle = shouldShowProgressBar(for: message)
-        let containerHeight = calcContainerSize(for: message, avatarsVisible: hasAvatars, progressCircleVisible: showProgressCircle).height
-        let size = CGSize(width: calcCellWidth(), height: calcCellHeightFromContent(for: message, at: indexPath, containerHeight: containerHeight, avatarsVisible: hasAvatars, progressCircleVisible: showProgressCircle))
+        let showProgress = shouldShowProgressBar(for: message)
+        let containerHeight = calcContainerSize(for: message, avatarsVisible: hasAvatars, progressVisible: showProgress).height
+        let size = CGSize(width: calcCellWidth(), height: calcCellHeightFromContent(for: message, at: indexPath, containerHeight: containerHeight, avatarsVisible: hasAvatars, progressVisible: showProgress))
         // cellSizeCache[indexPath.item] = size
         return size
     }
@@ -962,15 +967,14 @@ extension MessageViewController : MessageViewLayoutDelegate {
 
     func calcCellHeightFromContent(
         for message: Message, at indexPath: IndexPath, containerHeight: CGFloat,
-        avatarsVisible hasAvatars: Bool, progressCircleVisible: Bool) -> CGFloat {
+        avatarsVisible hasAvatars: Bool, progressVisible: Bool) -> CGFloat {
 
         let senderNameLabelHeight: CGFloat = shouldShowAvatar(for: message, at: indexPath) ? Constants.kSenderNameLabelHeight : 0
         let newDateLabelHeight: CGFloat = calcNewDateLabelHeight(at: indexPath)
         let avatarHeight = hasAvatars ? Constants.kAvatarSize : 0
-        let progressCircleHeight = progressCircleVisible ? Constants.kProgressCircleSize : 0
 
-        let totalLabelHeight: CGFloat = newDateLabelHeight + containerHeight + senderNameLabelHeight
-        return max(avatarHeight, progressCircleHeight, totalLabelHeight)
+        let totalLabelHeight: CGFloat = newDateLabelHeight + containerHeight + senderNameLabelHeight + (progressVisible ? Constants.kProgressViewHeight : 0)
+        return max(avatarHeight, totalLabelHeight)
     }
 
     func calcNewDateLabelHeight(at indexPath: IndexPath) -> CGFloat {
@@ -986,22 +990,20 @@ extension MessageViewController : MessageViewLayoutDelegate {
     }
 
     // Calculate maximum width of content inside message bubble
-    func calcMaxContentWidth(for message: Message,
-                             avatarsVisible: Bool, progressCircleVisible: Bool) -> CGFloat {
+    func calcMaxContentWidth(for message: Message, avatarsVisible: Bool) -> CGFloat {
 
         let insets = isFromCurrentSender(message: message) ? Constants.kOutgoingMessageContentInset : Constants.kIncomingMessageContentInset
 
         let avatarWidth = avatarsVisible ? Constants.kAvatarSize : 0
-        let progressCircleSize = progressCircleVisible ? Constants.kProgressCircleSize : 0
 
         let padding = isFromCurrentSender(message: message) ? Constants.kOutgoingContainerPadding : Constants.kIncomingContainerPadding
 
-        return calcCellWidth() - avatarWidth - progressCircleSize - padding.left - padding.right - insets.left - insets.right
+        return calcCellWidth() - avatarWidth - padding.left - padding.right - insets.left - insets.right
     }
 
     /// Calculate size of the view which holds message content.
-    func calcContainerSize(for message: Message, avatarsVisible: Bool, progressCircleVisible: Bool) -> CGSize {
-        let maxWidth = calcMaxContentWidth(for: message, avatarsVisible: avatarsVisible, progressCircleVisible: progressCircleVisible)
+    func calcContainerSize(for message: Message, avatarsVisible: Bool, progressVisible: Bool) -> CGSize {
+        let maxWidth = calcMaxContentWidth(for: message, avatarsVisible: avatarsVisible)
         let insets =
             message.isDeleted ? Constants.kDeletedMessageContentInset :
             isFromCurrentSender(message: message) ? Constants.kOutgoingMessageContentInset : Constants.kIncomingMessageContentInset
@@ -1011,8 +1013,8 @@ extension MessageViewController : MessageViewLayoutDelegate {
         size.width += insets.left + insets.right
         size.width = max(size.width, Constants.kMinimumCellWidth)
         size.height += insets.top + insets.bottom
-        if progressCircleVisible {
-            size.width += Constants.kProgressCircleSize
+        if progressVisible {
+            size.height += Constants.kProgressViewHeight
         }
 
         return size
@@ -1153,9 +1155,7 @@ extension MessageViewController : MessageCellDelegate {
     func didTapCancelUpload(in cell: MessageCell) {
         guard let topicId = self.topicName,
             let msgIdx = self.messageSeqIdIndex[cell.seqId] else { return }
-        if Cache.getLargeFileHelper().cancelUpload(
-            topicId: topicId, msgId: self.messages[msgIdx].msgId) {
-        }
+        _ = Cache.getLargeFileHelper().cancelUpload(topicId: topicId, msgId: self.messages[msgIdx].msgId)
     }
 
     private func handleButtonPost(in cell: MessageCell, using url: URL) {
@@ -1199,7 +1199,7 @@ extension MessageViewController : MessageCellDelegate {
         guard let data = MessageViewController.extractAttachment(from: cell), !data.isEmpty else { return }
         let downloadFrom = String(decoding: data[0], as: UTF8.self)
         guard var urlComps = URLComponents(string: downloadFrom) else { return }
-        if let filename = url.extractQueryParam(withName: "filename") {
+        if let filename = url.extractQueryParam(named: "filename") {
             urlComps.queryItems = [URLQueryItem(name: "origfn", value: filename)]
         }
         if let targetUrl = urlComps.url, targetUrl.scheme == "http" || targetUrl.scheme == "https" {
@@ -1212,7 +1212,7 @@ extension MessageViewController : MessageCellDelegate {
         guard let data = MessageViewController.extractAttachment(from: cell), !data.isEmpty else { return }
         let d = data[0]
         // FIXME: use actual mime instead of nil when generating file name.
-        let filename = url.extractQueryParam(withName: "filename") ?? Utils.uniqueFilename(forMime: nil)
+        let filename = url.extractQueryParam(named: "filename") ?? Utils.uniqueFilename(forMime: nil)
         let documentsUrl: URL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
         let destinationURL = documentsUrl.appendingPathComponent(filename)
         do {
@@ -1231,7 +1231,8 @@ extension MessageViewController : MessageCellDelegate {
         guard let entity = msg.content?.entities?[0], let bits = entity.data?["val"]?.asData() else { return }
 
         let content = ImagePreviewContent(
-            image: ImagePreviewContent.ImageContent.rawdata(bits),
+            imgContent: ImagePreviewContent.ImageContent.rawdata(bits),
+            caption: nil,
             fileName: entity.data?["name"]?.asString(),
             contentType: entity.data?["mime"]?.asString(),
             size: Int64(bits.count),

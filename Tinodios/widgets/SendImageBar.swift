@@ -8,6 +8,7 @@
 import UIKit
 
 protocol SendImageBarDelegate: class {
+    // Send the message.
     func sendImageBar(caption: String?)
 }
 
@@ -94,7 +95,7 @@ class SendImageBar: UIView {
             inputFieldMaxHeight = font.lineHeight * Constants.maxLines
         }
 
-        sendButton.isEnabled = false
+        sendButton.isEnabled = true
         toggleNotAvailableOverlay(visible: false)
     }
 
@@ -117,7 +118,5 @@ extension SendImageBar: UITextViewDelegate {
         } else {
             textView.isScrollEnabled = true
         }
-
-        sendButton.isEnabled = !textView.text.isEmpty
     }
 }

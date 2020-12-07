@@ -58,7 +58,7 @@ class FindInteractor: FindBusinessLogic {
         }
     }
     func attachToFndTopic() {
-        let tinode = Cache.getTinode()
+        let tinode = Cache.tinode
         UiUtils.attachToFndTopic(fndListener: self.fndListener)?.then(
                 onSuccess: { [weak self] msg in
                     self?.fndTopic = tinode.getOrCreateFndTopic()
@@ -119,7 +119,7 @@ class FindInteractor: FindBusinessLogic {
         guard let topicName = remoteContact.uniqueId, let sub = remoteContact.sub else {
             return false
         }
-        let tinode = Cache.getTinode()
+        let tinode = Cache.tinode
         var topic: DefaultComTopic?
         if !tinode.isTopicTracked(topicName: topicName) {
             topic = tinode.newTopic(for: topicName) as? DefaultComTopic

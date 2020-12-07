@@ -354,16 +354,18 @@ class AttributedStringFormatter: DraftyFormatter {
 
         private func makeFileAttachmentString(_ attachment: Attachment, withData bits: Data?, withRef ref: String?, defaultAttrs attributes: [NSAttributedString.Key : Any], maxSize size: CGSize) -> NSAttributedString {
             let attributed = NSMutableAttributedString()
-            attributed.beginEditing()
-            /*
-             TODO: use provided mime type to show custom icons for different types.
-             let unmanagedUti = UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, (attachment.mime ?? "application/octet-stream") as CFString, nil)
-             var uti = unmanagedUti?.takeRetainedValue() ?? kUTTypeData
-             uti = kUTTypeData
-             */
-            // Using basic kUTTypeData to prevent iOS from displaying distorted previews.
-            let tinode = Cache.getTinode()
             let baseFont = attributes[.font] as! UIFont
+            attributed.beginEditing()
+
+            // Get file description such as 'PDF Document'.
+            let mimeType = attachment.mime ?? "application/octet-stream"
+            let fileUti = UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, mimeType as CFString, nil)?.takeRetainedValue() ?? kUTTypeData
+            let fileDesc = (UTTypeCopyDescription(fileUti)?.takeRetainedValue() as String?) ?? NSLocalizedString("Unknown type", comment: "Displayed when the type of attachment cannot be determined")
+            // Get stock icon for the given file type.
+            let fileIcon = UIImage.defaultIcon(forMime: mimeType, preferredWidth: baseFont.lineHeight * 0.8)
+
+            // Using basic kUTTypeData to prevent iOS from displaying distorted previews.
+            let tinode = Cache.tinode
             // The attachment is valid if it contains either data or a link to download the data.
             let isValid = bits != nil || ref != nil
             if isValid {
@@ -387,21 +389,35 @@ class AttributedStringFormatter: DraftyFormatter {
 
             // Append file size.
             if let size = attachment.size {
-                attributed.append(NSAttributedString(string: " (" + UiUtils.bytesToHumanSize(Int64(size)) + ")", attributes: attributes))
+                // PDF Document · 2.0MB
+                // \u{2009} because iOS is buggy and bugs go unfixed for years.
+                // https://stackoverflow.com/questions/29041458/how-to-set-color-of-templated-image-in-nstextattachment
+                attributed.append(NSAttributedString(string: "\u{2009}\n", attributes: [NSAttributedString.Key.font: baseFont]))
+
+                let second = NSMutableAttributedString(string: "\(fileDesc) · \(UiUtils.bytesToHumanSize(Int64(size)))")
+                second.beginEditing()
+
+                let paragraph = NSMutableParagraphStyle()
+                paragraph.firstLineHeadIndent = Constants.kAttachmentIconSize.width + baseFont.capHeight * 0.25
+                paragraph.lineSpacing = 0
+                paragraph.lineHeightMultiple = 0.25
+                second.addAttributes([NSAttributedString.Key.paragraphStyle : paragraph, NSAttributedString.Key.foregroundColor : UIColor.gray,
+                ], range: NSRange(location: 0, length: second.length))
+
+                second.endEditing()
+                attributed.append(second)
             }
 
             if isValid {
                 // Insert linebreak then a clickable [↓ save] line
                 attributed.append(NSAttributedString(string: "\u{2009}\n", attributes: [NSAttributedString.Key.font : baseFont]))
 
-                // \u{2009} because iOS is buggy and bugs go unfixed for years.
-                // https://stackoverflow.com/questions/29041458/how-to-set-color-of-templated-image-in-nstextattachment
                 let second = NSMutableAttributedString(string: "\u{2009}")
                 second.beginEditing()
 
                 // Add 'download file' icon
                 let icon = NSTextAttachment()
-                icon.image = UIImage(named: "download-24")?.withRenderingMode(.alwaysTemplate)
+                icon.image = fileIcon ?? UIImage(named: "download-24")?.withRenderingMode(.alwaysTemplate)
                 icon.bounds = CGRect(origin: CGPoint(x: 0, y: -2), size: CGSize(width: baseFont.lineHeight * 0.8, height: baseFont.lineHeight * 0.8))
                 second.append(NSAttributedString(attachment: icon))
 
@@ -412,11 +428,11 @@ class AttributedStringFormatter: DraftyFormatter {
                 let paragraph = NSMutableParagraphStyle()
                 paragraph.firstLineHeadIndent = Constants.kAttachmentIconSize.width + baseFont.capHeight * 0.25
                 paragraph.lineSpacing = 0
-                paragraph.lineHeightMultiple = 0.8
+                paragraph.lineHeightMultiple = 0
                 second.addAttributes([NSAttributedString.Key.paragraphStyle : paragraph, NSAttributedString.Key.foregroundColor : Constants.kLinkColor,
                 ], range: NSRange(location: 0, length: second.length))
 
-                var baseUrl = URLComponents(string: "tinode://" + tinode.hostName)!
+                var baseUrl = URLComponents(string: "tinode://\(tinode.hostName)")!
                 baseUrl.path = ref != nil ? "/large-attachment" : "/small-attachment"
                 baseUrl.queryItems = [URLQueryItem(name: "filename", value: originalFileName)]
 
@@ -434,18 +450,19 @@ class AttributedStringFormatter: DraftyFormatter {
             switch attachment.content {
             // Image handling is easy.
             case .image:
-                let tinode = Cache.getTinode()
+                let tinode = Cache.tinode
                 let url: URL?
                 if let ref = attachment.ref {
                     url = URL(string: ref, relativeTo: tinode.baseURL(useWebsocketProtocol: false))
                 } else {
                     url = nil
                 }
-                let wrapper = url == nil ? NSTextAttachment() : AsyncTextAttachment(url: url!)
+                // tinode:// and mid: schemes are not real external URLs.
+                let wrapper = url == nil || url?.scheme == "mid" || url?.scheme == "tinode" ? NSTextAttachment() : AsyncTextAttachment(url: url!)
 
                 var image: UIImage?
                 if let bits = attachment.bits, let preview = UIImage(data: bits) {
-                    // FIXME: maybe cache result of converting Data to image.
+                    // FIXME: maybe cache result of converting Data to image (using topic+message_id as key).
                     // KingfisherManager.shared.cache.store(T##image: KFCrossPlatformImage##KFCrossPlatformImage, forKey: T##String)
                     image = preview
                 }

@@ -36,7 +36,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         // Try to connect and login in the background.
         DispatchQueue.global(qos: .userInitiated).async {
-            if !SharedUtils.connectAndLoginSync(using: Cache.getTinode(), inBackground: false) {
+            if !SharedUtils.connectAndLoginSync(using: Cache.tinode, inBackground: false) {
                 UiUtils.logoutAndRouteToLoginVC()
             }
         }
@@ -44,7 +44,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             let reachability = NWPathMonitor()
             reachability.start(queue: DispatchQueue.global(qos: .background))
             reachability.pathUpdateHandler = { path in
-                let tinode = Cache.getTinode()
+                let tinode = Cache.tinode
                 if path.status == .satisfied, !tinode.isConnected {
                     Cache.log.info("NWPathMonitor: network available - reconnecting")
                     tinode.reconnectNow(interactively: false, reset: false)
@@ -100,10 +100,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     return
                 }
                 // Fetch data in the background.
-                completionHandler(SharedUtils.fetchData(using: Cache.getTinode(), for: topicName, seq: seq))
+                completionHandler(SharedUtils.fetchData(using: Cache.tinode, for: topicName, seq: seq))
             } else if what == "sub" {
                 // New subscription.
-                completionHandler(SharedUtils.fetchDesc(using: Cache.getTinode(), for: topicName))
+                completionHandler(SharedUtils.fetchDesc(using: Cache.tinode, for: topicName))
             } else {
                 Cache.log.error("Invalid 'what' value ['%@'] in push notification for topic '%@'", what!, topicName)
                 completionHandler(.failed)
@@ -152,7 +152,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
             completionHandler([])
         } else {
             DispatchQueue.global(qos: .background).async {
-                SharedUtils.fetchData(using: Cache.getTinode(), for: topicName, seq: seq)
+                SharedUtils.fetchData(using: Cache.tinode, for: topicName, seq: seq)
             }
             // If the push notification is silent, do not present the alert.
             let isSilent = userInfo["silent"] as? String == "true"
@@ -165,7 +165,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         let userInfo = response.notification.request.content.userInfo
         defer { completionHandler() }
         guard let topicName = userInfo["topic"] as? String, !topicName.isEmpty else { return }
-        let tinode = Cache.getTinode()
+        let tinode = Cache.tinode
         if tinode.isConnectionAuthenticated {
             UiUtils.routeToMessageVC(forTopic: topicName)
             return
@@ -183,6 +183,6 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
 extension AppDelegate: MessagingDelegate {
     func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String) {
         // Update token. Send to the app server.
-        Cache.getTinode().setDeviceToken(token: fcmToken)
+        Cache.tinode.setDeviceToken(token: fcmToken)
     }
 }

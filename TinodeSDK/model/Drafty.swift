@@ -85,10 +85,9 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
     public var fmt: [Style]?
     public var ent: [Entity]?
 
-    public var isReferenceAttachment: Bool {
-        guard let ent = ent, ent.count == 1 else { return false }
-        let e = ent[0]
-        return e.tp == "EX" && e.data?["ref"] != nil
+    public var hasRefEntity: Bool {
+        guard let ent = ent, ent.count > 0 else { return false }
+        return ent.first(where: { $0.data?["ref"] != nil }) != nil
     }
 
     /// Initializes empty object
@@ -470,7 +469,7 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
     ///     - fname: name of the file to suggest to the receiver.
     /// - Returns: 'self' Drafty object.
     public func insertImage(at: Int, mime: String?, bits: Data, width: Int, height: Int, fname: String?) -> Drafty {
-        return try! insertImage(at: at, mime: mime, bits: bits, width: width, height: height, fname: fname, refurl: nil, size: 0)
+        return try! insertImage(at: at, mime: mime, bits: bits, width: width, height: height, fname: fname, refurl: nil, size: bits.count)
     }
 
     /// Insert image either as a reference or inline.

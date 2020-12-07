@@ -21,7 +21,7 @@ class BlockedContactsTableViewController: UITableViewController {
     }
 
     private func reloadData() {
-        self.topics = Cache.getTinode().getFilteredTopics(filter: {(topic: TopicProto) in
+        self.topics = Cache.tinode.getFilteredTopics(filter: {(topic: TopicProto) in
             return topic.topicType.matches(TopicType.user) && !topic.isJoiner
         })?.map {
             // Must succeed.
@@ -72,7 +72,7 @@ class BlockedContactsTableViewController: UITableViewController {
     }
 
     private func deleteTopic(_ name: String) {
-        let topic = Cache.getTinode().getTopic(topicName: name) as! DefaultComTopic
+        let topic = Cache.tinode.getTopic(topicName: name) as! DefaultComTopic
         topic.delete(hard: true).then(
             onSuccess: { [weak self] msg in
                 if let vc = self {

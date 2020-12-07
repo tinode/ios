@@ -72,22 +72,25 @@ enum ToastLevel {
 class UiUtils {
     static let kMinTagLength = 4
     static let kAvatarSize: CGFloat = 128
+    // Maximum linear size of an image.
     static let kMaxBitmapSize: CGFloat = 1024
+    // Maximum size of image preview when image is sent out-of-band.
+    static let kImagePreviewDimensions: CGFloat = 64
+    // Default dimensions of a bitmap when the sender provided none.
+    static let kDefaultBitmapSize: CGFloat = 256
     // Maximum length of topic title or user name.
     static let kMaxTitleLength = 60
-    // Default dimensions of a bitmap when sender provided none
-    static let kDefaultBitmapSize: CGFloat = 256
 
     private static func setUpPushNotifications() {
         let application = UIApplication.shared
         let appDelegate = application.delegate as! AppDelegate
         guard !appDelegate.pushNotificationsConfigured else {
             Messaging.messaging().token { (token, error) in
-              if let error = error {
-                Cache.log.debug("Error fetching FCM registration token: %@", error.localizedDescription)
-              } else if let token = token {
-                Cache.getTinode().setDeviceToken(token: token)
-              }
+                if let error = error {
+                    Cache.log.debug("Error fetching FCM registration token: %@", error.localizedDescription)
+                } else if let token = token {
+                    Cache.tinode.setDeviceToken(token: token)
+                }
             }
             return
         }
@@ -107,7 +110,7 @@ class UiUtils {
     }
 
     public static func attachToMeTopic(meListener: DefaultMeTopic.Listener?) -> PromisedReply<ServerMessage>? {
-        let tinode = Cache.getTinode()
+        let tinode = Cache.tinode
         var me = tinode.getMeTopic()
         if me == nil  {
             me = DefaultMeTopic(tinode: tinode, l: meListener)
@@ -125,7 +128,7 @@ class UiUtils {
                             UiUtils.logoutAndRouteToLoginVC()
                         case 502:
                             if text == "cluster unreachable" {
-                                Cache.getTinode().reconnectNow(interactively: false, reset: true)
+                                Cache.tinode.reconnectNow(interactively: false, reset: true)
                             }
                         default:
                             break
@@ -136,7 +139,7 @@ class UiUtils {
             })
     }
     public static func attachToFndTopic(fndListener: DefaultFndTopic.Listener?) -> PromisedReply<ServerMessage>? {
-        let tinode = Cache.getTinode()
+        let tinode = Cache.tinode
         let fnd = tinode.getOrCreateFndTopic()
         fnd.listener = fndListener
         //if fnd.
@@ -266,7 +269,7 @@ class UiUtils {
         let roundTo: Int = bucket > 0 ? (count < 3 ? 2 : (count < 30 ? 1 : 0)) : 0
         let multiplier: Double = pow(10, Double(roundTo))
         let whole: Int = Int(count)
-        let fraction: String = roundTo > 1 ? "." + "\(round(count * multiplier))".suffix(roundTo) : ""
+        let fraction: String = roundTo > 1 ? "." + "\(Int(round(count * multiplier)))".suffix(roundTo) : ""
         return "\(whole)\(fraction) \(sizes[bucket])"
     }
 
@@ -756,6 +759,20 @@ extension UIImage {
         guard let newCGImage = ctx.makeImage() else { return nil }
 
         return UIImage(cgImage: newCGImage, scale: 1, orientation: .up)
+    }
+
+    /// Get default iOS icon for the given file name (the file does not need to exist).
+    /// It will likely return nil when running under simulator, but will likely work on a real device.
+    public class func defaultIcon(forMime mime: String, preferredWidth width: CGFloat) -> UIImage? {
+        let fileName = Utils.uniqueFilename(forMime: mime)
+        guard let url = URL(string: "file:///\(fileName)") else { return nil }
+        let ic = UIDocumentInteractionController(url: url)
+        let allIcons = ic.icons
+
+        let nearest = allIcons.enumerated().min(by: {
+            return abs($0.element.size.width - width) < abs($1.element.size.width - width)
+        })
+        return nearest?.element
     }
 }
 

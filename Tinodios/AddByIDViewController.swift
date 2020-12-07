@@ -19,7 +19,7 @@ class AddByIDViewController: UIViewController {
 
         // Do any additional setup after loading the view.
         self.idTextField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: UIControl.Event.editingChanged)
-        self.tinode = Cache.getTinode()
+        self.tinode = Cache.tinode
         UiUtils.dismissKeyboardForTaps(onView: self.view)
     }
 

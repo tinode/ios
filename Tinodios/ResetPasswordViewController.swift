@@ -26,7 +26,7 @@ class ResetPasswordViewController : UIViewController {
         if self.isMovingFromParent {
             // If the user's logged in and is voluntarily leaving the ResetPassword VC
             // by hitting the Back button.
-            let tinode = Cache.getTinode()
+            let tinode = Cache.tinode
             if tinode.isConnectionAuthenticated || tinode.myUid != nil {
                 tinode.logout()
             }
@@ -69,7 +69,7 @@ class ResetPasswordViewController : UIViewController {
         default: return
         }
 
-        let tinode = Cache.getTinode()
+        let tinode = Cache.tinode
         UiUtils.toggleProgressOverlay(in: self, visible: true, title: NSLocalizedString("Requesting...", comment: "Progress overlay"))
         do {
             try tinode.connectDefault(inBackground: false)?
