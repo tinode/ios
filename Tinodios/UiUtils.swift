@@ -142,7 +142,6 @@ class UiUtils {
         let tinode = Cache.tinode
         let fnd = tinode.getOrCreateFndTopic()
         fnd.listener = fndListener
-        //if fnd.
         return !fnd.attached ?
             fnd.subscribe(set: nil, get: nil) :
             PromisedReply<ServerMessage>(value: ServerMessage())
@@ -150,7 +149,7 @@ class UiUtils {
 
     public static func logoutAndRouteToLoginVC() {
         Cache.log.info("UiUtils - Invalidating cache and logging out.")
-        BaseDb.getInstance().logout()
+        BaseDb.sharedInstance.logout()
         Cache.invalidate()
         SharedUtils.removeAuthToken()
         UiUtils.routeToLoginVC()

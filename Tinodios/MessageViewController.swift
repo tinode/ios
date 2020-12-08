@@ -317,8 +317,8 @@ class MessageViewController: UIViewController {
 
         self.setInterfaceColors()
 
-        if (self.interactor?.setup(topicName: self.topicName,
-                                   sendReadReceipts: self.sendReadReceipts) ?? false) {
+        if (self.interactor?.setup(topicName: self.topicName, sendReadReceipts: self.sendReadReceipts) ?? false) {
+            self.interactor?.deleteFailedMessages()
             self.interactor?.loadMessages()
         }
     }

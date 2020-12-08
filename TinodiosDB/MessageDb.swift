@@ -104,17 +104,17 @@ public class MessageDb {
                 guard let topicId = msg.topicId, let userId = msg.userId, topicId >= 0, userId >= 0 else {
                     throw MessageDbError.dataError("Failed to insert row into MessageDb: topicId = \(String(describing: msg.topicId)), userId = \(String(describing: msg.userId))")
                 }
-                var status: Int = BaseDb.kStatusUndefined
+                var status = BaseDb.Status.undefined
                 if let seq = msg.seq, seq > 0 {
-                    status = BaseDb.kStatusSynced
+                    status = .synced
                 } else {
                     msg.seq = tdb.getNextUnusedSeq(topic: topic)
-                    status = (msg.status == nil || msg.status == BaseDb.kStatusUndefined) ? BaseDb.kStatusQueued : msg.status!
+                    status = (msg.dbStatus == nil || msg.dbStatus == BaseDb.Status.undefined) ? .queued : msg.dbStatus!
                 }
                 var setters = [Setter]()
                 setters.append(self.topicId <- topicId)
                 setters.append(self.userId <- userId)
-                setters.append(self.status <- status)
+                setters.append(self.status <- status.rawValue)
                 setters.append(self.sender <- msg.from)
                 setters.append(self.ts <- msg.ts)
                 setters.append(self.seq <- msg.seq)
@@ -130,11 +130,11 @@ public class MessageDb {
             return -1
         }
     }
-    func updateStatusAndContent(msgId: Int64, status: Int?, content: Drafty?) -> Bool {
+    func updateStatusAndContent(msgId: Int64, status: BaseDb.Status?, content: Drafty?) -> Bool {
         let record = self.table.filter(self.id == msgId)
         var setters = [Setter]()
-        if status != BaseDb.kStatusUndefined {
-            setters.append(self.status <- status!)
+        if status != .undefined {
+            setters.append(self.status <- status!.rawValue)
         }
         if content != nil {
             setters.append(self.content <- content!.serialize())
@@ -148,13 +148,11 @@ public class MessageDb {
         }
         return false
     }
+
     func delivered(msgId: Int64, ts: Date?, seq: Int?) -> Bool {
         let record = self.table.filter(self.id == msgId)
         do {
-            return try self.db.run(record.update(
-                self.status <- BaseDb.kStatusSynced,
-                self.ts <- ts,
-                self.seq <- seq)) > 0
+            return try self.db.run(record.update(self.status <- BaseDb.Status.synced.rawValue, self.ts <- ts, self.seq <- seq)) > 0
         } catch {
             BaseDb.log.error("MessageDb - update delivery operation failed: msgId = %lld, error = %@", msgId, error.localizedDescription)
             return false
@@ -170,6 +168,21 @@ public class MessageDb {
             return try self.db.run(rows.delete()) > 0
         } catch {
             BaseDb.log.error("MessageDb - deleteAll(forTopic) operation failed: topicId = %lld, error = %@", topicId, error.localizedDescription)
+            return false
+        }
+    }
+
+    /// Delete failed messages in a given topic.
+    /// - Parameters:
+    ///  - topicId Tinode topic ID to delete messages from.
+    /// - Returns `true` if any messages were deleted.
+    @discardableResult
+    func deleteFailed(forTopic topicId: Int64) -> Bool {
+        let rows = self.table.filter(self.topicId == topicId && self.status == BaseDb.Status.failed.rawValue)
+        do {
+            return try self.db.run(rows.delete()) > 0
+        } catch {
+            BaseDb.log.error("MessageDb - deleteFailed(forTopic) operation failed: topicId = %lld, error = %@", topicId, error.localizedDescription)
             return false
         }
     }
@@ -210,18 +223,18 @@ public class MessageDb {
             try db.savepoint("MessageDb.deleteOrMarkDeleted-plain") {
                 // Message selector: all messages in a given topic with seq between fromId and toId [inclusive, exclusive).
                 let messageSelector = self.table.filter(
-                    self.topicId == topicId && startId <= self.seq && self.seq < endId && self.status <= BaseDb.kStatusSynced)
+                    self.topicId == topicId && startId <= self.seq && self.seq < endId && self.status <= BaseDb.Status.synced.rawValue)
                 // Selector of ranges which are fully within the new range.
                 let rangeDeleteSelector = self.table.filter(
-                    self.topicId == topicId && startId <= self.seq && self.seq < endId && self.status >= BaseDb.kStatusDeletedHard)
+                    self.topicId == topicId && startId <= self.seq && self.seq < endId && self.status >= BaseDb.Status.deletedHard.rawValue)
 
                 // Selector of partially overlapping deletion ranges. Find bounds of existing deletion ranges of the same type
                 // which partially overlap with the new deletion range.
                 let statusToConsume =
-                    delId > 0 ? BaseDb.kStatusDeletedSynced :
-                    hard ? BaseDb.kStatusDeletedHard : BaseDb.kStatusDeletedSoft
+                    delId > 0 ? BaseDb.Status.deletedSynced :
+                    hard ? BaseDb.Status.deletedHard : BaseDb.Status.deletedSoft
                 var rangeConsumeSelector = self.table.filter(
-                    self.topicId == topicId && self.status == statusToConsume
+                    self.topicId == topicId && self.status == statusToConsume.rawValue
                 )
                 if delId > 0 {
                     rangeConsumeSelector = rangeConsumeSelector.filter(self.delId < delId)
@@ -257,7 +270,7 @@ public class MessageDb {
                 setters.append(self.delId <- delId)
                 setters.append(self.seq <- startId)
                 setters.append(self.high <- endId)
-                setters.append(self.status <- statusToConsume)
+                setters.append(self.status <- statusToConsume.rawValue)
                 updateResult = try db.run(self.table.insert(setters)) > 0
             }
             return updateResult
@@ -280,7 +293,7 @@ public class MessageDb {
         sm.msgId = r[self.id]
         sm.topicId = r[self.topicId]
         sm.userId = r[self.userId]
-        sm.status = r[self.status]
+        sm.dbStatus = BaseDb.Status(rawValue: r[self.status] ?? 0) ?? .undefined
         sm.from = r[self.sender]
         sm.ts = r[self.ts]
         sm.seq = r[self.seq]
@@ -315,11 +328,11 @@ public class MessageDb {
     }
     func queryDeleted(topicId: Int64?, hard: Bool) -> [MsgRange]? {
         guard let topicId = topicId else { return nil }
-        let status = hard ? BaseDb.kStatusDeletedHard : BaseDb.kStatusDeletedSoft
+        let status = hard ? BaseDb.Status.deletedHard : BaseDb.Status.deletedSoft
         let queryTable = self.table
             .filter(
                 self.topicId == topicId &&
-                self.status == status)
+                    self.status == status.rawValue)
             .select(self.delId, self.seq, self.high)
             .order(self.seq)
         do {
@@ -337,9 +350,7 @@ public class MessageDb {
     }
     func queryUnsent(topicId: Int64?) -> [Message]? {
         let queryTable = self.table
-            .filter(
-                self.topicId == topicId &&
-                self.status == BaseDb.kStatusQueued)
+            .filter(self.topicId == topicId && self.status == BaseDb.Status.queued.rawValue)
             .order(self.ts)
         do {
             var messages = [StoredMessage]()

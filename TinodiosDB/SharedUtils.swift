@@ -95,7 +95,7 @@ public class SharedUtils {
     public static func createTinode() -> Tinode {
         let appVersion: String = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as! String
         let appName = "Tinodios/" + appVersion
-        let dbh = BaseDb.getInstance()
+        let dbh = BaseDb.sharedInstance
         // FIXME: Get and use current UI language from Bundle.main.preferredLocalizations.first
         let tinode = Tinode(for: appName,
                             authenticateWith: SharedUtils.kApiKey,

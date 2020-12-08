@@ -40,7 +40,7 @@ class NotificationService: UNNotificationServiceExtension {
         if let bestAttemptContent = bestAttemptContent {
             defer { self.contentHandler!(bestAttemptContent) }
 
-            let store = BaseDb.getInstance().sqlStore!
+            let store = BaseDb.sharedInstance.sqlStore!
 
             let userInfo = bestAttemptContent.userInfo
             guard let topic = userInfo["topic"] as? String, !topic.isEmpty,

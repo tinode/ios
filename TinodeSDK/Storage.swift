@@ -112,89 +112,121 @@ public protocol Storage: class {
     // Get a list o topic subscriptions from DB.
     func getSubscriptions(topic: TopicProto) -> [SubscriptionProto]?
 
-    // Read user description.
+    /// Read user description.
     func userGet(uid: String) -> UserProto?
-    // Insert new user.
+
+    /// Insert new user.
     func userAdd(user: UserProto) -> Int64
-    // Update existing user.
+
+    /// Update existing user.
     @discardableResult
     func userUpdate(user: UserProto) -> Bool
 
-    // Message received from the server.
+    /// Message is received from the server.
+    /// - Parameters:
+    ///   - topic: topic which owns the message
+    ///   - sub: message sender
+    ///   - msg: message itself
+    /// - Returns:
+    ///     database ID of the message.
     func msgReceived(topic: TopicProto, sub: SubscriptionProto?, msg: MsgServerData?) -> Int64
 
-    // Save message to DB as queued or synced.
-    // Params:
-    //   topic: topic which sent the message.
-    //   data: message data to save.
-    //   head: message headers.
-    // Returns:
-    //   database ID of the message suitable for use in.
+    /// Save message to DB as queued or synced.
+    /// - Parameters:
+    ///   - topic: topic which sent the message.
+    ///   - data: message data to save.
+    ///   - head: message headers.
+    /// - Returns:
+    ///     database ID of the message.
     func msgSend(topic: TopicProto, data: Drafty, head: [String: JSONValue]?) -> Int64
 
-    // Save message to database as a draft.
-    // Draft will not be sent to server until it status changes.
-    // Params:
-    //   topic: topic which sent the message.
-    //   data: message data to save.
-    //   head: message headers.
-    // Returns:
-    //   database ID of the message suitable for use in
+    /// Save message to database as a draft. The draft will not be sent to server until it status changes.
+    /// - Parameters:
+    ///   - topic: topic which owns the message.
+    ///   - data: message data to save.
+    ///   - head: message headers.
+    /// - Returns:
+    ///     database ID of the message.
     func msgDraft(topic: TopicProto, data: Drafty, head: [String: JSONValue]?) -> Int64
 
-    // Update message draft content without
-    // Params:
-    //   topic: topic which sent the message.
-    //   dbMessageId: database ID of the message.
-    //   data: updated content of the message. Must not be null.
-    // Returns true on success, false otherwise.
+    /// Update message draft content.
+    /// - Parameters:
+    ///   - topic: topic which owns the message.
+    ///   - dbMessageId: database ID of the message.
+    ///   - data: updated content of the message. Must not be null.
+    /// - Returns `true` on success, `false` otherwise.
     func msgDraftUpdate(topic: TopicProto, dbMessageId: Int64, data: Drafty) -> Bool
 
-    // Message is ready to be sent to the server.
-    // Params:
-    //   topic: topic which sent the message
-    //   dbMessageId: database ID of the message.
-    //   data: updated content of the message. If null only status is updated.
-    // Returns true on success, false otherwise.
+    /// Mark message as ready to be sent to the server.
+    /// - Parameters:
+    ///   - topic: topic which owns the message.
+    ///   - dbMessageId: database ID of the message.
+    ///   - data: updated content of the message. If null only status is updated.
+    /// - Returns `true` on success, `false` otherwise.
     func msgReady(topic: TopicProto, dbMessageId: Int64, data: Drafty) -> Bool
 
-    // Message is being sent to the server.
-    // Params
-    //   topic: topic which sent the message
-    //   dbMessageId: database ID of the message.
-    //   sync: true when the sync started, false when it's finished unsuccessfully.
-    // Returns true on success, false otherwise.
+    /// Mark message as being sent to the server.
+    /// - Parameters:
+    ///    - topic: topic which sent the message
+    ///    - dbMessageId: database ID of the message.
+    ///    - sync: `true` when the sync started, `false` when it's finished unsuccessfully.
+    /// - Returns `true` on success, `false` otherwise.
     @discardableResult
     func msgSyncing(topic: TopicProto, dbMessageId: Int64, sync: Bool) -> Bool
 
-    // Deletes a message by database id.
+    /// Mark message as failed.
+    /// - Parameters:
+    ///     - topic: topic which owns the message
+    ///     - dbMessageId: database ID of the message.
+    /// - Returns:
+    ///     `true` on success, `false` otherwise
+    @discardableResult
+    func msgFailed(topic: TopicProto, dbMessageId: Int64) -> Bool
+
+    /// Delete all failed messages in the given topis.
+    /// - Parameters:
+    ///     - topic: topic which sent the message
+    /// - Returns:
+    ///     `true` on success, `false` otherwise
+    @discardableResult
+    func msgPruneFailed(topic: TopicProto) -> Bool
+
+    /// Deletes a message by database id.
+    /// - Parameters:
+    ///     - topic: topic which owns the message
+    ///     - dbMessageId: database ID of the message.
+    /// - Returns:
+    ///     `true` on success, `false` otherwise
     func msgDiscard(topic: TopicProto, dbMessageId: Int64) -> Bool
 
-    // Message delivered to the server and received a real seq ID.
-    // Params:
-    //   topic: topic which sent the message.
-    //   dbMessageId: database ID of the message.
-    //   timestamp: server timestamp.
-    //   seq: server-issued message seqId.
-    // Returns true on success, false otherwise.
-    func msgDelivered(topic: TopicProto, dbMessageId: Int64,
-                      timestamp: Date, seq: Int) -> Bool
+    /// Mark message as delivered to the server and assign a real seq ID.
+    /// - Parameters:
+    ///   - topic: topic which sent the message.
+    ///   - dbMessageId: database ID of the message.
+    ///   - timestamp: server timestamp.
+    ///   - seq: server-issued message seqId.
+    /// - Returns `true` on success, `false` otherwise.
+    func msgDelivered(topic: TopicProto, dbMessageId: Int64, timestamp: Date, seq: Int) -> Bool
+
     // Mark messages for deletion by range.
     @discardableResult
-    func msgMarkToDelete(topic: TopicProto,
-                         from idLo: Int, to idHi: Int, markAsHard: Bool) -> Bool
+    func msgMarkToDelete(topic: TopicProto, from idLo: Int, to idHi: Int, markAsHard: Bool) -> Bool
+
     // Mark messages for deletion by seq ID list.
     func msgMarkToDelete(topic: TopicProto, ranges: [MsgRange]?, markAsHard: Bool) -> Bool
+
     // Delete messages.
     @discardableResult
-    func msgDelete(topic: TopicProto, delete id: Int,
-                   deleteFrom idLo: Int, deleteTo idHi: Int) -> Bool
+    func msgDelete(topic: TopicProto, delete id: Int, deleteFrom idLo: Int, deleteTo idHi: Int) -> Bool
+
     // Delete messages.
     @discardableResult
     func msgDelete(topic: TopicProto, delete id: Int, deleteAllIn ranges: [MsgRange]?) -> Bool
+
     // Set recv value for a given subscriber.
     @discardableResult
     func msgRecvByRemote(sub: SubscriptionProto, recv: Int?) -> Bool
+
     // Set read value for a given subscriber.
     @discardableResult
     func msgReadByRemote(sub: SubscriptionProto, read: Int?) -> Bool
