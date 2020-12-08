@@ -14,7 +14,7 @@ public class StoredTopic: Payload {
     var lastUsed: Date? = nil
     var minLocalSeq: Int? = nil
     var maxLocalSeq: Int? = nil
-    var status: Int = BaseDb.kStatusUndefined
+    var status: BaseDb.Status = .undefined
     var nextUnsentId: Int? = nil
 
     public static func isAllDataLoaded(topic: TopicProto?) -> Bool {
@@ -127,7 +127,7 @@ public class TopicDb {
     func deserializeTopic(topic: TopicProto, row: Row) {
         let st = StoredTopic()
         st.id = row[self.id]
-        st.status = row[self.status] ?? BaseDb.kStatusUndefined
+        st.status = BaseDb.Status(rawValue: row[self.status] ?? 0) ?? .undefined
         st.lastUsed = row[self.lastUsed]
         st.minLocalSeq = row[self.minLocalSeq]
         st.maxLocalSeq = row[self.maxLocalSeq]
@@ -209,11 +209,11 @@ public class TopicDb {
 
             let tp = topic.topicType
             let tpv = tp.rawValue
-            let status = topic.isNew ? BaseDb.kStatusQueued : BaseDb.kStatusSynced
+            let status = topic.isNew ? BaseDb.Status.queued : BaseDb.Status.synced
             let rowid = try db.run(
                 self.table.insert(
                     self.accountId <- accountId,
-                    self.status <- status,
+                    self.status <- status.rawValue,
                     self.topic <- topic.name,
                     type <- tpv,
                     visible <- TopicType.grp == tp || TopicType.p2p == tp ? 1 : 0,
@@ -261,9 +261,9 @@ public class TopicDb {
         let record = self.table.filter(self.id == recordId)
         var setters = [Setter]()
         var status = st.status
-        if status == BaseDb.kStatusQueued && !topic.isNew {
-            status = BaseDb.kStatusSynced
-            setters.append(self.status <- status)
+        if status == BaseDb.Status.queued && !topic.isNew {
+            status = BaseDb.Status.synced
+            setters.append(self.status <- status.rawValue)
             setters.append(self.topic <- topic.name)
         }
         if let updated = topic.updated {

@@ -34,6 +34,7 @@ protocol MessageDataStore {
     func loadMessages()
     func loadNextPage()
     func deleteMessage(seqId: Int)
+    func deleteFailedMessages()
 } 
 
 // Object to upload.
@@ -94,7 +95,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
     func setup(topicName: String?, sendReadReceipts: Bool) -> Bool {
         guard let topicName = topicName else { return false }
         self.topicName = topicName
-        self.topicId = BaseDb.getInstance().topicDb?.getId(topic: topicName)
+        self.topicId = BaseDb.sharedInstance.topicDb?.getId(topic: topicName)
         let tinode = Cache.tinode
         if self.tinodeEventListener == nil {
             self.tinodeEventListener = MessageEventListener(
@@ -177,7 +178,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                         )
                     }
                     if self?.topicId == -1 {
-                        self?.topicId = BaseDb.getInstance().topicDb?.getId(topic: self?.topicName)
+                        self?.topicId = BaseDb.sharedInstance.topicDb?.getId(topic: self?.topicName)
                     }
                     self?.loadMessages()
                     self?.presenter?.applyTopicPermissions(withError: nil)
@@ -259,7 +260,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
 
     func loadMessages() {
         self.messageInteractorQueue.async {
-            if let messages = BaseDb.getInstance().messageDb?.query(
+            if let messages = BaseDb.sharedInstance.messageDb?.query(
                     topicId: self.topicId,
                     pageCount: self.pagesToLoad,
                     pageSize: MessageInteractor.kMessagesPerPage,
@@ -285,7 +286,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
             return
         }
         if !loadNextPageInternal() && !StoredTopic.isAllDataLoaded(topic: t) {
-            t.getMeta(query:t.metaGetBuilder()
+            t.getMeta(query: t.metaGetBuilder()
                 .withEarlierData(limit: MessageInteractor.kMessagesPerPage).build())
                 .thenFinally({ [weak self] in
                     self?.presenter?.endRefresh()
@@ -294,6 +295,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
             self.presenter?.endRefresh()
         }
     }
+
     func deleteMessage(seqId: Int) {
         topic?.delMessage(id: seqId, hard: false).then(
             onSuccess: { [weak self] msg in
@@ -302,6 +304,13 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
             },
             onFailure: UiUtils.ToastFailureHandler)
         self.loadMessages()
+    }
+
+    func deleteFailedMessages() {
+        self.messageInteractorQueue.async {
+            guard let t = self.topic else { return }
+            _ = BaseDb.sharedInstance.sqlStore?.msgPruneFailed(topic: t)
+        }
     }
 
     func enablePeersMessaging() {

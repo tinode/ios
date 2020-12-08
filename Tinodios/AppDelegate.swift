@@ -24,7 +24,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         SharedUtils.registerUserDefaults()
-        let baseDb = BaseDb.getInstance()
+        let baseDb = BaseDb.sharedInstance
         if baseDb.isReady {
             // When the app launch after user tap on notification (originally was not running / not in background).
             if let opts = launchOptions, let userInfo = opts[.remoteNotification] as? [String: Any],

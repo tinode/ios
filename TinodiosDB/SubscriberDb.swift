@@ -13,7 +13,7 @@ public class StoredSubscription: Payload  {
     public var id: Int64? = nil
     public var topicId: Int64? = nil
     public var userId: Int64? = nil
-    public var status: Int? = nil
+    public var status: BaseDb.Status? = nil
 }
 
 enum SubscriberDbError: Error {
@@ -88,7 +88,7 @@ public class SubscriberDb {
         })
         try! self.db.run(self.table.createIndex(topicId, ifNotExists: true))
     }
-    func insert(for topicId: Int64, with status: Int, using sub: SubscriptionProto) -> Int64 {
+    func insert(for topicId: Int64, with status: BaseDb.Status, using sub: SubscriptionProto) -> Int64 {
         var rowId: Int64 = -1
         do {
             try self.db.savepoint("SubscriberDb.insert") {
@@ -109,7 +109,7 @@ public class SubscriberDb {
                 setters.append(self.userId <- ss.userId)
                 setters.append(self.mode <- sub.acs?.serialize())
                 setters.append(self.updated <- sub.updated ?? Date())
-                setters.append(self.status <- status)
+                setters.append(self.status <- status.rawValue)
                 ss.status = status
                 setters.append(self.read <- sub.getRead)
                 setters.append(self.recv <- sub.getRecv)
@@ -143,9 +143,9 @@ public class SubscriberDb {
                 var setters = [Setter]()
                 setters.append(self.mode <- sub.acs?.serialize())
                 setters.append(self.updated <- sub.updated)
-                if status != BaseDb.kStatusSynced {
-                    setters.append(self.status <- BaseDb.kStatusSynced)
-                    status = BaseDb.kStatusSynced
+                if status != .synced {
+                    setters.append(self.status <- BaseDb.Status.synced.rawValue)
+                    status = .synced
                 }
                 setters.append(self.read <- sub.getRead)
                 setters.append(self.recv <- sub.getRecv)
@@ -192,7 +192,7 @@ public class SubscriberDb {
         ss.id = r[self.id]
         ss.topicId = r[self.topicId]
         ss.userId = r[self.userId]
-        ss.status = r[self.status]
+        ss.status = BaseDb.Status(rawValue: r[self.status] ?? 0) ?? .undefined
 
         s.acs = Acs.deserialize(from: r[self.mode])
         s.updated = r[self.updated]

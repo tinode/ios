@@ -30,7 +30,7 @@ class ContactsManager {
     private let queue = DispatchQueue(label: "co.tinode.contacts")
     private let userDb: UserDb!
     init() {
-        self.userDb = BaseDb.getInstance().userDb!
+        self.userDb = BaseDb.sharedInstance.userDb!
     }
     public func processSubscription(sub: SubscriptionProto) {
         queue.sync {

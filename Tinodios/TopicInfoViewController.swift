@@ -559,7 +559,7 @@ extension TopicInfoViewController {
         let text: String
     }
 
-    static func getAccessModeLabels(acs: Acs?, status: Int?) -> [AccessModeLabel]? {
+    static func getAccessModeLabels(acs: Acs?, status: BaseDb.Status?) -> [AccessModeLabel]? {
         var result = [AccessModeLabel]()
         if let acs = acs {
             if acs.isModeDefined {
@@ -588,7 +588,7 @@ extension TopicInfoViewController {
                 }
             }
         }
-        if let status = status, status == BaseDb.kStatusQueued {
+        if let status = status, status == .queued {
             result.append(AccessModeLabel(color: AccessModeLabel.kColorGrayBorder, text: "pending"))
         }
         return !result.isEmpty ? result : nil

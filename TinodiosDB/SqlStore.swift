@@ -123,7 +123,7 @@ public class SqlStore : Storage {
         guard let st = topic.payload as? StoredTopic, let topicId = st.id else {
             return 0
         }
-        return self.dbh?.subscriberDb?.insert(for: topicId, with: BaseDb.kStatusSynced, using: sub) ?? 0
+        return self.dbh?.subscriberDb?.insert(for: topicId, with: .synced, using: sub) ?? 0
     }
 
     public func subUpdate(topic: TopicProto, sub: SubscriptionProto) -> Bool {
@@ -137,7 +137,7 @@ public class SqlStore : Storage {
         guard let st = topic.payload as? StoredTopic, let topicId = st.id else {
             return 0
         }
-        return self.dbh?.subscriberDb?.insert(for: topicId, with: BaseDb.kStatusQueued, using: sub) ?? 0
+        return self.dbh?.subscriberDb?.insert(for: topicId, with: .queued, using: sub) ?? 0
     }
 
     public func subDelete(topic: TopicProto, sub: SubscriptionProto) -> Bool {
@@ -209,13 +209,13 @@ public class SqlStore : Storage {
             return -1
         }
     }
-    private func insertMessage(topic: TopicProto, data: Drafty, head: [String: JSONValue]?, initialStatus: Int) -> Int64 {
+    private func insertMessage(topic: TopicProto, data: Drafty, head: [String: JSONValue]?, initialStatus: BaseDb.Status) -> Int64 {
         let msg = StoredMessage()
         msg.topic = topic.name
         msg.from = myUid
         msg.ts = Date() + timeAdjustment
         msg.seq = 0
-        msg.status = initialStatus
+        msg.dbStatus = initialStatus
         msg.content = data
         msg.head = head
         msg.topicId = (topic.payload as? StoredTopic)?.id ?? -1
@@ -227,32 +227,44 @@ public class SqlStore : Storage {
     }
 
     public func msgSend(topic: TopicProto, data: Drafty, head: [String: JSONValue]?) -> Int64 {
-        return self.insertMessage(topic: topic, data: data, head: head, initialStatus: BaseDb.kStatusUndefined)
+        return self.insertMessage(topic: topic, data: data, head: head, initialStatus: .undefined)
     }
 
     public func msgDraft(topic: TopicProto, data: Drafty, head: [String: JSONValue]?) -> Int64 {
-        return self.insertMessage(topic: topic, data: data, head: head, initialStatus: BaseDb.kStatusDraft)
+        return self.insertMessage(topic: topic, data: data, head: head, initialStatus: .draft)
     }
 
     public func msgDraftUpdate(topic: TopicProto, dbMessageId: Int64, data: Drafty) -> Bool {
         return self.dbh?.messageDb?.updateStatusAndContent(
             msgId: dbMessageId,
-            status: BaseDb.kStatusUndefined,
+            status: .undefined,
             content: data) ?? false
     }
 
     public func msgReady(topic: TopicProto, dbMessageId: Int64, data: Drafty) -> Bool {
         return self.dbh?.messageDb?.updateStatusAndContent(
             msgId: dbMessageId,
-            status: BaseDb.kStatusQueued,
+            status: .queued,
             content: data) ?? false
     }
 
     public func msgSyncing(topic: TopicProto, dbMessageId: Int64, sync: Bool) -> Bool {
         return self.dbh?.messageDb?.updateStatusAndContent(
             msgId: dbMessageId,
-            status: sync ? BaseDb.kStatusSending : BaseDb.kStatusQueued,
+            status: sync ? .sending : .queued,
             content: nil) ?? false
+    }
+
+    public func msgFailed(topic: TopicProto, dbMessageId: Int64) -> Bool {
+        return self.dbh?.messageDb?.updateStatusAndContent(
+            msgId: dbMessageId,
+            status: .failed,
+            content: nil) ?? false
+    }
+
+    public func msgPruneFailed(topic: TopicProto) -> Bool {
+        guard let st = topic.payload as? StoredTopic, let topicId = st.id else { return false }
+        return self.dbh?.messageDb?.deleteFailed(forTopic: topicId) ?? false
     }
 
     public func msgDiscard(topic: TopicProto, dbMessageId: Int64) -> Bool {
@@ -322,29 +334,29 @@ public class SqlStore : Storage {
         guard let ss = sub.payload as? StoredSubscription, let sid = ss.id, sid > 0, let recv = recv else {
             return false
         }
-        return BaseDb.getInstance().subscriberDb?.updateRecv(for: sid, with: recv) ?? false
+        return BaseDb.sharedInstance.subscriberDb?.updateRecv(for: sid, with: recv) ?? false
     }
 
     public func msgReadByRemote(sub: SubscriptionProto, read: Int?) -> Bool {
         guard let ss = sub.payload as? StoredSubscription, let sid = ss.id, sid > 0, let read = read else {
             return false
         }
-        return BaseDb.getInstance().subscriberDb?.updateRead(for: sid, with: read) ?? false
+        return BaseDb.sharedInstance.subscriberDb?.updateRead(for: sid, with: read) ?? false
     }
 
     public func getMessageById(topic: TopicProto, dbMessageId: Int64) -> Message? {
-        return BaseDb.getInstance().messageDb?.query(msgId: dbMessageId)
+        return BaseDb.sharedInstance.messageDb?.query(msgId: dbMessageId)
     }
 
     public func getQueuedMessages(topic: TopicProto) -> [Message]? {
         guard let st = topic.payload as? StoredTopic else { return nil }
         guard let id = st.id, id > 0 else { return nil }
-        return BaseDb.getInstance().messageDb?.queryUnsent(topicId: id)
+        return BaseDb.sharedInstance.messageDb?.queryUnsent(topicId: id)
     }
 
     public func getQueuedMessageDeletes(topic: TopicProto, hard: Bool) -> [MsgRange]? {
         guard let st = topic.payload as? StoredTopic,
             let id = st.id, id > 0 else { return nil }
-        return BaseDb.getInstance().messageDb?.queryDeleted(topicId: id, hard: hard)
+        return BaseDb.sharedInstance.messageDb?.queryDeleted(topicId: id, hard: hard)
     }
 }

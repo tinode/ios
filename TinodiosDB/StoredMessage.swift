@@ -15,22 +15,26 @@ public class StoredMessage : MsgServerData, Message {
 
     var topicId: Int64? = nil
     var userId: Int64? = nil
-    public var status: Int? = nil
 
-    public var isDraft: Bool { get { return status == BaseDb.kStatusDraft } }
-    public var isReady: Bool { get { return status == BaseDb.kStatusQueued } }
+    var dbStatus: BaseDb.Status? = nil
+    public var status: Int? {
+        return dbStatus?.rawValue
+    }
+
+    public var isDraft: Bool { get { return dbStatus == .draft } }
+    public var isReady: Bool { get { return dbStatus == .queued } }
     public var isDeleted: Bool {
-        return status == BaseDb.kStatusDeletedHard || status == BaseDb.kStatusDeletedSoft || status == BaseDb.kStatusDeletedSynced
+        return dbStatus == .deletedHard || dbStatus == .deletedSoft || dbStatus == .deletedSynced
     }
     public func isDeleted(hard: Bool) -> Bool {
         return hard ?
-            status == BaseDb.kStatusDeletedHard :
-            status == BaseDb.kStatusDeletedSoft
+            dbStatus == .deletedHard :
+            dbStatus == .deletedSoft
     }
-    public var isSynced: Bool { return status == BaseDb.kStatusSynced }
+    public var isSynced: Bool { return dbStatus == .synced }
 
     /// Message has not been delivered to the server yet.
-    public var isPending: Bool { return status == nil || status! <= BaseDb.kStatusSending }
+    public var isPending: Bool { return dbStatus == nil || dbStatus! <= .sending }
 
     /// Cached representation of message content as attributed string.
     public var cachedContent: NSAttributedString?
@@ -49,9 +53,9 @@ public class StoredMessage : MsgServerData, Message {
         self.content = m.content
     }
 
-    convenience init(from m: MsgServerData, status: Int) {
+    convenience init(from m: MsgServerData, status: BaseDb.Status) {
         self.init(from: m)
-        self.status = status
+        self.dbStatus = status
     }
 
     required init(from decoder: Decoder) throws {

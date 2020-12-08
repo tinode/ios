@@ -11,27 +11,36 @@ import TinodeSDK
 
 public class BaseDb {
     // Current database schema version. Increment on schema changes.
-    public static let kSchemaVersion: Int32 = 105
+    public static let kSchemaVersion: Int32 = 106
 
-    // Onject statuses.
-    // Status undefined/not set.
-    public static let kStatusUndefined = 0
-    // Object is not ready to be sent to the server.
-    public static let kStatusDraft = 1
-    // Object is ready but not yet sent to the server.
-    public static let kStatusQueued = 2
-    // Object is in the process of being sent to the server.
-    public static let kStatusSending = 3
-    // Object is received by the server.
-    public static let kStatusSynced = 4
+    // Object statuses. Values are incremented by 10 to make it easier to add new statuses.
+    public enum Status: Int, Comparable {
+        // Status undefined/not set.
+        case undefined = 0
+        // Object is not ready to be sent to the server.
+        case draft = 10
+        // Object is ready but not yet sent to the server.
+        case queued = 20
+        // Object is in the process of being sent to the server.
+        case sending = 30
+        // Sending failed
+        case failed = 40
+        // Object is received by the server.
+        case synced = 50
+        // Object is hard-deleted.
+        case deletedHard = 60
+        // Object is soft-deleted.
+        case deletedSoft = 70
+        // Object is a deletion range marker synchronized with the server.
+        case deletedSynced = 80
+
+        public static func < (lhs: BaseDb.Status, rhs: BaseDb.Status) -> Bool {
+            return lhs.rawValue < rhs.rawValue
+        }
+    }
+
     // Meta-status: object should be visible in the UI.
-    public static let kStatusVisible = 4
-    // Object is hard-deleted.
-    public static let kStatusDeletedHard = 5
-    // Object is soft-deleted.
-    public static let kStatusDeletedSoft = 6
-    // Object is a deletion range marker synchronized with the server.
-    public static let kStatusDeletedSynced = 7
+    public static let kStatusVisible = Status.synced
 
     public static let kBundleId = "co.tinode.tinodios.db"
     public static let kAppGroupId = "group." + BaseDb.kBundleId
@@ -109,7 +118,7 @@ public class BaseDb {
         self.userDb?.destroyTable()
         self.accountDb?.destroyTable()
     }
-    public static func getInstance() -> BaseDb {
+    public static var sharedInstance: BaseDb {
         return BaseDb.accessQueue.sync {
             if let instance = BaseDb.default {
                 return instance
@@ -121,7 +130,7 @@ public class BaseDb {
         }
     }
     func isMe(uid: String?) -> Bool {
-        guard let uid = uid, let acctUid = BaseDb.getInstance().uid else { return false }
+        guard let uid = uid, let acctUid = BaseDb.sharedInstance.uid else { return false }
         return uid == acctUid
     }
     var uid: String? {
