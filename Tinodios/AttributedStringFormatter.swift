@@ -151,7 +151,7 @@ class AttributedStringFormatter: DraftyFormatter {
         case "BR":
             node = TreeNode(content: "\n")
         case "LN":
-            if let urlString = attr?["url"]?.asString(), let url = NSURL(string: urlString), url.scheme == "https" || url.scheme == "http" {
+            if let urlString = attr?["url"]?.asString(), let url = NSURL(string: urlString), url.scheme?.lowercased() == "https" || url.scheme?.lowercased() == "http" {
                 node.style(cstyle: [NSAttributedString.Key.link: url])
             }
         case "MN": break // TODO: add fupport for @mentions
