@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
-    <device id="retina6_1" orientation="portrait">
-        <adaptation id="fullscreen"/>
-    </device>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17506" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17505"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -15,7 +14,7 @@
             <rect key="frame" x="0.0" y="0.0" width="414" height="60"/>
             <autoresizingMask key="autoresizingMask"/>
             <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="AM8-MA-3P8" id="R21-i3-9ML">
-                <rect key="frame" x="0.0" y="0.0" width="414" height="59.5"/>
+                <rect key="frame" x="0.0" y="0.0" width="414" height="60"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <view userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="epv-Q0-yKc" userLabel="Icon" customClass="AvatarWithOnlineIndicator" customModule="Tinodios" customModuleProvider="target">
@@ -29,7 +28,7 @@
                         </constraints>
                     </view>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wDJ-YF-7hy">
-                        <rect key="frame" x="68" y="8" width="34" height="21"/>
+                        <rect key="frame" x="68" y="8" width="33" height="21"/>
                         <accessibility key="accessibilityConfiguration" identifier="name"/>
                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                         <nil key="textColor"/>
@@ -42,8 +41,16 @@
                         <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <nil key="highlightedColor"/>
                     </label>
+                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="channel" translatesAutoresizingMaskIntoConstraints="NO" id="4aB-Zd-9Qa" userLabel="Channel indicator">
+                        <rect key="frame" x="105" y="14" width="18" height="12"/>
+                        <color key="tintColor" systemColor="labelColor"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="18" id="RpJ-qQ-Zoa"/>
+                            <constraint firstAttribute="height" constant="12" id="ZR9-KD-FM2"/>
+                        </constraints>
+                    </imageView>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="9+" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="18" translatesAutoresizingMaskIntoConstraints="NO" id="FaT-ra-R9w" userLabel="Unread Count">
-                        <rect key="frame" x="110" y="10" width="18" height="18"/>
+                        <rect key="frame" x="131" y="10" width="18" height="18"/>
                         <color key="backgroundColor" red="0.59607843140000005" green="0.68627450980000004" blue="0.78039215689999997" alpha="1" colorSpace="calibratedRGB"/>
                         <accessibility key="accessibilityConfiguration" identifier="unreadCount">
                             <accessibilityTraits key="traits" staticText="YES" notEnabled="YES"/>
@@ -63,7 +70,7 @@
                         </userDefinedRuntimeAttributes>
                     </label>
                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="block-25" translatesAutoresizingMaskIntoConstraints="NO" id="8zw-ko-8Ep" userLabel="Icon Blocked">
-                        <rect key="frame" x="132" y="10" width="26" height="18"/>
+                        <rect key="frame" x="153" y="10" width="26" height="18"/>
                         <color key="tintColor" red="0.80000000000000004" green="0.80000000000000004" blue="0.80000000000000004" alpha="1" colorSpace="calibratedRGB"/>
                         <accessibility key="accessibilityConfiguration">
                             <accessibilityTraits key="traits" image="YES" notEnabled="YES"/>
@@ -74,7 +81,7 @@
                         </constraints>
                     </imageView>
                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="alarm-off-25" translatesAutoresizingMaskIntoConstraints="NO" id="DSQ-ow-mzk" userLabel="Icon Muted">
-                        <rect key="frame" x="158" y="10" width="26" height="18"/>
+                        <rect key="frame" x="179" y="10" width="26" height="18"/>
                         <color key="tintColor" red="0.80000000000000004" green="0.80000000000000004" blue="0.80000000000000004" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="26" id="2op-7v-zNJ"/>
@@ -83,7 +90,8 @@
                     </imageView>
                 </subviews>
                 <constraints>
-                    <constraint firstItem="FaT-ra-R9w" firstAttribute="leading" secondItem="wDJ-YF-7hy" secondAttribute="trailing" constant="8" id="Buq-wl-TfQ"/>
+                    <constraint firstItem="4aB-Zd-9Qa" firstAttribute="top" secondItem="R21-i3-9ML" secondAttribute="top" constant="14" id="4KX-cN-hSR"/>
+                    <constraint firstItem="FaT-ra-R9w" firstAttribute="leading" secondItem="4aB-Zd-9Qa" secondAttribute="trailing" constant="8" symbolic="YES" id="Buq-wl-TfQ"/>
                     <constraint firstItem="DSQ-ow-mzk" firstAttribute="leading" secondItem="8zw-ko-8Ep" secondAttribute="trailing" id="Dvy-y5-fDa"/>
                     <constraint firstItem="epv-Q0-yKc" firstAttribute="leading" secondItem="R21-i3-9ML" secondAttribute="leading" constant="20" id="Gbe-pN-Eiv"/>
                     <constraint firstItem="8zw-ko-8Ep" firstAttribute="leading" secondItem="FaT-ra-R9w" secondAttribute="trailing" constant="4" id="H0a-fR-ZZD"/>
@@ -93,6 +101,7 @@
                     <constraint firstItem="8zw-ko-8Ep" firstAttribute="top" secondItem="R21-i3-9ML" secondAttribute="top" constant="10" id="TbS-WN-bxr"/>
                     <constraint firstItem="g5B-Iw-vLQ" firstAttribute="top" secondItem="wDJ-YF-7hy" secondAttribute="bottom" id="YVh-qW-ktp"/>
                     <constraint firstItem="wDJ-YF-7hy" firstAttribute="leading" secondItem="epv-Q0-yKc" secondAttribute="trailing" constant="8" id="dyh-36-jCx"/>
+                    <constraint firstItem="4aB-Zd-9Qa" firstAttribute="leading" secondItem="wDJ-YF-7hy" secondAttribute="trailing" constant="4" id="gBm-M8-A1Y"/>
                     <constraint firstItem="epv-Q0-yKc" firstAttribute="centerY" secondItem="R21-i3-9ML" secondAttribute="centerY" id="uhs-iR-WDD"/>
                     <constraint firstItem="DSQ-ow-mzk" firstAttribute="top" secondItem="R21-i3-9ML" secondAttribute="top" constant="10" id="vLF-jl-wf1"/>
                 </constraints>
@@ -100,6 +109,8 @@
             </tableViewCellContentView>
             <edgeInsets key="layoutMargins" top="8" left="8" bottom="8" right="8"/>
             <connections>
+                <outlet property="channelIndicator" destination="4aB-Zd-9Qa" id="cKV-lC-l8J"/>
+                <outlet property="channelIndicatorWidth" destination="RpJ-qQ-Zoa" id="dQ8-i7-tey"/>
                 <outlet property="icon" destination="epv-Q0-yKc" id="NQP-XU-ztt"/>
                 <outlet property="iconBlocked" destination="8zw-ko-8Ep" id="19j-T8-noT"/>
                 <outlet property="iconBlockedWidth" destination="azP-Ol-mbp" id="3AJ-OG-5vd"/>
@@ -109,11 +120,15 @@
                 <outlet property="unreadCount" destination="FaT-ra-R9w" id="uuV-4N-5dx"/>
                 <outlet property="unreadCountWidth" destination="pfH-oq-llg" id="ZIG-7s-yb3"/>
             </connections>
-            <point key="canvasLocation" x="70" y="-42"/>
+            <point key="canvasLocation" x="-567" y="-38"/>
         </tableViewCell>
     </objects>
     <resources>
         <image name="alarm-off-25" width="25" height="25"/>
         <image name="block-25" width="25" height="25"/>
+        <image name="channel" width="32" height="32"/>
+        <systemColor name="labelColor">
+            <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
     </resources>
 </document>

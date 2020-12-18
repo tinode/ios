@@ -20,6 +20,8 @@ class ChatListViewCell: UITableViewCell {
     @IBOutlet weak var iconMuted: UIImageView!
     @IBOutlet weak var iconBlockedWidth: NSLayoutConstraint!
     @IBOutlet weak var unreadCountWidth: NSLayoutConstraint!
+    @IBOutlet weak var channelIndicator: UIImageView!
+    @IBOutlet weak var channelIndicatorWidth: NSLayoutConstraint!
 
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -35,6 +37,14 @@ class ChatListViewCell: UITableViewCell {
         title.sizeToFit()
         subtitle.text = topic.comment
         subtitle.sizeToFit()
+        if topic.isChannel {
+            channelIndicator.isHidden = false
+            channelIndicatorWidth.constant = ChatListViewCell.kIconWidth
+        } else {
+            channelIndicator.isHidden = true
+            channelIndicatorWidth.constant = .leastNonzeroMagnitude
+        }
+
         let unread = topic.unread
         if unread > 0 {
             unreadCount.text = unread > 9 ? "9+" : String(unread)
