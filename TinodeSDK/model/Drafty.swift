@@ -52,13 +52,12 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
 
     private static let kEntities = try! [
         EntityProc(name: "LN",
-                   pattern: NSRegularExpression(pattern: #"(?<=^|\W)(https?://)?(?:www\.)?[-a-z0-9@:%._+~#=]{2,256}\.[a-z]{2,4}\b(?:[-a-z0-9@:%_+.~#?&/=]*)"#, options: [.caseInsensitive]),
+                   pattern: NSRegularExpression(pattern: #"\b(https?://)?(?:www\.)?(?:[a-z0-9][-a-z0-9]*[a-z0-9]\.){1,5}[a-z]{2,6}(?:[/?#:][-a-z0-9@:%_+.~#?&/=]*)?"#, options: [.caseInsensitive]),
                    pack: {(text: NSString, m: NSTextCheckingResult) -> [String:JSONValue] in
-                    var data: [String:JSONValue] = [:]
-                    data["url"] = JSONValue.string(m.range(at: 1).location == NSNotFound ?
-                        "http://" + text.substring(with: m.range) : text.substring(with: m.range))
-                    return data
-            }),
+                        var data: [String:JSONValue] = [:]
+                        data["url"] = JSONValue.string(m.range(at: 1).location == NSNotFound ? "http://" + text.substring(with: m.range) : text.substring(with: m.range))
+                        return data
+                   }),
         EntityProc(name: "MN",
                    pattern: NSRegularExpression(pattern: #"\B@(\w\w+)"#),
                    pack: {(text: NSString, m: NSTextCheckingResult) -> [String:JSONValue] in
