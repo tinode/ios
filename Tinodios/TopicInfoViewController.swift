@@ -581,9 +581,6 @@ extension TopicInfoViewController {
                         result.append(AccessModeLabel(color: AccessModeLabel.kColorGrayBorder, text: "invited"))
                     } else if acs.isNoneGiven && !acs.isNoneWant {
                         result.append(AccessModeLabel(color: AccessModeLabel.kColorGrayBorder, text: "requested"))
-                    } else {
-                        // Undefined state: both None.
-                        result.append(AccessModeLabel(color: AccessModeLabel.kColorGrayBorder, text: "undefined"))
                     }
                 }
             }
