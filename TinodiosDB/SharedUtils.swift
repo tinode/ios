@@ -143,19 +143,20 @@ public class SharedUtils {
             tinode.setAutoLoginWithToken(token: token)
             // Tinode.connect() will automatically log in.
             let msg = try tinode.connectDefault(inBackground: bkg)?.getResult()
-            if let code = msg?.ctrl?.code {
+            if let ctrl = msg?.ctrl {
                 // Assuming success by default.
                 success = true
-                switch code {
+                switch ctrl.code {
                 case 0..<300:
-                    BaseDb.log.info("Connect&Login Sync - login successful for: %@", tinode.myUid!)
+                    let myUid = ctrl.getStringParam(for: "user")
+                    BaseDb.log.info("Connect&Login Sync - login successful for: %@", myUid!)
                     if tinode.authToken != token {
-                    SharedUtils.saveAuthToken(for: userName, token: tinode.authToken, expires: tinode.authTokenExpires)
-                }
+                        SharedUtils.saveAuthToken(for: userName, token: tinode.authToken, expires: tinode.authTokenExpires)
+                    }
                 case 409:
                     BaseDb.log.info("Connect&Login Sync - already authenticated.")
                 case 500..<600:
-                    BaseDb.log.error("Connect&Login Sync - server error on login: %d", code)
+                    BaseDb.log.error("Connect&Login Sync - server error on login: %d", ctrl.code)
                 default:
                     success = false
                 }
