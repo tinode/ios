@@ -72,7 +72,9 @@ public class Utils {
     }
 
     public static func isValidTag(tag: String) -> Bool {
-        return tag.count >= UiUtils.kMinTagLength
+        let minTagLength = Cache.tinode.getServerLimit(for: Tinode.kMinTagLength, withDefault: UiUtils.kMinTagLength)
+        let maxTagLength = Cache.tinode.getServerLimit(for: Tinode.kMaxTagLength, withDefault: UiUtils.kMaxTagLength)
+        return tag.count >= minTagLength && tag.count <= maxTagLength
     }
 
     public static func uniqueFilename(forMime mime: String?) -> String {

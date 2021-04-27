@@ -125,6 +125,8 @@ public class Tinode {
     // Keys for server-provided limits.
     public static let kMaxMessageSize = "maxMessageSize"
     public static let kMaxSubscriberCount = "maxSubscriberCount"
+    public static let kMaxTagLength = "maxTagLength"
+    public static let kMinTagLength = "minTagLength"
     public static let kMaxTagCount = "maxTagCount"
     public static let kMaxFileUploadSize = "maxFileUploadSize"
 

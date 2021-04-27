@@ -12,6 +12,8 @@ import UIKit
 class TagsEditDialogViewController: UIViewController {
     private static let kButtonBorderColor = UIColor(fromHexCode: 0xFFE0E0E0)
 
+    private static let kDefaultMaxTagCount: Int64 = 16
+
     public typealias CompletionHandler = ((_ newTags: [TinodeTag]) -> ())
 
     @IBOutlet weak var alertView: UIView!
@@ -40,7 +42,7 @@ class TagsEditDialogViewController: UIViewController {
         cancelButton.addBorder(side: .right, color: TagsEditDialogViewController.kButtonBorderColor, width: 1)
         okButton.addBorder(side: .top, color: TagsEditDialogViewController.kButtonBorderColor, width: 1)
 
-        let maxTagCount = Cache.tinode.getServerLimit(for: Tinode.kMaxTagCount, withDefault: 16)
+        let maxTagCount = Cache.tinode.getServerLimit(for: Tinode.kMaxTagCount, withDefault: TagsEditDialogViewController.kDefaultMaxTagCount)
         tagsEditView.fontSize = 17
         tagsEditView.onShouldAcceptTag = { v in
             // Make sure we don't add more than maxTagCount.

@@ -70,7 +70,9 @@ enum ToastLevel {
 }
 
 class UiUtils {
-    static let kMinTagLength = 4
+    static let kMinTagLength: Int64 = 4
+    static let kMaxTagLength: Int64 = 96
+
     static let kAvatarSize: CGFloat = 128
     // Maximum linear size of an image.
     static let kMaxBitmapSize: CGFloat = 1024
