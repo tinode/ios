@@ -166,8 +166,8 @@ public class SqlStore : Storage {
         return self.dbh?.userDb?.update(user: user) ?? false
     }
 
-    public func msgReceived(topic: TopicProto, sub: SubscriptionProto?, msg: MsgServerData?) -> Int64 {
-        guard let msg = msg else { return -1 }
+    public func msgReceived(topic: TopicProto, sub: SubscriptionProto?, msg: MsgServerData?) -> Message? {
+        guard let msg = msg else { return nil }
 
         var topicId: Int64 = -1
         var userId: Int64 = -1
@@ -191,7 +191,7 @@ public class SqlStore : Storage {
 
         guard topicId >= 0 && userId >= 0 else {
             BaseDb.log.error("SqlStore - msgReceived: either user or topic not available, quitting.")
-            return -1
+            return nil
         }
         let sm = StoredMessage(from: msg)
         sm.topicId = topicId
@@ -203,13 +203,13 @@ public class SqlStore : Storage {
                     throw SqlStoreError.dbError("Could not handle received message: msgId = \(sm.msgId), topicId = \(topicId), userId = \(userId)")
                 }
             }
-            return sm.msgId
+            return sm
         } catch {
             BaseDb.log.error("SqlStore - msgReceived operation failed: %@", error.localizedDescription)
-            return -1
+            return nil
         }
     }
-    private func insertMessage(topic: TopicProto, data: Drafty, head: [String: JSONValue]?, initialStatus: BaseDb.Status) -> Int64 {
+    private func insertMessage(topic: TopicProto, data: Drafty, head: [String: JSONValue]?, initialStatus: BaseDb.Status) -> Message? {
         let msg = StoredMessage()
         msg.topic = topic.name
         msg.from = myUid
@@ -223,14 +223,15 @@ public class SqlStore : Storage {
             myId = self.dbh?.userDb?.getId(for: msg.from) ?? -1
         }
         msg.userId = myId
-        return self.dbh?.messageDb?.insert(topic: topic, msg: msg) ?? -1
+        let id = self.dbh?.messageDb?.insert(topic: topic, msg: msg) ?? -1
+        return id > 0 ? msg : nil
     }
 
-    public func msgSend(topic: TopicProto, data: Drafty, head: [String: JSONValue]?) -> Int64 {
+    public func msgSend(topic: TopicProto, data: Drafty, head: [String: JSONValue]?) -> Message? {
         return self.insertMessage(topic: topic, data: data, head: head, initialStatus: .undefined)
     }
 
-    public func msgDraft(topic: TopicProto, data: Drafty, head: [String: JSONValue]?) -> Int64 {
+    public func msgDraft(topic: TopicProto, data: Drafty, head: [String: JSONValue]?) -> Message? {
         return self.insertMessage(topic: topic, data: data, head: head, initialStatus: .draft)
     }
 
@@ -344,8 +345,16 @@ public class SqlStore : Storage {
         return BaseDb.sharedInstance.subscriberDb?.updateRead(for: sid, with: read) ?? false
     }
 
-    public func getMessageById(topic: TopicProto, dbMessageId: Int64) -> Message? {
-        return BaseDb.sharedInstance.messageDb?.query(msgId: dbMessageId)
+    private func messageById(dbId: Int64, previewLen: Int = -1) -> Message? {
+        return BaseDb.sharedInstance.messageDb?.query(msgId: dbId, previewLen: previewLen)
+    }
+
+    public func getMessageById(dbMessageId: Int64) -> Message? {
+        return messageById(dbId: dbMessageId)
+    }
+
+    public func getMessagePreviewById(dbMessageId: Int64) -> Message? {
+        return messageById(dbId: dbMessageId, previewLen: MessageDb.kMessagePreviewLength)
     }
 
     public func getQueuedMessages(topic: TopicProto) -> [Message]? {
@@ -358,5 +367,9 @@ public class SqlStore : Storage {
         guard let st = topic.payload as? StoredTopic,
             let id = st.id, id > 0 else { return nil }
         return BaseDb.sharedInstance.messageDb?.queryDeleted(topicId: id, hard: hard)
+    }
+
+    public func getLatestMessagePreviews() -> [Message]? {
+        return BaseDb.sharedInstance.messageDb?.queryLatest()
     }
 }

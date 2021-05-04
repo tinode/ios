@@ -7,6 +7,7 @@
 
 import UIKit
 import TinodeSDK
+import TinodiosDB
 
 class ChatListViewCell: UITableViewCell {
     private static let kIconWidth: CGFloat = 18
@@ -35,7 +36,11 @@ class ChatListViewCell: UITableViewCell {
     public func fillFromTopic(topic: DefaultComTopic) {
         title.text = topic.pub?.fn ?? "Unknown or unnamed"
         title.sizeToFit()
-        subtitle.text = topic.comment
+        if let msg = topic.latestMessage as? StoredMessage {
+            subtitle.attributedText = msg.attributedContent(fitIn: CGSize())
+        } else {
+            subtitle.text = topic.comment
+        }
         subtitle.sizeToFit()
         if topic.isChannel {
             channelIndicator.isHidden = false

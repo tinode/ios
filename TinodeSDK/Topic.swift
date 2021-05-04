@@ -38,6 +38,7 @@ public protocol TopicProto: class {
     var isReader: Bool { get }
     var isMuted: Bool { get }
     var unread: Int { get }
+    var latestMessage: Message? { get set }
 
     func serializePub() -> String?
     func serializePriv() -> String?
@@ -314,6 +315,8 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
             }
         }
     }
+
+    public var latestMessage: Message?
 
     public var topicType: TopicType {
         return Tinode.topicTypeByName(name: self.name)
@@ -880,7 +883,8 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
         setSeq(seq: data.getSeq)
         touched = data.ts
         if let s = store {
-            if s.msgReceived(topic: self, sub: getSubscription(for: data.from), msg: data) > 0 {
+            if let msg = s.msgReceived(topic: self, sub: getSubscription(for: data.from), msg: data) {
+                self.latestMessage = msg
                 noteRecv(fromMe: tinode!.isMe(uid: data.from))
             }
         } else {
@@ -1120,7 +1124,11 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
             setRecv(recv: seq)
         }
         setRead(read: seq)
-        store?.setRead(topic: self, read: seq)
+        if let s = store {
+            s.setRead(topic: self, read: seq)
+            let msg = s.getMessagePreviewById(dbMessageId: id)
+            self.latestMessage = msg
+        }
     }
     public func publish(content: Drafty, head: [String: JSONValue]?, msgId: Int64) -> PromisedReply<ServerMessage> {
         var headers = head
@@ -1141,7 +1149,10 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
         let head = !content.isPlain ? Tinode.draftyHeaders(for: content) : nil
         var id: Int64 = -1
         if let s = store {
-            id = s.msgSend(topic: self, data: content, head: head)
+            if let msg = s.msgSend(topic: self, data: content, head: head) {
+                self.latestMessage = msg
+                id = msg.msgId
+            }
         }
         if attached {
             return publish(content: content, head: head, msgId: id)
@@ -1199,7 +1210,7 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
     }
 
     public func syncOne(msgId: Int64) -> PromisedReply<ServerMessage> {
-        guard let m = store?.getMessageById(topic: self, dbMessageId: msgId) else {
+        guard let m = store?.getMessageById(dbMessageId: msgId) else {
             return PromisedReply<ServerMessage>(value: ServerMessage())
         }
         if m.isDeleted {

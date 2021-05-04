@@ -816,6 +816,11 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
         return formatter.apply(tp: nil, attr: nil, content: forEach(line: txt, start: 0, end: txt.count, spans: spans, formatter: formatter))
     }
 
+    public func preview(previewLen: Int) -> Drafty {
+        // TODO: implement.
+        return self
+    }
+
     /// Serialize Drafty object for storage in database.
     public func serialize() -> String? {
         return isPlain ? txt : Tinode.serializeObject(self)

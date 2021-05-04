@@ -7,7 +7,6 @@
 
 import Foundation
 
-
 public enum TinodeJsonError: Error {
     case encode
     case decode
@@ -398,6 +397,14 @@ public class Tinode {
                 topics[t.name] = t
                 if let updated = t.updated, topicsUpdated ?? Date.distantPast < updated {
                     topicsUpdated = updated
+                }
+            }
+            if let messages = s.getLatestMessagePreviews() {
+                for m in messages {
+                    if let topic = m.topic, let tt = topics[topic] {
+                        tt.latestMessage = m
+                        topics[topic] = tt
+                    }
                 }
             }
             topicsLoaded = true
