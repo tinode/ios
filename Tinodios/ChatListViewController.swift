@@ -8,7 +8,7 @@
 import UIKit
 import TinodeSDK
 
-protocol ChatListDisplayLogic: class {
+protocol ChatListDisplayLogic: AnyObject {
     func displayChats(_ topics: [DefaultComTopic], archivedTopics: [DefaultComTopic]?)
     func displayLoginView()
     func updateChat(_ name: String)

@@ -54,7 +54,7 @@ extension Message {
 }
 
 // Base protocol for implementing persistance.
-public protocol Storage: class {
+public protocol Storage: AnyObject {
     var myUid: String? { get set }
 
     var deviceToken: String? { get set }

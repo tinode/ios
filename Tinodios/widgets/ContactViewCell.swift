@@ -7,7 +7,7 @@
 
 import UIKit
 
-protocol ContactViewCellDelegate: class {
+protocol ContactViewCellDelegate: AnyObject {
     func selected(from: UITableViewCell)
 }
 

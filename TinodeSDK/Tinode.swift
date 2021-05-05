@@ -49,7 +49,7 @@ public enum TinodeError: LocalizedError, CustomStringConvertible {
 
 // Callback interface called by Connection
 // when it receives events from the websocket.
-public protocol TinodeEventListener: class {
+public protocol TinodeEventListener: AnyObject {
     // Connection established successfully, handshakes exchanged.
     // The connection is ready for login.
     // Params:
