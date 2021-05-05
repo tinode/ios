@@ -7,10 +7,10 @@
 
 import Foundation
 
-public protocol Payload: class {
+public protocol Payload: AnyObject {
 }
 
-public protocol TopicProto: class {
+public protocol TopicProto: AnyObject {
     var name: String { get }
     var updated: Date? { get set }
     var touched: Date? { get set }

@@ -30,7 +30,7 @@ public class LastSeen: Decodable {
 // Messages may send subscriptions with different
 // public and private types. We need to have a common type
 // to handle subscriptions with all these types.
-public protocol SubscriptionProto: class, Decodable {
+public protocol SubscriptionProto: AnyObject, Decodable {
     var user: String? { get set }
     var topic: String? { get set }
     var updated: Date? { get set }

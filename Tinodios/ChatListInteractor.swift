@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 import TinodeSDK
 
-protocol ChatListBusinessLogic: class {
+protocol ChatListBusinessLogic: AnyObject {
     func loadAndPresentTopics()
     func attachToMeTopic()
     func leaveMeTopic()
@@ -20,7 +20,7 @@ protocol ChatListBusinessLogic: class {
     func changeArchivedStatus(forTopic name: String, archived: Bool)
 }
 
-protocol ChatListDataStore: class {
+protocol ChatListDataStore: AnyObject {
     var topics: [DefaultComTopic]? { get set }
 }
 

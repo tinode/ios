@@ -9,7 +9,7 @@ import Contacts
 import MessageUI
 import UIKit
 
-protocol FindDisplayLogic: class {
+protocol FindDisplayLogic: AnyObject {
     func displayLocalContacts(contacts: [ContactHolder])
     func displayRemoteContacts(contacts: [RemoteContactHolder])
 }
