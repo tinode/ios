@@ -9,7 +9,7 @@ import UIKit
 import TinodeSDK
 import TinodiosDB
 
-protocol MessageDisplayLogic: class {
+protocol MessageDisplayLogic: AnyObject {
     func switchTopic(topic: String?)
     func updateTitleBar(icon: UIImage?, title: String?, online: Bool?)
     func setOnline(online: Bool?)

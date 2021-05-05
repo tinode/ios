@@ -8,7 +8,7 @@
 import Foundation
 import TinodeSDK
 
-protocol FindBusinessLogic: class {
+protocol FindBusinessLogic: AnyObject {
     var fndTopic: DefaultFndTopic? { get }
     func loadAndPresentContacts(searchQuery: String?)
     func updateAndPresentRemoteContacts()

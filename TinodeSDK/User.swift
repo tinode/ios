@@ -7,7 +7,7 @@
 
 import Foundation
 
-public protocol UserProto: class {
+public protocol UserProto: AnyObject {
     var updated: Date? { get set }
     var uid: String? { get set }
     var payload: Payload? { get set }

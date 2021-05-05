@@ -9,7 +9,7 @@ import Foundation
 import TinodeSDK
 import TinodiosDB
 
-protocol MessageBusinessLogic: class {
+protocol MessageBusinessLogic: AnyObject {
     @discardableResult
     func setup(topicName: String?, sendReadReceipts: Bool) -> Bool
     @discardableResult
