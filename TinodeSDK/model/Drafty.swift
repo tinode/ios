@@ -817,8 +817,60 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
     }
 
     public func preview(previewLen: Int) -> Drafty {
-        // TODO: implement.
-        return self
+        let preview = Drafty()
+
+        var len = 0
+        if !self.txt.isEmpty {
+            preview.txt = String(self.txt.prefix(previewLen))
+            len = preview.txt.count
+        }
+
+        if let format = self.fmt, !format.isEmpty {
+            var fmtCount = 0
+            // Entity mapping.
+            var entRefs = [Int:Int]()
+            // Count styles which start within the new length of the text and save entity keys as set.
+            for st in format {
+                if st.at < len {
+                    fmtCount += 1
+                    if (st.tp ?? "").isEmpty {
+                        let key = st.key ?? 0
+                        let existingEntry = entRefs[key]
+                        if existingEntry == nil {
+                            // Entity referenced by key will be located at the new pos 'entRefs.count'.
+                            entRefs[key] = entRefs.count
+                        }
+                    }
+                }
+            }
+            // Check if there are any styles in the preview fragment.
+            guard fmtCount > 0 else {
+                return preview
+            }
+            // Allocate space for copying styles and entities.
+            preview.fmt = [Style]()
+            preview.fmt?.reserveCapacity(fmtCount)
+            if !entRefs.isEmpty {
+                preview.ent = Array<Entity>(repeating: Entity(), count: entRefs.count)
+            }
+            // Insertion point for styles.
+            for st in format {
+                if st.at < len {
+                    let style = Style(tp: nil, at: st.at, len: st.len)
+                    let key = st.key ?? 0
+                    if let tp = st.tp, !tp.isEmpty {
+                        style.tp = tp
+                    } else if let entities = self.ent, let ref = entRefs[key], key < entities.count {
+                        style.key = ref
+                        preview.ent![ref] = entities[key].copyLight()
+                    } else {
+                        continue
+                    }
+                    preview.fmt!.append(style)
+                }
+            }
+        }
+        return preview
     }
 
     /// Serialize Drafty object for storage in database.
@@ -981,6 +1033,7 @@ public class Style: Codable, CustomStringConvertible, Equatable {
 
 /// Entity: style with additional data.
 public class Entity: Codable, CustomStringConvertible, Equatable {
+    private static let kLightData = ["mime", "name", "width", "height", "size"]
     public var tp: String?
     public var data: [String:JSONValue]?
 
@@ -1027,6 +1080,22 @@ public class Entity: Codable, CustomStringConvertible, Equatable {
         return "{tp: \(tp ?? "nil"), data: \(data ?? [:])}"
     }
 
+    /// Returns a copy of the original entity with the data restricted to the kLightData array keys.
+    public func copyLight() -> Entity {
+        var dataCopy: [String:JSONValue]? = nil
+        if let dt = self.data, !dt.isEmpty {
+            var dc: [String:JSONValue] = [:]
+            for key in Entity.kLightData {
+                if let val = dt[key] {
+                    dc[key] = val
+                }
+            }
+            if !dc.isEmpty {
+                dataCopy = dc
+            }
+        }
+        return Entity(tp: self.tp, data: dataCopy)
+    }
 }
 
 fileprivate class EntityProc {
