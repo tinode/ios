@@ -8,7 +8,7 @@
 import UIKit
 import TinodeSDK
 
-public protocol EditMembersDelegate: class {
+public protocol EditMembersDelegate: AnyObject {
     // Asks for the UIDs and contact info of initially selected members
     func editMembersInitialSelection(_: UIView) -> [ContactHolder]
     // Called when the editor completes selection.

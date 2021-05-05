@@ -9,7 +9,7 @@ import UIKit
 import TinodeSDK
 
 /// A protocol used to detect taps in the chat message.
-protocol MessageCellDelegate: class {
+protocol MessageCellDelegate: AnyObject {
     /// Long tap anywhere in massage cell
     func didLongTap(in cell: MessageCell)
     /// Tap on the message bubble

@@ -8,7 +8,7 @@
 import UIKit
 import TinodeSDK
 
-protocol NewGroupDisplayLogic: class {
+protocol NewGroupDisplayLogic: AnyObject {
     func presentChat(with topicName: String)
 }
 

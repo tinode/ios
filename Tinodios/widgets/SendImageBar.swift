@@ -7,7 +7,7 @@
 
 import UIKit
 
-protocol SendImageBarDelegate: class {
+protocol SendImageBarDelegate: AnyObject {
     // Send the message.
     func sendImageBar(caption: String?)
 }

@@ -7,7 +7,7 @@
 
 import UIKit
 
-protocol MessageViewLayoutDelegate: class {
+protocol MessageViewLayoutDelegate: AnyObject {
     func collectionView(_ collectionView: UICollectionView, fillAttributes: MessageViewLayoutAttributes)
 }
 

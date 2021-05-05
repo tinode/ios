@@ -7,7 +7,7 @@
 
 import UIKit
 
-protocol SendMessageBarDelegate: class {
+protocol SendMessageBarDelegate: AnyObject {
     func sendMessageBar(sendText: String)
 
     func sendMessageBar(attachment: Bool)
