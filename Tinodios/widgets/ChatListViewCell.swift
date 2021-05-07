@@ -37,7 +37,7 @@ class ChatListViewCell: UITableViewCell {
         title.text = topic.pub?.fn ?? "Unknown or unnamed"
         title.sizeToFit()
         if let msg = topic.latestMessage as? StoredMessage {
-            subtitle.attributedText = msg.attributedContent(fitIn: CGSize())
+            subtitle.attributedText = msg.attributedContent(fitIn: subtitle.frame.size)
         } else {
             subtitle.text = topic.comment
         }

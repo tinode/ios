@@ -36,10 +36,64 @@ class AttributedStringFormatter: DraftyFormatter {
         defaultAttrs = attrs
     }
 
-    // Inline image
-    private func handleImage(from node: TreeNode, with attr: [String : JSONValue]?) {
-        var attachment = Attachment(content: .image)
+    func handleStrong(withText content: String?, withChildren nodes: [TreeNode]?) -> TreeNode {
+        let node = TreeNode(text: content, nodes: nodes)
+        node.style(fontTraits: .traitBold)
+        return node
+    }
 
+    func handleEmphasized(withText content: String?, withChildren nodes: [TreeNode]?) -> TreeNode {
+        let node = TreeNode(text: content, nodes: nodes)
+        node.style(fontTraits: .traitItalic)
+        return node
+    }
+
+    func handleDeleted(withText content: String?, withChildren nodes: [TreeNode]?) -> TreeNode {
+        let node = TreeNode(text: content, nodes: nodes)
+        node.style(cstyle: [NSAttributedString.Key.strikethroughStyle: NSUnderlineStyle.single.rawValue])
+        return node
+    }
+
+    func handleCode(withText content: String?, withChildren nodes: [TreeNode]?) -> TreeNode {
+        let node = TreeNode(text: content, nodes: nodes)
+        // .traitMonoSpace is not a real font trait. It cannot be applied to an arbitrary font. A real
+        // monospaced font must be selected manually.
+        let baseFont = defaultAttrs[.font] as! UIFont
+        var attributes = defaultAttrs
+        attributes[.font] = UIFont(name: "Courier", size: baseFont.pointSize)!
+        node.style(cstyle: attributes)
+        return node
+    }
+
+    func handleHidden(withText content: String?, withChildren nodes: [TreeNode]?) -> TreeNode {
+        return TreeNode(text: content, nodes: nodes)
+    }
+
+    func handleLineBreak() -> TreeNode {
+        return TreeNode(content: "\n")
+    }
+
+    func handleLink(withText content: String?, withChildren nodes: [TreeNode]?, attr: [String : JSONValue]?) -> TreeNode {
+        let node = TreeNode(text: content, nodes: nodes)
+        if let urlString = attr?["url"]?.asString(), let url = NSURL(string: urlString), url.scheme?.lowercased() == "https" || url.scheme?.lowercased() == "http" {
+            node.style(cstyle: [NSAttributedString.Key.link: url])
+        }
+        return node
+    }
+
+    func handleMention(withText content: String?, withChildren nodes: [TreeNode]?) -> TreeNode {
+        // TODO: add fupport for @mentions
+        return TreeNode(text: content, nodes: nodes)
+    }
+
+    func handleHashtag(withText content: String?, withChildren nodes: [TreeNode]?) -> TreeNode {
+        // TODO: add support for #hashtangs
+        return TreeNode(text: content, nodes: nodes)
+    }
+
+    func handleImage(withText content: String?, withChildren nodes: [TreeNode]?, using attr: [String : JSONValue]?) -> TreeNode {
+        var attachment = Attachment(content: .image)
+        let node = TreeNode(text: content, nodes: nodes)
         if let attr = attr {
             attachment.bits = attr["val"]?.asData()
             attachment.mime = attr["mime"]?.asString()
@@ -49,17 +103,18 @@ class AttributedStringFormatter: DraftyFormatter {
             attachment.width = attr["width"]?.asInt()
             attachment.height = attr["height"]?.asInt()
         }
-
         node.attachment(attachment)
+        return node
     }
 
-    private func handleAttachment(from node: TreeNode, with attr: [String : JSONValue]?) {
+    func handleAttachment(withText content: String?, withChildren nodes: [TreeNode]?, using attr: [String : JSONValue]?) -> TreeNode {
+        let node = TreeNode(text: content, nodes: nodes)
         if let attr = attr {
             let mimeType =  attr["mime"]?.asString()
 
             // Skip json attachments. They are not meant to be user-visible.
             if mimeType == "application/json" {
-                return
+                return node
             }
 
             let bits = attr["val"]?.asData()
@@ -77,18 +132,48 @@ class AttributedStringFormatter: DraftyFormatter {
             attachment.name = attr["name"]?.asString()
             attachment.size = attr["size"]?.asInt()
             node.attachment(attachment)
-            return
+            return node
         }
 
         // Invalid attachment.
         node.attachment(Attachment(content: .empty))
+        return node
     }
 
-    private func handleButton(from node: TreeNode, with attr: [String : JSONValue]?) {
-        guard let urlStr = AttributedStringFormatter.buttonDataAsUri(face: node, attr: attr), let url = URL(string: urlStr) else { return }
+    func handleButton(withText content: String?, withChildren nodes: [TreeNode]?, using attr: [String : JSONValue]?) -> TreeNode {
+        let node = TreeNode(text: content, nodes: nodes)
+        guard let urlStr = AttributedStringFormatter.buttonDataAsUri(face: node, attr: attr), let url = URL(string: urlStr) else { return node }
 
         let attachment = Attachment(content: .button, mime: nil, name: nil, ref: url.absoluteString, size: nil, width: nil, height: nil)
         node.attachment(attachment)
+        return node
+    }
+
+    func handleForm(withText content: String?, withChildren nodes: [TreeNode]?) -> TreeNode {
+        let node = TreeNode(text: content, nodes: nodes)
+        if var children = node.children, !children.isEmpty {
+            // Add line breaks between form elements: each direct descendant is a paragraph.
+            for i in stride(from: children.count-1, to: 0, by: -1) {
+                children.insert(TreeNode(content: "\n"), at: i)
+            }
+            node.children = children
+        }
+        return node
+    }
+
+    func handleFormRow(withText content: String?, withChildren nodes: [TreeNode]?) -> TreeNode {
+        // Form element formatting is dependent on element content.
+        // No additional handling is needed.
+        return TreeNode(text: content, nodes: nodes)
+    }
+
+    func handleUnknown(withText content: String?, withChildren nodes: [TreeNode]?) -> TreeNode {
+        // Unknown formatting, treat as plain text
+        return TreeNode(text: content, nodes: nodes)
+    }
+
+    func handlePlain(withText content: String?, withChildren nodes: [TreeNode]?) -> TreeNode {
+        return TreeNode(text: content, nodes: nodes)
     }
 
     // Convert button payload to an URL.
@@ -130,67 +215,12 @@ class AttributedStringFormatter: DraftyFormatter {
         return baseUrl.url?.absoluteString
     }
 
-    // Construct a tree representing formatting styles and content.
-    private func apply(tp: String?, attr: [String : JSONValue]?, children: [TreeNode]?, content: String?) -> TreeNode {
-        // Create unstyled node
-        var node = TreeNode(text: content, nodes: children)
-        switch tp {
-        case "ST":
-            node.style(fontTraits: .traitBold)
-        case "EM":
-            node.style(fontTraits: .traitItalic)
-        case "DL":
-            node.style(cstyle: [NSAttributedString.Key.strikethroughStyle: NSUnderlineStyle.single.rawValue])
-        case "CO":
-            // .traitMonoSpace is not a real font trait. It cannot be applied to an arbitrary font. A real
-            // monospaced font must be selected manually.
-            let baseFont = defaultAttrs[.font] as! UIFont
-            var attributes = defaultAttrs
-            attributes[.font] = UIFont(name: "Courier", size: baseFont.pointSize)!
-            node.style(cstyle: attributes)
-        case "BR":
-            node = TreeNode(content: "\n")
-        case "LN":
-            if let urlString = attr?["url"]?.asString(), let url = NSURL(string: urlString), url.scheme?.lowercased() == "https" || url.scheme?.lowercased() == "http" {
-                node.style(cstyle: [NSAttributedString.Key.link: url])
-            }
-        case "MN": break // TODO: add fupport for @mentions
-        case "HT": break // TODO: add support for #hashtangs
-        case "HD": break // Hidden/ignored text
-        case "IM":
-            // Inline image
-            handleImage(from: node, with: attr)
-        case "EX":
-            // Attachment
-            handleAttachment(from: node, with: attr)
-        case "BN":
-            // Button
-            handleButton(from: node, with: attr)
-        case "FM":
-            // Form
-            if var children = node.children, !children.isEmpty {
-                // Add line breaks between form elements: each direct descendant is a paragraph.
-                for i in stride(from: children.count-1, to: 0, by: -1) {
-                    children.insert(TreeNode(content: "\n"), at: i)
-                }
-                node.children = children
-            }
-        case "RW":
-            // Form element formatting is dependent on element content.
-            // No additional handling is needed.
-            break
-        default:
-            break // Unknown formatting, treat as plain text
-        }
-        return node
-    }
-
     func apply(tp: String?, attr: [String : JSONValue]?, content: [AttributedStringFormatter.TreeNode]) -> AttributedStringFormatter.TreeNode {
-        return apply(tp: tp, attr: attr, children: content, content: nil)
+        return self.makeTree(tp: tp, attr: attr, children: content, content: nil)
     }
 
     func apply(tp: String?, attr: [String : JSONValue]?, content: String?) -> AttributedStringFormatter.TreeNode {
-        return apply(tp: tp, attr: attr, children: nil, content: content)
+        return self.makeTree(tp: tp, attr: attr, children: nil, content: content)
     }
 
     /// Convert drafty object into NSAttributedString
