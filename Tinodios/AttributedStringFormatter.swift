@@ -241,7 +241,7 @@ class AttributedStringFormatter: DraftyFormatter {
         }
 
         let formatTree = content.format(formatter: AttributedStringFormatter(withDefaultAttributes: attributes))
-        return formatTree.toAttributed(withDefaultAttributes: attributes, fontTraits: nil, fitIn: maxSize)
+        return try! formatTree.toAttributed(withDefaultAttributes: attributes, fontTraits: nil, fitIn: maxSize)
     }
 
     // File or image attachment.
@@ -264,11 +264,14 @@ class AttributedStringFormatter: DraftyFormatter {
         var height: Int?
     }
 
+    // Thrown by the formatting function when the length budget gets exceeded.
+    // Param represents the maximum prefix fitting within the length budget.
+    public enum LengthExceededError: Error {
+        case runtimeError(NSAttributedString)
+    }
+
     // Class representing Drafty as a tree of nodes with content and styles attached.
     class TreeNode : CustomStringConvertible {
-        // Link to parent class
-        weak var parent: AttributedStringFormatter!
-
         // A set of font traits to apply at the leaf level
         var cFont: UIFontDescriptor.SymbolicTraits?
         // Character style which can be applied over leaf or subtree
@@ -277,6 +280,8 @@ class AttributedStringFormatter: DraftyFormatter {
         var pStyle: NSMutableParagraphStyle?
         // Attachment. Apple is really bad at designing interfaces.
         var attachment: Attachment?
+        // Attachment. Like text, it simply gets appended to the output attributed string.
+        var preformattedAttachment: NSTextAttachment?
 
         // Leaf
         var text: String?
@@ -333,6 +338,10 @@ class AttributedStringFormatter: DraftyFormatter {
 
         func attachment(_ attachment: Attachment) {
             self.attachment = attachment
+        }
+
+        func preformattedAttachment(_ attachment: NSTextAttachment) {
+            self.preformattedAttachment = attachment
         }
 
         func addNode(node: TreeNode?) {
@@ -530,10 +539,10 @@ class AttributedStringFormatter: DraftyFormatter {
                 var attrs = attributes
                 attrs[.foregroundColor] = Constants.kLinkColor
                 if let text = text {
-                    faceText.append(textToAttributed(text, defaultAttrs: attrs, fontTraits: fontTraits))
+                    faceText.append(TreeNode.textToAttributed(text, defaultAttrs: attrs, fontTraits: fontTraits))
                 } else if let children = children {
                     for child in children {
-                        faceText.append(child.toAttributed(withDefaultAttributes: attrs, fontTraits: fontTraits, fitIn: size))
+                        faceText.append(try! child.toAttributed(withDefaultAttributes: attrs, fontTraits: fontTraits, fitIn: size))
                     }
                 } else {
                     faceText.append(NSAttributedString(string: "button", attributes: attrs))
@@ -547,7 +556,7 @@ class AttributedStringFormatter: DraftyFormatter {
         }
 
         /// Plain text to attributed string.
-        private func textToAttributed(_ text: String, defaultAttrs: [NSAttributedString.Key : Any], fontTraits: UIFontDescriptor.SymbolicTraits?) -> NSAttributedString {
+        public static func textToAttributed(_ text: String, defaultAttrs: [NSAttributedString.Key : Any], fontTraits: UIFontDescriptor.SymbolicTraits?) -> NSAttributedString {
 
             var attributes = defaultAttrs
             if let fontTraits = fontTraits {
@@ -577,7 +586,7 @@ class AttributedStringFormatter: DraftyFormatter {
         }
 
         /// Convert tree of nodes into an attributed string.
-        func toAttributed(withDefaultAttributes attributes: [NSAttributedString.Key : Any], fontTraits parentFontTraits: UIFontDescriptor.SymbolicTraits?, fitIn size: CGSize) -> NSAttributedString {
+        func toAttributed(withDefaultAttributes attributes: [NSAttributedString.Key : Any], fontTraits parentFontTraits: UIFontDescriptor.SymbolicTraits?, fitIn size: CGSize, upToLength maxLength: Int = Int.max) throws -> NSAttributedString {
 
             // Font traits for this substring and all its children.
             var fontTraits: UIFontDescriptor.SymbolicTraits? = cFont
@@ -589,20 +598,35 @@ class AttributedStringFormatter: DraftyFormatter {
                 }
             }
 
+            var exceeded = false
             let attributed = NSMutableAttributedString()
             attributed.beginEditing()
 
             // First check for attachments.
-            if let attachment = self.attachment {
+            if let preAttachment = self.preformattedAttachment {
+                attributed.append(NSAttributedString(attachment: preAttachment))
+            } else if let attachment = self.attachment {
                 // Image or file attachment
                 attributed.append(attachmentToAttributed(attachment, defaultAttrs: attributes, fontTraits: fontTraits, maxSize: size))
             } else if let text = self.text {
                 // Uniformly styled substring. Apply uniform font style.
-                attributed.append(textToAttributed(text, defaultAttrs: attributes, fontTraits: fontTraits))
-            } else if let children = self.children {
-                // Pass calculated font styles to children.
-                for child in children {
-                    attributed.append(child.toAttributed(withDefaultAttributes: attributes, fontTraits: fontTraits, fitIn: size))
+                attributed.append(TreeNode.textToAttributed(text, defaultAttrs: attributes, fontTraits: fontTraits))
+            }
+            if attributed.length > maxLength {
+                exceeded = true
+                attributed.setAttributedString(attributed.attributedSubstring(from: NSMakeRange(0, maxLength)))
+            }
+
+            if !exceeded, let children = self.children {
+                do {
+                    // Pass calculated font styles to children.
+                    for child in children {
+                        let curLen = attributed.length
+                        attributed.append(try child.toAttributed(withDefaultAttributes: attributes, fontTraits: fontTraits, fitIn: size, upToLength: maxLength - curLen))
+                    }
+                } catch LengthExceededError.runtimeError(let str) {
+                    exceeded = true
+                    attributed.append(str)
                 }
             }
 
@@ -614,7 +638,61 @@ class AttributedStringFormatter: DraftyFormatter {
             }
 
             attributed.endEditing()
+            if exceeded {
+                throw LengthExceededError.runtimeError(attributed)
+            }
             return attributed
         }
+    }
+}
+
+/// Creates a preview of the Drafty object as NSAttributedString .
+class PreviewFormatter: AttributedStringFormatter {
+    // Default font for previews.
+    static let kDefaultFont = UIFont.preferredFont(forTextStyle: .subheadline)
+
+    public static func toAttributed(_ content: Drafty, fitIn maxSize: CGSize, withDefaultAttributes attributes: [NSAttributedString.Key : Any]? = nil, upToLength maxLength: Int) -> NSAttributedString {
+
+        var attributes: [NSAttributedString.Key : Any] = attributes ?? [:]
+        if attributes[.font] == nil {
+            attributes[.font] = PreviewFormatter.kDefaultFont
+        }
+
+        if content.isPlain {
+            let result: String = content.string.count > maxLength ? content.string.prefix(maxLength) + "…" : content.string
+            return NSMutableAttributedString(string: result, attributes: attributes)
+        }
+
+        let formatTree = content.format(formatter: PreviewFormatter(withDefaultAttributes: attributes))
+        do {
+            return try formatTree.toAttributed(withDefaultAttributes: attributes, fontTraits: nil, fitIn: maxSize, upToLength: maxLength)
+        } catch LengthExceededError.runtimeError(let str) {
+            let result = NSMutableAttributedString(attributedString: str)
+            let elipses = NSAttributedString(string: "…")
+            result.append(elipses)
+            return result
+        } catch {
+            return NSAttributedString(string: "")
+        }
+    }
+
+    override func handleLineBreak() -> Node {
+        return TreeNode(content: " ")
+    }
+
+    override func handleImage(withText content: String?, withChildren nodes: [Node]?, using attr: [String : JSONValue]?) -> Node {
+        if nodes != nil {
+            Cache.log.error("PreviewFormatter - image nodes must be terminal.")
+        }
+        let icon = NSTextAttachment()
+        icon.image = UIImage(named: "download-24")?.withRenderingMode(.alwaysTemplate)
+        let baseFont = UIFont.preferredFont(forTextStyle: .subheadline)
+        icon.bounds = CGRect(origin: CGPoint(x: 0, y: -2), size: CGSize(width: baseFont.lineHeight * 0.8, height: baseFont.lineHeight * 0.8))
+
+        let node1 = TreeNode(text: content, nodes: nil)
+        node1.preformattedAttachment(icon)
+        let node2 = TreeNode(text: " " + NSLocalizedString("Picture", comment: "Preview image icon caption."), nodes: nil)
+        let node = TreeNode(content: [node1, node2])
+        return node
     }
 }

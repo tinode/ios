@@ -39,6 +39,9 @@ public class StoredMessage : MsgServerData, Message {
     /// Cached representation of message content as attributed string.
     public var cachedContent: NSAttributedString?
 
+    /// Cached representation of message preview as attributed string.
+    public var cachedPreview: NSAttributedString?
+
     // MARK: initializers
 
     public override init() { super.init() }
