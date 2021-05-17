@@ -83,6 +83,11 @@ class UiUtils {
     // Maximum length of topic title or user name.
     static let kMaxTitleLength = 60
 
+    // Color of "read" delivery marker.
+    static let kDeliveryMarkerTint = UIColor(red: 19/255, green: 144/255, blue:255/255, alpha: 0.8)
+    // Color of all other markers.
+    static let kDeliveryMarkerColor = UIColor.gray.withAlphaComponent(0.7)
+
     private static func setUpPushNotifications() {
         let application = UIApplication.shared
         let appDelegate = application.delegate as! AppDelegate
@@ -584,6 +589,26 @@ class UiUtils {
             ),
             altered: originalWidth != dstSize.width || originalHeight != dstSize.height
         )
+    }
+
+    public static func deliveryMarkerIcon(for message: Message, in topic: DefaultComTopic) -> (UIImage, UIColor) {
+        let iconName: String
+        var tint: UIColor = UiUtils.kDeliveryMarkerColor
+
+        if message.isPending {
+            iconName = "in-progress-30"
+        } else {
+            if topic.msgReadCount(seq: message.seqId) > 0 {
+                iconName = "done-all-30"
+                tint = UiUtils.kDeliveryMarkerTint
+            } else if topic.msgRecvCount(seq: message.seqId) > 0 {
+                iconName = "done-all-30"
+            } else {
+                iconName = "done-30"
+            }
+        }
+
+        return (UIImage(named: iconName)!, tint)
     }
 }
 

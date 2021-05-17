@@ -16,7 +16,7 @@ import UIKit
 class AttributedStringFormatter: DraftyFormatter {
     typealias Node = AttributedStringFormatter.TreeNode
 
-    private enum Constants {
+    internal enum Constants {
         static let kDefaultFont: UIFont = UIFont.preferredFont(forTextStyle: .body)
         /// Size of the document icon in attachments.
         static let kAttachmentIconSize = CGSize(width: 24, height: 32)
@@ -676,23 +676,90 @@ class PreviewFormatter: AttributedStringFormatter {
         }
     }
 
+    override func handleHidden(withText content: String?, withChildren nodes: [Node]?) -> Node {
+        return Node(content: "")
+    }
+
     override func handleLineBreak() -> Node {
-        return TreeNode(content: " ")
+        return Node(content: " ")
+    }
+
+    override func handleLink(withText content: String?, withChildren nodes: [Node]?, attr: [String : JSONValue]?) -> Node {
+        let node = Node(text: content, nodes: nodes)
+        node.style(cstyle: [.foregroundColor: AttributedStringFormatter.Constants.kLinkColor])
+        return node
+    }
+
+    private func annotatedIcon(iconName: String, annotation: String? = nil, comment: String? = nil) -> Node {
+        let icon = NSTextAttachment()
+        icon.image = UIImage(named: iconName)?.withRenderingMode(.alwaysTemplate)
+        let baseFont = PreviewFormatter.kDefaultFont
+        icon.bounds = CGRect(origin: CGPoint(x: 0, y: -2), size: CGSize(width: baseFont.lineHeight * 0.8, height: baseFont.lineHeight * 0.8))
+
+        let iconNode = Node(text: nil, nodes: nil)
+        iconNode.preformattedAttachment(icon)
+        if let annotationStr = annotation, let commentStr = comment {
+            let annotationNode = Node(text: " " + NSLocalizedString(annotationStr, comment: commentStr), nodes: nil)
+            return Node(content: [iconNode, annotationNode])
+        }
+        return iconNode
     }
 
     override func handleImage(withText content: String?, withChildren nodes: [Node]?, using attr: [String : JSONValue]?) -> Node {
         if nodes != nil {
             Cache.log.error("PreviewFormatter - image nodes must be terminal.")
         }
-        let icon = NSTextAttachment()
-        icon.image = UIImage(named: "download-24")?.withRenderingMode(.alwaysTemplate)
-        let baseFont = UIFont.preferredFont(forTextStyle: .subheadline)
-        icon.bounds = CGRect(origin: CGPoint(x: 0, y: -2), size: CGSize(width: baseFont.lineHeight * 0.8, height: baseFont.lineHeight * 0.8))
+        if let mime = attr?["mime"]?.asString(), mime == "application/json" {
+            // Skip JSON attachments. They are not meant to be user-visible.
+            return TreeNode(content: "")
+        }
+        return annotatedIcon(iconName: "image-50", annotation: "Picture", comment: "Image preview icon.")
+    }
 
-        let node1 = TreeNode(text: content, nodes: nil)
-        node1.preformattedAttachment(icon)
-        let node2 = TreeNode(text: " " + NSLocalizedString("Picture", comment: "Preview image icon caption."), nodes: nil)
-        let node = TreeNode(content: [node1, node2])
+    override func handleAttachment(withText content: String?, withChildren nodes: [Node]?, using attr: [String : JSONValue]?) -> Node {
+        if nodes != nil {
+            Cache.log.error("PreviewFormatter - attachment nodes must be terminal.")
+        }
+        return annotatedIcon(iconName: "attach-50", annotation: "Attachment", comment: "Attachment preview icon.")
+    }
+
+    override func handleForm(withText content: String?, withChildren nodes: [AttributedStringFormatter.TreeNode]?) -> Node {
+        var result = [annotatedIcon(iconName: "form-50", annotation: "Form", comment: "Form preview icon."), Node(content: ": ")]
+        if let content = content {
+            result.append(Node(content: content))
+        }
+        if let nodes = nodes {
+            result.append(Node(content: nodes))
+        }
+        return Node(content: result)
+    }
+
+    override func handleButton(withText content: String?, withChildren nodes: [Node]?, using attr: [String : JSONValue]?) -> Node {
+        let attrs: [NSAttributedString.Key : Any] = [.foregroundColor: Constants.kLinkColor]
+        var faceText: NSAttributedString
+        if let content = content {
+            faceText = NSAttributedString(string: content, attributes: attrs)
+        } else {
+            faceText = NSAttributedString(string: "button", attributes: attrs)
+        }
+        let att = DraftyButtonAttachment(face: faceText, data: nil, traceBorder: true, widthPadding: 0, heightMultiplier: 1)
+        let node = Node(text: nil, nodes: nil)
+        node.preformattedAttachment(att)
         return node
+    }
+
+    override func handleFormRow(withText content: String?, withChildren nodes: [Node]?) -> Node {
+        var result = [Node(content: " ")]
+        if let content = content {
+            result.append(Node(content: content))
+        }
+        if let nodes = nodes {
+            result.append(Node(content: nodes))
+        }
+        return Node(content: result)
+    }
+
+    override func handleUnknown(withText content: String?, withChildren nodes: [AttributedStringFormatter.TreeNode]?) -> AttributedStringFormatter.TreeNode {
+        return annotatedIcon(iconName: "question-mark-50")
     }
 }

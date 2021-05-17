@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="17506" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="18122" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17505"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="18093"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -35,7 +35,7 @@
                         <nil key="highlightedColor"/>
                     </label>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Subtitle" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="g5B-Iw-vLQ">
-                        <rect key="frame" x="68" y="29" width="52" height="18"/>
+                        <rect key="frame" x="85" y="29" width="52" height="18"/>
                         <accessibility key="accessibilityConfiguration" identifier="subtitle"/>
                         <fontDescription key="fontDescription" type="system" weight="light" pointSize="15"/>
                         <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -88,14 +88,27 @@
                             <constraint firstAttribute="height" constant="18" id="nJz-QB-fyD"/>
                         </constraints>
                     </imageView>
+                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="done-30" translatesAutoresizingMaskIntoConstraints="NO" id="qTs-2b-DEg" userLabel="Message Status">
+                        <rect key="frame" x="68" y="31" width="14" height="14"/>
+                        <color key="tintColor" systemColor="labelColor"/>
+                        <accessibility key="accessibilityConfiguration">
+                            <accessibilityTraits key="traits" image="YES" notEnabled="YES"/>
+                        </accessibility>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="14" id="HTe-oC-vKv"/>
+                            <constraint firstAttribute="width" constant="14" id="XdD-nB-C0c"/>
+                        </constraints>
+                    </imageView>
                 </subviews>
                 <constraints>
                     <constraint firstItem="4aB-Zd-9Qa" firstAttribute="top" secondItem="R21-i3-9ML" secondAttribute="top" constant="14" id="4KX-cN-hSR"/>
+                    <constraint firstItem="g5B-Iw-vLQ" firstAttribute="leading" secondItem="qTs-2b-DEg" secondAttribute="trailing" constant="3" id="5l3-J3-Egb"/>
+                    <constraint firstItem="qTs-2b-DEg" firstAttribute="leading" secondItem="wDJ-YF-7hy" secondAttribute="leading" id="89e-NW-Qtm"/>
+                    <constraint firstItem="qTs-2b-DEg" firstAttribute="centerY" secondItem="g5B-Iw-vLQ" secondAttribute="centerY" id="ASp-Fd-fzO"/>
                     <constraint firstItem="FaT-ra-R9w" firstAttribute="leading" secondItem="4aB-Zd-9Qa" secondAttribute="trailing" constant="8" symbolic="YES" id="Buq-wl-TfQ"/>
                     <constraint firstItem="DSQ-ow-mzk" firstAttribute="leading" secondItem="8zw-ko-8Ep" secondAttribute="trailing" id="Dvy-y5-fDa"/>
                     <constraint firstItem="epv-Q0-yKc" firstAttribute="leading" secondItem="R21-i3-9ML" secondAttribute="leading" constant="20" id="Gbe-pN-Eiv"/>
                     <constraint firstItem="8zw-ko-8Ep" firstAttribute="leading" secondItem="FaT-ra-R9w" secondAttribute="trailing" constant="4" id="H0a-fR-ZZD"/>
-                    <constraint firstItem="g5B-Iw-vLQ" firstAttribute="leading" secondItem="epv-Q0-yKc" secondAttribute="trailing" constant="8" id="IIt-jS-YbE"/>
                     <constraint firstItem="wDJ-YF-7hy" firstAttribute="top" secondItem="R21-i3-9ML" secondAttribute="top" constant="8" id="JeW-ZW-PLw"/>
                     <constraint firstItem="FaT-ra-R9w" firstAttribute="top" secondItem="R21-i3-9ML" secondAttribute="top" constant="10" id="SRZ-zr-jmr"/>
                     <constraint firstItem="8zw-ko-8Ep" firstAttribute="top" secondItem="R21-i3-9ML" secondAttribute="top" constant="10" id="TbS-WN-bxr"/>
@@ -114,19 +127,22 @@
                 <outlet property="icon" destination="epv-Q0-yKc" id="NQP-XU-ztt"/>
                 <outlet property="iconBlocked" destination="8zw-ko-8Ep" id="19j-T8-noT"/>
                 <outlet property="iconBlockedWidth" destination="azP-Ol-mbp" id="3AJ-OG-5vd"/>
+                <outlet property="iconMessageStatus" destination="qTs-2b-DEg" id="2wm-H1-QcI"/>
+                <outlet property="iconMessageStatusWidth" destination="XdD-nB-C0c" id="jzT-EW-8ek"/>
                 <outlet property="iconMuted" destination="DSQ-ow-mzk" id="dVx-rT-fmw"/>
                 <outlet property="subtitle" destination="g5B-Iw-vLQ" id="Kxf-dh-WoM"/>
                 <outlet property="title" destination="wDJ-YF-7hy" id="3Rg-Xm-ZlM"/>
                 <outlet property="unreadCount" destination="FaT-ra-R9w" id="uuV-4N-5dx"/>
                 <outlet property="unreadCountWidth" destination="pfH-oq-llg" id="ZIG-7s-yb3"/>
             </connections>
-            <point key="canvasLocation" x="-567" y="-38"/>
+            <point key="canvasLocation" x="-568.1159420289855" y="-38.169642857142854"/>
         </tableViewCell>
     </objects>
     <resources>
         <image name="alarm-off-25" width="25" height="25"/>
         <image name="block-25" width="25" height="25"/>
         <image name="channel" width="32" height="32"/>
+        <image name="done-30" width="30" height="30"/>
         <systemColor name="labelColor">
             <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

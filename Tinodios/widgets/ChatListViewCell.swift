@@ -11,6 +11,7 @@ import TinodiosDB
 
 class ChatListViewCell: UITableViewCell {
     private static let kIconWidth: CGFloat = 18
+    private static let kMessageStatusWidth: CGFloat = 14
     private static let kIconSeparator: CGFloat = 4
 
     @IBOutlet weak var icon: AvatarWithOnlineIndicator!
@@ -23,6 +24,8 @@ class ChatListViewCell: UITableViewCell {
     @IBOutlet weak var unreadCountWidth: NSLayoutConstraint!
     @IBOutlet weak var channelIndicator: UIImageView!
     @IBOutlet weak var channelIndicatorWidth: NSLayoutConstraint!
+    @IBOutlet weak var iconMessageStatus: UIImageView!
+    @IBOutlet weak var iconMessageStatusWidth: NSLayoutConstraint!
 
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -33,13 +36,29 @@ class ChatListViewCell: UITableViewCell {
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
     }
+
+    private func setMessageStatusVisibility(hidden: Bool) {
+        let width: CGFloat = hidden ? 0 : ChatListViewCell.kMessageStatusWidth
+        iconMessageStatus.isHidden = hidden
+        iconMessageStatusWidth.constant = width
+    }
+
     public func fillFromTopic(topic: DefaultComTopic) {
         title.text = topic.pub?.fn ?? "Unknown or unnamed"
         title.sizeToFit()
         if let msg = topic.latestMessage as? StoredMessage {
             subtitle.attributedText = msg.attributedPreview(fitIn: subtitle.frame.size)
+            if msg.from == Cache.tinode.myUid {
+                setMessageStatusVisibility(hidden: false)
+                let (image, tint) = UiUtils.deliveryMarkerIcon(for: msg, in: topic)
+                iconMessageStatus.image = image
+                iconMessageStatus.tintColor = tint
+            } else {
+                setMessageStatusVisibility(hidden: true)
+            }
         } else {
             subtitle.text = topic.comment
+            setMessageStatusVisibility(hidden: true)
         }
         subtitle.sizeToFit()
         if topic.isChannel {
