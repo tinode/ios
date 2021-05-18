@@ -234,6 +234,17 @@ extension StoredMessage {
         }
         return cachedContent
     }
+    /// Generate and cache NSAttributedString preview of Drafty content.
+    func attributedPreview(fitIn size: CGSize, withDefaultAttributes attributes: [NSAttributedString.Key : Any]? = nil) -> NSAttributedString? {
+        guard cachedPreview == nil else { return cachedPreview }
+        if !isDeleted {
+            guard let content = content else { return nil }
+            cachedPreview = PreviewFormatter.toAttributed(content, fitIn: size, withDefaultAttributes: attributes, upToLength: 40)
+        } else {
+            cachedPreview = StoredMessage.contentDeletedMessage(withAttributes: attributes)
+        }
+        return cachedPreview
+    }
     /// Creates "content deleted" string with a small "blocked" icon.
     private static func contentDeletedMessage(withAttributes attr: [NSAttributedString.Key : Any]?) -> NSAttributedString {
         // Space is needed as a workaround for a bug in UIKit. The icon style is not applied if the icon is the first object in the attributed string.

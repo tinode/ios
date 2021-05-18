@@ -17,6 +17,65 @@ public protocol DraftyFormatter {
 
     func apply(tp: String?, attr: [String:JSONValue]?, content: [Node]) -> Node
     func apply(tp: String?, attr: [String:JSONValue]?, content: String?) -> Node
+
+    // Formatting type handlers.
+    func handleStrong(withText content: String?, withChildren nodes: [Node]?) -> Node
+    func handleEmphasized(withText content: String?, withChildren nodes: [Node]?) -> Node
+    func handleDeleted(withText content: String?, withChildren nodes: [Node]?) -> Node
+    func handleCode(withText content: String?, withChildren nodes: [Node]?) -> Node
+    func handleHidden(withText content: String?, withChildren nodes: [Node]?) -> Node
+    func handleLineBreak() -> Node
+    func handleLink(withText content: String?, withChildren nodes: [Node]?, attr: [String : JSONValue]?) -> Node
+    func handleMention(withText content: String?, withChildren nodes: [Node]?) -> Node
+    func handleHashtag(withText content: String?, withChildren nodes: [Node]?) -> Node
+    func handleImage(withText content: String?, withChildren nodes: [Node]?, using attr: [String : JSONValue]?) -> Node
+    func handleAttachment(withText content: String?, withChildren nodes: [Node]?, using attr: [String : JSONValue]?) -> Node
+    func handleButton(withText content: String?, withChildren nodes: [Node]?, using attr: [String : JSONValue]?) -> Node
+    func handleForm(withText content: String?, withChildren nodes: [Node]?) -> Node
+    func handleFormRow(withText content: String?, withChildren nodes: [Node]?) -> Node
+    func handleUnknown(withText content: String?, withChildren nodes: [Node]?) -> Node
+    func handlePlain(withText content: String?, withChildren nodes: [Node]?) -> Node
+}
+
+extension DraftyFormatter {
+    // Construct a tree representing formatting styles and content.
+    public func makeTree(tp: String?, attr: [String : JSONValue]?, children: [Node]?, content: String?) -> Node {
+        guard let tp = tp else {
+            return handlePlain(withText: content, withChildren: children)
+        }
+        switch tp {
+        case "ST":
+            return handleStrong(withText: content, withChildren: children)
+        case "EM":
+            return handleEmphasized(withText: content, withChildren: children)
+        case "DL":
+            return handleDeleted(withText: content, withChildren: children)
+        case "CO":
+            return handleCode(withText: content, withChildren: children)
+        case "BR":
+            return handleLineBreak()
+        case "LN":
+            return handleLink(withText: content, withChildren: children, attr: attr)
+        case "MN":
+            return handleMention(withText: content, withChildren: children)
+        case "HT":
+            return handleHashtag(withText: content, withChildren: children)
+        case "HD":
+            return handleHidden(withText: content, withChildren: children)
+        case "IM":
+            return handleImage(withText: content, withChildren: children, using: attr)
+        case "EX":
+            return handleAttachment(withText: content, withChildren: children, using: attr)
+        case "BN":
+            return handleButton(withText: content, withChildren: children, using: attr) //(from: node, with: attr)
+        case "FM":
+            return handleForm(withText: content, withChildren: children)
+        case "RW":
+            return handleFormRow(withText: content, withChildren: children)
+        default:
+            return handleUnknown(withText: content, withChildren: children)
+        }
+    }
 }
 
 /// Class representing formatted text with optional attachments.
@@ -816,6 +875,63 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
         return formatter.apply(tp: nil, attr: nil, content: forEach(line: txt, start: 0, end: txt.count, spans: spans, formatter: formatter))
     }
 
+    public func preview(previewLen: Int) -> Drafty {
+        let preview = Drafty()
+
+        var len = 0
+        if !self.txt.isEmpty {
+            preview.txt = String(self.txt.prefix(previewLen))
+            len = preview.txt.count
+        }
+
+        if let format = self.fmt, !format.isEmpty {
+            var fmtCount = 0
+            // Entity mapping.
+            var entRefs = [Int:Int]()
+            // Count styles which start within the new length of the text and save entity keys as set.
+            for st in format {
+                if st.at < len {
+                    fmtCount += 1
+                    if (st.tp ?? "").isEmpty {
+                        let key = st.key ?? 0
+                        let existingEntry = entRefs[key]
+                        if existingEntry == nil {
+                            // Entity referenced by key will be located at the new pos 'entRefs.count'.
+                            entRefs[key] = entRefs.count
+                        }
+                    }
+                }
+            }
+            // Check if there are any styles in the preview fragment.
+            guard fmtCount > 0 else {
+                return preview
+            }
+            // Allocate space for copying styles and entities.
+            preview.fmt = [Style]()
+            preview.fmt?.reserveCapacity(fmtCount)
+            if !entRefs.isEmpty {
+                preview.ent = Array<Entity>(repeating: Entity(), count: entRefs.count)
+            }
+            // Insertion point for styles.
+            for st in format {
+                if st.at < len {
+                    let style = Style(tp: nil, at: st.at, len: st.len)
+                    let key = st.key ?? 0
+                    if let tp = st.tp, !tp.isEmpty {
+                        style.tp = tp
+                    } else if let entities = self.ent, let ref = entRefs[key], key < entities.count {
+                        style.key = ref
+                        preview.ent![ref] = entities[key].copyLight()
+                    } else {
+                        continue
+                    }
+                    preview.fmt!.append(style)
+                }
+            }
+        }
+        return preview
+    }
+
     /// Serialize Drafty object for storage in database.
     public func serialize() -> String? {
         return isPlain ? txt : Tinode.serializeObject(self)
@@ -976,6 +1092,7 @@ public class Style: Codable, CustomStringConvertible, Equatable {
 
 /// Entity: style with additional data.
 public class Entity: Codable, CustomStringConvertible, Equatable {
+    private static let kLightData = ["mime", "name", "width", "height", "size"]
     public var tp: String?
     public var data: [String:JSONValue]?
 
@@ -1022,6 +1139,22 @@ public class Entity: Codable, CustomStringConvertible, Equatable {
         return "{tp: \(tp ?? "nil"), data: \(data ?? [:])}"
     }
 
+    /// Returns a copy of the original entity with the data restricted to the kLightData array keys.
+    public func copyLight() -> Entity {
+        var dataCopy: [String:JSONValue]? = nil
+        if let dt = self.data, !dt.isEmpty {
+            var dc: [String:JSONValue] = [:]
+            for key in Entity.kLightData {
+                if let val = dt[key] {
+                    dc[key] = val
+                }
+            }
+            if !dc.isEmpty {
+                dataCopy = dc
+            }
+        }
+        return Entity(tp: self.tp, data: dataCopy)
+    }
 }
 
 fileprivate class EntityProc {

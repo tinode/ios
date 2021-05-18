@@ -427,21 +427,21 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
 
         guard let content = draft else { return }
 
-        if let msgId = topic.store?.msgDraft(topic: topic, data: content, head: Tinode.draftyHeaders(for: content)) {
+        if let msg = topic.store?.msgDraft(topic: topic, data: content, head: Tinode.draftyHeaders(for: content)) {
             let helper = Cache.getLargeFileHelper()
             helper.startUpload(
                 filename: filename, mimetype: mimeType, d: def.data,
-                topicId: self.topicName!, msgId: msgId,
+                topicId: self.topicName!, msgId: msg.msgId,
                 progressCallback: { [weak self] progress in
                     let interactor = self ?? MessageInteractor.existingInteractor(for: topic.name)
-                    interactor?.presenter?.updateProgress(forMsgId: msgId, progress: progress)
+                    interactor?.presenter?.updateProgress(forMsgId: msg.msgId, progress: progress)
                 },
                 completionCallback: { [weak self] (serverMessage, error) in
                     let interactor = self ?? MessageInteractor.existingInteractor(for: topic.name)
                     var success = false
                     defer {
                         if !success {
-                            _ = topic.store?.msgDiscard(topic: topic, dbMessageId: msgId)
+                            _ = topic.store?.msgDiscard(topic: topic, dbMessageId: msg.msgId)
                         }
                         interactor?.loadMessages()
                     }
@@ -464,8 +464,8 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                     }
 
                     if let content = draft {
-                        _ = topic.store?.msgReady(topic: topic, dbMessageId: msgId, data: content)
-                        topic.syncOne(msgId: msgId)
+                        _ = topic.store?.msgReady(topic: topic, dbMessageId: msg.msgId, data: content)
+                        topic.syncOne(msgId: msg.msgId)
                             .thenFinally({
                                 interactor?.loadMessages()
                             })

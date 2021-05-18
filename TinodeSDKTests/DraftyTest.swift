@@ -65,6 +65,29 @@ class DraftyTest: XCTestCase {
 
     }
 
+    func testPreview() {
+        var d1 = Drafty(content: "abc").preview(previewLen: 2)
+        var d2 = Drafty(text: "ab", fmt: nil, ent: nil)
+        XCTAssertEqual(d1, d2, "Basic: 'abc' -> 'ab'")
+
+        d1 = Drafty(content: "a😀c").preview(previewLen: 2)
+        d2 = Drafty(text: "a😀", fmt: nil, ent: nil)
+        XCTAssertEqual(d1, d2, "UTF32 emoji: 'a😀c' -> 'a😀'")
+
+        d1 = Drafty(content: "_😀 *b1👩🏽‍✈️b2* smile_").preview(previewLen: 6)
+        d2 = Drafty(text: "😀 b1👩🏽‍✈️b",
+                    fmt: [Style(tp:"ST", at:2, len:5), Style(tp:"EM", at:0, len:13)], ent: nil)
+        XCTAssertEqual(d1, d2, "UTF32 emoji with styles: '😀 b1👩🏽‍✈️b'")
+
+        d1 = Drafty(text: " abcdef my image",
+                    fmt: [Style(at: 0, len: 1, key: 0), Style(tp: "BR", at: 1, len: 1)],
+                    ent: [Entity(tp: "IM", data: ["mime": JSONValue.string("image/jpeg"), "width": JSONValue.int(100), "height": JSONValue.int(100)])]).preview(previewLen: 4)
+        d2 = Drafty(text: " abc",
+                    fmt: [Style(at: 0, len: 1, key: 0), Style(tp: "BR", at: 1, len: 1)],
+                    ent: [Entity(tp: "IM", data: ["mime": JSONValue.string("image/jpeg"), "width": JSONValue.int(100), "height": JSONValue.int(100)])])
+        XCTAssertEqual(d1, d2, "UTF32 emoji with entity: '<image> abcdef my image")
+    }
+
     func testPerformanceParse() {
         self.measure {
             for i in 0..<10000 {

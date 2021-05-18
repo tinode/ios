@@ -19,6 +19,7 @@ enum MessageDbError: Error {
 // * message deletion markers (synchronized and not yet synchronized).
 public class MessageDb {
     public static let kTableName = "messages"
+    public static let kMessagePreviewLength = 80
     private let db: SQLite.Connection
 
     public var table: Table
@@ -288,7 +289,7 @@ public class MessageDb {
             return false
         }
     }
-    private func readOne(r: Row) -> StoredMessage {
+    private func readOne(r: Row, previewLen: Int = -1) -> StoredMessage {
         let sm = StoredMessage()
         sm.msgId = r[self.id]
         sm.topicId = r[self.topicId]
@@ -299,6 +300,9 @@ public class MessageDb {
         sm.seq = r[self.seq]
         sm.head = Tinode.deserializeObject(from: r[self.head])
         sm.content = Drafty.deserialize(from: r[self.content])
+        if previewLen > 0, let content = sm.content {
+            sm.content = content.preview(previewLen: previewLen)
+        }
         return sm
     }
     public func query(topicId: Int64?, pageCount: Int, pageSize: Int, descending: Bool = true) -> [StoredMessage]? {
@@ -318,11 +322,11 @@ public class MessageDb {
             return nil
         }
     }
-    func query(msgId: Int64?) -> StoredMessage? {
+    func query(msgId: Int64?, previewLen: Int) -> StoredMessage? {
         guard let msgId = msgId else { return nil }
         let record = self.table.filter(self.id == msgId)
         if let row = try? db.pluck(record) {
-            return self.readOne(r: row)
+            return self.readOne(r: row, previewLen: previewLen)
         }
         return nil
     }
@@ -390,5 +394,42 @@ public class MessageDb {
             low = 1
         }
         return MsgRange(low: low, hi: hi)
+    }
+
+    func queryLatest() -> [StoredMessage]? {
+        let messages2 = self.table.alias("m2")
+        guard let topicDb = baseDb.topicDb else { return nil }
+        let topics = topicDb.table
+
+        let m2Id = Expression<Int64?>("id")
+        let joinedTable = self.table.select(
+            self.table[self.id],
+            self.table[self.topicId],
+            self.table[self.userId],
+            self.table[self.status],
+            self.table[self.sender],
+            self.table[self.ts],
+            self.table[self.seq],
+            self.table[self.high],
+            self.table[self.delId],
+            self.table[self.head],
+            self.table[self.content],
+            topics[topicDb.topic])
+        .join(.leftOuter, messages2,
+              on: self.table[self.topicId] == messages2[self.topicId] && self.table[self.seq] < messages2[self.seq])
+        .join(.leftOuter, topics, on: self.table[self.topicId] == topics[topicDb.id])
+            .filter(self.table[self.delId] == nil && messages2[self.delId] == nil && messages2[m2Id] == nil)
+        do {
+            var messages = [StoredMessage]()
+            for row in try db.prepare(joinedTable) {
+                let sm = self.readOne(r: row)
+                sm.topic = row[topicDb.topic]
+                messages.append(sm)
+            }
+            return messages
+        } catch {
+            BaseDb.log.error("MessageDb - queryLatest operation failed: error = %@", error.localizedDescription)
+            return nil
+        }
     }
 }

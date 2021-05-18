@@ -29,6 +29,9 @@ public protocol Message {
     // Get Tinode seq Id of the message (different from database ID).
     var seqId: Int { get }
 
+    // Textual topic name.
+    var topic: String? { get }
+
     var isDraft: Bool { get }
     var isReady: Bool { get }
     var isDeleted: Bool { get }
@@ -129,7 +132,7 @@ public protocol Storage: AnyObject {
     ///   - msg: message itself
     /// - Returns:
     ///     database ID of the message.
-    func msgReceived(topic: TopicProto, sub: SubscriptionProto?, msg: MsgServerData?) -> Int64
+    func msgReceived(topic: TopicProto, sub: SubscriptionProto?, msg: MsgServerData?) -> Message?
 
     /// Save message to DB as queued or synced.
     /// - Parameters:
@@ -138,7 +141,7 @@ public protocol Storage: AnyObject {
     ///   - head: message headers.
     /// - Returns:
     ///     database ID of the message.
-    func msgSend(topic: TopicProto, data: Drafty, head: [String: JSONValue]?) -> Int64
+    func msgSend(topic: TopicProto, data: Drafty, head: [String: JSONValue]?) -> Message?
 
     /// Save message to database as a draft. The draft will not be sent to server until it status changes.
     /// - Parameters:
@@ -147,7 +150,7 @@ public protocol Storage: AnyObject {
     ///   - head: message headers.
     /// - Returns:
     ///     database ID of the message.
-    func msgDraft(topic: TopicProto, data: Drafty, head: [String: JSONValue]?) -> Int64
+    func msgDraft(topic: TopicProto, data: Drafty, head: [String: JSONValue]?) -> Message?
 
     /// Update message draft content.
     /// - Parameters:
@@ -232,7 +235,10 @@ public protocol Storage: AnyObject {
     func msgReadByRemote(sub: SubscriptionProto, read: Int?) -> Bool
 
     // Retrieves a single message by database id.
-    func getMessageById(topic: TopicProto, dbMessageId: Int64) -> Message?
+    func getMessageById(dbMessageId: Int64) -> Message?
+
+    // Retrieves a single message preview by database id.
+    func getMessagePreviewById(dbMessageId: Int64) -> Message?
 
     // Returns a list of unsent messages.
     func getQueuedMessages(topic: TopicProto) -> [Message]?
@@ -241,4 +247,7 @@ public protocol Storage: AnyObject {
     // topic: topic where the messages were deleted.
     // hard: when true, fetch hard-deleted messages, soft-deleted otherwise.
     func getQueuedMessageDeletes(topic: TopicProto, hard: Bool) -> [MsgRange]?
+
+    // Returns the latest message in each topic.
+    func getLatestMessagePreviews() -> [Message]?
 }

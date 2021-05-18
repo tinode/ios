@@ -49,11 +49,6 @@ class MessageViewController: UIViewController {
         static let kProgressBarLeftPadding: CGFloat = 10
         static let kProgressBarRightPadding: CGFloat = 25
 
-        // Color of "read" delivery marker.
-        static let kDeliveryMarkerTint = UIColor(red: 19/255, green: 144/255, blue:255/255, alpha: 0.8)
-        // Color of all other markers.
-        static let kDeliveryMarkerColor = UIColor.gray.withAlphaComponent(0.7)
-
         // Light/dark gray color: outgoing messages
         static let kOutgoingBubbleColorLight = UIColor(red: 230/255, green: 230/255, blue: 230/255, alpha: 1)
         static let kOutgoingBubbleColorDark = UIColor(red: 51/255, green: 51/255, blue: 51/255, alpha: 1)
@@ -711,7 +706,7 @@ extension MessageViewController: UICollectionViewDataSource {
             cell.content.attributedText = text
         }
 
-        if let (image, tint) = deliveryMarker(for: message, at: indexPath) {
+        if let (image, tint) = deliveryMarker(for: message) {
             cell.deliveryMarker.image = image
             cell.deliveryMarker.tintColor = tint
         }
@@ -750,26 +745,9 @@ extension MessageViewController: UICollectionViewDataSource {
             ])
     }
 
-    func deliveryMarker(for message: Message, at indexPath: IndexPath) -> (UIImage, UIColor)? {
+    func deliveryMarker(for message: Message) -> (UIImage, UIColor)? {
         guard isFromCurrentSender(message: message), let topic = topic else { return nil }
-
-        let iconName: String
-        var tint: UIColor = Constants.kDeliveryMarkerColor
-
-        if message.isPending {
-            iconName = "in-progress-30"
-        } else {
-            if topic.msgReadCount(seq: message.seqId) > 0 {
-                iconName = "done-all-30"
-                tint = Constants.kDeliveryMarkerTint
-            } else if topic.msgRecvCount(seq: message.seqId) > 0 {
-                iconName = "done-all-30"
-            } else {
-                iconName = "done-30"
-            }
-        }
-
-        return (UIImage(named: iconName)!, tint)
+        return UiUtils.deliveryMarkerIcon(for: message, in: topic)
     }
 
     // Returns closure which adds message bubble mask to the supplied UIView.
