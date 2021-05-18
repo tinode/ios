@@ -175,6 +175,7 @@ public class MsgServerPres : Decodable {
 
 public class MsgServerInfo: Decodable {
     public var topic: String?
+    public var src: String?
     public var from: String?
     public var what: String?
     public var seq: Int?

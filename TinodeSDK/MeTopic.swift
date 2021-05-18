@@ -169,6 +169,31 @@ open class MeTopic<DP: Codable & Mergeable>: Topic<DP, PrivateType, DP, PrivateT
         }
     }
 
+    public func setMsgReadRecv(from topic: String?, what: String?, seq: Int?) {
+        guard let tn = topic, let topic = tinode?.getTopic(topicName: tn) else { return }
+
+        switch what {
+        case Tinode.kNoteRecv:
+            assignRecv(to: topic, recv: seq)
+        case Tinode.kNoteRead:
+            assignRead(to: topic, read: seq)
+        default:
+            break
+        }
+    }
+
+    override public func routeInfo(info: MsgServerInfo) {
+        guard let what = info.what, what != Tinode.kNoteKp, let src = info.src else { return }
+        if let t = tinode!.getTopic(topicName: src) as? DefaultTopic {
+            t.setReadRecvByRemote(from: info.from, what: what, seq: info.seq)
+        }
+        // If this is an update from the current user, update the contact with the new count too.
+        if tinode!.isMe(uid: info.from) {
+            setMsgReadRecv(from: info.src, what: what, seq: info.seq)
+        }
+        listener?.onInfo(info: info)
+    }
+
     override public func routeMeta(meta: MsgServerMeta) {
         if let cred = meta.cred {
             routeMetaCred(cred: cred)

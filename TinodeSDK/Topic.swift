@@ -316,7 +316,18 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
         }
     }
 
-    public var latestMessage: Message?
+    private var latestMessageValue: Message?
+    public var latestMessage: Message? {
+        get { return latestMessageValue }
+        set {
+            guard let newLM = newValue else { return }
+            if (latestMessageValue == nil) ||
+                (!newLM.isPending && latestMessageValue!.isPending) ||
+                (newLM.seqId > latestMessageValue!.seqId) {
+                latestMessageValue = newLM
+            }
+        }
+    }
 
     public var topicType: TopicType {
         return Tinode.topicTypeByName(name: self.name)
@@ -1013,23 +1024,31 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
                 return nil
             })
     }
+
+    public func setReadRecvByRemote(from uid: String?, what: String?, seq: Int?) {
+        if let sub = getSubscription(for: uid) {
+            switch what {
+            case Tinode.kNoteRecv:
+                sub.recv = seq
+                store?.msgRecvByRemote(sub: sub, recv: seq)
+            case Tinode.kNoteRead:
+                sub.read = seq
+                if sub.getRecv < sub.getRead {
+                    sub.recv = sub.read
+                    store?.msgRecvByRemote(sub: sub, recv: seq)
+                }
+                store?.msgReadByRemote(sub: sub, read: seq)
+            default:
+                break
+            }
+        }
+    }
+
     public func routeInfo(info: MsgServerInfo) {
         if info.what != Tinode.kNoteKp {
-            if let sub = getSubscription(for: info.from) {
-                switch info.what {
-                case Tinode.kNoteRecv:
-                    sub.recv = info.seq
-                    store?.msgRecvByRemote(sub: sub, recv: info.seq)
-                case Tinode.kNoteRead:
-                    sub.read = info.seq
-                    if sub.getRecv < sub.getRead {
-                        sub.recv = sub.read
-                        store?.msgRecvByRemote(sub: sub, recv: info.seq)
-                    }
-                    store?.msgReadByRemote(sub: sub, read: info.seq)
-                default:
-                    break
-                }
+            setReadRecvByRemote(from: info.from, what: info.what, seq: info.seq)
+            if let t = tinode, t.isMe(uid: info.from), let me = t.getMeTopic() {
+                me.setMsgReadRecv(from: self.name, what: info.what, seq: info.seq)
             }
         }
         listener?.onInfo(info: info)

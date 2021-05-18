@@ -196,6 +196,7 @@ public class SqlStore : Storage {
         let sm = StoredMessage(from: msg)
         sm.topicId = topicId
         sm.userId = userId
+        sm.dbStatus = .synced
         do {
             try dbh?.db?.savepoint("SqlStore.msgReceived") {
                 sm.msgId = self.dbh?.messageDb?.insert(topic: topic, msg: sm) ?? -1

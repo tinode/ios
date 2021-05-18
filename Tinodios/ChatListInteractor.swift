@@ -28,7 +28,6 @@ class ChatListInteractor: ChatListBusinessLogic, ChatListDataStore {
     private class MeListener: DefaultMeTopic.Listener {
         weak var interactor: ChatListBusinessLogic?
 
-        override func onInfo(info: MsgServerInfo) {}
         override func onPres(pres: MsgServerPres) {
             if pres.what == "msg" {
                 interactor?.loadAndPresentTopics()
@@ -72,6 +71,16 @@ class ChatListInteractor: ChatListBusinessLogic, ChatListDataStore {
             super.onDisconnect(byServer: byServer, code: code, reason: reason)
             // Update presence indicators (all should be off).
             self.interactor?.loadAndPresentTopics()
+        }
+        override func onDataMessage(data: MsgServerData?) {
+            if let topic = data?.topic {
+                interactor?.updateChat(topic)
+            }
+        }
+        override func onInfoMessage(info: MsgServerInfo?) {
+            if let topic = info?.src {
+                interactor?.updateChat(topic)
+            }
         }
     }
 
