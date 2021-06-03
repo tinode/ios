@@ -508,6 +508,9 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
         if on {
             if !isPersisted {
                 store?.topicAdd(topic: self)
+               if isP2PType, let desc = self.description {
+                   tinode?.updateUser(uid: self.name, desc: desc)
+               }
             }
         } else {
             store?.topicDelete(topic: self)
@@ -571,6 +574,9 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
                             }
                             // update store
                             self?.store?.topicUpdate(topic: self!)
+                            if let t = self, t.isP2PType, let desc = t.description {
+                                t.tinode?.updateUser(uid: t.name, desc: desc)
+                            }
                         }
                         self?.listener?.onSubscribe(code: ctrl.code, text: ctrl.text)
                     }
@@ -647,8 +653,14 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
         } else {
             changed = self.lastSeen!.merge(seen: sub.seen)
         }
-        if description?.merge(sub: sub) ?? false, changed {
+        if description?.merge(sub: sub) ?? false {
+            changed = true
+        }
+        if changed {
             store?.topicUpdate(topic: self)
+            if isP2PType, let desc = self.description {
+                tinode?.updateUser(uid: self.name, desc: desc)
+            }
         }
         if let o = sub.online {
             self.online = o
@@ -657,6 +669,9 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
     internal func update(desc: Description<DP, DR>) {
         if description?.merge(desc: desc) ?? false {
             store?.topicUpdate(topic: self)
+            if isP2PType, let desc = self.description {
+                tinode?.updateUser(uid: self.name, desc: desc)
+            }
         }
     }
     internal func update(tags: [String]) {
@@ -666,6 +681,9 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
     internal func update(desc: MetaSetDesc<DP, DR>) {
         if self.description?.merge(desc: desc) ?? false {
             self.store?.topicUpdate(topic: self)
+            if isP2PType, let desc = self.description {
+                tinode?.updateUser(uid: self.name, desc: desc)
+            }
         }
     }
     // Topic sent an update to description or subscription, got a confirmation, now
@@ -715,6 +733,9 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
             }
             if changed {
                 self.store?.topicUpdate(topic: self)
+                if isP2PType, let desc = self.description {
+                    tinode?.updateUser(uid: self.name, desc: desc)
+                }
             }
         }
         if let sub2 = self.getSubscription(for: user) {
