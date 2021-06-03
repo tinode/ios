@@ -215,9 +215,11 @@ class TopicInfoViewController: UITableViewController {
         topic.updateMuted(muted: isChecked).then(
             onSuccess: UiUtils.ToastSuccessHandler,
             onFailure: { err in
-                self.mutedSwitch.isOn = !isChecked
-                if let e = err as? TinodeError, case .notConnected(_) = e {
-                    UiUtils.showToast(message: NSLocalizedString("You are offline.", comment: "Toast notification"))
+                DispatchQueue.main.async {
+                    self.mutedSwitch.isOn = !isChecked
+                    if let e = err as? TinodeError, case .notConnected(_) = e {
+                        UiUtils.showToast(message: NSLocalizedString("You are offline.", comment: "Toast notification"))
+                    }
                 }
                 return nil
             }).thenFinally({
