@@ -1,5 +1,5 @@
 //
-//  AttribFormatter.swift
+//  AttributedStringFormatter.swift
 //  Tinodios
 //
 //  Copyright © 2019 Tinode. All rights reserved.
@@ -735,14 +735,14 @@ class PreviewFormatter: AttributedStringFormatter {
     }
 
     override func handleButton(withText content: String?, withChildren nodes: [Node]?, using attr: [String : JSONValue]?) -> Node {
-        let attrs: [NSAttributedString.Key : Any] = [.foregroundColor: Constants.kLinkColor]
+        let attrs: [NSAttributedString.Key : Any] = [.baselineOffset: 0]
         var faceText: NSAttributedString
         if let content = content {
             faceText = NSAttributedString(string: content, attributes: attrs)
         } else {
             faceText = NSAttributedString(string: "button", attributes: attrs)
         }
-        let att = DraftyButtonAttachment(face: faceText, data: nil, traceBorder: true, widthPadding: 0, heightMultiplier: 1)
+        let att = DraftyButtonAttachment(face: faceText, data: nil, traceBorder: true, widthPadding: 1, heightMultiplier: 1.1, verticalOffset: -2)
         let node = Node(text: nil, nodes: nil)
         node.preformattedAttachment(att)
         return node

@@ -15,7 +15,7 @@ class DraftyButtonAttachment : NSTextAttachment {
         // Button height mulitplier (forntHeight * 1.4)
         static let kHeightMultiplier: CGFloat = 1.4
         // Button width padding in characters.
-        static let kWidthPadding: Int = 3
+        static let kWidthPadding: CGFloat = 3
         static let kDefaultButtonBackgroundColor: UIColor = UIColor.white.withAlphaComponent(0.8)
     }
 
@@ -23,11 +23,11 @@ class DraftyButtonAttachment : NSTextAttachment {
     var attributedString: NSAttributedString
 
     let traceBorder: Bool
-    let widthPadding: Int
+    let widthPadding: CGFloat
     let heightMultiplier: CGFloat
     let backgroundColor: UIColor
 
-    init(face: NSAttributedString, data: URL?, traceBorder: Bool = false, widthPadding: Int = Constants.kWidthPadding, heightMultiplier: CGFloat = Constants.kHeightMultiplier, backgroundColor: UIColor = Constants.kDefaultButtonBackgroundColor) {
+    init(face: NSAttributedString, data: URL?, traceBorder: Bool = false, widthPadding: CGFloat = Constants.kWidthPadding, heightMultiplier: CGFloat = Constants.kHeightMultiplier, backgroundColor: UIColor = Constants.kDefaultButtonBackgroundColor, verticalOffset: CGFloat = 0) {
         attributedString = face
         payload = data
         self.traceBorder = traceBorder
@@ -35,13 +35,13 @@ class DraftyButtonAttachment : NSTextAttachment {
         self.heightMultiplier = heightMultiplier
         self.backgroundColor = backgroundColor
         super.init(data: nil, ofType: "public.text")
-        let rect = face.boundingRect(with: CGSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude), context: nil)
+        let textBounds = face.boundingRect(with: CGSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude), context: nil)
 
         // Calculate button width: string width + some characters extra, but no less than kMinWidth
-        let width = max(Constants.kMinWidth, rect.width / CGFloat(face.length) * CGFloat(face.length + self.widthPadding))
+        let width = max(Constants.kMinWidth, textBounds.width / CGFloat(face.length) * (CGFloat(face.length) + self.widthPadding))
 
-        bounds = CGRect(x: 0, y: 0, width: width, height: rect.height * heightMultiplier)
-        image = renderButtonImage(textRect: rect)
+        image = renderButtonImage(textBounds: textBounds, buttonBounds: CGRect(x: 0, y: 0, width: width, height: textBounds.height * heightMultiplier))
+        bounds = CGRect(x: 0, y: verticalOffset, width: width, height: textBounds.height * heightMultiplier)
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -49,26 +49,26 @@ class DraftyButtonAttachment : NSTextAttachment {
     }
 
     // Create button as image
-    private func renderButtonImage(textRect: CGRect) -> UIImage {
-        UIGraphicsBeginImageContextWithOptions(CGSize(width: bounds.width, height: bounds.height), false, UIScreen.main.scale)
+    private func renderButtonImage(textBounds: CGRect, buttonBounds: CGRect) -> UIImage {
+        UIGraphicsBeginImageContextWithOptions(CGSize(width: buttonBounds.width, height: buttonBounds.height), false, UIScreen.main.scale)
 
         defer { UIGraphicsEndImageContext() }
         let context = UIGraphicsGetCurrentContext()!
 
         context.saveGState()
-        context.clip(to: bounds)
+        context.clip(to: buttonBounds)
 
         // Draw background.
         context.setFillColor(self.backgroundColor.cgColor)
         // UIBezierPath with rounded corners
-        let bkgRect = bounds.insetBy(dx: 1, dy: 1)
+        let bkgRect = buttonBounds.insetBy(dx: 1, dy: 1)
         let path = UIBezierPath(roundedRect: bkgRect, cornerRadius: bkgRect.height * 0.5)
         path.fill()
         if traceBorder {
-            path.stroke(with: .colorBurn, alpha: 0.5)
+            path.stroke(with: .colorBurn, alpha: 0.67)
         }
         // Draw string
-        attributedString.draw(at: CGPoint(x: (bounds.width - textRect.width) * 0.5, y: (bounds.height - textRect.height) * 0.5))
+        attributedString.draw(at: CGPoint(x: (buttonBounds.width - textBounds.width) * 0.5, y: (buttonBounds.height - textBounds.height) * 0.5))
         context.restoreGState()
 
         guard let renderedImage = UIGraphicsGetImageFromCurrentImageContext() else {
