@@ -35,7 +35,7 @@
                         <nil key="highlightedColor"/>
                     </label>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Subtitle" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="g5B-Iw-vLQ">
-                        <rect key="frame" x="85" y="29" width="52" height="18"/>
+                        <rect key="frame" x="85" y="29" width="325" height="18"/>
                         <accessibility key="accessibilityConfiguration" identifier="subtitle"/>
                         <fontDescription key="fontDescription" type="system" weight="light" pointSize="15"/>
                         <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -102,6 +102,7 @@
                 </subviews>
                 <constraints>
                     <constraint firstItem="4aB-Zd-9Qa" firstAttribute="top" secondItem="R21-i3-9ML" secondAttribute="top" constant="14" id="4KX-cN-hSR"/>
+                    <constraint firstAttribute="trailing" secondItem="g5B-Iw-vLQ" secondAttribute="trailing" constant="4" id="4Kc-cP-A7p"/>
                     <constraint firstItem="g5B-Iw-vLQ" firstAttribute="leading" secondItem="qTs-2b-DEg" secondAttribute="trailing" constant="3" id="5l3-J3-Egb"/>
                     <constraint firstItem="qTs-2b-DEg" firstAttribute="leading" secondItem="wDJ-YF-7hy" secondAttribute="leading" id="89e-NW-Qtm"/>
                     <constraint firstItem="qTs-2b-DEg" firstAttribute="centerY" secondItem="g5B-Iw-vLQ" secondAttribute="centerY" id="ASp-Fd-fzO"/>
