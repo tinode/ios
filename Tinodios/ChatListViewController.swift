@@ -29,8 +29,8 @@ class ChatListViewController: UITableViewController, ChatListDisplayLogic {
     // Index of contacts: name => position in topics
     var rowIndex: [String : Int] = [:]
     var router: ChatListRoutingLogic?
-    // Archived chats footer
-    var archivedChatsFooter: UIView?
+    // Archived chats header.
+    var archivedChatsHeader: UIView?
 
     private func setup() {
         let viewController = self
@@ -48,23 +48,27 @@ class ChatListViewController: UITableViewController, ChatListDisplayLogic {
         self.chatListTableView.register(UINib(nibName: "ChatListViewCell", bundle: nil), forCellReuseIdentifier: "ChatListViewCell")
 
         // Footer for Archived Chats link.
-        archivedChatsFooter = UIView(frame: CGRect(x: 0, y: 0, width: tableView.frame.width, height: ChatListViewController.kFooterHeight))
-        archivedChatsFooter!.backgroundColor = tableView.backgroundColor
+        archivedChatsHeader = UIView(frame: CGRect(x: 0, y: 0, width: tableView.frame.width, height: ChatListViewController.kFooterHeight))
+        archivedChatsHeader!.backgroundColor = tableView.backgroundColor
         let button = UIButton(frame: CGRect(x: 0, y: 0, width: tableView.frame.width, height: ChatListViewController.kFooterHeight))
         button.setTitle(NSLocalizedString("Archived Chats", comment: "View title"), for: .normal)
         button.setTitleColor(UIColor.darkGray, for: .normal)
         button.titleLabel?.font = button.titleLabel?.font.withSize(15)
         button.addTarget(self, action: #selector(navigateToArchive), for: .touchUpInside)
-        archivedChatsFooter!.addSubview(button)
-        tableView.tableFooterView = archivedChatsFooter
+        archivedChatsHeader!.addSubview(button)
+        tableView.tableHeaderView = archivedChatsHeader
     }
 
     private func toggleFooter(visible: Bool) {
         let count = numArchivedTopics > 9 ? "9+" : String(numArchivedTopics)
-        let button = tableView.tableFooterView!.subviews[0] as! UIButton
+        let button = archivedChatsHeader!.subviews[0] as! UIButton
         button.setTitle(String(format: NSLocalizedString("Archived Chats (%@)", comment: "Button to open chat archive"), count), for: .normal)
-        archivedChatsFooter!.isHidden = !visible
-        tableView.tableFooterView = archivedChatsFooter
+        archivedChatsHeader!.isHidden = !visible
+        if visible {
+            tableView.tableHeaderView = archivedChatsHeader
+        } else {
+            tableView.tableHeaderView = nil
+        }
     }
 
     override func viewDidLoad() {
