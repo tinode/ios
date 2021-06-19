@@ -121,6 +121,10 @@ open class MsgServerData : Decodable {
 public class AccessChange : Decodable {
     let want: String?
     let given: String?
+
+    public var description: String {
+        return "{want = " + (want ?? "nil") + ", given = " + (given ?? "nil") + "}"
+    }
 }
 
 public class MsgServerPres : Decodable {

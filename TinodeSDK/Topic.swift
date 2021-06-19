@@ -527,8 +527,13 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
                 sub: nil,
                 tags: self.tags, cred: nil)
         } else {
-            getMsg = metaGetBuilder()
-                .withDesc().withData().withSub().withTags().build()
+            var mgb = metaGetBuilder()
+                .withDesc().withData().withSub()
+            if self.isMeType || (self.isGrpType && self.isOwner) {
+                // Ask for tags only if it's a 'me' topic or the user is the owner of a 'grp' topic.
+                mgb = mgb.withTags()
+            }
+            getMsg = mgb.build()
         }
         return subscribe(set: setMsg, get: getMsg)
     }
@@ -558,7 +563,8 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
         return tnd.subscribe(to: name, set: set, get: get).then(
             onSuccess: { [weak self] msg in
                 if let code = msg?.ctrl?.code, code >= 300 {
-                    // 3XX: status unchanged.
+                    // 3XX: status unchanged (alredy subscribed).
+                    self?.attached = true
                     return nil
                 }
                 let isAttached = self?.attached ?? false
@@ -780,6 +786,13 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
                 store?.subAdd(topic: self, sub: sub!)
             }
             tinode!.updateUser(sub: sub!)
+            // If this is a change to user's own permissions, update topic too.
+            if tinode!.isMe(uid: newsub.user) && newsub.acs != nil {
+                description?.acs = newsub.acs
+                store?.topicUpdate(topic: self)
+                // Notify listener that topic has updated.
+                listener?.onContUpdate(sub: sub!)
+            }
         }
         listener?.onMetaSub(sub: sub!)
     }
@@ -923,6 +936,11 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
             noteRecv(fromMe: tinode!.isMe(uid: data.from))
         }
         listener?.onData(data: data)
+
+        // Call notification listener on 'me' to refresh chat list, if appropriate.
+        if let me = tinode?.getMeTopic() {
+            me.setMsgReadRecv(from: self.name, what: "", seq: 0)
+        }
     }
 
     @discardableResult
@@ -1087,26 +1105,31 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
         case .kTerm:
             topicLeft(unsub: false, code: ServerMessage.kStatusInternalServerError, reason: "term")
         case .kAcs:
-            if let sub = getSubscription(for: pres.src) {
-                sub.updateAccessMode(ac: pres.dacs)
-                if sub.user == tinode?.myUid {
-                    if self.updateAccessMode(ac: pres.dacs) {
-                        store?.topicUpdate(topic: self)
-                    }
-                }
-                if !sub.acs!.isModeDefined {
-                    if isP2PType {
-                        leave()
-                    }
-                    sub.deleted = Date()
-                    processSub(newsub: sub)
-                }
-            } else {
-                let acs = Acs(from: nil as Acs?)
+            let userId = pres.src ?? tinode!.myUid!
+            var sub = getSubscription(for: userId)
+            if sub == nil {
+                let acs = Acs()
                 acs.update(from: pres.dacs)
                 if acs.isModeDefined {
-                    getMeta(query: metaGetBuilder().withSub(user: pres.src).build())
+                    let s = Subscription<SP, SR>()
+                    s.topic = self.name
+                    s.user = userId
+                    s.acs = acs
+                    s.updated = Date()
+                    if let user: User<SP> = tinode!.getUser(with: userId) {
+                        s.pub = user.pub
+                    } else {
+                        getMeta(query: metaGetBuilder().withSub(user: pres.src).build())
+                    }
+                    sub = s
+                } else {
+                    Tinode.log.error("Invalid access mode update %@", pres.dacs?.description ?? "nil")
                 }
+            } else {
+                sub!.updateAccessMode(ac: pres.dacs)
+            }
+            if let s = sub {
+                processSub(newsub: s)
             }
         default:
             Tinode.log.error("pres message - unknown what: %@", String(describing: pres.what))
@@ -1173,6 +1196,7 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
     public func publish(content: Drafty, head: [String: JSONValue]?, msgId: Int64) -> PromisedReply<ServerMessage> {
         var headers = head
         if content.isPlain && headers?["mime"] != nil {
+            // Plain text content should not have "mime" header. Clear it.
             headers?.removeValue(forKey: "mime")
         }
         return tinode!.publish(topic: name, head: headers, content: content).then(

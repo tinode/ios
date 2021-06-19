@@ -169,16 +169,18 @@ open class MeTopic<DP: Codable & Mergeable>: Topic<DP, PrivateType, DP, PrivateT
         }
     }
 
-    public func setMsgReadRecv(from topic: String?, what: String?, seq: Int?) {
-        guard let tn = topic, let topic = tinode?.getTopic(topicName: tn) else { return }
+    public func setMsgReadRecv(from topicName: String?, what: String?, seq: Int?) {
+        guard let tn = topicName, let topic = tinode?.getTopic(topicName: tn), let seq = seq else { return }
 
-        switch what {
-        case Tinode.kNoteRecv:
-            assignRecv(to: topic, recv: seq)
-        case Tinode.kNoteRead:
-            assignRead(to: topic, read: seq)
-        default:
-            break
+        if seq > 0 {
+            switch what {
+            case Tinode.kNoteRecv:
+                assignRecv(to: topic, recv: seq)
+            case Tinode.kNoteRead:
+                assignRead(to: topic, read: seq)
+            default:
+                break
+            }
         }
     }
 
