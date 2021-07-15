@@ -64,7 +64,7 @@ public enum JSONValue: Codable, Equatable {
         }
     }
 
-    /// MARK:  Convenience accessors.
+    // MARK: Convenience accessors.
 
     public func asString() -> String? {
         switch self {

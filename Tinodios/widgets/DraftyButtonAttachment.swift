@@ -8,7 +8,7 @@
 import UIKit
 
 // An NSTextAttachment which draws a button-like image for use in Drafty forms.
-class DraftyButtonAttachment : NSTextAttachment {
+class DraftyButtonAttachment: NSTextAttachment {
     private enum Constants {
         // Mimumum button width in points
         static let kMinWidth: CGFloat = 40
@@ -78,4 +78,3 @@ class DraftyButtonAttachment : NSTextAttachment {
         return renderedImage
     }
 }
-

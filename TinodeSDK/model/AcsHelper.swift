@@ -162,7 +162,7 @@ public class AcsHelper: Codable, CustomStringConvertible, Equatable {
             return mode
         }
         var result: Int
-        let action = command.first //[command.startIndex]
+        let action = command.first // [command.startIndex]
         if action == "+" || action == "-" {
             result = mode ?? 0
             let parts = tokenizeCommand(command: command)
@@ -200,7 +200,7 @@ public class AcsHelper: Codable, CustomStringConvertible, Equatable {
         return false
     }
     // Bitwise & operator.
-    public static func and(a1: AcsHelper? , a2: AcsHelper?) -> AcsHelper? {
+    public static func and(a1: AcsHelper?, a2: AcsHelper?) -> AcsHelper? {
         guard let ah1 = a1, let ah2 = a2, !ah1.isInvalid, !ah2.isInvalid else { return nil }
         return AcsHelper(a: ah1.a! & ah2.a!)
     }

@@ -62,7 +62,7 @@ public class LargeFileHelper: NSObject {
     static let kLineEnd = "\r\n"
 
     private var urlSession: URLSession!
-    private var activeUploads: [String : Upload] = [:]
+    private var activeUploads: [String: Upload] = [:]
     private var tinode: Tinode!
 
     init(with tinode: Tinode, config: URLSessionConfiguration) {
@@ -156,7 +156,6 @@ public class LargeFileHelper: NSObject {
     }
 }
 
-
 extension LargeFileHelper: URLSessionDelegate {
     public func urlSessionDidFinishEvents(forBackgroundURLSession session: URLSession) {
         DispatchQueue.main.async {
@@ -185,7 +184,7 @@ extension LargeFileHelper: URLSessionTaskDelegate {
             return
         }
         self.uploadFinished(for: taskId)
-        var serverMsg: ServerMessage? = nil
+        var serverMsg: ServerMessage?
         var uploadError: Error? = didCompleteWithError
         defer {
             upload.finished(msg: serverMsg, err: uploadError)
@@ -213,7 +212,7 @@ extension LargeFileHelper: URLSessionTaskDelegate {
             return
         }
     }
-    
+
     public func urlSession(_ session: URLSession, task: URLSessionTask, didSendBodyData: Int64, totalBytesSent: Int64, totalBytesExpectedToSend: Int64) {
         if let taskId = task.taskDescription, let upload = self.getActiveUpload(for: taskId) {
             let progress: Float = totalBytesExpectedToSend > 0 ?

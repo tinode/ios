@@ -161,7 +161,7 @@ public class SharedUtils {
                     success = false
                 }
             }
-        } catch SwiftWebSocket.WebSocketError.network(let e)  {
+        } catch SwiftWebSocket.WebSocketError.network(let e) {
             // No network connection.
             BaseDb.log.debug("Connect&Login Sync [network] - could not connect to Tinode: %@", e)
             success = true

@@ -19,7 +19,7 @@ extension String: Mergeable {
     }
 }
 
-public typealias PrivateType = Dictionary<String, JSONValue>
+public typealias PrivateType = [String: JSONValue]
 
 extension PrivateType: Mergeable {
     public var comment: String? {
@@ -54,7 +54,7 @@ extension PrivateType: Mergeable {
 public typealias DefaultDescription = Description<VCard, PrivateType>
 public typealias DefaultSubscription = Subscription<VCard, PrivateType>
 public typealias FndDescription = Description<String, String>
-public typealias FndSubscription = Subscription<VCard, Array<String>>
+public typealias FndSubscription = Subscription<VCard, [String]>
 
 public typealias DefaultTopic = Topic<VCard, PrivateType, VCard, PrivateType>
 public typealias DefaultComTopic = ComTopic<VCard>

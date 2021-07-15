@@ -56,7 +56,7 @@ public protocol TinodeEventListener: AnyObject {
     //   code   should be always 201.
     //   reason should be always "Created".
     //   params server parameters, such as protocol version.
-    func onConnect(code: Int, reason: String, params: [String:JSONValue]?)
+    func onConnect(code: Int, reason: String, params: [String: JSONValue]?)
 
     // Connection was dropped.
     // Params:
@@ -145,7 +145,7 @@ public class Tinode {
         static let kFutureExpiryInterval = 3.0
         static let kFutureExpiryTimerTolerance = 0.2
         static let kFutureTimeout = 5.0
-        private var futuresDict = [String:PromisedReply<ServerMessage>]()
+        private var futuresDict = [String: PromisedReply<ServerMessage>]()
         private let futuresQueue = DispatchQueue(label: "co.tinode.futuresmap")
         private var timer: Timer?
         init() {
@@ -201,7 +201,7 @@ public class Tinode {
 
     // A simple thread-safe wrapper around Dictionary<String, T>.
     private class ConcurrentMap<T> {
-        private var internalMap = [String:T]()
+        private var internalMap = [String: T]()
         private let opsQueue = DispatchQueue(label: "co.tinode.map-ops")
 
         var values: Dictionary<String, T>.Values {
@@ -244,7 +244,7 @@ public class Tinode {
             queue.sync { return self.listeners }
         }
 
-        func onConnect(code: Int, reason: String, params: [String : JSONValue]?) {
+        func onConnect(code: Int, reason: String, params: [String: JSONValue]?) {
             listenersThreadSafe.forEach { $0.onConnect(code: code, reason: reason, params: params) }
         }
 
@@ -293,8 +293,8 @@ public class Tinode {
     private var futures = ConcurrentFuturesMap()
     public var serverVersion: String?
     public var serverBuild: String?
-    private var serverLimits: [String:Int64]?
-    private var connectionListener: TinodeConnectionListener? = nil
+    private var serverLimits: [String: Int64]?
+    private var connectionListener: TinodeConnectionListener?
     public var timeAdjustment: TimeInterval = 0
     public var isConnectionAuthenticated = false
     public var myUid: String?
@@ -302,10 +302,10 @@ public class Tinode {
     public var authToken: String?
     public var authTokenExpires: Date?
     public var nameCounter = 0
-    public var store: Storage? = nil
+    public var store: Storage?
     private var listenerNotifier = ListenerNotifier()
     public var topicsLoaded = false
-    private(set) public var topicsUpdated: Date? = nil
+    private(set) public var topicsUpdated: Date?
 
     struct LoginCredentials {
         let scheme: String
@@ -315,7 +315,7 @@ public class Tinode {
             self.secret = secret
         }
     }
-    private var loginCredentials: LoginCredentials? = nil
+    private var loginCredentials: LoginCredentials?
     private var autoLogin: Bool = false
     private var loginInProgress: Bool = false
     // Queue to execute state-mutating operations on.
@@ -369,7 +369,7 @@ public class Tinode {
         self.deviceToken = self.store?.deviceToken
         self.useTLS = false
         self.hostName = ""
-        //self.osVersoin
+        // self.osVersoin
 
         // osVersion
         // eventListener
@@ -570,7 +570,7 @@ public class Tinode {
     public func noteKeyPress(topic: String) {
         note(topic: topic, what: Tinode.kNoteKp, seq: 0)
     }
-    private func send<DP: Codable, DR: Codable>(payload msg: ClientMessage<DP,DR>) throws {
+    private func send<DP: Codable, DR: Codable>(payload msg: ClientMessage<DP, DR>) throws {
         guard let conn = connection else {
             throw TinodeError.notConnected("Attempted to send msg to a closed connection.")
         }
@@ -579,7 +579,7 @@ public class Tinode {
         conn.send(payload: jsonData)
     }
 
-    private func sendWithPromise<DP: Codable, DR: Codable>(payload msg: ClientMessage<DP,DR>, with id: String) -> PromisedReply<ServerMessage> {
+    private func sendWithPromise<DP: Codable, DR: Codable>(payload msg: ClientMessage<DP, DR>, with id: String) -> PromisedReply<ServerMessage> {
         let future = PromisedReply<ServerMessage>()
         do {
             try send(payload: msg)
@@ -802,7 +802,7 @@ public class Tinode {
             }
         }
 
-        let msg = ClientMessage<Pu,Pr>(acc: msga)
+        let msg = ClientMessage<Pu, Pr>(acc: msga)
         let future = sendWithPromise(payload: msg, with: msgId)
 
         if !loginNow {
@@ -957,15 +957,15 @@ public class Tinode {
         }
         listenerNotifier.onDisconnect(byServer: isServerOriginated, code: code, reason: reason)
     }
-    public class TinodeConnectionListener : ConnectionListener {
+    public class TinodeConnectionListener: ConnectionListener {
         var tinode: Tinode
-        var completionPromises : [PromisedReply<ServerMessage>] = []
+        var completionPromises: [PromisedReply<ServerMessage>] = []
         var promiseQueue = DispatchQueue(label: "co.tinode.completion-promises")
 
         init(tinode: Tinode) {
             self.tinode = tinode
         }
-        func onConnect(reconnecting: Bool, param: Any?) -> Void {
+        func onConnect(reconnecting: Bool, param: Any?) {
             let m = reconnecting ? "YES" : "NO"
             Tinode.log.info("Tinode connected: after reconnect - %@", m.description)
             let doLogin = tinode.autoLogin && tinode.loginCredentials != nil
@@ -1009,7 +1009,7 @@ public class Tinode {
                 return PromisedReply<ServerMessage>(error: err)
             })
         }
-        func onMessage(with message: String) -> Void {
+        func onMessage(with message: String) {
             Log.default.debug("in: %@", message)
             do {
                 try tinode.dispatch(message)
@@ -1017,13 +1017,13 @@ public class Tinode {
                 Log.default.error("onMessage error: %@", error.localizedDescription)
             }
         }
-        func onDisconnect(isServerOriginated: Bool, code: Int, reason: String) -> Void {
+        func onDisconnect(isServerOriginated: Bool, code: Int, reason: String) {
             let serverOriginatedString = isServerOriginated ? "YES" : "NO"
             Log.default.info("Tinode disconnected: server originated [%@]; code [%d]; reason [%@]",
                              serverOriginatedString, code, reason)
             tinode.handleDisconnect(isServerOriginated: isServerOriginated, code: code, reason: reason)
         }
-        func onError(error: Error) -> Void {
+        func onError(error: Error) {
             tinode.handleDisconnect(isServerOriginated: true, code: 0, reason: error.localizedDescription)
             Log.default.error("Tinode network error: %@", error.localizedDescription)
             try? rejectAllPromises(err: error)
@@ -1156,7 +1156,7 @@ public class Tinode {
             let msgId = getNextMsgId()
             let msg = ClientMessage<Int, Int>(hi: MsgClientHi(id: msgId, dev: token))
             return sendWithPromise(payload: msg, with: msgId)
-                .thenCatch { [weak self] err in
+                .thenCatch { [weak self] _ in
                     // Clear cached value on failure to allow for retries.
                     self?.deviceToken = nil
                     self?.store?.deviceToken = nil
@@ -1211,17 +1211,17 @@ public class Tinode {
         return head
     }
 
-    public func publish(topic: String, head: [String:JSONValue]?, content: Drafty) -> PromisedReply<ServerMessage> {
+    public func publish(topic: String, head: [String: JSONValue]?, content: Drafty) -> PromisedReply<ServerMessage> {
         let msgId = getNextMsgId()
         let msg = ClientMessage<Int, Int>(
             pub: MsgClientPub(id: msgId, topic: topic, noecho: true, head: head, content: content))
         return sendWithPromise(payload: msg, with: msgId)
     }
 
-    public func getTopics() -> Array<TopicProto>? {
+    public func getTopics() -> [TopicProto]? {
         return Array(topics.values)
     }
-    public func getFilteredTopics(filter: ((TopicProto) -> Bool)?) -> Array<TopicProto>? {
+    public func getFilteredTopics(filter: ((TopicProto) -> Bool)?) -> [TopicProto]? {
         guard let filter = filter else {
             return topics.values.compactMap { $0 }
         }
@@ -1290,7 +1290,7 @@ public class Tinode {
     public func delCurrentUser(hard: Bool) -> PromisedReply<ServerMessage> {
         let msgId = getNextMsgId()
         let msg = ClientMessage<Int, Int>(del: MsgClientDel(id: msgId, hard: hard))
-        return sendWithPromise(payload: msg, with: msgId).thenApply{ [weak self] _ in
+        return sendWithPromise(payload: msg, with: msgId).thenApply { [weak self] _ in
             guard let this = self else { return nil }
             this.disconnect()
             this.store?.deleteAccount(this.myUid!)

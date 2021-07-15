@@ -7,7 +7,7 @@
 
 import UIKit
 
-class ProgressView : UIView {
+class ProgressView: UIView {
 
     @IBOutlet weak var containerView: UIView!
     @IBOutlet weak var progressView: UIProgressView!

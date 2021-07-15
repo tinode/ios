@@ -19,13 +19,13 @@ protocol FindBusinessLogic: AnyObject {
 }
 
 class RemoteContactHolder: ContactHolder {
-    var sub: Subscription<VCard, Array<String>>? = nil
+    var sub: Subscription<VCard, [String]>?
 }
 
 class FindInteractor: FindBusinessLogic {
     private class FndListener: DefaultFndTopic.Listener {
         weak var interactor: FindBusinessLogic?
-        override func onMetaSub(sub: Subscription<VCard, Array<String>>) {
+        override func onMetaSub(sub: Subscription<VCard, [String]>) {
             // bitmaps?
         }
         override func onSubsUpdated() {
@@ -60,7 +60,7 @@ class FindInteractor: FindBusinessLogic {
     func attachToFndTopic() {
         let tinode = Cache.tinode
         UiUtils.attachToFndTopic(fndListener: self.fndListener)?.then(
-                onSuccess: { [weak self] msg in
+                onSuccess: { [weak self] _ in
                     self?.fndTopic = tinode.getOrCreateFndTopic()
                     return nil
                 },

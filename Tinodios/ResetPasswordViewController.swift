@@ -7,7 +7,7 @@
 
 import UIKit
 
-class ResetPasswordViewController : UIViewController {
+class ResetPasswordViewController: UIViewController {
     @IBOutlet weak var credentialTextField: UITextField!
     @IBOutlet weak var requestButton: UIButton!
 

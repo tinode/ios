@@ -27,7 +27,7 @@ open class MeTopic<DP: Codable & Mergeable>: Topic<DP, PrivateType, DP, PrivateT
         }
     }
 
-    private var credentials: [Credential]? = nil
+    private var credentials: [Credential]?
 
     public init(tinode: Tinode?) {
         super.init(tinode: tinode, name: Tinode.kTopicMe, l: nil)
@@ -83,7 +83,7 @@ open class MeTopic<DP: Codable & Mergeable>: Topic<DP, PrivateType, DP, PrivateT
         let tnd = tinode!
 
         return tnd.delCredential(cred: cred)
-            .thenApply { [weak self] msg in
+            .thenApply { [weak self] _ in
                 guard let me = self else { return nil }
 
                 let idx = me.findCredIndex(cred: cred, anyUnconfirmed: false)
@@ -102,7 +102,7 @@ open class MeTopic<DP: Codable & Mergeable>: Topic<DP, PrivateType, DP, PrivateT
 
     public func confirmCred(meth: String, response: String) ->PromisedReply<ServerMessage> {
         let cred = Credential(meth: meth, val: nil, resp: response, params: nil)
-        return setMeta(meta: MsgSetMeta(desc: nil, sub: nil, tags: nil, cred: cred));
+        return setMeta(meta: MsgSetMeta(desc: nil, sub: nil, tags: nil, cred: cred))
     }
 
     private func findCredIndex(cred other: Credential, anyUnconfirmed: Bool) -> Int {
@@ -136,7 +136,7 @@ open class MeTopic<DP: Codable & Mergeable>: Topic<DP, PrivateType, DP, PrivateT
         return PromisedReply<ServerMessage>(value: ServerMessage())
     }
 
-    override internal func update(acsMap: [String:String]?, sub: MetaSetSub) {
+    override internal func update(acsMap: [String: String]?, sub: MetaSetSub) {
         var newAcs: Acs
         if let acsMap = acsMap {
             newAcs = Acs(from: acsMap)
@@ -275,7 +275,7 @@ open class MeTopic<DP: Codable & Mergeable>: Topic<DP, PrivateType, DP, PrivateT
             }
         }
 
-        if (what == MsgServerPres.What.kGone) {
+        if what == MsgServerPres.What.kGone {
             listener?.onSubsUpdated()
         }
         listener?.onPres(pres: pres)
@@ -297,7 +297,7 @@ open class MeTopic<DP: Codable & Mergeable>: Topic<DP, PrivateType, DP, PrivateT
     }
 
     override internal func routeMetaSub(meta: MsgServerMeta) {
-        if let metaSubs = meta.sub as? Array<Subscription<DP, PrivateType>> {
+        if let metaSubs = meta.sub as? [Subscription<DP, PrivateType>] {
             for sub in metaSubs {
                 if let topic = tinode!.getTopic(topicName: sub.topic!) {
                     if sub.deleted != nil {

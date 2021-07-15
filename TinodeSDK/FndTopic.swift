@@ -7,8 +7,7 @@
 
 import Foundation
 
-
-public class FndTopic<SP: Codable>: Topic<String, String, SP, Array<String>> {
+public class FndTopic<SP: Codable>: Topic<String, String, SP, [String]> {
     init(tinode: Tinode?) {
         super.init(tinode: tinode, name: Tinode.kTopicFnd)
     }
@@ -40,7 +39,7 @@ public class FndTopic<SP: Codable>: Topic<String, String, SP, Array<String>> {
         self.listener?.onSubsUpdated()
     }
 
-    override public func getSubscriptions() -> [Subscription<SP, Array<String>>]? {
+    override public func getSubscriptions() -> [Subscription<SP, [String]>]? {
         guard let v = subs?.values else { return nil }
         return Array(v)
     }

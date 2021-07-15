@@ -73,7 +73,7 @@ class AttributedStringFormatter: DraftyFormatter {
         return TreeNode(content: "\n")
     }
 
-    func handleLink(withText content: String?, withChildren nodes: [TreeNode]?, attr: [String : JSONValue]?) -> TreeNode {
+    func handleLink(withText content: String?, withChildren nodes: [TreeNode]?, attr: [String: JSONValue]?) -> TreeNode {
         let node = TreeNode(text: content, nodes: nodes)
         if let urlString = attr?["url"]?.asString(), let url = NSURL(string: urlString), url.scheme?.lowercased() == "https" || url.scheme?.lowercased() == "http" {
             node.style(cstyle: [NSAttributedString.Key.link: url])
@@ -91,7 +91,7 @@ class AttributedStringFormatter: DraftyFormatter {
         return TreeNode(text: content, nodes: nodes)
     }
 
-    func handleImage(withText content: String?, withChildren nodes: [TreeNode]?, using attr: [String : JSONValue]?) -> TreeNode {
+    func handleImage(withText content: String?, withChildren nodes: [TreeNode]?, using attr: [String: JSONValue]?) -> TreeNode {
         var attachment = Attachment(content: .image)
         let node = TreeNode(text: content, nodes: nodes)
         if let attr = attr {
@@ -107,7 +107,7 @@ class AttributedStringFormatter: DraftyFormatter {
         return node
     }
 
-    func handleAttachment(withText content: String?, withChildren nodes: [TreeNode]?, using attr: [String : JSONValue]?) -> TreeNode {
+    func handleAttachment(withText content: String?, withChildren nodes: [TreeNode]?, using attr: [String: JSONValue]?) -> TreeNode {
         let node = TreeNode(text: content, nodes: nodes)
         if let attr = attr {
             let mimeType =  attr["mime"]?.asString()
@@ -140,7 +140,7 @@ class AttributedStringFormatter: DraftyFormatter {
         return node
     }
 
-    func handleButton(withText content: String?, withChildren nodes: [TreeNode]?, using attr: [String : JSONValue]?) -> TreeNode {
+    func handleButton(withText content: String?, withChildren nodes: [TreeNode]?, using attr: [String: JSONValue]?) -> TreeNode {
         let node = TreeNode(text: content, nodes: nodes)
         guard let urlStr = AttributedStringFormatter.buttonDataAsUri(face: node, attr: attr), let url = URL(string: urlStr) else { return node }
 
@@ -178,7 +178,7 @@ class AttributedStringFormatter: DraftyFormatter {
 
     // Convert button payload to an URL.
     // NSAttributedString.Key.link wants payload to be NSURL.
-    private static func buttonDataAsUri(face: TreeNode, attr: [String : JSONValue]?) -> String? {
+    private static func buttonDataAsUri(face: TreeNode, attr: [String: JSONValue]?) -> String? {
         guard let attr = attr, let actionType = attr["act"]?.asString() else { return nil }
         var baseUrl: URLComponents
         switch actionType {
@@ -215,11 +215,11 @@ class AttributedStringFormatter: DraftyFormatter {
         return baseUrl.url?.absoluteString
     }
 
-    func apply(tp: String?, attr: [String : JSONValue]?, content: [AttributedStringFormatter.TreeNode]) -> AttributedStringFormatter.TreeNode {
+    func apply(tp: String?, attr: [String: JSONValue]?, content: [AttributedStringFormatter.TreeNode]) -> AttributedStringFormatter.TreeNode {
         return self.makeTree(tp: tp, attr: attr, children: content, content: nil)
     }
 
-    func apply(tp: String?, attr: [String : JSONValue]?, content: String?) -> AttributedStringFormatter.TreeNode {
+    func apply(tp: String?, attr: [String: JSONValue]?, content: String?) -> AttributedStringFormatter.TreeNode {
         return self.makeTree(tp: tp, attr: attr, children: nil, content: content)
     }
 
@@ -229,9 +229,9 @@ class AttributedStringFormatter: DraftyFormatter {
     ///    - fitIn: maximum size of attached images.
     ///    - defaultAttrs: default attribues to apply to all otherwise unstyled content.
     ///    - textColor: default text color.
-    public static func toAttributed(_ content: Drafty, fitIn maxSize: CGSize, withDefaultAttributes attributes: [NSAttributedString.Key : Any]? = nil) -> NSAttributedString {
+    public static func toAttributed(_ content: Drafty, fitIn maxSize: CGSize, withDefaultAttributes attributes: [NSAttributedString.Key: Any]? = nil) -> NSAttributedString {
 
-        var attributes: [NSAttributedString.Key : Any] = attributes ?? [:]
+        var attributes: [NSAttributedString.Key: Any] = attributes ?? [:]
         if attributes[.font] == nil {
             attributes[.font] = Constants.kDefaultFont
         }
@@ -271,7 +271,7 @@ class AttributedStringFormatter: DraftyFormatter {
     }
 
     // Class representing Drafty as a tree of nodes with content and styles attached.
-    class TreeNode : CustomStringConvertible {
+    class TreeNode: CustomStringConvertible {
         // A set of font traits to apply at the leaf level
         var cFont: UIFontDescriptor.SymbolicTraits?
         // Character style which can be applied over leaf or subtree
@@ -391,7 +391,7 @@ class AttributedStringFormatter: DraftyFormatter {
             }
         }
 
-        private func makeFileAttachmentString(_ attachment: Attachment, withData bits: Data?, withRef ref: String?, defaultAttrs attributes: [NSAttributedString.Key : Any], maxSize size: CGSize) -> NSAttributedString {
+        private func makeFileAttachmentString(_ attachment: Attachment, withData bits: Data?, withRef ref: String?, defaultAttrs attributes: [NSAttributedString.Key: Any], maxSize size: CGSize) -> NSAttributedString {
             let attributed = NSMutableAttributedString()
             let baseFont = attributes[.font] as! UIFont
             attributed.beginEditing()
@@ -424,7 +424,7 @@ class AttributedStringFormatter: DraftyFormatter {
                 fname = fname.prefix(visibleLen) + "…" + fname.suffix(visibleLen)
             }
             attributed.append(NSAttributedString(string: " "))
-            attributed.append(NSAttributedString(string: fname, attributes: [NSAttributedString.Key.font : UIFont(name: "Courier", size: baseFont.pointSize)!]))
+            attributed.append(NSAttributedString(string: fname, attributes: [NSAttributedString.Key.font: UIFont(name: "Courier", size: baseFont.pointSize)!]))
 
             // Append file size.
             if let size = attachment.size {
@@ -440,7 +440,7 @@ class AttributedStringFormatter: DraftyFormatter {
                 paragraph.firstLineHeadIndent = Constants.kAttachmentIconSize.width + baseFont.capHeight * 0.25
                 paragraph.lineSpacing = 0
                 paragraph.lineHeightMultiple = 0.25
-                second.addAttributes([NSAttributedString.Key.paragraphStyle : paragraph, NSAttributedString.Key.foregroundColor : UIColor.gray,
+                second.addAttributes([NSAttributedString.Key.paragraphStyle: paragraph, NSAttributedString.Key.foregroundColor: UIColor.gray
                 ], range: NSRange(location: 0, length: second.length))
 
                 second.endEditing()
@@ -449,7 +449,7 @@ class AttributedStringFormatter: DraftyFormatter {
 
             if isValid {
                 // Insert linebreak then a clickable [↓ save] line
-                attributed.append(NSAttributedString(string: "\u{2009}\n", attributes: [NSAttributedString.Key.font : baseFont]))
+                attributed.append(NSAttributedString(string: "\u{2009}\n", attributes: [NSAttributedString.Key.font: baseFont]))
 
                 let second = NSMutableAttributedString(string: "\u{2009}")
                 second.beginEditing()
@@ -461,14 +461,14 @@ class AttributedStringFormatter: DraftyFormatter {
                 second.append(NSAttributedString(attachment: icon))
 
                 // Add "save" text.
-                second.append(NSAttributedString(string: " save", attributes: [NSAttributedString.Key.font : baseFont]))
+                second.append(NSAttributedString(string: " save", attributes: [NSAttributedString.Key.font: baseFont]))
 
                 // Add paragraph style and coloring
                 let paragraph = NSMutableParagraphStyle()
                 paragraph.firstLineHeadIndent = Constants.kAttachmentIconSize.width + baseFont.capHeight * 0.25
                 paragraph.lineSpacing = 0
                 paragraph.lineHeightMultiple = 0
-                second.addAttributes([NSAttributedString.Key.paragraphStyle : paragraph, NSAttributedString.Key.foregroundColor : Constants.kLinkColor,
+                second.addAttributes([NSAttributedString.Key.paragraphStyle: paragraph, NSAttributedString.Key.foregroundColor: Constants.kLinkColor
                 ], range: NSRange(location: 0, length: second.length))
 
                 var baseUrl = URLComponents(string: "tinode://\(tinode.hostName)")!
@@ -485,7 +485,7 @@ class AttributedStringFormatter: DraftyFormatter {
         }
 
         /// Create custom layout for attachments.
-        private func attachmentToAttributed(_ attachment: Attachment, defaultAttrs attributes: [NSAttributedString.Key : Any], fontTraits: UIFontDescriptor.SymbolicTraits?, maxSize size: CGSize) -> NSAttributedString {
+        private func attachmentToAttributed(_ attachment: Attachment, defaultAttrs attributes: [NSAttributedString.Key: Any], fontTraits: UIFontDescriptor.SymbolicTraits?, maxSize size: CGSize) -> NSAttributedString {
             switch attachment.content {
             // Image handling is easy.
             case .image:
@@ -556,7 +556,7 @@ class AttributedStringFormatter: DraftyFormatter {
         }
 
         /// Plain text to attributed string.
-        public static func textToAttributed(_ text: String, defaultAttrs: [NSAttributedString.Key : Any], fontTraits: UIFontDescriptor.SymbolicTraits?) -> NSAttributedString {
+        public static func textToAttributed(_ text: String, defaultAttrs: [NSAttributedString.Key: Any], fontTraits: UIFontDescriptor.SymbolicTraits?) -> NSAttributedString {
 
             var attributes = defaultAttrs
             if let fontTraits = fontTraits {
@@ -586,7 +586,7 @@ class AttributedStringFormatter: DraftyFormatter {
         }
 
         /// Convert tree of nodes into an attributed string.
-        func toAttributed(withDefaultAttributes attributes: [NSAttributedString.Key : Any], fontTraits parentFontTraits: UIFontDescriptor.SymbolicTraits?, fitIn size: CGSize, upToLength maxLength: Int = Int.max) throws -> NSAttributedString {
+        func toAttributed(withDefaultAttributes attributes: [NSAttributedString.Key: Any], fontTraits parentFontTraits: UIFontDescriptor.SymbolicTraits?, fitIn size: CGSize, upToLength maxLength: Int = Int.max) throws -> NSAttributedString {
 
             // Font traits for this substring and all its children.
             var fontTraits: UIFontDescriptor.SymbolicTraits? = cFont
@@ -614,7 +614,7 @@ class AttributedStringFormatter: DraftyFormatter {
             }
             if attributed.length > maxLength {
                 exceeded = true
-                attributed.setAttributedString(attributed.attributedSubstring(from: NSMakeRange(0, maxLength)))
+                attributed.setAttributedString(attributed.attributedSubstring(from: NSRange(location: 0, length: maxLength)))
             }
 
             if !exceeded, let children = self.children {
@@ -651,9 +651,9 @@ class PreviewFormatter: AttributedStringFormatter {
     // Default font for previews.
     static let kDefaultFont = UIFont.preferredFont(forTextStyle: .subheadline)
 
-    public static func toAttributed(_ content: Drafty, fitIn maxSize: CGSize, withDefaultAttributes attributes: [NSAttributedString.Key : Any]? = nil, upToLength maxLength: Int) -> NSAttributedString {
+    public static func toAttributed(_ content: Drafty, fitIn maxSize: CGSize, withDefaultAttributes attributes: [NSAttributedString.Key: Any]? = nil, upToLength maxLength: Int) -> NSAttributedString {
 
-        var attributes: [NSAttributedString.Key : Any] = attributes ?? [:]
+        var attributes: [NSAttributedString.Key: Any] = attributes ?? [:]
         if attributes[.font] == nil {
             attributes[.font] = PreviewFormatter.kDefaultFont
         }
@@ -684,7 +684,7 @@ class PreviewFormatter: AttributedStringFormatter {
         return Node(content: " ")
     }
 
-    override func handleLink(withText content: String?, withChildren nodes: [Node]?, attr: [String : JSONValue]?) -> Node {
+    override func handleLink(withText content: String?, withChildren nodes: [Node]?, attr: [String: JSONValue]?) -> Node {
         let node = Node(text: content, nodes: nodes)
         node.style(cstyle: [.foregroundColor: AttributedStringFormatter.Constants.kLinkColor])
         return node
@@ -705,7 +705,7 @@ class PreviewFormatter: AttributedStringFormatter {
         return iconNode
     }
 
-    override func handleImage(withText content: String?, withChildren nodes: [Node]?, using attr: [String : JSONValue]?) -> Node {
+    override func handleImage(withText content: String?, withChildren nodes: [Node]?, using attr: [String: JSONValue]?) -> Node {
         if nodes != nil {
             Cache.log.error("PreviewFormatter - image nodes must be terminal.")
         }
@@ -716,7 +716,7 @@ class PreviewFormatter: AttributedStringFormatter {
         return annotatedIcon(iconName: "image-50", annotation: "Picture", comment: "Image preview icon.")
     }
 
-    override func handleAttachment(withText content: String?, withChildren nodes: [Node]?, using attr: [String : JSONValue]?) -> Node {
+    override func handleAttachment(withText content: String?, withChildren nodes: [Node]?, using attr: [String: JSONValue]?) -> Node {
         if nodes != nil {
             Cache.log.error("PreviewFormatter - attachment nodes must be terminal.")
         }
@@ -734,8 +734,8 @@ class PreviewFormatter: AttributedStringFormatter {
         return Node(content: result)
     }
 
-    override func handleButton(withText content: String?, withChildren nodes: [Node]?, using attr: [String : JSONValue]?) -> Node {
-        let attrs: [NSAttributedString.Key : Any] = [.baselineOffset: 0]
+    override func handleButton(withText content: String?, withChildren nodes: [Node]?, using attr: [String: JSONValue]?) -> Node {
+        let attrs: [NSAttributedString.Key: Any] = [.baselineOffset: 0]
         var faceText: NSAttributedString
         if let content = content {
             faceText = NSAttributedString(string: content, attributes: attrs)

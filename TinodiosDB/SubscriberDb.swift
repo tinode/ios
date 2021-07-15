@@ -9,11 +9,11 @@ import Foundation
 import SQLite
 import TinodeSDK
 
-public class StoredSubscription: Payload  {
-    public var id: Int64? = nil
-    public var topicId: Int64? = nil
-    public var userId: Int64? = nil
-    public var status: BaseDb.Status? = nil
+public class StoredSubscription: Payload {
+    public var id: Int64?
+    public var topicId: Int64?
+    public var userId: Int64?
+    public var status: BaseDb.Status?
 }
 
 enum SubscriberDbError: Error {
@@ -53,7 +53,7 @@ public class SubscriberDb {
         self.status = Expression<Int?>("status")
         self.mode = Expression<String?>("mode")
         self.updated = Expression<Date?>("updated")
-        //self.deleted =
+        // self.deleted =
         self.read = Expression<Int?>("read")
         self.recv = Expression<Int?>("recv")
         self.clear = Expression<Int?>("clear")
@@ -77,7 +77,7 @@ public class SubscriberDb {
             t.column(status)
             t.column(mode)
             t.column(updated)
-            //self.deleted =
+            // self.deleted =
             t.column(read)
             t.column(recv)
             t.column(clear)
@@ -219,7 +219,7 @@ public class SubscriberDb {
             self.table[self.status],
             self.table[self.mode],
             self.table[self.updated],
-            //self.deleted
+            // self.deleted
             self.table[self.read],
             self.table[self.recv],
             self.table[self.clear],

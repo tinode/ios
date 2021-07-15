@@ -99,7 +99,7 @@ class SendImageBar: UIView {
         toggleNotAvailableOverlay(visible: false)
     }
 
-    /// MARK: - Subviews handling
+    // MARK: - Subviews handling
     public func toggleNotAvailableOverlay(visible: Bool) {
         allDisabledView.isHidden = !visible
         isUserInteractionEnabled = !visible

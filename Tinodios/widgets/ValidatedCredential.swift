@@ -38,7 +38,7 @@ enum ValidatedCredential {
             currObject = str
         }
 
-        let predicate =  NSPredicate(format: "SELF MATCHES %@" ,predicateStr)
+        let predicate =  NSPredicate(format: "SELF MATCHES %@", predicateStr)
         return predicate.evaluate(with: currObject)
     }
 

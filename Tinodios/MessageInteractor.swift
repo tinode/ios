@@ -35,7 +35,7 @@ protocol MessageDataStore {
     func loadNextPage()
     func deleteMessage(seqId: Int)
     func deleteFailedMessages()
-} 
+}
 
 // Object to upload.
 struct UploadDef {
@@ -74,7 +74,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
     var presenter: MessagePresentationLogic?
     var messages: [StoredMessage] = []
     private var messageInteractorQueue = DispatchQueue(label: "co.tinode.messageinteractor")
-    private var tinodeEventListener: MessageEventListener? = nil
+    private var tinodeEventListener: MessageEventListener?
     // Last reported recv and read seq ids by the onInfo handler.
     // Upon receipt of an info message, the handler will reload all messages with
     // seq ids between the last seen seq id (for recv and read messages respectively)
@@ -226,7 +226,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
             loadMessages()
         }
         topic.publish(content: content).then(
-            onSuccess: { [weak self] msg in
+            onSuccess: { [weak self] _ in
                 self?.loadMessages()
                 return nil
             },
@@ -312,7 +312,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
 
     func deleteMessage(seqId: Int) {
         topic?.delMessage(id: seqId, hard: false).then(
-            onSuccess: { [weak self] msg in
+            onSuccess: { [weak self] _ in
                 self?.loadMessages()
                 return nil
             },
@@ -344,7 +344,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
             // For P2P topics change 'given' permission of the peer too.
             // In p2p topics the other user has the same name as the topic.
             response = response.then(
-                onSuccess: { msg in
+                onSuccess: { _ in
                     _ = topic.setMeta(meta: MsgSetMeta(
                         desc: nil,
                         sub: MetaSetSub(user: topic.name, mode: mode),
@@ -355,7 +355,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                 onFailure: UiUtils.ToastFailureHandler
             )
         }
-        response.thenApply({ msg in
+        response.thenApply({ _ in
             self.presenter?.applyTopicPermissions(withError: nil)
             return nil
         })
@@ -381,7 +381,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
     static private func existingInteractor(for topicName: String?) -> MessageInteractor? {
         // Must be called on main thread.
         guard let topicName = topicName else { return nil }
-        var result: MessageInteractor? = nil
+        var result: MessageInteractor?
         DispatchQueue.main.sync {
             guard let window = UIApplication.shared.keyWindow, let navVC = window.rootViewController as? UINavigationController else {
                 return
@@ -496,7 +496,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
 
     private static func draftyImage(caption: String?, filename: String?, refurl: URL?, mimeType: String?, data: Data, width: Int, height: Int, size: Int) -> Drafty? {
 
-        let content = Drafty(plainText: " ");
+        let content = Drafty(plainText: " ")
         let ref: URL?
         if let refurl = refurl, let base = Cache.tinode.baseURL(useWebsocketProtocol: false) {
             ref = URL(string: refurl.relativize(from: base))
@@ -504,7 +504,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
             ref = nil
         }
 
-        try? _ = content.insertImage(at: 0, mime: mimeType, bits: data, width: width, height: height, fname: filename, refurl: ref, size: size);
+        try? _ = content.insertImage(at: 0, mime: mimeType, bits: data, width: width, height: height, fname: filename, refurl: ref, size: size)
 
         if let caption = caption, !caption.isEmpty {
             _ = content.appendLineBreak().append(Drafty(plainText: caption))

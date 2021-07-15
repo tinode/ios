@@ -22,7 +22,7 @@ class NewGroupViewController: UITableViewController {
 
     private var selectedContacts: [ContactHolder] = []
     private var selectedUids = Set<String>()
-    var selectedMembers: Array<String> { return selectedUids.map { $0 } }
+    var selectedMembers: [String] { return selectedUids.map { $0 } }
 
     private var imageUploaded: Bool = false
 
@@ -165,7 +165,7 @@ class NewGroupViewController: UITableViewController {
         topic.priv = ["comment": .string(subtitle)] // No need to use Tinode.kNullValue here
         topic.tags = tags
         topic.subscribe().then(
-            onSuccess: { msg in
+            onSuccess: { _ in
                 for u in members {
                     topic.invite(user: u, in: nil)
                 }
@@ -195,13 +195,13 @@ extension NewGroupViewController: EditMembersDelegate {
         selectedUids.formUnion(added)
         selectedUids.subtract(removed)
         // A simple tableView.reloadData() results in a crash. Thus doing this crazy stuff.
-        let removedPaths = removed.map( {(rem: String) -> IndexPath in
+        let removedPaths = removed.map({(rem: String) -> IndexPath in
             let row = selectedContacts.firstIndex(where: { h in h.uniqueId == rem })
             assert(row != nil, "Removed non-existent user")
             return IndexPath(row: row! + 1, section: 1)
         })
         let newSelection = ContactsManager.default.fetchContacts(withUids: selectedMembers) ?? []
-        let addedPaths = added.map( {(add: String) -> IndexPath in
+        let addedPaths = added.map({(add: String) -> IndexPath in
             let row = newSelection.firstIndex(where: { h in h.uniqueId == add })
             assert(row != nil, "Added non-existent user")
             return IndexPath(row: row! + 1, section: 1)

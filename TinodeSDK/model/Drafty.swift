@@ -15,8 +15,8 @@ public enum DraftyError: Error {
 public protocol DraftyFormatter {
     associatedtype Node
 
-    func apply(tp: String?, attr: [String:JSONValue]?, content: [Node]) -> Node
-    func apply(tp: String?, attr: [String:JSONValue]?, content: String?) -> Node
+    func apply(tp: String?, attr: [String: JSONValue]?, content: [Node]) -> Node
+    func apply(tp: String?, attr: [String: JSONValue]?, content: String?) -> Node
 
     // Formatting type handlers.
     func handleStrong(withText content: String?, withChildren nodes: [Node]?) -> Node
@@ -25,12 +25,12 @@ public protocol DraftyFormatter {
     func handleCode(withText content: String?, withChildren nodes: [Node]?) -> Node
     func handleHidden(withText content: String?, withChildren nodes: [Node]?) -> Node
     func handleLineBreak() -> Node
-    func handleLink(withText content: String?, withChildren nodes: [Node]?, attr: [String : JSONValue]?) -> Node
+    func handleLink(withText content: String?, withChildren nodes: [Node]?, attr: [String: JSONValue]?) -> Node
     func handleMention(withText content: String?, withChildren nodes: [Node]?) -> Node
     func handleHashtag(withText content: String?, withChildren nodes: [Node]?) -> Node
-    func handleImage(withText content: String?, withChildren nodes: [Node]?, using attr: [String : JSONValue]?) -> Node
-    func handleAttachment(withText content: String?, withChildren nodes: [Node]?, using attr: [String : JSONValue]?) -> Node
-    func handleButton(withText content: String?, withChildren nodes: [Node]?, using attr: [String : JSONValue]?) -> Node
+    func handleImage(withText content: String?, withChildren nodes: [Node]?, using attr: [String: JSONValue]?) -> Node
+    func handleAttachment(withText content: String?, withChildren nodes: [Node]?, using attr: [String: JSONValue]?) -> Node
+    func handleButton(withText content: String?, withChildren nodes: [Node]?, using attr: [String: JSONValue]?) -> Node
     func handleForm(withText content: String?, withChildren nodes: [Node]?) -> Node
     func handleFormRow(withText content: String?, withChildren nodes: [Node]?) -> Node
     func handleUnknown(withText content: String?, withChildren nodes: [Node]?) -> Node
@@ -39,7 +39,7 @@ public protocol DraftyFormatter {
 
 extension DraftyFormatter {
     // Construct a tree representing formatting styles and content.
-    public func makeTree(tp: String?, attr: [String : JSONValue]?, children: [Node]?, content: String?) -> Node {
+    public func makeTree(tp: String?, attr: [String: JSONValue]?, children: [Node]?, content: String?) -> Node {
         guard let tp = tp else {
             return handlePlain(withText: content, withChildren: children)
         }
@@ -67,7 +67,7 @@ extension DraftyFormatter {
         case "EX":
             return handleAttachment(withText: content, withChildren: children, using: attr)
         case "BN":
-            return handleButton(withText: content, withChildren: children, using: attr) //(from: node, with: attr)
+            return handleButton(withText: content, withChildren: children, using: attr) // (from: node, with: attr)
         case "FM":
             return handleForm(withText: content, withChildren: children)
         case "RW":
@@ -112,28 +112,28 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
     private static let kEntities = try! [
         EntityProc(name: "LN",
                    pattern: NSRegularExpression(pattern: #"\b(https?://)?(?:www\.)?(?:[a-z0-9][-a-z0-9]*[a-z0-9]\.){1,5}[a-z]{2,6}(?:[/?#:][-a-z0-9@:%_+.~#?&/=]*)?"#, options: [.caseInsensitive]),
-                   pack: {(text: NSString, m: NSTextCheckingResult) -> [String:JSONValue] in
-                        var data: [String:JSONValue] = [:]
+                   pack: {(text: NSString, m: NSTextCheckingResult) -> [String: JSONValue] in
+                        var data: [String: JSONValue] = [:]
                         data["url"] = JSONValue.string(m.range(at: 1).location == NSNotFound ? "http://" + text.substring(with: m.range) : text.substring(with: m.range))
                         return data
                    }),
         EntityProc(name: "MN",
                    pattern: NSRegularExpression(pattern: #"\B@(\w\w+)"#),
-                   pack: {(text: NSString, m: NSTextCheckingResult) -> [String:JSONValue] in
-                    var data: [String:JSONValue] = [:]
+                   pack: {(text: NSString, m: NSTextCheckingResult) -> [String: JSONValue] in
+                    var data: [String: JSONValue] = [:]
                     data["val"] = JSONValue.string(text.substring(with: m.range(at: 1)))
                     return data
             }),
         EntityProc(name: "HT",
                    pattern: NSRegularExpression(pattern: #"(?<=[\s,.!]|^)#(\w\w+)"#),
-                   pack: {(text: NSString, m: NSTextCheckingResult) -> [String:JSONValue] in
-                    var data: [String:JSONValue] = [:]
+                   pack: {(text: NSString, m: NSTextCheckingResult) -> [String: JSONValue] in
+                    var data: [String: JSONValue] = [:]
                     data["val"] = JSONValue.string(text.substring(with: m.range(at: 1)))
                     return data
             })
     ]
 
-    private enum CodingKeys : String, CodingKey  {
+    private enum CodingKeys: String, CodingKey {
         case txt = "txt"
         case fmt = "fmt"
         case ent = "ent"
@@ -390,7 +390,7 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
         var blks: [Block] = []
         var refs: [Entity] = []
 
-        var entityMap: [String:JSONValue] = [:]
+        var entityMap: [String: JSONValue] = [:]
         for line in lines {
             var spans = Drafty.kInlineStyles.flatMap { (arg) -> [Span] in
                 let (name, re) = arg
@@ -553,7 +553,7 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
 
         prepareForEntity(at: at, len: 1)
 
-        var data: [String:JSONValue] = [:]
+        var data: [String: JSONValue] = [:]
         if let mime = mime, !mime.isEmpty {
             data["mime"] = JSONValue.string(mime)
         }
@@ -615,7 +615,7 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
 
         prepareForEntity(at: -1, len: 1)
 
-        var data: [String:JSONValue] = [:]
+        var data: [String: JSONValue] = [:]
         if let mime = mime, !mime.isEmpty {
             data["mime"] = JSONValue.string(mime)
         }
@@ -641,10 +641,10 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
     /// - Parameters:
     ///     - json: object to attach.
     /// - Returns: 'self' Drafty object.
-    public func attachJSON(_ json: [String:JSONValue]) -> Drafty {
+    public func attachJSON(_ json: [String: JSONValue]) -> Drafty {
         prepareForEntity(at: -1, len: 1)
 
-        var data: [String:JSONValue] = [:]
+        var data: [String: JSONValue] = [:]
         data["mime"] = JSONValue.string(Drafty.kJSONMimeType)
         data["val"] = JSONValue.dict(json)
         ent!.append(Entity(tp: "EX", data: data))
@@ -718,7 +718,7 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
             throw DraftyError.illegalArgument("URL required for URL buttons")
         }
 
-        var data: [String:JSONValue] = [:]
+        var data: [String: JSONValue] = [:]
         data["act"] = JSONValue.string(actionType)
         if let name = name, !name.isEmpty {
             data["name"] = JSONValue.string(name)
@@ -805,7 +805,7 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
 
         // Add the last unformatted range.
         if start < end {
-            result.append(formatter.apply(tp: nil, attr: nil,  content: String(line[line.index(line.startIndex, offsetBy: start)..<line.index(line.startIndex, offsetBy: end)])))
+            result.append(formatter.apply(tp: nil, attr: nil, content: String(line[line.index(line.startIndex, offsetBy: start)..<line.index(line.startIndex, offsetBy: end)])))
         }
 
         return result
@@ -839,7 +839,7 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
                 // Attachment
                 aFmt.at = -1
                 aFmt.len = 1
-            } else if (aFmt.at + aFmt.len > maxIndex) {
+            } else if aFmt.at + aFmt.len > maxIndex {
                 // Out of bounds span.
                 continue
             }
@@ -887,7 +887,7 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
         if let format = self.fmt, !format.isEmpty {
             var fmtCount = 0
             // Entity mapping.
-            var entRefs = [Int:Int]()
+            var entRefs = [Int: Int]()
             // Count styles which start within the new length of the text and save entity keys as set.
             for st in format {
                 if st.at < len {
@@ -910,7 +910,7 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
             preview.fmt = [Style]()
             preview.fmt?.reserveCapacity(fmtCount)
             if !entRefs.isEmpty {
-                preview.ent = Array<Entity>(repeating: Entity(), count: entRefs.count)
+                preview.ent = [Entity](repeating: Entity(), count: entRefs.count)
             }
             // Insertion point for styles.
             for st in format {
@@ -976,7 +976,7 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
         var key: Int
         var text: String?
         var type: String?
-        var data: [String:JSONValue]?
+        var data: [String: JSONValue]?
         var children: [Span]?
 
         init() {
@@ -1013,7 +1013,7 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
         var tp: String
         var value: String
 
-        var data: [String:JSONValue]
+        var data: [String: JSONValue]
 
         init() {
             at = 0
@@ -1032,7 +1032,7 @@ public class Style: Codable, CustomStringConvertible, Equatable {
     var tp: String?
     var key: Int?
 
-    private enum CodingKeys : String, CodingKey  {
+    private enum CodingKeys: String, CodingKey {
         case at = "at"
         case len = "len"
         case tp = "tp"
@@ -1094,9 +1094,9 @@ public class Style: Codable, CustomStringConvertible, Equatable {
 public class Entity: Codable, CustomStringConvertible, Equatable {
     private static let kLightData = ["mime", "name", "width", "height", "size"]
     public var tp: String?
-    public var data: [String:JSONValue]?
+    public var data: [String: JSONValue]?
 
-    private enum CodingKeys : String, CodingKey  {
+    private enum CodingKeys: String, CodingKey {
         case tp = "tp"
         case data = "data"
     }
@@ -1105,7 +1105,7 @@ public class Entity: Codable, CustomStringConvertible, Equatable {
     required public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         tp = try? container.decode(String.self, forKey: .tp)
-        data = try? container.decode([String:JSONValue].self, forKey: .data)
+        data = try? container.decode([String: JSONValue].self, forKey: .data)
 
         // data["val"] is expected to be a large base64-encoded string. Decode it to Data so it does not need to decoded it every time it's accessed
         if let val = data?["val"]?.asString() {
@@ -1125,7 +1125,7 @@ public class Entity: Codable, CustomStringConvertible, Equatable {
     /// - Parameters:
     ///     - tp: type of attachment
     ///     - data: payload
-    public init(tp: String?, data: [String:JSONValue]?) {
+    public init(tp: String?, data: [String: JSONValue]?) {
         self.tp = tp
         self.data = data
     }
@@ -1141,9 +1141,9 @@ public class Entity: Codable, CustomStringConvertible, Equatable {
 
     /// Returns a copy of the original entity with the data restricted to the kLightData array keys.
     public func copyLight() -> Entity {
-        var dataCopy: [String:JSONValue]? = nil
+        var dataCopy: [String: JSONValue]?
         if let dt = self.data, !dt.isEmpty {
-            var dc: [String:JSONValue] = [:]
+            var dc: [String: JSONValue] = [:]
             for key in Entity.kLightData {
                 if let val = dt[key] {
                     dc[key] = val
@@ -1157,12 +1157,12 @@ public class Entity: Codable, CustomStringConvertible, Equatable {
     }
 }
 
-fileprivate class EntityProc {
+private class EntityProc {
     var name: String
     var re: NSRegularExpression
-    var pack: (_ text: NSString, _ m: NSTextCheckingResult) -> [String:JSONValue]
+    var pack: (_ text: NSString, _ m: NSTextCheckingResult) -> [String: JSONValue]
 
-    init(name: String, pattern: NSRegularExpression, pack: @escaping (_ text: NSString, _ m: NSTextCheckingResult) -> [String:JSONValue]) {
+    init(name: String, pattern: NSRegularExpression, pack: @escaping (_ text: NSString, _ m: NSTextCheckingResult) -> [String: JSONValue]) {
         self.name = name
         self.re = pattern
         self.pack = pack

@@ -12,13 +12,13 @@ import TinodeSDK
 
 public typealias ScalingData = (dst: CGSize, src: CGRect, altered: Bool)
 
-class UiTinodeEventListener : TinodeEventListener {
+class UiTinodeEventListener: TinodeEventListener {
     private var connected: Bool = false
 
     init(connected: Bool) {
         self.connected = connected
     }
-    func onConnect(code: Int, reason: String, params: [String : JSONValue]?) {
+    func onConnect(code: Int, reason: String, params: [String: JSONValue]?) {
         connected = true
     }
     func onDisconnect(byServer: Bool, code: Int, reason: String) {
@@ -84,7 +84,7 @@ class UiUtils {
     static let kMaxTitleLength = 60
 
     // Color of "read" delivery marker.
-    static let kDeliveryMarkerTint = UIColor(red: 19/255, green: 144/255, blue:255/255, alpha: 0.8)
+    static let kDeliveryMarkerTint = UIColor(red: 19/255, green: 144/255, blue: 255/255, alpha: 0.8)
     // Color of all other markers.
     static let kDeliveryMarkerColor = UIColor.gray.withAlphaComponent(0.7)
 
@@ -119,7 +119,7 @@ class UiUtils {
     public static func attachToMeTopic(meListener: DefaultMeTopic.Listener?) -> PromisedReply<ServerMessage>? {
         let tinode = Cache.tinode
         var me = tinode.getMeTopic()
-        if me == nil  {
+        if me == nil {
             me = DefaultMeTopic(tinode: tinode, l: meListener)
         } else {
             me!.listener = meListener
@@ -350,7 +350,7 @@ class UiUtils {
         }, completion: {(isCompleted) in
             UIView.animate(withDuration: 0.2, delay: duration-0.4, options: .curveEaseIn, animations: {
                 toastView.alpha = 0
-            }, completion: {(isCompleted) in
+            }, completion: {(_) in
                 toastView.removeFromSuperview()
             })
         })
@@ -397,7 +397,7 @@ class UiUtils {
     @discardableResult
     public static func handlePermissionsChange(onTopic topic: DefaultTopic, forUid uid: String?, changeType: PermissionsChangeType, newPermissions: String)
         -> PromisedReply<ServerMessage>? {
-        var reply: PromisedReply<ServerMessage>? = nil
+        var reply: PromisedReply<ServerMessage>?
         switch changeType {
         case .updateSelfSub:
             reply = topic.updateMode(uid: nil, update: newPermissions)
@@ -633,7 +633,7 @@ extension UITableViewController {
         // Resolve this issue.
         if let rect = self.tabBarController?.navigationController?.navigationBar.frame {
             let y = rect.size.height + rect.origin.y
-            let shift = UIEdgeInsets(top: y, left: 0,bottom: 0,right: 0)
+            let shift = UIEdgeInsets(top: y, left: 0, bottom: 0, right: 0)
             self.tableView.scrollIndicatorInsets = shift
             self.tableView.contentInset = shift
         }
@@ -839,4 +839,3 @@ extension UIButton {
         self.layer.addSublayer(border)
     }
 }
-

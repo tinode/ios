@@ -23,11 +23,11 @@ class ChatListViewController: UITableViewController, ChatListDisplayLogic {
 
     var interactor: ChatListBusinessLogic?
     var topics: [DefaultComTopic] = []
-    var archivedTopics: [DefaultComTopic]? = nil
+    var archivedTopics: [DefaultComTopic]?
     var numArchivedTopics: Int { return archivedTopics?.count ?? 0 }
 
     // Index of contacts: name => position in topics
-    var rowIndex: [String : Int] = [:]
+    var rowIndex: [String: Int] = [:]
     var router: ChatListRoutingLogic?
     // Archived chats footer
     var archivedChatsFooter: UIView?
@@ -175,11 +175,11 @@ extension ChatListViewController {
 
     override func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
         // Delete item at indexPath
-        let delete = UITableViewRowAction(style: .destructive, title: NSLocalizedString("Delete", comment: "Swipe action")) { (action, indexPath) in
+        let delete = UITableViewRowAction(style: .destructive, title: NSLocalizedString("Delete", comment: "Swipe action")) { (_, indexPath) in
             let topic = self.topics[indexPath.row]
             self.interactor?.deleteTopic(topic.name)
         }
-        let archive = UITableViewRowAction(style: .normal, title: NSLocalizedString("Archive", comment: "Swipe action")) { (action, indexPath) in
+        let archive = UITableViewRowAction(style: .normal, title: NSLocalizedString("Archive", comment: "Swipe action")) { (_, indexPath) in
             let topic = self.topics[indexPath.row]
             self.interactor?.changeArchivedStatus(
                 forTopic: topic.name, archived: !topic.isArchived)
@@ -189,7 +189,7 @@ extension ChatListViewController {
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated:  true)
+        tableView.deselectRow(at: indexPath, animated: true)
         self.performSegue(withIdentifier: "Chats2Messages", sender: self.topics[indexPath.row].name)
     }
 }

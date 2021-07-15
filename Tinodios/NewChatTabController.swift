@@ -13,7 +13,7 @@ class NewChatTabController: UITabBarController, UITabBarControllerDelegate {
         super.viewDidLoad()
         self.delegate = self
     }
-    
+
     func tabBarController(_ tabBarController: UITabBarController,
                           shouldSelect viewController: UIViewController) -> Bool {
         guard let viewControllers = self.viewControllers else { return false }

@@ -104,7 +104,7 @@ class MessageViewController: UIViewController {
         // we refresh the UI in full in order to avoid UI glitches.
         static let kUpdateBatchFullRefreshThreshold = 5
         // Max time difference between successive messages to count them as one batch.
-        static let kUpdateBatchTimeDeltaThresholdMs : Int64 = 300
+        static let kUpdateBatchTimeDeltaThresholdMs: Int64 = 300
     }
 
     /// The `sendMessageBar` is used as the `inputAccessoryView` in the view controller.
@@ -152,9 +152,9 @@ class MessageViewController: UIViewController {
     var messages: [Message] = []
     // For updating individual messages, we need:
     // * Tinode sequence id -> messages offset.
-    var messageSeqIdIndex: [Int:Int] = [:]
+    var messageSeqIdIndex: [Int: Int] = [:]
     // * Database message id -> message offset.
-    var messageDbIdIndex: [Int64:Int] = [:]
+    var messageDbIdIndex: [Int64: Int] = [:]
 
     // Cache of message cell sizes. Calculation of cell sizes is heavy. Caching the result to improve scrolling performance.
     // var cellSizeCache: [CGSize?] = []
@@ -312,7 +312,7 @@ class MessageViewController: UIViewController {
 
         self.setInterfaceColors()
 
-        if (self.interactor?.setup(topicName: self.topicName, sendReadReceipts: self.sendReadReceipts) ?? false) {
+        if self.interactor?.setup(topicName: self.topicName, sendReadReceipts: self.sendReadReceipts) ?? false {
             self.interactor?.deleteFailedMessages()
             self.interactor?.loadMessages()
         }
@@ -431,17 +431,17 @@ extension MessageViewController: MessageDisplayLogic {
         alert.setValue(title, forKey: "attributedTitle")
         alert.addAction(UIAlertAction(
             title: NSLocalizedString("Accept", comment: "Invite reaction button"), style: .default,
-            handler: { action in
+            handler: { _ in
                 self.interactor?.acceptInvitation()
         }))
         alert.addAction(UIAlertAction(
             title: NSLocalizedString("Ignore", comment: "Invite reaction button"), style: .default,
-            handler: { action in
+            handler: { _ in
                 self.interactor?.ignoreInvitation()
         }))
         alert.addAction(UIAlertAction(
             title: NSLocalizedString("Block", comment: "Invite reaction button"), style: .default,
-            handler: { action in
+            handler: { _ in
                 self.interactor?.blockTopic()
         }))
         self.present(alert, animated: true)
@@ -490,12 +490,12 @@ extension MessageViewController: MessageDisplayLogic {
         // Both empty: no change.
         guard !oldData.isEmpty || !newData.isEmpty else { return }
 
-        self.messageSeqIdIndex = newData.enumerated().reduce([Int:Int]()) { (dict, item) -> [Int:Int] in
+        self.messageSeqIdIndex = newData.enumerated().reduce([Int: Int]()) { (dict, item) -> [Int: Int] in
             var dict = dict
             dict[item.element.seqId] = item.offset
             return dict
         }
-        self.messageDbIdIndex = newData.enumerated().reduce([Int64:Int]()) { (dict, item) -> [Int64:Int] in
+        self.messageDbIdIndex = newData.enumerated().reduce([Int64: Int]()) { (dict, item) -> [Int64: Int] in
             var dict = dict
             dict[item.element.msgId] = item.offset
             return dict
@@ -635,7 +635,7 @@ extension MessageViewController: UICollectionViewDataSource {
         configureCell(cell: cell, with: message, at: indexPath)
 
         cell.avatarView.frame = attributes.avatarFrame
-        if attributes.avatarFrame != .zero  {
+        if attributes.avatarFrame != .zero {
             // The avatar image should be assigned after setting the size. Otherwise it may be drawn twice.
             if let sub = topic?.getSubscription(for: message.from) {
                 cell.avatarView.set(icon: sub.pub?.photo?.image(), title: sub.pub?.fn, id: message.from)
@@ -833,7 +833,7 @@ extension MessageViewController {
 }
 
 // Message size calculation
-extension MessageViewController : MessageViewLayoutDelegate {
+extension MessageViewController: MessageViewLayoutDelegate {
 
     // MARK: MessageViewLayoutDelegate method
 
@@ -926,7 +926,7 @@ extension MessageViewController : MessageViewLayoutDelegate {
 
     // Calculate and cache message cell size
     func calcCellSize(forItemAt indexPath: IndexPath) -> CGSize {
-        //if let size = cellSizeCache[indexPath.item] {
+        // if let size = cellSizeCache[indexPath.item] {
         //    return size
         // }
 
@@ -1033,7 +1033,7 @@ extension MessageViewController : MessageViewLayoutDelegate {
 
 // Methods for handling taps in messages.
 
-extension MessageViewController : MessageCellDelegate {
+extension MessageViewController: MessageCellDelegate {
     func didLongTap(in cell: MessageCell) {
         createPopupMenu(in: cell)
     }
@@ -1138,7 +1138,7 @@ extension MessageViewController : MessageCellDelegate {
 
     private func handleButtonPost(in cell: MessageCell, using url: URL) {
         let parts = URLComponents(url: url, resolvingAgainstBaseURL: false)
-        var query: [String : String]?
+        var query: [String: String]?
         if let queryItems = parts?.queryItems {
             query = [:]
             for item in queryItems {
@@ -1146,10 +1146,10 @@ extension MessageViewController : MessageCellDelegate {
             }
         }
         let newMsg = Drafty(content: query?["title"] ?? NSLocalizedString("undefined", comment: "Button with missing text"))
-        var json: [String : JSONValue] = [:]
+        var json: [String: JSONValue] = [:]
         // {"seq":6,"resp":{"yes":1}}
         if let name = query?["name"], let val = query?["val"] {
-            var resp: [String : JSONValue] = [:]
+            var resp: [String: JSONValue] = [:]
             resp[name] = JSONValue.string(val)
             json["resp"] = JSONValue.dict(resp)
         }
@@ -1162,8 +1162,8 @@ extension MessageViewController : MessageCellDelegate {
         guard let text = cell.content.attributedText else { return nil }
         var parts = [Data]()
 
-        let range = NSMakeRange(0, text.length)
-        text.enumerateAttributes(in: range, options: NSAttributedString.EnumerationOptions(rawValue: 0)) { (object, range, stop) in
+        let range = NSRange(location: 0, length: text.length)
+        text.enumerateAttributes(in: range, options: NSAttributedString.EnumerationOptions(rawValue: 0)) { (object, _, _) in
             if object.keys.contains(.attachment) {
                 if let attachment = object[.attachment] as? NSTextAttachment, let data = attachment.contents {
                     parts.append(data)

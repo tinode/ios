@@ -27,7 +27,7 @@ public class UserDb {
     public let accountId: Expression<Int64?>
     public let uid: Expression<String?>
     public let updated: Expression<Date?>
-    //public let deleted: Expression<Int?>
+    // public let deleted: Expression<Int?>
     public let pub: Expression<String?>
 
     private let baseDb: BaseDb!
@@ -145,7 +145,7 @@ public class UserDb {
     }
 
     public func getId(for uid: String?) -> Int64 {
-        guard let accountId = baseDb.account?.id else  {
+        guard let accountId = baseDb.account?.id else {
             return -1
         }
         let uid = uid ?? UserDb.kNoUser
@@ -179,7 +179,7 @@ public class UserDb {
     // Generic reader
     private func read(one uid: String?, multiple uids: [String]) -> [UserProto]? {
         guard uid != nil || !uids.isEmpty else { return nil }
-        guard let accountId = baseDb.account?.id else  {
+        guard let accountId = baseDb.account?.id else {
             return nil
         }
         var query = self.table.select(self.table[*])

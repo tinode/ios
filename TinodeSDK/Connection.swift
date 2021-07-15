@@ -53,7 +53,7 @@ public class Connection {
     private var autoreconnect: Bool = false
     private var reconnecting: Bool = false
     private var backoffSteps = ExpBackoffSteps()
-    private var reconnectClosure: DispatchWorkItem? = nil
+    private var reconnectClosure: DispatchWorkItem?
     // Opaque parameter passed to onConnect. Used once then discarded.
     private var param: Any?
 
@@ -103,7 +103,7 @@ public class Connection {
 
     private func maybeInitReconnectClosure() {
         if reconnectClosure?.isCancelled ?? true {
-            reconnectClosure = DispatchWorkItem() {
+            reconnectClosure = DispatchWorkItem {
                 self.connectSocket()
                 if self.isConnected {
                     self.reconnecting = false
@@ -158,15 +158,15 @@ public class Connection {
         }
     }
 
-    func send(payload data: Data) -> Void {
+    func send(payload data: Data) {
         webSocketConnection?.send(data: data)
     }
 
 }
 
 protocol ConnectionListener {
-    func onConnect(reconnecting: Bool, param: Any?) -> Void
-    func onMessage(with message: String) -> Void
-    func onDisconnect(isServerOriginated: Bool, code: Int, reason: String) -> Void
-    func onError(error: Error) -> Void
+    func onConnect(reconnecting: Bool, param: Any?)
+    func onMessage(with message: String)
+    func onDisconnect(isServerOriginated: Bool, code: Int, reason: String)
+    func onError(error: Error)
 }

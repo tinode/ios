@@ -92,7 +92,7 @@ public class Subscription<SP: Codable, SR: Codable>: SubscriptionProto {
     public var getClear: Int { return clear ?? 0 }
     public var pub: SP?
     public var seen: LastSeen?
-    public var payload: Payload? = nil
+    public var payload: Payload?
 
     public var uniqueId: String? {
         if topic == nil {
@@ -104,7 +104,7 @@ public class Subscription<SP: Codable, SR: Codable>: SubscriptionProto {
         return topic! + ":" + user!
     }
 
-    private enum CodingKeys : String, CodingKey {
+    private enum CodingKeys: String, CodingKey {
         case user, updated, deleted, touched,
              acs, read, recv, priv = "private", online,
              topic, seq, clear, pub = "public", seen

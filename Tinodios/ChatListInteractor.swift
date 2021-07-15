@@ -88,9 +88,9 @@ class ChatListInteractor: ChatListBusinessLogic, ChatListDataStore {
     var router: ChatListRoutingLogic?
     var topics: [DefaultComTopic]?
     private var archivedTopics: [DefaultComTopic]?
-    private var meListener: MeListener? = nil
-    private var meTopic: DefaultMeTopic? = nil
-    private var tinodeEventListener: ChatEventListener? = nil
+    private var meListener: MeListener?
+    private var meTopic: DefaultMeTopic?
+    private var tinodeEventListener: ChatEventListener?
 
     func attachToMeTopic() {
         let tinode = Cache.tinode
@@ -99,7 +99,7 @@ class ChatListInteractor: ChatListBusinessLogic, ChatListDataStore {
         }
 
         UiUtils.attachToMeTopic(meListener: self.meListener)?.then(
-            onSuccess: { [weak self] msg in
+            onSuccess: { [weak self] _ in
                 self?.loadAndPresentTopics()
                 self?.meTopic = tinode.getMeTopic()
                 return nil
@@ -162,7 +162,7 @@ class ChatListInteractor: ChatListBusinessLogic, ChatListDataStore {
     func deleteTopic(_ name: String) {
         let topic = Cache.tinode.getTopic(topicName: name) as! DefaultComTopic
         topic.delete(hard: true).then(
-            onSuccess: { [weak self] msg in
+            onSuccess: { [weak self] _ in
                 self?.loadAndPresentTopics()
                 return nil
             },
@@ -173,7 +173,7 @@ class ChatListInteractor: ChatListBusinessLogic, ChatListDataStore {
     func changeArchivedStatus(forTopic name: String, archived: Bool) {
         let topic = Cache.tinode.getTopic(topicName: name) as! DefaultComTopic
         topic.updateArchived(archived: archived)?.then(
-            onSuccess: { [weak self] msg in
+            onSuccess: { [weak self] _ in
                 self?.loadAndPresentTopics()
                 return nil
             },

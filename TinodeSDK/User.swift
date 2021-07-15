@@ -32,13 +32,13 @@ extension UserProto {
 public typealias DefaultUser = User<VCard>
 
 public class User<P: Codable>: UserProto {
-    enum UserError : Error {
+    enum UserError: Error {
         case invalidUser(String)
     }
     public var updated: Date?
     public var uid: String?
     public var pub: P?
-    public var payload: Payload? = nil
+    public var payload: Payload?
 
     public init(uid: String?, updated: Date?, pub: P?) {
         self.uid = uid

@@ -52,7 +52,7 @@ class MessageViewLayout: UICollectionViewLayout {
 
         // Calculate and cache cell attributes.
         attributeCache.removeAll(keepingCapacity: true)
-        var yOffset: CGFloat = 0 //collectionView.layoutMargins.top
+        var yOffset: CGFloat = 0 // collectionView.layoutMargins.top
         let leftMargin = collectionView.layoutMargins.left
         for item in 0 ..< itemCount {
             let indexPath = IndexPath(item: item, section: 0)

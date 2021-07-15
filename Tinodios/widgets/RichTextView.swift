@@ -8,7 +8,7 @@
 import UIKit
 
 /// UITextView with some layout issues fixed.
-class RichTextView : UITextView {
+class RichTextView: UITextView {
 
     override func layoutSubviews() {
         super.layoutSubviews()

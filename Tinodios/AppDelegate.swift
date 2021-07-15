@@ -58,7 +58,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, handleEventsForBackgroundURLSession identifier: String, completionHandler: @escaping () -> Void) {
         backgroundSessionCompletionHandler = completionHandler
         // Instantiate large file helper.
-        let _ = Cache.getLargeFileHelper(withIdentifier: identifier)
+        _ = Cache.getLargeFileHelper(withIdentifier: identifier)
     }
 
     func applicationWillResignActive(_ application: UIApplication) {
@@ -127,7 +127,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             return false
         }
         // TODO: support 3rd party urls.
-        if (components.host?.hasSuffix("tinode.co") ?? false) {
+        if components.host?.hasSuffix("tinode.co") ?? false {
             // Start the app.
             return true
         }

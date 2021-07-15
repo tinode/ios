@@ -8,7 +8,7 @@
 import UIKit
 import TinodeSDK
 
-class CredentialsViewController : UIViewController {
+class CredentialsViewController: UIViewController {
 
     @IBOutlet weak var codeText: UITextField!
 

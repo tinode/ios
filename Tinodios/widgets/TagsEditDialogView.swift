@@ -14,7 +14,7 @@ class TagsEditDialogViewController: UIViewController {
 
     private static let kDefaultMaxTagCount: Int64 = 16
 
-    public typealias CompletionHandler = ((_ newTags: [TinodeTag]) -> ())
+    public typealias CompletionHandler = ((_ newTags: [TinodeTag]) -> Void)
 
     @IBOutlet weak var alertView: UIView!
     @IBOutlet weak var okButton: UIButton!
@@ -59,7 +59,7 @@ class TagsEditDialogViewController: UIViewController {
         viewController.present(self, animated: true, completion: nil)
     }
 
-    /// MARK: - Button clicks
+    // MARK: - Button clicks
     @IBAction func cancelClicked(_ sender: Any) {
         self.dismiss(animated: true, completion: nil)
     }

@@ -160,17 +160,17 @@ public class PromisedReply<Value> {
     public func thenFinally(_ finally: @escaping FinallyHandler) {
         then(
             onSuccess: {
-                msg in try finally()
+                _ in try finally()
                 return nil
             },
             onFailure: {
-                err in try finally()
+                _ in try finally()
                 return nil
         })
     }
 
     private func callOnSuccess(result: Value?) throws {
-        var ret: PromisedReply<Value>? = nil
+        var ret: PromisedReply<Value>?
         do {
             if let sh = successHandler {
                 ret = try sh(result)

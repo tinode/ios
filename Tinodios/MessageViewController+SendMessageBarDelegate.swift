@@ -9,7 +9,7 @@ import UIKit
 import MobileCoreServices
 import TinodeSDK
 
-extension MessageViewController : SendMessageBarDelegate {
+extension MessageViewController: SendMessageBarDelegate {
     // Default 256K server limit. Does not account for base64 compression and overhead.
     static let kMaxInbandAttachmentSize: Int64 = 1 << 18
     // Default upload size.
@@ -50,7 +50,7 @@ extension MessageViewController : SendMessageBarDelegate {
     }
 }
 
-extension MessageViewController : UIDocumentPickerDelegate {
+extension MessageViewController: UIDocumentPickerDelegate {
     func documentPickerWasCancelled(_ controller: UIDocumentPickerViewController) {
         controller.dismiss(animated: true, completion: nil)
         // NOTE(Apple's bug, Tinode's hack):
@@ -73,7 +73,7 @@ extension MessageViewController : UIDocumentPickerDelegate {
 
             let bits = try Data(contentsOf: urls[0], options: .mappedIfSafe)
             let fname = urls[0].lastPathComponent
-            var mimeType: String? = nil
+            var mimeType: String?
             if let uti = try urls[0].resourceValues(forKeys: [.typeIdentifierKey]).typeIdentifier {
                 let unmanaged = UTTypeCopyPreferredTagWithClass(uti as CFString, kUTTagClassMIMEType)
                 mimeType = unmanaged?.takeRetainedValue() as String? ?? "application/octet-stream"
@@ -98,7 +98,7 @@ extension MessageViewController : UIDocumentPickerDelegate {
     }
 }
 
-extension MessageViewController : ImagePickerDelegate {
+extension MessageViewController: ImagePickerDelegate {
     func didSelect(image: UIImage?, mimeType mime: String?, fileName fname: String?) {
         guard let image = image else { return }
 

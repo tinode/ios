@@ -53,7 +53,7 @@ public class MsgServerCtrl: Decodable {
         return val.asInt64()
     }
 
-    public func getStringDict(for key: String) -> [String:String]? {
+    public func getStringDict(for key: String) -> [String: String]? {
         if case .dict(let  v)? = params?[key] {
             return v.mapValues { (value) -> String? in
                 if case .string(let s) = value {
@@ -81,11 +81,11 @@ public class MsgServerMeta: Decodable {
     public let tags: [String]?
     public let cred: [Credential]?
 
-    private enum CodingKeys: String, CodingKey  {
+    private enum CodingKeys: String, CodingKey {
         case id, topic, ts, desc, sub, del, tags, cred
     }
     required public init (from decoder: Decoder) throws {
-        let container =  try decoder.container (keyedBy: CodingKeys.self)
+        let container =  try decoder.container(keyedBy: CodingKeys.self)
         id = try? container.decode(String.self, forKey: .id)
         topic = try? container.decode(String.self, forKey: .topic)
         ts = try? container.decode(Date.self, forKey: .ts)
@@ -105,10 +105,10 @@ public class MsgServerMeta: Decodable {
     }
 }
 
-open class MsgServerData : Decodable {
+open class MsgServerData: Decodable {
     public var id: String?
     public var topic: String?
-    public var head: [String:JSONValue]?
+    public var head: [String: JSONValue]?
     public var from: String?
     public var ts: Date?
     public var seq: Int?
@@ -118,7 +118,7 @@ open class MsgServerData : Decodable {
     public init() {}
 }
 
-public class AccessChange : Decodable {
+public class AccessChange: Decodable {
     let want: String?
     let given: String?
 
@@ -127,7 +127,7 @@ public class AccessChange : Decodable {
     }
 }
 
-public class MsgServerPres : Decodable {
+public class MsgServerPres: Decodable {
     enum What {
         case kOn, kOff, kUpd, kGone, kTerm, kAcs, kMsg, kUa, kRecv, kRead, kDel, kTags, kUnknown
     }

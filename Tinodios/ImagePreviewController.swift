@@ -24,7 +24,7 @@ struct ImagePreviewContent {
     let height: Int?
 }
 
-class ImagePreviewController : UIViewController, UIScrollViewDelegate {
+class ImagePreviewController: UIViewController, UIScrollViewDelegate {
 
     @IBOutlet weak var scrollView: UIScrollView!
     @IBOutlet weak var imageView: UIImageView!
@@ -33,7 +33,7 @@ class ImagePreviewController : UIViewController, UIScrollViewDelegate {
     @IBOutlet weak var sizeLabel: UILabel!
     @IBOutlet weak var imageDetailsPanel: UIStackView!
 
-    var previewContent: ImagePreviewContent? = nil
+    var previewContent: ImagePreviewContent?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -131,7 +131,7 @@ class ImagePreviewController : UIViewController, UIScrollViewDelegate {
     }
 }
 
-extension ImagePreviewController : SendImageBarDelegate {
+extension ImagePreviewController: SendImageBarDelegate {
     func sendImageBar(caption: String?) {
         guard let originalContent = self.previewContent else { return }
         guard case let .uiimage(originalImage) = originalContent.imgContent else { return }

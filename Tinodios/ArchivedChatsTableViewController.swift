@@ -40,7 +40,6 @@ class ArchivedChatsTableViewController: UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ChatListViewCell") as! ChatListViewCell
 
         let topic = self.topics[indexPath.row]
-        //cell.textLabel?.text = topic.pub?.fn ?? "Unknown"
         cell.fillFromTopic(topic: topic)
         return cell
     }
@@ -64,7 +63,7 @@ class ArchivedChatsTableViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
-        let unarchive = UITableViewRowAction(style: .normal, title: NSLocalizedString("Unarchive", comment: "Swipe action")) { (action, indexPath) in
+        let unarchive = UITableViewRowAction(style: .normal, title: NSLocalizedString("Unarchive", comment: "Swipe action")) { (_, indexPath) in
             let topic = self.topics[indexPath.row]
             self.unarchiveTopic(topic: topic)
         }
@@ -72,7 +71,7 @@ class ArchivedChatsTableViewController: UITableViewController {
         return [unarchive]
     }
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated:  true)
+        tableView.deselectRow(at: indexPath, animated: true)
         self.performSegue(withIdentifier: "ArchivedChats2Messages",
                           sender: self.topics[indexPath.row].name)
     }

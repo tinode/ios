@@ -42,7 +42,7 @@ class MessageView: UICollectionView {
         self.init(frame: .zero, collectionViewLayout: MessageViewLayout())
     }
 
-    /// MARK: - Methods
+    // MARK: - Methods
 
     @objc
     func handleTapGesture(_ gesture: UIGestureRecognizer) {

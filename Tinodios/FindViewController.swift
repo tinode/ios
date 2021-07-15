@@ -23,7 +23,7 @@ class FindViewController: UITableViewController, FindDisplayLogic {
     var localContacts: [ContactHolder] = []
     var remoteContacts: [RemoteContactHolder] = []
     var searchController: UISearchController!
-    var pendingSearchRequest: DispatchWorkItem? = nil
+    var pendingSearchRequest: DispatchWorkItem?
 
     // Flag which indicates that the user is leaving the view.
     var transitioningOut: Bool = false
@@ -151,11 +151,11 @@ class FindViewController: UITableViewController, FindDisplayLogic {
         let dialogTitle = NSAttributedString(string: NSLocalizedString("Invite", comment: "Dialog title: call to action"), attributes: attrs)
         let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         alert.setValue(dialogTitle, forKey: "attributedTitle")
-        alert.addAction(UIAlertAction(title: NSLocalizedString("Copy to clipboard", comment: "Alert action"), style: .default, handler: { action in
+        alert.addAction(UIAlertAction(title: NSLocalizedString("Copy to clipboard", comment: "Alert action"), style: .default, handler: { _ in
             let pasteboard = UIPasteboard.general
             pasteboard.string = inviteBody
         }))
-        alert.addAction(UIAlertAction(title: NSLocalizedString("Email", comment: "Alert action"), style: .default, handler: { action in
+        alert.addAction(UIAlertAction(title: NSLocalizedString("Email", comment: "Alert action"), style: .default, handler: { _ in
             if MFMailComposeViewController.canSendMail() {
                 let mailVC = MFMailComposeViewController()
                 mailVC.mailComposeDelegate = self
@@ -167,7 +167,7 @@ class FindViewController: UITableViewController, FindDisplayLogic {
                 UiUtils.showToast(message: NSLocalizedString("No access to email", comment: "Error message"))
             }
         }))
-        alert.addAction(UIAlertAction(title: NSLocalizedString("Messages", comment: "Alert action"), style: .default, handler: { action in
+        alert.addAction(UIAlertAction(title: NSLocalizedString("Messages", comment: "Alert action"), style: .default, handler: { _ in
             if MFMessageComposeViewController.canSendText() {
                 let messageVC = MFMessageComposeViewController()
                 messageVC.messageComposeDelegate = self
@@ -279,7 +279,7 @@ extension FindViewController: UISearchResultsUpdating, UISearchControllerDelegat
             return
         }
         let queryString = getQueryString()
-        let currentSearchRequest = DispatchWorkItem() {
+        let currentSearchRequest = DispatchWorkItem {
             self.doSearch(queryString: queryString)
         }
         pendingSearchRequest = currentSearchRequest
@@ -339,12 +339,12 @@ extension FindViewController: MFMessageComposeViewControllerDelegate {
 // UISearchBar.searchTextField is only available in iOS 13+.
 // Needed so we can change placeholder font size in the search bar.
 extension UISearchBar {
-    var textField : UITextField? {
+    var textField: UITextField? {
         if #available(iOS 13.0, *) {
             return self.searchTextField
         } else {
             // Fallback on earlier versions
-            for view : UIView in (self.subviews[0]).subviews {
+            for view: UIView in (self.subviews[0]).subviews {
                 if let textField = view as? UITextField {
                     return textField
                 }

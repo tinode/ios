@@ -8,15 +8,15 @@
 import Foundation
 import TinodeSDK
 
-public class StoredMessage : MsgServerData, Message {
+public class StoredMessage: MsgServerData, Message {
     public var msgId: Int64 = 0
 
     public var seqId: Int { return seq ?? 0 }
 
-    var topicId: Int64? = nil
-    var userId: Int64? = nil
+    var topicId: Int64?
+    var userId: Int64?
 
-    var dbStatus: BaseDb.Status? = nil
+    var dbStatus: BaseDb.Status?
     public var status: Int? {
         return dbStatus?.rawValue
     }

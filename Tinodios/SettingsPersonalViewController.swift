@@ -91,7 +91,7 @@ class SettingsPersonalViewController: UITableViewController {
             textField.text = self.me?.pub?.fn ?? ""
         })
         alert.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: "Alert action"), style: .default,
-                                      handler: { action in
+                                      handler: { _ in
             if let name = alert.textFields?.first?.text {
                 self.updateUserName(name)
             }
@@ -109,7 +109,7 @@ class SettingsPersonalViewController: UITableViewController {
             alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: ""), style: .cancel, handler: nil))
         alert.addAction(UIAlertAction(
             title: NSLocalizedString("OK", comment: ""), style: .default,
-            handler: { action in
+            handler: { _ in
                 var success = false
                 if let cred = ValidatedCredential.parse(from: alert.textFields?.first?.text) {
                     let credMsg: Credential?
@@ -155,7 +155,7 @@ class SettingsPersonalViewController: UITableViewController {
         alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: ""), style: .cancel, handler: nil))
         alert.addAction(UIAlertAction(
             title: NSLocalizedString("OK", comment: ""), style: .default,
-            handler: { action in
+            handler: { _ in
                 guard let code = alert.textFields?.first?.text else { return }
                 self.me.confirmCred(meth: meth, response: code)
                     .thenApply { [weak self] _ in
@@ -180,7 +180,7 @@ class SettingsPersonalViewController: UITableViewController {
             pub.fn = String(userName.prefix(UiUtils.kMaxTitleLength))
         }
         UiUtils.setTopicData(forTopic: self.me, pub: pub, priv: nil)?.then(
-            onSuccess: { msg in
+            onSuccess: { _ in
                 DispatchQueue.main.async { self.reloadData() }
                 return nil
             },
@@ -195,7 +195,7 @@ extension SettingsPersonalViewController: ImagePickerDelegate {
             return
         }
         UiUtils.updateAvatar(forTopic: self.me, image: image)?.then(
-            onSuccess: { msg in
+            onSuccess: { _ in
                 DispatchQueue.main.async {
                     self.reloadData()
                 }
@@ -261,7 +261,7 @@ extension SettingsPersonalViewController {
             return
         }
 
-        tableView.deselectRow(at: indexPath, animated:  true)
+        tableView.deselectRow(at: indexPath, animated: true)
 
         guard let cred = me.creds?[indexPath.row - 1], !cred.isDone, cred.meth != nil else { return }
 
@@ -292,4 +292,3 @@ extension SettingsPersonalViewController {
         }
     }
 }
-

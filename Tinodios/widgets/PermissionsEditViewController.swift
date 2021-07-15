@@ -8,10 +8,10 @@
 import UIKit
 
 class PermissionsEditViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
-    private static let kAllPermissions: [Character] = ["J","R","W","P","A","S","D","O"]
-    private static let kPermissions: [Character : String] = ["J" : "Join", "R" : "Read", "W" : "Write", "P" : "Receive notifications", "A" : "Approve new members", "S" : "Invite new members", "D" : "Delete messages", "O" : "Full control (owner)"]
+    private static let kAllPermissions: [Character] = ["J", "R", "W", "P", "A", "S", "D", "O"]
+    private static let kPermissions: [Character: String] = ["J": "Join", "R": "Read", "W": "Write", "P": "Receive notifications", "A": "Approve new members", "S": "Invite new members", "D": "Delete messages", "O": "Full control (owner)"]
 
-    public typealias ChangeHandler = ((_ permissions: String) -> ())
+    public typealias ChangeHandler = ((_ permissions: String) -> Void)
 
     private static let buttonBorderColor = UIColor(fromHexCode: 0xFFE0E0E0)
 
@@ -66,7 +66,7 @@ class PermissionsEditViewController: UIViewController, UITableViewDelegate, UITa
         tableViewHeight.constant = tableView.contentSize.height
     }
 
-    /// MARK: - UITableView delegates
+    // MARK: - UITableView delegates
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return visiblePermissions.count
@@ -103,7 +103,7 @@ class PermissionsEditViewController: UIViewController, UITableViewDelegate, UITa
         viewController.present(self, animated: true, completion: nil)
     }
 
-    /// MARK: - Button clicks
+    // MARK: - Button clicks
 
     @IBAction func cancelClicked(_ sender: Any) {
         self.dismiss(animated: true, completion: nil)

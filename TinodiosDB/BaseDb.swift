@@ -45,18 +45,18 @@ public class BaseDb {
     public static let kBundleId = "co.tinode.tinodios.db"
     public static let kAppGroupId = "group." + BaseDb.kBundleId
     // No direct access to the shared instance.
-    private static var `default`: BaseDb? = nil
+    private static var `default`: BaseDb?
     private static let accessQueue = DispatchQueue(label: BaseDb.kBundleId)
     private let kDatabaseName = "basedb.sqlite3"
     var db: SQLite.Connection?
     private let pathToDatabase: String
     public var sqlStore: SqlStore?
-    public var topicDb: TopicDb? = nil
-    public var accountDb: AccountDb? = nil
-    public var subscriberDb: SubscriberDb? = nil
-    public var userDb: UserDb? = nil
-    public var messageDb: MessageDb? = nil
-    var account: StoredAccount? = nil
+    public var topicDb: TopicDb?
+    public var accountDb: AccountDb?
+    public var subscriberDb: SubscriberDb?
+    public var userDb: UserDb?
+    public var messageDb: MessageDb?
+    var account: StoredAccount?
     var isCredValidationRequired: Bool {
         return !(self.account?.credMethods?.isEmpty ?? true)
     }

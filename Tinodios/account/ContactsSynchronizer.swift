@@ -12,10 +12,10 @@ import TinodiosDB
 
 class ContactsSynchronizer {
     private class ContactHolder2 {
-        var displayName: String? = nil
-        var imageThumbnail: Data? = nil
-        var phones: [String]? = nil
-        var emails: [String]? = nil
+        var displayName: String?
+        var imageThumbnail: Data?
+        var phones: [String]?
+        var emails: [String]?
 
         func toString() -> String {
             var vals = [String]()
@@ -92,7 +92,7 @@ class ContactsSynchronizer {
         let request = CNContactFetchRequest(keysToFetch: keysToFetch)
         do {
             try self.store.enumerateContacts(with: request) {
-                (contact, cursor) -> Void in
+                (contact, _) -> Void in
                 contacts.append(contact)
             }
         } catch let error {

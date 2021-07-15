@@ -10,11 +10,11 @@ import TinodeSDK
 import TinodiosDB
 
 public class ContactHolder {
-    var displayName: String? = nil
-    var image: UIImage? = nil
-    var uniqueId: String? = nil
+    var displayName: String?
+    var image: UIImage?
+    var uniqueId: String?
     // This is used when the contact was found in search: what was matched.
-    var subtitle: String? = nil
+    var subtitle: String?
 
     init(displayName: String?, image: UIImage?, uniqueId: String?, subtitle: String? = nil) {
         self.displayName = displayName

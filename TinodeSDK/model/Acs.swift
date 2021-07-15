@@ -78,7 +78,7 @@ public class Acs: Codable, CustomStringConvertible, Equatable {
     public var givenString: String {
         return given?.description ?? ""
     }
-    private enum CodingKeys : String, CodingKey  {
+    private enum CodingKeys: String, CodingKey {
         case given, want, mode
     }
     private func assign(given: String?, want: String?, mode: String?) {
@@ -92,19 +92,19 @@ public class Acs: Codable, CustomStringConvertible, Equatable {
         self.assign(given: given, want: want, mode: mode)
     }
     public init(from am: Acs?) {
-        if (am != nil) {
+        if am != nil {
             given = AcsHelper(ah: am!.given)
             want = AcsHelper(ah: am!.want)
             mode = AcsHelper(ah: am!.mode)
         }
     }
-    init(from dict: [String:String]?) {
+    init(from dict: [String: String]?) {
         if let d = dict {
             self.assign(given: d["given"], want: d["want"], mode: d["mode"])
         }
     }
     required public init (from decoder: Decoder) throws {
-        let container =  try decoder.container (keyedBy: CodingKeys.self)
+        let container =  try decoder.container(keyedBy: CodingKeys.self)
         if let givenStr = try? container.decode(String.self, forKey: .given) {
             self.given = AcsHelper(str: givenStr)
         }

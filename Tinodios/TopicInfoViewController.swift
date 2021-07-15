@@ -247,7 +247,7 @@ class TopicInfoViewController: UITableViewController {
         })
         alert.addAction(UIAlertAction(
             title: NSLocalizedString("OK", comment: "Alert action"), style: .default,
-            handler: { action in
+            handler: { _ in
                 let textFields = alert.textFields!
                 let newTitle = self.topic.isOwner ? textFields[0].text : nil
                 let newSubtitle = textFields[self.topic.isOwner ? 1 : 0].text
@@ -257,13 +257,13 @@ class TopicInfoViewController: UITableViewController {
     }
 
     private func updateTitles(newTitle: String?, newSubtitle: String?) {
-        var pub: VCard? = nil
+        var pub: VCard?
         if let nt = newTitle {
             if let oldPub = topic.pub, oldPub.fn != nt {
                 pub = VCard(fn: String(nt.prefix(UiUtils.kMaxTitleLength)), avatar: nil as Data?)
             }
         }
-        var priv: PrivateType? = nil
+        var priv: PrivateType?
         if let ns = newSubtitle {
             if topic.comment == nil || (topic.comment! != ns) {
                 priv = PrivateType()
@@ -322,7 +322,7 @@ class TopicInfoViewController: UITableViewController {
 
     private func deleteTopic() {
         topic.delete(hard: true).then(
-            onSuccess: { msg in
+            onSuccess: { _ in
                 DispatchQueue.main.async {
                     self.performSegue(withIdentifier: "TopicInfo2Chats", sender: nil)
                 }
@@ -333,7 +333,7 @@ class TopicInfoViewController: UITableViewController {
 
     private func blockContact() {
         topic.updateMode(uid: nil, update: "-JP").then(
-            onSuccess: { msg in
+            onSuccess: { _ in
                 DispatchQueue.main.async {
                     self.performSegue(withIdentifier: "TopicInfo2Chats", sender: nil)
                 }
@@ -343,7 +343,7 @@ class TopicInfoViewController: UITableViewController {
     }
 
     private func reportTopic(reason: String) {
-        blockContact();
+        blockContact()
         // Create and send spam report.
         let msg = Drafty().attachJSON([
             "action": JSONValue.string("report"),
@@ -361,7 +361,7 @@ class TopicInfoViewController: UITableViewController {
             alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Alert action"), style: .cancel, handler: nil))
         alert.addAction(UIAlertAction(
             title: NSLocalizedString("Delete", comment: "Alert action"), style: .destructive,
-            handler: { action in self.deleteTopic() }))
+            handler: { _ in self.deleteTopic() }))
         present(alert, animated: true)
     }
 
@@ -379,11 +379,11 @@ class TopicInfoViewController: UITableViewController {
         if topic.isDeleter {
             alert.addAction(UIAlertAction(
                 title: NSLocalizedString("For all", comment: "Alert action qualifier as in 'Delete for all'"), style: .destructive,
-                handler: { action in handler(true) }))
+                handler: { _ in handler(true) }))
         }
         alert.addAction(UIAlertAction(
             title: topic.isDeleter ? NSLocalizedString("For me", comment: "Alert action 'Delete for me'") : NSLocalizedString("OK", comment: "Alert action"), style: .destructive,
-            handler: { action in handler(false) }))
+            handler: { _ in handler(false) }))
         present(alert, animated: true)
     }
 
@@ -392,7 +392,7 @@ class TopicInfoViewController: UITableViewController {
         alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Alert action"), style: .cancel, handler: nil))
         alert.addAction(UIAlertAction(
             title: NSLocalizedString("Leave", comment: "Alert action"), style: .destructive,
-            handler: { action in self.deleteTopic() }))
+            handler: { _ in self.deleteTopic() }))
         present(alert, animated: true)
     }
 
@@ -406,7 +406,7 @@ class TopicInfoViewController: UITableViewController {
         alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Alert action"), style: .cancel, handler: nil))
         alert.addAction(UIAlertAction(
             title: NSLocalizedString("Leave", comment: "Alert action"), style: .destructive,
-            handler: { action in self.deleteTopic() }))
+            handler: { _ in self.deleteTopic() }))
         present(alert, animated: true)
     }
 
@@ -415,7 +415,7 @@ class TopicInfoViewController: UITableViewController {
         alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Alert action"), style: .cancel, handler: nil))
         alert.addAction(UIAlertAction(
             title: NSLocalizedString("Block", comment: "Alert action"), style: .destructive,
-            handler: { action in self.blockContact() }))
+            handler: { _ in self.blockContact() }))
         present(alert, animated: true)
     }
 
@@ -424,7 +424,7 @@ class TopicInfoViewController: UITableViewController {
         alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Alert action"), style: .cancel, handler: nil))
         alert.addAction(UIAlertAction(
             title: NSLocalizedString("Report", comment: "Alert action"), style: .destructive,
-            handler: { action in self.reportTopic(reason: "TODO") }))
+            handler: { _ in self.reportTopic(reason: "TODO") }))
         present(alert, animated: true)
     }
 
@@ -433,7 +433,7 @@ class TopicInfoViewController: UITableViewController {
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
         alert.addAction(UIAlertAction(
             title: NSLocalizedString("Report", comment: "Alert action"), style: .destructive,
-            handler: { action in self.reportTopic(reason: "TODO") }))
+            handler: { _ in self.reportTopic(reason: "TODO") }))
         present(alert, animated: true)
     }
 
@@ -451,7 +451,7 @@ class TopicInfoViewController: UITableViewController {
     }
 }
 
-extension TopicInfoViewController : UIPopoverPresentationControllerDelegate {
+extension TopicInfoViewController: UIPopoverPresentationControllerDelegate {
     func adaptivePresentationStyle(for controller: UIPresentationController) -> UIModalPresentationStyle {
         return UIModalPresentationStyle.none
     }
@@ -641,7 +641,7 @@ extension TopicInfoViewController {
                                         message: String) {
         guard let uid = uid else { return }
         let alert = UIAlertController(title: nil, message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: "Alert action"), style: .default, handler: { action in
+        alert.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: "Alert action"), style: .default, handler: { _ in
             var ban: Bool
             switch memberAction {
             case .remove:
@@ -658,7 +658,7 @@ extension TopicInfoViewController {
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated:  true)
+        tableView.deselectRow(at: indexPath, animated: true)
 
         guard indexPath.section == TopicInfoViewController.kSectionMembers && indexPath.row != 0 else {
             return
@@ -670,14 +670,14 @@ extension TopicInfoViewController {
         }
 
         let alert = UIAlertController(title: sub.pub?.fn ?? NSLocalizedString("Unknown", comment: "Placeholder for missing user name"), message: nil, preferredStyle: .actionSheet)
-        alert.addAction(UIAlertAction(title: NSLocalizedString("Send message", comment: "Alert action"), style: .default, handler: { action in
+        alert.addAction(UIAlertAction(title: NSLocalizedString("Send message", comment: "Alert action"), style: .default, handler: { _ in
             if let topic = sub.user {
                 self.presentChatReplacingCurrentVC(with: topic)
             } else {
                 UiUtils.showToast(message: NSLocalizedString("Topic name missing", comment: "Toast notification"))
             }
         }))
-        alert.addAction(UIAlertAction(title: NSLocalizedString("Change permissions", comment: "Alert action"), style: .default, handler: { action in
+        alert.addAction(UIAlertAction(title: NSLocalizedString("Change permissions", comment: "Alert action"), style: .default, handler: { _ in
             guard let acsUnwrapped = sub.acs?.given, acsUnwrapped.isDefined else {
                 UiUtils.showToast(message: NSLocalizedString("Can't change permissions for this user.", comment: "Toast notification"))
                 return
@@ -685,7 +685,7 @@ extension TopicInfoViewController {
             self.changePermissions(acs: acsUnwrapped, uid: sub.user, changeType: .updateSub, disabledPermissions: nil)
 
         }))
-        alert.addAction(UIAlertAction(title: NSLocalizedString("Make owner", comment: "Alert action"), style: .default, handler: { action in
+        alert.addAction(UIAlertAction(title: NSLocalizedString("Make owner", comment: "Alert action"), style: .default, handler: { _ in
             guard let uid = sub.user else {
                 UiUtils.showToast(message: NSLocalizedString("Can't make this user owner.", comment: "Toast notification"))
                 return
@@ -696,12 +696,12 @@ extension TopicInfoViewController {
         }))
         let topicTitle = self.topic.pub?.fn ?? NSLocalizedString("Unknown", comment: "Placeholder for missing topic name")
         let title = sub.pub?.fn ?? NSLocalizedString("Unknown", comment: "Placeholder for missing user name")
-        alert.addAction(UIAlertAction(title: NSLocalizedString("Remove", comment: "Alert action"), style: .default, handler: { action in
+        alert.addAction(UIAlertAction(title: NSLocalizedString("Remove", comment: "Alert action"), style: .default, handler: { _ in
             self.showConfirmationDialog(
                 forAction: .remove, withUid: sub.user,
                 message: String(format: NSLocalizedString("Remove %@ from %@?", comment: "Confirmation"), title, topicTitle))
         }))
-        alert.addAction(UIAlertAction(title: NSLocalizedString("Block", comment: "Alert action"), style: .default, handler: { action in
+        alert.addAction(UIAlertAction(title: NSLocalizedString("Block", comment: "Alert action"), style: .default, handler: { _ in
             self.showConfirmationDialog(
                 forAction: .ban, withUid: sub.user,
                 message: String(format: NSLocalizedString("Remove and ban %@ from %@?", comment: "Confirmation"), title, topicTitle))

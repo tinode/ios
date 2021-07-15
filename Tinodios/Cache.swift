@@ -13,9 +13,9 @@ import Firebase
 class Cache {
     private static let `default` = Cache()
 
-    private var tinodeInstance: Tinode? = nil
+    private var tinodeInstance: Tinode?
     private var timer = RepeatingTimer(timeInterval: 60 * 60 * 4) // Once every 4 hours.
-    private var largeFileHelper: LargeFileHelper? = nil
+    private var largeFileHelper: LargeFileHelper?
     private var queue = DispatchQueue(label: "co.tinode.cache")
     internal static let log = TinodeSDK.Log(subsystem: "co.tinode.tinodios")
 

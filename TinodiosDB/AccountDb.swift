@@ -68,7 +68,7 @@ public class AccountDb {
         return nil
     }
     func addOrActivateAccount(for uid: String, withCredMethods meth: [String]?) -> StoredAccount? {
-        var result: StoredAccount? = nil
+        var result: StoredAccount?
         do {
             try db.savepoint("AccountDb.addOrActivateAccount") {
                 try self.deactivateAll()

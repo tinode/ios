@@ -7,7 +7,6 @@
 
 import UIKit
 
-
 class MessageMenuItem: UIMenuItem {
     var seqId: Int = -1
 

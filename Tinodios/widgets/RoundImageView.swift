@@ -169,7 +169,6 @@ import UIKit
         defer { UIGraphicsEndImageContext() }
         let context = UIGraphicsGetCurrentContext()!
 
-
         let textRect = calcTextRect(outerViewWidth: width)
         // Maybe adjust font size to make sure the text fits inside the circle.
         font = adjustFontSize(text: initials, font: font, width: textRect.width, height: textRect.height)
@@ -276,19 +275,19 @@ import UIKit
 // These extensions are needed for selecting the color of avatar background
 fileprivate extension Character {
     var asciiValue: UInt32? {
-        return String(self).unicodeScalars.filter{$0.isASCII}.first?.value
+        return String(self).unicodeScalars.filter {$0.isASCII}.first?.value
     }
 }
 
 fileprivate extension String {
     // ASCII array to map the string
     var asciiArray: [UInt32] {
-        return unicodeScalars.filter{$0.isASCII}.map{$0.value}
+        return unicodeScalars.filter {$0.isASCII}.map {$0.value}
     }
 
     // hashCode produces output equal to the Java hash function.
     func hashCode() -> Int32 {
-        var hash : Int32 = 0
+        var hash: Int32 = 0
         for i in self.asciiArray {
             hash = 31 &* hash &+ Int32(i) // Be aware of overflow operators,
         }

@@ -76,7 +76,7 @@ public enum TopicType: Int {
 }
 
 // Cannot make it a class constant because Swift is poorly designed: "Static stored properties not supported in generic types"
-fileprivate let kIntervalBetweenKeyPresses: TimeInterval = 3.0
+private let kIntervalBetweenKeyPresses: TimeInterval = 3.0
 
 open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, SR: Codable>: TopicProto {
     enum TopicError: Error {
@@ -191,7 +191,7 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
         }
     }
 
-    internal weak var tinode: Tinode? = nil
+    internal weak var tinode: Tinode?
     public var name: String = ""
     public var isNew: Bool {
         return Topic.isNewByName(name: name)
@@ -268,7 +268,7 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
         return unread > 0 ? unread : 0
     }
 
-    public var subsLastUpdated: Date? = nil
+    public var subsLastUpdated: Date?
     public var subsUpdated: Date? {
         return subsLastUpdated
     }
@@ -282,7 +282,7 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
     }
 
     // The bulk of topic data
-    private var description: Description<DP, DR>? = nil
+    private var description: Description<DP, DR>?
     public var pub: DP? {
         get { return description?.pub }
         set { description?.pub = newValue }
@@ -292,10 +292,10 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
         set { description?.priv = newValue }
     }
     public var attached = false
-    weak public var listener: Listener? = nil
+    weak public var listener: Listener?
     // Cache of topic subscribers indexed by userID
-    internal var subs: [String:Subscription<SP,SR>]? = nil
-    public var tags: [String]? = nil
+    internal var subs: [String: Subscription<SP, SR>]?
+    public var tags: [String]?
     private var lastKeyPress: Date = Date(timeIntervalSince1970: 0)
 
     public var online: Bool = false {
@@ -306,7 +306,7 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
         }
     }
 
-    public var lastSeen: LastSeen? = nil
+    public var lastSeen: LastSeen?
 
     public var maxDel: Int = 0 {
         didSet {
@@ -397,8 +397,8 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
     }
 
     // Storage is owned by Tinode.
-    weak public var store: Storage? = nil
-    public var payload: Payload? = nil
+    weak public var store: Storage?
+    public var payload: Payload?
     public var isPersisted: Bool { get { return payload != nil } }
 
     public var cachedMessageRange: MsgRange? {
@@ -422,7 +422,7 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
                 return count + 1
             }
             return count
-        } )
+        })
     }
 
     // Tells how many topic subscribers have reported the message as read.
@@ -519,8 +519,8 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
 
     @discardableResult
     public func subscribe() -> PromisedReply<ServerMessage> {
-        var setMsg: MsgSetMeta<DP, DR>? = nil
-        var getMsg: MsgGetMeta? = nil
+        var setMsg: MsgSetMeta<DP, DR>?
+        var getMsg: MsgGetMeta?
         if isNew {
             setMsg = MsgSetMeta<DP, DR>(
                 desc: MetaSetDesc(pub: self.pub, priv: self.priv),
@@ -615,7 +615,7 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
         subsLastUpdated = loaded.max(by: {(s1, s2) -> Bool in
             ((s1.updated ?? Date.distantPast) < (s2.updated ?? Date.distantPast))
         })?.updated
-        subs = (Dictionary(uniqueKeysWithValues: loaded.map { ($0.user, $0) }) as! [String : Subscription<SP, SR>])
+        subs = (Dictionary(uniqueKeysWithValues: loaded.map { ($0.user, $0) }) as! [String: Subscription<SP, SR>])
         return subs!.count
     }
 
@@ -714,7 +714,7 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
             self.listener?.onMetaTags(tags: tags)
         }
     }
-    internal func update(acsMap: [String:String]?, sub: MetaSetSub) {
+    internal func update(acsMap: [String: String]?, sub: MetaSetSub) {
         var user = sub.user
         var acs: Acs
         if let acsMap = acsMap {
@@ -766,7 +766,7 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
 
     private func processSub(newsub: Subscription<SP, SR>) {
         var sub: Subscription<SP, SR>?
-        if (newsub.deleted != nil) {
+        if newsub.deleted != nil {
             store?.subDelete(topic: self, sub: newsub)
             removeSubFromCache(sub: newsub)
 
@@ -803,7 +803,7 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
     }
 
     internal func routeMetaSub(meta: MsgServerMeta) {
-        if let metaSubs = meta.sub as? Array<Subscription<SP, SR>> {
+        if let metaSubs = meta.sub as? [Subscription<SP, SR>] {
             for newsub in metaSubs {
                 processSub(newsub: newsub)
             }
@@ -1032,7 +1032,7 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
         }
         let metaSetSub = MetaSetSub(user: uid, mode: mode)
         return setMeta(meta: MsgSetMeta(desc: nil, sub: metaSetSub, tags: nil, cred: nil))
-            .thenApply { [weak self] msg in
+            .thenApply { [weak self] _ in
                 if let topic = self {
                     topic.store?.subUpdate(topic: topic, sub: sub!)
                     topic.listener?.onMetaSub(sub: sub!)
@@ -1056,7 +1056,7 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
             listener?.onSubsUpdated()
             return PromisedReply(error: TinodeError.notSynchronized)
         }
-        return tinode!.delSubscription(topicName: name, user: uid).thenApply({ msg in
+        return tinode!.delSubscription(topicName: name, user: uid).thenApply({ _ in
                 self.store?.subDelete(topic: self, sub: sub)
                 self.removeSubFromCache(sub: sub)
                 self.listener?.onSubsUpdated()
@@ -1222,7 +1222,7 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
             return publish(content: content, head: head, msgId: id)
         } else {
             return subscribe()
-                .thenApply({ [weak self] msg in
+                .thenApply({ [weak self] _ in
                     return self?.publish(content: content, head: head, msgId: id)
                 }).thenCatch({ [weak self] err in
                     self?.store?.msgSyncing(topic: self!, dbMessageId: id, sync: false)
@@ -1314,7 +1314,7 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
         let limit = newSeq - description!.getSeq
         self.setSeq(seq: newSeq)
         if !self.attached {
-            self.subscribe(set: nil, get: self.metaGetBuilder().withLaterData(limit: limit).build()).thenApply({ msg in
+            self.subscribe(set: nil, get: self.metaGetBuilder().withLaterData(limit: limit).build()).thenApply({ _ in
                 self.leave()
                 return nil
             })

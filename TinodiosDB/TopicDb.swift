@@ -10,12 +10,12 @@ import SQLite
 import TinodeSDK
 
 public class StoredTopic: Payload {
-    var id: Int64? = nil
-    var lastUsed: Date? = nil
-    var minLocalSeq: Int? = nil
-    var maxLocalSeq: Int? = nil
+    var id: Int64?
+    var lastUsed: Date?
+    var minLocalSeq: Int?
+    var maxLocalSeq: Int?
     var status: BaseDb.Status = .undefined
-    var nextUnsentId: Int? = nil
+    var nextUnsentId: Int?
 
     public static func isAllDataLoaded(topic: TopicProto?) -> Bool {
         guard let topic = topic else { return false }
@@ -358,7 +358,7 @@ public class TopicDb {
             loId = -1
         }
         if hiId > (st.maxLocalSeq ?? 0) && loId <= (st.maxLocalSeq ?? 0) {
-            setters.append(self.maxLocalSeq <- hiId);
+            setters.append(self.maxLocalSeq <- hiId)
         } else {
             hiId = -1
         }

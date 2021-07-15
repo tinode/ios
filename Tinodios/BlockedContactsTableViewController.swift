@@ -74,7 +74,7 @@ class BlockedContactsTableViewController: UITableViewController {
     private func deleteTopic(_ name: String) {
         let topic = Cache.tinode.getTopic(topicName: name) as! DefaultComTopic
         topic.delete(hard: true).then(
-            onSuccess: { [weak self] msg in
+            onSuccess: { [weak self] _ in
                 if let vc = self {
                     vc.handleSuccess(vc)
                 }
@@ -86,12 +86,12 @@ class BlockedContactsTableViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
         // Delete item at indexPath
-        let delete = UITableViewRowAction(style: .destructive, title: NSLocalizedString("Delete", comment: "Swipe action")) { (action, indexPath) in
+        let delete = UITableViewRowAction(style: .destructive, title: NSLocalizedString("Delete", comment: "Swipe action")) { (_, indexPath) in
             let topic = self.topics[indexPath.row]
             self.deleteTopic(topic.name)
         }
         // Unblock item.
-        let unblock = UITableViewRowAction(style: .normal, title: NSLocalizedString("Unblock", comment: "Swipe action")) { (action, indexPath) in
+        let unblock = UITableViewRowAction(style: .normal, title: NSLocalizedString("Unblock", comment: "Swipe action")) { (_, indexPath) in
             let topic = self.topics[indexPath.row]
             self.unblockTopic(topic: topic)
         }

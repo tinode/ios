@@ -45,7 +45,7 @@ class EditMembersViewController: UIViewController, UITableViewDataSource {
     }
 
     private func setup() {
-        var uid2contact = [String:Int]()
+        var uid2contact = [String: Int]()
         let subscriptions = delegate?.editMembersInitialSelection(editMembersView)
         if let subs = subscriptions {
             for (idx, contact) in subs.enumerated() {
@@ -179,9 +179,9 @@ extension EditMembersViewController: UITableViewDelegate {
     }
 }
 
-extension EditMembersViewController : UICollectionViewDataSource {
+extension EditMembersViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        //toggleNoSelectedMembersNote(on: selectedContacts.isEmpty)
+        // toggleNoSelectedMembersNote(on: selectedContacts.isEmpty)
         return selectedContacts.count
     }
 

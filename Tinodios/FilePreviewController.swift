@@ -16,9 +16,9 @@ struct FilePreviewContent {
     let size: Int?
 }
 
-class FilePreviewController : UIViewController, UIScrollViewDelegate {
+class FilePreviewController: UIViewController, UIScrollViewDelegate {
 
-    var previewContent: FilePreviewContent? = nil
+    var previewContent: FilePreviewContent?
 
     override func viewDidLoad() {
         super.viewDidLoad()

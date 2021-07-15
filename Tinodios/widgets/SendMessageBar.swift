@@ -45,10 +45,10 @@ class SendMessageBar: UIView {
         inputField.resignFirstResponder()
 
         let alert = UIAlertController(title: "Attachment", message: nil, preferredStyle: .actionSheet)
-        alert.addAction(UIAlertAction(title: "Image", style: .default, handler: { action in
+        alert.addAction(UIAlertAction(title: "Image", style: .default, handler: { _ in
             self.delegate?.sendMessageBar(attachment: false)
         }))
-        alert.addAction(UIAlertAction(title: "File", style: .default, handler: { action in
+        alert.addAction(UIAlertAction(title: "File", style: .default, handler: { _ in
             self.delegate?.sendMessageBar(attachment: true)
         }))
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
@@ -136,7 +136,7 @@ class SendMessageBar: UIView {
         togglePeerMessagingDisabled(visible: false)
     }
 
-    /// MARK: - Subviews handling
+    // MARK: - Subviews handling
 
     public func toggleNotAvailableOverlay(visible: Bool) {
         allDisabledView.isHidden = !visible

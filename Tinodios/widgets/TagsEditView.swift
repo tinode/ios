@@ -338,7 +338,7 @@ public class TagsEditView: UIScrollView {
             }
         }
 
-        tagView.onDidInputText = { [weak self] tagView, text in
+        tagView.onDidInputText = { [weak self] _, text in
             if text == "\n" {
                 self?.selectNextTag()
             } else {
@@ -419,7 +419,6 @@ public class TagsEditView: UIScrollView {
     fileprivate var layerBoundsObserver: NSKeyValueObservation?
 }
 
-
 // MARK: Private functions
 
 extension TagsEditView {
@@ -439,7 +438,7 @@ extension TagsEditView {
         textField.delegate = self
         addSubview(textField)
 
-        layerBoundsObserver = self.observe(\.layer.bounds, options: [.old, .new]) { [weak self] sender, change in
+        layerBoundsObserver = self.observe(\.layer.bounds, options: [.old, .new]) { [weak self] _, change in
             guard change.oldValue?.size.width != change.newValue?.size.width else {
                 return
             }
@@ -468,8 +467,7 @@ extension TagsEditView {
         enumerateItemRects(layoutWidth: layoutWidth) { (_, tagRect: CGRect?, textFieldRect: CGRect?) in
             if let tagRect = tagRect {
                 totalRect = tagRect.union(totalRect)
-            }
-            else if let textFieldRect = textFieldRect {
+            } else if let textFieldRect = textFieldRect {
                 totalRect = textFieldRect.union(totalRect)
             }
         }
@@ -539,8 +537,7 @@ extension TagsEditView {
                 tagView.frame = tagRect
                 tagView.setNeedsLayout()
                 contentRect = tagRect.union(contentRect)
-            }
-            else if let textFieldRect = textFieldRect {
+            } else if let textFieldRect = textFieldRect {
                 textField.frame = textFieldRect
                 contentRect = textFieldRect.union(contentRect)
             }
@@ -559,7 +556,7 @@ extension TagsEditView {
 
         if self.isScrollEnabled {
             // FIXME: this isn't working. Need to think in a workaround.
-            //self.scrollRectToVisible(textField.frame, animated: false)
+            // self.scrollRectToVisible(textField.frame, animated: false)
         }
     }
 

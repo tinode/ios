@@ -14,11 +14,11 @@ import Foundation
 public protocol DescriptionProto: Codable {}
 
 public class Description<DP: Codable & Mergeable, DR: Codable & Mergeable>: DescriptionProto {
-    var created: Date? = nil
-    var updated: Date? = nil
-    var touched: Date? = nil
-    var defacs: Defacs? = nil
-    var acs: Acs? = nil
+    var created: Date?
+    var updated: Date?
+    var touched: Date?
+    var defacs: Defacs?
+    var acs: Acs?
     var seq: Int? = 0
     var getSeq: Int { return seq ?? 0 }
     // Values reported by the current user as read and received
@@ -29,10 +29,10 @@ public class Description<DP: Codable & Mergeable, DR: Codable & Mergeable>: Desc
     var clear: Int? = 0
     var getClear: Int { return clear ?? 0 }
 
-    var pub: DP? = nil
-    var priv: DR? = nil
+    var pub: DP?
+    var priv: DR?
 
-    private enum CodingKeys : String, CodingKey {
+    private enum CodingKeys: String, CodingKey {
         case created, updated, touched,
              defacs, acs, seq, read, recv, clear,
              pub = "public", priv = "private"

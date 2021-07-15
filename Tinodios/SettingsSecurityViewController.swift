@@ -107,7 +107,7 @@ class SettingsSecurityViewController: UITableViewController {
         }
         UiUtils.showPermissionsEditDialog(over: self, acs: acsUnwrapped, callback: { permissions in
             UiUtils.handlePermissionsChange(onTopic: self.me, forUid: nil, changeType: changeType, newPermissions: permissions)?.then(
-                onSuccess: { msg in
+                onSuccess: { _ in
                     DispatchQueue.main.async { self.reloadData() }
                         return nil
                 }
@@ -146,7 +146,7 @@ class SettingsSecurityViewController: UITableViewController {
         })
         alert.addAction(UIAlertAction(
             title: NSLocalizedString("OK", comment: ""), style: .default,
-            handler: { action in
+            handler: { _ in
                 if let newPassword = alert.textFields?.first?.text {
                     self.updatePassword(with: newPassword)
                 }
@@ -170,7 +170,7 @@ class SettingsSecurityViewController: UITableViewController {
         alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: ""), style: .cancel, handler: nil))
         alert.addAction(UIAlertAction(
             title: NSLocalizedString("OK", comment: ""), style: .default,
-            handler: { action in
+            handler: { _ in
                 self.logout()
             }))
         self.present(alert, animated: true)
@@ -181,7 +181,7 @@ class SettingsSecurityViewController: UITableViewController {
         alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: ""), style: .cancel, handler: nil))
         alert.addAction(UIAlertAction(
             title: NSLocalizedString("Delete", comment: "Alert action"), style: .default,
-            handler: { action in
+            handler: { _ in
                 self.deleteAccount()
             }))
         self.present(alert, animated: true)

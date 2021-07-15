@@ -62,7 +62,7 @@ class SignupViewController: UITableViewController {
 
         guard !login.isEmpty && !pwd.isEmpty && !name.isEmpty && !credential.isEmpty else { return }
 
-        var method: String? = nil
+        var method: String?
         if let cred = ValidatedCredential.parse(from: credential) {
             switch cred {
             case .email:
@@ -92,7 +92,7 @@ class SignupViewController: UITableViewController {
         UiUtils.toggleProgressOverlay(in: self, visible: true, title: NSLocalizedString("Registering...", comment: "Progress overlay"))
         do {
             try tinode.connectDefault(inBackground: false)?
-                .thenApply { pkt in
+                .thenApply { _ in
                     return tinode.createAccountBasic(
                         uname: login, pwd: pwd, login: true,
                         tags: nil, desc: desc, creds: creds)
@@ -144,4 +144,3 @@ extension SignupViewController: ImagePickerDelegate {
         uploadedAvatar = true
     }
 }
-

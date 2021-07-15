@@ -46,8 +46,8 @@ public class Photo: Codable {
 }
 
 public class Contact: Codable {
-    var type: String? = nil
-    var uri: String? = nil
+    var type: String?
+    var uri: String?
     init() {}
     public func copy() -> Contact {
         let contactCopy = Contact()
@@ -58,11 +58,11 @@ public class Contact: Codable {
 }
 
 public class Name: Codable {
-    var surname: String? = nil
-    var given: String? = nil
-    var additional: String? = nil
-    var prefix: String? = nil
-    var suffix: String? = nil
+    var surname: String?
+    var given: String?
+    var additional: String?
+    var prefix: String?
+    var suffix: String?
     init() {}
     public func copy() -> Name {
         let nameCopy = Name()

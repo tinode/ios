@@ -7,7 +7,7 @@
 
 import Foundation
 
-public class MsgClientHi : Encodable {
+public class MsgClientHi: Encodable {
     let id: String?
     let ver: String?
     // User Agent.
@@ -34,22 +34,22 @@ public class Credential: Codable, Comparable, CustomStringConvertible {
     public static let kMethEmail = "email"
     public static let kMethPhone = "tel"
     // Confirmation method: email, phone, captcha.
-    public var meth: String? = nil
+    public var meth: String?
     // Credential to be confirmed, e.g. email or a phone number.
-    public var val: String? = nil
+    public var val: String?
     // Confirmation response, such as '123456'.
-    var resp: String? = nil
+    var resp: String?
     // Confirmation parameters.
-    var params: [String:String]? = nil
+    var params: [String: String]?
     // If credential is confirmed
-    var done: Bool? = nil
+    var done: Bool?
 
     public init(meth: String, val: String) {
         self.meth = meth
         self.val = val
     }
 
-    public init(meth: String?, val: String?, resp: String?, params: [String:String]?) {
+    public init(meth: String?, val: String?, resp: String?, params: [String: String]?) {
         self.meth = meth
         self.val = val
         self.resp = resp
@@ -73,7 +73,7 @@ public class Credential: Codable, Comparable, CustomStringConvertible {
     }
 }
 
-public class MsgClientAcc<Pu: Encodable,Pr: Encodable>: Encodable {
+public class MsgClientAcc<Pu: Encodable, Pr: Encodable>: Encodable {
     var id: String?
     var user: String?
     var scheme: String?
@@ -81,14 +81,14 @@ public class MsgClientAcc<Pu: Encodable,Pr: Encodable>: Encodable {
     var login: Bool?
     var tags: [String]?
     var cred: [Credential]?
-    var desc: MetaSetDesc<Pu,Pr>?
+    var desc: MetaSetDesc<Pu, Pr>?
 
     init(id: String?,
          uid: String?,
          scheme: String?,
          secret: String?,
          doLogin: Bool,
-         desc: MetaSetDesc<Pu,Pr>?) {
+         desc: MetaSetDesc<Pu, Pr>?) {
         self.id = id
         self.user = uid
         self.scheme = scheme
@@ -178,10 +178,10 @@ public class MsgGetMeta: CustomStringConvertible, Encodable {
     private var set = 0
 
     public var what: String = ""
-    public var desc: MetaGetDesc? = nil
-    public var sub: MetaGetSub? = nil
-    public var data: MetaGetData? = nil
-    public var del: MetaGetData? = nil
+    public var desc: MetaGetDesc?
+    public var sub: MetaGetSub?
+    public var data: MetaGetData?
+    public var del: MetaGetData?
 
     // Only use these fields in JSON representation.
     private enum CodingKeys: String, CodingKey {
@@ -193,7 +193,7 @@ public class MsgGetMeta: CustomStringConvertible, Encodable {
     }
 
     public var description: String {
-        //return
+        // return
         let desc_str = desc != nil ? String(describing: desc!) : "nil"
         let sub_str = sub != nil ? String(describing: sub!) : "nil"
         let data_str = data != nil ? String(describing: data!) : "nil"
@@ -294,10 +294,10 @@ public class MsgGetMeta: CustomStringConvertible, Encodable {
 }
 
 public class MetaSetDesc<P: Encodable, R: Encodable>: Encodable {
-    var defacs: Defacs? = nil
-    var pub: P? = nil
-    var priv: R? = nil
-    private enum CodingKeys : String, CodingKey {
+    var defacs: Defacs?
+    var pub: P?
+    var priv: R?
+    private enum CodingKeys: String, CodingKey {
         case defacs, pub = "public", priv = "private"
     }
     public init(da: Defacs) {
@@ -420,10 +420,10 @@ public class MsgClientPub: Encodable {
     let id: String?
     let topic: String?
     let noecho: Bool?
-    let head: [String:JSONValue]?
+    let head: [String: JSONValue]?
     let content: Drafty?
 
-    init(id: String?, topic: String?, noecho: Bool?, head: [String:JSONValue]?, content: Drafty?) {
+    init(id: String?, topic: String?, noecho: Bool?, head: [String: JSONValue]?, content: Drafty?) {
         self.id = id
         self.topic = topic
         self.noecho = noecho
@@ -504,9 +504,9 @@ public class MsgClientDel: Encodable {
 
 }
 
-public class ClientMessage<Pu: Encodable, Pr: Encodable> : Encodable {
+public class ClientMessage<Pu: Encodable, Pr: Encodable>: Encodable {
     var hi: MsgClientHi?
-    var acc: MsgClientAcc<Pu,Pr>?
+    var acc: MsgClientAcc<Pu, Pr>?
     var login: MsgClientLogin?
     var sub: MsgClientSub<Pu, Pr>?
     var get: MsgClientGet?
@@ -519,7 +519,7 @@ public class ClientMessage<Pu: Encodable, Pr: Encodable> : Encodable {
     init(hi: MsgClientHi) {
         self.hi = hi
     }
-    init(acc: MsgClientAcc<Pu,Pr>) {
+    init(acc: MsgClientAcc<Pu, Pr>) {
         self.acc = acc
     }
     init(login: MsgClientLogin) {

@@ -12,7 +12,7 @@ enum SqlStoreError: Error {
     case dbError(String)
 }
 
-public class SqlStore : Storage {
+public class SqlStore: Storage {
     public var myUid: String? {
         get {
             return self.dbh?.uid

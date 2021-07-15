@@ -79,7 +79,7 @@ public class Utils {
 
     public static func uniqueFilename(forMime mime: String?) -> String {
         let mimeType: CFString = (mime ?? "application/octet-stream") as CFString
-        var ext: String? = nil
+        var ext: String?
         if let uti = UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, mimeType, nil)?.takeUnretainedValue() {
             ext = UTTypeCopyPreferredTagWithClass(uti, kUTTagClassFilenameExtension)?.takeUnretainedValue() as String?
         }
@@ -216,13 +216,13 @@ extension URL {
 extension UIFont {
     func withTraits(traits: UIFontDescriptor.SymbolicTraits) -> UIFont {
         let descriptor = fontDescriptor.withSymbolicTraits(traits)
-        return UIFont(descriptor: descriptor!, size: 0) //size 0 means keep the size as it is
+        return UIFont(descriptor: descriptor!, size: 0) // size 0 means keep the size as it is
     }
 }
 
 extension StoredMessage {
     /// Generate and cache NSAttributedString representation of Drafty content.
-    func attributedContent(fitIn size: CGSize, withDefaultAttributes attributes: [NSAttributedString.Key : Any]? = nil) -> NSAttributedString? {
+    func attributedContent(fitIn size: CGSize, withDefaultAttributes attributes: [NSAttributedString.Key: Any]? = nil) -> NSAttributedString? {
         if cachedContent != nil {
             return cachedContent
         }
@@ -235,7 +235,7 @@ extension StoredMessage {
         return cachedContent
     }
     /// Generate and cache NSAttributedString preview of Drafty content.
-    func attributedPreview(fitIn size: CGSize, withDefaultAttributes attributes: [NSAttributedString.Key : Any]? = nil) -> NSAttributedString? {
+    func attributedPreview(fitIn size: CGSize, withDefaultAttributes attributes: [NSAttributedString.Key: Any]? = nil) -> NSAttributedString? {
         guard cachedPreview == nil else { return cachedPreview }
         if !isDeleted {
             guard let content = content else { return nil }
@@ -246,7 +246,7 @@ extension StoredMessage {
         return cachedPreview
     }
     /// Creates "content deleted" string with a small "blocked" icon.
-    private static func contentDeletedMessage(withAttributes attr: [NSAttributedString.Key : Any]?) -> NSAttributedString {
+    private static func contentDeletedMessage(withAttributes attr: [NSAttributedString.Key: Any]?) -> NSAttributedString {
         // Space is needed as a workaround for a bug in UIKit. The icon style is not applied if the icon is the first object in the attributed string.
         let second = NSMutableAttributedString(string: " ")
         second.beginEditing()
@@ -265,7 +265,7 @@ extension StoredMessage {
         // https://stackoverflow.com/questions/47844721/vertically-aligning-nstextattachment-in-nsmutableattributedstring
         var textFont: UIFont = attr?[.font] as? UIFont ?? UIFont.systemFont(ofSize: 14)
         textFont = textFont.withSize(14)
-        var newAttr: [NSAttributedString.Key : Any] = attr ?? [:]
+        var newAttr: [NSAttributedString.Key: Any] = attr ?? [:]
         newAttr[.baselineOffset] = (icon.bounds.height - textFont.pointSize) / 2 - textFont.descender / 2
         newAttr[.font] = textFont
         second.append(NSAttributedString(string: NSLocalizedString("  Content deleted", comment: "Replacement for chat message with no content"), attributes: newAttr))
