@@ -1,0 +1,327 @@
+﻿/* Replacement for chat message with no content */
+"  Content deleted" = "  Content deleted";
+
+/* Invite reaction button */
+"Accept" = "接受";
+
+/* Toast notification */
+"Action failed: %@" = "操作失敗：%@";
+
+/* Alert title */
+"Add contact" = "新增聯絡人";
+
+/* Alert placeholder */
+"Additional info (private)" = "額外資訊 (私人)";
+
+/* Alert explanation */
+"Also block and remove all messages" = "同時封鎖並移除所有訊息";
+
+/* Swipe action */
+"Archive" = "封存";
+
+/* View title */
+"Archived Chats" = "已封存的對話";
+
+/* Button to open chat archive */
+"Archived Chats (%d)" = "已封存的對話 (%d)";
+
+/* Warning in delete account alert */
+"Are you sure you want to delete your account? It cannot be undone." = "您確定要刪除您的帳號嗎？此操作無法還原。";
+
+/* Warning in logout alert */
+"Are you sure you want to log out?" = "您確定要登出嗎？";
+
+/* Alert action
+   Invite reaction button */
+"Block" = "封鎖";
+
+/* Alert action */
+"Block contact?" = "要封鎖聯絡人嗎？";
+
+/* Toast notification */
+"Can't change permissions for this user." = "無法修改此使用者的權限。";
+
+/* Toast notification */
+"Can't make this user owner." = "無法將擁有者身分轉移給此使用者。";
+
+/* Alert action */
+"Cancel" = "取消";
+
+/* Error message */
+"Cannot send email: functionality not accessible." = "無法傳送郵件：無法存取功能。";
+
+/* Alert title */
+"Change Password" = "修改密碼";
+
+/* Alert action */
+"Change permissions" = "修改權限";
+
+/* Invitation subject */
+"Check out Tinode Messenger" = "試試 Tinode Messenger";
+
+/* Invitation body */
+"Check out Tinode Messenger: https://tinode.co/" = "試試 Tinode Messenger：https://tinode.co/";
+
+/* Alert title */
+"Clear all messages?" = "確定要清除所有訊息嗎？";
+
+/* Button text */
+"confirm" = "確認";
+
+/* Alert title */
+"Confirm contact" = "確認聯絡人";
+
+/* Info message */
+"Confirmaition message sent to %@" = "已將確認訊息傳送給 %@";
+
+/* Toast info message */
+"Confirmed successfully" = "確認成功";
+
+/* Toast notification */
+"Connection to server lost." = "失去與伺服器的連線。";
+
+/* Menu item */
+"Copy" = "複製";
+
+/* Alert action */
+"Copy to clipboard" = "複製至剪貼簿";
+
+/* Error message */
+"Could not change password: %@" = "無法修改密碼：%@";
+
+/* Error message */
+"Couldn't connect to server at %@: %@" = "無法連接位於 %@ 的伺服器：%@";
+
+/* Alert action
+   Menu item
+   Swipe action */
+"Delete" = "刪除";
+
+/* Alert title */
+"Delete the group?" = "要刪除群組嗎？";
+
+/* Section title */
+"Directory" = "目錄";
+
+/* Alert title */
+"Edit account name" = "編輯帳號名稱";
+
+/* Alert title */
+"Edit Group" = "編輯群組";
+
+/* Alert action */
+"Email" = "電子郵件地址";
+
+/* Toast error message */
+"Enter a valid credential (phone or email)." = "輸入有效的認證 (電話號碼或是電子郵件信箱)。";
+
+/* Alert prompt */
+"Enter confirmation code sent to you by %@" = "輸入透過 %@ 傳送給您的確認碼";
+
+/* Alert message */
+"Enter email or phone number" = "輸入電話號碼或是電子郵件信箱";
+
+/* Alert prompt */
+"Enter new password" = "輸入新密碼";
+
+/* Error message */
+"Entered text is neither email nor phone number." = "您輸入的不是電子郵件信箱或是電話號碼";
+
+/* Toast notification */
+"Error changing permissions: %@" = "修改權限失敗：%@";
+
+/* Error message */
+"Failed to create account: %@" = "建立帳號失敗：%@";
+
+/* Error message */
+"Failed to save group and contact info." = "無法儲存群組及聯絡資訊。";
+
+/* Error message */
+"Failed to subscribe to topic: %@" = "無法訂閱主題：%@";
+
+/* Alert action qualifier as in 'Delete for all' */
+"For all" = "所有人";
+
+/* Alert action 'Delete for me' */
+"For me" = "僅我自己";
+
+/* User name prompt */
+"Full name, e.g. John Doe" = "全名，例如：王小明";
+
+/* Invite reaction button */
+"Ignore" = "忽略";
+
+/* Error message */
+"Invalid group ID: %d (%@)" = "群組 ID 無效：%1$d (%2$@)";
+
+/* Dialog title: call to action */
+"Invite" = "邀請";
+
+/* Alert action */
+"Leave" = "離開";
+
+/* Alert title */
+"Leave the conversation?" = "要離開對話嗎？";
+
+/* Alert title */
+"Leave the group?" = "要離開群組嗎？";
+
+/* Section title */
+"Local Contacts" = "本機聯絡人";
+
+/* Login progress text */
+"Logging in..." = "正在登入...";
+
+/* Error message */
+"Login info missing..." = "缺少登入資訊...";
+
+/* Alert action */
+"Make owner" = "轉移擁有者";
+
+/* View title */
+"Manage members" = "管理成員";
+
+/* Toast notification */
+"Message not sent." = "未傳送訊息。";
+
+/* Toast info */
+"Message with instructions sent to the provided address." = "已將指示傳送到指定的位址。";
+
+/* Alert action */
+"Messages" = "訊息";
+
+/* Alert placeholder */
+"Name of the group" = "群組名稱";
+
+/* Invalid date */
+"Never ??:??" = "永不 ??:??";
+
+/* View title */
+"New Chat" = "新對話";
+
+/* Error message */
+"No access to email" = "無存取電子郵件地址的權限";
+
+/* No read access in chat
+   Toast error message */
+"No access to messages" = "無存取訊息的權限";
+
+/* Placeholder when no members are selected */
+"No members selected" = "未選擇任何成員";
+
+/* Placeholder in empty chat */
+"No messages in the conversation" = "對話中沒有訊息";
+
+/* Alert action */
+"OK" = "OK";
+
+/* Toast notification */
+"Only Owner can delete group" = "只有擁有者能夠刪除群組";
+
+/* Toast notification */
+"Owner cannot leave the group" = "擁有者不能離開群組";
+
+/* Error message */
+"Password too short" = "密碼過短";
+
+/* Toast notification */
+"Permissions not modified: %d (%s)" = "未修改權限：%1$d (%2$s)";
+
+/* Progress overlay */
+"Please wait..." = "請稍候...";
+
+/* Placeholder text in editor */
+"Private info: not set" = "私人資訊：未設定";
+
+/* Progress overlay */
+"Registering..." = "正在註冊...";
+
+/* Alert action */
+"Remove" = "移除";
+
+/* Confirmation */
+"Remove %@ from %@?" = "要將 %1$@ 從 %2$@ 移除嗎？";
+
+/* Confirmation */
+"Remove and ban %@ from %@?" = "要將 %1$@ 從 %2$@ 移除並封禁嗎？";
+
+/* Alert action */
+"Report" = "檢舉";
+
+/* Alert title */
+"Report contact?" = "要檢舉聯絡人嗎？";
+
+/* Alert title */
+"Report Group?" = "要檢舉群組嗎？";
+
+/* Error message */
+"Request failed: %@" = "請求失敗：%@";
+
+/* Progress overlay */
+"Requesting..." = "正在請求...";
+
+/* Placeholder prompt */
+"Search by tags" = "以標籤搜尋";
+
+/* Error message when permissions are missing */
+"Search functionality limited. Grant Contacts permission." = "搜尋功能受限。請授予存取聯絡人的權限。";
+
+/* Error message */
+"Select at least one group member" = "至少選取一位群組成員";
+
+/* Alert action */
+"Send message" = "傳送訊息";
+
+/* Toast notification */
+"Something went wrong: %d (%s)" = "有東西出錯了：%1$d (%2$s)";
+
+/* Toast notification */
+"Tags missing." = "缺少標籤。";
+
+/* Error message */
+"The file size exceeds the limit %@" = "檔案大小超出限制 %@";
+
+/* Toast notification */
+"Topic name missing" = "缺少主題名稱";
+
+/* Swipe action */
+"Unarchive" = "未封存";
+
+/* Undefined chat name */
+"Undefined" = "未定義";
+
+/* Button with missing text
+   Placeholder for missing file name
+   Placeholder for missing file type */
+"undefined" = "未定義";
+
+/* Placeholder for missing topic name
+   Placeholder for missing user name */
+"Unknown" = "未知";
+
+/* Sender with missing name */
+"Unknown %@" = "未知 %@";
+
+/* Error message */
+"Upload failed (%@). No server response." = "上傳失敗 (%@)。伺服器無回應。";
+
+/* Error message */
+"Upload failed (%@): empty response body." = "上傳失敗 (%@)：回應本體空白。";
+
+/* Error message */
+"Upload failed (%@): response code %d." = "上傳失敗 (%1$@)：回傳碼 %2$d。";
+
+/* Error message */
+"Verification failure: %d %@" = "驗證失敗：%1$d %2$@";
+
+/* This is 'you' */
+"You" = "您";
+
+/* Call to action */
+"You are invited to start a new chat. What would you like?" = "您已被邀請開始新對話。接下來您要做什麼呢？";
+
+/* Toast notification */
+"You are offline." = "您處於離線狀態。";
+
+/* Placeholder when no chats found */
+"You have no chats\n\n¯\\_(ツ)_/¯" = "您沒有任何對話\n\n¯\\_(ツ)_/¯";
