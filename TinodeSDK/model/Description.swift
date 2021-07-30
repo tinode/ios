@@ -32,10 +32,12 @@ public class Description<DP: Codable & Mergeable, DR: Codable & Mergeable>: Desc
     var pub: DP?
     var priv: DR?
 
+    var seen: LastSeen?
+
     private enum CodingKeys: String, CodingKey {
         case created, updated, touched,
              defacs, acs, seq, read, recv, clear,
-             pub = "public", priv = "private"
+             pub = "public", priv = "private", seen
     }
 
     private func mergePub(with another: DP) -> Int {
@@ -55,112 +57,128 @@ public class Description<DP: Codable & Mergeable, DR: Codable & Mergeable>: Desc
     }
 
     func merge(desc: Description<DP, DR>) -> Bool {
-        var changed = 0
+        var changed = false
         if created == nil && desc.created != nil {
             created = desc.created
-            changed += 1
+            changed = true
         }
         if desc.updated != nil && (updated == nil || updated! < desc.updated!) {
             updated = desc.updated
-            changed += 1
+            changed = true
         }
         if desc.touched != nil && (touched == nil || touched! < desc.touched!) {
             touched = desc.touched
-            changed += 1
+            changed = true
         }
         if desc.defacs != nil {
             if defacs == nil {
                 defacs = desc.defacs
-                changed += 1
+                changed = true
             } else {
-                changed += (defacs!.merge(defacs: desc.defacs!) ? 1 : 0)
+                changed = defacs!.merge(defacs: desc.defacs!) || changed
             }
         }
         if desc.acs != nil {
             if acs == nil {
                 acs = desc.acs
-                changed += 1
+                changed = true
             } else {
-                changed += (acs!.merge(from: desc.acs) ? 1 : 0)
+                changed = acs!.merge(from: desc.acs) || changed
             }
         }
         if getSeq < desc.getSeq {
             seq = desc.getSeq
-            changed += 1
+            changed = true
         }
         if getRead < desc.getRead {
             read = desc.getRead
-            changed += 1
+            changed = true
         }
         if getRecv < desc.getRecv {
             recv = desc.getRecv
-            changed += 1
+            changed = true
         }
         if getClear < desc.getClear {
             clear = desc.getClear
-            changed += 1
+            changed = true
         }
         if let spub = desc.pub {
             if mergePub(with: spub) > 0 {
-                changed += 1
+                changed = true
             }
         }
         if let spriv = desc.priv {
             if mergePriv(with: spriv) > 0 {
-                changed += 1
+                changed = true
             }
         }
-        return changed > 0
+        if let dseen = desc.seen {
+            if seen == nil {
+                seen = dseen
+                changed = true
+            } else {
+                changed = seen!.merge(seen: dseen) || changed
+            }
+        }
+        return changed
     }
 
     // Merges subscription into a description.
     func merge<SP: Decodable, SR: Decodable>(sub: Subscription<SP, SR>) -> Bool {
-        var changed = 0
+        var changed = false
         if sub.updated != nil && (updated == nil || updated! < sub.updated!) {
             updated = sub.updated
-            changed += 1
+            changed = true
         }
         if sub.touched != nil && (touched == nil || touched! < sub.touched!) {
             touched = sub.touched
-            changed += 1
+            changed = true
         }
         if let newAcs = sub.acs {
             if acs == nil {
                 acs = newAcs
-                changed += 1
+                changed = true
             } else {
-                changed += acs!.merge(from: newAcs) ? 1 : 0
+                changed = acs!.merge(from: newAcs) || changed
             }
         }
         if getSeq < sub.getSeq {
             seq = sub.getSeq
-            changed += 1
+            changed = true
         }
         if getRead < sub.getRead {
             read = sub.getRead
-            changed += 1
+            changed = true
         }
         if getRecv < sub.getRecv {
             recv = sub.getRecv
-            changed += 1
+            changed = true
         }
         if getClear < sub.getClear {
             clear = sub.getClear
-            changed += 1
+            changed = true
         }
         if sub.pub != nil {
             let spub = sub.pub as! DP
             if mergePub(with: spub) > 0 {
-                changed += 1
+                changed = true
             }
         }
         if sub.priv != nil {
             let spriv = sub.priv as! DR
             if mergePriv(with: spriv) > 0 {
-                changed += 1
+                changed = true
             }
         }
-        return changed > 0
+        if sub.seen != nil {
+            if seen == nil {
+                seen = sub.seen
+                changed = true
+            } else {
+                changed = seen!.merge(seen: sub.seen) || changed
+            }
+        }
+        return changed
     }
     func merge(desc: MetaSetDesc<DP, DR>) -> Bool {
         var changed = 0

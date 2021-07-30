@@ -7,7 +7,7 @@
 
 import Foundation
 
-public class LastSeen: Decodable {
+public class LastSeen: Codable {
     public var when: Date?
     public var ua: String?
     public init(when: Date?, ua: String?) {
