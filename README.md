@@ -73,6 +73,7 @@ The app is currently available in the following languages:
 * English (default)
 * Chinese (simplified)
 * Chinese (traditional)
+* Russian
 * Spanish
 
 More translations are welcome. See [instructions](https://github.com/tinode/chat/blob/devel/docs/translations.md#ios).
