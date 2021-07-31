@@ -69,7 +69,13 @@ If you want to use the app with your own server and want push notification to wo
 
 ## Translations
 
-The app is currently available in English (default), Simplified Chinese, Spanish. Pull requests with more translations are welcome. Two files need to be translated: [storyboard](Tinodios/en.lproj/Main.strings) and [code](en.lproj/Localizable.strings).
+The app is currently available in the following languages:
+* English (default)
+* Chinese (simplified)
+* Chinese (traditional)
+* Spanish
+
+More translations are welcome. See [instructions](https://github.com/tinode/chat/blob/devel/docs/translations.md#ios).
 
 ## Other
 
