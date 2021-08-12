@@ -1,5 +1,6 @@
-﻿/* Replacement for chat message with no content */
-"  Content deleted" = "  Content deleted";
+
+/* Replacement for chat message with no content */
+"  Content deleted" = "內容已刪除";
 
 /* Invite reaction button */
 "Accept" = "接受";
@@ -65,9 +66,6 @@
 /* Alert title */
 "Clear all messages?" = "確定要清除所有訊息嗎？";
 
-/* Button text */
-"confirm" = "確認";
-
 /* Alert title */
 "Confirm contact" = "確認聯絡人";
 
@@ -104,10 +102,10 @@
 "Directory" = "目錄";
 
 /* Alert title */
-"Edit account name" = "編輯帳號名稱";
+"Edit Group" = "編輯群組";
 
 /* Alert title */
-"Edit Group" = "編輯群組";
+"Edit account name" = "編輯帳號名稱";
 
 /* Alert action */
 "Email" = "電子郵件地址";
@@ -249,10 +247,10 @@
 "Report" = "檢舉";
 
 /* Alert title */
-"Report contact?" = "要檢舉聯絡人嗎？";
+"Report Group?" = "要檢舉群組嗎？";
 
 /* Alert title */
-"Report Group?" = "要檢舉群組嗎？";
+"Report contact?" = "要檢舉聯絡人嗎？";
 
 /* Error message */
 "Request failed: %@" = "請求失敗：%@";
@@ -290,11 +288,6 @@
 /* Undefined chat name */
 "Undefined" = "未定義";
 
-/* Button with missing text
-   Placeholder for missing file name
-   Placeholder for missing file type */
-"undefined" = "未定義";
-
 /* Placeholder for missing topic name
    Placeholder for missing user name */
 "Unknown" = "未知";
@@ -324,4 +317,12 @@
 "You are offline." = "您處於離線狀態。";
 
 /* Placeholder when no chats found */
-"You have no chats\n\n¯\\_(ツ)_/¯" = "您沒有任何對話\n\n¯\\_(ツ)_/¯";
+"You have no chats\n\n¯\\_(ツ)_/¯" = "您沒有任何對話\n\n¯\_(ツ)_/¯";
+
+/* Button text */
+"confirm" = "確認";
+
+/* Button with missing text
+   Placeholder for missing file name
+   Placeholder for missing file type */
+"undefined" = "未定義";
