@@ -2,7 +2,7 @@
 //  MeTopic.swift
 //  TinodeSDK
 //
-//  Copyright © 2020 Tinode. All rights reserved.
+//  Copyright © 2020-2021 Tinode LLC. All rights reserved.
 //
 
 import Foundation
@@ -29,10 +29,7 @@ open class MeTopic<DP: Codable & Mergeable>: Topic<DP, PrivateType, DP, PrivateT
 
     private var credentials: [Credential]?
 
-    public init(tinode: Tinode?) {
-        super.init(tinode: tinode, name: Tinode.kTopicMe, l: nil)
-    }
-    public init(tinode: Tinode?, l: MeTopic<DP>.Listener?) {
+    public init(tinode: Tinode?, l: MeTopic<DP>.Listener? = nil) {
         super.init(tinode: tinode, name: Tinode.kTopicMe, l: l)
     }
     public init(tinode: Tinode?, desc: Description<DP, PrivateType>) {

@@ -2,21 +2,12 @@
 //  ComTopic.swift
 //  TinodeSDK
 //
-//  Copyright © 2020 Tinode. All rights reserved.
+//  Copyright © 2020-2021 Tinode LLC. All rights reserved.
 //
 
 import Foundation
 
 public class ComTopic<DP: Codable & Mergeable>: Topic<DP, PrivateType, DP, PrivateType> {
-    override init(tinode: Tinode?, name: String, l: Listener?) {
-        super.init(tinode: tinode, name: name, l: l)
-    }
-    override init(tinode: Tinode?, sub: Subscription<DP, PrivateType>) {
-        super.init(tinode: tinode, sub: sub)
-    }
-    override init(tinode: Tinode?, name: String, desc: Description<DP, PrivateType>) {
-        super.init(tinode: tinode, name: name, desc: desc)
-    }
     public convenience init(in tinode: Tinode?, forwardingEventsTo l: Listener? = nil, isChannel: Bool) {
         let name = (isChannel ? Tinode.kChannelNew : Tinode.kTopicNew) + tinode!.nextUniqueString()
         self.init(tinode: tinode!, name: name, l: l)

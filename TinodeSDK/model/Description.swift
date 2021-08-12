@@ -2,7 +2,7 @@
 //  Description.swift
 //  ios
 //
-//  Copyright © 2019 Tinode. All rights reserved.
+//  Copyright © 2019-2021 Tinode LLC. All rights reserved.
 //
 
 import Foundation
