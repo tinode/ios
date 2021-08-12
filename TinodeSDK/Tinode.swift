@@ -2,7 +2,7 @@
 //  Tinode.swift
 //  ios
 //
-//  Copyright © 2019 Tinode. All rights reserved.
+//  Copyright © 2019-2021 Tinode LLC. All rights reserved.
 //
 
 import Foundation
@@ -674,7 +674,7 @@ public class Tinode {
         } else if meta.topic == Tinode.kTopicFnd {
             topic = DefaultFndTopic(tinode: self)
         } else {
-            topic = DefaultComTopic(tinode: self, name: meta.topic!, desc: meta.desc! as! DefaultDescription)
+            topic = DefaultComTopic(tinode: self, name: meta.topic!, desc: (meta.desc! as! DefaultDescription))
         }
 
         return topic
