@@ -11,8 +11,8 @@ import TinodiosDB
 
 class TopicInfoViewController: UITableViewController {
 
-    // Number of rows in every section. '-1' means variable number of items
     private static let kSectionBasic = 0
+    private static let kSectionBasicLastSeen = 2
 
     private static let kSectionMute = 1
 
@@ -42,6 +42,7 @@ class TopicInfoViewController: UITableViewController {
     @IBOutlet weak var loadAvatarButton: UIButton!
     @IBOutlet weak var mutedSwitch: UISwitch!
     @IBOutlet weak var topicIDLabel: UILabel!
+    @IBOutlet weak var lastSeenTimestampLabel: UILabel!
 
     @IBOutlet weak var actionMyPermissions: UITableViewCell!
     @IBOutlet weak var myPermissionsLabel: UILabel!
@@ -190,6 +191,20 @@ class TopicInfoViewController: UITableViewController {
         avatarImage.letterTileFont = self.avatarImage.letterTileFont.withSize(CGFloat(50))
         mutedSwitch.isOn = topic.isMuted
         let acs = topic.accessMode
+
+        if let ts = topic?.lastSeen?.when {
+            var date: String
+            if #available(iOS 13.0, *) {
+                let formatter = RelativeDateTimeFormatter()
+                formatter.unitsStyle = .short
+                date = formatter.localizedString(for: ts, relativeTo: Date())
+            } else {
+                // Fallback on earlier versions
+                date = RelativeDateFormatter.shared.shortDate(from: ts)
+            }
+
+            self.lastSeenTimestampLabel?.text = date
+        }
 
         if self.topic.isGrpType {
             authUsersPermissionsLabel?.text = topic.defacs?.getAuth()
@@ -474,9 +489,9 @@ extension TopicInfoViewController {
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if indexPath.section == TopicInfoViewController.kSectionMembers && indexPath.row != 0 {
             return 60
-        }
-
-        if indexPath.section == TopicInfoViewController.kSectionActions {
+        } else if indexPath.section == TopicInfoViewController.kSectionBasic && indexPath.row == TopicInfoViewController.kSectionBasicLastSeen && topic?.lastSeen == nil {
+            return CGFloat.leastNonzeroMagnitude
+        } else if indexPath.section == TopicInfoViewController.kSectionActions {
             if indexPath.row == TopicInfoViewController.kSectionActionsManageTags && (!(topic?.isGrpType ?? false) || !(topic?.isOwner ?? false)) {
                 // P2P topic has no owner, hide [Manage Tags]
                 return CGFloat.leastNonzeroMagnitude

@@ -196,8 +196,10 @@
 		B02F5C8A22679BC80079A97E /* ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
 		B031BE542263075E004160AE /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		B05ACEB222FDAB5200276713 /* ResetPasswordViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResetPasswordViewController.swift; sourceTree = "<group>"; };
-		B0762A9F244EE94300385B65 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Main.strings; sourceTree = "<group>"; };
 		B079062423EEA0C90019ED75 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		B093F50126C5BBF300FAA4E8 /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/Localizable.strings"; sourceTree = "<group>"; };
+		B093F50426C5BD4200FAA4E8 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Main.strings; sourceTree = "<group>"; };
+		B093F50526C5BD8800FAA4E8 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		B0941BC42487CEE100A891B7 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Main.strings; sourceTree = "<group>"; };
 		B0941BC52487CEE100A891B7 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
 		B0941BC62487CEE100A891B7 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -222,7 +224,6 @@
 		B0CEF8DA26B603E3000028C2 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
 		B0CEF8DB26B603E4000028C2 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Localizable.strings; sourceTree = "<group>"; };
 		B0CF83DD244DFB1C00E79D22 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Main.strings"; sourceTree = "<group>"; };
-		B0CF83E1244E074A00E79D22 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		B0CF83E3244E074E00E79D22 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		B0DF03162279F027000F9492 /* RoundImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundImageView.swift; sourceTree = "<group>"; };
 		B0DF0318227C2517000F9492 /* MessageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageView.swift; sourceTree = "<group>"; };
@@ -725,10 +726,10 @@
 			children = (
 				0A0380DC21B3CC8100A3FA0E /* Base */,
 				B0CF83DD244DFB1C00E79D22 /* zh-Hans */,
-				B0762A9F244EE94300385B65 /* en */,
 				B0941BC42487CEE100A891B7 /* es */,
 				B0CEF8D726B5EC21000028C2 /* zh-Hant */,
 				B0CEF8D926B603E3000028C2 /* ru */,
+				B093F50426C5BD4200FAA4E8 /* en */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";
@@ -748,10 +749,11 @@
 		B0CF83E2244E074A00E79D22 /* Localizable.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
-				B0CF83E1244E074A00E79D22 /* en */,
 				B0CF83E3244E074E00E79D22 /* zh-Hans */,
 				B0941BC62487CEE100A891B7 /* es */,
 				B0CEF8DB26B603E4000028C2 /* ru */,
+				B093F50126C5BBF300FAA4E8 /* zh-Hant */,
+				B093F50526C5BD8800FAA4E8 /* en */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
