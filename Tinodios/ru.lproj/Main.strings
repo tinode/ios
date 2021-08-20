@@ -14,8 +14,8 @@
 /* Class = "UITableViewSection"; headerTitle = "Group Members"; ObjectID = "26s-2T-nI0"; */
 "26s-2T-nI0.headerTitle" = "Участники";
 
-/* Class = "UIBarButtonItem"; title = "Item"; ObjectID = "3zN-CC-6bS"; */
-"3zN-CC-6bS.title" = "Item";
+/*  */
+"3gX-G0-wiF.headerTitle" = "Уведомления";
 
 /* Class = "UITableViewController"; title = "General Settings"; ObjectID = "4dd-0I-UFm"; */
 "4dd-0I-UFm.title" = "Общие настройки";
@@ -135,7 +135,7 @@
 "Rv6-qQ-FqW.normalTitle" = "Зарегистрироваться";
 
 /* Class = "UIButton"; normalTitle = "Добавить аватар"; ObjectID = "Svo-WC-LXa"; */
-"Svo-WC-LXa.normalTitle" = "Add Avatar";
+"Svo-WC-LXa.normalTitle" = "Добавить аватар";
 
 /* Class = "UITabBarItem"; title = "By ID"; ObjectID = "T7l-iC-Rs6"; */
 "T7l-iC-Rs6.title" = "По адресу";
@@ -168,7 +168,7 @@
 "YmQ-cB-rjH.title" = "SignUp";
 
 /* Class = "UITableViewSection"; headerTitle = "Notifications"; ObjectID = "ZEt-A4-kIu"; */
-"ZEt-A4-kIu.headerTitle" = "Notifications";
+"ZEt-A4-kIu.headerTitle" = "Нотификации";
 
 /* Class = "UITextField"; placeholder = "Password"; ObjectID = "ZQy-2N-acy"; */
 "ZQy-2N-acy.placeholder" = "Пароль";
@@ -205,6 +205,12 @@
 
 /* Class = "UILabel"; text = "N"; ObjectID = "aMv-to-Vu2"; */
 "aMv-to-Vu2.text" = "N";
+
+/*  */
+"bEA-WA-uoH.text" = "Был онлайн";
+
+/*  */
+"bFa-Y7-bbT.text" = "Имя пользователя";
 
 /* Class = "UILabel"; text = "N"; ObjectID = "bZv-2Q-BI9"; */
 "bZv-2Q-BI9.text" = "N";
@@ -317,8 +323,11 @@
 /* Class = "UINavigationController"; title = "StartNavigationController"; ObjectID = "oPa-Qr-HlP"; */
 "oPa-Qr-HlP.title" = "StartNavigationController";
 
-/* Class = "UILabel"; text = "TopicID"; ObjectID = "om5-K5-yRq"; */
+/*  */
 "om5-K5-yRq.text" = "TopicID";
+
+/*  */
+"out-KF-2FK.headerTitle" = "Общее";
 
 /* Class = "UIButton"; normalTitle = "Forgot password?"; ObjectID = "q6T-TC-n42"; */
 "q6T-TC-n42.normalTitle" = "Забыл пароль?";
