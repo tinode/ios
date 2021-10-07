@@ -43,16 +43,27 @@ import UIKit
 
     // MARK: overridden UITextView variables
 
-    override var text: String! {
+    // "text" and "attributedText" vars should not accessed
+    // via "actualText" and "actualAttributedText" which takes into account
+    // whether the placeholder is being shown.
+    override internal var text: String! {
         didSet {
             checkForEmptyText()
         }
     }
 
-    override var attributedText: NSAttributedString! {
+    override internal var attributedText: NSAttributedString! {
         didSet {
             checkForEmptyText()
         }
+    }
+
+    var actualText: String! {
+        return isShowingPlaceholder ? "" : text
+    }
+
+    var actualAttributedText: NSAttributedString! {
+        return isShowingPlaceholder ? NSAttributedString() : attributedText
     }
 
     // See explanation here https://stackoverflow.com/questions/13601643/uimenucontroller-hides-the-keyboard/23849955#23849955

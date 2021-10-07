@@ -30,7 +30,7 @@ class SendImageBar: UIView {
 
     // MARK: IBActions
     @IBAction func send(_ sender: UIButton) {
-        let caption = inputField.text.trimmingCharacters(in: .whitespacesAndNewlines)
+        let caption = inputField.actualText.trimmingCharacters(in: .whitespacesAndNewlines)
         delegate?.sendImageBar(caption: caption)
         inputField.text = nil
         textViewDidChange(inputField)
