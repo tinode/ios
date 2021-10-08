@@ -89,11 +89,11 @@ class ImagePreviewController: UIViewController, UIScrollViewDelegate {
 
     // This makes input bar visible.
     override var inputAccessoryView: UIView? {
-        return previewContent?.imgContent != nil ? sendImageBar : super.inputAccessoryView
+        return previewContent?.imgContent != nil && sendImageBar.delegate != nil ? sendImageBar : super.inputAccessoryView
     }
 
     override var canBecomeFirstResponder: Bool {
-        return previewContent?.imgContent != nil
+        return previewContent?.imgContent != nil && sendImageBar.delegate != nil
     }
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
