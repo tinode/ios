@@ -2,47 +2,20 @@
 /* Class = "UILabel"; text = "Block Contact"; ObjectID = "07M-9x-zBK"; */
 "07M-9x-zBK.text" = "封鎖聯絡人";
 
-/* Class = "UITabBarItem"; title = "New Group"; ObjectID = "0Fx-rq-hiS"; */
-"0Fx-rq-hiS.title" = "新群組";
-
 /* Class = "UILabel"; text = "Size:"; ObjectID = "12g-Mq-Ht6"; */
 "12g-Mq-Ht6.text" = "大小：";
 
 /* Class = "UIButton"; normalTitle = "Sign Up"; ObjectID = "1tv-os-KfJ"; */
 "1tv-os-KfJ.normalTitle" = "註冊";
 
-/* Class = "UITableViewSection"; headerTitle = "Group Members"; ObjectID = "26s-2T-nI0"; */
-"26s-2T-nI0.headerTitle" = "群組成員";
-
 /* Class = "UITableViewSection"; headerTitle = "Notifications"; ObjectID = "3gX-G0-wiF"; */
 "3gX-G0-wiF.headerTitle" = "通知";
-
-/*  */
-"4dd-0I-UFm.title" = "常規設置";
-
-/* Class = "UILabel"; text = "Send typing notifications"; ObjectID = "4ll-eW-b8Z"; */
-"4ll-eW-b8Z.text" = "傳送輸入中提示";
 
 /* Class = "UILabel"; text = "placeholder_file_name"; ObjectID = "6rW-B5-NCp"; */
 "6rW-B5-NCp.text" = "placeholder_file_name";
 
-/* Class = "UILabel"; text = "1.0.0 (222)"; ObjectID = "71p-KF-hSv"; */
-"71p-KF-hSv.text" = "1.0.0 (222)";
-
 /* Class = "UILabel"; text = "Delete Messages"; ObjectID = "7EV-I9-csz"; */
 "7EV-I9-csz.text" = "刪除訊息";
-
-/* Class = "UILabel"; text = "Log out"; ObjectID = "8RW-nB-5t3"; */
-"8RW-nB-5t3.text" = "登出";
-
-/* Class = "UILabel"; text = "Anonymous users"; ObjectID = "8wo-Rg-iTZ"; */
-"8wo-Rg-iTZ.text" = "匿名使用者";
-
-/* Class = "UILabel"; text = "Contact us"; ObjectID = "9Lj-hp-MkL"; */
-"9Lj-hp-MkL.text" = "聯絡我們";
-
-/* Class = "UILabel"; text = "Terms of use"; ObjectID = "9dk-JW-5z0"; */
-"9dk-JW-5z0.text" = "使用條款";
 
 /* Class = "UILabel"; text = "Authenticated users"; ObjectID = "9gO-eS-keH"; */
 "9gO-eS-keH.text" = "已驗證的使用者";
@@ -52,9 +25,6 @@
 
 /* Class = "UILabel"; text = "N"; ObjectID = "9rO-zX-bOn"; */
 "9rO-zX-bOn.text" = "N";
-
-/* Class = "UILabel"; text = "App Version"; ObjectID = "AXP-O2-x5k"; */
-"AXP-O2-x5k.text" = "應用程式版本";
 
 /* Class = "UILabel"; text = "Muted"; ObjectID = "AoI-xo-VbS"; */
 "AoI-xo-VbS.text" = "已靜音";
@@ -71,21 +41,6 @@
 /* Class = "UILabel"; text = "Address"; ObjectID = "D6H-jy-Zh4"; */
 "D6H-jy-Zh4.text" = "地址";
 
-/* Class = "UIButton"; normalTitle = "OK"; ObjectID = "DMQ-om-04T"; */
-"DMQ-om-04T.normalTitle" = "OK";
-
-/* Class = "UITextField"; placeholder = "Additional info (private)"; ObjectID = "Do2-Ue-UdA"; */
-"Do2-Ue-UdA.placeholder" = "額外資訊 (私人)";
-
-/* Class = "UILabel"; text = "Add members"; ObjectID = "FeF-3T-sWp"; */
-"FeF-3T-sWp.text" = "新增成員";
-
-/* Class = "UILabel"; text = "Delete account"; ObjectID = "Fjs-5K-JCI"; */
-"Fjs-5K-JCI.text" = "刪除帳號";
-
-/* Class = "UITableViewSection"; headerTitle = "Default Permissions"; ObjectID = "H78-sG-L0j"; */
-"H78-sG-L0j.headerTitle" = "預設權限";
-
 /* Class = "UILabel"; text = "placeholder_file_name"; ObjectID = "HIs-n4-sFa"; */
 "HIs-n4-sFa.text" = "placeholder_file_name";
 
@@ -98,35 +53,11 @@
 /* Class = "UINavigationItem"; title = "Image Preview"; ObjectID = "JpP-JB-AWY"; */
 "JpP-JB-AWY.title" = "圖片預覽";
 
-/* Class = "UILabel"; text = "Subtitle"; ObjectID = "K7L-Uc-b68"; */
-"K7L-Uc-b68.text" = "說明";
-
-/* Class = "UINavigationItem"; title = "Edit Members"; ObjectID = "LRu-ae-drd"; */
-"LRu-ae-drd.title" = "編輯成員";
-
 /* Class = "UIBarButtonItem"; title = "New Chat"; ObjectID = "LVG-dB-flA"; */
 "LVG-dB-flA.title" = "新對話";
 
-/*  */
-"Lh9-1X-ez1.text" = "已屏蔽的聯繫人";
-
-/*  */
-"O9h-LB-2lW.title" = "通知";
-
 /* Class = "UILabel"; text = "Content type:"; ObjectID = "OeG-Kx-gwG"; */
 "OeG-Kx-gwG.text" = "內容類型：";
-
-/* Class = "UILabel"; text = "Address"; ObjectID = "OwU-2N-QQV"; */
-"OwU-2N-QQV.text" = "地址";
-
-/* Class = "UITableViewController"; title = "Account Settings"; ObjectID = "Pnk-9m-ZVg"; */
-"Pnk-9m-ZVg.title" = "帳號設定";
-
-/*  */
-"PuQ-zO-4Of.text" = "名和姓";
-
-/* Class = "UILabel"; text = "Topic or user ID"; ObjectID = "RA0-dx-dSp"; */
-"RA0-dx-dSp.text" = "主題或使用者 ID";
 
 /* Class = "UINavigationItem"; title = "Tinode"; ObjectID = "Rgo-YL-uPZ"; */
 "Rgo-YL-uPZ.title" = "Tinode";
@@ -134,29 +65,14 @@
 /* Class = "UIButton"; normalTitle = "Sign up"; ObjectID = "Rv6-qQ-FqW"; */
 "Rv6-qQ-FqW.normalTitle" = "註冊";
 
-/*  */
-"Svo-WC-LXa.normalTitle" = "添加頭像";
-
-/* Class = "UITabBarItem"; title = "By ID"; ObjectID = "T7l-iC-Rs6"; */
-"T7l-iC-Rs6.title" = "以 ID";
-
-/*  */
-"TCK-gb-1BS.text" = "孫七";
-
 /* Class = "UILabel"; text = "Leave Group"; ObjectID = "TRR-fA-HKj"; */
 "TRR-fA-HKj.text" = "離開群組";
 
 /* Class = "UIButton"; normalTitle = "Sign In"; ObjectID = "TvF-F9-blO"; */
 "TvF-F9-blO.normalTitle" = "登入";
 
-/* Class = "UITableViewController"; title = "Find Controller"; ObjectID = "UgX-En-K1m"; */
-"UgX-En-K1m.title" = "Find Controller";
-
 /* Class = "UILabel"; text = "Anonymous users"; ObjectID = "Ukl-EW-zMS"; */
 "Ukl-EW-zMS.text" = "匿名使用者";
-
-/* Class = "UILabel"; text = "N"; ObjectID = "Un9-ds-iQd"; */
-"Un9-ds-iQd.text" = "N";
 
 /* Class = "UILabel"; text = "image/jpeg"; ObjectID = "YLX-fZ-c26"; */
 "YLX-fZ-c26.text" = "image/jpeg";
@@ -185,20 +101,11 @@
 /* Class = "UIViewController"; title = "File Preview"; ObjectID = "ZTN-Oj-COh"; */
 "ZTN-Oj-COh.title" = "檔案預覽";
 
-/* Class = "UILabel"; text = "Privacy policy"; ObjectID = "Zn8-7V-BcX"; */
-"Zn8-7V-BcX.text" = "隱私權政策";
-
 /* Class = "UIViewController"; title = "Image Preview"; ObjectID = "a2m-CR-0Zc"; */
 "a2m-CR-0Zc.title" = "圖片預覽";
 
-/* Class = "UILabel"; text = "GROUP MEMBERS"; ObjectID = "a45-p0-44d"; */
-"a45-p0-44d.text" = "GROUP MEMBERS";
-
 /* Class = "UILabel"; text = "File name:"; ObjectID = "aA7-FA-fcf"; */
 "aA7-FA-fcf.text" = "檔名：";
-
-/*  */
-"aCk-Z4-8m7.text" = "通知";
 
 /* Class = "UIButton"; normalTitle = "Confirm"; ObjectID = "aFc-MO-QyO"; */
 "aFc-MO-QyO.normalTitle" = "確認";
@@ -212,35 +119,11 @@
 /* Class = "UITextView"; text = "User name"; ObjectID = "bFa-Y7-bbT"; */
 "bFa-Y7-bbT.text" = "使用者名稱";
 
-/* Class = "UILabel"; text = "N"; ObjectID = "bZv-2Q-BI9"; */
-"bZv-2Q-BI9.text" = "N";
-
-/* Class = "UITableViewSection"; headerTitle = "Contacts"; ObjectID = "bvE-OV-sy1"; */
-"bvE-OV-sy1.headerTitle" = "聯絡人";
-
-/* Class = "UILabel"; text = " MyUID"; ObjectID = "bvN-my-ZPi"; */
-"bvN-my-ZPi.text" = " MyUID";
-
-/*  */
-"d7l-9Y-8mk.title" = "幫助和關於";
-
-/* Class = "UILabel"; text = "Manage"; ObjectID = "eHa-mE-ZbY"; */
-"eHa-mE-ZbY.text" = "管理";
-
 /* Class = "UILabel"; text = "128x365; 35KB"; ObjectID = "eVu-vx-CU8"; */
 "eVu-vx-CU8.text" = "128x365; 35KB";
 
-/* Class = "UILabel"; text = "Add another"; ObjectID = "fLh-oI-CRP"; */
-"fLh-oI-CRP.text" = "新增其他";
-
 /* Class = "UINavigationItem"; title = "Archived chats"; ObjectID = "fP4-sa-3Wz"; */
 "fP4-sa-3Wz.title" = "已封存的對話";
-
-/*  */
-"fPM-Ht-gZz.text" = "幫助和關於";
-
-/* Class = "UILabel"; text = "ALL USERS"; ObjectID = "ftJ-J6-tqx"; */
-"ftJ-J6-tqx.text" = "ALL USERS";
 
 /* Class = "UITextField"; accessibilityHint = "Password"; ObjectID = "gLF-JR-ZfF"; */
 "gLF-JR-ZfF.accessibilityHint" = "密碼";
@@ -251,18 +134,6 @@
 /* Class = "UITextField"; placeholder = "Password"; ObjectID = "gLF-JR-ZfF"; */
 "gLF-JR-ZfF.placeholder" = "密碼";
 
-/* Class = "UILabel"; text = "Send read receipts"; ObjectID = "geh-gC-6qO"; */
-"geh-gC-6qO.text" = "傳送已讀提示";
-
-/*  */
-"hTR-e8-PeX.title" = "已屏蔽的聯繫人";
-
-/*  */
-"hUo-8f-ZiA.title" = "關於我";
-
-/* Class = "UINavigationItem"; title = "New chat"; ObjectID = "hZA-k4-xku"; */
-"hZA-k4-xku.title" = "新對話";
-
 /* Class = "UIButton"; normalTitle = "Request"; ObjectID = "i0f-S8-O1v"; */
 "i0f-S8-O1v.normalTitle" = "請求";
 
@@ -271,12 +142,6 @@
 
 /* Class = "UILabel"; text = "Add Members"; ObjectID = "jZE-Vv-ggf"; */
 "jZE-Vv-ggf.text" = "新增成員";
-
-/* Class = "UITableViewSection"; headerTitle = "Tags (Content Discovery)"; ObjectID = "jal-tR-OpF"; */
-"jal-tR-OpF.headerTitle" = "標籤 (內容探索)";
-
-/* Class = "UITextField"; placeholder = "Name of the group"; ObjectID = "kDN-bf-JDL"; */
-"kDN-bf-JDL.placeholder" = "群組名稱";
 
 /* Class = "UITableViewSection"; headerTitle = "Permissions"; ObjectID = "kJw-Pr-jNc"; */
 "kJw-Pr-jNc.headerTitle" = "權限";
@@ -299,9 +164,6 @@
 /* Class = "UILabel"; text = "N"; ObjectID = "mTa-Ke-dom"; */
 "mTa-Ke-dom.text" = "N";
 
-/*  */
-"mV4-Fq-kmc.title" = "賬戶和安全";
-
 /* Class = "UILabel"; text = "Size: "; ObjectID = "moa-6V-LhX"; */
 "moa-6V-LhX.text" = "大小：";
 
@@ -310,9 +172,6 @@
 
 /* Class = "UITextField"; placeholder = "Login"; ObjectID = "nho-5Y-Mt8"; */
 "nho-5Y-Mt8.placeholder" = "登入";
-
-/* Class = "UILabel"; text = "No results"; ObjectID = "ntt-8z-Ay2"; */
-"ntt-8z-Ay2.text" = "無結果";
 
 /* Class = "UINavigationController"; title = "ChatsNavigationController"; ObjectID = "oDj-ht-EO8"; */
 "oDj-ht-EO8.title" = "ChatsNavigationController";
@@ -332,41 +191,23 @@
 /* Class = "UIButton"; normalTitle = "Forgot password?"; ObjectID = "q6T-TC-n42"; */
 "q6T-TC-n42.normalTitle" = "忘記密碼？";
 
-/* Class = "UITabBarController"; title = "New chat"; ObjectID = "qBo-ye-avT"; */
-"qBo-ye-avT.title" = "新對話";
-
 /* Class = "UILabel"; text = "Report Group"; ObjectID = "qaR-VW-Rfy"; */
 "qaR-VW-Rfy.text" = "檢舉群組";
-
-/* Class = "UILabel"; text = "Change password"; ObjectID = "qvs-D4-f94"; */
-"qvs-D4-f94.text" = "修改密碼";
 
 /* Class = "UILabel"; text = "Manage Tags"; ObjectID = "r8j-wT-BLF"; */
 "r8j-wT-BLF.text" = "管理標籤";
 
-/* Class = "UITableViewSection"; headerTitle = "Actions"; ObjectID = "raq-d6-2nI"; */
-"raq-d6-2nI.headerTitle" = "操作";
-
 /* Class = "UIBarButtonItem"; title = "Profile"; ObjectID = "rlG-v4-QUc"; */
 "rlG-v4-QUc.title" = "個人檔案";
 
-/* Class = "UITabBarItem"; title = "Find"; ObjectID = "rqZ-eR-8TP"; */
-"rqZ-eR-8TP.title" = "尋找";
-
 /* Class = "UILabel"; text = "N"; ObjectID = "s6S-ku-F63"; */
 "s6S-ku-F63.text" = "N";
-
-/*  */
-"skU-B7-Zed.text" = "這是一個頻道";
 
 /* Class = "UILabel"; text = "John Doe"; ObjectID = "syF-Vp-vRc"; */
 "syF-Vp-vRc.text" = "王小明";
 
 /* Class = "UILabel"; text = "Leave Conversation"; ObjectID = "t2m-Xv-gTF"; */
 "t2m-Xv-gTF.text" = "離開對話";
-
-/* Class = "UIView"; accessibilityLabel = "Footer"; ObjectID = "te7-Jx-ztq"; */
-"te7-Jx-ztq.accessibilityLabel" = "Footer";
 
 /* Class = "UILabel"; text = "Report Contact"; ObjectID = "ub9-mK-yqf"; */
 "ub9-mK-yqf.text" = "檢舉聯絡人";
@@ -377,29 +218,14 @@
 /* Class = "UINavigationItem"; title = "Reset Password"; ObjectID = "wWt-TO-3We"; */
 "wWt-TO-3We.title" = "重設密碼";
 
-/* Class = "UILabel"; text = "Authenticated users"; ObjectID = "wd7-ah-oJu"; */
-"wd7-ah-oJu.text" = "已驗證的使用者";
-
 /* Class = "UILabel"; text = "128x365; 35KB"; ObjectID = "wfA-TG-Chj"; */
 "wfA-TG-Chj.text" = "128x365; 35KB";
 
 /* Class = "UIView"; accessibilityLabel = "Footer"; ObjectID = "xIw-r0-6Pv"; */
 "xIw-r0-6Pv.accessibilityLabel" = "Footer";
 
-/* Class = "UITextField"; placeholder = "usr123aBcDef"; ObjectID = "xmn-wq-Hpr"; */
-"xmn-wq-Hpr.placeholder" = "usr123aBcDef";
-
-/* Class = "UILabel"; text = "Incognito mode"; ObjectID = "xyg-ee-0pd"; Note = "Label for incognito mode switch"; */
-"xyg-ee-0pd.text" = "無痕模式";
-
 /* Class = "UITextField"; placeholder = "First and last name"; ObjectID = "yKx-xt-rdn"; */
 "yKx-xt-rdn.placeholder" = "姓名";
-
-/*  */
-"yL1-ka-zNK.text" = "字幕";
-
-/*  */
-"z08-iK-CeG.text" = "賬戶和安全";
 
 /* Class = "UILabel"; text = "Delete Group"; ObjectID = "z6C-JF-Mnb"; */
 "z6C-JF-Mnb.text" = "刪除群組";

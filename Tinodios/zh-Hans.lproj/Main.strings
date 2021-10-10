@@ -2,47 +2,20 @@
 /* Class = "UILabel"; text = "拉黑联系人"; ObjectID = "07M-9x-zBK"; */
 "07M-9x-zBK.text" = "拉黑联系人";
 
-/* Class = "UITabBarItem"; title = "新群组"; ObjectID = "0Fx-rq-hiS"; */
-"0Fx-rq-hiS.title" = "新群组";
-
 /* Class = "UILabel"; text = "尺寸:"; ObjectID = "12g-Mq-Ht6"; */
 "12g-Mq-Ht6.text" = "尺寸:";
 
 /* Class = "UIButton"; normalTitle = "注册"; ObjectID = "1tv-os-KfJ"; */
 "1tv-os-KfJ.normalTitle" = "注册";
 
-/* Class = "UITableViewSection"; headerTitle = "群组成员"; ObjectID = "26s-2T-nI0"; */
-"26s-2T-nI0.headerTitle" = "群组成员";
-
 /* Class = "UITableViewSection"; headerTitle = "通知"; ObjectID = "3gX-G0-wiF"; */
 "3gX-G0-wiF.headerTitle" = "通知";
-
-/*  */
-"4dd-0I-UFm.title" = "常规设置";
-
-/* Class = "UILabel"; text = "发送键入通知"; ObjectID = "4ll-eW-b8Z"; */
-"4ll-eW-b8Z.text" = "发送键入通知";
 
 /* Class = "UILabel"; text = "placeholder_file_name"; ObjectID = "6rW-B5-NCp"; */
 "6rW-B5-NCp.text" = "placeholder_file_name";
 
-/* Class = "UILabel"; text = "1.0.0 (222)"; ObjectID = "71p-KF-hSv"; */
-"71p-KF-hSv.text" = "1.0.0 (222)";
-
 /* Class = "UILabel"; text = "删除信息"; ObjectID = "7EV-I9-csz"; */
 "7EV-I9-csz.text" = "删除信息";
-
-/* Class = "UILabel"; text = "登出"; ObjectID = "8RW-nB-5t3"; */
-"8RW-nB-5t3.text" = "登出";
-
-/* Class = "UILabel"; text = "匿名用户"; ObjectID = "8wo-Rg-iTZ"; */
-"8wo-Rg-iTZ.text" = "匿名用户";
-
-/* Class = "UILabel"; text = "联系我们"; ObjectID = "9Lj-hp-MkL"; */
-"9Lj-hp-MkL.text" = "联系我们";
-
-/* Class = "UILabel"; text = "使用条款"; ObjectID = "9dk-JW-5z0"; */
-"9dk-JW-5z0.text" = "使用条款";
 
 /* Class = "UILabel"; text = "经过身份验证的用户"; ObjectID = "9gO-eS-keH"; */
 "9gO-eS-keH.text" = "经过身份验证的用户";
@@ -52,9 +25,6 @@
 
 /* Class = "UILabel"; text = "N"; ObjectID = "9rO-zX-bOn"; */
 "9rO-zX-bOn.text" = "N";
-
-/* Class = "UILabel"; text = "应用版本"; ObjectID = "AXP-O2-x5k"; */
-"AXP-O2-x5k.text" = "应用版本";
 
 /* Class = "UILabel"; text = "静音"; ObjectID = "AoI-xo-VbS"; */
 "AoI-xo-VbS.text" = "静音";
@@ -71,21 +41,6 @@
 /* Class = "UILabel"; text = "地址"; ObjectID = "D6H-jy-Zh4"; */
 "D6H-jy-Zh4.text" = "地址";
 
-/* Class = "UIButton"; normalTitle = "确认"; ObjectID = "DMQ-om-04T"; */
-"DMQ-om-04T.normalTitle" = "确认";
-
-/* Class = "UITextField"; placeholder = "附加信息（私人）"; ObjectID = "Do2-Ue-UdA"; */
-"Do2-Ue-UdA.placeholder" = "附加信息（私人）";
-
-/* Class = "UILabel"; text = "添加成员"; ObjectID = "FeF-3T-sWp"; */
-"FeF-3T-sWp.text" = "添加成员";
-
-/* Class = "UILabel"; text = "Delete account"; ObjectID = "Fjs-5K-JCI"; */
-"Fjs-5K-JCI.text" = "删除帐户";
-
-/* Class = "UITableViewSection"; headerTitle = "默认权限"; ObjectID = "H78-sG-L0j"; */
-"H78-sG-L0j.headerTitle" = "默认权限";
-
 /* Class = "UILabel"; text = "占位_文件_名称"; ObjectID = "HIs-n4-sFa"; */
 "HIs-n4-sFa.text" = "占位_文件_名称";
 
@@ -98,35 +53,11 @@
 /* Class = "UINavigationItem"; title = "图片预览"; ObjectID = "JpP-JB-AWY"; */
 "JpP-JB-AWY.title" = "图片预览";
 
-/* Class = "UILabel"; text = "Subtitle"; ObjectID = "K7L-Uc-b68"; */
-"K7L-Uc-b68.text" = "字幕";
-
-/* Class = "UINavigationItem"; title = "编辑成员"; ObjectID = "LRu-ae-drd"; */
-"LRu-ae-drd.title" = "编辑成员";
-
 /* Class = "UIBarButtonItem"; title = "新会话"; ObjectID = "LVG-dB-flA"; */
 "LVG-dB-flA.title" = "新会话";
 
-/*  */
-"Lh9-1X-ez1.text" = "已屏蔽的联系人";
-
-/*  */
-"O9h-LB-2lW.title" = "通知";
-
 /* Class = "UILabel"; text = "Content type:"; ObjectID = "OeG-Kx-gwG"; */
 "OeG-Kx-gwG.text" = "内容类型：";
-
-/* Class = "UILabel"; text = "地址"; ObjectID = "OwU-2N-QQV"; */
-"OwU-2N-QQV.text" = "地址";
-
-/* Class = "UITableViewController"; title = "账户设置"; ObjectID = "Pnk-9m-ZVg"; */
-"Pnk-9m-ZVg.title" = "账户设置";
-
-/*  */
-"PuQ-zO-4Of.text" = "名和姓";
-
-/* Class = "UILabel"; text = "主题或用户ID"; ObjectID = "RA0-dx-dSp"; */
-"RA0-dx-dSp.text" = "主题或用户ID";
 
 /* Class = "UINavigationItem"; title = "Tinode"; ObjectID = "Rgo-YL-uPZ"; */
 "Rgo-YL-uPZ.title" = "Tinode";
@@ -134,29 +65,14 @@
 /* Class = "UIButton"; normalTitle = "注册"; ObjectID = "Rv6-qQ-FqW"; */
 "Rv6-qQ-FqW.normalTitle" = "注册";
 
-/*  */
-"Svo-WC-LXa.normalTitle" = "添加头像";
-
-/* Class = "UITabBarItem"; title = "通过ID"; ObjectID = "T7l-iC-Rs6"; */
-"T7l-iC-Rs6.title" = "通过ID";
-
-/*  */
-"TCK-gb-1BS.text" = "孙七";
-
 /* Class = "UILabel"; text = "离开群组"; ObjectID = "TRR-fA-HKj"; */
 "TRR-fA-HKj.text" = "离开群组";
 
 /* Class = "UIButton"; normalTitle = "登录"; ObjectID = "TvF-F9-blO"; */
 "TvF-F9-blO.normalTitle" = "登录";
 
-/* Class = "UITableViewController"; title = "查找控制器"; ObjectID = "UgX-En-K1m"; */
-"UgX-En-K1m.title" = "查找控制器";
-
 /* Class = "UILabel"; text = "匿名用户"; ObjectID = "Ukl-EW-zMS"; */
 "Ukl-EW-zMS.text" = "匿名用户";
-
-/* Class = "UILabel"; text = "N"; ObjectID = "Un9-ds-iQd"; */
-"Un9-ds-iQd.text" = "N";
 
 /* Class = "UILabel"; text = "image/jpeg"; ObjectID = "YLX-fZ-c26"; */
 "YLX-fZ-c26.text" = "image/jpeg";
@@ -185,20 +101,11 @@
 /* Class = "UIViewController"; title = "File Preview"; ObjectID = "ZTN-Oj-COh"; */
 "ZTN-Oj-COh.title" = "文件预览";
 
-/* Class = "UILabel"; text = "隐私政策"; ObjectID = "Zn8-7V-BcX"; */
-"Zn8-7V-BcX.text" = "隐私政策";
-
 /* Class = "UIViewController"; title = "图片预览"; ObjectID = "a2m-CR-0Zc"; */
 "a2m-CR-0Zc.title" = "图片预览";
 
-/* Class = "UILabel"; text = "群组成员"; ObjectID = "a45-p0-44d"; */
-"a45-p0-44d.text" = "群组成员";
-
 /* Class = "UILabel"; text = "文件名:"; ObjectID = "aA7-FA-fcf"; */
 "aA7-FA-fcf.text" = "文件名:";
-
-/*  */
-"aCk-Z4-8m7.text" = "通知";
 
 /* Class = "UIButton"; normalTitle = "确认"; ObjectID = "aFc-MO-QyO"; */
 "aFc-MO-QyO.normalTitle" = "确认";
@@ -212,35 +119,11 @@
 /* Class = "UITextView"; text = "用户名"; ObjectID = "bFa-Y7-bbT"; */
 "bFa-Y7-bbT.text" = "用户名";
 
-/* Class = "UILabel"; text = "N"; ObjectID = "bZv-2Q-BI9"; */
-"bZv-2Q-BI9.text" = "N";
-
-/* Class = "UITableViewSection"; headerTitle = "联系人"; ObjectID = "bvE-OV-sy1"; */
-"bvE-OV-sy1.headerTitle" = "联系人";
-
-/* Class = "UILabel"; text = " MyUID"; ObjectID = "bvN-my-ZPi"; */
-"bvN-my-ZPi.text" = " MyUID";
-
-/*  */
-"d7l-9Y-8mk.title" = "帮助和关于";
-
-/* Class = "UILabel"; text = "管理"; ObjectID = "eHa-mE-ZbY"; */
-"eHa-mE-ZbY.text" = "管理";
-
 /* Class = "UILabel"; text = "128x365; 35KB"; ObjectID = "eVu-vx-CU8"; */
 "eVu-vx-CU8.text" = "128x365; 35KB";
 
-/* Class = "UILabel"; text = "添加联系人"; ObjectID = "fLh-oI-CRP"; */
-"fLh-oI-CRP.text" = "添加联系人";
-
 /* Class = "UINavigationItem"; title = "存档的会话"; ObjectID = "fP4-sa-3Wz"; */
 "fP4-sa-3Wz.title" = "存档的会话";
-
-/*  */
-"fPM-Ht-gZz.text" = "帮助和关于";
-
-/* Class = "UILabel"; text = "全部用户"; ObjectID = "ftJ-J6-tqx"; */
-"ftJ-J6-tqx.text" = "全部用户";
 
 /* Class = "UITextField"; accessibilityHint = "密码"; ObjectID = "gLF-JR-ZfF"; */
 "gLF-JR-ZfF.accessibilityHint" = "密码";
@@ -251,18 +134,6 @@
 /* Class = "UITextField"; placeholder = "密码"; ObjectID = "gLF-JR-ZfF"; */
 "gLF-JR-ZfF.placeholder" = "密码";
 
-/* Class = "UILabel"; text = "发送已读回执"; ObjectID = "geh-gC-6qO"; */
-"geh-gC-6qO.text" = "发送已读回执";
-
-/*  */
-"hTR-e8-PeX.title" = "Contactos bloqueados";
-
-/*  */
-"hUo-8f-ZiA.title" = "关于我";
-
-/* Class = "UINavigationItem"; title = "新会话"; ObjectID = "hZA-k4-xku"; */
-"hZA-k4-xku.title" = "新会话";
-
 /* Class = "UIButton"; normalTitle = "请求"; ObjectID = "i0f-S8-O1v"; */
 "i0f-S8-O1v.normalTitle" = "请求";
 
@@ -271,12 +142,6 @@
 
 /* Class = "UILabel"; text = "添加成员"; ObjectID = "jZE-Vv-ggf"; */
 "jZE-Vv-ggf.text" = "添加成员";
-
-/* Class = "UITableViewSection"; headerTitle = "标签（内容发现）"; ObjectID = "jal-tR-OpF"; */
-"jal-tR-OpF.headerTitle" = "标签（内容发现）";
-
-/* Class = "UITextField"; placeholder = "群组名称"; ObjectID = "kDN-bf-JDL"; */
-"kDN-bf-JDL.placeholder" = "群组名称";
 
 /* Class = "UITableViewSection"; headerTitle = "权限"; ObjectID = "kJw-Pr-jNc"; */
 "kJw-Pr-jNc.headerTitle" = "权限";
@@ -299,9 +164,6 @@
 /* Class = "UILabel"; text = "N"; ObjectID = "mTa-Ke-dom"; */
 "mTa-Ke-dom.text" = "N";
 
-/*  */
-"mV4-Fq-kmc.title" = "账户和安全";
-
 /* Class = "UILabel"; text = "Size: "; ObjectID = "moa-6V-LhX"; */
 "moa-6V-LhX.text" = "尺寸：";
 
@@ -310,9 +172,6 @@
 
 /* Class = "UITextField"; placeholder = "登录"; ObjectID = "nho-5Y-Mt8"; */
 "nho-5Y-Mt8.placeholder" = "登录";
-
-/* Class = "UILabel"; text = "没有结果"; ObjectID = "ntt-8z-Ay2"; */
-"ntt-8z-Ay2.text" = "没有结果";
 
 /* Class = "UINavigationController"; title = "ChatsNavigationController"; ObjectID = "oDj-ht-EO8"; */
 "oDj-ht-EO8.title" = "ChatsNavigationController";
@@ -332,41 +191,23 @@
 /* Class = "UIButton"; normalTitle = "忘记密码?"; ObjectID = "q6T-TC-n42"; */
 "q6T-TC-n42.normalTitle" = "忘记密码?";
 
-/* Class = "UITabBarController"; title = "新会话"; ObjectID = "qBo-ye-avT"; */
-"qBo-ye-avT.title" = "新会话";
-
 /* Class = "UILabel"; text = "举报群组"; ObjectID = "qaR-VW-Rfy"; */
 "qaR-VW-Rfy.text" = "举报群组";
-
-/* Class = "UILabel"; text = "更改密码"; ObjectID = "qvs-D4-f94"; */
-"qvs-D4-f94.text" = "更改密码";
 
 /* Class = "UILabel"; text = "管理标签"; ObjectID = "r8j-wT-BLF"; */
 "r8j-wT-BLF.text" = "管理标签";
 
-/* Class = "UITableViewSection"; headerTitle = "动作"; ObjectID = "raq-d6-2nI"; */
-"raq-d6-2nI.headerTitle" = "动作";
-
 /* Class = "UIBarButtonItem"; title = "个人中心"; ObjectID = "rlG-v4-QUc"; */
 "rlG-v4-QUc.title" = "个人中心";
 
-/* Class = "UITabBarItem"; title = "查找"; ObjectID = "rqZ-eR-8TP"; */
-"rqZ-eR-8TP.title" = "查找";
-
 /* Class = "UILabel"; text = "N"; ObjectID = "s6S-ku-F63"; */
 "s6S-ku-F63.text" = "N";
-
-/*  */
-"skU-B7-Zed.text" = "这是一个频道";
 
 /* Class = "UILabel"; text = "John Doe"; ObjectID = "syF-Vp-vRc"; */
 "syF-Vp-vRc.text" = "例如张伟";
 
 /* Class = "UILabel"; text = "离开会话"; ObjectID = "t2m-Xv-gTF"; */
 "t2m-Xv-gTF.text" = "离开会话";
-
-/* Class = "UIView"; accessibilityLabel = "Footer"; ObjectID = "te7-Jx-ztq"; */
-"te7-Jx-ztq.accessibilityLabel" = "Footer";
 
 /* Class = "UILabel"; text = "举报联系人"; ObjectID = "ub9-mK-yqf"; */
 "ub9-mK-yqf.text" = "举报联系人";
@@ -377,29 +218,14 @@
 /* Class = "UINavigationItem"; title = "重置密码"; ObjectID = "wWt-TO-3We"; */
 "wWt-TO-3We.title" = "重置密码";
 
-/* Class = "UILabel"; text = "经过身份验证的用户"; ObjectID = "wd7-ah-oJu"; */
-"wd7-ah-oJu.text" = "经过身份验证的用户";
-
 /* Class = "UILabel"; text = "128x365; 35KB"; ObjectID = "wfA-TG-Chj"; */
 "wfA-TG-Chj.text" = "128x365; 35KB";
 
 /* Class = "UIView"; accessibilityLabel = "Footer"; ObjectID = "xIw-r0-6Pv"; */
 "xIw-r0-6Pv.accessibilityLabel" = "Footer";
 
-/* Class = "UITextField"; placeholder = "usr123aBcDef"; ObjectID = "xmn-wq-Hpr"; */
-"xmn-wq-Hpr.placeholder" = "usr123aBcDef";
-
-/* Class = "UILabel"; text = "Incognito mode"; ObjectID = "xyg-ee-0pd"; Note = "Label for incognito mode switch"; */
-"xyg-ee-0pd.text" = "无痕模式";
-
 /* Class = "UITextField"; placeholder = "姓名"; ObjectID = "yKx-xt-rdn"; */
 "yKx-xt-rdn.placeholder" = "姓名";
-
-/*  */
-"yL1-ka-zNK.text" = "字幕";
-
-/*  */
-"z08-iK-CeG.text" = "账户和安全";
 
 /* Class = "UILabel"; text = "删除群组"; ObjectID = "z6C-JF-Mnb"; */
 "z6C-JF-Mnb.text" = "删除群组";
