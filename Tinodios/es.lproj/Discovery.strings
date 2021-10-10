@@ -1,0 +1,56 @@
+/* Class = "UITabBarItem"; title = "New Group"; ObjectID = "0Fx-rq-hiS"; */
+"0Fx-rq-hiS.title" = "Nuevo grupo";
+
+/* Class = "UITableViewSection"; headerTitle = "Group Members"; ObjectID = "26s-2T-nI0"; */
+"26s-2T-nI0.headerTitle" = "Miembros del grupo";
+
+/* Class = "UIButton"; normalTitle = "OK"; ObjectID = "DMQ-om-04T"; */
+"DMQ-om-04T.normalTitle" = "OK";
+
+/* Class = "UITextField"; placeholder = "Additional info (private)"; ObjectID = "Do2-Ue-UdA"; */
+"Do2-Ue-UdA.placeholder" = "Información adicional (privado)";
+
+/* Class = "UILabel"; text = "Add members"; ObjectID = "FeF-3T-sWp"; */
+"FeF-3T-sWp.text" = "Añadir miembros";
+
+/* Class = "UINavigationItem"; title = "Edit Members"; ObjectID = "LRu-ae-drd"; */
+"LRu-ae-drd.title" = "Editar miembros";
+
+/* Class = "UILabel"; text = "Topic or user ID"; ObjectID = "RA0-dx-dSp"; */
+"RA0-dx-dSp.text" = "Tema o ID de usuario";
+
+/* Class = "UITabBarItem"; title = "By ID"; ObjectID = "T7l-iC-Rs6"; */
+"T7l-iC-Rs6.title" = "Por ID";
+
+/* Class = "UITableViewController"; title = "Find Controller"; ObjectID = "UgX-En-K1m"; */
+"UgX-En-K1m.title" = "Encontrar controlador";
+
+/* Class = "UILabel"; text = "GROUP MEMBERS"; ObjectID = "a45-p0-44d"; */
+"a45-p0-44d.text" = "MIEMBROS DEL GRUPO";
+
+/* Class = "UILabel"; text = "ALL USERS"; ObjectID = "ftJ-J6-tqx"; */
+"ftJ-J6-tqx.text" = "TODOS LOS USUARIOS";
+
+/* Class = "UINavigationItem"; title = "New chat"; ObjectID = "hZA-k4-xku"; */
+"hZA-k4-xku.title" = "Nuevo chat";
+
+/* Class = "UITextField"; placeholder = "Name of the group"; ObjectID = "kDN-bf-JDL"; */
+"kDN-bf-JDL.placeholder" = "Nombre del grupo";
+
+/* Class = "UILabel"; text = "No results"; ObjectID = "ntt-8z-Ay2"; */
+"ntt-8z-Ay2.text" = "No hay resultados";
+
+/* Class = "UITabBarController"; title = "New chat"; ObjectID = "qBo-ye-avT"; */
+"qBo-ye-avT.title" = "Nuevo chat";
+
+/* Class = "UITabBarItem"; title = "Find"; ObjectID = "rqZ-eR-8TP"; */
+"rqZ-eR-8TP.title" = "Encontrar";
+
+/*  */
+"skU-B7-Zed.text" = "Este es un canal";
+
+/* Class = "UIView"; accessibilityLabel = "Footer"; ObjectID = "te7-Jx-ztq"; */
+"te7-Jx-ztq.accessibilityLabel" = "Pie";
+
+/* Class = "UITextField"; placeholder = "usr123aBcDef"; ObjectID = "xmn-wq-Hpr"; */
+"xmn-wq-Hpr.placeholder" = "usr123aBcDef";

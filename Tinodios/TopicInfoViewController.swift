@@ -63,6 +63,7 @@ class TopicInfoViewController: UITableViewController {
     @IBOutlet weak var actionBlockContact: UITableViewCell!
     @IBOutlet weak var actionReportContact: UITableViewCell!
     @IBOutlet weak var actionReportGroup: UITableViewCell!
+    @IBOutlet weak var actionAddMembers: UITableViewCell!
 
     var topicName = ""
     private var topic: DefaultComTopic!
@@ -172,6 +173,13 @@ class TopicInfoViewController: UITableViewController {
             UiUtils.setupTapRecognizer(
                 forView: actionAnonPermissions,
                 action: #selector(TopicInfoViewController.permissionsTapped),
+                actionTarget: self)
+        }
+
+        if showGroupMembers {
+            UiUtils.setupTapRecognizer(
+                forView: actionAddMembers,
+                action: #selector(TopicInfoViewController.addMembersTapped),
                 actionTarget: self)
         }
 
@@ -335,6 +343,17 @@ class TopicInfoViewController: UITableViewController {
         }
     }
 
+    @objc func addMembersTapped(sender: UITapGestureRecognizer) {
+        // EditMembersVC is defined in the Discovery storyboard.
+        let storyboard = UIStoryboard(name: "Discovery", bundle: nil)
+        let destinationVC = storyboard.instantiateViewController(withIdentifier: "EditMembersNavViewController") as! UINavigationController
+        destinationVC.modalPresentationStyle = .currentContext
+        destinationVC.modalTransitionStyle = .coverVertical
+        let em = destinationVC.viewControllers.first as! EditMembersViewController
+        em.delegate = self
+        self.showDetailViewController(destinationVC, sender: self.view)
+    }
+
     private func deleteTopic() {
         topic.delete(hard: true).then(
             onSuccess: { _ in
@@ -450,14 +469,6 @@ class TopicInfoViewController: UITableViewController {
             title: NSLocalizedString("Report", comment: "Alert action"), style: .destructive,
             handler: { _ in self.reportTopic(reason: "TODO") }))
         present(alert, animated: true)
-    }
-
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "TopicInfo2EditMembers" {
-            let navigator = segue.destination as! UINavigationController
-            let destination = navigator.viewControllers.first as! EditMembersViewController
-            destination.delegate = self
-        }
     }
 
     private func promiseSuccessHandler(msg: ServerMessage?) throws -> PromisedReply<ServerMessage>? {

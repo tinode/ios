@@ -147,6 +147,18 @@ class ChatListViewController: UITableViewController, ChatListDisplayLogic {
     @objc private func navigateToArchive() {
         self.performSegue(withIdentifier: "Chats2Archive", sender: nil)
     }
+
+    @IBAction func profileButtonClicked(_ sender: Any) {
+        let storyboard = UIStoryboard(name: "Profile", bundle: nil)
+        let destinationVC = storyboard.instantiateViewController(withIdentifier: "AccountSettingsViewController") as! AccountSettingsViewController
+        self.navigationController?.pushViewController(destinationVC, animated: true)
+    }
+
+    @IBAction func newChatButtonClicked(_ sender: Any) {
+        let storyboard = UIStoryboard(name: "Discovery", bundle: nil)
+        let destinationVC = storyboard.instantiateViewController(withIdentifier: "NewChatTabController") as! NewChatTabController
+        self.navigationController?.pushViewController(destinationVC, animated: true)
+    }
 }
 
 // UITableViewController
