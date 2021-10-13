@@ -2,20 +2,47 @@
 /* Class = "UILabel"; text = "Block Contact"; ObjectID = "07M-9x-zBK"; */
 "07M-9x-zBK.text" = "Заблокировать";
 
+/* Class = "UITabBarItem"; title = "New Group"; ObjectID = "0Fx-rq-hiS"; */
+"0Fx-rq-hiS.title" = "Новая группа";
+
 /* Class = "UILabel"; text = "Size:"; ObjectID = "12g-Mq-Ht6"; */
 "12g-Mq-Ht6.text" = "Размер:";
 
 /* Class = "UIButton"; normalTitle = "Sign Up"; ObjectID = "1tv-os-KfJ"; */
 "1tv-os-KfJ.normalTitle" = "Регистрация";
 
+/* Class = "UITableViewSection"; headerTitle = "Group Members"; ObjectID = "26s-2T-nI0"; */
+"26s-2T-nI0.headerTitle" = "Участники";
+
 /*  */
 "3gX-G0-wiF.headerTitle" = "Уведомления";
+
+/* Class = "UITableViewController"; title = "General Settings"; ObjectID = "4dd-0I-UFm"; */
+"4dd-0I-UFm.title" = "Общие настройки";
+
+/* Class = "UILabel"; text = "Send typing notifications"; ObjectID = "4ll-eW-b8Z"; */
+"4ll-eW-b8Z.text" = "Индикатор печати";
 
 /* Class = "UILabel"; text = "placeholder_file_name"; ObjectID = "6rW-B5-NCp"; */
 "6rW-B5-NCp.text" = "placeholder_file_name";
 
+/* Class = "UILabel"; text = "1.0.0 (222)"; ObjectID = "71p-KF-hSv"; */
+"71p-KF-hSv.text" = "1.0.0 (222)";
+
 /* Class = "UILabel"; text = "Delete Messages"; ObjectID = "7EV-I9-csz"; */
 "7EV-I9-csz.text" = "Удалить сообщения";
+
+/* Class = "UILabel"; text = "Log out"; ObjectID = "8RW-nB-5t3"; */
+"8RW-nB-5t3.text" = "Выйти";
+
+/* Class = "UILabel"; text = "Anonymous users"; ObjectID = "8wo-Rg-iTZ"; */
+"8wo-Rg-iTZ.text" = "Анонимные";
+
+/* Class = "UILabel"; text = "Contact us"; ObjectID = "9Lj-hp-MkL"; */
+"9Lj-hp-MkL.text" = "Обратная связь";
+
+/* Class = "UILabel"; text = "Terms of use"; ObjectID = "9dk-JW-5z0"; */
+"9dk-JW-5z0.text" = "Условия использования";
 
 /* Class = "UILabel"; text = "Authenticated users"; ObjectID = "9gO-eS-keH"; */
 "9gO-eS-keH.text" = "Авторизованные";
@@ -25,6 +52,9 @@
 
 /* Class = "UILabel"; text = "N"; ObjectID = "9rO-zX-bOn"; */
 "9rO-zX-bOn.text" = "N";
+
+/* Class = "UILabel"; text = "App Version"; ObjectID = "AXP-O2-x5k"; */
+"AXP-O2-x5k.text" = "Версия приложения";
 
 /* Class = "UILabel"; text = "Muted"; ObjectID = "AoI-xo-VbS"; */
 "AoI-xo-VbS.text" = "Без уведомлений";
@@ -41,6 +71,21 @@
 /* Class = "UILabel"; text = "Address"; ObjectID = "D6H-jy-Zh4"; */
 "D6H-jy-Zh4.text" = "Адрес";
 
+/* Class = "UIButton"; normalTitle = "OK"; ObjectID = "DMQ-om-04T"; */
+"DMQ-om-04T.normalTitle" = "OK";
+
+/* Class = "UITextField"; placeholder = "Additional info (private)"; ObjectID = "Do2-Ue-UdA"; */
+"Do2-Ue-UdA.placeholder" = "Пояснение (только для себя)";
+
+/* Class = "UILabel"; text = "Add members"; ObjectID = "FeF-3T-sWp"; */
+"FeF-3T-sWp.text" = "Пригласить";
+
+/* Class = "UILabel"; text = "Delete account"; ObjectID = "Fjs-5K-JCI"; */
+"Fjs-5K-JCI.text" = "Удалить аккаунт";
+
+/* Class = "UITableViewSection"; headerTitle = "Default Permissions"; ObjectID = "H78-sG-L0j"; */
+"H78-sG-L0j.headerTitle" = "Разрешения по умолчанию";
+
 /* Class = "UILabel"; text = "placeholder_file_name"; ObjectID = "HIs-n4-sFa"; */
 "HIs-n4-sFa.text" = "placeholder_file_name";
 
@@ -53,11 +98,35 @@
 /* Class = "UINavigationItem"; title = "Image Preview"; ObjectID = "JpP-JB-AWY"; */
 "JpP-JB-AWY.title" = "Предпросмотр";
 
+/* Class = "UILabel"; text = "Subtitle"; ObjectID = "K7L-Uc-b68"; */
+"K7L-Uc-b68.text" = "Подзаголовок";
+
+/* Class = "UINavigationItem"; title = "Edit Members"; ObjectID = "LRu-ae-drd"; */
+"LRu-ae-drd.title" = "Изменить участников";
+
 /* Class = "UIBarButtonItem"; title = "New Chat"; ObjectID = "LVG-dB-flA"; */
 "LVG-dB-flA.title" = "Новый чат";
 
+/* Class = "UILabel"; text = "Blocked contacts"; ObjectID = "Lh9-1X-ez1"; */
+"Lh9-1X-ez1.text" = "Заблокированные контакты";
+
+/* Class = "UINavigationItem"; title = "Notifications"; ObjectID = "O9h-LB-2lW"; */
+"O9h-LB-2lW.title" = "Уведомления";
+
 /* Class = "UILabel"; text = "Content type:"; ObjectID = "OeG-Kx-gwG"; */
 "OeG-Kx-gwG.text" = "Тип контента:";
+
+/* Class = "UILabel"; text = "Address"; ObjectID = "OwU-2N-QQV"; */
+"OwU-2N-QQV.text" = "Адрес";
+
+/* Class = "UITableViewController"; title = "Account Settings"; ObjectID = "Pnk-9m-ZVg"; */
+"Pnk-9m-ZVg.title" = "Настройки аккаунта";
+
+/* Class = "UILabel"; text = "First and Last Name"; ObjectID = "PuQ-zO-4Of"; */
+"PuQ-zO-4Of.text" = "Имя и фамилия";
+
+/* Class = "UILabel"; text = "Topic or user ID"; ObjectID = "RA0-dx-dSp"; */
+"RA0-dx-dSp.text" = "Адрес пользователя или группы";
 
 /* Class = "UINavigationItem"; title = "Tinode"; ObjectID = "Rgo-YL-uPZ"; */
 "Rgo-YL-uPZ.title" = "Tinode";
@@ -65,14 +134,29 @@
 /* Class = "UIButton"; normalTitle = "Sign up"; ObjectID = "Rv6-qQ-FqW"; */
 "Rv6-qQ-FqW.normalTitle" = "Зарегистрироваться";
 
+/* Class = "UIButton"; normalTitle = "Добавить аватар"; ObjectID = "Svo-WC-LXa"; */
+"Svo-WC-LXa.normalTitle" = "Добавить аватар";
+
+/* Class = "UITabBarItem"; title = "By ID"; ObjectID = "T7l-iC-Rs6"; */
+"T7l-iC-Rs6.title" = "По адресу";
+
+/* Class = "UILabel"; text = "John Doe"; ObjectID = "TCK-gb-1BS"; */
+"TCK-gb-1BS.text" = "Иван Петров";
+
 /* Class = "UILabel"; text = "Leave Group"; ObjectID = "TRR-fA-HKj"; */
 "TRR-fA-HKj.text" = "Покинуть группу";
 
 /* Class = "UIButton"; normalTitle = "Sign In"; ObjectID = "TvF-F9-blO"; */
 "TvF-F9-blO.normalTitle" = "Войти";
 
+/* Class = "UITableViewController"; title = "Find Controller"; ObjectID = "UgX-En-K1m"; */
+"UgX-En-K1m.title" = "Find Controller";
+
 /* Class = "UILabel"; text = "Anonymous users"; ObjectID = "Ukl-EW-zMS"; */
 "Ukl-EW-zMS.text" = "Анонимные";
+
+/* Class = "UILabel"; text = "N"; ObjectID = "Un9-ds-iQd"; */
+"Un9-ds-iQd.text" = "N";
 
 /* Class = "UILabel"; text = "image/jpeg"; ObjectID = "YLX-fZ-c26"; */
 "YLX-fZ-c26.text" = "image/jpeg";
@@ -101,11 +185,20 @@
 /* Class = "UIViewController"; title = "File Preview"; ObjectID = "ZTN-Oj-COh"; */
 "ZTN-Oj-COh.title" = "Предпросмотр";
 
+/* Class = "UILabel"; text = "Privacy policy"; ObjectID = "Zn8-7V-BcX"; */
+"Zn8-7V-BcX.text" = "Политика конфиденциальности";
+
 /* Class = "UIViewController"; title = "Image Preview"; ObjectID = "a2m-CR-0Zc"; */
 "a2m-CR-0Zc.title" = "Предпросмотр";
 
+/* Class = "UILabel"; text = "GROUP MEMBERS"; ObjectID = "a45-p0-44d"; */
+"a45-p0-44d.text" = "УЧАСТНИКИ";
+
 /* Class = "UILabel"; text = "File name:"; ObjectID = "aA7-FA-fcf"; */
 "aA7-FA-fcf.text" = "Имя файла:";
+
+/* Class = "UILabel"; text = "Notifications"; ObjectID = "aCk-Z4-8m7"; */
+"aCk-Z4-8m7.text" = "Уведомления";
 
 /* Class = "UIButton"; normalTitle = "Confirm"; ObjectID = "aFc-MO-QyO"; */
 "aFc-MO-QyO.normalTitle" = "Подтвердить";
@@ -119,11 +212,35 @@
 /*  */
 "bFa-Y7-bbT.text" = "Имя пользователя";
 
+/* Class = "UILabel"; text = "N"; ObjectID = "bZv-2Q-BI9"; */
+"bZv-2Q-BI9.text" = "N";
+
+/* Class = "UITableViewSection"; headerTitle = "Contacts"; ObjectID = "bvE-OV-sy1"; */
+"bvE-OV-sy1.headerTitle" = "Контакты";
+
+/* Class = "UILabel"; text = " MyUID"; ObjectID = "bvN-my-ZPi"; */
+"bvN-my-ZPi.text" = " MyUID";
+
+/* Class = "UINavigationItem"; title = "Help and About"; ObjectID = "d7l-9Y-8mk"; */
+"d7l-9Y-8mk.title" = "Помощь, о приложении";
+
+/* Class = "UILabel"; text = "Manage"; ObjectID = "eHa-mE-ZbY"; */
+"eHa-mE-ZbY.text" = "Управлять";
+
 /* Class = "UILabel"; text = "128x365; 35KB"; ObjectID = "eVu-vx-CU8"; */
 "eVu-vx-CU8.text" = "128x365; 35KB";
 
+/* Class = "UILabel"; text = "Add another"; ObjectID = "fLh-oI-CRP"; */
+"fLh-oI-CRP.text" = "Добавить еще";
+
 /* Class = "UINavigationItem"; title = "Archived chats"; ObjectID = "fP4-sa-3Wz"; */
 "fP4-sa-3Wz.title" = "Архив чатов";
+
+/* Class = "UILabel"; text = "Help and About"; ObjectID = "fPM-Ht-gZz"; */
+"fPM-Ht-gZz.text" = "Помощь, о приложении";
+
+/* Class = "UILabel"; text = "ALL USERS"; ObjectID = "ftJ-J6-tqx"; */
+"ftJ-J6-tqx.text" = "ВСЕ ПОЛЬЗОВАТЕЛИ";
 
 /* Class = "UITextField"; accessibilityHint = "Password"; ObjectID = "gLF-JR-ZfF"; */
 "gLF-JR-ZfF.accessibilityHint" = "Пароль";
@@ -134,6 +251,18 @@
 /* Class = "UITextField"; placeholder = "Password"; ObjectID = "gLF-JR-ZfF"; */
 "gLF-JR-ZfF.placeholder" = "Пароль";
 
+/* Class = "UILabel"; text = "Send read receipts"; ObjectID = "geh-gC-6qO"; */
+"geh-gC-6qO.text" = "Отправлять уведомления о прочтении";
+
+/* Class = "UINavigationItem"; title = "Blocked Contacts"; ObjectID = "hTR-e8-PeX"; */
+"hTR-e8-PeX.title" = "Заблокированные";
+
+/* Class = "UINavigationItem"; title = "Personal"; ObjectID = "hUo-8f-ZiA"; */
+"hUo-8f-ZiA.title" = "О себе";
+
+/* Class = "UINavigationItem"; title = "New Chat"; ObjectID = "hZA-k4-xku"; */
+"hZA-k4-xku.title" = "Новый чат";
+
 /* Class = "UIButton"; normalTitle = "Запросить"; ObjectID = "i0f-S8-O1v"; */
 "i0f-S8-O1v.normalTitle" = "Запросить";
 
@@ -142,6 +271,12 @@
 
 /* Class = "UILabel"; text = "Add Members"; ObjectID = "jZE-Vv-ggf"; */
 "jZE-Vv-ggf.text" = "Добавить участников";
+
+/* Class = "UITableViewSection"; headerTitle = "Tags (Content Discovery)"; ObjectID = "jal-tR-OpF"; */
+"jal-tR-OpF.headerTitle" = "Тэги (поиск групп и контактов)";
+
+/* Class = "UITextField"; placeholder = "Name of the group"; ObjectID = "kDN-bf-JDL"; */
+"kDN-bf-JDL.placeholder" = "Название группы";
 
 /* Class = "UITableViewSection"; headerTitle = "Permissions"; ObjectID = "kJw-Pr-jNc"; */
 "kJw-Pr-jNc.headerTitle" = "Права доступа";
@@ -164,6 +299,9 @@
 /* Class = "UILabel"; text = "N"; ObjectID = "mTa-Ke-dom"; */
 "mTa-Ke-dom.text" = "N";
 
+/* Class = "UINavigationItem"; title = "Account and Security"; ObjectID = "mV4-Fq-kmc"; */
+"mV4-Fq-kmc.title" = "Аккаунт и безопасность";
+
 /* Class = "UILabel"; text = "Size: "; ObjectID = "moa-6V-LhX"; */
 "moa-6V-LhX.text" = "Размер: ";
 
@@ -172,6 +310,9 @@
 
 /* Class = "UITextField"; placeholder = "Login"; ObjectID = "nho-5Y-Mt8"; */
 "nho-5Y-Mt8.placeholder" = "Логин";
+
+/* Class = "UILabel"; text = "No results"; ObjectID = "ntt-8z-Ay2"; */
+"ntt-8z-Ay2.text" = "Не найдено";
 
 /* Class = "UINavigationController"; title = "ChatsNavigationController"; ObjectID = "oDj-ht-EO8"; */
 "oDj-ht-EO8.title" = "ChatsNavigationController";
@@ -191,23 +332,41 @@
 /* Class = "UIButton"; normalTitle = "Forgot password?"; ObjectID = "q6T-TC-n42"; */
 "q6T-TC-n42.normalTitle" = "Забыл пароль?";
 
+/* Class = "UITabBarController"; title = "New chat"; ObjectID = "qBo-ye-avT"; */
+"qBo-ye-avT.title" = "Новый чат";
+
 /* Class = "UILabel"; text = "Report Group"; ObjectID = "qaR-VW-Rfy"; */
 "qaR-VW-Rfy.text" = "Уведомить о нарушении";
+
+/* Class = "UILabel"; text = "Change password"; ObjectID = "qvs-D4-f94"; */
+"qvs-D4-f94.text" = "Изменить пароль";
 
 /* Class = "UILabel"; text = "Manage Tags"; ObjectID = "r8j-wT-BLF"; */
 "r8j-wT-BLF.text" = "Настройки тэгов";
 
+/* Class = "UITableViewSection"; headerTitle = "Actions"; ObjectID = "raq-d6-2nI"; */
+"raq-d6-2nI.headerTitle" = "Действия";
+
 /* Class = "UIBarButtonItem"; title = "Profile"; ObjectID = "rlG-v4-QUc"; */
 "rlG-v4-QUc.title" = "Профиль";
 
+/* Class = "UITabBarItem"; title = "Find"; ObjectID = "rqZ-eR-8TP"; */
+"rqZ-eR-8TP.title" = "Найти";
+
 /* Class = "UILabel"; text = "N"; ObjectID = "s6S-ku-F63"; */
 "s6S-ku-F63.text" = "N";
+
+/* Class = "UILabel"; text = "This is a channel"; ObjectID = "skU-B7-Zed"; Note = "Label for channel switch"; */
+"skU-B7-Zed.text" = "Это канал";
 
 /* Class = "UILabel"; text = "John Doe"; ObjectID = "syF-Vp-vRc"; */
 "syF-Vp-vRc.text" = "Иван Петров";
 
 /* Class = "UILabel"; text = "Leave Conversation"; ObjectID = "t2m-Xv-gTF"; */
 "t2m-Xv-gTF.text" = "Выйти из чата";
+
+/* Class = "UIView"; accessibilityLabel = "Footer"; ObjectID = "te7-Jx-ztq"; */
+"te7-Jx-ztq.accessibilityLabel" = "Footer";
 
 /* Class = "UILabel"; text = "Report Contact"; ObjectID = "ub9-mK-yqf"; */
 "ub9-mK-yqf.text" = "Уведомить о нарушении";
@@ -218,14 +377,29 @@
 /* Class = "UINavigationItem"; title = "Reset Password"; ObjectID = "wWt-TO-3We"; */
 "wWt-TO-3We.title" = "Напомнить пароль";
 
+/* Class = "UILabel"; text = "Authenticated users"; ObjectID = "wd7-ah-oJu"; */
+"wd7-ah-oJu.text" = "Авторизованныые";
+
 /* Class = "UILabel"; text = "128x365; 35KB"; ObjectID = "wfA-TG-Chj"; */
 "wfA-TG-Chj.text" = "128x365; 35KB";
 
 /* Class = "UIView"; accessibilityLabel = "Footer"; ObjectID = "xIw-r0-6Pv"; */
 "xIw-r0-6Pv.accessibilityLabel" = "Footer";
 
+/* Class = "UITextField"; placeholder = "usr123aBcDef"; ObjectID = "xmn-wq-Hpr"; */
+"xmn-wq-Hpr.placeholder" = "usr123aBcDef";
+
+/* Class = "UILabel"; text = "Incognito mode"; ObjectID = "xyg-ee-0pd"; Note = "Label for incognito mode switch"; */
+"xyg-ee-0pd.text" = "Инкогнито";
+
 /* Class = "UITextField"; placeholder = "First and last name"; ObjectID = "yKx-xt-rdn"; */
 "yKx-xt-rdn.placeholder" = "Имя и фамилия";
+
+/* Class = "UILabel"; text = "Subtitle"; ObjectID = "yL1-ka-zNK"; */
+"yL1-ka-zNK.text" = "Подзаголовок";
+
+/* Class = "UILabel"; text = "Account and Security"; ObjectID = "z08-iK-CeG"; */
+"z08-iK-CeG.text" = "Аккаунт и безопасность";
 
 /* Class = "UILabel"; text = "Delete Group"; ObjectID = "z6C-JF-Mnb"; */
 "z6C-JF-Mnb.text" = "Удалить группу";
