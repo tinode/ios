@@ -1054,6 +1054,8 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
         let proc = PreviewProcessor<T>()
         let tree = proc.process(contentOf: self, using: tranformer) as! Span
         tree.clip(upToMax: length)
+        // Remove leading whitespaces.
+        tree.lTrim()
         var result = Drafty()
         var keymap = [Int: Int]()
         tree.appendTo(document: &result, using: &keymap)
@@ -1179,6 +1181,33 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
             }
             return accumulatedLen
         }
+        // Removes spaces and breaks on the left. Returns true if the tree has been trimmed.
+        func lTrim() -> Bool {
+            if self.type == "BR" {
+                text = nil
+                type = nil
+                children = nil
+                return true
+            }
+            if let tp = self.type, !tp.isEmpty {
+                // Explicit formatting. Skip.
+                return false
+            }
+            if text != nil {
+                let trimmed = self.text!.removingLeadingSpaces()
+                if trimmed != self.text! {
+                    self.text = trimmed
+                    return true
+                }
+                return false
+            } else {
+                var result = false
+                while (self.children?.first?.lTrim() ?? false) {
+                    result = true
+                }
+                return result
+            }
+        }
         // Appends the tree of Spans (for which the root is self) to a Drafty doc.
         func appendTo(document doc: inout Drafty, using keymap: inout [Int: Int]) {
             let start = doc.length
@@ -1191,7 +1220,7 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
             }
             if let tp = self.type {
                 let addedLen = doc.length - start
-                if addedLen == 0 && (tp == "BR" || tp == "EX") {
+                if addedLen == 0 && !(tp == "BR" || tp == "EX") {
                     return
                 }
                 if doc.fmt == nil { doc.fmt = [] }
@@ -1380,5 +1409,16 @@ private class EntityProc {
         self.name = name
         self.re = pattern
         self.pack = pack
+    }
+}
+
+extension String {
+    // Trims whitespaces and new lines on the left.
+    func removingLeadingSpaces() -> String {
+        guard let index = firstIndex(where: { !CharacterSet(charactersIn: String($0)).isSubset(of: .whitespacesAndNewlines) }) else {
+            // No such index (i.e. all characters are whitespace chars)? - Trim all.
+            return ""
+        }
+        return String(self[index...])
     }
 }
