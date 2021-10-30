@@ -22,6 +22,7 @@ protocol MessagePresentationLogic {
     func applyTopicPermissions(withError: Error?)
     func endRefresh()
     func dismiss()
+    func dismissPreviewBar()
 }
 
 class MessagePresenter: MessagePresentationLogic {
@@ -81,6 +82,11 @@ class MessagePresenter: MessagePresentationLogic {
     func dismiss() {
         DispatchQueue.main.async {
             self.viewController?.dismissVC()
+        }
+    }
+    func dismissPreviewBar() {
+        DispatchQueue.main.async {
+            self.viewController?.togglePreviewBar(with: nil)
         }
     }
 }

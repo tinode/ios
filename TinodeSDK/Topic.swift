@@ -1172,7 +1172,7 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
             self.latestMessage = msg
         }
     }
-    public func publish(content: Drafty, head: [String: JSONValue]?, msgId: Int64) -> PromisedReply<ServerMessage> {
+    private func publishInternal(content: Drafty, head: [String: JSONValue]?, msgId: Int64) -> PromisedReply<ServerMessage> {
         var headers = head
         if content.isPlain && headers?["mime"] != nil {
             // Plain text content should not have "mime" header. Clear it.
@@ -1188,8 +1188,13 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
                 throw err
             })
     }
-    public func publish(content: Drafty) -> PromisedReply<ServerMessage> {
-        let head = !content.isPlain ? Tinode.draftyHeaders(for: content) : nil
+    public func publish(content: Drafty, withExtraHeaders extraHeaders: [String: JSONValue]? = nil) -> PromisedReply<ServerMessage> {
+        var head = !content.isPlain ? Tinode.draftyHeaders(for: content) : nil
+        if let extra = extraHeaders {
+            head = head ?? [:]
+            // Break conflicts by taking values from extras.
+            head!.merge(extra) { (_, new) in new }
+        }
         var id: Int64 = -1
         if let s = store {
             if let msg = s.msgSend(topic: self, data: content, head: head) {
@@ -1198,11 +1203,11 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
             }
         }
         if attached {
-            return publish(content: content, head: head, msgId: id)
+            return publishInternal(content: content, head: head, msgId: id)
         } else {
             return subscribe()
                 .thenApply({ [weak self] _ in
-                    return self?.publish(content: content, head: head, msgId: id)
+                    return self?.publishInternal(content: content, head: head, msgId: id)
                 }).thenCatch({ [weak self] err in
                     self?.store?.msgSyncing(topic: self!, dbMessageId: id, sync: false)
                     throw err
@@ -1261,7 +1266,7 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
         }
         if m.isReady, let content = m.content {
             store?.msgSyncing(topic: self, dbMessageId: msgId, sync: true)
-            return self.publish(content: content, head: m.head, msgId: msgId)
+            return self.publishInternal(content: content, head: m.head, msgId: msgId)
         }
         return PromisedReply<ServerMessage>(value: ServerMessage())
     }
@@ -1283,7 +1288,7 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
         for msg in pendingMsgs {
             let msgId = msg.msgId
             _ = self.store?.msgSyncing(topic: self, dbMessageId: msgId, sync: true)
-            result = self.publish(content: msg.content!, head: msg.head, msgId: msgId)
+            result = self.publishInternal(content: msg.content!, head: msg.head, msgId: msgId)
         }
         return result
     }

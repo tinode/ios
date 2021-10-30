@@ -694,10 +694,10 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
     ///     - uid: UID of the author to mention.
     ///     - body: Body of the quoted message.
     /// - Returns:a Drafty doc with the quote formatting.
-    public static func quote(quoteHeader header: String, authorUid uid: String, quoteContent body: String) -> Drafty {
+    public static func quote(quoteHeader header: String, authorUid uid: String, quoteContent body: Drafty) -> Drafty {
         return Drafty.mention(userWithName: header, uid: uid)
                 .appendLineBreak()
-                .append(Drafty(plainText: body))
+                .append(body)
                 .wrapInto(style: "QQ")
     }
 
@@ -999,8 +999,9 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
     }
 
     //
-    private class PreviewTransformer: SpanTreeTransformer {
-        func transform(node: Span) -> Span? {
+    open class PreviewTransformer: SpanTreeTransformer {
+        public init() {}
+        open func transform(node: Span) -> Span? {
             //let node = node as! Span
             guard node.type != "QQ" else {
                 return nil
@@ -1101,13 +1102,13 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
     }
 
     public class Span: DraftySpan {
-        var start: Int
-        var end: Int
-        var key: Int
-        var text: String?
-        var type: String?
-        var data: [String: JSONValue]?
-        var children: [Span]?
+        public var start: Int
+        public var end: Int
+        public var key: Int
+        public var text: String?
+        public var type: String?
+        public var data: [String: JSONValue]?
+        public var children: [Span]?
 
         required public init() {
             start = 0
@@ -1136,7 +1137,7 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
             self.key = index
         }
 
-        convenience init(from another: Span) {
+        public convenience init(from another: Span) {
             self.init(start: another.start, end: another.end, index: another.key)
             self.children = another.children
             self.type = another.type
@@ -1182,6 +1183,7 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
             return accumulatedLen
         }
         // Removes spaces and breaks on the left. Returns true if the tree has been trimmed.
+        @discardableResult
         func lTrim() -> Bool {
             if self.type == "BR" {
                 text = nil

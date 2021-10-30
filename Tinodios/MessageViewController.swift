@@ -21,6 +21,8 @@ protocol MessageDisplayLogic: AnyObject {
     func applyTopicPermissions(withError: Error?)
     func endRefresh()
     func dismissVC()
+    // Display or dismiss preview (e.g. reply preview) in the send message bar.
+    func togglePreviewBar(with preview: NSAttributedString?)
 }
 
 class MessageViewController: UIViewController {
@@ -605,6 +607,10 @@ extension MessageViewController: MessageDisplayLogic {
         self.navigationController?.popViewController(animated: true)
         self.dismiss(animated: true)
     }
+
+    func togglePreviewBar(with preview: NSAttributedString?) {
+        self.sendMessageBar.togglePreviewBar(with: preview)
+    }
 }
 
 // Methods for filling message with content and layout out message subviews.
@@ -1086,6 +1092,11 @@ extension MessageViewController: MessageCellDelegate {
             // Channel users cannot delete messages.
             menuItems.append(MessageMenuItem(title: NSLocalizedString("Delete", comment: "Menu item"), action: #selector(deleteMessage(sender:)), seqId: cell.seqId))
         }
+
+        if !cell.isDeleted, let msgIndex = messageSeqIdIndex[cell.seqId], messages[msgIndex].isSynced {
+            menuItems.append(MessageMenuItem(title: NSLocalizedString("Reply", comment: "Menu item"), action: #selector(showReplyPreview(sender:)), seqId: cell.seqId))
+        }
+
         UIMenuController.shared.menuItems = menuItems
 
         // Tell the menu controller the first responder's frame and its super view
@@ -1119,6 +1130,15 @@ extension MessageViewController: MessageCellDelegate {
         }
         senderName = senderName ?? String(format: NSLocalizedString("Unknown %@", comment: ""), msg.from ?? "none")
         UIPasteboard.general.string = "[\(senderName!)]: \(msg.content?.string ?? ""); \(RelativeDateFormatter.shared.shortDate(from: msg.ts))"
+    }
+
+    @objc func showReplyPreview(sender: UIMenuController) {
+        guard let menuItem = sender.menuItems?.first as? MessageMenuItem, menuItem.seqId > 0, let msgIndex = messageSeqIdIndex[menuItem.seqId] else { return }
+        let msg = messages[msgIndex]
+        if let reply = interactor?.prepareReply(to: msg) {
+            let formattedReply = AttributedStringFormatter.toAttributed(reply, fitIn: CGSize(width: CGFloat.infinity, height: CGFloat.infinity))
+            self.togglePreviewBar(with: formattedReply)
+        }
     }
 
     @objc func deleteMessage(sender: UIMenuController) {

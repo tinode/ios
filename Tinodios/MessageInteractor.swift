@@ -26,6 +26,7 @@ protocol MessageBusinessLogic: AnyObject {
     func blockTopic()
     func uploadFile(_ def: UploadDef)
     func uploadImage(_ def: UploadDef)
+    func prepareReply(to msg: Message?) -> Drafty?
 }
 
 protocol MessageDataStore {
@@ -96,6 +97,10 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
     private var knownSubs: Set<String> = []
     // True when new subscriptions were added to the topic.
     private var newSubsAvailable = false
+
+    // Message (and its seq id) to which the user is replying.
+    private var replyTo: Drafty?
+    private var replyToSeqId: Int?
 
     @discardableResult
     func setup(topicName: String?, sendReadReceipts: Bool) -> Bool {
@@ -220,12 +225,65 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         return false
     }
 
+    // Turns images into thumbnails when preparing a reply quote to a message.
+    private class ReplyTransformer: Drafty.PreviewTransformer {
+        override func transform(node: Drafty.Span) -> Drafty.Span? {
+            guard node.type == "IM" else {
+                return super.transform(node: node)
+            }
+            let result = Drafty.Span(from: node)
+            if result.data != nil {
+                result.data?.removeAll()
+            } else {
+                result.data = [:]
+            }
+            result.data!["name"] = node.data?["name"]
+            if let bits = node.data?["val"]?.asData() {
+                let thumbnail = UIImage(data: bits)?.resize(width: 36, height: 36, clip: true)
+                let thumbnailBits = thumbnail?.pixelData(forMimeType: "image/jpeg")
+                result.data!["val"] = .bytes(thumbnailBits!)
+                result.data!["mime"] = .string("image/jpeg")
+                result.data!["width"] = .int(36)
+                result.data!["height"] = .int(36)
+                result.data!["size"] = .int(thumbnailBits!.count)
+            } else if let _ = result.data?["ref"]?.asString() {
+                // TODO:
+            }
+            return result
+        }
+    }
+
+    // Creates a reply quote.
+    func prepareReply(to msg: Message?) -> Drafty? {
+        guard let msg = msg, let replyTo = msg.content else {
+            self.replyTo = nil
+            self.replyToSeqId = nil
+            return nil
+        }
+        let seqId = msg.seqId
+        var senderName: String?
+        if let sub = topic?.getSubscription(for: msg.from), let pub = sub.pub {
+            senderName = pub.fn
+        }
+        senderName = senderName ?? String(format: NSLocalizedString("Unknown %@", comment: ""), msg.from ?? "none")
+        let p = replyTo.preview(ofMaxLength: 30, using: ReplyTransformer())
+        self.replyTo = Drafty.quote(quoteHeader: senderName!, authorUid: msg.from ?? "", quoteContent: p!)
+        self.replyToSeqId = seqId
+        return self.replyTo
+    }
+
     func sendMessage(content: Drafty) {
         guard let topic = self.topic else { return }
         defer {
             loadMessages()
         }
-        topic.publish(content: content).then(
+        var message = content
+        var head: [String: JSONValue]? = nil
+        if let reply = self.replyTo, let replyToSeq = self.replyToSeqId {
+            message = reply.append(message)
+            head = ["reply": .string(String(replyToSeq))]
+        }
+        topic.publish(content: message, withExtraHeaders: head).then(
             onSuccess: { [weak self] _ in
                 self?.loadMessages()
                 return nil
@@ -243,8 +301,13 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                 }
                 return nil
             }
-        )
+        ).thenFinally {
+            self.replyTo = nil
+            self.replyToSeqId = nil
+            self.presenter?.dismissPreviewBar()
+        }
     }
+
     func sendReadNotification(explicitSeq: Int? = nil, when deadline: DispatchTime) {
         guard self.sendReadReceipts else { return }
         // We don't send a notification if more notifications are pending.

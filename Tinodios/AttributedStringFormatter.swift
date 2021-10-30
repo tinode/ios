@@ -179,7 +179,8 @@ class AttributedStringFormatter: DraftyFormatter {
 
         let attachment = Attachment(content: .quote, mime: nil, name: nil, ref: nil, size: nil, width: nil, height: nil)
         node.attachment(attachment)
-        return node
+        let outer = TreeNode(content: [node, TreeNode(content: "\n")])
+        return outer
     }
 
     // Convert button payload to an URL.
