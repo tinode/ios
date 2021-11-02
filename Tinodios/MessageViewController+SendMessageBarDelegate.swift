@@ -48,6 +48,10 @@ extension MessageViewController: SendMessageBarDelegate {
             interactor?.enablePeersMessaging()
         }
     }
+
+    func previewSize(forMessage msg: NSAttributedString) -> CGSize {
+        return self.textSizeHelper.computeSize(for: msg, within: CGFloat.infinity)
+    }
 }
 
 extension MessageViewController: UIDocumentPickerDelegate {

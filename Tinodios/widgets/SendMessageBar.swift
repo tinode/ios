@@ -15,6 +15,8 @@ protocol SendMessageBarDelegate: AnyObject {
     func sendMessageBar(textChangedTo text: String)
 
     func sendMessageBar(enablePeersMessaging: Bool)
+
+    func previewSize(forMessage msg: NSAttributedString) -> CGSize
 }
 
 class SendMessageBar: UIView {
@@ -35,10 +37,10 @@ class SendMessageBar: UIView {
     // Message "Peer's messaging is disabled. Enable". Not installed by default.
     @IBOutlet weak var peerMessagingDisabledView: UIStackView!
     @IBOutlet weak var peerMessagingDisabledHeight: NSLayoutConstraint!
-    @IBOutlet weak var previewView: UIStackView!
-    var previewViewHeight: NSLayoutConstraint?
-    @IBOutlet weak var previewView2: RichTextView!
-    
+    @IBOutlet weak var previewView: RichTextView!
+    @IBOutlet weak var previewViewHeight: NSLayoutConstraint!
+    @IBOutlet weak var previewViewWidth: NSLayoutConstraint!
+
     // MARK: Properties
     weak var foregroundView: UIView?
 
@@ -158,19 +160,15 @@ class SendMessageBar: UIView {
     }
 
     public func togglePreviewBar(with message: NSAttributedString?) {
-        if let message = message {
-            previewView.isUserInteractionEnabled = true
-            previewView.isHidden = false
-            //previewHeight.constant = 30
-            NSLayoutConstraint.deactivate([previewViewHeight!])
-            self.previewView2.attributedText = message
+        if let message = message, let delegate = self.delegate {
+            let b = delegate.previewSize(forMessage: message)
+            previewViewWidth.constant = b.width
+            previewViewHeight.constant = b.height
+            self.previewView.attributedText = message
         } else {
-            previewView.isUserInteractionEnabled = false
-            previewView.isHidden = true
-            previewViewHeight = NSLayoutConstraint(item: previewView!, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .height, multiplier: 0, constant: 0)
-            NSLayoutConstraint.activate([previewViewHeight!])
-            //previewHeight.constant = 0
-            previewView2.attributedText = nil
+            previewViewWidth.constant = CGFloat.zero
+            previewViewHeight.constant = CGFloat.zero
+            previewView.attributedText = nil
         }
     }
 }

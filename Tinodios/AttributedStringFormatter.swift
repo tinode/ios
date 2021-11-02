@@ -10,10 +10,15 @@ import MobileCoreServices // For MIME -> UTI conversion
 import TinodeSDK
 import UIKit
 
+// Drafty formatter implementation.
+protocol FormatterImpl: DraftyFormatter {
+    init(withDefaultAttributes attributes: [NSAttributedString.Key: Any])
+}
+
 // iOS's support for styled strings is much weaker than Android's and web. Some styles cannot be nested. They have to be constructed and applied all at once at the leaf level.
 
 /// Class which creates NSAttributedString with Drafty format applied.
-class AttributedStringFormatter: DraftyFormatter {
+class AttributedStringFormatter: FormatterImpl {
     internal enum Constants {
         static let kDefaultFont: UIFont = UIFont.preferredFont(forTextStyle: .body)
         /// Size of the document icon in attachments.
@@ -30,7 +35,7 @@ class AttributedStringFormatter: DraftyFormatter {
 
     let defaultAttrs: [NSAttributedString.Key: Any]
 
-    init(withDefaultAttributes attrs: [NSAttributedString.Key: Any]) {
+    required init(withDefaultAttributes attrs: [NSAttributedString.Key: Any]) {
         defaultAttrs = attrs
     }
 
@@ -174,11 +179,16 @@ class AttributedStringFormatter: DraftyFormatter {
         return TreeNode(text: content, nodes: nodes as? [TreeNode])
     }
 
-    func handleQuote(withText content: String?, withChildren nodes: [DraftySpan]?) -> DraftySpan {
+    fileprivate func handleQuoteImpl(withText content: String?, withChildren nodes: [DraftySpan]?) -> TreeNode {
         let node = TreeNode(text: content, nodes: nodes as? [TreeNode])
 
         let attachment = Attachment(content: .quote, mime: nil, name: nil, ref: nil, size: nil, width: nil, height: nil)
         node.attachment(attachment)
+        return node
+    }
+
+    func handleQuote(withText content: String?, withChildren nodes: [DraftySpan]?) -> DraftySpan {
+        let node = handleQuoteImpl(withText: content, withChildren: nodes)
         let outer = TreeNode(content: [node, TreeNode(content: "\n")])
         return outer
     }
@@ -236,7 +246,8 @@ class AttributedStringFormatter: DraftyFormatter {
     ///    - fitIn: maximum size of attached images.
     ///    - defaultAttrs: default attribues to apply to all otherwise unstyled content.
     ///    - textColor: default text color.
-    public static func toAttributed(_ content: Drafty, fitIn maxSize: CGSize, withDefaultAttributes attributes: [NSAttributedString.Key: Any]? = nil) -> NSAttributedString {
+    public static func toAttributed<T: FormatterImpl>(_ content: Drafty, fitIn maxSize: CGSize, withDefaultAttributes attributes: [NSAttributedString.Key: Any]? = nil,
+                                                  fmt: T.Type) -> NSAttributedString {
 
         var attributes: [NSAttributedString.Key: Any] = attributes ?? [:]
         if attributes[.font] == nil {
@@ -247,7 +258,7 @@ class AttributedStringFormatter: DraftyFormatter {
             return NSMutableAttributedString(string: content.string, attributes: attributes)
         }
 
-        let formatTree = content.format(formatWith: AttributedStringFormatter(withDefaultAttributes: attributes),
+        let formatTree = content.format(formatWith: fmt.init(withDefaultAttributes: attributes),
                                         customizeWith: ["QQ": QuoteFormatter(withDefaultAttributes: attributes)])
         return try! (formatTree as! TreeNode).toAttributed(withDefaultAttributes: attributes, fontTraits: nil, fitIn: maxSize)
     }
@@ -818,5 +829,11 @@ class QuoteFormatter: PreviewFormatter {
             children.append(TreeNode(content: filename))
         }
         return TreeNode(content: children)
+    }
+}
+
+class ReplyFormatter: AttributedStringFormatter {
+    override func handleQuote(withText content: String?, withChildren nodes: [DraftySpan]?) -> DraftySpan {
+        return handleQuoteImpl(withText: content, withChildren: nodes)
     }
 }
