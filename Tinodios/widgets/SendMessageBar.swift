@@ -44,6 +44,10 @@ class SendMessageBar: UIView {
     // MARK: Properties
     weak var foregroundView: UIView?
 
+    var previewMaxWidth: CGFloat {
+        return inputField.frame.width - Constants.kPreviewCancelButtonMaxWidth
+    }
+
     // MARK: IBActions
 
     @IBAction func attach(_ sender: UIButton) {
@@ -85,6 +89,7 @@ class SendMessageBar: UIView {
         static let inputFieldInsetLeading: CGFloat = 4
         static let inputFieldInsetTrailing: CGFloat = 40
         static let peerMessagingDisabledHeight: CGFloat = 30
+        static let kPreviewCancelButtonMaxWidth: CGFloat = 36
     }
 
     // MARK: - Private properties

@@ -1136,7 +1136,9 @@ extension MessageViewController: MessageCellDelegate {
         guard let menuItem = sender.menuItems?.first as? MessageMenuItem, menuItem.seqId > 0, let msgIndex = messageSeqIdIndex[menuItem.seqId] else { return }
         let msg = messages[msgIndex]
         if let reply = interactor?.prepareReply(to: msg) {
-            let formattedReply = AttributedStringFormatter.toAttributed(reply, fitIn: CGSize(width: CGFloat.infinity, height: CGFloat.infinity),
+            let maxWidth = sendMessageBar.previewMaxWidth
+            let maxHeight = collectionView.frame.height
+            let formattedReply = AttributedStringFormatter.toAttributed(reply, fitIn: CGSize(width: maxWidth, height: maxHeight),
                                                              fmt: ReplyFormatter.self)
             self.togglePreviewBar(with: formattedReply)
         }

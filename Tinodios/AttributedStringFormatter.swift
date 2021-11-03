@@ -580,7 +580,7 @@ class AttributedStringFormatter: FormatterImpl {
                 if isButton {
                     return NSAttributedString(attachment: DraftyButtonAttachment(face: faceText, data: URL(string: attachment.ref!)))
                 }
-                return NSAttributedString(attachment: QuotedAttachment(quotedText: faceText))
+                return NSAttributedString(attachment: QuotedAttachment(quotedText: faceText, fitIn: size))
 
             // File attachment is harder: construct attributed string showing an attachment.
             case .data, .empty:
