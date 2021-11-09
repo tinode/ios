@@ -56,7 +56,7 @@ class SendMessageBar: UIView {
     }
 
     @IBAction func send(_ sender: UIButton) {
-        let msg = inputField.text.trimmingCharacters(in: .whitespacesAndNewlines)
+        let msg = inputField.actualText.trimmingCharacters(in: .whitespacesAndNewlines)
         if msg.isEmpty {
             return
         }

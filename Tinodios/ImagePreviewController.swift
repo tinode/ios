@@ -6,13 +6,14 @@
 //
 
 // Shows full-screen
-import UIKit
+import Kingfisher
 import TinodeSDK
+import UIKit
 
 struct ImagePreviewContent {
     enum ImageContent {
         case uiimage(UIImage)
-        case rawdata(Data)
+        case rawdata(Data?, String?)  // inline data or reference
     }
 
     let imgContent: ImageContent
@@ -53,9 +54,12 @@ class ImagePreviewController: UIViewController, UIScrollViewDelegate {
             navigationItem.rightBarButtonItem = nil
             // Hide image details panel.
             imageDetailsPanel.bounds = CGRect()
-        case .rawdata(let bits):
+        case .rawdata(let bits, let ref):
+            let errorImage = UiUtils.placeholderImage(
+                named: "broken-image", withBackground: nil,
+                width: CGFloat(content.width ?? 64), height: CGFloat(content.height ?? 64))
             // Viewing received image.
-            imageView.image = UIImage(data: bits)
+            imageView.image = bits != nil ? UIImage(data: bits!) : errorImage
 
             // Fill out details panel for the received image.
             fileNameLabel.text = content.fileName ?? NSLocalizedString("undefined", comment: "Placeholder for missing file name")
@@ -68,6 +72,11 @@ class ImagePreviewController: UIViewController, UIScrollViewDelegate {
                 sizeString += "; \(width)×\(height)"
             }
             sizeLabel.text = sizeString
+
+            // If we have a reference, kick off the download.
+            if let ref = ref, let url = URL(string: ref, relativeTo: Cache.tinode.baseURL(useWebsocketProtocol: false)) {
+                self.startDownload(fromUrl: url, onError: errorImage)
+            }
         }
 
         if imageView.image == nil {
@@ -89,11 +98,11 @@ class ImagePreviewController: UIViewController, UIScrollViewDelegate {
 
     // This makes input bar visible.
     override var inputAccessoryView: UIView? {
-        return previewContent?.imgContent != nil ? sendImageBar : super.inputAccessoryView
+        return previewContent?.imgContent != nil && sendImageBar.delegate != nil ? sendImageBar : super.inputAccessoryView
     }
 
     override var canBecomeFirstResponder: Bool {
-        return previewContent?.imgContent != nil
+        return previewContent?.imgContent != nil && sendImageBar.delegate != nil
     }
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
@@ -117,17 +126,38 @@ class ImagePreviewController: UIViewController, UIScrollViewDelegate {
 
     @IBAction func saveImageButtonClicked(_ sender: Any) {
         guard let content = previewContent else { return }
-        guard case let .rawdata(imageBits) = content.imgContent else { return }
+        guard case let .rawdata(imageBits, ref) = content.imgContent else { return }
 
         let picturesUrl: URL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
         let destinationURL = picturesUrl.appendingPathComponent(content.fileName ?? Utils.uniqueFilename(forMime: content.contentType))
+        let data = ref != nil ? self.imageView.image?.pixelData(forMimeType: content.contentType) : imageBits
+        guard let data = data else { return }
         do {
             try FileManager.default.createDirectory(at: picturesUrl, withIntermediateDirectories: true, attributes: nil)
-            try imageBits.write(to: destinationURL)
+            try data.write(to: destinationURL)
             UiUtils.presentFileSharingVC(for: destinationURL)
         } catch {
             Cache.log.info("Failed to save image as %@: %@", destinationURL.absoluteString, error.localizedDescription)
         }
+    }
+
+    // Downloads image from the provided url and displays it to the user.
+    private func startDownload(fromUrl url: URL, onError errorImage: UIImage) {
+        let modifier = AnyModifier { request in
+            var request = request
+            LargeFileHelper.addCommonHeaders(to: &request, using: Cache.tinode)
+            return request
+        }
+
+        KingfisherManager.shared.retrieveImage(with: url.downloadURL, options: [.requestModifier(modifier)], completionHandler: { result in
+            switch result {
+            case .success(let value):
+                self.imageView.image = value.image
+            case .failure(let error):
+                self.imageView.image = errorImage
+                Cache.log.info("Failed to download image '%@': %d", url.absoluteString, error.errorCode)
+            }
+        })
     }
 }
 

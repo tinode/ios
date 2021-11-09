@@ -1206,14 +1206,18 @@ extension MessageViewController: MessageCellDelegate {
         // TODO: maybe pass nil to show "broken image" preview instead of returning.
         guard let index = messageSeqIdIndex[cell.seqId] else { return }
         let msg = messages[index]
-        guard let entity = msg.content?.entities?[0], let bits = entity.data?["val"]?.asData() else { return }
+        guard let entity = msg.content?.entities?[0] else { return }
+        let bits = entity.data?["val"]?.asData()
+        let ref = entity.data?["ref"]?.asString()
+        // Need to have at least one.
+        guard bits != nil || ref != nil else { return }
 
         let content = ImagePreviewContent(
-            imgContent: ImagePreviewContent.ImageContent.rawdata(bits),
+            imgContent: ImagePreviewContent.ImageContent.rawdata(bits, ref),
             caption: nil,
             fileName: entity.data?["name"]?.asString(),
             contentType: entity.data?["mime"]?.asString(),
-            size: Int64(bits.count),
+            size: entity.data?["size"]?.asInt64() ?? Int64(bits?.count ?? 0),
             width: entity.data?["width"]?.asInt(),
             height: entity.data?["height"]?.asInt())
         performSegue(withIdentifier: "ShowImagePreview", sender: content)

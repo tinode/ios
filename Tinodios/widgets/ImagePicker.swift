@@ -93,20 +93,29 @@ extension ImagePicker: UIImagePickerControllerDelegate, UINavigationControllerDe
             return self.pickerController(picker, didSelect: nil, mimeType: nil, fileName: nil)
         }
 
-        let imageUrl = info[.imageURL] as? NSURL
-
-        // Get mime type and file name
-        let urlResourceValues = try? imageUrl?.resourceValues(forKeys: [.typeIdentifierKey, .nameKey])
-        let uti = urlResourceValues?[.typeIdentifierKey] as? NSString
-        let fname = urlResourceValues?[.nameKey] as? NSString
-
-        let mimeType: String?
-        if let uti = uti {
-            // Convert UTI string like 'public.jpeg' to MIME type like 'image/jpeg'
-            let unmanaged = UTTypeCopyPreferredTagWithClass(uti as CFString, kUTTagClassMIMEType)
-            mimeType = unmanaged?.takeRetainedValue() as String?
+        var mimeType: String? = nil
+        var fname: NSString? = nil
+        if self.pickerController.sourceType == .camera {
+            // Images taken by camera won't have .imageURL or .referenceURL.
+            // Generate the file name from the timestamp and set the mime type to "image/png".
+            if let metadata = info[.mediaMetadata] as? [NSString: Any], let exif = metadata["{Exif}"] as? [NSString: Any] {
+                fname = ((exif["DateTimeOriginal"] as? NSString ?? "unknown").replacingOccurrences(of: " ", with: "-") + ".png") as NSString
+                mimeType = "image/png"
+            }
         } else {
-            mimeType = nil
+            let imageUrl = info[.imageURL] as? NSURL
+
+            // Get mime type and file name
+            let urlResourceValues = try? imageUrl?.resourceValues(forKeys: [.typeIdentifierKey, .nameKey])
+            let uti = urlResourceValues?[.typeIdentifierKey] as? NSString
+            fname = urlResourceValues?[.nameKey] as? NSString
+            if let uti = uti {
+                // Convert UTI string like 'public.jpeg' to MIME type like 'image/jpeg'
+                let unmanaged = UTTypeCopyPreferredTagWithClass(uti as CFString, kUTTagClassMIMEType)
+                mimeType = unmanaged?.takeRetainedValue() as String?
+            } else {
+                mimeType = nil
+            }
         }
 
         self.pickerController(picker, didSelect: image, mimeType: mimeType, fileName: fname as String?)
