@@ -834,7 +834,7 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
                 while i < spans.count {
                     let inner = spans[i]
                     i += 1
-                    if inner.start < span.end {
+                    if inner.start >= 0 && inner.start < span.end {
                         subspans.append(inner)
                     } else {
                         // Move back.
@@ -885,6 +885,7 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
                 }
             }
 
+            var attachments: [Span] = []
             var spans: [Span] = []
             let maxIndex = txt.count
             for aFmt in fmt! {
@@ -896,6 +897,11 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
                     // Attachment
                     aFmt.at = -1
                     aFmt.len = 1
+                    let key = aFmt.key ?? 0
+                    if key >= 0 {
+                        attachments.append(Span(start: aFmt.at, end: 0, index: key))
+                    }
+                    continue
                 } else if aFmt.at + aFmt.len > maxIndex {
                     // Out of bounds span.
                     continue
@@ -913,6 +919,10 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
                     return rhs.end < lhs.end // longer one comes first (<0)
                 }
                 return lhs.start < rhs.start
+            }
+
+            if !attachments.isEmpty {
+                spans += attachments
             }
 
             for span in spans {
@@ -1060,6 +1070,14 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
         var result = Drafty()
         var keymap = [Int: Int]()
         tree.appendTo(document: &result, using: &keymap)
+        // Make attachments trailing.
+        result.fmt?.forEach {
+            if $0.at < 0 {
+                $0.at = result.txt.count
+                $0.len = 1
+                result.txt.append(" ")
+            }
+        }
         return result
     }
 

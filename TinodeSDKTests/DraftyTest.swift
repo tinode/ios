@@ -142,8 +142,9 @@ class DraftyTest: XCTestCase {
                                 "val": JSONValue.string("<38992, bytes: ...>"),
                                 "width": JSONValue.int(100),
                                 "height": JSONValue.int(80)])]).preview(previewLen: 15)
+        // Attachment will become trailing.
         d2 = Drafty(
-            text: "", fmt: [Style(at: -1, len: 0, key: 0)],
+            text: " ", fmt: [Style(at: 0, len: 1, key: 0)],
             ent: [Entity(tp: "EX",
                          data: ["mime": JSONValue.string("image/jpeg"),
                                 "name": JSONValue.string("hello.jpg"),
