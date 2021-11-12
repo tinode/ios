@@ -28,8 +28,11 @@ class RichTextView: UITextView {
         isSelectable = true
 
         var b = bounds
-        b.size.height = sizeThatFits(CGSize(width: bounds.size.width, height: CGFloat.greatestFiniteMagnitude)).height
-        bounds = b
+        if !b.isEmpty {
+            // Only change bounds for non-trivial (visible) RichTextViews.
+            b.size.height = sizeThatFits(CGSize(width: bounds.size.width, height: CGFloat.greatestFiniteMagnitude)).height
+            bounds = b
+        }
     }
 
     override func setContentOffset(_ contentOffset: CGPoint, animated: Bool) {

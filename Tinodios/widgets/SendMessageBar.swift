@@ -169,11 +169,13 @@ class SendMessageBar: UIView {
             let b = delegate.previewSize(forMessage: message)
             previewViewWidth.constant = b.width
             previewViewHeight.constant = b.height
-            self.previewView.attributedText = message
+            previewView.attributedText = message
+            previewView.isHidden = false
         } else {
             previewViewWidth.constant = CGFloat.zero
             previewViewHeight.constant = CGFloat.zero
             previewView.attributedText = nil
+            previewView.isHidden = true
         }
     }
 }
