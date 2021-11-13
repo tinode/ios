@@ -88,6 +88,59 @@ class UiUtils {
     // Color of all other markers.
     static let kDeliveryMarkerColor = UIColor.gray.withAlphaComponent(0.7)
 
+    // Letter tile image colors (light).
+    private static let kLetterTileLightColors: [UIColor] = [
+        UIColor(fromHexCode: 0xFFEF9A9A),
+        UIColor(fromHexCode: 0xFF90CAF9),
+        UIColor(fromHexCode: 0xFFB0BEC5),
+        UIColor(fromHexCode: 0xFFB39DDB),
+        UIColor(fromHexCode: 0xFFFFAB91),
+        UIColor(fromHexCode: 0xFFA5D6A7),
+        UIColor(fromHexCode: 0xFFDDDDDD),
+        UIColor(fromHexCode: 0xFFE6EE9C),
+        UIColor(fromHexCode: 0xFFC5E1A5),
+        UIColor(fromHexCode: 0xFFFFF59D),
+        UIColor(fromHexCode: 0xFFF48FB1),
+        UIColor(fromHexCode: 0xFF9FA8DA),
+        UIColor(fromHexCode: 0xFFFFE082),
+        UIColor(fromHexCode: 0xFFBCAAA4),
+        UIColor(fromHexCode: 0xFF80DEEA),
+        UIColor(fromHexCode: 0xFFCE93D8)
+    ]
+
+    // Letter tile image colors (dark).
+    private static let kLetterTileDarkColors: [UIColor] = [
+        UIColor(fromHexCode: 0xFFC62828),
+        UIColor(fromHexCode: 0xFFAD1457),
+        UIColor(fromHexCode: 0xFF6A1B9A),
+        UIColor(fromHexCode: 0xFF4527A0),
+        UIColor(fromHexCode: 0xFF283593),
+        UIColor(fromHexCode: 0xFF1565C0),
+        UIColor(fromHexCode: 0xFF0277BD),
+        UIColor(fromHexCode: 0xFF00838F),
+        UIColor(fromHexCode: 0xFF00695C),
+        UIColor(fromHexCode: 0xFF2E7D32),
+        UIColor(fromHexCode: 0xFF558B2F),
+        UIColor(fromHexCode: 0xFF9E9D24),
+        UIColor(fromHexCode: 0xFFF9A825),
+        UIColor(fromHexCode: 0xFFFF8F00),
+        UIColor(fromHexCode: 0xFFEF6C00),
+        UIColor(fromHexCode: 0xFFD84315)
+    ]
+
+    private static let kDefaultLetterTileLightColor = UIColor(fromHexCode: 0xFF9E9E9E)
+    private static let kDefaultLetterTileDarkColor = UIColor(fromHexCode: 0xFF757575)
+
+    public static func letterTileColor(for uid: String, dark: Bool) -> UIColor {
+        let colors = dark ? UiUtils.kLetterTileDarkColors : UiUtils.kLetterTileLightColors
+
+        let hash = UInt(uid.hashCode().magnitude)
+        if hash == 0 {
+            return dark ? UiUtils.kDefaultLetterTileDarkColor : UiUtils.kDefaultLetterTileLightColor
+        }
+        return colors[Int(hash % UInt(colors.count))]
+    }
+
     private static func setUpPushNotifications() {
         let application = UIApplication.shared
         let appDelegate = application.delegate as! AppDelegate

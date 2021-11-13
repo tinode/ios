@@ -84,9 +84,13 @@ class AttributedStringFormatter: FormatterImpl {
         return node
     }
 
-    func handleMention(withText content: String?, withChildren nodes: [DraftySpan]?) -> DraftySpan {
-        // TODO: add fupport for @mentions
-        return TreeNode(text: content, nodes: nodes as? [TreeNode])
+    func handleMention(withText content: String?, withChildren nodes: [DraftySpan]?, using attr: [String: JSONValue]?) -> DraftySpan {
+        let node = TreeNode(text: content, nodes: nodes as? [TreeNode])
+        if let uid = attr?["val"]?.asString() {
+            node.style(cstyle: [.foregroundColor: UiUtils.letterTileColor(for: uid, dark: true),
+                                .font: Constants.kDefaultFont.withTraits(traits: .traitBold)])
+        }
+        return node
     }
 
     func handleHashtag(withText content: String?, withChildren nodes: [DraftySpan]?) -> DraftySpan {
