@@ -399,6 +399,7 @@ class MessageViewController: UIViewController {
         case "ShowImagePreview":
             let destinationVC = segue.destination as! ImagePreviewController
             destinationVC.previewContent = (sender as! ImagePreviewContent)
+            destinationVC.replyPreviewDelegate = self
         case "ShowFilePreview":
             let destinationVC = segue.destination as! FilePreviewController
             destinationVC.previewContent = (sender as! FilePreviewContent)
@@ -1244,5 +1245,27 @@ extension MessageViewController: MessageCellDelegate {
             width: entity.data?["width"]?.asInt(),
             height: entity.data?["height"]?.asInt())
         performSegue(withIdentifier: "ShowImagePreview", sender: content)
+    }
+}
+
+protocol ReplyPreviewDelegate: AnyObject {
+    // Calculates size for preview attributed string.
+    func previewSize(forMessage msg: NSAttributedString) -> CGSize
+    // Cancels preview.
+    func dismissPreview()
+
+    func preview() -> NSAttributedString?
+}
+
+extension MessageViewController: ReplyPreviewDelegate {
+    func previewSize(forMessage msg: NSAttributedString) -> CGSize {
+        return self.textSizeHelper.computeSize(for: msg, within: CGFloat.infinity)
+    }
+    func dismissPreview() {
+        self.togglePreviewBar(with: nil)
+        self.interactor?.dismissReply()
+    }
+    func preview() -> NSAttributedString? {
+        self.sendMessageBar.previewText
     }
 }

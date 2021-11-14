@@ -48,7 +48,7 @@
                     </connections>
                 </button>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dee-Lg-Hb5" userLabel="Cancel Preview Button">
-                    <rect key="frame" x="146" y="57" width="22" height="22"/>
+                    <rect key="frame" x="146" y="13" width="22" height="22"/>
                     <constraints>
                         <constraint firstAttribute="width" secondItem="dee-Lg-Hb5" secondAttribute="height" multiplier="1:1" id="Rxe-gC-4rx"/>
                     </constraints>
@@ -58,7 +58,7 @@
                     </connections>
                 </button>
                 <textView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="redraw" editable="NO" textAlignment="natural" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="JUS-tF-V11" userLabel="Preview View" customClass="RichTextView" customModule="Tinodios" customModuleProvider="target">
-                    <rect key="frame" x="50" y="48" width="100" height="40"/>
+                    <rect key="frame" x="50" y="4" width="100" height="40"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="40" id="6uu-eX-bmg"/>
                         <constraint firstAttribute="width" constant="100" id="ENz-ZY-rZ4"/>
@@ -68,7 +68,7 @@
                     <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                 </textView>
                 <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="bxx-m5-ifU" customClass="PlaceholderTextView" customModule="Tinodios" customModuleProvider="target">
-                    <rect key="frame" x="50" y="92" width="360" height="54"/>
+                    <rect key="frame" x="50" y="48" width="360" height="98"/>
                     <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                     <constraints>
                         <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="40" id="gP4-QC-iyW"/>
@@ -150,7 +150,7 @@
                 <constraint firstAttribute="trailing" secondItem="Awf-Rd-vTa" secondAttribute="trailing" constant="4" id="D9y-3Z-SlW"/>
                 <constraint firstItem="JUS-tF-V11" firstAttribute="trailing" secondItem="dee-Lg-Hb5" secondAttribute="leading" constant="4" id="FZO-E7-Swq"/>
                 <constraint firstItem="Mh3-pG-tJg" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="FjB-HD-awt"/>
-                <constraint firstItem="JUS-tF-V11" firstAttribute="top" secondItem="UC5-i1-la2" secondAttribute="top" constant="4" id="IU9-Gp-XQV"/>
+                <constraint firstItem="JUS-tF-V11" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="4" id="IU9-Gp-XQV"/>
                 <constraint firstItem="Awf-Rd-vTa" firstAttribute="top" secondItem="bxx-m5-ifU" secondAttribute="bottom" constant="4" id="SiQ-Ca-JnV"/>
                 <constraint firstAttribute="bottom" secondItem="yZd-O5-BVm" secondAttribute="bottom" id="UsF-vi-bMs"/>
                 <constraint firstItem="Awf-Rd-vTa" firstAttribute="leading" secondItem="bxx-m5-ifU" secondAttribute="leading" id="YWB-4j-4KG"/>

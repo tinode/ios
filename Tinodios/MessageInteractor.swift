@@ -27,6 +27,7 @@ protocol MessageBusinessLogic: AnyObject {
     func uploadFile(_ def: UploadDef)
     func uploadImage(_ def: UploadDef)
     func prepareReply(to msg: Message?) -> Drafty?
+    func dismissReply()
 }
 
 protocol MessageDataStore {
@@ -272,6 +273,11 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         return self.replyTo
     }
 
+    func dismissReply() {
+        self.replyTo = nil
+        self.replyToSeqId = nil
+    }
+
     func sendMessage(content: Drafty) {
         guard let topic = self.topic else { return }
         defer {
@@ -480,8 +486,9 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
 
         // Giving fake URL to Drafty instead of Data which is not needed in DB anyway.
         let ref = URL(string: "mid:uploading/\(filename)")!
-        let draft: Drafty?
+        var draft: Drafty?
         let previewData: Data?
+        var head: [String: JSONValue]?
         switch type {
         case .file:
             draft = MessageInteractor.draftyFile(filename: filename, refurl: ref, mimeType: mimeType, data: nil)
@@ -500,11 +507,24 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                 previewData = def.data
             }
             draft = MessageInteractor.draftyImage(caption: def.caption, filename: filename, refurl: ref, mimeType: mimeType, data: data, width: Int(def.width!), height: Int(def.height!), size: def.data.count)
+            if let d = draft, let reply = self.replyTo, let replyToSeq = self.replyToSeqId {
+                draft = reply.append(d)
+                head = ["reply": .string(String(replyToSeq))]
+            }
         }
 
         guard let content = draft else { return }
+        // Dismiss reply.
+        self.replyTo = nil
+        self.replyToSeqId = nil
+        self.presenter?.dismissPreviewBar()
 
-        if let msg = topic.store?.msgDraft(topic: topic, data: content, head: Tinode.draftyHeaders(for: content)) {
+        var headers = Tinode.draftyHeaders(for: content)
+        if let h = head {
+            headers = headers ?? [:]
+            _ = headers!.merge(with: h)
+        }
+        if let msg = topic.store?.msgDraft(topic: topic, data: content, head: headers) {
             let helper = Cache.getLargeFileHelper()
             helper.startUpload(
                 filename: filename, mimetype: mimeType, d: def.data,

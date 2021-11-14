@@ -10,17 +10,24 @@ import UIKit
 protocol SendImageBarDelegate: AnyObject {
     // Send the message.
     func sendImageBar(caption: String?)
+    // Dismisses reply preview.
+    func dismissPreview()
 }
 
 class SendImageBar: UIView {
 
     // MARK: Action delegate
     weak var delegate: SendImageBarDelegate?
+    weak var replyPreviewDelegate: ReplyPreviewDelegate?
 
     // MARK: IBOutlets
     @IBOutlet weak var sendButton: UIButton!
     @IBOutlet weak var inputField: PlaceholderTextView!
     @IBOutlet weak var inputFieldHeight: NSLayoutConstraint!
+    // Reply/forward previews.
+    @IBOutlet weak var previewView: RichTextView!
+    @IBOutlet weak var previewViewHeight: NSLayoutConstraint!
+    @IBOutlet weak var previewViewWidth: NSLayoutConstraint!
 
     // Overlay for 'writing disabled'. Hidden by default.
     @IBOutlet weak var allDisabledView: UIView!
@@ -103,6 +110,26 @@ class SendImageBar: UIView {
     public func toggleNotAvailableOverlay(visible: Bool) {
         allDisabledView.isHidden = !visible
         isUserInteractionEnabled = !visible
+    }
+
+    @IBAction func cancelPreviewClicked(_ sender: Any) {
+        self.togglePreviewBar(with: nil)
+        self.delegate?.dismissPreview()
+    }
+
+    public func togglePreviewBar(with message: NSAttributedString?) {
+        if let message = message, let delegate = self.replyPreviewDelegate {
+            let b = delegate.previewSize(forMessage: message)
+            previewViewWidth.constant = b.width
+            previewViewHeight.constant = b.height
+            previewView.attributedText = message
+            previewView.isHidden = false
+        } else {
+            previewViewWidth.constant = CGFloat.zero
+            previewViewHeight.constant = CGFloat.zero
+            previewView.attributedText = nil
+            previewView.isHidden = true
+        }
     }
 }
 

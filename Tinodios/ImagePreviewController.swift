@@ -35,6 +35,7 @@ class ImagePreviewController: UIViewController, UIScrollViewDelegate {
     @IBOutlet weak var imageDetailsPanel: UIStackView!
 
     var previewContent: ImagePreviewContent?
+    var replyPreviewDelegate: ReplyPreviewDelegate?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -50,6 +51,8 @@ class ImagePreviewController: UIViewController, UIScrollViewDelegate {
             imageView.image = image
 
             sendImageBar.delegate = self
+            sendImageBar.replyPreviewDelegate = replyPreviewDelegate
+            sendImageBar.togglePreviewBar(with: replyPreviewDelegate?.preview())
             // Hide [Save image] button.
             navigationItem.rightBarButtonItem = nil
             // Hide image details panel.
@@ -77,6 +80,7 @@ class ImagePreviewController: UIViewController, UIScrollViewDelegate {
             if let ref = ref, let url = URL(string: ref, relativeTo: Cache.tinode.baseURL(useWebsocketProtocol: false)) {
                 self.startDownload(fromUrl: url, onError: errorImage)
             }
+            sendImageBar.togglePreviewBar(with: nil)
         }
 
         if imageView.image == nil {
@@ -184,5 +188,8 @@ extension ImagePreviewController: SendImageBarDelegate {
         NotificationCenter.default.post(name: Notification.Name(MessageViewController.kNotificationSendAttachment), object: content)
         // Return to MessageViewController.
         navigationController?.popViewController(animated: true)
+    }
+    func dismissPreview() {
+        self.replyPreviewDelegate?.dismissPreview()
     }
 }

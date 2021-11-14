@@ -15,15 +15,13 @@ protocol SendMessageBarDelegate: AnyObject {
     func sendMessageBar(textChangedTo text: String)
 
     func sendMessageBar(enablePeersMessaging: Bool)
-
-    func previewSize(forMessage msg: NSAttributedString) -> CGSize
 }
 
 class SendMessageBar: UIView {
 
     // MARK: Action delegate
 
-    weak var delegate: SendMessageBarDelegate?
+    weak var delegate: (SendMessageBarDelegate & ReplyPreviewDelegate)?
 
     // MARK: IBOutlets
 
@@ -43,6 +41,11 @@ class SendMessageBar: UIView {
 
     // MARK: Properties
     weak var foregroundView: UIView?
+
+    public var previewText: NSAttributedString? {
+        get { return previewView.attributedText }
+        set { previewView.attributedText = newValue }
+    }
 
     var previewMaxWidth: CGFloat {
         return inputField.frame.width - Constants.kPreviewCancelButtonMaxWidth
@@ -80,6 +83,7 @@ class SendMessageBar: UIView {
 
     @IBAction func cancelPreviewClicked(_ sender: Any) {
         self.togglePreviewBar(with: nil)
+        self.delegate?.dismissPreview()
     }
 
     // MARK: - Constants
@@ -169,12 +173,12 @@ class SendMessageBar: UIView {
             let b = delegate.previewSize(forMessage: message)
             previewViewWidth.constant = b.width
             previewViewHeight.constant = b.height
-            previewView.attributedText = message
+            previewText = message
             previewView.isHidden = false
         } else {
             previewViewWidth.constant = CGFloat.zero
             previewViewHeight.constant = CGFloat.zero
-            previewView.attributedText = nil
+            previewText = nil
             previewView.isHidden = true
         }
     }
