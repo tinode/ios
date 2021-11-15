@@ -1012,7 +1012,6 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
     open class PreviewTransformer: SpanTreeTransformer {
         public init() {}
         open func transform(node: Span) -> Span? {
-            //let node = node as! Span
             guard node.type != "QQ" else {
                 return nil
             }
@@ -1031,6 +1030,14 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
                 result.data = dc
             }
             return result
+        }
+    }
+
+    // Creates a carbon copy of a Drafty object.
+    fileprivate class CopyTransformer: SpanTreeTransformer {
+        public init() {}
+        public func transform(node: Drafty.Span) -> Drafty.Span? {
+            return Drafty.Span(from: node)
         }
     }
 
@@ -1079,6 +1086,11 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
             }
         }
         return result
+    }
+
+    /// Deep copy a Drafty object.
+    public func copy() -> Drafty? {
+        return preview(ofMaxLength: Int.max, using: CopyTransformer())
     }
 
     /// Serialize Drafty object for storage in database.

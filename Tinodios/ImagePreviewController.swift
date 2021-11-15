@@ -52,7 +52,7 @@ class ImagePreviewController: UIViewController, UIScrollViewDelegate {
 
             sendImageBar.delegate = self
             sendImageBar.replyPreviewDelegate = replyPreviewDelegate
-            sendImageBar.togglePreviewBar(with: replyPreviewDelegate?.preview())
+            sendImageBar.togglePreviewBar(with: replyPreviewDelegate?.pendingReplyPreview())
             // Hide [Save image] button.
             navigationItem.rightBarButtonItem = nil
             // Hide image details panel.
@@ -190,6 +190,6 @@ extension ImagePreviewController: SendImageBarDelegate {
         navigationController?.popViewController(animated: true)
     }
     func dismissPreview() {
-        self.replyPreviewDelegate?.dismissPreview()
+        self.replyPreviewDelegate?.dismissReplyPreview()
     }
 }

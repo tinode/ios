@@ -484,6 +484,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
             return
         }
 
+        let savedReply = self.replyTo?.copy()
         // Giving fake URL to Drafty instead of Data which is not needed in DB anyway.
         let ref = URL(string: "mid:uploading/\(filename)")!
         var draft: Drafty?
@@ -552,12 +553,15 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                         return
                     }
 
-                    let draft: Drafty?
+                    var draft: Drafty?
                     switch type {
                     case .file:
                         draft = try? Drafty().attachFile(mime: mimeType, fname: filename, refurl: srvUrl, size: def.data.count)
                     case .image:
                         draft = MessageInteractor.draftyImage(caption: def.caption, filename: filename, refurl: srvUrl, mimeType: mimeType, data: previewData!, width: Int(def.width!), height: Int(def.height!), size: def.data.count)
+                        if let r = savedReply, let d = draft {
+                            draft = r.append(d)
+                        }
                     }
 
                     if let content = draft {

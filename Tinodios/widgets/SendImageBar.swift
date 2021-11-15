@@ -119,7 +119,7 @@ class SendImageBar: UIView {
 
     public func togglePreviewBar(with message: NSAttributedString?) {
         if let message = message, let delegate = self.replyPreviewDelegate {
-            let b = delegate.previewSize(forMessage: message)
+            let b = delegate.replyPreviewSize(forMessage: message)
             previewViewWidth.constant = b.width
             previewViewHeight.constant = b.height
             previewView.attributedText = message

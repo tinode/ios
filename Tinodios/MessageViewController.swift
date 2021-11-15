@@ -1250,22 +1250,22 @@ extension MessageViewController: MessageCellDelegate {
 
 protocol ReplyPreviewDelegate: AnyObject {
     // Calculates size for preview attributed string.
-    func previewSize(forMessage msg: NSAttributedString) -> CGSize
+    func replyPreviewSize(forMessage msg: NSAttributedString) -> CGSize
     // Cancels preview.
-    func dismissPreview()
+    func dismissReplyPreview()
 
-    func preview() -> NSAttributedString?
+    func pendingReplyPreview() -> NSAttributedString?
 }
 
 extension MessageViewController: ReplyPreviewDelegate {
-    func previewSize(forMessage msg: NSAttributedString) -> CGSize {
+    func replyPreviewSize(forMessage msg: NSAttributedString) -> CGSize {
         return self.textSizeHelper.computeSize(for: msg, within: CGFloat.infinity)
     }
-    func dismissPreview() {
+    func dismissReplyPreview() {
         self.togglePreviewBar(with: nil)
         self.interactor?.dismissReply()
     }
-    func preview() -> NSAttributedString? {
-        self.sendMessageBar.previewText
+    func pendingReplyPreview() -> NSAttributedString? {
+        return self.sendMessageBar.previewText?.length != .zero ? self.sendMessageBar.previewText : nil
     }
 }

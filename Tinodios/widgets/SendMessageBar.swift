@@ -83,7 +83,7 @@ class SendMessageBar: UIView {
 
     @IBAction func cancelPreviewClicked(_ sender: Any) {
         self.togglePreviewBar(with: nil)
-        self.delegate?.dismissPreview()
+        self.delegate?.dismissReplyPreview()
     }
 
     // MARK: - Constants
@@ -170,7 +170,7 @@ class SendMessageBar: UIView {
 
     public func togglePreviewBar(with message: NSAttributedString?) {
         if let message = message, let delegate = self.delegate {
-            let b = delegate.previewSize(forMessage: message)
+            let b = delegate.replyPreviewSize(forMessage: message)
             previewViewWidth.constant = b.width
             previewViewHeight.constant = b.height
             previewText = message
