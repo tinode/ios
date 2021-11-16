@@ -508,10 +508,10 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                 previewData = def.data
             }
             draft = MessageInteractor.draftyImage(caption: def.caption, filename: filename, refurl: ref, mimeType: mimeType, data: data, width: Int(def.width!), height: Int(def.height!), size: def.data.count)
-            if let d = draft, let reply = self.replyTo, let replyToSeq = self.replyToSeqId {
-                draft = reply.append(d)
-                head = ["reply": .string(String(replyToSeq))]
-            }
+        }
+        if let d = draft, let reply = self.replyTo, let replyToSeq = self.replyToSeqId {
+            draft = reply.append(d)
+            head = ["reply": .string(String(replyToSeq))]
         }
 
         guard let content = draft else { return }
@@ -559,9 +559,9 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                         draft = try? Drafty().attachFile(mime: mimeType, fname: filename, refurl: srvUrl, size: def.data.count)
                     case .image:
                         draft = MessageInteractor.draftyImage(caption: def.caption, filename: filename, refurl: srvUrl, mimeType: mimeType, data: previewData!, width: Int(def.width!), height: Int(def.height!), size: def.data.count)
-                        if let r = savedReply, let d = draft {
-                            draft = r.append(d)
-                        }
+                    }
+                    if let r = savedReply, let d = draft {
+                        draft = r.append(d)
                     }
 
                     if let content = draft {

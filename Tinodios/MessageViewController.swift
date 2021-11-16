@@ -403,6 +403,7 @@ class MessageViewController: UIViewController {
         case "ShowFilePreview":
             let destinationVC = segue.destination as! FilePreviewController
             destinationVC.previewContent = (sender as! FilePreviewContent)
+            destinationVC.replyPreviewDelegate = self
         default:
             break
         }

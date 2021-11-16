@@ -729,6 +729,11 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
                 let style = Style()
                 style.at = src.at + len
                 style.len = src.len
+                // Special case for the outside of the normal rendering flow styles (e.g. EX).
+                if src.at == -1 {
+                    style.at = -1
+                    style.len = 0
+                }
                 if src.tp != nil {
                     style.tp = src.tp
                 } else if let thatEnt = that.ent {

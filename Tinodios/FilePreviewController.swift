@@ -19,6 +19,7 @@ struct FilePreviewContent {
 class FilePreviewController: UIViewController, UIScrollViewDelegate {
 
     var previewContent: FilePreviewContent?
+    var replyPreviewDelegate: ReplyPreviewDelegate?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -30,11 +31,20 @@ class FilePreviewController: UIViewController, UIScrollViewDelegate {
     @IBOutlet weak var fileNameLabel: UILabel!
     @IBOutlet weak var sizeLabel: UILabel!
 
+    @IBOutlet weak var previewView: RichTextView!
+    @IBOutlet weak var previewViewWidth: NSLayoutConstraint!
+    @IBOutlet weak var previewViewHeight: NSLayoutConstraint!
+
     @IBAction func sendFileAttachment(_ sender: UIButton) {
         // This notification is received by the MessageViewController.
         NotificationCenter.default.post(name: Notification.Name(MessageViewController.kNotificationSendAttachment), object: previewContent)
         // Return to MessageViewController.
         navigationController?.popViewController(animated: true)
+    }
+
+    @IBAction func cancelPreviewClicked(_ sender: Any) {
+        self.togglePreviewBar(with: nil)
+        self.replyPreviewDelegate?.dismissReplyPreview()
     }
 
     private func setup() {
@@ -51,6 +61,7 @@ class FilePreviewController: UIViewController, UIScrollViewDelegate {
             sizeString = UiUtils.bytesToHumanSize(Int64(size))
         }
         sizeLabel.text = sizeString
+        self.togglePreviewBar(with: self.replyPreviewDelegate?.pendingReplyPreview())
 
         setInterfaceColors()
     }
@@ -89,5 +100,20 @@ class FilePreviewController: UIViewController, UIScrollViewDelegate {
         }
 
         return FilePreviewController.kDefaultIcon
+    }
+
+    public func togglePreviewBar(with message: NSAttributedString?) {
+        if let message = message, let delegate = self.replyPreviewDelegate {
+            let b = delegate.replyPreviewSize(forMessage: message)
+            previewViewWidth.constant = b.width
+            previewViewHeight.constant = b.height
+            previewView.attributedText = message
+            previewView.isHidden = false
+        } else {
+            previewViewWidth.constant = CGFloat.zero
+            previewViewHeight.constant = CGFloat.zero
+            previewView.attributedText = nil
+            previewView.isHidden = true
+        }
     }
 }
