@@ -19,7 +19,7 @@ struct FilePreviewContent {
 class FilePreviewController: UIViewController, UIScrollViewDelegate {
 
     var previewContent: FilePreviewContent?
-    var replyPreviewDelegate: ReplyPreviewDelegate?
+    var replyPreviewDelegate: PendingMessagePreviewDelegate?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -44,7 +44,7 @@ class FilePreviewController: UIViewController, UIScrollViewDelegate {
 
     @IBAction func cancelPreviewClicked(_ sender: Any) {
         self.togglePreviewBar(with: nil)
-        self.replyPreviewDelegate?.dismissReplyPreview()
+        self.replyPreviewDelegate?.dismissPendingMessagePreview()
     }
 
     private func setup() {
@@ -61,7 +61,7 @@ class FilePreviewController: UIViewController, UIScrollViewDelegate {
             sizeString = UiUtils.bytesToHumanSize(Int64(size))
         }
         sizeLabel.text = sizeString
-        self.togglePreviewBar(with: self.replyPreviewDelegate?.pendingReplyPreview())
+        self.togglePreviewBar(with: self.replyPreviewDelegate?.pendingMessagePreview())
 
         setInterfaceColors()
     }
@@ -104,7 +104,7 @@ class FilePreviewController: UIViewController, UIScrollViewDelegate {
 
     public func togglePreviewBar(with message: NSAttributedString?) {
         if let message = message, let delegate = self.replyPreviewDelegate {
-            let b = delegate.replyPreviewSize(forMessage: message)
+            let b = delegate.pendingPreviewMessageSize(forMessage: message)
             previewViewWidth.constant = b.width
             previewViewHeight.constant = b.height
             previewView.attributedText = message

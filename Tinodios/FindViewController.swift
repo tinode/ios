@@ -241,6 +241,11 @@ class FindViewController: UITableViewController, FindDisplayLogic {
         default: return nil
         }
     }
+
+    // Opens a chat with the given id.
+    func jumpTo(topic topicId: String) {
+        presentChatReplacingCurrentVC(with: topicId)
+    }
 }
 
 // MARK: - Search functionality
@@ -317,9 +322,9 @@ extension FindViewController: ContactViewCellDelegate {
         if searchController.isActive {
             // Disable the animation as we are going straight to another view.
             // This call takes very long time to complete.
-            searchController.dismiss(animated: false, completion: { self.presentChatReplacingCurrentVC(with: id) })
+            searchController.dismiss(animated: false, completion: { self.jumpTo(topic: id) })
         } else {
-            presentChatReplacingCurrentVC(with: id)
+            jumpTo(topic: id)
         }
     }
 }

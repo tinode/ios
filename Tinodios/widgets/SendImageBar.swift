@@ -18,7 +18,7 @@ class SendImageBar: UIView {
 
     // MARK: Action delegate
     weak var delegate: SendImageBarDelegate?
-    weak var replyPreviewDelegate: ReplyPreviewDelegate?
+    weak var replyPreviewDelegate: PendingMessagePreviewDelegate?
 
     // MARK: IBOutlets
     @IBOutlet weak var sendButton: UIButton!
@@ -119,7 +119,7 @@ class SendImageBar: UIView {
 
     public func togglePreviewBar(with message: NSAttributedString?) {
         if let message = message, let delegate = self.replyPreviewDelegate {
-            let b = delegate.replyPreviewSize(forMessage: message)
+            let b = delegate.pendingPreviewMessageSize(forMessage: message)
             previewViewWidth.constant = b.width
             previewViewHeight.constant = b.height
             previewView.attributedText = message

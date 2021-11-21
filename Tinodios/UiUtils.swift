@@ -666,13 +666,15 @@ class UiUtils {
 }
 
 extension UIViewController {
-    public func presentChatReplacingCurrentVC(with topicName: String, afterDelay delay: DispatchTimeInterval = .seconds(0)) {
+    // Opens a chat with the specified topic name after popping all items from the current navigation stack.
+    public func presentChatReplacingCurrentVC(with topicName: String, afterDelay delay: DispatchTimeInterval = .seconds(0), initializationCallback: ((UIViewController) -> Void)? = nil) {
         DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
             if let navController = self.navigationController {
                 navController.popToRootViewController(animated: false)
 
                 let messageVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "MessageViewController") as! MessageViewController
                 messageVC.topicName = topicName
+                initializationCallback?(messageVC)
                 navController.pushViewController(messageVC, animated: true)
             }
         }

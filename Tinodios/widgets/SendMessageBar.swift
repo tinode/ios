@@ -21,7 +21,7 @@ class SendMessageBar: UIView {
 
     // MARK: Action delegate
 
-    weak var delegate: (SendMessageBarDelegate & ReplyPreviewDelegate)?
+    weak var delegate: (SendMessageBarDelegate & PendingMessagePreviewDelegate)?
 
     // MARK: IBOutlets
 
@@ -42,7 +42,7 @@ class SendMessageBar: UIView {
     // MARK: Properties
     weak var foregroundView: UIView?
 
-    public var previewText: NSAttributedString? {
+    public var pendingPreviewText: NSAttributedString? {
         get { return previewView.attributedText }
         set { previewView.attributedText = newValue }
     }
@@ -82,8 +82,8 @@ class SendMessageBar: UIView {
     }
 
     @IBAction func cancelPreviewClicked(_ sender: Any) {
-        self.togglePreviewBar(with: nil)
-        self.delegate?.dismissReplyPreview()
+        self.togglePendingPreviewBar(with: nil)
+        self.delegate?.dismissPendingMessagePreview()
     }
 
     // MARK: - Constants
@@ -152,7 +152,7 @@ class SendMessageBar: UIView {
         sendButton.isEnabled = false
         toggleNotAvailableOverlay(visible: false)
         togglePeerMessagingDisabled(visible: false)
-        togglePreviewBar(with: nil)
+        togglePendingPreviewBar(with: nil)
     }
 
     // MARK: - Subviews handling
@@ -168,17 +168,17 @@ class SendMessageBar: UIView {
         peerMessagingDisabledHeight.constant = visible ? Constants.peerMessagingDisabledHeight : 0
     }
 
-    public func togglePreviewBar(with message: NSAttributedString?) {
+    public func togglePendingPreviewBar(with message: NSAttributedString?) {
         if let message = message, let delegate = self.delegate {
-            let b = delegate.replyPreviewSize(forMessage: message)
+            let b = delegate.pendingPreviewMessageSize(forMessage: message)
             previewViewWidth.constant = b.width
             previewViewHeight.constant = b.height
-            previewText = message
+            pendingPreviewText = message
             previewView.isHidden = false
         } else {
             previewViewWidth.constant = CGFloat.zero
             previewViewHeight.constant = CGFloat.zero
-            previewText = nil
+            pendingPreviewText = nil
             previewView.isHidden = true
         }
     }

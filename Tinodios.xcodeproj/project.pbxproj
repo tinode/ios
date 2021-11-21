@@ -24,6 +24,7 @@
 		0A4B11FC2373D6E400199310 /* TagsEditDialogView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0A4B11FB2373D6E400199310 /* TagsEditDialogView.xib */; };
 		0A4B11FE2373DC1400199310 /* TagsEditDialogView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4B11FD2373DC1400199310 /* TagsEditDialogView.swift */; };
 		0A4E1D3022829C46006C0912 /* ContactsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4E1D2F22829C46006C0912 /* ContactsManager.swift */; };
+		0A57890927487B9400E77F0C /* ForwardToViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A57890827487B9400E77F0C /* ForwardToViewController.swift */; };
 		0A69D47F22A6552300769426 /* TopicInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A69D47E22A6552300769426 /* TopicInfoViewController.swift */; };
 		0A6AC322229FAA130025A4EC /* PermissionsEditView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0A6AC321229FAA130025A4EC /* PermissionsEditView.xib */; };
 		0A6AC324229FB0EE0025A4EC /* PermissionsEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A6AC323229FB0ED0025A4EC /* PermissionsEditViewController.swift */; };
@@ -150,6 +151,7 @@
 		0A4B11FB2373D6E400199310 /* TagsEditDialogView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TagsEditDialogView.xib; sourceTree = "<group>"; };
 		0A4B11FD2373DC1400199310 /* TagsEditDialogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagsEditDialogView.swift; sourceTree = "<group>"; };
 		0A4E1D2F22829C46006C0912 /* ContactsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsManager.swift; sourceTree = "<group>"; };
+		0A57890827487B9400E77F0C /* ForwardToViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ForwardToViewController.swift; sourceTree = "<group>"; };
 		0A69D47E22A6552300769426 /* TopicInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopicInfoViewController.swift; sourceTree = "<group>"; };
 		0A6AC321229FAA130025A4EC /* PermissionsEditView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PermissionsEditView.xib; sourceTree = "<group>"; };
 		0A6AC323229FB0ED0025A4EC /* PermissionsEditViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionsEditViewController.swift; sourceTree = "<group>"; };
@@ -308,6 +310,7 @@
 				0AE50D4522156A4B0021F7B7 /* FindInteractor.swift */,
 				0AE50D4722156A5B0021F7B7 /* FindPresenter.swift */,
 				0AE50D4322156A250021F7B7 /* FindViewController.swift */,
+				0A57890827487B9400E77F0C /* ForwardToViewController.swift */,
 				B0C6A3C1229EDF14009B0B5D /* ImagePreviewController.swift */,
 				FA37AD23238B0D6F00301261 /* KeyboardInfo.swift */,
 				B0BB53C2256DD5C9000FE949 /* LargeFileHelper.swift */,
@@ -694,6 +697,7 @@
 				0A4B11FE2373DC1400199310 /* TagsEditDialogView.swift in Sources */,
 				0A69D47F22A6552300769426 /* TopicInfoViewController.swift in Sources */,
 				0A9E7149237BCC8400C1D491 /* NewChatTabController.swift in Sources */,
+				0A57890927487B9400E77F0C /* ForwardToViewController.swift in Sources */,
 				0A0016E921E736CD00088188 /* MessagePresenter.swift in Sources */,
 				B0F98C8322E381C300444121 /* MessageMenuItem.swift in Sources */,
 				B0A612B1228C85C300569DFE /* MessageViewLayout.swift in Sources */,

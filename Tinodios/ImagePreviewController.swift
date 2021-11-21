@@ -35,7 +35,7 @@ class ImagePreviewController: UIViewController, UIScrollViewDelegate {
     @IBOutlet weak var imageDetailsPanel: UIStackView!
 
     var previewContent: ImagePreviewContent?
-    var replyPreviewDelegate: ReplyPreviewDelegate?
+    var replyPreviewDelegate: PendingMessagePreviewDelegate?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -52,7 +52,7 @@ class ImagePreviewController: UIViewController, UIScrollViewDelegate {
 
             sendImageBar.delegate = self
             sendImageBar.replyPreviewDelegate = replyPreviewDelegate
-            sendImageBar.togglePreviewBar(with: replyPreviewDelegate?.pendingReplyPreview())
+            sendImageBar.togglePreviewBar(with: replyPreviewDelegate?.pendingMessagePreview())
             // Hide [Save image] button.
             navigationItem.rightBarButtonItem = nil
             // Hide image details panel.
@@ -190,6 +190,6 @@ extension ImagePreviewController: SendImageBarDelegate {
         navigationController?.popViewController(animated: true)
     }
     func dismissPreview() {
-        self.replyPreviewDelegate?.dismissReplyPreview()
+        self.replyPreviewDelegate?.dismissPendingMessagePreview()
     }
 }

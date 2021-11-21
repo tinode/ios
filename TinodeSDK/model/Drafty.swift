@@ -1095,7 +1095,8 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
 
     /// Deep copy a Drafty object.
     public func copy() -> Drafty? {
-        return preview(ofMaxLength: Int.max, using: CopyTransformer())
+        let dummy = Drafty()
+        return dummy.append(self)
     }
 
     /// Serialize Drafty object for storage in database.

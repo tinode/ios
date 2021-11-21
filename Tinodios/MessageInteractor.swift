@@ -9,6 +9,14 @@ import Foundation
 import TinodeSDK
 import TinodiosDB
 
+// Pending part of the message to be sent.
+public enum PendingMessage {
+    // The user is replying to a message.
+    case replyTo(message: Drafty, seqId: Int)
+    // The user is forwarding a messsage.
+    case forwarded(message: Drafty)
+}
+
 protocol MessageBusinessLogic: AnyObject {
     @discardableResult
     func setup(topicName: String?, sendReadReceipts: Bool) -> Bool
@@ -27,7 +35,11 @@ protocol MessageBusinessLogic: AnyObject {
     func uploadFile(_ def: UploadDef)
     func uploadImage(_ def: UploadDef)
     func prepareReply(to msg: Message?) -> Drafty?
-    func dismissReply()
+    func dismissPendingMessage()
+
+    func createForwardedMessage(from original: Message?) -> (Drafty?, String?)
+    func prepareToForward(message: Drafty)
+    var pendingMessage: PendingMessage? { get }
 }
 
 protocol MessageDataStore {
@@ -99,9 +111,8 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
     // True when new subscriptions were added to the topic.
     private var newSubsAvailable = false
 
-    // Message (and its seq id) to which the user is replying.
-    private var replyTo: Drafty?
-    private var replyToSeqId: Int?
+    // Only if the user is replying to a message or forwarding a message.
+    public var pendingMessage: PendingMessage?
 
     @discardableResult
     func setup(topicName: String?, sendReadReceipts: Bool) -> Bool {
@@ -254,28 +265,65 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         }
     }
 
+    // Strips the first mention (i.e. forwarded from mention) from the document.
+    private class ForwardingTransformer: SpanTreeTransformer {
+        private var mentionStripped = false
+        func transform(node: Drafty.Span) -> Drafty.Span? {
+            guard node.type == "MN" && !mentionStripped else { return node }
+            mentionStripped = true
+            return nil
+        }
+    }
+
+    private func senderName(for message: Message) -> String {
+        var senderName: String?
+        if let sub = topic?.getSubscription(for: message.from), let pub = sub.pub {
+            senderName = pub.fn
+        }
+        return senderName ?? String(format: NSLocalizedString("Unknown %@", comment: ""), message.from ?? "none")
+    }
+
     // Creates a reply quote.
     func prepareReply(to msg: Message?) -> Drafty? {
         guard let msg = msg, let replyTo = msg.content else {
-            self.replyTo = nil
-            self.replyToSeqId = nil
+            self.dismissPendingMessage()
             return nil
         }
         let seqId = msg.seqId
-        var senderName: String?
-        if let sub = topic?.getSubscription(for: msg.from), let pub = sub.pub {
-            senderName = pub.fn
-        }
-        senderName = senderName ?? String(format: NSLocalizedString("Unknown %@", comment: ""), msg.from ?? "none")
+        let sender = senderName(for: msg)
         let p = replyTo.preview(ofMaxLength: 30, using: ReplyTransformer())
-        self.replyTo = Drafty.quote(quoteHeader: senderName!, authorUid: msg.from ?? "", quoteContent: p!)
-        self.replyToSeqId = seqId
-        return self.replyTo
+        let finalMsg = Drafty.quote(quoteHeader: sender, authorUid: msg.from ?? "", quoteContent: p!)
+
+        self.pendingMessage = .replyTo(message: finalMsg, seqId: seqId)
+        return finalMsg
     }
 
-    func dismissReply() {
-        self.replyTo = nil
-        self.replyToSeqId = nil
+    func dismissPendingMessage() {
+        self.pendingMessage = nil
+    }
+
+    func createForwardedMessage(from original: Message?) -> (Drafty?, String?) {
+        guard let original = original, let content = original.content else {
+            return (nil, nil)
+        }
+        let sender = "➦ " + senderName(for: original)
+        guard let from = original.from ?? self.topicName else {
+            Cache.log.error("prepareForwardedMessage error: could not determine sender id for message %@", content.string)
+            return (nil, nil)
+        }
+        guard let transformed = content.preview(ofMaxLength: Int.max, using: ForwardingTransformer()) else {
+            Cache.log.error("prepareForwardedMessage error: could not transform the original message for forwarding - %@", content.string)
+            return (nil, nil)
+        }
+        let forwardedContent = Drafty.mention(userWithName: sender, uid: from)
+            .appendLineBreak()
+            .append(transformed)
+        return (forwardedContent, self.topicName)
+    }
+
+    // Saves the pending forwarded message and returns its preview.
+    func prepareToForward(message: Drafty) {
+        self.pendingMessage = .forwarded(message: message)
     }
 
     func sendMessage(content: Drafty) {
@@ -285,9 +333,15 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         }
         var message = content
         var head: [String: JSONValue]? = nil
-        if let reply = self.replyTo, let replyToSeq = self.replyToSeqId {
-            message = reply.append(message)
-            head = ["reply": .string(String(replyToSeq))]
+        if let pendingMsg = self.pendingMessage {
+            // If we have a pending message, handle it.
+            switch pendingMsg {
+            case .replyTo(let replyTo, let replyToSeq):
+                message = replyTo.append(message)
+                head = ["reply": .string(String(replyToSeq))]
+            case .forwarded(let forwardedMsg):
+                message = forwardedMsg
+            }
         }
         topic.publish(content: message, withExtraHeaders: head).then(
             onSuccess: { [weak self] _ in
@@ -308,9 +362,8 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                 return nil
             }
         ).thenFinally {
-            self.replyTo = nil
-            self.replyToSeqId = nil
-            self.presenter?.dismissPreviewBar()
+            self.dismissPendingMessage()
+            self.presenter?.dismissPendingMessagePreviewBar()
         }
     }
 
@@ -484,7 +537,11 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
             return
         }
 
-        let savedReply = self.replyTo?.copy()
+        var replyToCopy: Drafty?
+        if case let .replyTo(replyTo, _) = self.pendingMessage {
+            replyToCopy = replyTo.copy()
+        }
+
         // Giving fake URL to Drafty instead of Data which is not needed in DB anyway.
         let ref = URL(string: "mid:uploading/\(filename)")!
         var draft: Drafty?
@@ -509,16 +566,15 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
             }
             draft = MessageInteractor.draftyImage(caption: def.caption, filename: filename, refurl: ref, mimeType: mimeType, data: data, width: Int(def.width!), height: Int(def.height!), size: def.data.count)
         }
-        if let d = draft, let reply = self.replyTo, let replyToSeq = self.replyToSeqId {
-            draft = reply.append(d)
+        if let d = draft, case let .replyTo(replyTo, replyToSeq) = self.pendingMessage {
+            draft = replyTo.append(d)
             head = ["reply": .string(String(replyToSeq))]
         }
 
         guard let content = draft else { return }
         // Dismiss reply.
-        self.replyTo = nil
-        self.replyToSeqId = nil
-        self.presenter?.dismissPreviewBar()
+        self.dismissPendingMessage()
+        self.presenter?.dismissPendingMessagePreviewBar()
 
         var headers = Tinode.draftyHeaders(for: content)
         if let h = head {
@@ -560,7 +616,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                     case .image:
                         draft = MessageInteractor.draftyImage(caption: def.caption, filename: filename, refurl: srvUrl, mimeType: mimeType, data: previewData!, width: Int(def.width!), height: Int(def.height!), size: def.data.count)
                     }
-                    if let r = savedReply, let d = draft {
+                    if let r = replyToCopy, let d = draft {
                         draft = r.append(d)
                     }
 

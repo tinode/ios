@@ -342,6 +342,9 @@ class MessageViewController: UIViewController {
 
         collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: sendMessageBar.frame.height, right: 0)
 
+        if case let .forwarded(fwdMessage) = self.interactor?.pendingMessage {
+            self.showInPreviewBar(content: fwdMessage)
+        }
         self.interactor?.attachToTopic(interactively: true)
         self.interactor?.loadMessages()
         self.interactor?.sendReadNotification(explicitSeq: nil, when: .now() + .seconds(1))
@@ -611,7 +614,7 @@ extension MessageViewController: MessageDisplayLogic {
     }
 
     func togglePreviewBar(with preview: NSAttributedString?) {
-        self.sendMessageBar.togglePreviewBar(with: preview)
+        self.sendMessageBar.togglePendingPreviewBar(with: preview)
     }
 }
 
@@ -1097,6 +1100,7 @@ extension MessageViewController: MessageCellDelegate {
 
         if !cell.isDeleted, let msgIndex = messageSeqIdIndex[cell.seqId], messages[msgIndex].isSynced {
             menuItems.append(MessageMenuItem(title: NSLocalizedString("Reply", comment: "Menu item"), action: #selector(showReplyPreview(sender:)), seqId: cell.seqId))
+            menuItems.append(MessageMenuItem(title: NSLocalizedString("Forward", comment: "Menu item"), action: #selector(showForwardSelector(sender:)), seqId: cell.seqId))
         }
 
         UIMenuController.shared.menuItems = menuItems
@@ -1134,16 +1138,39 @@ extension MessageViewController: MessageCellDelegate {
         UIPasteboard.general.string = "[\(senderName!)]: \(msg.content?.string ?? ""); \(RelativeDateFormatter.shared.shortDate(from: msg.ts))"
     }
 
+    private func showInPreviewBar(content: Drafty?) {
+        guard let content = content else { return }
+        let maxWidth = sendMessageBar.previewMaxWidth
+        let maxHeight = collectionView.frame.height
+        // Make sure it's properly formatted.
+        let formattedPreview = AttributedStringFormatter.toAttributed(
+            content, fitIn: CGSize(width: maxWidth, height: maxHeight),
+            fmt: ReplyFormatter.self)
+        self.togglePreviewBar(with: formattedPreview)
+    }
+
     @objc func showReplyPreview(sender: UIMenuController) {
         guard let menuItem = sender.menuItems?.first as? MessageMenuItem, menuItem.seqId > 0, let msgIndex = messageSeqIdIndex[menuItem.seqId] else { return }
         let msg = messages[msgIndex]
         if let reply = interactor?.prepareReply(to: msg) {
-            let maxWidth = sendMessageBar.previewMaxWidth
-            let maxHeight = collectionView.frame.height
-            let formattedReply = AttributedStringFormatter.toAttributed(reply, fitIn: CGSize(width: maxWidth, height: maxHeight),
-                                                             fmt: ReplyFormatter.self)
-            self.togglePreviewBar(with: formattedReply)
+            self.showInPreviewBar(content: reply)
         }
+    }
+
+    @objc func showForwardSelector(sender: UIMenuController) {
+        guard let menuItem = sender.menuItems?.first as? MessageMenuItem, menuItem.seqId > 0, let msgIndex = messageSeqIdIndex[menuItem.seqId] else { return }
+        let msg = messages[msgIndex]
+        guard let (forwardedMsg, forwardedFrom) = interactor?.createForwardedMessage(from: msg) else {
+            UiUtils.showToast(message: "Failed to create forwarded content.")
+            return
+        }
+        let navigator = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "ForwardToNavController") as! UINavigationController
+        navigator.modalPresentationStyle = .pageSheet
+        let forwardToVC = navigator.viewControllers.first as! ForwardToViewController
+        forwardToVC.delegate = self
+        forwardToVC.forwardedContent = forwardedMsg
+        forwardToVC.forwardedFromTopic = forwardedFrom
+        self.present(navigator, animated: true, completion: nil)
     }
 
     @objc func deleteMessage(sender: UIMenuController) {
@@ -1249,24 +1276,37 @@ extension MessageViewController: MessageCellDelegate {
     }
 }
 
-protocol ReplyPreviewDelegate: AnyObject {
+// Pending message is the one the user is either  replying to or forwarding.
+protocol PendingMessagePreviewDelegate: AnyObject {
     // Calculates size for preview attributed string.
-    func replyPreviewSize(forMessage msg: NSAttributedString) -> CGSize
+    func pendingPreviewMessageSize(forMessage msg: NSAttributedString) -> CGSize
     // Cancels preview.
-    func dismissReplyPreview()
-
-    func pendingReplyPreview() -> NSAttributedString?
+    func dismissPendingMessagePreview()
+    // Pending message preview.
+    func pendingMessagePreview() -> NSAttributedString?
 }
 
-extension MessageViewController: ReplyPreviewDelegate {
-    func replyPreviewSize(forMessage msg: NSAttributedString) -> CGSize {
+extension MessageViewController: PendingMessagePreviewDelegate {
+    func pendingPreviewMessageSize(forMessage msg: NSAttributedString) -> CGSize {
         return self.textSizeHelper.computeSize(for: msg, within: CGFloat.infinity)
     }
-    func dismissReplyPreview() {
+    func dismissPendingMessagePreview() {
         self.togglePreviewBar(with: nil)
-        self.interactor?.dismissReply()
+        self.interactor?.dismissPendingMessage()
     }
-    func pendingReplyPreview() -> NSAttributedString? {
-        return self.sendMessageBar.previewText?.length != .zero ? self.sendMessageBar.previewText : nil
+    func pendingMessagePreview() -> NSAttributedString? {
+        return self.sendMessageBar.pendingPreviewText?.length != .zero ? self.sendMessageBar.pendingPreviewText : nil
+    }
+}
+
+extension MessageViewController: ForwardToDelegate {
+    func forwardMessage(_ message: Drafty, from originTopic: String, to topicId: String) {
+        self.presentChatReplacingCurrentVC(with: topicId, initializationCallback: {
+            ($0 as! MessageViewController).attachForwardedMessage(message, from: originTopic)
+        })
+    }
+
+    func attachForwardedMessage(_ message: Drafty, from originTopic: String) {
+        self.interactor?.prepareToForward(message: message)
     }
 }
