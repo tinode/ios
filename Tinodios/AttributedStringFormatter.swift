@@ -687,8 +687,20 @@ class AttributedStringFormatter: FormatterImpl {
 class PreviewFormatter: AttributedStringFormatter {
     // Default font for previews.
     static let kDefaultFont = UIFont.preferredFont(forTextStyle: .subheadline)
+    // Indicates whether the first "MN" node should be stripped.
+    // Typically true for forwarded messages.
+    public var stripFirstMention: Bool = false
 
-    public static func toAttributed(_ content: Drafty, fitIn maxSize: CGSize, withDefaultAttributes attributes: [NSAttributedString.Key: Any]? = nil, upToLength maxLength: Int) -> NSAttributedString {
+    public init(withDefaultAttributes attrs: [NSAttributedString.Key: Any], isForwardedMessage: Bool) {
+        super.init(withDefaultAttributes: attrs)
+        stripFirstMention = isForwardedMessage
+    }
+
+    required init(withDefaultAttributes attrs: [NSAttributedString.Key : Any]) {
+        super.init(withDefaultAttributes: attrs)
+    }
+
+    public static func toAttributed(_ content: Drafty, fitIn maxSize: CGSize, withDefaultAttributes attributes: [NSAttributedString.Key: Any]? = nil, isForwarded: Bool = false, upToLength maxLength: Int) -> NSAttributedString {
 
         var attributes: [NSAttributedString.Key: Any] = attributes ?? [:]
         if attributes[.font] == nil {
@@ -700,7 +712,8 @@ class PreviewFormatter: AttributedStringFormatter {
             return NSMutableAttributedString(string: result, attributes: attributes)
         }
 
-        let formatTree = content.format(formatWith: PreviewFormatter(withDefaultAttributes: attributes)) as! TreeNode
+        let formatter = PreviewFormatter(withDefaultAttributes: attributes, isForwardedMessage: isForwarded)
+        let formatTree = content.format(formatWith: formatter) as! TreeNode
         do {
             return try formatTree.toAttributed(withDefaultAttributes: attributes, fontTraits: nil, fitIn: maxSize, upToLength: maxLength)
         } catch LengthExceededError.runtimeError(let str) {
@@ -725,6 +738,14 @@ class PreviewFormatter: AttributedStringFormatter {
         let node = TreeNode(text: content, nodes: nodes as? [TreeNode])
         node.style(cstyle: [.foregroundColor: AttributedStringFormatter.Constants.kLinkColor])
         return node
+    }
+
+    override func handleMention(withText content: String?, withChildren nodes: [DraftySpan]?, using attr: [String : JSONValue]?) -> DraftySpan {
+        if stripFirstMention {
+            stripFirstMention = false
+            return TreeNode(content: "➦ ")
+        }
+        return super.handleMention(withText: content, withChildren: nodes, using: attr)
     }
 
     private func annotatedIcon(iconName: String, annotation: String? = nil, comment: String? = nil) -> TreeNode {

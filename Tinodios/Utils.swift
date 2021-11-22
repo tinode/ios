@@ -239,7 +239,9 @@ extension StoredMessage {
         guard cachedPreview == nil else { return cachedPreview }
         if !isDeleted {
             guard let content = content else { return nil }
-            cachedPreview = PreviewFormatter.toAttributed(content, fitIn: size, withDefaultAttributes: attributes, upToLength: 40)
+            let forwarded = self.isForwarded
+            cachedPreview = PreviewFormatter.toAttributed(content, fitIn: size, withDefaultAttributes: attributes,
+                                                          isForwarded: forwarded, upToLength: 40)
         } else {
             cachedPreview = StoredMessage.contentDeletedMessage(withAttributes: attributes)
         }

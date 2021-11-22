@@ -14,7 +14,7 @@ public enum PendingMessage {
     // The user is replying to a message.
     case replyTo(message: Drafty, seqId: Int)
     // The user is forwarding a messsage.
-    case forwarded(message: Drafty)
+    case forwarded(message: Drafty, from: String)
 }
 
 protocol MessageBusinessLogic: AnyObject {
@@ -38,7 +38,7 @@ protocol MessageBusinessLogic: AnyObject {
     func dismissPendingMessage()
 
     func createForwardedMessage(from original: Message?) -> (Drafty?, String?)
-    func prepareToForward(message: Drafty)
+    func prepareToForward(message: Drafty, forwardedFrom: String)
     var pendingMessage: PendingMessage? { get }
 }
 
@@ -291,7 +291,9 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         }
         let seqId = msg.seqId
         let sender = senderName(for: msg)
-        let p = replyTo.preview(ofMaxLength: 30, using: ReplyTransformer())
+        let content =
+            msg.isForwarded ? replyTo.preview(ofMaxLength: Int.max, using: ForwardingTransformer()) : replyTo
+        let p = content!.preview(ofMaxLength: 30, using: ReplyTransformer())
         let finalMsg = Drafty.quote(quoteHeader: sender, authorUid: msg.from ?? "", quoteContent: p!)
 
         self.pendingMessage = .replyTo(message: finalMsg, seqId: seqId)
@@ -303,7 +305,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
     }
 
     func createForwardedMessage(from original: Message?) -> (Drafty?, String?) {
-        guard let original = original, let content = original.content else {
+        guard let original = original, let content = original.content, let topicName = self.topicName else {
             return (nil, nil)
         }
         let sender = "➦ " + senderName(for: original)
@@ -318,12 +320,13 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         let forwardedContent = Drafty.mention(userWithName: sender, uid: from)
             .appendLineBreak()
             .append(transformed)
-        return (forwardedContent, self.topicName)
+        let fwdHeader = "\(topicName):\(original.seqId)"
+        return (forwardedContent, fwdHeader)
     }
 
     // Saves the pending forwarded message and returns its preview.
-    func prepareToForward(message: Drafty) {
-        self.pendingMessage = .forwarded(message: message)
+    func prepareToForward(message: Drafty, forwardedFrom: String) {
+        self.pendingMessage = .forwarded(message: message, from: forwardedFrom)
     }
 
     func sendMessage(content: Drafty) {
@@ -339,8 +342,9 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
             case .replyTo(let replyTo, let replyToSeq):
                 message = replyTo.append(message)
                 head = ["reply": .string(String(replyToSeq))]
-            case .forwarded(let forwardedMsg):
+            case .forwarded(let forwardedMsg, let origin):
                 message = forwardedMsg
+                head = ["forwarded": .string(origin)]
             }
         }
         topic.publish(content: message, withExtraHeaders: head).then(

@@ -38,6 +38,7 @@ public protocol Message {
     func isDeleted(hard: Bool) -> Bool
     var isSynced: Bool { get }
     var isPending: Bool { get }
+    var isForwarded: Bool { get }
 }
 
 extension Message {

@@ -342,7 +342,7 @@ class MessageViewController: UIViewController {
 
         collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: sendMessageBar.frame.height, right: 0)
 
-        if case let .forwarded(fwdMessage) = self.interactor?.pendingMessage {
+        if case let .forwarded(fwdMessage, _) = self.interactor?.pendingMessage {
             self.showInPreviewBar(content: fwdMessage)
         }
         self.interactor?.attachToTopic(interactively: true)
@@ -1169,7 +1169,7 @@ extension MessageViewController: MessageCellDelegate {
         let forwardToVC = navigator.viewControllers.first as! ForwardToViewController
         forwardToVC.delegate = self
         forwardToVC.forwardedContent = forwardedMsg
-        forwardToVC.forwardedFromTopic = forwardedFrom
+        forwardToVC.forwardedFrom = forwardedFrom
         self.present(navigator, animated: true, completion: nil)
     }
 
@@ -1302,7 +1302,7 @@ extension MessageViewController: ForwardToDelegate {
         })
     }
 
-    func attachForwardedMessage(_ message: Drafty, from originTopic: String) {
-        self.interactor?.prepareToForward(message: message)
+    func attachForwardedMessage(_ message: Drafty, from origin: String) {
+        self.interactor?.prepareToForward(message: message, forwardedFrom: origin)
     }
 }

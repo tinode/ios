@@ -6,13 +6,13 @@ import TinodeSDK
 import UIKit
 
 protocol ForwardToDelegate: AnyObject {
-    func forwardMessage(_ message: Drafty, from originTopic: String, to topicId: String)
+    func forwardMessage(_ message: Drafty, from origin: String, to topicId: String)
 }
 
 class ForwardToViewController: FindViewController {
     var delegate: ForwardToDelegate?
     var forwardedContent: Drafty!
-    var forwardedFromTopic: String!
+    var forwardedFrom: String!
 
     private func dismiss() {
         self.navigationController?.popViewController(animated: true)
@@ -25,6 +25,6 @@ class ForwardToViewController: FindViewController {
 
     override func jumpTo(topic topicId: String) {
         self.dismiss()
-        self.delegate?.forwardMessage(forwardedContent, from: forwardedFromTopic, to: topicId)
+        self.delegate?.forwardMessage(forwardedContent, from: forwardedFrom, to: topicId)
     }
 }

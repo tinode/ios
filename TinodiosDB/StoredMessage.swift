@@ -36,6 +36,11 @@ public class StoredMessage: MsgServerData, Message {
     /// Message has not been delivered to the server yet.
     public var isPending: Bool { return dbStatus == nil || dbStatus! <= .sending }
 
+    /// True if message was forwarded from another topic.
+    public var isForwarded: Bool {
+        return !(head?["forwarded"]?.asString()?.isEmpty ?? true)
+    }
+
     /// Cached representation of message content as attributed string.
     public var cachedContent: NSAttributedString?
 
