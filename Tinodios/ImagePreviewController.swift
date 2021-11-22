@@ -23,6 +23,9 @@ struct ImagePreviewContent {
     let size: Int64?
     let width: Int?
     let height: Int?
+
+    // ReplyTo preview (the user is replying to another message with an image).
+    let pendingMessagePreview: NSAttributedString?
 }
 
 class ImagePreviewController: UIViewController, UIScrollViewDelegate {
@@ -52,7 +55,8 @@ class ImagePreviewController: UIViewController, UIScrollViewDelegate {
 
             sendImageBar.delegate = self
             sendImageBar.replyPreviewDelegate = replyPreviewDelegate
-            sendImageBar.togglePreviewBar(with: replyPreviewDelegate?.pendingMessagePreview())
+            //sendImageBar.togglePreviewBar(with: replyPreviewDelegate?.pendingMessagePreview())
+            sendImageBar.togglePreviewBar(with: content.pendingMessagePreview)
             // Hide [Save image] button.
             navigationItem.rightBarButtonItem = nil
             // Hide image details panel.
@@ -181,7 +185,8 @@ extension ImagePreviewController: SendImageBarDelegate {
             contentType: mimeType,
             size: -1,
             width: Int(image.size.width * image.scale),
-            height: Int(image.size.height * image.scale)
+            height: Int(image.size.height * image.scale),
+            pendingMessagePreview: nil
         )
 
         // This notification is received by the MessageViewController.

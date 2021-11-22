@@ -14,6 +14,9 @@ struct FilePreviewContent {
     let fileName: String?
     let contentType: String?
     let size: Int?
+
+    // ReplyTo preview (the user is replying to another message with a file).
+    let pendingMessagePreview: NSAttributedString?
 }
 
 class FilePreviewController: UIViewController, UIScrollViewDelegate {
@@ -61,7 +64,7 @@ class FilePreviewController: UIViewController, UIScrollViewDelegate {
             sizeString = UiUtils.bytesToHumanSize(Int64(size))
         }
         sizeLabel.text = sizeString
-        self.togglePreviewBar(with: self.replyPreviewDelegate?.pendingMessagePreview())
+        self.togglePreviewBar(with: content.pendingMessagePreview)
 
         setInterfaceColors()
     }

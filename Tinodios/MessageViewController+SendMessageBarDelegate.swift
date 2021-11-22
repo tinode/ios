@@ -84,12 +84,14 @@ extension MessageViewController: UIDocumentPickerDelegate {
                 return
             }
 
+            let pendingPreview = (self.inputAccessoryView as! SendMessageBar).pendingPreviewText
             let content = FilePreviewContent(
                 data: bits,
                 refUrl: urls[0],
                 fileName: fname,
                 contentType: mimeType,
-                size: bits.count
+                size: bits.count,
+                pendingMessagePreview: pendingPreview
             )
             performSegue(withIdentifier: "ShowFilePreview", sender: content)
         } catch {
@@ -105,6 +107,7 @@ extension MessageViewController: ImagePickerDelegate {
         let width = Int(image.size.width * image.scale)
         let height = Int(image.size.height * image.scale)
 
+        let pendingPreview = (self.inputAccessoryView as! SendMessageBar).pendingPreviewText
         let content = ImagePreviewContent(
             imgContent: ImagePreviewContent.ImageContent.uiimage(image),
             caption: nil,
@@ -112,7 +115,8 @@ extension MessageViewController: ImagePickerDelegate {
             contentType: mime,
             size: 0,
             width: width,
-            height: height)
+            height: height,
+            pendingMessagePreview: pendingPreview)
 
         performSegue(withIdentifier: "ShowImagePreview", sender: content)
     }

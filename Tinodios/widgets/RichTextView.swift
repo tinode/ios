@@ -15,6 +15,10 @@ class RichTextView: UITextView {
         setup()
     }
 
+    // If true, will automatically adjust height based on the held content
+    // upon size change (i.e. when layoutSubviews() gets called).
+    @IBInspectable var autoAdjustHeight: Bool = true
+
     func setup() {
         // Apple is a steaming pile of buggy $#14
         // See https://stackoverflow.com/questions/746670/how-to-lose-margin-padding-in-uitextview
@@ -28,10 +32,12 @@ class RichTextView: UITextView {
         isSelectable = true
 
         var b = bounds
-        if !b.isEmpty {
+        if !b.isEmpty && autoAdjustHeight {
             // Only change bounds for non-trivial (visible) RichTextViews.
             b.size.height = sizeThatFits(CGSize(width: bounds.size.width, height: CGFloat.greatestFiniteMagnitude)).height
-            bounds = b
+            if b != bounds {
+                bounds = b
+            }
         }
     }
 

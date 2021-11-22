@@ -1271,7 +1271,8 @@ extension MessageViewController: MessageCellDelegate {
             contentType: entity.data?["mime"]?.asString(),
             size: entity.data?["size"]?.asInt64() ?? Int64(bits?.count ?? 0),
             width: entity.data?["width"]?.asInt(),
-            height: entity.data?["height"]?.asInt())
+            height: entity.data?["height"]?.asInt(),
+            pendingMessagePreview: nil)
         performSegue(withIdentifier: "ShowImagePreview", sender: content)
     }
 }
@@ -1282,8 +1283,6 @@ protocol PendingMessagePreviewDelegate: AnyObject {
     func pendingPreviewMessageSize(forMessage msg: NSAttributedString) -> CGSize
     // Cancels preview.
     func dismissPendingMessagePreview()
-    // Pending message preview.
-    func pendingMessagePreview() -> NSAttributedString?
 }
 
 extension MessageViewController: PendingMessagePreviewDelegate {
@@ -1293,9 +1292,6 @@ extension MessageViewController: PendingMessagePreviewDelegate {
     func dismissPendingMessagePreview() {
         self.togglePreviewBar(with: nil)
         self.interactor?.dismissPendingMessage()
-    }
-    func pendingMessagePreview() -> NSAttributedString? {
-        return self.sendMessageBar.pendingPreviewText?.length != .zero ? self.sendMessageBar.pendingPreviewText : nil
     }
 }
 
