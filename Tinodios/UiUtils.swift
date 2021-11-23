@@ -88,6 +88,9 @@ class UiUtils {
     // Color of all other markers.
     static let kDeliveryMarkerColor = UIColor.gray.withAlphaComponent(0.7)
 
+    // Maximum length of the quoted part in a reply.
+    static let kQuotedReplyLength = 30
+
     // Letter tile image colors (light).
     private static let kLetterTileLightColors: [UIColor] = [
         UIColor(fromHexCode: 0xFFEF9A9A),

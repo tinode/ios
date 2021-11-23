@@ -293,7 +293,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         let sender = senderName(for: msg)
         let content =
             msg.isForwarded ? replyTo.preview(ofMaxLength: Int.max, using: ForwardingTransformer()) : replyTo
-        let p = content!.preview(ofMaxLength: 30, using: ReplyTransformer())
+        let p = content!.preview(ofMaxLength: UiUtils.kQuotedReplyLength, using: ReplyTransformer())
         let finalMsg = Drafty.quote(quoteHeader: sender, authorUid: msg.from ?? "", quoteContent: p!)
 
         self.pendingMessage = .replyTo(message: finalMsg, seqId: seqId)
@@ -328,7 +328,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
             .append(transformed)
         let fwdHeader = "\(topicName):\(original.seqId)"
         // Preview.
-        let preview = transformed.preview(previewLen: 30)
+        let preview = transformed.preview(ofMaxLength: UiUtils.kQuotedReplyLength, using: ReplyTransformer())!
         let forwardedPreview = Drafty.quote(quoteHeader: sender, authorUid: from, quoteContent: preview)
         return (forwardedContent, fwdHeader, forwardedPreview)
     }
