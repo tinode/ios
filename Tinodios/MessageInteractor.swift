@@ -14,7 +14,7 @@ public enum PendingMessage {
     // The user is replying to a message.
     case replyTo(message: Drafty, seqId: Int)
     // The user is forwarding a messsage.
-    case forwarded(message: Drafty, from: String)
+    case forwarded(message: Drafty, from: String, preview: Drafty)
 }
 
 protocol MessageBusinessLogic: AnyObject {
@@ -37,8 +37,8 @@ protocol MessageBusinessLogic: AnyObject {
     func prepareReply(to msg: Message?) -> Drafty?
     func dismissPendingMessage()
 
-    func createForwardedMessage(from original: Message?) -> (Drafty?, String?)
-    func prepareToForward(message: Drafty, forwardedFrom: String)
+    func createForwardedMessage(from original: Message?) -> (Drafty?, String?, Drafty?)
+    func prepareToForward(message: Drafty, forwardedFrom: String, preview: Drafty)
     var pendingMessage: PendingMessage? { get }
 }
 
@@ -304,29 +304,38 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         self.pendingMessage = nil
     }
 
-    func createForwardedMessage(from original: Message?) -> (Drafty?, String?) {
+    func createForwardedMessage(from original: Message?) -> (Drafty?, String?, Drafty?) {
         guard let original = original, let content = original.content, let topicName = self.topicName else {
-            return (nil, nil)
+            return (nil, nil, nil)
         }
         let sender = "➦ " + senderName(for: original)
         guard let from = original.from ?? self.topicName else {
             Cache.log.error("prepareForwardedMessage error: could not determine sender id for message %@", content.string)
-            return (nil, nil)
+            return (nil, nil, nil)
         }
-        guard let transformed = content.preview(ofMaxLength: Int.max, using: ForwardingTransformer()) else {
-            Cache.log.error("prepareForwardedMessage error: could not transform the original message for forwarding - %@", content.string)
-            return (nil, nil)
+        var transformed: Drafty!
+        if original.isForwarded {
+            guard let p = content.preview(ofMaxLength: Int.max, using: ForwardingTransformer()) else {
+                Cache.log.error("prepareForwardedMessage error: could not transform the original message for forwarding - %@", content.string)
+                return (nil, nil, nil)
+            }
+            transformed = p
+        } else {
+            transformed = content
         }
         let forwardedContent = Drafty.mention(userWithName: sender, uid: from)
             .appendLineBreak()
             .append(transformed)
         let fwdHeader = "\(topicName):\(original.seqId)"
-        return (forwardedContent, fwdHeader)
+        // Preview.
+        let preview = transformed.preview(previewLen: 30)
+        let forwardedPreview = Drafty.quote(quoteHeader: sender, authorUid: from, quoteContent: preview)
+        return (forwardedContent, fwdHeader, forwardedPreview)
     }
 
     // Saves the pending forwarded message and returns its preview.
-    func prepareToForward(message: Drafty, forwardedFrom: String) {
-        self.pendingMessage = .forwarded(message: message, from: forwardedFrom)
+    func prepareToForward(message: Drafty, forwardedFrom: String, preview: Drafty) {
+        self.pendingMessage = .forwarded(message: message, from: forwardedFrom, preview: preview)
     }
 
     func sendMessage(content: Drafty) {
@@ -342,7 +351,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
             case .replyTo(let replyTo, let replyToSeq):
                 message = replyTo.append(message)
                 head = ["reply": .string(String(replyToSeq))]
-            case .forwarded(let forwardedMsg, let origin):
+            case .forwarded(let forwardedMsg, let origin, _):
                 message = forwardedMsg
                 head = ["forwarded": .string(origin)]
             }

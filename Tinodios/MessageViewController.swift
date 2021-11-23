@@ -342,8 +342,8 @@ class MessageViewController: UIViewController {
 
         collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: sendMessageBar.frame.height, right: 0)
 
-        if case let .forwarded(fwdMessage, _) = self.interactor?.pendingMessage {
-            self.showInPreviewBar(content: fwdMessage)
+        if case let .forwarded(_, _, fwdPreview) = self.interactor?.pendingMessage {
+            self.showInPreviewBar(content: fwdPreview)
         }
         self.interactor?.attachToTopic(interactively: true)
         self.interactor?.loadMessages()
@@ -1160,7 +1160,7 @@ extension MessageViewController: MessageCellDelegate {
     @objc func showForwardSelector(sender: UIMenuController) {
         guard let menuItem = sender.menuItems?.first as? MessageMenuItem, menuItem.seqId > 0, let msgIndex = messageSeqIdIndex[menuItem.seqId] else { return }
         let msg = messages[msgIndex]
-        guard let (forwardedMsg, forwardedFrom) = interactor?.createForwardedMessage(from: msg) else {
+        guard let (forwardedMsg, forwardedFrom, forwardedPreview) = interactor?.createForwardedMessage(from: msg) else {
             UiUtils.showToast(message: "Failed to create forwarded content.")
             return
         }
@@ -1170,6 +1170,7 @@ extension MessageViewController: MessageCellDelegate {
         forwardToVC.delegate = self
         forwardToVC.forwardedContent = forwardedMsg
         forwardToVC.forwardedFrom = forwardedFrom
+        forwardToVC.forwardedPreview = forwardedPreview
         self.present(navigator, animated: true, completion: nil)
     }
 
@@ -1296,13 +1297,13 @@ extension MessageViewController: PendingMessagePreviewDelegate {
 }
 
 extension MessageViewController: ForwardToDelegate {
-    func forwardMessage(_ message: Drafty, from originTopic: String, to topicId: String) {
+    func forwardMessage(_ message: Drafty, preview: Drafty, from originTopic: String, to topicId: String) {
         self.presentChatReplacingCurrentVC(with: topicId, initializationCallback: {
-            ($0 as! MessageViewController).attachForwardedMessage(message, from: originTopic)
+            ($0 as! MessageViewController).attachForwardedMessage(message, preview, from: originTopic)
         })
     }
 
-    func attachForwardedMessage(_ message: Drafty, from origin: String) {
-        self.interactor?.prepareToForward(message: message, forwardedFrom: origin)
+    func attachForwardedMessage(_ message: Drafty, _ preview: Drafty, from origin: String) {
+        self.interactor?.prepareToForward(message: message, forwardedFrom: origin, preview: preview)
     }
 }
