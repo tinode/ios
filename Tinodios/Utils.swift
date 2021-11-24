@@ -85,6 +85,15 @@ public class Utils {
         }
         return ProcessInfo.processInfo.globallyUniqueString + "." + (ext ?? "bin")
     }
+
+    public static func fetchTopics(archived: Bool) -> [DefaultComTopic]? {
+        return Cache.tinode.getFilteredTopics(filter: {(topic: TopicProto) in
+            return topic.topicType.matches(TopicType.user) && topic.isArchived == archived && topic.isJoiner
+        })?.map {
+            // Must succeed.
+            $0 as! DefaultComTopic
+        }
+    }
 }
 
 // Per

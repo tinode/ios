@@ -8,6 +8,7 @@
 import Foundation
 
 protocol FindPresentationLogic {
+    var viewController: FindDisplayLogic? { get set }
     func presentLocalContacts(contacts: [ContactHolder])
     func presentRemoteContacts(contacts: [RemoteContactHolder])
 }

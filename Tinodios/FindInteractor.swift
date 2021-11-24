@@ -9,6 +9,7 @@ import Foundation
 import TinodeSDK
 
 protocol FindBusinessLogic: AnyObject {
+    var presenter: FindPresentationLogic? { get set }
     var fndTopic: DefaultFndTopic? { get }
     func loadAndPresentContacts(searchQuery: String?)
     func updateAndPresentRemoteContacts()
@@ -83,12 +84,16 @@ class FindInteractor: FindBusinessLogic {
         self.presenter?.presentRemoteContacts(contacts: self.remoteContacts!)
     }
 
+    func fetchLocalContacts() -> [ContactHolder] {
+        return self.contactsManager.fetchContacts() ?? []
+    }
+
     func loadAndPresentContacts(searchQuery: String? = nil) {
         let changed = self.searchQuery != searchQuery
         self.searchQuery = searchQuery
         queue.async {
             if self.localContacts == nil {
-                self.localContacts = self.contactsManager.fetchContacts() ?? []
+                self.localContacts = self.fetchLocalContacts()
             }
             if self.remoteContacts == nil {
                self.remoteContacts = []

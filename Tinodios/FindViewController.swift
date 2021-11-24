@@ -58,10 +58,13 @@ class FindViewController: UITableViewController, FindDisplayLogic {
                              NSAttributedString.Key.foregroundColor: UIColor.systemGray])
     }
 
+    func createDependencies() -> (FindBusinessLogic, FindPresentationLogic) {
+        return (FindInteractor(), FindPresenter())
+    }
+
     private func setup() {
         let viewController = self
-        let interactor = FindInteractor()
-        let presenter = FindPresenter()
+        var (interactor, presenter) = createDependencies()
 
         viewController.interactor = interactor
         interactor.presenter = presenter

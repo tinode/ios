@@ -141,12 +141,7 @@ class ChatListInteractor: ChatListBusinessLogic, ChatListDataStore {
         }
     }
     private func getTopics(archived: Bool) -> [DefaultComTopic]? {
-        return Cache.tinode.getFilteredTopics(filter: {(topic: TopicProto) in
-            return topic.topicType.matches(TopicType.user) && topic.isArchived == archived && topic.isJoiner
-        })?.map {
-            // Must succeed.
-            $0 as! DefaultComTopic
-        }
+        return Utils.fetchTopics(archived: archived)
     }
     func loadAndPresentTopics() {
         self.topics = self.getTopics(archived: false)
