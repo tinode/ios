@@ -19,6 +19,8 @@
 		0A35BA9E22836CCF00AA5E2F /* ContactsSynchronizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A35BA9D22836CCF00AA5E2F /* ContactsSynchronizer.swift */; };
 		0A35BAA02283A37500AA5E2F /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A35BA9F2283A37500AA5E2F /* Utils.swift */; };
 		0A36776922B09C1900724873 /* EditMembersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A36776822B09C1900724873 /* EditMembersViewController.swift */; };
+		0A3AE3B5274CAD2500CB673E /* ForwardMessageBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A3AE3B4274CAD2500CB673E /* ForwardMessageBar.swift */; };
+		0A3AE3B7274CAD5800CB673E /* ForwardMessageBar.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0A3AE3B6274CAD5800CB673E /* ForwardMessageBar.xib */; };
 		0A431C032244A26200A837F7 /* TinodeSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A431C022244A26200A837F7 /* TinodeSDK.framework */; };
 		0A431C042244A26200A837F7 /* TinodeSDK.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0A431C022244A26200A837F7 /* TinodeSDK.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		0A4B11FC2373D6E400199310 /* TagsEditDialogView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0A4B11FB2373D6E400199310 /* TagsEditDialogView.xib */; };
@@ -147,11 +149,13 @@
 		0A35BA9D22836CCF00AA5E2F /* ContactsSynchronizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsSynchronizer.swift; sourceTree = "<group>"; };
 		0A35BA9F2283A37500AA5E2F /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		0A36776822B09C1900724873 /* EditMembersViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditMembersViewController.swift; sourceTree = "<group>"; };
+		0A3AE3B4274CAD2500CB673E /* ForwardMessageBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForwardMessageBar.swift; sourceTree = "<group>"; };
+		0A3AE3B6274CAD5800CB673E /* ForwardMessageBar.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ForwardMessageBar.xib; sourceTree = "<group>"; };
 		0A431C022244A26200A837F7 /* TinodeSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = TinodeSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		0A4B11FB2373D6E400199310 /* TagsEditDialogView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TagsEditDialogView.xib; sourceTree = "<group>"; };
 		0A4B11FD2373DC1400199310 /* TagsEditDialogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagsEditDialogView.swift; sourceTree = "<group>"; };
 		0A4E1D2F22829C46006C0912 /* ContactsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsManager.swift; sourceTree = "<group>"; };
-		0A57890827487B9400E77F0C /* ForwardToViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ForwardToViewController.swift; sourceTree = "<group>"; };
+		0A57890827487B9400E77F0C /* ForwardToViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForwardToViewController.swift; sourceTree = "<group>"; };
 		0A69D47E22A6552300769426 /* TopicInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopicInfoViewController.swift; sourceTree = "<group>"; };
 		0A6AC321229FAA130025A4EC /* PermissionsEditView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PermissionsEditView.xib; sourceTree = "<group>"; };
 		0A6AC323229FB0ED0025A4EC /* PermissionsEditViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionsEditViewController.swift; sourceTree = "<group>"; };
@@ -402,6 +406,8 @@
 				B0125996229C982900688FCE /* ContactViewCell.swift */,
 				B0125997229C982900688FCE /* ContactViewCell.xib */,
 				B0A612B2228EDC7B00569DFE /* DraftyButtonAttachment.swift */,
+				0A3AE3B4274CAD2500CB673E /* ForwardMessageBar.swift */,
+				0A3AE3B6274CAD5800CB673E /* ForwardMessageBar.xib */,
 				B02F5C8A22679BC80079A97E /* ImagePicker.swift */,
 				B0F98C8222E381C300444121 /* MessageMenuItem.swift */,
 				B0DF031E227C6898000F9492 /* PaddedLabel.swift */,
@@ -523,6 +529,7 @@
 				B031BE552263075E004160AE /* Settings.bundle in Resources */,
 				B0CF83E0244E074A00E79D22 /* Localizable.strings in Resources */,
 				0AE7339C22C33FEF0089C8D8 /* ChatListViewCell.xib in Resources */,
+				0A3AE3B7274CAD5800CB673E /* ForwardMessageBar.xib in Resources */,
 				B0133AE323D1AADF00C813CA /* SendImageBar.xib in Resources */,
 				B0DF032D2282EE8A000F9492 /* SendMessageBar.xib in Resources */,
 				0A0380E221B3CC8200A3FA0E /* LaunchScreen.storyboard in Resources */,
@@ -669,6 +676,7 @@
 				0A95F4D4229BD95900AEF7D3 /* AccountSettingsViewController.swift in Sources */,
 				0A4E1D3022829C46006C0912 /* ContactsManager.swift in Sources */,
 				0ACB5F0E22097651008FE740 /* ChatListPresenter.swift in Sources */,
+				0A3AE3B5274CAD2500CB673E /* ForwardMessageBar.swift in Sources */,
 				B0BB539F256B14A1000FE949 /* AsyncTextAttachment.swift in Sources */,
 				B026F247257C5EFF003BA14B /* ProgressView.swift in Sources */,
 				0A0380D821B3CC8100A3FA0E /* AppDelegate.swift in Sources */,

@@ -116,6 +116,14 @@ class MessageViewController: UIViewController {
         return view
     }()
 
+    /// The `forwardMessageBar` is used as the `inputAccessoryView` in the view controller
+    /// (for forwarded messages only).
+    private lazy var forwardMessageBar: ForwardMessageBar = {
+        let view = ForwardMessageBar()
+        view.autoresizingMask = .flexibleHeight
+        return view
+    }()
+
     /// Avatar in the NavBar
     private lazy var navBarAvatarView: AvatarWithOnlineIndicator = {
         let avatarIcon = AvatarWithOnlineIndicator()
@@ -264,8 +272,12 @@ class MessageViewController: UIViewController {
 
     // This makes messageInputBar visible.
     override var inputAccessoryView: UIView? {
-        return sendMessageBar
+        return !isForwardingMessage ? sendMessageBar : forwardMessageBar
     }
+
+    // Indicates whether the user is about to forward a message to this topic
+    // i.e. the forwarded message preview is shown in the preview bar.
+    var isForwardingMessage: Bool = false
 
     override var canBecomeFirstResponder: Bool {
         return true
@@ -311,6 +323,7 @@ class MessageViewController: UIViewController {
 
         self.collectionView.dataSource = self
         sendMessageBar.delegate = self
+        forwardMessageBar.delegate = self
 
         self.setInterfaceColors()
 
@@ -343,6 +356,7 @@ class MessageViewController: UIViewController {
         collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: sendMessageBar.frame.height, right: 0)
 
         if case let .forwarded(_, _, fwdPreview) = self.interactor?.pendingMessage {
+            self.isForwardingMessage = true
             self.showInPreviewBar(content: fwdPreview)
         }
         self.interactor?.attachToTopic(interactively: true)
@@ -590,8 +604,15 @@ extension MessageViewController: MessageDisplayLogic {
         } else {
             self.collectionView.removeNoAccessOverlay()
         }
+
+        let publishingForbidden = !(self.topic?.isWriter ?? false) || err != nil
         // No "W" permission. Replace input field with a message "Not available".
-        self.sendMessageBar.toggleNotAvailableOverlay(visible: !(self.topic?.isWriter ?? false) || err != nil)
+        self.sendMessageBar.toggleNotAvailableOverlay(visible: publishingForbidden)
+        if publishingForbidden {
+            // Dismiss all pending messages.
+            self.togglePreviewBar(with: nil)
+            self.interactor?.dismissPendingMessage()
+        }
         // The peer is missing either "W" or "R" permissions. Show "Peer's messaging is disabled" message.
         if let acs = self.topic?.peer?.acs, let missing = acs.missing {
             self.sendMessageBar.togglePeerMessagingDisabled(visible: acs.isJoiner(for: .want) && (missing.isReader || missing.isWriter))
@@ -614,7 +635,15 @@ extension MessageViewController: MessageDisplayLogic {
     }
 
     func togglePreviewBar(with preview: NSAttributedString?) {
-        self.sendMessageBar.togglePendingPreviewBar(with: preview)
+        if preview == nil {
+            isForwardingMessage = false
+        }
+        if isForwardingMessage {
+            self.forwardMessageBar.togglePendingPreviewBar(with: preview)
+        } else {
+            self.sendMessageBar.togglePendingPreviewBar(with: preview)
+        }
+        self.reloadInputViews()
     }
 }
 
@@ -1304,6 +1333,8 @@ extension MessageViewController: ForwardToDelegate {
     }
 
     func attachForwardedMessage(_ message: Drafty, _ preview: Drafty, from origin: String) {
-        self.interactor?.prepareToForward(message: message, forwardedFrom: origin, preview: preview)
+        if self.topic?.isWriter ?? false {
+            self.interactor?.prepareToForward(message: message, forwardedFrom: origin, preview: preview)
+        }
     }
 }
