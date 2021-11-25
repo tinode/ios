@@ -283,6 +283,8 @@ class AttributedStringFormatter: FormatterImpl {
         var mime: String?
         var name: String?
         var ref: String?
+        // Callback to run after the image has been downloaded from ref.
+        var afterRefDownloaded: ((UIImage) -> UIImage?)?
         var size: Int?
         var width: Int?
         var height: Int?
@@ -520,7 +522,7 @@ class AttributedStringFormatter: FormatterImpl {
                     url = nil
                 }
                 // tinode:// and mid: schemes are not real external URLs.
-                let wrapper = url == nil || url?.scheme == "mid" || url?.scheme == "tinode" ? NSTextAttachment() : AsyncTextAttachment(url: url!)
+                let wrapper = url == nil || url?.scheme == "mid" || url?.scheme == "tinode" ? NSTextAttachment() : AsyncTextAttachment(url: url!, afterDownloaded: attachment.afterRefDownloaded)
 
                 var image: UIImage?
                 if let bits = attachment.bits, let preview = UIImage(data: bits) {
@@ -539,15 +541,14 @@ class AttributedStringFormatter: FormatterImpl {
                     originalSize = CGSize(width: UiUtils.kDefaultBitmapSize, height: UiUtils.kDefaultBitmapSize)
                 }
 
-                var scaledSize: CGSize
+                let scaledSize = UiUtils.sizeUnder(original: originalSize, fitUnder: size, scale: 1, clip: false).dst
                 if image == nil {
                     let iconName = attachment.ref != nil ? "image-wait" : "broken-image"
                     // No need to scale the stock image.
-                    wrapper.image = UiUtils.placeholderImage(named: iconName, withBackground: nil, width: size.width, height: size.height)
-                    scaledSize = size
+                    wrapper.image = UiUtils.placeholderImage(named: iconName, withBackground: nil, width: scaledSize.width, height: scaledSize.height)
+                    //scaledSize = size
                 } else {
                     wrapper.image = image
-                    scaledSize = UiUtils.sizeUnder(original: originalSize, fitUnder: size, scale: 1, clip: false).dst
                 }
                 wrapper.bounds = CGRect(origin: .zero, size: scaledSize)
 
@@ -827,6 +828,8 @@ class PreviewFormatter: AttributedStringFormatter {
 }
 
 class QuoteFormatter: PreviewFormatter {
+    static let kThumbnailImageDim = 32
+
     override func handleLineBreak() -> DraftySpan {
         return TreeNode(content: "\n")
     }
@@ -836,7 +839,15 @@ class QuoteFormatter: PreviewFormatter {
         var attachment = Attachment(content: .image)
         var filename = ""
         if let attr = attr {
-            attachment.bits = attr["val"]?.asData()
+            if let bits = attr["val"]?.asData() {
+                attachment.bits = bits
+            } else if let ref = attr["ref"]?.asString() {
+                attachment.ref = ref
+                attachment.afterRefDownloaded = {
+                    return $0.resize(
+                        width: CGFloat(UiUtils.kReplyThumbnailSize), height: CGFloat(UiUtils.kReplyThumbnailSize), clip: true)
+                }
+            }
             attachment.mime = attr["mime"]?.asString()
             if let name = attr["name"]?.asString() {
                 filename = name
@@ -844,8 +855,8 @@ class QuoteFormatter: PreviewFormatter {
                 filename = "Picture"
             }
             attachment.size = attr["size"]?.asInt()
-            attachment.width = 32
-            attachment.height = 32
+            attachment.width = QuoteFormatter.kThumbnailImageDim
+            attachment.height = QuoteFormatter.kThumbnailImageDim
         }
         img.attachment(attachment)
         var children = [TreeNode]()

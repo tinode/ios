@@ -251,16 +251,18 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
             }
             result.data!["name"] = node.data?["name"]
             if let bits = node.data?["val"]?.asData() {
-                let thumbnail = UIImage(data: bits)?.resize(width: 36, height: 36, clip: true)
+                let thumbnail = UIImage(data: bits)?.resize(
+                    width: CGFloat(UiUtils.kReplyThumbnailSize), height: CGFloat(UiUtils.kReplyThumbnailSize), clip: true)
                 let thumbnailBits = thumbnail?.pixelData(forMimeType: "image/jpeg")
                 result.data!["val"] = .bytes(thumbnailBits!)
                 result.data!["mime"] = .string("image/jpeg")
-                result.data!["width"] = .int(36)
-                result.data!["height"] = .int(36)
+
                 result.data!["size"] = .int(thumbnailBits!.count)
-            } else if let _ = result.data?["ref"]?.asString() {
-                // TODO:
+            } else if let ref = node.data?["ref"]?.asString() {
+                result.data!["ref"] = .string(ref)
             }
+            result.data!["width"] = .int(UiUtils.kReplyThumbnailSize)
+            result.data!["height"] = .int(UiUtils.kReplyThumbnailSize)
             return result
         }
     }
@@ -291,6 +293,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         }
         let seqId = msg.seqId
         let sender = senderName(for: msg)
+        // Trim any mentions (starting with a ➦).
         let content =
             msg.isForwarded ? replyTo.preview(ofMaxLength: Int.max, using: ForwardingTransformer()) : replyTo
         let p = content!.preview(ofMaxLength: UiUtils.kQuotedReplyLength, using: ReplyTransformer())

@@ -90,6 +90,8 @@ class UiUtils {
 
     // Maximum length of the quoted part in a reply.
     static let kQuotedReplyLength = 30
+    // Size of image thumbnails in the quoted part in a reply.
+    static let kReplyThumbnailSize = 36
 
     // Letter tile image colors (light).
     private static let kLetterTileLightColors: [UIColor] = [

@@ -9,7 +9,7 @@ import Kingfisher
 import TinodeSDK
 import UIKit
 
-/// An image text attachment which gets updated after loading an imgae from URL
+/// An image text attachment which gets updated after loading an image from URL
 public class AsyncTextAttachment: NSTextAttachment {
     /// Container to be notified when the image is updated: successfully fetched or failed.
     weak var textContainer: NSTextContainer?
@@ -17,9 +17,13 @@ public class AsyncTextAttachment: NSTextAttachment {
     /// Source of the image
     public var url: URL
 
+    /// Postprocessing callback after the image's been downloaded
+    private var postprocessing: ((UIImage) -> UIImage?)?
+
     /// Designated initializer
-    public init(url: URL) {
+    public init(url: URL, afterDownloaded: ((UIImage) -> UIImage?)? = nil) {
         self.url = url
+        self.postprocessing = afterDownloaded
 
         super.init(data: nil, ofType: nil)
     }
@@ -38,7 +42,11 @@ public class AsyncTextAttachment: NSTextAttachment {
         KingfisherManager.shared.retrieveImage(with: url.downloadURL, options: [.requestModifier(modifier)], completionHandler: { result in
             switch result {
             case .success(let value):
-                self.image = value.image
+                if let done = self.postprocessing {
+                    self.image = done(value.image) ?? errorImage
+                } else {
+                    self.image = value.image
+                }
             case .failure(let error):
                 self.image = errorImage
                 Cache.log.info("Failed to download image '%@': %d", self.url.absoluteString, error.errorCode)
