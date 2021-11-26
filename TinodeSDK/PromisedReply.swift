@@ -94,7 +94,7 @@ public class PromisedReply<Value> {
         countDownLatch = CountDownLatch(count: 0)
     }
 
-    func resolve(result: Value?) throws {
+    public func resolve(result: Value?) throws {
         defer {
             // down the semaphore
             countDownLatch?.countDown()
@@ -109,7 +109,7 @@ public class PromisedReply<Value> {
         }
     }
 
-    func reject(error: Error) throws {
+    public func reject(error: Error) throws {
         defer {
             // down the semaphore
             countDownLatch?.countDown()

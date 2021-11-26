@@ -34,10 +34,10 @@ protocol MessageBusinessLogic: AnyObject {
     func blockTopic()
     func uploadFile(_ def: UploadDef)
     func uploadImage(_ def: UploadDef)
-    func prepareReply(to msg: Message?) -> Drafty?
+    func prepareReply(to msg: Message?) -> PromisedReply<Drafty>?
     func dismissPendingMessage()
 
-    func createForwardedMessage(from original: Message?) -> (Drafty?, String?, Drafty?)
+    func createForwardedMessage(from original: Message?) -> PromisedReply<PendingMessage>?
     func prepareToForward(message: Drafty, forwardedFrom: String, preview: Drafty)
     var pendingMessage: PendingMessage? { get }
 }
@@ -239,6 +239,10 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
 
     // Turns images into thumbnails when preparing a reply quote to a message.
     private class ReplyTransformer: Drafty.PreviewTransformer {
+        // Keeps track of the chain of images which need to be asynchronously downloaded
+        // and downsized.
+        var promise: PromisedReply<UIImage>?
+
         override func transform(node: Drafty.Span) -> Drafty.Span? {
             guard node.type == "IM" else {
                 return super.transform(node: node)
@@ -259,7 +263,18 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
 
                 result.data!["size"] = .int(thumbnailBits!.count)
             } else if let ref = node.data?["ref"]?.asString() {
-                result.data!["ref"] = .string(ref)
+                let origPromise = self.promise
+                let url = Utils.tinodeResourceUrl(from: ref)
+                let p = Utils.fetchTinodeResource(from: url)?.thenApply {
+                    let thumbnail = $0?.resize(
+                        width: CGFloat(UiUtils.kReplyThumbnailSize), height: CGFloat(UiUtils.kReplyThumbnailSize), clip: true)
+                    let thumbnailBits = thumbnail?.pixelData(forMimeType: "image/jpeg")
+                    result.data!["val"] = .bytes(thumbnailBits!)
+                    result.data!["mime"] = .string("image/jpeg")
+                    return origPromise
+                }
+                // Chain promises.
+                self.promise = p
             }
             result.data!["width"] = .int(UiUtils.kReplyThumbnailSize)
             result.data!["height"] = .int(UiUtils.kReplyThumbnailSize)
@@ -286,7 +301,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
     }
 
     // Creates a reply quote.
-    func prepareReply(to msg: Message?) -> Drafty? {
+    func prepareReply(to msg: Message?) -> PromisedReply<Drafty>? {
         guard let msg = msg, let replyTo = msg.content else {
             self.dismissPendingMessage()
             return nil
@@ -296,31 +311,48 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         // Trim any mentions (starting with a ➦).
         let content =
             msg.isForwarded ? replyTo.preview(ofMaxLength: Int.max, using: ForwardingTransformer()) : replyTo
-        let p = content!.preview(ofMaxLength: UiUtils.kQuotedReplyLength, using: ReplyTransformer())
-        let finalMsg = Drafty.quote(quoteHeader: sender, authorUid: msg.from ?? "", quoteContent: p!)
 
-        self.pendingMessage = .replyTo(message: finalMsg, seqId: seqId)
-        return finalMsg
+        let transformer = ReplyTransformer()
+        let p = content!.preview(ofMaxLength: UiUtils.kQuotedReplyLength, using: ReplyTransformer())
+        if transformer.promise != nil {
+            // We have images to download and downsize.
+            let result = PromisedReply<Drafty>()
+            transformer.promise!.then(onSuccess: {_ in
+                let finalMsg = Drafty.quote(quoteHeader: sender, authorUid: msg.from ?? "", quoteContent: p!)
+                self.pendingMessage = .replyTo(message: finalMsg, seqId: seqId)
+                try? result.resolve(result: finalMsg)
+                return nil
+            }, onFailure: { err in
+                try? result.reject(error: err)
+                return nil
+            })
+            return result
+        } else {
+            // We are done. So form a reply and return a resolved promise.
+            let finalMsg = Drafty.quote(quoteHeader: sender, authorUid: msg.from ?? "", quoteContent: p!)
+            self.pendingMessage = .replyTo(message: finalMsg, seqId: seqId)
+            return PromisedReply<Drafty>(value: finalMsg)
+        }
     }
 
     func dismissPendingMessage() {
         self.pendingMessage = nil
     }
 
-    func createForwardedMessage(from original: Message?) -> (Drafty?, String?, Drafty?) {
+    func createForwardedMessage(from original: Message?) -> PromisedReply<PendingMessage>? {
         guard let original = original, let content = original.content, let topicName = self.topicName else {
-            return (nil, nil, nil)
+            return nil
         }
         let sender = "➦ " + senderName(for: original)
         guard let from = original.from ?? self.topicName else {
             Cache.log.error("prepareForwardedMessage error: could not determine sender id for message %@", content.string)
-            return (nil, nil, nil)
+            return nil
         }
         var transformed: Drafty!
         if original.isForwarded {
             guard let p = content.preview(ofMaxLength: Int.max, using: ForwardingTransformer()) else {
                 Cache.log.error("prepareForwardedMessage error: could not transform the original message for forwarding - %@", content.string)
-                return (nil, nil, nil)
+                return nil
             }
             transformed = p
         } else {
@@ -330,10 +362,24 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
             .appendLineBreak()
             .append(transformed)
         let fwdHeader = "\(topicName):\(original.seqId)"
-        // Preview.
-        let preview = transformed.preview(ofMaxLength: UiUtils.kQuotedReplyLength, using: ReplyTransformer())!
-        let forwardedPreview = Drafty.quote(quoteHeader: sender, authorUid: from, quoteContent: preview)
-        return (forwardedContent, fwdHeader, forwardedPreview)
+        // Preview. We may have images to download and downsize. Have to do it asynchronously.
+        let transformer = ReplyTransformer()
+        let preview = transformed.preview(ofMaxLength: UiUtils.kQuotedReplyLength, using: transformer)!
+        if let p = transformer.promise {
+            let result = PromisedReply<PendingMessage>()
+            p.then(onSuccess: { value in
+                let forwardedPreview = Drafty.quote(quoteHeader: sender, authorUid: from, quoteContent: preview)
+                try? result.resolve(result: .forwarded(message: forwardedContent, from: fwdHeader, preview: forwardedPreview))
+                return nil
+            }, onFailure: { err in
+                try? result.reject(error: err)
+                return nil
+            })
+            return result
+        } else {
+            let forwardedPreview = Drafty.quote(quoteHeader: sender, authorUid: from, quoteContent: preview)
+            return PromisedReply<PendingMessage>(value: .forwarded(message: forwardedContent, from: fwdHeader, preview: forwardedPreview))
+        }
     }
 
     // Saves the pending forwarded message and returns its preview.

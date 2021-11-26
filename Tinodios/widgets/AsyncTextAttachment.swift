@@ -5,7 +5,6 @@
 //  Copyright © 2020 Tinode. All rights reserved.
 //
 
-import Kingfisher
 import TinodeSDK
 import UIKit
 
@@ -33,31 +32,26 @@ public class AsyncTextAttachment: NSTextAttachment {
     }
 
     public func startDownload(onError errorImage: UIImage) {
-        let modifier = AnyModifier { request in
-            var request = request
-            LargeFileHelper.addCommonHeaders(to: &request, using: Cache.tinode)
-            return request
-        }
-
-        KingfisherManager.shared.retrieveImage(with: url.downloadURL, options: [.requestModifier(modifier)], completionHandler: { result in
-            switch result {
-            case .success(let value):
+        Utils.fetchTinodeResource(from: url)?
+            .then(onSuccess: { value in
                 if let done = self.postprocessing {
-                    self.image = done(value.image) ?? errorImage
+                    self.image = done(value!) ?? errorImage
                 } else {
-                    self.image = value.image
+                    self.image = value
                 }
-            case .failure(let error):
+                return nil
+            }, onFailure: { error in
                 self.image = errorImage
-                Cache.log.info("Failed to download image '%@': %d", self.url.absoluteString, error.errorCode)
+                Cache.log.info("Failed to download image '%@': %@", self.url.absoluteString, error.localizedDescription)
+                return nil
+            })
+            .thenFinally {
+                DispatchQueue.main.async {
+                    // Force container redraw.
+                    let length = self.textContainer?.layoutManager?.textStorage?.length
+                    self.textContainer?.layoutManager?.invalidateDisplay(forCharacterRange: NSRange(location: 0, length: length ?? 1))
+                }
             }
-
-            DispatchQueue.main.async {
-                // Force container redraw.
-                let length = self.textContainer?.layoutManager?.textStorage?.length
-                self.textContainer?.layoutManager?.invalidateDisplay(forCharacterRange: NSRange(location: 0, length: length ?? 1))
-            }
-        })
     }
 
     public override func image(forBounds imageBounds: CGRect, textContainer: NSTextContainer?, characterIndex charIndex: Int) -> UIImage? {

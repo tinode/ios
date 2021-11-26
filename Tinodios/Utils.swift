@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Kingfisher
 import MobileCoreServices
 import PhoneNumberKit
 import TinodeSDK
@@ -93,6 +94,31 @@ public class Utils {
             // Must succeed.
             $0 as! DefaultComTopic
         }
+    }
+
+    // Creates a URL out of Tinode ref.
+    public static func tinodeResourceUrl(from ref: String) -> URL? {
+        let u = URL(string: ref, relativeTo: Cache.tinode.baseURL(useWebsocketProtocol: false))
+        return u
+    }
+
+    // Initializes a download for a resource (typically, an image) from the provided url.
+    public static func fetchTinodeResource(from url: URL?) -> PromisedReply<UIImage>? {
+        let modifier = AnyModifier { request in
+            var request = request
+            LargeFileHelper.addCommonHeaders(to: &request, using: Cache.tinode)
+            return request
+        }
+        let p = PromisedReply<UIImage>()
+        KingfisherManager.shared.retrieveImage(with: url!.downloadURL, options: [.requestModifier(modifier)], completionHandler: { result in
+            switch result {
+            case .success(let value):
+                try? p.resolve(result: value.image)
+            case .failure(let error):
+                try? p.reject(error: error)
+            }
+        })
+        return p
     }
 }
 

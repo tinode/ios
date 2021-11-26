@@ -1182,25 +1182,41 @@ extension MessageViewController: MessageCellDelegate {
         guard let menuItem = sender.menuItems?.first as? MessageMenuItem, menuItem.seqId > 0, let msgIndex = messageSeqIdIndex[menuItem.seqId] else { return }
         let msg = messages[msgIndex]
         if let reply = interactor?.prepareReply(to: msg) {
-            self.showInPreviewBar(content: reply)
+            reply.then(onSuccess: { value in
+                DispatchQueue.main.async { self.showInPreviewBar(content: value) }
+                return nil
+            }, onFailure: { err in
+                DispatchQueue.main.async { UiUtils.showToast(message: "Failed to prepare reply: \(err)") }
+                return nil
+            })
         }
     }
 
     @objc func showForwardSelector(sender: UIMenuController) {
         guard let menuItem = sender.menuItems?.first as? MessageMenuItem, menuItem.seqId > 0, let msgIndex = messageSeqIdIndex[menuItem.seqId] else { return }
         let msg = messages[msgIndex]
-        guard let (forwardedMsg, forwardedFrom, forwardedPreview) = interactor?.createForwardedMessage(from: msg) else {
-            UiUtils.showToast(message: "Failed to create forwarded content.")
+        guard let p = interactor?.createForwardedMessage(from: msg) else {
             return
         }
-        let navigator = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "ForwardToNavController") as! UINavigationController
-        navigator.modalPresentationStyle = .pageSheet
-        let forwardToVC = navigator.viewControllers.first as! ForwardToViewController
-        forwardToVC.delegate = self
-        forwardToVC.forwardedContent = forwardedMsg
-        forwardToVC.forwardedFrom = forwardedFrom
-        forwardToVC.forwardedPreview = forwardedPreview
-        self.present(navigator, animated: true, completion: nil)
+        p.then(onSuccess: { value in
+            guard case let .forwarded(forwardedMsg, forwardedFrom, forwardedPreview) = value else {
+                return nil
+            }
+            DispatchQueue.main.async {
+                let navigator = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "ForwardToNavController") as! UINavigationController
+                navigator.modalPresentationStyle = .pageSheet
+                let forwardToVC = navigator.viewControllers.first as! ForwardToViewController
+                forwardToVC.delegate = self
+                forwardToVC.forwardedContent = forwardedMsg
+                forwardToVC.forwardedFrom = forwardedFrom
+                forwardToVC.forwardedPreview = forwardedPreview
+                self.present(navigator, animated: true, completion: nil)
+            }
+            return nil
+        }, onFailure: { err in
+            DispatchQueue.main.async { UiUtils.showToast(message: "Failed for form forwarded message: \(err)") }
+            return nil
+        })
     }
 
     @objc func deleteMessage(sender: UIMenuController) {
@@ -1288,7 +1304,8 @@ extension MessageViewController: MessageCellDelegate {
         // TODO: maybe pass nil to show "broken image" preview instead of returning.
         guard let index = messageSeqIdIndex[cell.seqId] else { return }
         let msg = messages[index]
-        guard let entity = msg.content?.entities?[0] else { return }
+        guard let entity = msg.content?.entities?.first(where: { $0.tp == "IM" }) else { return }
+        //guard let entity = msg.content?.entities?[0] else { return }
         let bits = entity.data?["val"]?.asData()
         let ref = entity.data?["ref"]?.asString()
         // Need to have at least one.

@@ -514,10 +514,9 @@ class AttributedStringFormatter: FormatterImpl {
             switch attachment.content {
             // Image handling is easy.
             case .image:
-                let tinode = Cache.tinode
                 let url: URL?
                 if let ref = attachment.ref {
-                    url = URL(string: ref, relativeTo: tinode.baseURL(useWebsocketProtocol: false))
+                    url = Utils.tinodeResourceUrl(from: ref)
                 } else {
                     url = nil
                 }
