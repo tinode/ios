@@ -171,6 +171,9 @@ class MessageViewController: UIViewController {
 
     var isInitialLayout = true
 
+    // Highlight this cell when scroll finishes (after the user tapped on a quote).
+    private var highlightCellAtPathAfterScroll: IndexPath?
+
     // Size of the present update batch.
     private var updateBatchSize = 0
     // Last message received timestamp - for tracking batches.
@@ -299,6 +302,7 @@ class MessageViewController: UIViewController {
         collectionView.keyboardDismissMode = .interactive
         collectionView.alwaysBounceVertical = true
         collectionView.layoutMargins = Constants.kCollectionViewInset
+        collectionView.delegate = self
         view.addSubview(collectionView)
         self.collectionView = collectionView
 
@@ -1093,6 +1097,8 @@ extension MessageViewController: MessageCellDelegate {
                 Cache.log.debug("MessageViewController - large attachment: %@", url.description)
             case "/preview-image":
                 showImagePreview(in: cell)
+            case "/quote":
+                handleQuoteClick(in: cell)
             default:
                 Cache.log.error("MessageVC - unknown tinode:// action: %@", url.path)
                 break
@@ -1304,8 +1310,8 @@ extension MessageViewController: MessageCellDelegate {
         // TODO: maybe pass nil to show "broken image" preview instead of returning.
         guard let index = messageSeqIdIndex[cell.seqId] else { return }
         let msg = messages[index]
+        //let quote = msg.content?.entities?.filter(where: { $0.tp == "QQ" })
         guard let entity = msg.content?.entities?.first(where: { $0.tp == "IM" }) else { return }
-        //guard let entity = msg.content?.entities?[0] else { return }
         let bits = entity.data?["val"]?.asData()
         let ref = entity.data?["ref"]?.asString()
         // Need to have at least one.
@@ -1321,6 +1327,23 @@ extension MessageViewController: MessageCellDelegate {
             height: entity.data?["height"]?.asInt(),
             pendingMessagePreview: nil)
         performSegue(withIdentifier: "ShowImagePreview", sender: content)
+    }
+
+    func handleQuoteClick(in cell: MessageCell) {
+        guard let index = messageSeqIdIndex[cell.seqId] else { return }
+        let msg = messages[index]
+        guard let seqId = Int(msg.head?["reply"]?.asString() ?? ""), let itemIdx = messageSeqIdIndex[seqId] else { return }
+        print("scrolling to \(seqId) \(itemIdx)")
+        let path = IndexPath(item: itemIdx, section: 0)
+        if let cell = collectionView.cellForItem(at: path) as? MessageCell {
+            // If the cell is already visible.
+            cell.highlightAnimated(withDuration: 4.0)
+        } else {
+            // Not visible? Memorize the cell and highlight it
+            // after the view scrolls the cell into the viewport.
+            self.highlightCellAtPathAfterScroll = path
+        }
+        self.collectionView.scrollToItem(at: path, at: .top, animated: true)
     }
 }
 
@@ -1353,5 +1376,14 @@ extension MessageViewController: ForwardToDelegate {
         if self.topic?.isWriter ?? false {
             self.interactor?.prepareToForward(message: message, forwardedFrom: origin, preview: preview)
         }
+    }
+}
+
+extension MessageViewController: UICollectionViewDelegate {
+    func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
+        guard let path = self.highlightCellAtPathAfterScroll else { return }
+        self.highlightCellAtPathAfterScroll = nil
+        guard let cell = collectionView.cellForItem(at: path) as? MessageCell else { return }
+        cell.highlightAnimated(withDuration: 4.0)
     }
 }

@@ -71,6 +71,10 @@ class RichTextView: UITextView {
             return button.payload
         }
 
+        if attachment is QuotedAttachment {
+            return URL(string: "tinode:///quote")
+        }
+
         if attachment.image != nil {
             return URL(string: "tinode:///preview-image")
         }

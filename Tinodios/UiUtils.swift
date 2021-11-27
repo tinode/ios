@@ -873,6 +873,27 @@ extension UIColor {
                   blue: CGFloat(blue) / 255.0,
                   alpha: CGFloat(alpha) / 255.0)
     }
+
+    func lighter(by percentage: CGFloat = 30.0) -> UIColor? {
+        return self.adjustBrightness(by: abs(percentage) )
+    }
+
+    func darker(by percentage: CGFloat = 30.0) -> UIColor? {
+        return self.adjustBrightness(by: -1 * abs(percentage) )
+    }
+
+    func adjustBrightness(by percentage: CGFloat = 30.0) -> UIColor? {
+        var red: CGFloat = 0, green: CGFloat = 0, blue: CGFloat = 0, alpha: CGFloat = 0
+        if self.getRed(&red, green: &green, blue: &blue, alpha: &alpha) {
+            let delta = percentage / 100
+            return UIColor(red: min(red + delta, 1.0),
+                           green: min(green + delta, 1.0),
+                           blue: min(blue + delta, 1.0),
+                           alpha: alpha)
+        } else {
+            return nil
+        }
+    }
 }
 
 public enum UIButtonBorderSide {

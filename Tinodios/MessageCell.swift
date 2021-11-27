@@ -186,4 +186,15 @@ class MessageCell: UICollectionViewCell {
         super.resignFirstResponder()
         return true
     }
+
+    /// Highlights the cell by gradually changing its background color to a darker one and back.
+    func highlightAnimated(withDuration duration: TimeInterval) {
+        let halfDuration = 0.5 * duration
+        UIView.animate(withDuration: halfDuration) {
+            self.containerView.backgroundColor = self.containerView.backgroundColor?.darker()
+        }
+        UIView.animate(withDuration: halfDuration) {
+            self.containerView.backgroundColor = self.containerView.backgroundColor?.lighter()
+        }
+    }
 }
