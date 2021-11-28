@@ -566,20 +566,24 @@ extension MessageViewController: MessageDisplayLogic {
             // to be an Apple bug because removed index is against the old array, refreshed against the new.
             refresh = Array(Set(refresh).subtracting(Set(diff.inserted)))
 
-            collectionView.performBatchUpdates({ () -> Void in
-                self.messages = newData
-                if diff.removed.count > 0 {
-                    collectionView.deleteItems(at: diff.removed.map { IndexPath(item: $0, section: 0) })
-                }
-                if diff.inserted.count > 0 {
-                    collectionView.insertItems(at: diff.inserted.map { IndexPath(item: $0, section: 0) })
-                }
-            }, completion: nil)
-            collectionView.performBatchUpdates({ () -> Void in
-                self.collectionView.reloadItems(at: refresh.map { IndexPath(item: $0, section: 0) })
-                self.collectionView.layoutIfNeeded()
-                self.collectionView.scrollToBottom()
-            }, completion: nil)
+            if !diff.inserted.isEmpty || !diff.removed.isEmpty {
+                collectionView.performBatchUpdates({ () -> Void in
+                    self.messages = newData
+                    if diff.removed.count > 0 {
+                        collectionView.deleteItems(at: diff.removed.map { IndexPath(item: $0, section: 0) })
+                    }
+                    if diff.inserted.count > 0 {
+                        collectionView.insertItems(at: diff.inserted.map { IndexPath(item: $0, section: 0) })
+                    }
+                }, completion: nil)
+            }
+            if !refresh.isEmpty {
+                collectionView.performBatchUpdates({ () -> Void in
+                    self.collectionView.reloadItems(at: refresh.map { IndexPath(item: $0, section: 0) })
+                    self.collectionView.layoutIfNeeded()
+                    self.collectionView.scrollToBottom()
+                }, completion: nil)
+            }
         }
     }
 
@@ -1332,7 +1336,6 @@ extension MessageViewController: MessageCellDelegate {
         guard let index = messageSeqIdIndex[cell.seqId] else { return }
         let msg = messages[index]
         guard let seqId = Int(msg.head?["reply"]?.asString() ?? ""), let itemIdx = messageSeqIdIndex[seqId] else { return }
-        print("scrolling to \(seqId) \(itemIdx)")
         let path = IndexPath(item: itemIdx, section: 0)
         if let cell = collectionView.cellForItem(at: path) as? MessageCell {
             // If the cell is already visible.

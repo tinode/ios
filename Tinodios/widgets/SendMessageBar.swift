@@ -43,7 +43,7 @@ class SendMessageBar: UIView {
     weak var foregroundView: UIView?
 
     public var pendingPreviewText: NSAttributedString? {
-        get { return previewView.attributedText }
+        get { return previewView.attributedText.length != .zero ? previewView.attributedText : nil }
         set { previewView.attributedText = newValue }
     }
 

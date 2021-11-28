@@ -55,7 +55,6 @@ class ImagePreviewController: UIViewController, UIScrollViewDelegate {
 
             sendImageBar.delegate = self
             sendImageBar.replyPreviewDelegate = replyPreviewDelegate
-            //sendImageBar.togglePreviewBar(with: replyPreviewDelegate?.pendingMessagePreview())
             sendImageBar.togglePreviewBar(with: content.pendingMessagePreview)
             // Hide [Save image] button.
             navigationItem.rightBarButtonItem = nil
