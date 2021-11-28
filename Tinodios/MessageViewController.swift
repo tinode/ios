@@ -1096,7 +1096,7 @@ extension MessageViewController: MessageCellDelegate {
                 handleLargeAttachment(in: cell, using: url)
                 Cache.log.debug("MessageViewController - large attachment: %@", url.description)
             case "/preview-image":
-                showImagePreview(in: cell)
+                showImagePreview(in: cell, draftyEntityKey: Int(url.extractQueryParam(named: "key") ?? ""))
             case "/quote":
                 handleQuoteClick(in: cell)
             default:
@@ -1306,12 +1306,11 @@ extension MessageViewController: MessageCellDelegate {
         }
     }
 
-    private func showImagePreview(in cell: MessageCell) {
+    private func showImagePreview(in cell: MessageCell, draftyEntityKey: Int?) {
         // TODO: maybe pass nil to show "broken image" preview instead of returning.
-        guard let index = messageSeqIdIndex[cell.seqId] else { return }
+        guard let index = messageSeqIdIndex[cell.seqId], let draftyKey = draftyEntityKey else { return }
         let msg = messages[index]
-        //let quote = msg.content?.entities?.filter(where: { $0.tp == "QQ" })
-        guard let entity = msg.content?.entities?.first(where: { $0.tp == "IM" }) else { return }
+        guard let entity = msg.content?.entities?[draftyKey] else { return }
         let bits = entity.data?["val"]?.asData()
         let ref = entity.data?["ref"]?.asString()
         // Need to have at least one.

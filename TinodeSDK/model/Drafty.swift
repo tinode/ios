@@ -23,8 +23,8 @@ public protocol DraftySpan {
 // Describes a class which constructs a Drafty formatting tree
 // (which consists of DraftyNode{s}).
 public protocol DraftyFormatter {
-    func apply(tp: String?, attr: [String: JSONValue]?, content: [DraftySpan]) -> DraftySpan
-    func apply(tp: String?, attr: [String: JSONValue]?, content: String?) -> DraftySpan
+    func apply(tp: String?, key: Int?, attr: [String: JSONValue]?, content: [DraftySpan]) -> DraftySpan
+    func apply(tp: String?, key: Int?, attr: [String: JSONValue]?, content: String?) -> DraftySpan
 
     // Formatting type handlers.
     func handleStrong(withText content: String?, withChildren nodes: [DraftySpan]?) -> DraftySpan
@@ -36,7 +36,7 @@ public protocol DraftyFormatter {
     func handleLink(withText content: String?, withChildren nodes: [DraftySpan]?, attr: [String: JSONValue]?) -> DraftySpan
     func handleMention(withText content: String?, withChildren nodes: [DraftySpan]?, using attr: [String: JSONValue]?) -> DraftySpan
     func handleHashtag(withText content: String?, withChildren nodes: [DraftySpan]?) -> DraftySpan
-    func handleImage(withText content: String?, withChildren nodes: [DraftySpan]?, using attr: [String: JSONValue]?) -> DraftySpan
+    func handleImage(withText content: String?, withChildren nodes: [DraftySpan]?, using attr: [String: JSONValue]?, fromDraftyEntity key: Int?) -> DraftySpan
     func handleAttachment(withText content: String?, withChildren nodes: [DraftySpan]?, using attr: [String: JSONValue]?) -> DraftySpan
     func handleButton(withText content: String?, withChildren nodes: [DraftySpan]?, using attr: [String: JSONValue]?) -> DraftySpan
     func handleForm(withText content: String?, withChildren nodes: [DraftySpan]?) -> DraftySpan
@@ -48,7 +48,7 @@ public protocol DraftyFormatter {
 
 extension DraftyFormatter {
     // Construct a tree representing formatting styles and content.
-    public func makeTree(tp: String?, attr: [String: JSONValue]?, children: [DraftySpan]?, content: String?) -> DraftySpan {
+    public func makeTree(tp: String?, key: Int?, attr: [String: JSONValue]?, children: [DraftySpan]?, content: String?) -> DraftySpan {
         guard let tp = tp else {
             return handlePlain(withText: content, withChildren: children)
         }
@@ -72,7 +72,7 @@ extension DraftyFormatter {
         case "HD":
             return handleHidden(withText: content, withChildren: children)
         case "IM":
-            return handleImage(withText: content, withChildren: children, using: attr)
+            return handleImage(withText: content, withChildren: children, using: attr, fromDraftyEntity: key)
         case "EX":
             return handleAttachment(withText: content, withChildren: children, using: attr)
         case "BN":
@@ -964,13 +964,13 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
             self.styleFormatters = customizers
         }
         override func handleText(_ content: String?, using formatter: DraftyFormatter) -> DraftySpan? {
-            return formatter.apply(tp: nil, attr: nil, content: content)
+            return formatter.apply(tp: nil, key: nil, attr: nil, content: content)
         }
         override func handleStyle(tp: String?, attr: [String : JSONValue]?, key: Int?, using formatter: DraftyFormatter) -> DraftySpan? {
-            return formatter.apply(tp: tp, attr: attr, content: nil)
+            return formatter.apply(tp: tp, key: key, attr: attr, content: nil)
         }
         override func finalize(tree: FormattingSpan, using formatter: DraftyFormatter) -> DraftySpan? {
-            return formatter.apply(tp: nil, attr: nil, content: tree.children)
+            return formatter.apply(tp: nil, key: nil, attr: nil, content: tree.children)
         }
         override func handleSubspans(current span: Span, line: String, start: Int, end: Int, subspans: [Drafty.Span]?, using defaultFormatter: DraftyFormatter) -> DraftySpan? {
             if span.type == "BN" {
@@ -978,7 +978,7 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
                 span.data = span.data ?? [:]
                 let title = String(line[line.index(line.startIndex, offsetBy: span.start)..<line.index(line.startIndex, offsetBy: span.end)])
                 span.data!["title"] = JSONValue.string(title)
-                return defaultFormatter.apply(tp: span.type, attr: span.data, content: title)
+                return defaultFormatter.apply(tp: span.type, key: span.key, attr: span.data, content: title)
             } else {
                 var formatter: DraftyFormatter? = nil
                 if let style = span.type, let customizer = self.styleFormatters?[style] {
@@ -987,7 +987,7 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
                     formatter = defaultFormatter
                 }
                 let tree = forEach(line: line, start: start, end: span.end, spans: subspans!, using: formatter!)
-                return defaultFormatter.apply(tp: span.type, attr: span.data, content: tree.children)
+                return defaultFormatter.apply(tp: span.type, key: span.key, attr: span.data, content: tree.children)
             }
         }
     }

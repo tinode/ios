@@ -98,7 +98,7 @@ class AttributedStringFormatter: FormatterImpl {
         return TreeNode(text: content, nodes: nodes as? [TreeNode])
     }
 
-    func handleImage(withText content: String?, withChildren nodes: [DraftySpan]?, using attr: [String: JSONValue]?) -> DraftySpan {
+    func handleImage(withText content: String?, withChildren nodes: [DraftySpan]?, using attr: [String: JSONValue]?, fromDraftyEntity key: Int?) -> DraftySpan {
         var attachment = Attachment(content: .image)
         let node = TreeNode(text: content, nodes: nodes as? [TreeNode])
         if let attr = attr {
@@ -110,6 +110,7 @@ class AttributedStringFormatter: FormatterImpl {
             attachment.width = attr["width"]?.asInt()
             attachment.height = attr["height"]?.asInt()
         }
+        attachment.draftyEntityKey = key
         node.attachment(attachment)
         return node
     }
@@ -236,12 +237,12 @@ class AttributedStringFormatter: FormatterImpl {
         return baseUrl.url?.absoluteString
     }
 
-    func apply(tp: String?, attr: [String: JSONValue]?, content: [DraftySpan]) -> DraftySpan {
-        return self.makeTree(tp: tp, attr: attr, children: content, content: nil)
+    func apply(tp: String?, key: Int?, attr: [String: JSONValue]?, content: [DraftySpan]) -> DraftySpan {
+        return self.makeTree(tp: tp, key: key, attr: attr, children: content, content: nil)
     }
 
-    func apply(tp: String?, attr: [String: JSONValue]?, content: String?) -> DraftySpan {
-        return self.makeTree(tp: tp, attr: attr, children: nil, content: content)
+    func apply(tp: String?, key: Int?, attr: [String: JSONValue]?, content: String?) -> DraftySpan {
+        return self.makeTree(tp: tp, key: key, attr: attr, children: nil, content: content)
     }
 
     /// Convert drafty object into NSAttributedString
@@ -288,6 +289,8 @@ class AttributedStringFormatter: FormatterImpl {
         var size: Int?
         var width: Int?
         var height: Int?
+        // Index of the entity in the original Drafty object.
+        var draftyEntityKey: Int?
     }
 
     // Thrown by the formatting function when the length budget gets exceeded.
@@ -521,7 +524,8 @@ class AttributedStringFormatter: FormatterImpl {
                     url = nil
                 }
                 // tinode:// and mid: schemes are not real external URLs.
-                let wrapper = url == nil || url?.scheme == "mid" || url?.scheme == "tinode" ? NSTextAttachment() : AsyncTextAttachment(url: url!, afterDownloaded: attachment.afterRefDownloaded)
+                let wrapper = url == nil || url?.scheme == "mid" || url?.scheme == "tinode" ? ImageTextAttachment() : AsyncTextAttachment(url: url!, afterDownloaded: attachment.afterRefDownloaded)
+                wrapper.draftyEntityKey = attachment.draftyEntityKey
 
                 var image: UIImage?
                 if let bits = attachment.bits, let preview = UIImage(data: bits) {
@@ -545,7 +549,6 @@ class AttributedStringFormatter: FormatterImpl {
                     let iconName = attachment.ref != nil ? "image-wait" : "broken-image"
                     // No need to scale the stock image.
                     wrapper.image = UiUtils.placeholderImage(named: iconName, withBackground: nil, width: scaledSize.width, height: scaledSize.height)
-                    //scaledSize = size
                 } else {
                     wrapper.image = image
                 }
@@ -763,7 +766,7 @@ class PreviewFormatter: AttributedStringFormatter {
         return iconNode
     }
 
-    override func handleImage(withText content: String?, withChildren nodes: [DraftySpan]?, using attr: [String: JSONValue]?) -> DraftySpan {
+    override func handleImage(withText content: String?, withChildren nodes: [DraftySpan]?, using attr: [String: JSONValue]?, fromDraftyEntity key: Int?) -> DraftySpan {
         if nodes != nil {
             Cache.log.error("PreviewFormatter - image nodes must be terminal.")
         }
@@ -833,7 +836,7 @@ class QuoteFormatter: PreviewFormatter {
         return TreeNode(content: "\n")
     }
 
-    override func handleImage(withText content: String?, withChildren nodes: [DraftySpan]?, using attr: [String : JSONValue]?) -> DraftySpan {
+    override func handleImage(withText content: String?, withChildren nodes: [DraftySpan]?, using attr: [String : JSONValue]?, fromDraftyEntity key: Int?) -> DraftySpan {
         let img = TreeNode(text: content, nodes: nodes as? [TreeNode])
         var attachment = Attachment(content: .image)
         var filename = ""

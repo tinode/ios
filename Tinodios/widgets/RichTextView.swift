@@ -75,8 +75,13 @@ class RichTextView: UITextView {
             return URL(string: "tinode:///quote")
         }
 
-        if attachment.image != nil {
-            return URL(string: "tinode:///preview-image")
+        if let att = attachment as? ImageTextAttachment {
+            var urlComps = URLComponents(string: "tinode:///preview-image")
+            if let key = att.draftyEntityKey {
+                let queryItems = [URLQueryItem(name: "key", value: String(key))]
+                urlComps?.queryItems = queryItems
+            }
+            return urlComps?.url
         }
 
         return URL(string: "tinode:///generic-attachment")
