@@ -19,6 +19,14 @@
             <rect key="frame" x="0.0" y="0.0" width="414" height="116"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
+                <visualEffectView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="tAT-EI-20d">
+                    <rect key="frame" x="0.0" y="0.0" width="414" height="116"/>
+                    <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="OOY-2U-nG4">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="116"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                    </view>
+                    <blurEffect style="light"/>
+                </visualEffectView>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="TGw-6X-4Ag" userLabel="sendButton">
                     <rect key="frame" x="372" y="64" width="32" height="32"/>
                     <color key="backgroundColor" red="0.25098039220000001" green="0.75294117650000003" blue="0.25098039220000001" alpha="1" colorSpace="calibratedRGB"/>
@@ -60,6 +68,8 @@
             </subviews>
             <viewLayoutGuide key="safeArea" id="NHg-S4-bIP"/>
             <constraints>
+                <constraint firstItem="tAT-EI-20d" firstAttribute="leading" secondItem="NHg-S4-bIP" secondAttribute="leading" id="1vD-mH-hpJ"/>
+                <constraint firstItem="tAT-EI-20d" firstAttribute="top" secondItem="vsm-5d-Xa0" secondAttribute="top" id="2WE-Hp-p0w"/>
                 <constraint firstItem="N38-2J-nw1" firstAttribute="centerY" secondItem="ql0-Xs-Vfe" secondAttribute="centerY" id="JoS-pj-rCx"/>
                 <constraint firstItem="N38-2J-nw1" firstAttribute="leading" secondItem="ql0-Xs-Vfe" secondAttribute="trailing" constant="4" id="KbU-az-zwW"/>
                 <constraint firstItem="NHg-S4-bIP" firstAttribute="bottom" secondItem="N38-2J-nw1" secondAttribute="bottom" constant="4" id="L0C-HM-RwP"/>
@@ -67,9 +77,11 @@
                 <constraint firstItem="ql0-Xs-Vfe" firstAttribute="leading" secondItem="NHg-S4-bIP" secondAttribute="leading" constant="10" id="Pdj-CD-Wqh"/>
                 <constraint firstItem="N38-2J-nw1" firstAttribute="trailing" secondItem="TGw-6X-4Ag" secondAttribute="leading" constant="-4" id="R7Y-po-WgB"/>
                 <constraint firstItem="NHg-S4-bIP" firstAttribute="trailing" secondItem="TGw-6X-4Ag" secondAttribute="trailing" constant="10" id="XgX-aV-Xtg"/>
+                <constraint firstItem="tAT-EI-20d" firstAttribute="bottom" secondItem="vsm-5d-Xa0" secondAttribute="bottom" id="eAj-jo-XeG"/>
                 <constraint firstItem="ql0-Xs-Vfe" firstAttribute="width" secondItem="ql0-Xs-Vfe" secondAttribute="height" multiplier="1:1" id="hKi-k3-aBh"/>
                 <constraint firstItem="TGw-6X-4Ag" firstAttribute="centerY" secondItem="ql0-Xs-Vfe" secondAttribute="centerY" id="op5-oh-2iy"/>
                 <constraint firstItem="N38-2J-nw1" firstAttribute="top" secondItem="NHg-S4-bIP" secondAttribute="top" constant="4" id="qP3-iR-1dX"/>
+                <constraint firstItem="tAT-EI-20d" firstAttribute="trailing" secondItem="NHg-S4-bIP" secondAttribute="trailing" id="qYZ-xo-V4k"/>
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <point key="canvasLocation" x="-1407.2463768115942" y="186.16071428571428"/>
