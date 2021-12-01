@@ -15,7 +15,7 @@ protocol MessagePresentationLogic {
     func updateTitleBar(icon: UIImage?, title: String?, online: Bool?)
     func setOnline(online: Bool?)
     func runTypingAnimation()
-    func presentMessages(messages: [StoredMessage])
+    func presentMessages(messages: [StoredMessage], _ scrollToMostRecentMessage: Bool)
     func reloadMessages(fromSeqId loId: Int, toSeqId hiId: Int)
     func reloadAllMessages()
     func updateProgress(forMsgId msgId: Int64, progress: Float)
@@ -44,9 +44,9 @@ class MessagePresenter: MessagePresentationLogic {
             self.viewController?.setOnline(online: online)
         }
     }
-    func presentMessages(messages: [StoredMessage]) {
+    func presentMessages(messages: [StoredMessage], _ scrollToMostRecentMessage: Bool) {
         DispatchQueue.main.async {
-            self.viewController?.displayChatMessages(messages: messages)
+            self.viewController?.displayChatMessages(messages: messages, scrollToMostRecentMessage)
         }
     }
     func reloadMessages(fromSeqId loId: Int, toSeqId hiId: Int) {

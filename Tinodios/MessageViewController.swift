@@ -14,7 +14,7 @@ protocol MessageDisplayLogic: AnyObject {
     func updateTitleBar(icon: UIImage?, title: String?, online: Bool?)
     func setOnline(online: Bool?)
     func runTypingAnimation()
-    func displayChatMessages(messages: [StoredMessage])
+    func displayChatMessages(messages: [StoredMessage], _ scrollToMostRecentMessage: Bool)
     func reloadAllMessages()
     func reloadMessages(fromSeqId loId: Int, toSeqId hiId: Int)
     func updateProgress(forMsgId msgId: Int64, progress: Float)
@@ -333,7 +333,7 @@ class MessageViewController: UIViewController {
 
         if self.interactor?.setup(topicName: self.topicName, sendReadReceipts: self.sendReadReceipts) ?? false {
             self.interactor?.deleteFailedMessages()
-            self.interactor?.loadMessages()
+            self.interactor?.loadMessages(scrollToMostRecentMessage: true)
         }
     }
 
@@ -364,7 +364,7 @@ class MessageViewController: UIViewController {
             self.showInPreviewBar(content: fwdPreview)
         }
         self.interactor?.attachToTopic(interactively: true)
-        self.interactor?.loadMessages()
+        self.interactor?.loadMessages(scrollToMostRecentMessage: false)
         self.interactor?.sendReadNotification(explicitSeq: nil, when: .now() + .seconds(1))
         self.applyTopicPermissions()
     }
@@ -506,7 +506,7 @@ extension MessageViewController: MessageDisplayLogic {
         collectionView.reloadSections(IndexSet(integer: 0))
     }
 
-    func displayChatMessages(messages: [StoredMessage]) {
+    func displayChatMessages(messages: [StoredMessage], _ scrollToMostRecentMessage: Bool) {
         assert(Thread.isMainThread)
 
         let oldData = self.messages
@@ -540,7 +540,9 @@ extension MessageViewController: MessageDisplayLogic {
             self.messages = newData
             collectionView.reloadSections(IndexSet(integer: 0))
             collectionView.layoutIfNeeded()
-            collectionView.scrollToBottom()
+            if scrollToMostRecentMessage {
+                collectionView.scrollToBottom()
+            }
         } else {
             // Get indexes of inserted and deleted items.
             let diff = Utils.diffMessageArray(sortedOld: oldData, sortedNew: newData)
@@ -581,7 +583,9 @@ extension MessageViewController: MessageDisplayLogic {
                 collectionView.performBatchUpdates({ () -> Void in
                     self.collectionView.reloadItems(at: refresh.map { IndexPath(item: $0, section: 0) })
                     self.collectionView.layoutIfNeeded()
-                    self.collectionView.scrollToBottom()
+                    if scrollToMostRecentMessage {
+                        self.collectionView.scrollToBottom()
+                    }
                 }, completion: nil)
             }
         }

@@ -45,7 +45,7 @@ protocol MessageBusinessLogic: AnyObject {
 protocol MessageDataStore {
     var topicName: String? { get set }
     var topic: DefaultComTopic? { get set }
-    func loadMessages()
+    func loadMessages(scrollToMostRecentMessage: Bool)
     func loadNextPage()
     func deleteMessage(seqId: Int)
     func deleteFailedMessages()
@@ -456,7 +456,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         topic?.noteKeyPress()
     }
 
-    func loadMessages() {
+    func loadMessages(scrollToMostRecentMessage: Bool = true) {
         self.messageInteractorQueue.async {
             if let messages = BaseDb.sharedInstance.messageDb?.query(
                     topicId: self.topicId,
@@ -464,7 +464,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                     pageSize: MessageInteractor.kMessagesPerPage,
                     descending: true) {
                 self.messages = messages.reversed()
-                self.presenter?.presentMessages(messages: self.messages)
+                self.presenter?.presentMessages(messages: self.messages, scrollToMostRecentMessage)
             }
         }
     }
@@ -472,7 +472,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
     private func loadNextPageInternal() -> Bool {
         if self.pagesToLoad * MessageInteractor.kMessagesPerPage == self.messages.count {
             self.pagesToLoad += 1
-            self.loadMessages()
+            self.loadMessages(scrollToMostRecentMessage: false)
             return true
         }
         return false
@@ -725,8 +725,10 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
     }
 
     override func onData(data: MsgServerData?) {
-        self.loadMessages()
-        if let from = data?.from, let seq = data?.seq, !Cache.tinode.isMe(uid: from) {
+        guard let data = data, let topic = topic else { return }
+        let newData = data.getSeq >= (topic.seq ?? 0)
+        self.loadMessages(scrollToMostRecentMessage: newData)
+        if let from = data.from, let seq = data.seq, !Cache.tinode.isMe(uid: from) {
             sendReadNotification(explicitSeq: seq, when: .now() + .seconds(1))
         }
     }
