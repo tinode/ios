@@ -92,6 +92,8 @@ class UiUtils {
     static let kQuotedReplyLength = 30
     // Size of image thumbnails in the quoted part in a reply.
     static let kReplyThumbnailSize = 36
+    // Max file name (e.g. image file names) length to display in previews and quotes.
+    static let kPreviewMaxFileNameLength = 16
 
     // Letter tile image colors (light).
     private static let kLetterTileLightColors: [UIColor] = [
@@ -667,6 +669,13 @@ class UiUtils {
         }
 
         return (UIImage(named: iconName)!, tint)
+    }
+
+    // Returns a shortened version of the file name.
+    public static func previewFileName(from original: String) -> String {
+        guard original.count > UiUtils.kPreviewMaxFileNameLength else { return original }
+        let len = UiUtils.kPreviewMaxFileNameLength / 2
+        return original.prefix(len) + "…" + original.suffix(len)
     }
 }
 

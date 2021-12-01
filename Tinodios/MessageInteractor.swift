@@ -605,7 +605,13 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         }
 
         // Giving fake URL to Drafty instead of Data which is not needed in DB anyway.
-        let ref = URL(string: "mid:uploading/\(filename)")!
+        guard let urlStr = "mid:uploading/\(filename)".addingPercentEncoding(withAllowedCharacters: .urlHostAllowed) else {
+            DispatchQueue.main.async {
+                UiUtils.showToast(message: NSLocalizedString("Failed to create URL string for file: \(filename)", comment: "Error message: malformed URL string"))
+            }
+            return
+        }
+        let ref = URL(string: urlStr)!
         var draft: Drafty?
         let previewData: Data?
         var head: [String: JSONValue]?

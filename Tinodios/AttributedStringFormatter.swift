@@ -852,7 +852,7 @@ class QuoteFormatter: PreviewFormatter {
             }
             attachment.mime = attr["mime"]?.asString()
             if let name = attr["name"]?.asString() {
-                filename = name
+                filename = UiUtils.previewFileName(from: name)
             } else {
                 filename = "Picture"
             }
@@ -864,7 +864,9 @@ class QuoteFormatter: PreviewFormatter {
         var children = [TreeNode]()
         children.append(img)
         if !filename.isEmpty {
-            children.append(TreeNode(content: filename))
+            let node = TreeNode(content: filename)
+            node.style(cstyle: [.font: Constants.kDefaultFont.withTraits(traits: .traitItalic)])
+            children.append(node)
         }
         return TreeNode(content: children)
     }

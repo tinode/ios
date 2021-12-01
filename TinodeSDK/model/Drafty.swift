@@ -1076,7 +1076,7 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
     public func preview<T: SpanTreeTransformer>(ofMaxLength length: Int, using tranformer: T) -> Drafty? {
         let proc = PreviewProcessor<T>()
         let tree = proc.process(contentOf: self, using: tranformer) as! Span
-        tree.clip(upToMax: length)
+        let shortened = tree.clip(upToMax: length) < 0
         // Remove leading whitespaces.
         tree.lTrim()
         var result = Drafty()
@@ -1089,6 +1089,10 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
                 $0.len = 1
                 result.txt.append(" ")
             }
+        }
+        if shortened {
+            // If we've shortened the text, append ellipses.
+            result.txt.append("…")
         }
         return result
     }
