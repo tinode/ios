@@ -285,9 +285,20 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
     // Strips the first mention (i.e. forwarded from mention) from the document.
     private class ForwardingTransformer: SpanTreeTransformer {
         private var mentionStripped = false
+        // If true, will substitute the message origin (➦ User Name) for a "➦ ".
+        // Otherwise, will strip the origin string altogether.
+        private var keepForwardedSign: Bool
+        public init(shouldKeepForwardedSign: Bool) {
+            self.keepForwardedSign = shouldKeepForwardedSign
+        }
         func transform(node: Drafty.Span) -> Drafty.Span? {
             guard node.type == "MN" && !mentionStripped else { return node }
             mentionStripped = true
+            if self.keepForwardedSign {
+                let span = Drafty.Span()
+                span.text = "➦ "
+                return span
+            }
             return nil
         }
     }
@@ -310,7 +321,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         let sender = senderName(for: msg)
         // Trim any mentions (starting with a ➦).
         let content =
-            msg.isForwarded ? replyTo.preview(ofMaxLength: Int.max, using: ForwardingTransformer()) : replyTo
+            msg.isForwarded ? replyTo.preview(ofMaxLength: Int.max, using: ForwardingTransformer(shouldKeepForwardedSign: true)) : replyTo
 
         let transformer = ReplyTransformer()
         let p = content!.preview(ofMaxLength: UiUtils.kQuotedReplyLength, using: ReplyTransformer())
@@ -350,7 +361,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         }
         var transformed: Drafty!
         if original.isForwarded {
-            guard let p = content.preview(ofMaxLength: Int.max, using: ForwardingTransformer()) else {
+            guard let p = content.preview(ofMaxLength: Int.max, using: ForwardingTransformer(shouldKeepForwardedSign: false)) else {
                 Cache.log.error("prepareForwardedMessage error: could not transform the original message for forwarding - %@", content.string)
                 return nil
             }

@@ -751,7 +751,7 @@ class PreviewFormatter: AttributedStringFormatter {
         return super.handleMention(withText: content, withChildren: nodes, using: attr)
     }
 
-    private func annotatedIcon(iconName: String, annotation: String? = nil, comment: String? = nil) -> TreeNode {
+    func annotatedIcon(iconName: String, annotation: String? = nil, comment: String? = nil) -> TreeNode {
         let icon = NSTextAttachment()
         icon.image = UIImage(named: iconName)?.withRenderingMode(.alwaysTemplate)
         let baseFont = PreviewFormatter.kDefaultFont
@@ -869,6 +869,16 @@ class QuoteFormatter: PreviewFormatter {
             children.append(node)
         }
         return TreeNode(content: children)
+    }
+
+    override func handleAttachment(withText content: String?, withChildren nodes: [DraftySpan]?, using attr: [String: JSONValue]?) -> DraftySpan {
+        var annotation: String
+        if let filename = attr?["name"]?.asString() {
+            annotation = UiUtils.previewFileName(from: filename)
+        } else {
+            annotation = "Attachment"
+        }
+        return annotatedIcon(iconName: "attach-50", annotation: annotation, comment: "Attachment preview icon.")
     }
 }
 
