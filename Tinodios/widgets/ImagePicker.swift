@@ -89,6 +89,10 @@ extension ImagePicker: UIImagePickerControllerDelegate, UINavigationControllerDe
 
     public func imagePickerController(_ picker: UIImagePickerController,
                                       didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
+        guard !picker.isBeingDismissed else {
+            // Prevent ImagePicker from showing the image multiple times.
+            return
+        }
         guard let image = (info[self.pickerController.allowsEditing ? .editedImage : .originalImage] as? UIImage)?.fixedOrientation() else {
             return self.pickerController(picker, didSelect: nil, mimeType: nil, fileName: nil)
         }

@@ -1366,6 +1366,9 @@ extension MessageViewController: PendingMessagePreviewDelegate {
         return self.textSizeHelper.computeSize(for: msg, within: CGFloat.infinity)
     }
     func dismissPendingMessagePreview() {
+        // Make sure MessageVC is the first responder so we can successfully reload
+        // the input accessory view.
+        self.becomeFirstResponder()
         self.togglePreviewBar(with: nil)
         self.interactor?.dismissPendingMessage()
     }
