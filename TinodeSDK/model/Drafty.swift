@@ -141,6 +141,11 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
         case ent = "ent"
     }
 
+    // Formatting weights. Used to break ties between formatting spans
+    // covering the same text range.
+    private static let kFmtWeights = ["QQ": 1000]
+    private static let kFmtDefaultWeight = 0
+
     public var txt: String
     public var fmt: [Style]?
     public var ent: [Entity]?
@@ -918,12 +923,42 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
                 }
             }
 
-            // Sort spans first by start index (asc) then by length (desc).
+            // Get span's actual type and attached data.
+            typealias TypeDataPair = (tp: String, data: [String : JSONValue]?)
+            let getTypeAndData = { (span: Drafty.Span) -> TypeDataPair in
+                var tp: String?
+                var data: [String : JSONValue]?
+                if span.type != nil && !span.type!.isEmpty {
+                    tp = span.type
+                } else if span.key >= 0 && span.key < ent!.count {
+                    let e = ent![span.key]
+                    tp = e.tp
+                    data = e.data
+                }
+
+                // Is type still undefined? Hide the invalid element!
+                if tp == nil || tp!.isEmpty {
+                    tp = "HD"
+                }
+
+                return (tp: tp!, data: data)
+            }
+
+            // Sort spans first by start index (asc), then by length (desc),
+            // then by formatting type weight (desc).
             spans.sort { lhs, rhs in
-                if lhs.start == rhs.start {
+                // Try start.
+                if lhs.start != rhs.start {
+                    return lhs.start < rhs.start
+                }
+                // Try length (end).
+                if lhs.end != rhs.end {
                     return rhs.end < lhs.end // longer one comes first (<0)
                 }
-                return lhs.start < rhs.start
+                let ltp = getTypeAndData(lhs).tp
+                let rtp = getTypeAndData(rhs).tp
+                return Drafty.kFmtWeights[ltp] ?? Drafty.kFmtDefaultWeight >
+                    Drafty.kFmtWeights[rtp] ?? Drafty.kFmtDefaultWeight
             }
 
             if !attachments.isEmpty {
@@ -931,17 +966,9 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
             }
 
             for span in spans {
-                if ent != nil && (span.type == nil || span.type!.isEmpty) {
-                    if span.key >= 0 && span.key < ent!.count {
-                        span.type = ent![span.key].tp
-                        span.data = ent![span.key].data
-                    }
-                }
-
-                // Is type still undefined? Hide the invalid element!
-                if span.type == nil || span.type!.isEmpty {
-                    span.type = "HD"
-                }
+                let p = getTypeAndData(span)
+                span.type = p.tp
+                span.data = p.data
             }
             let tree = self.forEach(line: txt, start: 0, end: txt.count, spans: spans, using: context)
             return self.finalize(tree: tree, using: context)
@@ -1279,7 +1306,7 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
                     }
                     var at = -1
                     var len = 0
-                    if tp != "EX" {
+                    if tp != "EX" || start > 0 {
                         at = start
                         len = addedLen
                     }
