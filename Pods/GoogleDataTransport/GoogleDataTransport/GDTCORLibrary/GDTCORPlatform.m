@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-#import "GoogleDataTransport/GDTCORLibrary/Public/GoogleDataTransport/GDTCORPlatform.h"
+#import "GoogleDataTransport/GDTCORLibrary/Internal/GDTCORPlatform.h"
 
 #import <sys/sysctl.h>
 
-#import "GoogleDataTransport/GDTCORLibrary/Public/GoogleDataTransport/GDTCORAssert.h"
+#import "GoogleDataTransport/GDTCORLibrary/Internal/GDTCORAssert.h"
+#import "GoogleDataTransport/GDTCORLibrary/Internal/GDTCORReachability.h"
 #import "GoogleDataTransport/GDTCORLibrary/Public/GoogleDataTransport/GDTCORConsoleLogger.h"
-#import "GoogleDataTransport/GDTCORLibrary/Public/GoogleDataTransport/GDTCORReachability.h"
 
 #import "GoogleDataTransport/GDTCORLibrary/Private/GDTCORRegistrar_Private.h"
 
@@ -230,8 +230,10 @@ NSData *_Nullable GDTCOREncodeArchive(id<NSSecureCoding> obj,
                                    code:-1
                                userInfo:@{NSLocalizedFailureReasonErrorKey : errorString}];
     }
-    GDTCORLogDebug(@"Attempt to write archive. successful:%@ URL:%@ error:%@",
-                   result ? @"YES" : @"NO", filePath, *error);
+    if (filePath.length > 0) {
+      GDTCORLogDebug(@"Attempt to write archive. successful:%@ URL:%@ error:%@",
+                     result ? @"YES" : @"NO", filePath, *error);
+    }
   }
   return resultData;
 }

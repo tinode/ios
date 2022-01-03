@@ -1,4 +1,4 @@
-framework module Pods_TinodeSDK {
+module Pods_TinodeSDK {
   umbrella header "Pods-TinodeSDK-umbrella.h"
 
   export *

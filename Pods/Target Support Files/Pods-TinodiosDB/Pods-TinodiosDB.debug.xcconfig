@@ -1,12 +1,14 @@
-FRAMEWORK_SEARCH_PATHS = $(inherited) "${PODS_CONFIGURATION_BUILD_DIR}/SQLite.swift" "${PODS_CONFIGURATION_BUILD_DIR}/SwiftKeychainWrapper"
+CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = NO
 GCC_PREPROCESSOR_DEFINITIONS = $(inherited) COCOAPODS=1
-HEADER_SEARCH_PATHS = $(inherited) "${PODS_CONFIGURATION_BUILD_DIR}/SQLite.swift/SQLite.framework/Headers" "${PODS_CONFIGURATION_BUILD_DIR}/SwiftKeychainWrapper/SwiftKeychainWrapper.framework/Headers"
-LD_RUNPATH_SEARCH_PATHS = $(inherited) '@executable_path/Frameworks' '@loader_path/Frameworks' '@executable_path/../../Frameworks'
-OTHER_CFLAGS = $(inherited) -isystem "${PODS_CONFIGURATION_BUILD_DIR}/SQLite.swift/SQLite.framework/Headers" -isystem "${PODS_CONFIGURATION_BUILD_DIR}/SwiftKeychainWrapper/SwiftKeychainWrapper.framework/Headers" -iframework "${PODS_CONFIGURATION_BUILD_DIR}/SQLite.swift" -iframework "${PODS_CONFIGURATION_BUILD_DIR}/SwiftKeychainWrapper"
-OTHER_LDFLAGS = $(inherited) -l"sqlite3" -framework "SQLite" -framework "SwiftKeychainWrapper"
-OTHER_SWIFT_FLAGS = $(inherited) -D COCOAPODS
+HEADER_SEARCH_PATHS = $(inherited) "${PODS_ROOT}/Headers/Public" "${PODS_ROOT}/Headers/Public/Firebase" "${PODS_ROOT}/Headers/Public/FirebaseCore" "${PODS_ROOT}/Headers/Public/FirebaseCoreDiagnostics" "${PODS_ROOT}/Headers/Public/FirebaseCrashlytics" "${PODS_ROOT}/Headers/Public/FirebaseInstallations" "${PODS_ROOT}/Headers/Public/FirebaseMessaging" "${PODS_ROOT}/Headers/Public/GoogleDataTransport" "${PODS_ROOT}/Headers/Public/GoogleUtilities" "${PODS_ROOT}/Headers/Public/Kingfisher" "${PODS_ROOT}/Headers/Public/PromisesObjC" "${PODS_ROOT}/Headers/Public/SQLite.swift" "${PODS_ROOT}/Headers/Public/SwiftKeychainWrapper" "${PODS_ROOT}/Headers/Public/nanopb"
+LIBRARY_SEARCH_PATHS = $(inherited) "${DT_TOOLCHAIN_DIR}/usr/lib/swift/${PLATFORM_NAME}" "${PODS_CONFIGURATION_BUILD_DIR}/SQLite.swift" "${PODS_CONFIGURATION_BUILD_DIR}/SwiftKeychainWrapper" /usr/lib/swift
+OTHER_CFLAGS = $(inherited) -fmodule-map-file="${PODS_CONFIGURATION_BUILD_DIR}/SQLite.swift/SQLite.modulemap" -fmodule-map-file="${PODS_CONFIGURATION_BUILD_DIR}/SwiftKeychainWrapper/SwiftKeychainWrapper.modulemap" -isystem "${PODS_ROOT}/Headers/Public"
+OTHER_LDFLAGS = $(inherited) -ObjC -l"SQLite.swift" -l"SwiftKeychainWrapper" -l"sqlite3"
+OTHER_SWIFT_FLAGS = $(inherited) -D COCOAPODS -Xcc -fmodule-map-file="${PODS_CONFIGURATION_BUILD_DIR}/SQLite.swift/SQLite.modulemap" -Xcc -fmodule-map-file="${PODS_CONFIGURATION_BUILD_DIR}/SwiftKeychainWrapper/SwiftKeychainWrapper.modulemap"
 PODS_BUILD_DIR = ${BUILD_DIR}
 PODS_CONFIGURATION_BUILD_DIR = ${PODS_BUILD_DIR}/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)
 PODS_PODFILE_DIR_PATH = ${SRCROOT}/.
 PODS_ROOT = ${SRCROOT}/Pods
+PODS_XCFRAMEWORKS_BUILD_DIR = $(PODS_CONFIGURATION_BUILD_DIR)/XCFrameworkIntermediates
+SWIFT_INCLUDE_PATHS = $(inherited) "${PODS_CONFIGURATION_BUILD_DIR}/SQLite.swift" "${PODS_CONFIGURATION_BUILD_DIR}/SwiftKeychainWrapper"
 USE_RECURSIVE_SCRIPT_INPUTS_IN_SCRIPT_PHASES = YES

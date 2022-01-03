@@ -17,12 +17,12 @@
 #import "GoogleDataTransport/GDTCORLibrary/Private/GDTCORTransformer.h"
 #import "GoogleDataTransport/GDTCORLibrary/Private/GDTCORTransformer_Private.h"
 
-#import "GoogleDataTransport/GDTCORLibrary/Public/GoogleDataTransport/GDTCORAssert.h"
+#import "GoogleDataTransport/GDTCORLibrary/Internal/GDTCORAssert.h"
+#import "GoogleDataTransport/GDTCORLibrary/Internal/GDTCORLifecycle.h"
+#import "GoogleDataTransport/GDTCORLibrary/Internal/GDTCORStorageProtocol.h"
 #import "GoogleDataTransport/GDTCORLibrary/Public/GoogleDataTransport/GDTCORConsoleLogger.h"
 #import "GoogleDataTransport/GDTCORLibrary/Public/GoogleDataTransport/GDTCOREvent.h"
 #import "GoogleDataTransport/GDTCORLibrary/Public/GoogleDataTransport/GDTCOREventTransformer.h"
-#import "GoogleDataTransport/GDTCORLibrary/Public/GoogleDataTransport/GDTCORLifecycle.h"
-#import "GoogleDataTransport/GDTCORLibrary/Public/GoogleDataTransport/GDTCORStorageProtocol.h"
 
 #import "GoogleDataTransport/GDTCORLibrary/Private/GDTCOREvent_Private.h"
 #import "GoogleDataTransport/GDTCORLibrary/Private/GDTCORRegistrar_Private.h"
@@ -78,16 +78,16 @@
   dispatch_async(_eventWritingQueue, ^{
     GDTCOREvent *transformedEvent = event;
     for (id<GDTCOREventTransformer> transformer in transformers) {
-      if ([transformer respondsToSelector:@selector(transform:)]) {
+      if ([transformer respondsToSelector:@selector(transformGDTEvent:)]) {
         GDTCORLogDebug(@"Applying a transformer to event %@", event);
-        transformedEvent = [transformer transform:transformedEvent];
+        transformedEvent = [transformer transformGDTEvent:event];
         if (!transformedEvent) {
           completionWrapper(NO, nil);
           return;
         }
       } else {
         GDTCORLogError(GDTCORMCETransformerDoesntImplementTransform,
-                       @"Transformer doesn't implement transform: %@", transformer);
+                       @"Transformer doesn't implement transformGDTEvent: %@", transformer);
         completionWrapper(NO, nil);
         return;
       }
