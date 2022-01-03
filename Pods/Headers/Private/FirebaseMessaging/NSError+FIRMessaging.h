@@ -1,0 +1,1 @@
+../../../FirebaseMessaging/FirebaseMessaging/Sources/NSError+FIRMessaging.h

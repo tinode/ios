@@ -1,0 +1,1 @@
+../../../FirebaseMessaging/FirebaseMessaging/Sources/Interop/FIRMessagingInterop.h
