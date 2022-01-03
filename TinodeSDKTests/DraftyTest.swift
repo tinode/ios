@@ -107,18 +107,18 @@ class DraftyTest: XCTestCase {
 
     func testPreview() {
         // Basic cases
-        var d1 = Drafty(content: "abc").preview(previewLen: 2)
-        var d2 = Drafty(text: "ab", fmt: nil, ent: nil)
-        XCTAssertEqual(d1, d2, "Basic: 'abc' -> 'ab'")
+        var d1 = Drafty(content: "abcd").preview(previewLen: 3)
+        var d2 = Drafty(text: "ab…", fmt: nil, ent: nil)
+        XCTAssertEqual(d1, d2, "Basic: 'abcd' -> 'ab…'")
 
-        d1 = Drafty(content: "a😀c").preview(previewLen: 2)
-        d2 = Drafty(text: "a😀", fmt: nil, ent: nil)
-        XCTAssertEqual(d1, d2, "UTF32 emoji: 'a😀c' -> 'a😀'")
+        d1 = Drafty(content: "a😀cd").preview(previewLen: 3)
+        d2 = Drafty(text: "a😀…", fmt: nil, ent: nil)
+        XCTAssertEqual(d1, d2, "UTF32 emoji: 'a😀cd' -> 'a😀…'")
 
         d1 = Drafty(content: "_😀 *b1👩🏽‍✈️b2* smile_").preview(previewLen: 6)
-        d2 = Drafty(text: "😀 b1👩🏽‍✈️b",
+        d2 = Drafty(text: "😀 b1👩🏽‍✈️…",
                     fmt: [Style(tp:"ST", at:2, len:5), Style(tp:"EM", at:0, len:13)], ent: nil)
-        XCTAssertEqual(d1, d2, "UTF32 emoji with styles: '😀 b1👩🏽‍✈️b'")
+        XCTAssertEqual(d1, d2, "UTF32 emoji with styles: '😀 b1👩🏽‍✈️…'")
 
         d1 = Drafty(text: " abcdef my image",
                     fmt: [Style(at: 0, len: 1, key: 0), Style(tp: "BR", at: 1, len: 1)],
@@ -158,7 +158,7 @@ class DraftyTest: XCTestCase {
                     fmt: [Style(at: 0, len: 22, key: 0)],
                     ent: [Entity(tp: "LN", data: ["url": .string("https://www.youtube.com/watch?v=dQw4w9WgXcQ")])])
             .preview(previewLen: 15)
-        d2 = Drafty(text: "https://api.tin",
+        d2 = Drafty(text: "https://api.ti…",
                     fmt: [Style(at: 0, len: 15, key: 0)],
                     ent: [Entity(tp: "LN", data: ["url": .string("https://www.youtube.com/watch?v=dQw4w9WgXcQ")])])
         XCTAssertEqual(d1, d2, "Preview 3 failed")
@@ -228,7 +228,7 @@ class DraftyTest: XCTestCase {
                           Style(tp: "DL", at: 27, len: 11)],
                     ent: nil)
             .preview(previewLen: 15)
-        d2 = Drafty(text: "This text is fo",
+        d2 = Drafty(text: "This text is f…",
                     fmt: [Style(tp: "ST", at: 5, len: 4),
                           Style(tp: "EM", at: 13, len: 2)],
                     ent: nil)
@@ -238,7 +238,7 @@ class DraftyTest: XCTestCase {
         d1 = Drafty(text: "мультибайтовый юникод",
                     fmt: [Style(tp: "ST", at: 0, len: 14), Style(tp: "EM", at: 15, len: 6)], ent: nil)
             .preview(previewLen: 15)
-        d2 = Drafty(text: "мультибайтовый ",
+        d2 = Drafty(text: "мультибайтовый…",
                     fmt: [Style(tp: "ST", at: 0, len: 14)], ent: nil)
         XCTAssertEqual(d1, d2, "Preview 9 failed")
 
@@ -265,7 +265,7 @@ class DraftyTest: XCTestCase {
     func testPerformanceParse() {
         self.measure {
             for i in 0..<10000 {
-                Drafty(content: "*abcd _\(i)_*\nsecond line https://www.example.com/ @mention")
+                _ = Drafty(content: "*abcd _\(i)_*\nsecond line https://www.example.com/ @mention")
             }
         }
     }
