@@ -2,7 +2,6 @@
 //  WebSocket.swift
 //  TinodeSDK
 //
-//  Created by Gene Sokolov on 03.01.2022.
 //  Copyright © 2022 Tinode LLC. All rights reserved.
 //
 
@@ -17,10 +16,32 @@ protocol WebSocketConnectionDelegate {
 }
 
 class WebSocket: NSObject, URLSessionWebSocketDelegate, URLSessionDelegate {
+    enum State: CustomDebugStringConvertible {
+        case unopened
+        case connecting
+        case open
+        case closing
+        case closed
+
+        var debugDescription: String {
+            switch self {
+            case .unopened: return "unopened"
+            case .connecting: return "connecting"
+            case .open: return "open"
+            case .closing: return "closing"
+            case .closed: return "closed"
+            }
+        }
+    }
+
     private var delegate: WebSocketConnectionDelegate?
     private var socket: URLSessionWebSocketTask!
-    private var urlSession: URLSession!
-    private let webSocketQueue: DispatchQueue = DispatchQueue(label: "WebSocket.webSocketQueue")
+    private var session: URLSession!
+    private let webSocketQueue: DispatchQueue = DispatchQueue(
+        label: "co.tinode.tinodios.websocket",
+        qos: .default,
+        autoreleaseFrequency: .workItem
+    )
     private lazy var delegateQueue: OperationQueue = {
         let queue = OperationQueue()
         queue.name = "WebSocket.delegateQueue"
@@ -29,23 +50,21 @@ class WebSocket: NSObject, URLSessionWebSocketDelegate, URLSessionDelegate {
         return queue
     }()
     private var timeout: TimeInterval!
-    private(set) var isConnected: Bool = false
-    private(set) var isConnecting: Bool = false
+    private(set) var state: State = .unopened
 
-    init(timeout: TimeInterval) {
+    init(timeout: TimeInterval, delegate: WebSocketConnectionDelegate?) {
         super.init()
         self.timeout = timeout
+        self.delegate = delegate
     }
 
     func urlSession(_ session: URLSession, webSocketTask: URLSessionWebSocketTask, didOpenWithProtocol protocol: String?) {
-        isConnected = true
-        isConnecting = false
+        self.state = .open
         self.delegate?.onConnected(connection: self)
     }
 
     func urlSession(_ session: URLSession, webSocketTask: URLSessionWebSocketTask, didCloseWith closeCode: URLSessionWebSocketTask.CloseCode, reason: Data?) {
-        isConnected = false
-        isConnecting = false
+        self.state = .closed
         self.delegate?.onDisconnected(connection: self, isServerOriginated: true, closeCode: closeCode, reason: String(decoding: reason ?? Data(), as: UTF8.self))
     }
 
@@ -55,50 +74,38 @@ class WebSocket: NSObject, URLSessionWebSocketDelegate, URLSessionDelegate {
     }
 
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
-        isConnected = false
-        isConnecting = false
-        if let error = error as NSError? {
-            if error.code == 57 /* timeout */ ||
-                error.code == 60 /* no network */ ||
-                error.code == 54 /* offline */ {
-                close()
-                delegate?.onDisconnected(connection: self, isServerOriginated: false, closeCode: .invalid, reason: error.localizedDescription)
-            } else {
-                delegate?.onError(connection: self, error: error)
-            }
-        }
+        errorHandler(error)
     }
 
     func connect(req: URLRequest) {
-        isConnecting = true
-        urlSession = URLSession(configuration: .default, delegate: self, delegateQueue: delegateQueue)
-        socket = urlSession.webSocketTask(with: req)
+        session = URLSession(configuration: .default, delegate: self, delegateQueue: delegateQueue)
+        socket = session.webSocketTask(with: req)
+        state = .connecting
         socket.resume()
 
         listen()
     }
 
     func close() {
+        state = .closing
         socket.cancel(with: .goingAway, reason: nil)
     }
 
     func send(text: String) {
         socket.send(URLSessionWebSocketTask.Message.string(text)) { error in
-            if let error = error {
-                self.delegate?.onError(connection: self, error: error)
-            }
+            self.errorHandler(error)
         }
     }
 
     func send(data: Data) {
         socket.send(URLSessionWebSocketTask.Message.data(data)) { error in
-            if let error = error {
-                self.delegate?.onError(connection: self, error: error)
-            }
+            self.errorHandler(error)
         }
     }
 
     private func listen()  {
+        guard socket.state == .running else { return }
+
         socket.receive { [weak self] result in
             guard let self = self else { return }
 
@@ -116,6 +123,48 @@ class WebSocket: NSObject, URLSessionWebSocketDelegate, URLSessionDelegate {
                 }
 
                 self.listen()
+            }
+        }
+    }
+
+    private func errorHandler(_ error: Error?) {
+        guard let error = error else { return }
+
+        self.state = .closed
+
+        if let error = error as NSError? {
+            switch Int32(error.code) {
+            case ENETDOWN, ENETUNREACH, ECONNRESET, ETIMEDOUT, ECONNREFUSED:
+                socket.cancel(with: .goingAway, reason: nil)
+                delegate?.onError(connection: self, error: WebSocketError.network(code: error.code))
+                // delegate?.onDisconnected(connection: self, isServerOriginated: false, closeCode: .invalid, reason: error.localizedDescription)
+            default:
+                delegate?.onError(connection: self, error: error)
+            }
+        }
+    }
+}
+
+public enum WebSocketError: Error {
+    // Network error code
+    case network(code: Int)
+
+    public var description: String {
+        switch self {
+        case .network(let code):
+            switch Int32(code) {
+            case ENETDOWN:
+                return "ENETDOWN: network is down"
+            case ENETUNREACH:
+                return "ENETUNREACH: network is unreachable";
+            case ECONNRESET:
+                return "ECONNRESET: connection reset by peer"
+            case ETIMEDOUT:
+                return "ETIMEDOUT: network timeout"
+            case ECONNREFUSED:
+                return "ECONNREFUSED: connection refused"
+            default:
+                return "Network error: \(code)"
             }
         }
     }

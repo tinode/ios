@@ -160,10 +160,10 @@ public class SharedUtils {
                     success = false
                 }
             }
-        //} catch WebSocketError.network(let err) {
-        //    // No network connection.
-        //    BaseDb.log.debug("Connect&Login Sync [network] - could not connect to Tinode: %@", err)
-        //    success = true
+        } catch WebSocketError.network(let err) {
+            // No network connection.
+            BaseDb.log.debug("Connect&Login Sync [network] - could not connect to Tinode: %@", err)
+            success = true
         } catch {
             BaseDb.log.error("Connect&Login Sync - failed to automatically login to Tinode: %@", error.localizedDescription)
         }

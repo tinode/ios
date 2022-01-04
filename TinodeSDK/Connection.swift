@@ -27,16 +27,17 @@ public class Connection: WebSocketConnectionDelegate {
         }
     }
 
-    fileprivate let kConnectionTimeout:TimeInterval = 3.0
+    // Connection timeout in seconds.
+    fileprivate let kConnectionTimeout: TimeInterval = 3.0
 
     var isConnected: Bool {
         guard let conn = webSocketConnection else { return false }
-        return conn.isConnected
+        return conn.state == .open
     }
 
     var isWaitingToConnect: Bool {
         guard let conn = webSocketConnection else { return false }
-        return conn.isConnecting
+        return conn.state == .connecting
     }
 
     private var webSocketConnection: WebSocket?
@@ -45,7 +46,6 @@ public class Connection: WebSocketConnectionDelegate {
     private var apiKey: String
     private var useTLS = false
     private var connectQueue = DispatchQueue(label: "co.tinode.connection")
-    private var netEventQueue = DispatchQueue(label: "co.tinode.network")
     private var autoreconnect: Bool = false
     private var reconnecting: Bool = false
     private var backoffSteps = ExpBackoffSteps()
@@ -67,7 +67,7 @@ public class Connection: WebSocketConnectionDelegate {
         if endpointComponenets.port == nil {
             endpointComponenets.port = useTLS ? 443 : 80
         }
-        self.webSocketConnection = WebSocket(timeout: kConnectionTimeout)
+        self.webSocketConnection = WebSocket(timeout: kConnectionTimeout, delegate: self)
         maybeInitReconnectClosure()
     }
 

@@ -47,12 +47,6 @@ Status: beta. Usable and mostly stable but bugs may happen.
 
 ## Dependencies
 
-### SDK
-
-* https://github.com/tidwall/SwiftWebSocket for websocket support
-
-### Application
-
 * [SQLite.swift](https://github.com/stephencelis/SQLite.swift) for convenience of SQLite use.
 * [SwiftKeychainWrapper](https://github.com/jrendel/SwiftKeychainWrapper) for convenience of Keychain access.
 * [PhoneNumberKit](https://github.com/marmelroy/PhoneNumberKit) for normalizing phone numbers.
