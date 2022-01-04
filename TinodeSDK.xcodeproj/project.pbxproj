@@ -36,7 +36,7 @@
 		B0876010243F1C3E00B464D1 /* MeTopic.swift in Sources */ = {isa = PBXBuildFile; fileRef = B087600F243F1C3E00B464D1 /* MeTopic.swift */; };
 		B0876012243F1DD900B464D1 /* FndTopic.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0876011243F1DD900B464D1 /* FndTopic.swift */; };
 		B0876014243F1E4000B464D1 /* ComTopic.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0876013243F1E4000B464D1 /* ComTopic.swift */; };
-		B5AA390BD4FDAF036DE12D64 /* libPods-TinodeSDK.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ADCCA8DC5FD1702092B57CCF /* libPods-TinodeSDK.a */; };
+		B089261627838F4600C419C0 /* WebSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = B089261527838F4600C419C0 /* WebSocket.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -81,12 +81,10 @@
 		0AAF8BEB23B70E2A00C9CFBB /* MsgRange.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MsgRange.swift; sourceTree = "<group>"; };
 		15EB4A3618442D5E79FEAB59 /* Pods-TinodeSDK.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TinodeSDK.debug.xcconfig"; path = "Pods/Target Support Files/Pods-TinodeSDK/Pods-TinodeSDK.debug.xcconfig"; sourceTree = "<group>"; };
 		79834550805DF1A314040328 /* Pods-TinodeSDKTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TinodeSDKTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-TinodeSDKTests/Pods-TinodeSDKTests.debug.xcconfig"; sourceTree = "<group>"; };
-		ADCCA8DC5FD1702092B57CCF /* libPods-TinodeSDK.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-TinodeSDK.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B087600F243F1C3E00B464D1 /* MeTopic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeTopic.swift; sourceTree = "<group>"; };
 		B0876011243F1DD900B464D1 /* FndTopic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FndTopic.swift; sourceTree = "<group>"; };
 		B0876013243F1E4000B464D1 /* ComTopic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComTopic.swift; sourceTree = "<group>"; };
-		B0CD0F1036565AA6D7FCB418 /* Pods-TinodeSDK.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TinodeSDK.release.xcconfig"; path = "./Pods/Target Support Files/Pods-TinodeSDK/Pods-TinodeSDK.release.xcconfig"; sourceTree = "<group>"; };
-		B4211CF84B51039364CC4DD3 /* Pods-TinodeSDK.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TinodeSDK.debug.xcconfig"; path = "./Pods/Target Support Files/Pods-TinodeSDK/Pods-TinodeSDK.debug.xcconfig"; sourceTree = "<group>"; };
+		B089261527838F4600C419C0 /* WebSocket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocket.swift; sourceTree = "<group>"; };
 		C8B1F7A52439924B698AC915 /* libPods-TinodeSDKTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-TinodeSDKTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D80621A4BCCAF3C0B58C06E5 /* Pods-TinodeSDK.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TinodeSDK.release.xcconfig"; path = "Pods/Target Support Files/Pods-TinodeSDK/Pods-TinodeSDK.release.xcconfig"; sourceTree = "<group>"; };
 		FD6888AEFAE0E94A350A75E8 /* Pods-TinodeSDKTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TinodeSDKTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-TinodeSDKTests/Pods-TinodeSDKTests.release.xcconfig"; sourceTree = "<group>"; };
@@ -97,7 +95,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B5AA390BD4FDAF036DE12D64 /* libPods-TinodeSDK.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -149,6 +146,7 @@
 				0A431BF62244A14D00A837F7 /* Tinode.swift */,
 				0A431BF82244A14D00A837F7 /* Topic.swift */,
 				0A431BF92244A14D00A837F7 /* User.swift */,
+				B089261527838F4600C419C0 /* WebSocket.swift */,
 				0A431BDF2244A0BE00A837F7 /* TinodeSDK.h */,
 				0A431BE02244A0BE00A837F7 /* Info.plist */,
 			);
@@ -187,8 +185,6 @@
 		8C6B3962D56241D86158FB6E /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				B4211CF84B51039364CC4DD3 /* Pods-TinodeSDK.debug.xcconfig */,
-				B0CD0F1036565AA6D7FCB418 /* Pods-TinodeSDK.release.xcconfig */,
 				15EB4A3618442D5E79FEAB59 /* Pods-TinodeSDK.debug.xcconfig */,
 				D80621A4BCCAF3C0B58C06E5 /* Pods-TinodeSDK.release.xcconfig */,
 				79834550805DF1A314040328 /* Pods-TinodeSDKTests.debug.xcconfig */,
@@ -201,7 +197,6 @@
 			isa = PBXGroup;
 			children = (
 				0A44B0102247573C00A98866 /* SwiftWebSocket.framework */,
-				ADCCA8DC5FD1702092B57CCF /* libPods-TinodeSDK.a */,
 				C8B1F7A52439924B698AC915 /* libPods-TinodeSDKTests.a */,
 			);
 			name = Frameworks;
@@ -225,7 +220,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 0A431BE42244A0BE00A837F7 /* Build configuration list for PBXNativeTarget "TinodeSDK" */;
 			buildPhases = (
-				10BAED752489B32660F6CF41 /* [CP] Check Pods Manifest.lock */,
 				0A431BD72244A0BE00A837F7 /* Headers */,
 				0A431BD82244A0BE00A837F7 /* Sources */,
 				0A431BD92244A0BE00A837F7 /* Frameworks */,
@@ -315,28 +309,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		10BAED752489B32660F6CF41 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-TinodeSDK-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
 		11CE15399BDFA482926A8220 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -370,6 +342,7 @@
 				0A44B00C2244AAC500A98866 /* JSONValue.swift in Sources */,
 				0A610453227563E200C6A9D2 /* Log.swift in Sources */,
 				B0876012243F1DD900B464D1 /* FndTopic.swift in Sources */,
+				B089261627838F4600C419C0 /* WebSocket.swift in Sources */,
 				0AAF8BEC23B70E2A00C9CFBB /* MsgRange.swift in Sources */,
 				0A81B317236FA896009AF14B /* Types.swift in Sources */,
 				0A44B0052244AAC500A98866 /* ServerMessages.swift in Sources */,
@@ -466,7 +439,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -525,7 +498,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -539,7 +512,6 @@
 		};
 		0A431BE52244A0BE00A837F7 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B4211CF84B51039364CC4DD3 /* Pods-TinodeSDK.debug.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
@@ -549,7 +521,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = TinodeSDK/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -567,7 +539,6 @@
 		};
 		0A431BE62244A0BE00A837F7 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B0CD0F1036565AA6D7FCB418 /* Pods-TinodeSDK.release.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
@@ -577,7 +548,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = TinodeSDK/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

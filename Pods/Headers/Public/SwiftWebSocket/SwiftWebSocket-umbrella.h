@@ -1,1 +1,0 @@
-../../../Target Support Files/SwiftWebSocket/SwiftWebSocket-umbrella.h

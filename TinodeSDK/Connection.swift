@@ -2,13 +2,12 @@
 //  Connection.swift
 //  ios
 //
-//  Copyright © 2019 Tinode. All rights reserved.
+//  Copyright © 2019-2022 Tinode LLC. All rights reserved.
 //
 
 import Foundation
-import SwiftWebSocket
 
-public class Connection {
+public class Connection: WebSocketConnectionDelegate {
     private class ExpBackoffSteps {
         private let kBaseSleepMs = 500
         private let kMaxShift = 11
@@ -27,20 +26,17 @@ public class Connection {
             attempt = 0
         }
     }
-    // This is useless. SwiftWebSocket doesn't allow the user
-    // to specify the timeout (which is hardcoded and defaults to 30 seconds).
-    // TODO: figure out a solution here (e.g. switch to another library or
-    //       implement connection primitives by hand).
-    fileprivate let kConnectionTimeout = 3000
+
+    fileprivate let kConnectionTimeout:TimeInterval = 3.0
 
     var isConnected: Bool {
         guard let conn = webSocketConnection else { return false }
-        return conn.readyState == .open
+        return conn.isConnected
     }
 
     var isWaitingToConnect: Bool {
         guard let conn = webSocketConnection else { return false }
-        return conn.readyState == .connecting
+        return conn.isConnecting
     }
 
     private var webSocketConnection: WebSocket?
@@ -71,34 +67,40 @@ public class Connection {
         if endpointComponenets.port == nil {
             endpointComponenets.port = useTLS ? 443 : 80
         }
-        self.webSocketConnection = WebSocket()
-        // Use a separate thread to run network event handlers.
-        self.webSocketConnection!.eventQueue = netEventQueue
-        webSocketConnection!.event.open = {
-            self.backoffSteps.reset()
-            let r = self.reconnecting
-            self.reconnecting = false
-            let p = self.param
-            self.param = nil
-            self.connectionListener?.onConnect(reconnecting: r, param: p)
-        }
-        webSocketConnection!.event.error = { error in
-            self.connectionListener?.onError(error: error)
-        }
-        webSocketConnection!.event.message = { message in
-            self.connectionListener?.onMessage(with: message as! String)
-        }
-        webSocketConnection!.event.close = { code, reason, clean in
-            self.connectionListener?.onDisconnect(isServerOriginated: clean, code: code, reason: reason)
-            guard !self.reconnecting else {
-                return
-            }
-            self.reconnecting = self.autoreconnect
-            if self.autoreconnect {
-                self.connectWithBackoffAsync()
-            }
-        }
+        self.webSocketConnection = WebSocket(timeout: kConnectionTimeout)
         maybeInitReconnectClosure()
+    }
+
+    func onConnected(connection: WebSocket) {
+        self.backoffSteps.reset()
+        let r = self.reconnecting
+        self.reconnecting = false
+        let p = self.param
+        self.param = nil
+        self.connectionListener?.onConnect(reconnecting: r, param: p)
+    }
+
+    func onDisconnected(connection: WebSocket, isServerOriginated clean: Bool, closeCode: URLSessionWebSocketTask.CloseCode, reason: String) {
+        self.connectionListener?.onDisconnect(isServerOriginated: clean, code: closeCode, reason: reason)
+        guard !self.reconnecting else {
+            return
+        }
+        self.reconnecting = self.autoreconnect
+        if self.autoreconnect {
+            self.connectWithBackoffAsync()
+        }
+    }
+
+    func onError(connection: WebSocket, error: Error) {
+        self.connectionListener?.onError(error: error)
+    }
+
+    func onMessage(connection: WebSocket, text: String) {
+        self.connectionListener?.onMessage(with: text)
+    }
+
+    func onMessage(connection: WebSocket, data: Data) {
+        // Unexpected data message.
     }
 
     private func maybeInitReconnectClosure() {
@@ -121,13 +123,14 @@ public class Connection {
     }
 
     private func openConnection(with urlRequest: URLRequest) {
-        self.webSocketConnection?.open(request: urlRequest)
+        self.webSocketConnection?.connect(req: urlRequest)
     }
     private func connectSocket() {
         guard !isConnected else { return }
         let request = try! createUrlRequest()
         self.openConnection(with: request)
     }
+
     private func connectWithBackoffAsync() {
         let delay = Double(self.backoffSteps.getNextDelay()) / 1000
         maybeInitReconnectClosure()
@@ -135,6 +138,7 @@ public class Connection {
             deadline: .now() + delay,
             execute: reconnectClosure!)
     }
+
     @discardableResult
     func connect(reconnectAutomatically: Bool = true, withParam param: Any?) throws -> Bool {
         self.autoreconnect = reconnectAutomatically
@@ -150,6 +154,7 @@ public class Connection {
         }
         return true
     }
+
     func disconnect() {
         webSocketConnection?.close()
         if autoreconnect {
@@ -167,6 +172,6 @@ public class Connection {
 protocol ConnectionListener {
     func onConnect(reconnecting: Bool, param: Any?)
     func onMessage(with message: String)
-    func onDisconnect(isServerOriginated: Bool, code: Int, reason: String)
+    func onDisconnect(isServerOriginated: Bool, code: URLSessionWebSocketTask.CloseCode, reason: String)
     func onError(error: Error)
 }

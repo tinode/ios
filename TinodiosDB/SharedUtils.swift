@@ -7,7 +7,6 @@
 
 import Foundation
 import SwiftKeychainWrapper
-import SwiftWebSocket
 import TinodeSDK
 
 public class SharedUtils {
@@ -161,10 +160,10 @@ public class SharedUtils {
                     success = false
                 }
             }
-        } catch SwiftWebSocket.WebSocketError.network(let e) {
-            // No network connection.
-            BaseDb.log.debug("Connect&Login Sync [network] - could not connect to Tinode: %@", e)
-            success = true
+        //} catch WebSocketError.network(let err) {
+        //    // No network connection.
+        //    BaseDb.log.debug("Connect&Login Sync [network] - could not connect to Tinode: %@", err)
+        //    success = true
         } catch {
             BaseDb.log.error("Connect&Login Sync - failed to automatically login to Tinode: %@", error.localizedDescription)
         }

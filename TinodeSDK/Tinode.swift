@@ -63,7 +63,7 @@ public protocol TinodeEventListener: AnyObject {
     //   byServer: true if connection was closed by server.
     //   code: numeric code of the error which caused connection to drop.
     //   reason: error message.
-    func onDisconnect(byServer: Bool, code: Int, reason: String)
+    func onDisconnect(byServer: Bool, code: URLSessionWebSocketTask.CloseCode, reason: String)
 
     // Result of successful or unsuccessful {@link #login} attempt.
     // Params:
@@ -248,7 +248,7 @@ public class Tinode {
             listenersThreadSafe.forEach { $0.onConnect(code: code, reason: reason, params: params) }
         }
 
-        func onDisconnect(byServer: Bool, code: Int, reason: String) {
+        func onDisconnect(byServer: Bool, code: URLSessionWebSocketTask.CloseCode, reason: String) {
             listenersThreadSafe.forEach { $0.onDisconnect(byServer: byServer, code: code, reason: reason) }
         }
 
@@ -946,7 +946,7 @@ public class Tinode {
             self.store?.logout()
         }
     }
-    private func handleDisconnect(isServerOriginated: Bool, code: Int, reason: String) {
+    private func handleDisconnect(isServerOriginated: Bool, code: URLSessionWebSocketTask.CloseCode, reason: String) {
         let e = TinodeError.notConnected("no longer connected to server")
         futures.rejectAndPurgeAll(withError: e)
         serverBuild = nil
@@ -1017,14 +1017,14 @@ public class Tinode {
                 Log.default.error("onMessage error: %@", error.localizedDescription)
             }
         }
-        func onDisconnect(isServerOriginated: Bool, code: Int, reason: String) {
+        func onDisconnect(isServerOriginated: Bool, code: URLSessionWebSocketTask.CloseCode, reason: String) {
             let serverOriginatedString = isServerOriginated ? "YES" : "NO"
             Log.default.info("Tinode disconnected: server originated [%@]; code [%d]; reason [%@]",
-                             serverOriginatedString, code, reason)
+                             serverOriginatedString, code.rawValue, reason)
             tinode.handleDisconnect(isServerOriginated: isServerOriginated, code: code, reason: reason)
         }
         func onError(error: Error) {
-            tinode.handleDisconnect(isServerOriginated: true, code: 0, reason: error.localizedDescription)
+            tinode.handleDisconnect(isServerOriginated: true, code: .invalid, reason: error.localizedDescription)
             Log.default.error("Tinode network error: %@", error.localizedDescription)
             try? rejectAllPromises(err: error)
         }

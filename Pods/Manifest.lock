@@ -1,17 +1,11 @@
 PODS:
-  - Firebase/Analytics (8.10.0):
-    - Firebase/Core
+  - Firebase (8.10.0):
+    - Firebase/Core (= 8.10.0)
   - Firebase/Core (8.10.0):
     - Firebase/CoreOnly
     - FirebaseAnalytics (~> 8.10.0)
   - Firebase/CoreOnly (8.10.0):
     - FirebaseCore (= 8.10.0)
-  - Firebase/Crashlytics (8.10.0):
-    - Firebase/CoreOnly
-    - FirebaseCrashlytics (~> 8.10.0)
-  - Firebase/Messaging (8.10.0):
-    - Firebase/CoreOnly
-    - FirebaseMessaging (~> 8.10.0)
   - FirebaseAnalytics (8.10.0):
     - FirebaseAnalytics/AdIdSupport (= 8.10.0)
     - FirebaseCore (~> 8.0)
@@ -103,36 +97,36 @@ PODS:
     - GoogleUtilities/Logger
   - GoogleUtilities/UserDefaults (7.6.0):
     - GoogleUtilities/Logger
-  - Kingfisher (5.15.7):
-    - Kingfisher/Core (= 5.15.7)
-  - Kingfisher/Core (5.15.7)
+  - Kingfisher (5.15.8):
+    - Kingfisher/Core (= 5.15.8)
+  - Kingfisher/Core (5.15.8)
   - nanopb (2.30908.0):
     - nanopb/decode (= 2.30908.0)
     - nanopb/encode (= 2.30908.0)
   - nanopb/decode (2.30908.0)
   - nanopb/encode (2.30908.0)
-  - PhoneNumberKit (3.3.1):
-    - PhoneNumberKit/PhoneNumberKitCore (= 3.3.1)
-    - PhoneNumberKit/UIKit (= 3.3.1)
-  - PhoneNumberKit/PhoneNumberKitCore (3.3.1)
-  - PhoneNumberKit/UIKit (3.3.1):
+  - PhoneNumberKit (3.3.3):
+    - PhoneNumberKit/PhoneNumberKitCore (= 3.3.3)
+    - PhoneNumberKit/UIKit (= 3.3.3)
+  - PhoneNumberKit/PhoneNumberKitCore (3.3.3)
+  - PhoneNumberKit/UIKit (3.3.3):
     - PhoneNumberKit/PhoneNumberKitCore
   - PromisesObjC (2.0.0)
   - SQLite.swift (0.12.2):
     - SQLite.swift/standard (= 0.12.2)
   - SQLite.swift/standard (0.12.2)
   - SwiftKeychainWrapper (3.4.0)
-  - SwiftWebSocket (2.7.0)
 
 DEPENDENCIES:
-  - Firebase/Analytics
-  - Firebase/Crashlytics
-  - Firebase/Messaging
+  - Firebase
+  - FirebaseAnalytics
+  - FirebaseCore
+  - FirebaseCrashlytics
+  - FirebaseMessaging
   - Kingfisher (~> 5.0)
   - PhoneNumberKit (~> 3.1)
   - SQLite.swift (~> 0.12.2)
   - SwiftKeychainWrapper (~> 3.2)
-  - SwiftWebSocket (~> 2.7.0)
 
 SPEC REPOS:
   trunk:
@@ -152,7 +146,6 @@ SPEC REPOS:
     - PromisesObjC
     - SQLite.swift
     - SwiftKeychainWrapper
-    - SwiftWebSocket
 
 SPEC CHECKSUMS:
   Firebase: 44213362f1dcc52555b935dc925ed35ac55f1b20
@@ -165,14 +158,13 @@ SPEC CHECKSUMS:
   GoogleAppMeasurement: a3311dbcf3ea651e5a070fe8559b57c174ada081
   GoogleDataTransport: 629c20a4d363167143f30ea78320d5a7eb8bd940
   GoogleUtilities: 684ee790a24f73ebb2d1d966e9711c203f2a4237
-  Kingfisher: 6e1a13523fcb1c86924ce53affe4ac957e544d59
+  Kingfisher: a3c03d702433fa6cfedabb2bddbe076fb8f2e902
   nanopb: a0ba3315591a9ae0a16a309ee504766e90db0c96
-  PhoneNumberKit: ff153d5e299f6da566cb73c6aa71e354933b2932
+  PhoneNumberKit: 4ce83273551c4d2ae10b7361162f4283dd02835f
   PromisesObjC: 68159ce6952d93e17b2dfe273b8c40907db5ba58
   SQLite.swift: d2b4642190917051ce6bd1d49aab565fe794eea3
   SwiftKeychainWrapper: 6fc49fbf7d4a6b0772917acb0e53a1639f6078d6
-  SwiftWebSocket: 612c9729fd503cb6b0b8b45390c788686dac306f
 
-PODFILE CHECKSUM: dae28227c8dc3d34d19d9d78a59f754e89f32011
+PODFILE CHECKSUM: bf012d79c03bff19f9a2825cfadae90d17f0f6c3
 
 COCOAPODS: 1.11.2

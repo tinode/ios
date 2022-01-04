@@ -1,6 +1,0 @@
-module SwiftWebSocket {
-  umbrella header "SwiftWebSocket-umbrella.h"
-
-  export *
-  module * { export * }
-}

@@ -21,7 +21,7 @@ class UiTinodeEventListener: TinodeEventListener {
     func onConnect(code: Int, reason: String, params: [String: JSONValue]?) {
         connected = true
     }
-    func onDisconnect(byServer: Bool, code: Int, reason: String) {
+    func onDisconnect(byServer: Bool, code: URLSessionWebSocketTask.CloseCode, reason: String) {
         if connected {
             // If we just got disconnected, display the connection lost message.
             DispatchQueue.main.async {

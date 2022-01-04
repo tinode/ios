@@ -2,7 +2,7 @@
 //  FndTopic.swift
 //  TinodeSDK
 //
-//  Copyright © 2020 Tinode. All rights reserved.
+//  Copyright © 2020-2022 Tinode LLC. All rights reserved.
 //
 
 import Foundation

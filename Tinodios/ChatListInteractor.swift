@@ -67,7 +67,7 @@ class ChatListInteractor: ChatListBusinessLogic, ChatListDataStore {
             super.onLogin(code: code, text: text)
             self.interactor?.attachToMeTopic()
         }
-        override func onDisconnect(byServer: Bool, code: Int, reason: String) {
+        override func onDisconnect(byServer: Bool, code: URLSessionWebSocketTask.CloseCode, reason: String) {
             super.onDisconnect(byServer: byServer, code: code, reason: reason)
             // Update presence indicators (all should be off).
             self.interactor?.loadAndPresentTopics()
