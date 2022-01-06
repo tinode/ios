@@ -16,8 +16,9 @@ class QuotedAttachment: NSTextAttachment {
         static let kHeightMultiplier: CGFloat = 1.4
         // Quote width padding in characters.
         static let kWidthPadding: CGFloat = 3
-        static let kDefaultQuoteBackgroundColor: UIColor = UIColor(fromHexCode: 0x20333333)
-        static let kDefaultStripeColor: UIColor = UIColor(fromHexCode: 0xFF00897B)
+        static let kDefaultQuoteBackgroundColorLight = UIColor(fromHexCode: 0x20333333)
+        static let kDefaultQuoteBackgroundColorDark = UIColor(fromHexCode: 0x20CCCCCC)
+        static let kDefaultStripeColor = UIColor(Color.accentColor)
     }
 
     var attributedString: NSAttributedString
@@ -27,12 +28,16 @@ class QuotedAttachment: NSTextAttachment {
     let backgroundColor: UIColor
     let stripeColor: UIColor
 
-    init(quotedText: NSAttributedString, fitIn maxSize: CGSize, widthPadding: CGFloat = Constants.kWidthPadding, heightMultiplier: CGFloat = Constants.kHeightMultiplier, backgroundColor: UIColor = Constants.kDefaultQuoteBackgroundColor, stripeColor: UIColor = Constants.kDefaultStripeColor, verticalOffset: CGFloat = 0) {
+    init(quotedText: NSAttributedString, fitIn maxSize: CGSize, widthPadding: CGFloat = Constants.kWidthPadding, heightMultiplier: CGFloat = Constants.kHeightMultiplier, verticalOffset: CGFloat = 0) {
         attributedString = quotedText
         self.widthPadding = widthPadding
         self.heightMultiplier = heightMultiplier
-        self.backgroundColor = backgroundColor
-        self.stripeColor = stripeColor
+        if traitCollection.userInterfaceStyle == .dark {
+            self.backgroundColor = Constants.kDefaultQuoteBackgroundColorDark
+        } else {
+            self.backgroundColor = Constants.kDefaultQuoteBackgroundColorLight
+        }
+        self.stripeColor = Constants.kDefaultStripeColor
         super.init(data: nil, ofType: "public.text")
 
         let textSize = TextSizeHelper().computeSize(for: quotedText, within: maxSize.width)

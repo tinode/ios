@@ -13,84 +13,20 @@ public enum DraftyError: Error {
     case invalidIndex(String)
 }
 
-// Basic unit of the Drafty formatting tree which
-// defines how a given span of text should be formatted.
-public protocol DraftySpan {
-    init()
-    func append(_ child: DraftySpan)
+/// Defines requirements for the values handled by the DraftyFormatter.
+public protocol Appendable {
+    func append(_ that: Appendable) -> Appendable
 }
 
-// Describes a class which constructs a Drafty formatting tree
-// (which consists of DraftyNode{s}).
+/// Describes a class which converts nodes of a Drafty formatting tree to string representation.
 public protocol DraftyFormatter {
-    func apply(tp: String?, key: Int?, attr: [String: JSONValue]?, content: [DraftySpan]) -> DraftySpan
-    func apply(tp: String?, key: Int?, attr: [String: JSONValue]?, content: String?) -> DraftySpan
-
-    // Formatting type handlers.
-    func handleStrong(withText content: String?, withChildren nodes: [DraftySpan]?) -> DraftySpan
-    func handleEmphasized(withText content: String?, withChildren nodes: [DraftySpan]?) -> DraftySpan
-    func handleDeleted(withText content: String?, withChildren nodes: [DraftySpan]?) -> DraftySpan
-    func handleCode(withText content: String?, withChildren nodes: [DraftySpan]?) -> DraftySpan
-    func handleHidden(withText content: String?, withChildren nodes: [DraftySpan]?) -> DraftySpan
-    func handleLineBreak() -> DraftySpan
-    func handleLink(withText content: String?, withChildren nodes: [DraftySpan]?, attr: [String: JSONValue]?) -> DraftySpan
-    func handleMention(withText content: String?, withChildren nodes: [DraftySpan]?, using attr: [String: JSONValue]?) -> DraftySpan
-    func handleHashtag(withText content: String?, withChildren nodes: [DraftySpan]?) -> DraftySpan
-    func handleImage(withText content: String?, withChildren nodes: [DraftySpan]?, using attr: [String: JSONValue]?, fromDraftyEntity key: Int?) -> DraftySpan
-    func handleAttachment(withText content: String?, withChildren nodes: [DraftySpan]?, using attr: [String: JSONValue]?) -> DraftySpan
-    func handleButton(withText content: String?, withChildren nodes: [DraftySpan]?, using attr: [String: JSONValue]?) -> DraftySpan
-    func handleForm(withText content: String?, withChildren nodes: [DraftySpan]?) -> DraftySpan
-    func handleFormRow(withText content: String?, withChildren nodes: [DraftySpan]?) -> DraftySpan
-    func handleUnknown(withText content: String?, withChildren nodes: [DraftySpan]?) -> DraftySpan
-    func handlePlain(withText content: String?, withChildren nodes: [DraftySpan]?) -> DraftySpan
-    func handleQuote(withText content: String?, withChildren nodes: [DraftySpan]?) -> DraftySpan
+    typealias FormattedString = Appendable
+    func apply(type: String?, data: [String: JSONValue]?, key: Int?, content: [FormattedString], stack: [String]?) -> FormattedString
+    func wrapText(_ content: String) -> FormattedString
 }
 
-extension DraftyFormatter {
-    // Construct a tree representing formatting styles and content.
-    public func makeTree(tp: String?, key: Int?, attr: [String: JSONValue]?, children: [DraftySpan]?, content: String?) -> DraftySpan {
-        guard let tp = tp else {
-            return handlePlain(withText: content, withChildren: children)
-        }
-        switch tp {
-        case "ST":
-            return handleStrong(withText: content, withChildren: children)
-        case "EM":
-            return handleEmphasized(withText: content, withChildren: children)
-        case "DL":
-            return handleDeleted(withText: content, withChildren: children)
-        case "CO":
-            return handleCode(withText: content, withChildren: children)
-        case "BR":
-            return handleLineBreak()
-        case "LN":
-            return handleLink(withText: content, withChildren: children, attr: attr)
-        case "MN":
-            return handleMention(withText: content, withChildren: children, using: attr)
-        case "HT":
-            return handleHashtag(withText: content, withChildren: children)
-        case "HD":
-            return handleHidden(withText: content, withChildren: children)
-        case "IM":
-            return handleImage(withText: content, withChildren: children, using: attr, fromDraftyEntity: key)
-        case "EX":
-            return handleAttachment(withText: content, withChildren: children, using: attr)
-        case "BN":
-            return handleButton(withText: content, withChildren: children, using: attr) // (from: node, with: attr)
-        case "FM":
-            return handleForm(withText: content, withChildren: children)
-        case "RW":
-            return handleFormRow(withText: content, withChildren: children)
-        case "QQ":
-            return handleQuote(withText: content, withChildren: children)
-        default:
-            return handleUnknown(withText: content, withChildren: children)
-        }
-    }
-}
-
-// Span tree transformer interface.
-public protocol SpanTreeTransformer {
+/// Span tree transformer interface.
+public protocol DraftyTransformer {
     // Called on every node of the span tree.
     // Returns a new node that the given node should be replaced with.
     func transform(node: Drafty.Span) -> Drafty.Span?
@@ -102,6 +38,9 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
     public static let kJSONMimeType = "application/json"
 
     private static let kMaxFormElements = 8
+
+    // Styles which require no body.
+    private static let kVoidStyles = ["BR", "EX", "HD"];
 
     // Regular expressions for parsing inline formats.
     private static let kInlineStyles = try! [
@@ -299,7 +238,7 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
 
     // Convert flat array or spans into a tree representation.
     // Keep standalone and nested spans, throw away partially overlapping spans.
-    private static func toTree(spans: [Span]) -> [Span] {
+    private static func toSpanTree(spans: [Span]) -> [Span] {
         guard !spans.isEmpty else { return spans }
 
         var tree: [Span] = []
@@ -327,7 +266,7 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
         // Recursively rearrange the subnodes.
         for span in tree {
             if let children = span.children {
-                span.children = toTree(spans: children)
+                span.children = toSpanTree(spans: children)
             }
         }
 
@@ -414,7 +353,7 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
                 }
 
                 // Rearrange flat list of styled spans into a tree, throw away invalid spans.
-                spans = toTree(spans: spans)
+                spans = toSpanTree(spans: spans)
 
                 // Parse the entire string into spans, styled or unstyled.
                 spans = chunkify(line: line, start: 0, end: line.count, spans: spans)
@@ -803,20 +742,17 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
         return ent == nil && fmt == nil
     }
 
-    /// Turns a Drafty object into a tree of spans and traverses it.
-    /// Each node of the tree is processed using the provided context object.
-    fileprivate class SpanTreeProcessor<TreeRoot: DraftySpan, Ctx> {
-        // Inverse of chunkify. Returns a tree of formatted spans.
-        func forEach(line: String, start startAt: Int, end: Int, spans: [Span], using context: Ctx) -> TreeRoot {
-            let result = TreeRoot()
+    /// Turns a Drafty object into a tree of Span's and provides methods for top-down and bottom-up tree traversal.
+    fileprivate class SpanTreeProcessor {
+        static func substring(line: String, start: Int, end: Int) -> String {
+            return String(line[line.index(line.startIndex, offsetBy: start)..<line.index(line.startIndex, offsetBy: end)])
+        }
 
+        // Inverse of chunkify. Returns a tree of formatted spans.
+        private func spansToTree(tree parent: Span, line: String, start startAt: Int, end: Int, spans: [Span]) -> Span {
             var start = startAt
             guard !spans.isEmpty else {
-                let content = String(line[line.index(line.startIndex, offsetBy: start)..<line.index(line.startIndex, offsetBy: end)])
-                if let item = self.handleText(content, using: context) {
-                    result.append(item)
-                }
-                return result
+                return parent.append(Span(text: SpanTreeProcessor.substring(line: line, start: start, end: end)))
             }
 
             // Process ranges calling formatter for each range. Have to use index because it needs to step back.
@@ -825,17 +761,13 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
                 let span = spans[i]
                 i += 1
                 if span.start < 0 && span.type == "EX" {
-                    if let item = self.handleStyle(tp: span.type, attr: span.data, key: span.key, using: context) {
-                        result.append(item)
-                    }
+                    parent.append(Span(type: span.type, data: span.data, key: span.key, attachment: true))
                     continue
                 }
 
                 // Add un-styled range before the styled span starts.
                 if start < span.start {
-                    if let item = self.handleText(String(line[line.index(line.startIndex, offsetBy: start)..<line.index(line.startIndex, offsetBy: span.start)]), using: context) {
-                        result.append(item)
-                    }
+                    parent.append(Span(text: SpanTreeProcessor.substring(line: line, start: start, end: span.start)))
                     start = span.start
                 }
 
@@ -844,54 +776,47 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
                 while i < spans.count {
                     let inner = spans[i]
                     i += 1
-                    if inner.start >= 0 && inner.start < span.end {
-                        subspans.append(inner)
-                    } else {
-                        // Move back.
+                    if inner.start < 0 || inner.start >= span.end {
+                        // Either an attachment at the end, or past the current span. Put back and stop.
                         i -= 1
                         break
+                    } else if inner.end <= span.end {
+                        if inner.start < inner.end || inner.isVoid {
+                            // Valid subspan: completely within the current span and
+                            // either non-zero length or zero length is acceptable.
+                            subspans.append(inner)
+                        }
                     }
+                    // else: overlapping subspan, ignore it.
                 }
 
-                if let item = self.handleSubspans(current: span, line: line, start: start, end: span.end, subspans: subspans, using: context) {
-                    result.append(item)
-                }
+                parent.append(self.spansToTree(tree: span, line: line, start: start, end: span.end, spans: subspans))
 
                 start = span.end
             }
 
             // Add the last unformatted range.
             if start < end {
-                if let item = self.handleText(String(line[line.index(line.startIndex, offsetBy: start)..<line.index(line.startIndex, offsetBy: end)]), using: context) {
-                    result.append(item)
-                }
+                parent.append(Span(text: SpanTreeProcessor.substring(line: line, start: start, end: end)))
             }
 
-            return result
+            return parent
         }
-        func handleText(_ content: String?, using context: Ctx) -> DraftySpan? {
-            return nil
-        }
-        func handleStyle(tp: String?, attr: [String: JSONValue]?, key: Int?, using context: Ctx) -> DraftySpan? {
-            return nil
-        }
-        func handleSubspans(current span: Span, line: String, start: Int, end: Int, subspans: [Span]?, using context: Ctx) -> DraftySpan? {
-            return nil
-        }
-        func finalize(tree: TreeRoot, using context: Ctx) -> DraftySpan? {
-            return nil
-        }
-        public func process(contentOf content: Drafty, using context: Ctx) -> DraftySpan? {
-            // Handle special case when all values in fmt are 0 and fmt therefore was
-            // skipped.
+
+        public func toTree(contentOf content: Drafty) -> Span? {
             let txt = content.txt
             var fmt = content.fmt
             let ent = content.ent
+
+            let entCount = ent?.count ?? 0
+
+            // Handle special case when all values in fmt are 0 and fmt therefore was
+            // skipped.
             if fmt == nil || fmt!.isEmpty {
-                if ent != nil && ent!.count == 1 {
+                if entCount == 1 {
                     fmt = [Style(at: 0, len: 0, key: 0)]
                 } else {
-                    return self.handleText(txt, using: context)
+                    return Span(text: txt)
                 }
             }
 
@@ -903,21 +828,25 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
                     // Invalid length
                     continue
                 }
+
+                let key = aFmt.key ?? 0;
+                if (ent != nil && (key < 0 || key >= entCount)) {
+                    // Invalid key.
+                    continue;
+                }
+
                 if aFmt.at < 0 {
                     // Attachment
                     aFmt.at = -1
                     aFmt.len = 1
-                    let key = aFmt.key ?? 0
-                    if key >= 0 {
-                        attachments.append(Span(start: aFmt.at, end: 0, index: key))
-                    }
+                    attachments.append(Span(start: aFmt.at, end: 0, index: key))
                     continue
                 } else if aFmt.at + aFmt.len > maxIndex {
                     // Out of bounds span.
                     continue
                 }
                 if aFmt.tp == nil || aFmt.tp!.isEmpty {
-                    spans.append(Drafty.Span(start: aFmt.at, end: aFmt.at + aFmt.len, index: aFmt.key ?? 0))
+                    spans.append(Drafty.Span(start: aFmt.at, end: aFmt.at + aFmt.len, index: key))
                 } else {
                     spans.append(Drafty.Span(type: aFmt.tp, start: aFmt.at, end: aFmt.at + aFmt.len))
                 }
@@ -930,7 +859,7 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
                 var data: [String : JSONValue]?
                 if span.type != nil && !span.type!.isEmpty {
                     tp = span.type
-                } else if span.key >= 0 && span.key < ent!.count {
+                } else {
                     let e = ent![span.key]
                     tp = e.tp
                     data = e.data
@@ -961,6 +890,7 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
                     Drafty.kFmtWeights[rtp] ?? Drafty.kFmtDefaultWeight
             }
 
+            // Move attachments to the end of the list.
             if !attachments.isEmpty {
                 spans += attachments
             }
@@ -970,18 +900,57 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
                 span.type = p.tp
                 span.data = p.data
             }
-            let tree = self.forEach(line: txt, start: 0, end: txt.count, spans: spans, using: context)
-            return self.finalize(tree: tree, using: context)
-        }
-    }
+            let tree = self.spansToTree(tree: Span(), line: txt, start: 0, end: txt.count, spans: spans)
 
-    class FormattingSpan: DraftySpan {
-        var children: [DraftySpan]
-        required init() {
-            children = [DraftySpan]()
+            // TODO: Flatten tree nodes, remove styling from buttons, copy button text to 'title' data.
+
+            return tree
         }
-        func append(_ newElement: DraftySpan) {
-            children.append(newElement)
+
+        /// Traverse tree top down (transforming).
+        func treeTopDown(tree: Span, tr: DraftyTransformer) -> Span? {
+            let node = tr.transform(node: tree)
+            guard let node = node else { return node }
+            if node.children == nil || node.children!.isEmpty {
+                return node
+            }
+
+            var children: [Span] = []
+            for child in node.children! {
+                if let transformed = treeTopDown(tree: child, tr: tr) {
+                    children.append(transformed)
+                }
+            }
+
+            if children.isEmpty {
+                node.children = nil
+            } else {
+                node.children = children
+            }
+            return node
+        }
+
+        /// Traverse the tree from the bottom up (formatting).
+        func treeBottomUp<F: DraftyFormatter, S: DraftyFormatter.FormattedString>(src: Span?, formatter: F, stack context: [String]?) -> S? {
+            guard let src = src else { return nil }
+
+            var stack = context
+            if !src.isUnstyled {
+                stack?.append(src.type!)
+            }
+
+            var content: [S] = []
+            if let children = src.children {
+                for child in children {
+                    if let val: S = treeBottomUp(src: child, formatter: formatter, stack: stack) {
+                        content.append(val)
+                    }
+                }
+            } else if src.text != nil {
+                content.append(formatter.wrapText(src.text!) as! S)
+            }
+
+            return formatter.apply(type: src.type, data: src.data, key: src.key, content: content, stack: context) as? S
         }
     }
 
@@ -1040,8 +1009,70 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
         return preview!
     }
 
+    /// Shortens Drafty object to specified length.
+    ///
+    /// - Parameters:
+    ///     - previewLen: maximum length of the preview.
+    /// - Returns: a new Drafty object - a preview of the original object (self).
+    public func shorten(previewLen: Int, stripHeavyEntities: Bool) -> Drafty {
+        let preview = preview(ofMaxLength: previewLen, using: PreviewTransformer())
+        return preview!
+    }
+
+    /// Shorten the tree to specified length.
+    open class ShorteningTransformer: DraftyTransformer {
+        public init() {}
+        open func transform(node: Drafty.Span) -> Drafty.Span? {
+            /*
+             // Clip tree to the provided limit.
+             // If the tree is shortened, prepend tail.
+             protected static Node shortenTree(Node tree, int length, String tail) {
+                 if (tail != null) {
+                     length -= tail.length();
+                 }
+
+                 return treeTopDown(tree, new Transformer() {
+                     private int limit;
+
+                     Transformer init(int limit) {
+                         this.limit = limit;
+                         return this;
+                     }
+
+                     @Override
+                     public @Nullable Node transform(Node node) {
+                         if (limit <= -1) {
+                             // Limit -1 means the doc was already clipped.
+                             return null;
+                         }
+
+                         if (node.attachment) {
+                             // Attachments are unchanged.
+                             return node;
+                         }
+                         if (limit == 0) {
+                             node.text = tail;
+                             limit = -1;
+                         } else if (node.text != null) {
+                             int len = node.text.length();
+                             if (len > limit) {
+                                 node.text = node.text.subSequence(0, limit) + tail;
+                                 limit = -1;
+                             } else {
+                                 limit -= len;
+                             }
+                         }
+                         return node;
+                     }
+                 }.init(length));
+             }
+             */
+            return node
+        }
+    }
+
     //
-    open class PreviewTransformer: SpanTreeTransformer {
+    open class PreviewTransformer: DraftyTransformer {
         public init() {}
         open func transform(node: Span) -> Span? {
             guard node.type != "QQ" else {
@@ -1066,14 +1097,14 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
     }
 
     // Creates a carbon copy of a Drafty object.
-    fileprivate class CopyTransformer: SpanTreeTransformer {
+    fileprivate class CopyTransformer: DraftyTransformer {
         public init() {}
         public func transform(node: Drafty.Span) -> Drafty.Span? {
             return Drafty.Span(from: node)
         }
     }
 
-    fileprivate class PreviewProcessor<T: SpanTreeTransformer>: SpanTreeProcessor<Span, T> {
+    fileprivate class PreviewProcessor<T: DraftyTransformer>: SpanTreeProcessor<Span, T> {
         override func handleText(_ content: String?, using transformer: T) -> DraftySpan? {
             guard  let txt = content else { return nil }
             let node = Span(text: txt)
@@ -1100,9 +1131,9 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
     ///     - length: maximum length of the preview.
     ///     - transformer: defines how the nodes of the span tree of the given Drafty object should be modified
     /// - Returns: a new Drafty object - a preview of the original object (self).
-    public func preview<T: SpanTreeTransformer>(ofMaxLength length: Int, using tranformer: T) -> Drafty? {
+    public func preview<T: DraftyTransformer>(ofMaxLength length: Int, using tranformer: T) -> Drafty? {
         let proc = PreviewProcessor<T>()
-        let tree = proc.process(contentOf: self, using: tranformer) as! Span
+        let tree = proc.toTree(contentOf: self, using: tranformer) as! Span
         let shortened = tree.clip(upToMax: length) < 0
         // Remove leading whitespaces.
         tree.lTrim()
@@ -1168,7 +1199,7 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
         }
     }
 
-    public class Span: DraftySpan {
+    public class Span {
         public var start: Int
         public var end: Int
         public var key: Int
@@ -1176,11 +1207,13 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
         public var type: String?
         public var data: [String: JSONValue]?
         public var children: [Span]?
+        public var attachment: Bool
 
         required public init() {
             start = 0
             end = 0
             key = 0
+            attachment = false
         }
 
         convenience init(text: String) {
@@ -1202,6 +1235,7 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
             self.start = start
             self.end = end
             self.key = index
+            self.attachment = false
         }
 
         public convenience init(from another: Span) {
@@ -1212,17 +1246,33 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
             self.text = another.text
         }
 
-        convenience init(type: String?, data: [String: JSONValue]?, key: Int) {
+        convenience init(type: String?, data: [String: JSONValue]?, key: Int, attachment: Bool = false) {
             self.init()
             self.type = type
             self.data = data
             self.key = key
+            self.attachment = attachment
         }
 
-        public func append(_ child: DraftySpan) {
+        @discardableResult
+        public func append(_ child: Span) -> Span {
             if children == nil { children = [] }
-            children!.append(child as! Span)
+            children!.append(child)
+            return self
         }
+
+        var isUnstyled: Bool {
+            get {
+               return type == nil || type!.isEmpty
+            }
+        }
+
+        var isVoid: Bool {
+            get {
+                return kVoidStyles.contains(type ?? "")
+            }
+        }
+
         // Returns new length. If length is unchanged then it's returned
         // as a non-negative number. If changed then it's a negative number.
         @discardableResult
