@@ -914,7 +914,9 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
                         // Unwrap.
                         let child = children[0]
                         if result.isUnstyled {
+                            let parent = result.parent
                             result = child
+                            result.parent = parent
                         } else if child.isUnstyled && (child.children == nil || child.children!.isEmpty) {
                             result.text = child.text
                             result.children = nil
@@ -1269,8 +1271,8 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
         class Formatter : DraftyFormatter {
             func apply(type: String?, data: [String : JSONValue]?, key: Int?, content: [FormattedString], stack: [String]?) -> FormattedString {
                 var res = ""
-                for c in content {
-                    res.append((c as! WrappedString).string)
+                for ws in content {
+                    res.append((ws as! WrappedString).string)
                 }
 
                 if type == nil {
