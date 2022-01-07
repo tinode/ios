@@ -545,7 +545,7 @@ class DraftyTest: XCTestCase {
         )
         XCTAssertEqual(expected, actual, "Reply 4 has failed")
     }
-/*
+
     func testFormat() {
         // --------- Format 1
         var src = Drafty(
@@ -581,7 +581,6 @@ class DraftyTest: XCTestCase {
         expected = "an url: [https://www.example.com/abc#fragment](https://www.example.com/abc#fragment) and another _[www.tinode.co](http://www.tinode.co)_"
         XCTAssertEqual(expected, actual, "Format 2 has failed")
     }
-*/
 
     func testPerformanceParse() {
         self.measure {

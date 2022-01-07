@@ -13,14 +13,9 @@ public enum DraftyError: Error {
     case invalidIndex(String)
 }
 
-/// Defines requirements for the values handled by the DraftyFormatter.
-public protocol Appendable {
-    func append(_ that: Appendable) -> Appendable
-}
-
 /// Describes a class which converts nodes of a Drafty formatting tree to string representation.
 public protocol DraftyFormatter {
-    typealias FormattedString = Appendable
+    typealias FormattedString = AnyObject
     func apply(type: String?, data: [String: JSONValue]?, key: Int?, content: [FormattedString], stack: [String]?) -> FormattedString
     func wrapText(_ content: String) -> FormattedString
 }
@@ -961,7 +956,7 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
         }
 
         /// Traverse the tree from the bottom up (formatting).
-        class func treeBottomUp<FMT: DraftyFormatter, STR: DraftyFormatter.FormattedString>(src: Span?, formatter fmt: FMT, stack context: [String]?) -> STR? {
+        class func treeBottomUp<FMT: DraftyFormatter, STR: DraftyFormatter.FormattedString>(src: Span?, formatter fmt: FMT, stack context: inout [String]?) -> STR? {
             guard let src = src else { return nil }
 
             var stack = context
@@ -972,7 +967,7 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
             var content: [STR] = []
             if let children = src.children {
                 for child in children {
-                    if let val: STR = treeBottomUp(src: child, formatter: fmt, stack: stack) {
+                    if let val: STR = treeBottomUp(src: child, formatter: fmt, stack: &stack) {
                         content.append(val)
                     }
                 }
@@ -1258,6 +1253,64 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
         tree.appendTo(document: &result, using: &keymap)
         return result
     }
+
+    /// Mostly for testing: convert Drafty to a markdown string.
+    public func toMarkdown() -> String {
+        var tree = Span()
+        tree = SpanTreeProcessor.toTree(contentOf: self) ?? tree
+
+        class WrappedString {
+            var string: String
+            init(_ str: String) {
+                string = str
+            }
+        }
+
+        class Formatter : DraftyFormatter {
+            func apply(type: String?, data: [String : JSONValue]?, key: Int?, content: [FormattedString], stack: [String]?) -> FormattedString {
+                var res = ""
+                for c in content {
+                    res.append((c as! WrappedString).string)
+                }
+
+                if type == nil {
+                    return WrappedString(res)
+                }
+
+                switch type {
+                case "BR":
+                    res = "\n"
+                case "HT":
+                    res = "#" + res
+                case "MN":
+                    res = "@" + res
+                case "ST":
+                    res = "*" + res + "*"
+                case "EM":
+                    res = "_" + res + "_"
+                case "DL":
+                    res = "~" + res + "~"
+                case "CO":
+                    res = "`" + res + "`"
+                case "LN":
+                    let url = data?["url"]?.asString() ?? "nil"
+                    res = "[" + res + "](" + url + ")"
+                default:
+                    break
+                }
+
+                return WrappedString(res)
+            }
+
+            func wrapText(_ content: String) -> FormattedString {
+                return WrappedString(content)
+            }
+        }
+        var stack: [String]? = []
+        let result: WrappedString? = SpanTreeProcessor.treeBottomUp(src: tree, formatter: Formatter(), stack: &stack)
+        return result?.string ?? ""
+    }
+
 
     /*
     /// Format converts Drafty object into a collection of nodes with format definitions.
