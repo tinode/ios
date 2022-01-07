@@ -110,7 +110,7 @@ class DraftyTest: XCTestCase {
 
         // ------- Shorten 1
         var src = Drafty(plainText: "This is a plain text string.")
-        var actual = src.shorten(limit, true)
+        var actual = src.shorten(previewLen: limit, stripHeavyEntities: true)
         var expected = Drafty(plainText: "This is a plai…")
         XCTAssertEqual(expected, actual, "Shorten 1 has failed")
 
@@ -127,7 +127,7 @@ class DraftyTest: XCTestCase {
                         "height": .int(80),
                      ])]
         )
-        actual = src.shorten(limit, true);
+        actual = src.shorten(previewLen: limit, stripHeavyEntities: true);
         expected = Drafty(text: "",
                           fmt: [Style(at: -1, len: 0, key: 0)],
                           ent: [Entity(tp: "EX", data: [
@@ -145,7 +145,7 @@ class DraftyTest: XCTestCase {
             fmt: [Style(at: 0, len: 22, key: 0)],
             ent: [Entity(tp: "LN", data: ["url": .string("https://www.youtube.com/watch?v=dQw4w9WgXcQ")])]
         )
-        actual = src.shorten(limit, true);
+        actual = src.shorten(previewLen: limit, stripHeavyEntities: true);
         expected = Drafty(
             text: "https://api.ti…",
             fmt: [Style(at: 0, len: 15, key: 0)],
@@ -159,7 +159,7 @@ class DraftyTest: XCTestCase {
             fmt: [Style(at: 9, len: 3, key: 0), Style(at: 4, len: 3, key: 0)],
             ent: [Entity(tp: "LN", data: ["url": .string("http://tinode.co")])]
         )
-        actual = src.shorten(limit, true);
+        actual = src.shorten(previewLen: limit, stripHeavyEntities: true);
         expected = Drafty(
             text: "Url one, two",
             fmt: [Style(at: 4, len: 3, key: 0), Style(at: 9, len: 3, key: 0)],
@@ -176,7 +176,7 @@ class DraftyTest: XCTestCase {
                 Entity(tp: "LN", data: ["url": .string("http://example.com")])
             ]
         )
-        actual = src.shorten(limit, true);
+        actual = src.shorten(previewLen: limit, stripHeavyEntities: true);
         expected = Drafty(
             text: "Url one, two",
             fmt: [Style(at: 4, len: 3, key: 0), Style(at: 9, len: 3, key: 1)],
@@ -202,7 +202,7 @@ class DraftyTest: XCTestCase {
                 ])
             ]
         )
-        actual = src.shorten(limit, true);
+        actual = src.shorten(previewLen: limit, stripHeavyEntities: true);
         expected = Drafty(
             text: " ",
             fmt: [Style(at: 0, len: 1, key: 0)],
@@ -227,7 +227,7 @@ class DraftyTest: XCTestCase {
             ],
             ent: nil
         )
-        actual = src.shorten(limit, true);
+        actual = src.shorten(previewLen: limit, stripHeavyEntities: true);
         expected = Drafty(
             text: "This text has …",
             fmt: [Style(tp: "EM", at: 5, len: 8)],
@@ -247,7 +247,7 @@ class DraftyTest: XCTestCase {
             ent: nil
         )
 
-        actual = src.shorten(limit, true);
+        actual = src.shorten(previewLen: limit, stripHeavyEntities: true);
         expected = Drafty(
             text: "This text is f…",
             fmt: [
@@ -267,7 +267,7 @@ class DraftyTest: XCTestCase {
             ],
             ent: nil
         )
-        actual = src.shorten(limit, true);
+        actual = src.shorten(previewLen: limit, stripHeavyEntities: true);
         expected = Drafty(
             text: "мультибайтовый…",
             fmt: [Style(tp: "ST", at: 0, len: 14)],
@@ -296,7 +296,7 @@ class DraftyTest: XCTestCase {
                 Entity(tp: "MN", data: ["val": .string("usr123abcDE")])
             ]
         )
-        actual = src.shorten(limit, true);
+        actual = src.shorten(previewLen: limit, stripHeavyEntities: true);
 
         expected = Drafty(
             text: "Alice Johnson …",
@@ -311,13 +311,13 @@ class DraftyTest: XCTestCase {
 
         // Emoji 1
         src = Drafty(plainText: "a😀cd")
-        actual = src.shorten(previewLen: 3)
+        actual = src.shorten(previewLen: 3, stripHeavyEntities: false)
         expected = Drafty(text: "a😀…", fmt: nil, ent: nil)
         XCTAssertEqual(expected, actual, "Shorten Emoji 1 has failed")
 
         // Emodji 2
         src = Drafty(content: "_😀 *b1👩🏽‍✈️b2* smile_")
-        expected = src.shorten(previewLen: 6)
+        expected = src.shorten(previewLen: 6, stripHeavyEntities: false)
         actual = Drafty(
             text: "😀 b1👩🏽‍✈️…",
             fmt: [
@@ -339,7 +339,7 @@ class DraftyTest: XCTestCase {
             ],
             ent: [Entity(tp: "MN", data: ["val": .string("usr123abcDE")])]
         )
-        var actual = src.forwardedContent();
+        var actual = src.forwardedContent()
 
         var expected = Drafty(
             text: "Alice Johnson This is a reply to replyThis is a Reply -> Forward -> Reply.",
@@ -350,7 +350,7 @@ class DraftyTest: XCTestCase {
             ],
             ent: [Entity(tp: "MN", data: ["val": .string("usr123abcDE")])]
         )
-        XCTAssertEqual("Forward 1 has failed", expected, actual);
+        XCTAssertEqual(expected, actual, "Forward 1 has failed")
 
         // ------- Forward 2 (mention stripped).
         src = Drafty(
@@ -379,7 +379,7 @@ class DraftyTest: XCTestCase {
                 Entity(tp: "MN", data: ["val": .string("usr123abcDE")])
             ]
         )
-        XCTAssertEqual("Forward 2 has failed", expected, actual);
+        XCTAssertEqual(expected, actual, "Forward 2 has failed")
     }
 
     func testPreview() {
@@ -400,7 +400,7 @@ class DraftyTest: XCTestCase {
             fmt: [Style(tp: "QQ", at: 0, len: 1)],
             ent: nil
         )
-        XCTAssertEqual("Preview 1 has failed", expected, actual);
+        XCTAssertEqual(expected, actual, "Preview 1 has failed")
 
         // ------- Preview 2.
         src = Drafty(
@@ -428,7 +428,7 @@ class DraftyTest: XCTestCase {
                 Entity(tp: "MN", data: ["val": .string("usr123abcDE")])
             ]
         )
-        XCTAssertEqual("Preview 2 has failed", expected, actual);
+        XCTAssertEqual(expected, actual, "Preview 2 has failed")
     }
 
     func testReply() {
@@ -444,9 +444,9 @@ class DraftyTest: XCTestCase {
                 Entity(tp: "MN", data: ["val": .string("usr123abcDE")])
             ]
         )
-        var actual = src.replyContent(25, 3);
+        var actual = src.replyContent(length: 25, maxAttachments: 3);
         var expected = Drafty(plainText: "This is a Reply -> Forwa…")
-        XCTAssertEqual("Reply 1 has failed", expected, actual);
+        XCTAssertEqual(expected, actual, "Reply 1 has failed");
 
         // ----------- Reply 2
         src = Drafty(
@@ -463,7 +463,7 @@ class DraftyTest: XCTestCase {
                 Entity(tp: "MN", data: ["val": .string("usr123abcDE")])
             ]
         )
-        actual = src.replyContent(25, 3);
+        actual = src.replyContent(length: 25, maxAttachments: 3);
         expected = Drafty(
             text: "➦ This is a reply to rep…",
             fmt: [
@@ -471,7 +471,7 @@ class DraftyTest: XCTestCase {
             ],
             ent: nil
         )
-        XCTAssertEqual("Reply 2 has failed", expected, actual);
+        XCTAssertEqual(expected, actual, "Reply 2 has failed");
 
         // ----------- Reply 3
         src = Drafty(
@@ -491,7 +491,7 @@ class DraftyTest: XCTestCase {
                 ])
             ]
         )
-        actual = src.replyContent(25, 3);
+        actual = src.replyContent(length: 25, maxAttachments: 3);
         expected = Drafty(
             text: "Message with attachment ",
             fmt: [
@@ -508,7 +508,7 @@ class DraftyTest: XCTestCase {
                 ])
             ]
         )
-        XCTAssertEqual("Reply 3 has failed", expected, actual);
+        XCTAssertEqual(expected, actual, "Reply 3 has failed")
 
         // ----------- Reply 4
         src = Drafty(
@@ -527,7 +527,7 @@ class DraftyTest: XCTestCase {
                 ])
             ]
         )
-        actual = src.replyContent(25, 3);
+        actual = src.replyContent(length: 25, maxAttachments: 3);
         expected = Drafty(
             text: " ",
             fmt: [
@@ -543,9 +543,9 @@ class DraftyTest: XCTestCase {
                 ])
             ]
         )
-        XCTAssertEqual("Reply 4 has failed", expected, actual);
+        XCTAssertEqual(expected, actual, "Reply 4 has failed")
     }
-
+/*
     func testFormat() {
         // --------- Format 1
         var src = Drafty(
@@ -561,7 +561,7 @@ class DraftyTest: XCTestCase {
         )
         var actual = src.toMarkdown()
         var expected = "*@Alice Johnson\nThis is a reply to reply*This is a Reply -> Forward -> Reply.";
-        XCTAssertEqual("Format 1 has failed", expected, actual);
+        XCTAssertEqual(expected, actual, "Format 1 has failed")
 
         // --------- Format 2
 
@@ -579,164 +579,9 @@ class DraftyTest: XCTestCase {
         )
         actual = src.toMarkdown()
         expected = "an url: [https://www.example.com/abc#fragment](https://www.example.com/abc#fragment) and another _[www.tinode.co](http://www.tinode.co)_"
-        XCTAssertEqual("Format 2 has failed", expected, actual);
+        XCTAssertEqual(expected, actual, "Format 2 has failed")
     }
-
-    func testPreview_old() {
-        // Basic cases
-        var d1 = Drafty(plainText: "abcd").preview(previewLen: 3)
-        var d2 = Drafty(text: "ab…", fmt: nil, ent: nil)
-        XCTAssertEqual(d1, d2, "Basic: 'abcd' -> 'ab…'")
-
-        d1 = Drafty(plainText: "a😀cd").preview(previewLen: 3)
-        d2 = Drafty(text: "a😀…", fmt: nil, ent: nil)
-        XCTAssertEqual(d1, d2, "UTF32 emoji: 'a😀cd' -> 'a😀…'")
-
-        d1 = Drafty(content: "_😀 *b1👩🏽‍✈️b2* smile_").preview(previewLen: 6)
-        d2 = Drafty(text: "😀 b1👩🏽‍✈️…",
-                    fmt: [Style(tp:"ST", at:2, len:5), Style(tp:"EM", at:0, len:13)], ent: nil)
-        XCTAssertEqual(d1, d2, "UTF32 emoji with styles: '😀 b1👩🏽‍✈️…'")
-
-        d1 = Drafty(text: " abcdef my image",
-                    fmt: [Style(at: 0, len: 1, key: 0), Style(tp: "BR", at: 1, len: 1)],
-                    ent: [Entity(tp: "IM", data: ["mime": JSONValue.string("image/jpeg"), "width": JSONValue.int(100), "height": JSONValue.int(100)])]).preview(previewLen: 4)
-        d2 = Drafty(text: "  bc",
-                    fmt: [Style(at: 0, len: 1, key: 0)/*, Style(tp: "BR", at: 1, len: 1)*/],
-                    ent: [Entity(tp: "IM", data: ["mime": JSONValue.string("image/jpeg"), "width": JSONValue.int(100), "height": JSONValue.int(100)])])
-        XCTAssertEqual(d1, d2, "UTF32 emoji with entity: '<image> abcdef my image")
-
-        // ------- Preview 1
-        d1 = Drafty(content: "This is a plain text string.").preview(previewLen: 15)
-        d2 = Drafty(content: "This is a plain")
-        XCTAssertEqual(d1, d2, "Preview 1 failed")
-
-        // ------- Preview 2
-        d1 = Drafty(
-            text: "", fmt: [Style(at: -1, len: 0, key: 0)],
-            ent: [Entity(tp: "EX",
-                         data: ["mime": JSONValue.string("image/jpeg"),
-                                "name": JSONValue.string("hello.jpg"),
-                                "val": JSONValue.string("<38992, bytes: ...>"),
-                                "width": JSONValue.int(100),
-                                "height": JSONValue.int(80)])]).preview(previewLen: 15)
-        // Attachment will become trailing.
-        d2 = Drafty(
-            text: " ", fmt: [Style(at: 0, len: 1, key: 0)],
-            ent: [Entity(tp: "EX",
-                         data: ["mime": JSONValue.string("image/jpeg"),
-                                "name": JSONValue.string("hello.jpg"),
-                                // "val" will be filtered out.
-                                "width": JSONValue.int(100),
-                                "height": JSONValue.int(80)])])
-        XCTAssertEqual(d1, d2, "Preview 2 failed")
-
-        // ------- Preview 3
-        d1 = Drafty(text: "https://api.tinode.co/",
-                    fmt: [Style(at: 0, len: 22, key: 0)],
-                    ent: [Entity(tp: "LN", data: ["url": .string("https://www.youtube.com/watch?v=dQw4w9WgXcQ")])])
-            .preview(previewLen: 15)
-        d2 = Drafty(text: "https://api.ti…",
-                    fmt: [Style(at: 0, len: 15, key: 0)],
-                    ent: [Entity(tp: "LN", data: ["url": .string("https://www.youtube.com/watch?v=dQw4w9WgXcQ")])])
-        XCTAssertEqual(d1, d2, "Preview 3 failed")
-
-        // ------- Preview 4 (two references to the same entity).
-        d1 = Drafty(text: "Url one, two",
-                    fmt: [Style(at: 9, len: 3, key: 0), Style(at: 4, len: 3, key: 0)],
-                    ent: [Entity(tp: "LN", data: ["url": .string("http://tinode.co")])])
-            .preview(previewLen: 15)
-        d2 = Drafty(text: "Url one, two",
-                    fmt: [Style(at: 4, len: 3, key: 0), Style(at: 9, len: 3, key: 0)],
-                    ent: [Entity(tp: "LN", data: ["url": .string("http://tinode.co")])])
-        XCTAssertEqual(d1, d2, "Preview 4 failed")
-
-        // ------- Preview 5 (two different entities).
-        d1 = Drafty(text: "Url one, two",
-                    fmt: [Style(at: 9, len: 3, key: 1), Style(at: 4, len: 3, key: 0)],
-                    ent: [Entity(tp: "LN", data: ["url": .string("http://tinode.co")]),
-                          Entity(tp: "LN", data: ["url": .string("http://example.com")])])
-            .preview(previewLen: 15)
-        d2 = Drafty(text: "Url one, two",
-                    fmt: [Style(at: 4, len: 3, key: 0), Style(at: 9, len: 3, key: 1)],
-                    ent: [Entity(tp: "LN", data: ["url": .string("http://tinode.co")]),
-                          Entity(tp: "LN", data: ["url": .string("http://example.com")])])
-        XCTAssertEqual(d1, d2, "Preview 5 failed")
-
-        // ------- Preview 6 (inline image)
-        d1 = Drafty(text: " ",
-                    fmt: [Style(at: 0, len: 1, key: 0)],
-                    ent: [Entity(tp: "IM", data: [
-                        "height": .int(213),
-                        "width": .int(638),
-                        "name": .string("roses.jpg"),
-                        "val": .string("<38992, bytes: ...>"),
-                        "mime": .string("image/jpeg")
-                    ])])
-            .preview(previewLen: 15)
-        d2 = Drafty(text: " ",
-                    fmt: [Style(at: 0, len: 1, key: 0)],
-                    ent: [Entity(tp: "IM", data: [
-                        "height": .int(213),
-                        "width": .int(638),
-                        "name": .string("roses.jpg"),
-                        // "val" is filtered out.
-                        "mime": .string("image/jpeg")
-                    ])])
-        XCTAssertEqual(d1, d2, "Preview 6 failed")
-
-
-        // ------- Preview 7 (staggered formats)
-        d1 = Drafty(text: "This text has staggered formats",
-                    fmt: [Style(tp: "EM", at: 5, len: 8), Style(tp: "ST", at: 10, len: 13)],
-                    ent: nil)
-        d1 = d1.preview(previewLen: 15)
-        d2 = Drafty(text: "This text has s",
-                    fmt: [Style(tp: "EM", at: 5, len: 8)],
-                    ent: nil)
-        XCTAssertEqual(d1, d2, "Preview 7 failed")
-
-
-        // ------- Preview 8 (multiple formatting)
-        d1 = Drafty(text: "This text is formatted and deleted too",
-                    fmt: [Style(tp: "ST", at: 5, len: 4),
-                          Style(tp: "EM", at: 13, len: 9),
-                          Style(tp: "ST", at: 35, len: 3),
-                          Style(tp: "DL", at: 27, len: 11)],
-                    ent: nil)
-            .preview(previewLen: 15)
-        d2 = Drafty(text: "This text is f…",
-                    fmt: [Style(tp: "ST", at: 5, len: 4),
-                          Style(tp: "EM", at: 13, len: 2)],
-                    ent: nil)
-        XCTAssertEqual(d1, d2, "Preview 8 failed")
-
-        //  -------  Preview 9 (multibyte unicode)
-        d1 = Drafty(text: "мультибайтовый юникод",
-                    fmt: [Style(tp: "ST", at: 0, len: 14), Style(tp: "EM", at: 15, len: 6)], ent: nil)
-            .preview(previewLen: 15)
-        d2 = Drafty(text: "мультибайтовый…",
-                    fmt: [Style(tp: "ST", at: 0, len: 14)], ent: nil)
-        XCTAssertEqual(d1, d2, "Preview 9 failed")
-
-        //  -------  Preview 10 (quoted reply)
-        d1 = Drafty(text: "Alice Johnson    This is a test",
-                    fmt: [Style(tp: "BR", at: 13, len: 1),
-                          Style(at: 15, len: 1, key: 0),
-                          Style(at: 0, len: 13, key: 1),
-                          Style(tp: "QQ", at: 0, len: 16),
-                          Style(tp: "BR", at: 16, len: 1)],
-                    ent: [Entity(tp: "IM",
-                                 data: ["mime": .string("image/jpeg"),
-                                        "val": .string("<1292, bytes: /9j/4AAQSkZJ...rehH5o6D/9k=>"),
-                                        "width": .int(25),
-                                        "height": .int(14),
-                                        "size": .int(968)]),
-                          Entity(tp: "MN",
-                                 data: ["val": .string("usr12345678")])])
-            .preview(previewLen: 15)
-        d2 = Drafty(content: "This is a test")
-        XCTAssertEqual(d1, d2, "Preview 10 failed")
-    }
+*/
 
     func testPerformanceParse() {
         self.measure {
