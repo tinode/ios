@@ -37,7 +37,7 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
     private static let kMaxPreviewDataSize = 64
     private static let kMaxPreviewAttachments = 3
 
-    // Styles which require no body.
+    // Styles which require no body (but may have a body which will be ignored).
     private static let kVoidStyles = ["BR", "EX", "HD"]
 
     // Entity data field names which will be processed.
@@ -174,6 +174,10 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
         self.txt = text
         self.fmt = fmt
         self.ent = ent
+    }
+
+    public static func isVoid(type: String?) -> Bool {
+        return kVoidStyles.contains(type ?? "-")
     }
 
     // Polifill brain-damaged Swift.
@@ -958,7 +962,7 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
         }
 
         /// Traverse the tree from the bottom up (formatting).
-        class func treeBottomUp<FMT: DraftyFormatter, STR: DraftyFormatter.FormattedString>(src: Span?, formatter fmt: FMT, stack context: inout [String]?) -> STR? {
+        class func treeBottomUp<FMT: DraftyFormatter, STR: DraftyFormatter.FormattedString>(src: Span?, formatter fmt: FMT, stack context: inout [String]?, resultType rt: STR.Type) -> STR? {
             guard let src = src else { return nil }
 
             var stack = context
@@ -969,7 +973,7 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
             var content: [STR] = []
             if let children = src.children {
                 for child in children {
-                    if let val: STR = treeBottomUp(src: child, formatter: fmt, stack: &stack) {
+                    if let val: STR = treeBottomUp(src: child, formatter: fmt, stack: &stack, resultType: rt) {
                         content.append(val)
                     }
                 }
@@ -1309,23 +1313,26 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
             }
         }
         var stack: [String]? = []
-        let result: WrappedString? = SpanTreeProcessor.treeBottomUp(src: tree, formatter: Formatter(), stack: &stack)
+        let result = SpanTreeProcessor.treeBottomUp(src: tree, formatter: Formatter(), stack: &stack, resultType: WrappedString.self)
         return result?.string ?? ""
     }
 
 
-    /*
+
     /// Format converts Drafty object into a collection of nodes with format definitions.
     /// Each node contains either a formatted element or a collection of formatted elements.
     ///
     /// - Parameters:
-    ///     - formatter: an interface with an `apply` methods. It's iteratively for to every node in the tree.
+    ///     - formatter: an interface with an `apply`and `wrapString` methods. It's iteratively called for to every node in the tree.
+    ///     - resultType: a way to get around limtations of Swift generics.
     /// - Returns: a tree of nodes.
-    public func format(formatWith formatter: DraftyFormatter) -> DraftyFormatter.FormattedString {
-        let proc = FormattingProcessor(with: styleFormatters)
-        return proc.process(contentOf: self, using: defaultFormatter)!
+    public func format<FMT: DraftyFormatter, STR: DraftyFormatter.FormattedString>(formatWith formatter: FMT, resultType rt: STR.Type) -> STR? {
+        var tree = Span()
+        tree = SpanTreeProcessor.toTree(contentOf: self) ?? tree
+
+        var stack: [String]? = []
+        return SpanTreeProcessor.treeBottomUp(src: tree, formatter: formatter, stack: &stack, resultType: rt)
     }
-    */
 
     /// Deep copy a Drafty object.
     public func copy() -> Drafty? {

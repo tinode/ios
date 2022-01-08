@@ -361,7 +361,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         }
         var transformed: Drafty!
         if original.isForwarded {
-            guard let p = content.preview(ofMaxLength: Int.max, using: ForwardingTransformer(shouldKeepForwardedSign: false)) else {
+            guard let p = content.preview(previewLen: Int.max, using: ForwardingTransformer(shouldKeepForwardedSign: false)) else {
                 Cache.log.error("prepareForwardedMessage error: could not transform the original message for forwarding - %@", content.string)
                 return nil
             }
@@ -375,7 +375,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         let fwdHeader = "\(topicName):\(original.seqId)"
         // Preview. We may have images to download and downsize. Have to do it asynchronously.
         let transformer = ReplyTransformer()
-        let preview = transformed.preview(ofMaxLength: UiUtils.kQuotedReplyLength, using: transformer)!
+        let preview = transformed.preview(previewLen: UiUtils.kQuotedReplyLength)
         if let p = transformer.promise {
             let result = PromisedReply<PendingMessage>()
             p.then(onSuccess: { value in

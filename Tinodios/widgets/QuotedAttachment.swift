@@ -18,7 +18,7 @@ class QuotedAttachment: NSTextAttachment {
         static let kWidthPadding: CGFloat = 3
         static let kDefaultQuoteBackgroundColorLight = UIColor(fromHexCode: 0x20333333)
         static let kDefaultQuoteBackgroundColorDark = UIColor(fromHexCode: 0x20CCCCCC)
-        static let kDefaultStripeColor = UIColor(Color.accentColor)
+        static let kDefaultStripeColor = UIColor.link
     }
 
     var attributedString: NSAttributedString
