@@ -263,7 +263,7 @@ extension StoredMessage {
         }
         if !isDeleted {
             guard let content = content else { return nil }
-            cachedContent = AttributedStringFormatter.toAttributed(content, fitIn: size, withDefaultAttributes: attributes, fmt: AttributedStringFormatter.self)
+            cachedContent = AttributedStringFormatter.toAttributed(content, fitIn: size, withDefaultAttributes: attributes)
         } else {
             cachedContent = StoredMessage.contentDeletedMessage(withAttributes: attributes)
         }

@@ -544,6 +544,39 @@ class DraftyTest: XCTestCase {
             ]
         )
         XCTAssertEqual(expected, actual, "Reply 4 has failed")
+
+        // ------- Reply 5 (inline image)
+        src = Drafty(
+            text: " ",
+            fmt: [Style(at: 0, len: 1, key: 0)],
+            ent: [Entity(
+                tp: "IM",
+                data: [
+                    "height": .int(213),
+                    "width": .int(638),
+                    "name": .string("roses.jpg"),
+                    "val": .string("<38992, 123456789012345678901234567890123456789012345678901234567890 bytes: ...>"),
+                    "mime":.string("image/jpeg")
+                ])
+            ]
+        )
+        actual = src.replyContent(length: 25, maxAttachments: 3);
+        expected = Drafty(
+            text: " ",
+            fmt: [Style(at: 0, len: 1, key: 0)],
+            ent: [Entity(
+                tp: "IM",
+                data: [
+                    "height": .int(213),
+                    "width": .int(638),
+                    "name": .string("roses.jpg"),
+                    "val": .string("<38992, 123456789012345678901234567890123456789012345678901234567890 bytes: ...>"),
+                    "mime": .string("image/jpeg")
+                ])
+            ]
+        )
+        XCTAssertEqual(expected, actual, "Reply 5 has failed");
+
     }
 
     func testFormat() {

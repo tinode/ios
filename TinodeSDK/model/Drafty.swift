@@ -1071,19 +1071,31 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
     }
 
     private class LightCopyTransformer: DraftyTransformer {
-        required init() {}
+        private let allowed: [String]?
+        private let forTypes: [String]?
+        required init() {
+            allowed = nil
+            forTypes = nil
+        }
+        init(allowedFields: [String], forTypes: [String]?) {
+            self.allowed = allowedFields
+            self.forTypes = forTypes
+        }
+        private func isAllowed(type: String, field: String) -> Bool {
+            return (allowed == nil || allowed!.contains(field)) && (forTypes == nil || forTypes!.contains(type))
+        }
         func transform(node: Drafty.Span) -> Drafty.Span? {
-            node.data = LightCopyTransformer.copyEntData(data: node.data, maxLength: Drafty.kMaxPreviewDataSize)
+            node.data = copyEntData(type: node.type, data: node.data, maxLength: Drafty.kMaxPreviewDataSize)
             return node
         }
 
-        class func copyEntData(data: [String : JSONValue]?, maxLength: Int) -> [String : JSONValue]? {
+        func copyEntData(type: String?, data: [String : JSONValue]?, maxLength: Int) -> [String : JSONValue]? {
             guard let data = data, !data.isEmpty else { return data }
 
             var dc: [String : JSONValue] = [:]
             for key in Drafty.kKnownDataFelds {
                 if let value = data[key] {
-                    if maxLength <= 0 {
+                    if maxLength <= 0 || isAllowed(type: type ?? "", field: key) {
                         dc[key] = value
                         continue
                     }
@@ -1215,7 +1227,7 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
     /// * Replace forwarding mention with symbol '➦' and remove data (UID).
     /// * Remove quoted text completely.
     /// * Replace line breaks with spaces.
-    /// * Strip entities of heavy content.
+    /// * Strip entities of heavy content except 'val' (inline image data).
     /// * Move attachments to the end of the document.
     /// - Parameters:
     ///     - length: length in characters to shorten to.
@@ -1251,7 +1263,7 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
         tree = SpanTreeProcessor.attachmentsToEnd(tree: tree, maxAttachments: maxAttachments) ?? tree
         // Shorten the doc.
         tree = SpanTreeProcessor.treeTopDown(tree: tree, using: ShorteningTransformer(length: length, tail: "…")) ?? tree
-        tree = SpanTreeProcessor.treeTopDown(tree: tree, using: LightCopyTransformer()) ?? tree
+        tree = SpanTreeProcessor.treeTopDown(tree: tree, using: LightCopyTransformer(allowedFields: ["val"], forTypes: ["IM"])) ?? tree
 
         // Convert back to Drafty.
         var keymap = [Int: Int]()

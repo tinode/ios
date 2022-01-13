@@ -109,7 +109,7 @@ class PreviewFormatter: AttributedStringFormatter {
         if nodes.isEmpty {
             faceText = NSAttributedString(string: "button", attributes: attrs)
         } else {
-            faceText = NSAttributedString(string: content, attributes: attrs)
+            faceText = NSAttributedString(string: FormatNode(nodes).toString(), attributes: attrs)
         }
         let att = DraftyButtonAttachment(face: faceText, data: nil, traceBorder: true, widthPadding: 1, heightMultiplier: 1.1, verticalOffset: -2)
         let node = FormatNode()

@@ -237,72 +237,6 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         return false
     }
 
-    // Turns images into thumbnails when preparing a reply quote to a message.
-    private class ReplyTransformer: Drafty.PreviewTransformer {
-        // Keeps track of the chain of images which need to be asynchronously downloaded
-        // and downsized.
-        var promise: PromisedReply<UIImage>?
-
-        override func transform(node: Drafty.Span) -> Drafty.Span? {
-            guard node.type == "IM" else {
-                return super.transform(node: node)
-            }
-            let result = Drafty.Span(from: node)
-            if result.data != nil {
-                result.data?.removeAll()
-            } else {
-                result.data = [:]
-            }
-            result.data!["name"] = node.data?["name"]
-            if let bits = node.data?["val"]?.asData() {
-                let thumbnail = UIImage(data: bits)?.resize(
-                    width: CGFloat(UiUtils.kReplyThumbnailSize), height: CGFloat(UiUtils.kReplyThumbnailSize), clip: true)
-                let thumbnailBits = thumbnail?.pixelData(forMimeType: "image/jpeg")
-                result.data!["val"] = .bytes(thumbnailBits!)
-                result.data!["mime"] = .string("image/jpeg")
-
-                result.data!["size"] = .int(thumbnailBits!.count)
-            } else if let ref = node.data?["ref"]?.asString() {
-                let origPromise = self.promise
-                let url = Utils.tinodeResourceUrl(from: ref)
-                let p = Utils.fetchTinodeResource(from: url)?.thenApply {
-                    let thumbnail = $0?.resize(
-                        width: CGFloat(UiUtils.kReplyThumbnailSize), height: CGFloat(UiUtils.kReplyThumbnailSize), clip: true)
-                    let thumbnailBits = thumbnail?.pixelData(forMimeType: "image/jpeg")
-                    result.data!["val"] = .bytes(thumbnailBits!)
-                    result.data!["mime"] = .string("image/jpeg")
-                    return origPromise
-                }
-                // Chain promises.
-                self.promise = p
-            }
-            result.data!["width"] = .int(UiUtils.kReplyThumbnailSize)
-            result.data!["height"] = .int(UiUtils.kReplyThumbnailSize)
-            return result
-        }
-    }
-
-    // Strips the first mention (i.e. forwarded from mention) from the document.
-    private class ForwardingTransformer: SpanTreeTransformer {
-        private var mentionStripped = false
-        // If true, will substitute the message origin (➦ User Name) for a "➦ ".
-        // Otherwise, will strip the origin string altogether.
-        private var keepForwardedSign: Bool
-        public init(shouldKeepForwardedSign: Bool) {
-            self.keepForwardedSign = shouldKeepForwardedSign
-        }
-        func transform(node: Drafty.Span) -> Drafty.Span? {
-            guard node.type == "MN" && !mentionStripped else { return node }
-            mentionStripped = true
-            if self.keepForwardedSign {
-                let span = Drafty.Span()
-                span.text = "➦ "
-                return span
-            }
-            return nil
-        }
-    }
-
     private func senderName(for message: Message) -> String {
         var senderName: String?
         if let sub = topic?.getSubscription(for: message.from), let pub = sub.pub {
@@ -319,12 +253,9 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         }
         let seqId = msg.seqId
         let sender = senderName(for: msg)
-        // Trim any mentions (starting with a ➦).
-        let content =
-            msg.isForwarded ? replyTo.preview(ofMaxLength: Int.max, using: ForwardingTransformer(shouldKeepForwardedSign: true)) : replyTo
+        let content = replyTo.preview(previewLen: Int.max)
 
-        let transformer = ReplyTransformer()
-        let p = content!.preview(ofMaxLength: UiUtils.kQuotedReplyLength, using: ReplyTransformer())
+        let p = content.format(formatWith: ReplyFormatter(), resultType: ReplyFormatter)
         if transformer.promise != nil {
             // We have images to download and downsize.
             let result = PromisedReply<Drafty>()
@@ -359,22 +290,13 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
             Cache.log.error("prepareForwardedMessage error: could not determine sender id for message %@", content.string)
             return nil
         }
-        var transformed: Drafty!
-        if original.isForwarded {
-            guard let p = content.preview(previewLen: Int.max, using: ForwardingTransformer(shouldKeepForwardedSign: false)) else {
-                Cache.log.error("prepareForwardedMessage error: could not transform the original message for forwarding - %@", content.string)
-                return nil
-            }
-            transformed = p
-        } else {
-            transformed = content
-        }
+        let transformed = content.forwardedContent()
         let forwardedContent = Drafty.mention(userWithName: sender, uid: from)
             .appendLineBreak()
             .append(transformed)
         let fwdHeader = "\(topicName):\(original.seqId)"
         // Preview. We may have images to download and downsize. Have to do it asynchronously.
-        let transformer = ReplyTransformer()
+        let transformer = ReplyFormatter()
         let preview = transformed.preview(previewLen: UiUtils.kQuotedReplyLength)
         if let p = transformer.promise {
             let result = PromisedReply<PendingMessage>()

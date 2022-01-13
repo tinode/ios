@@ -16,8 +16,7 @@ class QuotedAttachment: NSTextAttachment {
         static let kHeightMultiplier: CGFloat = 1.4
         // Quote width padding in characters.
         static let kWidthPadding: CGFloat = 3
-        static let kDefaultQuoteBackgroundColorLight = UIColor(fromHexCode: 0x20333333)
-        static let kDefaultQuoteBackgroundColorDark = UIColor(fromHexCode: 0x20CCCCCC)
+        static let kDefaultQuoteBackgroundColor = UIColor(fromHexCode: 0x20808080)
         static let kDefaultStripeColor = UIColor.link
     }
 
@@ -32,11 +31,7 @@ class QuotedAttachment: NSTextAttachment {
         attributedString = quotedText
         self.widthPadding = widthPadding
         self.heightMultiplier = heightMultiplier
-        if traitCollection.userInterfaceStyle == .dark {
-            self.backgroundColor = Constants.kDefaultQuoteBackgroundColorDark
-        } else {
-            self.backgroundColor = Constants.kDefaultQuoteBackgroundColorLight
-        }
+        self.backgroundColor = Constants.kDefaultQuoteBackgroundColor
         self.stripeColor = Constants.kDefaultStripeColor
         super.init(data: nil, ofType: "public.text")
 
