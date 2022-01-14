@@ -9,6 +9,7 @@ import Foundation
 import TinodeSDK
 import UIKit
 
+// Formatting of a text inside quote.
 class QuoteFormatter: PreviewFormatter {
     static let kThumbnailImageDim = 32
 

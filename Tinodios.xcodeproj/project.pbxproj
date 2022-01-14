@@ -65,11 +65,12 @@
 		B0133AE323D1AADF00C813CA /* SendImageBar.xib in Resources */ = {isa = PBXBuildFile; fileRef = B0133AE223D1AADF00C813CA /* SendImageBar.xib */; };
 		B0133AE523D1ACBD00C813CA /* SendImageBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0133AE423D1ACBC00C813CA /* SendImageBar.swift */; };
 		B01C693F22F87B5C003C0AA7 /* SignupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B01C693E22F87B5C003C0AA7 /* SignupViewController.swift */; };
+		B01D2C6D27910B1E009543F2 /* ThumbnailTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B01D2C6C27910B1E009543F2 /* ThumbnailTransformer.swift */; };
 		B026F243257C59CA003BA14B /* ProgressView.xib in Resources */ = {isa = PBXBuildFile; fileRef = B026F242257C59CA003BA14B /* ProgressView.xib */; };
 		B026F247257C5EFF003BA14B /* ProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B026F246257C5EFF003BA14B /* ProgressView.swift */; };
 		B027E5AE278901CA00A34C17 /* PreviewFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B027E5AD278901CA00A34C17 /* PreviewFormatter.swift */; };
 		B027E5B02789020D00A34C17 /* QuoteFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B027E5AF2789020D00A34C17 /* QuoteFormatter.swift */; };
-		B027E5B22789026200A34C17 /* ReplyFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B027E5B12789026200A34C17 /* ReplyFormatter.swift */; };
+		B027E5B22789026200A34C17 /* SendReplyFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B027E5B12789026200A34C17 /* SendReplyFormatter.swift */; };
 		B02F5C8B22679BC80079A97E /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = B02F5C8A22679BC80079A97E /* ImagePicker.swift */; };
 		B031BE552263075E004160AE /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = B031BE542263075E004160AE /* Settings.bundle */; };
 		B05ACEB322FDAB5200276713 /* ResetPasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B05ACEB222FDAB5200276713 /* ResetPasswordViewController.swift */; };
@@ -202,11 +203,12 @@
 		B0133AE223D1AADF00C813CA /* SendImageBar.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SendImageBar.xib; sourceTree = "<group>"; };
 		B0133AE423D1ACBC00C813CA /* SendImageBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendImageBar.swift; sourceTree = "<group>"; };
 		B01C693E22F87B5C003C0AA7 /* SignupViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignupViewController.swift; sourceTree = "<group>"; };
+		B01D2C6C27910B1E009543F2 /* ThumbnailTransformer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThumbnailTransformer.swift; sourceTree = "<group>"; };
 		B026F242257C59CA003BA14B /* ProgressView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ProgressView.xib; sourceTree = "<group>"; };
 		B026F246257C5EFF003BA14B /* ProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressView.swift; sourceTree = "<group>"; };
 		B027E5AD278901CA00A34C17 /* PreviewFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewFormatter.swift; sourceTree = "<group>"; };
 		B027E5AF2789020D00A34C17 /* QuoteFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuoteFormatter.swift; sourceTree = "<group>"; };
-		B027E5B12789026200A34C17 /* ReplyFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReplyFormatter.swift; sourceTree = "<group>"; };
+		B027E5B12789026200A34C17 /* SendReplyFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendReplyFormatter.swift; sourceTree = "<group>"; };
 		B02F5C8A22679BC80079A97E /* ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
 		B031BE542263075E004160AE /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		B05ACEB222FDAB5200276713 /* ResetPasswordViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResetPasswordViewController.swift; sourceTree = "<group>"; };
@@ -302,7 +304,7 @@
 			isa = PBXGroup;
 			children = (
 				0A4E1D3122829C52006C0912 /* account */,
-				B027E5AC2789010C00A34C17 /* formatter */,
+				B027E5AC2789010C00A34C17 /* format */,
 				B0C496B022787C020084FA0D /* widgets */,
 				0A95F4D3229BD95900AEF7D3 /* AccountSettingsViewController.swift */,
 				0A2F81C5229677DD007E562C /* AddByIDViewController.swift */,
@@ -400,15 +402,16 @@
 			name = Pods;
 			sourceTree = "<group>";
 		};
-		B027E5AC2789010C00A34C17 /* formatter */ = {
+		B027E5AC2789010C00A34C17 /* format */ = {
 			isa = PBXGroup;
 			children = (
 				B008593B22741B89002C5168 /* AttributedStringFormatter.swift */,
 				B027E5AD278901CA00A34C17 /* PreviewFormatter.swift */,
 				B027E5AF2789020D00A34C17 /* QuoteFormatter.swift */,
-				B027E5B12789026200A34C17 /* ReplyFormatter.swift */,
+				B027E5B12789026200A34C17 /* SendReplyFormatter.swift */,
+				B01D2C6C27910B1E009543F2 /* ThumbnailTransformer.swift */,
 			);
-			path = formatter;
+			path = format;
 			sourceTree = "<group>";
 		};
 		B0C496B022787C020084FA0D /* widgets */ = {
@@ -681,7 +684,7 @@
 				B09C5652246C0E6B00D6615D /* BlockedContactsTableViewController.swift in Sources */,
 				B09C564E246975F700D6615D /* SettingsHelpViewController.swift in Sources */,
 				B0DF03312283FFD8000F9492 /* PlaceholderTextView.swift in Sources */,
-				B027E5B22789026200A34C17 /* ReplyFormatter.swift in Sources */,
+				B027E5B22789026200A34C17 /* SendReplyFormatter.swift in Sources */,
 				0A35BA9E22836CCF00AA5E2F /* ContactsSynchronizer.swift in Sources */,
 				B09C564A2469362A00D6615D /* SettingsPersonalViewController.swift in Sources */,
 				0A11912D22F03E3100A1BBA1 /* TagsEditView.swift in Sources */,
@@ -712,6 +715,7 @@
 				7DDADC5221D5C219009733B5 /* ValidatedCredential.swift in Sources */,
 				B0A612B5229132CC00569DFE /* MessageBubbleDecorator.swift in Sources */,
 				B0DF0319227C2517000F9492 /* MessageView.swift in Sources */,
+				B01D2C6D27910B1E009543F2 /* ThumbnailTransformer.swift in Sources */,
 				7DDADC5421D5C2E6009733B5 /* CredentialsViewController.swift in Sources */,
 				B0A612AF228B08EC00569DFE /* RichTextView.swift in Sources */,
 				0AD6873D27233C0800A39486 /* QuotedAttachment.swift in Sources */,

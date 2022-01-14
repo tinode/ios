@@ -39,7 +39,7 @@ class PreviewFormatter: AttributedStringFormatter {
         }
 
         let formatter = PreviewFormatter(withDefaultAttributes: attributes, isForwardedMessage: isForwarded)
-        let formatTree = content.format(formatWith: formatter, resultType: FormatNode.self) as! FormatNode
+        let formatTree = content.format(formatWith: formatter, resultType: FormatNode.self)!
         do {
             return try formatTree.toAttributed(withDefaultAttributes: attributes, fontTraits: nil, fitIn: maxSize, upToLength: maxLength)
         } catch LengthExceededError.runtimeError(let str) {

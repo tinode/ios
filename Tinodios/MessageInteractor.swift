@@ -245,33 +245,34 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         return senderName ?? String(format: NSLocalizedString("Unknown %@", comment: ""), message.from ?? "none")
     }
 
-    // Creates a reply quote.
+    // Convert message into a quote ready for sending as a reply.
     func prepareReply(to msg: Message?) -> PromisedReply<Drafty>? {
-        guard let msg = msg, let replyTo = msg.content else {
+        guard let msg = msg, let content = msg.content else {
             self.dismissPendingMessage()
             return nil
         }
         let seqId = msg.seqId
         let sender = senderName(for: msg)
-        let content = replyTo.preview(previewLen: Int.max)
-
-        let p = content.format(formatWith: ReplyFormatter(), resultType: ReplyFormatter)
-        if transformer.promise != nil {
+        // Strip unneeded content and shorten.
+        var reply = content.replyContent(length: SendReplyFormatter.kQuotedReplyLength, maxAttachments: 1)
+        let createThumbnails = ThumbnailTransformer()
+        reply = reply.transform(createThumbnails)
+        if let whenDone = createThumbnails.promise {
             // We have images to download and downsize.
             let result = PromisedReply<Drafty>()
-            transformer.promise!.then(onSuccess: {_ in
-                let finalMsg = Drafty.quote(quoteHeader: sender, authorUid: msg.from ?? "", quoteContent: p!)
-                self.pendingMessage = .replyTo(message: finalMsg, seqId: seqId)
-                try? result.resolve(result: finalMsg)
-                return nil
-            }, onFailure: { err in
-                try? result.reject(error: err)
-                return nil
-            })
+            whenDone.then(onSuccess: {_ in
+                    let finalMsg = Drafty.quote(quoteHeader: sender, authorUid: msg.from ?? "", quoteContent: reply)
+                    self.pendingMessage = .replyTo(message: finalMsg, seqId: seqId)
+                    try? result.resolve(result: finalMsg)
+                    return nil
+                }, onFailure: { err in
+                    try? result.reject(error: err)
+                    return nil
+                })
             return result
         } else {
-            // We are done. So form a reply and return a resolved promise.
-            let finalMsg = Drafty.quote(quoteHeader: sender, authorUid: msg.from ?? "", quoteContent: p!)
+            // No long-running operations (no downloads). Form a reply and return a resolved promise.
+            let finalMsg = Drafty.quote(quoteHeader: sender, authorUid: msg.from ?? "", quoteContent: reply)
             self.pendingMessage = .replyTo(message: finalMsg, seqId: seqId)
             return PromisedReply<Drafty>(value: finalMsg)
         }
@@ -296,7 +297,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
             .append(transformed)
         let fwdHeader = "\(topicName):\(original.seqId)"
         // Preview. We may have images to download and downsize. Have to do it asynchronously.
-        let transformer = ReplyFormatter()
+        let transformer = SendReplyFormatter(withDefaultAttributes: [:])
         let preview = transformed.preview(previewLen: UiUtils.kQuotedReplyLength)
         if let p = transformer.promise {
             let result = PromisedReply<PendingMessage>()

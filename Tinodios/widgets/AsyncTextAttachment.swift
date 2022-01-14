@@ -2,7 +2,7 @@
 //  AsyncTextAttachment.swift
 //  Tinodios
 //
-//  Copyright © 2020 Tinode. All rights reserved.
+//  Copyright © 2020-2022 Tinode LLC. All rights reserved.
 //
 
 import TinodeSDK
@@ -12,7 +12,7 @@ public class ImageTextAttachment: NSTextAttachment {
     public var draftyEntityKey: Int?
 }
 
-/// An image text attachment which gets updated after loading an image from URL
+/// An image text attachment which gets updated after loading an image from URL.
 public class AsyncTextAttachment: ImageTextAttachment {
     /// Container to be notified when the image is updated: successfully fetched or failed.
     weak var textContainer: NSTextContainer?

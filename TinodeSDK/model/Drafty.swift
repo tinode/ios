@@ -1143,7 +1143,7 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
         }
         var keymap = [Int: Int]()
         var result = Drafty()
-        tree.appendTo(document: &result, using: &keymap)
+        tree.appendTo(document: &result, withKeymap: &keymap)
         return result
     }
 
@@ -1187,7 +1187,7 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
 
         var keymap = [Int: Int]()
         var result = Drafty()
-        tree.appendTo(document: &result, using: &keymap)
+        tree.appendTo(document: &result, withKeymap: &keymap)
         return result
     }
 
@@ -1219,7 +1219,7 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
         // Convert back to Drafty.
         var keymap = [Int: Int]()
         var result = Drafty()
-        tree.appendTo(document: &result, using: &keymap)
+        tree.appendTo(document: &result, withKeymap: &keymap)
         return result
     }
 
@@ -1268,7 +1268,20 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
         // Convert back to Drafty.
         var keymap = [Int: Int]()
         var result = Drafty()
-        tree.appendTo(document: &result, using: &keymap)
+        tree.appendTo(document: &result, withKeymap: &keymap)
+        return result
+    }
+
+    /// Apply custom transformer to Draft tree top-down.
+    public func transform(_ transformer: DraftyTransformer) -> Drafty {
+        var tree = Span()
+        tree = SpanTreeProcessor.toTree(contentOf: self) ?? tree
+        tree = SpanTreeProcessor.treeTopDown(tree: tree, using: transformer) ?? tree
+
+        // Convert back to Drafty.
+        var keymap = [Int: Int]()
+        var result = Drafty()
+        tree.appendTo(document: &result, withKeymap: &keymap)
         return result
     }
 
@@ -1487,13 +1500,13 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
         }
 
         // Appends the tree of Spans (for which the root is self) to a Drafty doc.
-        func appendTo(document doc: inout Drafty, using keymap: inout [Int: Int]) {
+        func appendTo(document doc: inout Drafty, withKeymap keymap: inout [Int: Int]) {
             let start = doc.length
             if let txt = text {
                 doc.txt += txt
             } else if let children = self.children {
                 for child in children {
-                    child.appendTo(document: &doc, using: &keymap)
+                    child.appendTo(document: &doc, withKeymap: &keymap)
                 }
             }
             if let tp = self.type {

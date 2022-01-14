@@ -1186,7 +1186,7 @@ extension MessageViewController: MessageCellDelegate {
         let maxWidth = sendMessageBar.previewMaxWidth
         let maxHeight = collectionView.frame.height
         // Make sure it's properly formatted.
-        let formattedPreview = ReplyFormatter.toAttributed(content, fitIn: CGSize(width: maxWidth, height: maxHeight))
+        let formattedPreview = SendReplyFormatter.toAttributed(content, fitIn: CGSize(width: maxWidth, height: maxHeight))
         self.togglePreviewBar(with: formattedPreview)
     }
 
@@ -1198,7 +1198,7 @@ extension MessageViewController: MessageCellDelegate {
                 DispatchQueue.main.async { self.showInPreviewBar(content: value) }
                 return nil
             }, onFailure: { err in
-                DispatchQueue.main.async { UiUtils.showToast(message: "Failed to prepare reply: \(err)") }
+                DispatchQueue.main.async { UiUtils.showToast(message: "Failed to create reply: \(err)") }
                 return nil
             })
         }
