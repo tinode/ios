@@ -94,6 +94,20 @@ public class PromisedReply<Value> {
         countDownLatch = CountDownLatch(count: 0)
     }
 
+    public class func allOf(promises waitFor: [PromisedReply]) -> PromisedReply<Void> {
+        let done = PromisedReply<Void>()
+        // Create a separate thread and wait for all promises to resolve.
+        DispatchQueue(label: "co.tinode.promise.allOf").async {
+            for p in waitFor {
+                p.countDownLatch?.await()
+            }
+
+            // We can't do anything if it throws.
+            try? done.resolve(result: nil)
+        }
+        return done
+    }
+
     public func resolve(result: Value?) throws {
         defer {
             // down the semaphore
@@ -124,6 +138,7 @@ public class PromisedReply<Value> {
             try callOnFailure(err: error)
         }
     }
+
     @discardableResult
     public func then(onSuccess successHandler: SuccessHandler, onFailure failureHandler: FailureHandler = nil) -> PromisedReply<Value> {
         return queue.sync {
@@ -148,10 +163,12 @@ public class PromisedReply<Value> {
             return self.nextPromise!
         }
     }
+
     @discardableResult
     public func thenApply(_ successHandler: SuccessHandler) -> PromisedReply<Value> {
         return then(onSuccess: successHandler, onFailure: nil)
     }
+
     @discardableResult
     public func thenCatch(_ failureHandler: FailureHandler) -> PromisedReply<Value> {
         return then(onSuccess: nil, onFailure: failureHandler)

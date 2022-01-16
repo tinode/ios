@@ -36,7 +36,7 @@ public class AsyncTextAttachment: ImageTextAttachment {
     }
 
     public func startDownload(onError errorImage: UIImage) {
-        Utils.fetchTinodeResource(from: url)?
+        Utils.fetchTinodeResource(from: url)
             .then(onSuccess: { value in
                 if let done = self.postprocessing {
                     self.image = done(value!) ?? errorImage

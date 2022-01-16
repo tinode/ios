@@ -257,25 +257,14 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         var reply = content.replyContent(length: SendReplyFormatter.kQuotedReplyLength, maxAttachments: 1)
         let createThumbnails = ThumbnailTransformer()
         reply = reply.transform(createThumbnails)
-        if let whenDone = createThumbnails.promise {
-            // We have images to download and downsize.
-            let result = PromisedReply<Drafty>()
-            whenDone.then(onSuccess: {_ in
-                    let finalMsg = Drafty.quote(quoteHeader: sender, authorUid: msg.from ?? "", quoteContent: reply)
-                    self.pendingMessage = .replyTo(message: finalMsg, seqId: seqId)
-                    try? result.resolve(result: finalMsg)
-                    return nil
-                }, onFailure: { err in
-                    try? result.reject(error: err)
-                    return nil
-                })
-            return result
-        } else {
-            // No long-running operations (no downloads). Form a reply and return a resolved promise.
+        let whenDone = PromisedReply<Drafty>()
+        createThumbnails.completionPromise.thenApply {_ in
             let finalMsg = Drafty.quote(quoteHeader: sender, authorUid: msg.from ?? "", quoteContent: reply)
             self.pendingMessage = .replyTo(message: finalMsg, seqId: seqId)
-            return PromisedReply<Drafty>(value: finalMsg)
+            try? whenDone.resolve(result: finalMsg)
+            return nil
         }
+        return whenDone
     }
 
     func dismissPendingMessage() {

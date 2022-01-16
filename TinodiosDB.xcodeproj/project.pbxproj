@@ -368,7 +368,6 @@
 					"$(inherited)",
 					"\"${PODS_CONFIGURATION_BUILD_DIR}/SQLite.swift\"",
 					"\"${PODS_CONFIGURATION_BUILD_DIR}/SwiftKeychainWrapper\"",
-					"\"${PODS_CONFIGURATION_BUILD_DIR}/SwiftWebSocket\"",
 				);
 				INFOPLIST_FILE = TinodiosDB/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -401,7 +400,6 @@
 					"$(inherited)",
 					"\"${PODS_CONFIGURATION_BUILD_DIR}/SQLite.swift\"",
 					"\"${PODS_CONFIGURATION_BUILD_DIR}/SwiftKeychainWrapper\"",
-					"\"${PODS_CONFIGURATION_BUILD_DIR}/SwiftWebSocket\"",
 				);
 				INFOPLIST_FILE = TinodiosDB/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";

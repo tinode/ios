@@ -103,7 +103,7 @@ public class Utils {
     }
 
     // Initializes a download for a resource (typically, an image) from the provided url.
-    public static func fetchTinodeResource(from url: URL?) -> PromisedReply<UIImage>? {
+    public static func fetchTinodeResource(from url: URL?) -> PromisedReply<UIImage> {
         let modifier = AnyModifier { request in
             var request = request
             LargeFileHelper.addCommonHeaders(to: &request, using: Cache.tinode)

@@ -42,7 +42,7 @@ class PreviewFormatter: AttributedStringFormatter {
         let formatTree = content.format(formatWith: formatter, resultType: FormatNode.self)!
         do {
             return try formatTree.toAttributed(withDefaultAttributes: attributes, fontTraits: nil, fitIn: maxSize, upToLength: maxLength)
-        } catch LengthExceededError.runtimeError(let str) {
+        } catch FormatNode.LengthExceededError.runtimeError(let str) {
             let result = NSMutableAttributedString(attributedString: str)
             let elipses = NSAttributedString(string: "…")
             result.append(elipses)
@@ -58,7 +58,7 @@ class PreviewFormatter: AttributedStringFormatter {
 
     override func handleLink(content nodes: [FormatNode], using attr: [String: JSONValue]?) -> FormatNode {
         let node = FormatNode(nodes)
-        node.style(cstyle: [.foregroundColor: AttributedStringFormatter.Constants.kLinkColor])
+        node.style(cstyle: [.foregroundColor: FormatNode.Constants.kLinkColor])
         return node
     }
 
@@ -90,15 +90,15 @@ class PreviewFormatter: AttributedStringFormatter {
             // Skip JSON attachments. They are not meant to be user-visible.
             return FormatNode("")
         }
-        return annotatedIcon(iconName: "image-50", annotation: "Picture", comment: "Image preview icon.")
+        return annotatedIcon(iconName: "image-50", annotation: NSLocalizedString("Picture", comment: "Label shown next to an inline image"), comment: "Image preview icon.")
     }
 
     override func handleAttachment(using attr: [String: JSONValue]?) -> FormatNode {
-        return annotatedIcon(iconName: "attach-50", annotation: "Attachment", comment: "Attachment preview icon.")
+        return annotatedIcon(iconName: "attach-50", annotation: NSLocalizedString("Attachment", comment: "Label shown next to an attachment"), comment: "Attachment preview icon.")
     }
 
     override func handleForm(_ nodes: [FormatNode]) -> FormatNode {
-        var result = [annotatedIcon(iconName: "form-50", annotation: "Form", comment: "Form preview icon."), FormatNode(": ")]
+        var result = [annotatedIcon(iconName: "form-50", annotation: NSLocalizedString("Form", comment: "Label shown next to a form in preview"), comment: "Form preview icon."), FormatNode(": ")]
         result.append(contentsOf: nodes)
         return FormatNode(result)
     }

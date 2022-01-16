@@ -9,7 +9,7 @@ import Foundation
 import TinodeSDK
 import UIKit
 
-// Formatting of a text inside quote.
+// Formatting of text inside a blockquote.
 class QuoteFormatter: PreviewFormatter {
     static let kThumbnailImageDim = 32
 
@@ -17,11 +17,11 @@ class QuoteFormatter: PreviewFormatter {
         return FormatNode("\n")
     }
 
-    override func handleImage(using attr: [String : JSONValue]?, fromDraftyEntity key: Int?) -> FormatNode {
-        let img = FormatNode()
+    override func handleImage(using data: [String : JSONValue]?, fromDraftyEntity key: Int?) -> FormatNode {
         var attachment = Attachment(content: .image)
+        let img = FormatNode()
         var filename = ""
-        if let attr = attr {
+        if let attr = data {
             if let bits = attr["val"]?.asData() {
                 attachment.bits = bits
             } else if let ref = attr["ref"]?.asString() {
@@ -35,14 +35,15 @@ class QuoteFormatter: PreviewFormatter {
             if let name = attr["name"]?.asString() {
                 filename = UiUtils.previewFileName(from: name)
             } else {
-                filename = "Picture"
+                filename = NSLocalizedString("Picture", comment: "Label shown next to an inline image")
             }
             attachment.size = attr["size"]?.asInt()
             attachment.width = QuoteFormatter.kThumbnailImageDim
             attachment.height = QuoteFormatter.kThumbnailImageDim
+            attachment.draftyEntityKey = key
         }
         img.attachment(attachment)
-        var children = [FormatNode]()
+        var children: [FormatNode] = []
         children.append(img)
         if !filename.isEmpty {
             let node = FormatNode(filename)
@@ -57,7 +58,7 @@ class QuoteFormatter: PreviewFormatter {
         if let filename = attr?["name"]?.asString() {
             annotation = UiUtils.previewFileName(from: filename)
         } else {
-            annotation = "Attachment"
+            annotation = NSLocalizedString("Attachment", comment: "Label shown next to an attachment")
         }
         return annotatedIcon(iconName: "attach-50", annotation: annotation, comment: "Attachment preview icon.")
     }
