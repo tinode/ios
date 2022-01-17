@@ -1186,8 +1186,8 @@ extension MessageViewController: MessageCellDelegate {
         let maxWidth = sendMessageBar.previewMaxWidth
         let maxHeight = collectionView.frame.height
         // Make sure it's properly formatted.
-        let formattedPreview = SendReplyFormatter.toAttributed(content, fitIn: CGSize(width: maxWidth, height: maxHeight))
-        self.togglePreviewBar(with: formattedPreview)
+        let replyPreview = SendReplyFormatter(defaultAttributes: [:]).toAttributed(content, fitIn: CGSize(width: maxWidth, height: maxHeight))
+        self.togglePreviewBar(with: replyPreview)
     }
 
     @objc func showReplyPreview(sender: UIMenuController) {

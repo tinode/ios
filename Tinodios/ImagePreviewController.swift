@@ -65,6 +65,7 @@ class ImagePreviewController: UIViewController, UIScrollViewDelegate {
                 named: "broken-image", withBackground: nil,
                 width: CGFloat(content.width ?? 64), height: CGFloat(content.height ?? 64))
             // Viewing received image.
+
             imageView.image = bits != nil ? UIImage(data: bits!) : errorImage
 
             // Fill out details panel for the received image.

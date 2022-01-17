@@ -94,6 +94,8 @@ class UiUtils {
     static let kReplyThumbnailSize = 36
     // Max file name (e.g. image file names) length to display in previews and quotes.
     static let kPreviewMaxFileNameLength = 16
+    // Max length of message previews.
+    static let kPreviewLength = 42
 
     // Letter tile image colors (light).
     private static let kLetterTileLightColors: [UIColor] = [
@@ -577,13 +579,7 @@ class UiUtils {
 
         return UIGraphicsImageRenderer(size: size).image { rendererContext in
             // Draw solid gray background
-            let bgColor: UIColor
-            if #available(iOS 13, *) {
-                bgColor = UIColor.secondarySystemBackground
-            } else {
-                bgColor = UIColor.systemGray
-            }
-            bgColor.setFill()
+            UIColor.secondarySystemBackground.setFill()
             rendererContext.fill(CGRect(origin: .zero, size: size))
 
             // Draw semi-transparent background image, if available.
@@ -592,11 +588,7 @@ class UiUtils {
             }
 
             // Draw icon.
-            if #available(iOS 13, *) {
-                UIColor.secondaryLabel.setFill()
-            } else {
-                UIColor.darkText.setFill()
-            }
+            UIColor.secondaryLabel.setFill()
             icon.draw(in: CGRect(x: dx, y: dy, width: iconSize.width, height: iconSize.height))
         }
     }

@@ -256,32 +256,41 @@ extension UIFont {
 }
 
 extension StoredMessage {
+    private static var fullFormatter: FullFormatter?
+    private static var previewFormatter: PreviewFormatter?
+
     /// Generate and cache NSAttributedString representation of Drafty content.
     func attributedContent(fitIn size: CGSize, withDefaultAttributes attributes: [NSAttributedString.Key: Any]? = nil) -> NSAttributedString? {
-        if cachedContent != nil {
-            return cachedContent
-        }
+        guard cachedContent == nil else { return cachedContent }
         if !isDeleted {
             guard let content = content else { return nil }
-            cachedContent = AttributedStringFormatter.toAttributed(content, fitIn: size, withDefaultAttributes: attributes)
+            if StoredMessage.fullFormatter == nil {
+                StoredMessage.fullFormatter = FullFormatter(defaultAttributes: [:])
+                StoredMessage.fullFormatter!.quoteFormatter = QuoteFormatter(defaultAttributes: [:])
+            }
+            cachedContent = StoredMessage.fullFormatter!.toAttributed(content, fitIn: size, attributes: attributes)
         } else {
             cachedContent = StoredMessage.contentDeletedMessage(withAttributes: attributes)
         }
         return cachedContent
     }
+
     /// Generate and cache NSAttributedString preview of Drafty content.
     func attributedPreview(fitIn size: CGSize, withDefaultAttributes attributes: [NSAttributedString.Key: Any]? = nil) -> NSAttributedString? {
         guard cachedPreview == nil else { return cachedPreview }
         if !isDeleted {
-            guard let content = content else { return nil }
-            let forwarded = self.isForwarded
-            cachedPreview = PreviewFormatter.toAttributed(content, fitIn: size, withDefaultAttributes: attributes,
-                                                          isForwarded: forwarded, upToLength: 40)
+            guard var content = content else { return nil }
+            if StoredMessage.previewFormatter == nil {
+                StoredMessage.previewFormatter = PreviewFormatter(defaultAttributes: [:])
+            }
+            content = content.preview(previewLen: UiUtils.kPreviewLength)
+            cachedPreview = StoredMessage.previewFormatter!.toAttributed(content, fitIn: size, attributes: attributes)
         } else {
             cachedPreview = StoredMessage.contentDeletedMessage(withAttributes: attributes)
         }
         return cachedPreview
     }
+
     /// Creates "content deleted" string with a small "blocked" icon.
     private static func contentDeletedMessage(withAttributes attr: [NSAttributedString.Key: Any]?) -> NSAttributedString {
         // Space is needed as a workaround for a bug in UIKit. The icon style is not applied if the icon is the first object in the attributed string.

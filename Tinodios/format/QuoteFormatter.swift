@@ -18,6 +18,7 @@ class QuoteFormatter: PreviewFormatter {
     }
 
     override func handleImage(using data: [String : JSONValue]?, fromDraftyEntity key: Int?) -> FormatNode {
+        Log.default.info("Quote.handleImage %@", data!)
         var attachment = Attachment(content: .image)
         let img = FormatNode()
         var filename = ""
@@ -31,7 +32,7 @@ class QuoteFormatter: PreviewFormatter {
                         width: CGFloat(UiUtils.kReplyThumbnailSize), height: CGFloat(UiUtils.kReplyThumbnailSize), clip: true)
                 }
             }
-            attachment.mime = attr["mime"]?.asString()
+            attachment.mime = "image/jpeg"
             if let name = attr["name"]?.asString() {
                 filename = UiUtils.previewFileName(from: name)
             } else {
@@ -42,6 +43,7 @@ class QuoteFormatter: PreviewFormatter {
             attachment.height = QuoteFormatter.kThumbnailImageDim
             attachment.draftyEntityKey = key
         }
+
         img.attachment(attachment)
         var children: [FormatNode] = []
         children.append(img)
@@ -61,5 +63,13 @@ class QuoteFormatter: PreviewFormatter {
             annotation = NSLocalizedString("Attachment", comment: "Label shown next to an attachment")
         }
         return annotatedIcon(iconName: "attach-50", annotation: annotation, comment: "Attachment preview icon.")
+    }
+
+    override func handleMention(content nodes: [FormatNode], using data: [String: JSONValue]?) -> FormatNode {
+        let node = FormatNode(nodes)
+        if let uid = data?["val"]?.asString() {
+            node.style(cstyle: [.foregroundColor: UiUtils.letterTileColor(for: uid, dark: true)])
+        }
+        return node
     }
 }

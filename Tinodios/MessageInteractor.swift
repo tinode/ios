@@ -286,7 +286,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
             .append(transformed)
         let fwdHeader = "\(topicName):\(original.seqId)"
         // Preview. We may have images to download and downsize. Have to do it asynchronously.
-        let transformer = SendReplyFormatter(withDefaultAttributes: [:])
+        let transformer = SendReplyFormatter(defaultAttributes: [:])
         let preview = transformed.preview(previewLen: UiUtils.kQuotedReplyLength)
         if let p = transformer.promise {
             let result = PromisedReply<PendingMessage>()

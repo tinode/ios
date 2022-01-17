@@ -10,50 +10,21 @@ import TinodeSDK
 import UIKit
 
 /// Creates a preview of the Drafty object as NSAttributedString .
-class PreviewFormatter: AttributedStringFormatter {
-    // Default font for previews.
-    static let kDefaultFont = UIFont.preferredFont(forTextStyle: .subheadline)
-    // Indicates whether the first "MN" node should be stripped.
-    // Typically true for forwarded messages.
-    public var stripFirstMention: Bool = false
-
-    public init(withDefaultAttributes attrs: [NSAttributedString.Key: Any], isForwardedMessage: Bool) {
-        super.init(withDefaultAttributes: attrs)
-        stripFirstMention = isForwardedMessage
+class PreviewFormatter: AbstractFormatter {
+    internal enum Constants {
+        static let kDefaultFont = UIFont.preferredFont(forTextStyle: .subheadline)
     }
 
-    required init(withDefaultAttributes attrs: [NSAttributedString.Key : Any]) {
-        super.init(withDefaultAttributes: attrs)
-    }
-
-    public static func toAttributed(_ content: Drafty, fitIn maxSize: CGSize, withDefaultAttributes attributes: [NSAttributedString.Key: Any]? = nil, isForwarded: Bool = false, upToLength maxLength: Int) -> NSAttributedString {
-
-        var attributes: [NSAttributedString.Key: Any] = attributes ?? [:]
-        if attributes[.font] == nil {
-            attributes[.font] = PreviewFormatter.kDefaultFont
-        }
-
-        if content.isPlain {
-            let result: String = content.string.count > maxLength ? content.string.prefix(maxLength) + "…" : content.string
-            return NSMutableAttributedString(string: result, attributes: attributes)
-        }
-
-        let formatter = PreviewFormatter(withDefaultAttributes: attributes, isForwardedMessage: isForwarded)
-        let formatTree = content.format(formatWith: formatter, resultType: FormatNode.self)!
-        do {
-            return try formatTree.toAttributed(withDefaultAttributes: attributes, fontTraits: nil, fitIn: maxSize, upToLength: maxLength)
-        } catch FormatNode.LengthExceededError.runtimeError(let str) {
-            let result = NSMutableAttributedString(attributedString: str)
-            let elipses = NSAttributedString(string: "…")
-            result.append(elipses)
-            return result
-        } catch {
-            return NSAttributedString(string: "")
-        }
+    init(defaultAttributes attrs: [NSAttributedString.Key : Any]) {
+        super.init(defaultAttributes: attrs, defaultFont: Constants.kDefaultFont)
     }
 
     override func handleLineBreak() -> FormatNode {
         return FormatNode(" ")
+    }
+
+    override func handleMention(content nodes: [FormatNode], using data: [String: JSONValue]?) -> FormatNode {
+        return FormatNode(nodes)
     }
 
     override func handleLink(content nodes: [FormatNode], using attr: [String: JSONValue]?) -> FormatNode {
@@ -62,18 +33,10 @@ class PreviewFormatter: AttributedStringFormatter {
         return node
     }
 
-    override func handleMention(content nodes: [FormatNode], using attr: [String : JSONValue]?) -> FormatNode {
-        if stripFirstMention {
-            stripFirstMention = false
-            return FormatNode("➦ ") // FIXME: this should not be here. The conversion should happen earlier.
-        }
-        return super.handleMention(content: nodes, using: attr)
-    }
-
     func annotatedIcon(iconName: String, annotation: String? = nil, comment: String? = nil) -> FormatNode {
         let icon = NSTextAttachment()
         icon.image = UIImage(named: iconName)?.withRenderingMode(.alwaysTemplate)
-        let baseFont = PreviewFormatter.kDefaultFont
+        let baseFont = Constants.kDefaultFont
         icon.bounds = CGRect(origin: CGPoint(x: 0, y: -2), size: CGSize(width: baseFont.lineHeight * 0.8, height: baseFont.lineHeight * 0.8))
 
         let iconNode = FormatNode()
@@ -86,14 +49,19 @@ class PreviewFormatter: AttributedStringFormatter {
     }
 
     override func handleImage(using attr: [String: JSONValue]?, fromDraftyEntity key: Int?) -> FormatNode {
-        if let mime = attr?["mime"]?.asString(), mime == "application/json" {
-            // Skip JSON attachments. They are not meant to be user-visible.
-            return FormatNode("")
-        }
         return annotatedIcon(iconName: "image-50", annotation: NSLocalizedString("Picture", comment: "Label shown next to an inline image"), comment: "Image preview icon.")
     }
 
     override func handleAttachment(using attr: [String: JSONValue]?) -> FormatNode {
+        guard let attr = attr else {
+            return FormatNode()
+        }
+
+        if let mime = attr["mime"]?.asString(), mime == "application/json" {
+            // Skip JSON attachments. They are not meant to be user-visible.
+            return FormatNode()
+        }
+
         return annotatedIcon(iconName: "attach-50", annotation: NSLocalizedString("Attachment", comment: "Label shown next to an attachment"), comment: "Attachment preview icon.")
     }
 
@@ -124,6 +92,7 @@ class PreviewFormatter: AttributedStringFormatter {
     }
 
     override func handleQuote(_ nodes: [FormatNode]) -> FormatNode {
+        // Quote within preview is blank.
         return FormatNode()
     }
 

@@ -18,6 +18,23 @@ struct Attachment {
         case button
         case quote
         case empty
+
+        var description: String {
+          get {
+            switch self {
+            case .data:
+                return "data"
+            case .image:
+                return "image"
+            case .button:
+                return "button"
+            case .quote:
+                return "quote"
+            case .empty:
+                return "empty"
+            }
+          }
+        }
     }
 
     var content: AttachmentType
@@ -74,13 +91,25 @@ class FormatNode: CustomStringConvertible {
         children = nil
     }
 
-    // Create unstyled node
+    // Create unstyled leaf node.
     init(_ text: String) {
         self.text = text
     }
 
+    // Unstyled node with one or more subnodes.
     init(_ nodes: [FormatNode]) {
-        self.children = nodes
+        if nodes.count > 1 {
+            self.children = nodes
+        } else if nodes.count == 1 {
+            // Just copy the single child node to self.
+            self.cFont = nodes[0].cFont
+            self.cStyle = nodes[0].cStyle
+            self.pStyle = nodes[0].pStyle
+            self.attachment = nodes[0].attachment
+            self.preformattedAttachment = nodes[0].preformattedAttachment
+            self.text = nodes[0].text
+            self.children = nodes[0].children
+        }
     }
 
     private init(style: CharacterStyle, nodes: [FormatNode]) {
@@ -89,7 +118,7 @@ class FormatNode: CustomStringConvertible {
     }
 
     var description: String {
-        return children?.description ?? "nil"
+        return text?.description ?? children?.description ?? "nil"
     }
 
     func style(cstyle: CharacterStyle) {
@@ -114,41 +143,44 @@ class FormatNode: CustomStringConvertible {
 
     func append(_ child: FormatNode) {
         if children == nil { children = [] }
+        if text != nil {
+            children!.append(FormatNode(text!))
+            text = nil
+        }
         children!.append(child)
     }
 
     var isEmpty: Bool {
-        return children?.isEmpty ?? true
+        return text == nil && (children?.isEmpty ?? true) && attachment == nil
     }
 
     /// Simple representation of an attachment as plain string.
     private func attachmentToString(_ attachment: Attachment) -> String {
         switch attachment.content {
         case .image:
-            return "[img ref=\(attachment.ref ?? "nil") \(attachment.name ?? "unnamed") \(attachment.width ?? 0)x\(attachment.height ?? 0) \(attachment.size ?? 0)B]"
+            return "{img ref=\(attachment.ref ?? "nil") bits.count=\(attachment.bits?.count ?? -1) \(attachment.name ?? "unnamed") \(attachment.width ?? 0)x\(attachment.height ?? 0) \(attachment.size ?? 0)B}"
         case .quote:
             fallthrough
         case .button:
-            let entity = attachment.content == .quote ? "quote" : "btn"
+            let entity = attachment.content.description
             if let text = text {
-                return "[\(entity) \(text)]"
-            }
-            if let children = children {
+                return "{\(entity): '\(text)'}"
+            } else if let children = children {
                 var faceText = ""
                 for child in children {
                     faceText += child.toString()
                 }
-                return "[\(entity) \(faceText)]"
+                return "{\(entity): [\(faceText)]}"
             }
-            return "[\(entity)]"
+            return "{\(entity)}"
         case .empty:
-            fallthrough
+            return "{empty}"
         case .data:
             var fname = attachment.name ?? "unnamed"
             if fname.count > 32 {
                 fname = fname.prefix(14) + "…" + fname.suffix(14)
             }
-            return "[att \(fname)]"
+            return "{att: '\(fname)'}"
         }
     }
 
@@ -161,14 +193,14 @@ class FormatNode: CustomStringConvertible {
         let mimeType = attachment.mime ?? "application/octet-stream"
         let fileUti = UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, mimeType as CFString, nil)?.takeRetainedValue() ?? kUTTypeData
         let fileDesc = (UTTypeCopyDescription(fileUti)?.takeRetainedValue() as String?) ?? NSLocalizedString("Unknown type", comment: "Displayed when the type of attachment cannot be determined")
-        // Get stock icon for the given file type.
-        let fileIcon = UIImage.defaultIcon(forMime: mimeType, preferredWidth: baseFont.lineHeight * 0.8)
 
         // Using basic kUTTypeData to prevent iOS from displaying distorted previews.
         let tinode = Cache.tinode
         // The attachment is valid if it contains either data or a link to download the data.
         let isValid = bits != nil || ref != nil
         if isValid {
+            // TODO: use mime-specific file icon:
+            // let fileIcon = UIImage.defaultIcon(forMime: mimeType, preferredWidth: baseFont.lineHeight * 0.8)
             let data = bits ?? Data(tinode.hostURL(useWebsocketProtocol: false)!.appendingPathComponent(ref!).absoluteString.utf8)
             let wrapper = NSTextAttachment(data: data, ofType: kUTTypeData as String)
             wrapper.bounds = CGRect(origin: CGPoint(x: 0, y: baseFont.capHeight - Constants.kAttachmentIconSize.height), size: Constants.kAttachmentIconSize)
@@ -187,26 +219,29 @@ class FormatNode: CustomStringConvertible {
         attributed.append(NSAttributedString(string: " "))
         attributed.append(NSAttributedString(string: fname, attributes: [NSAttributedString.Key.font: UIFont(name: "Courier", size: baseFont.pointSize)!]))
 
-        // Append file size.
+        // PDF Document · 2.0MB
+        // \u{2009} because iOS is buggy and bugs go unfixed for years.
+        // https://stackoverflow.com/questions/29041458/how-to-set-color-of-templated-image-in-nstextattachment
+        attributed.append(NSAttributedString(string: "\u{2009}\n", attributes: [NSAttributedString.Key.font: baseFont]))
+
+        let second = NSMutableAttributedString(string: "\(fileDesc)")
+        second.beginEditing()
+
         if let size = attachment.size {
-            // PDF Document · 2.0MB
-            // \u{2009} because iOS is buggy and bugs go unfixed for years.
-            // https://stackoverflow.com/questions/29041458/how-to-set-color-of-templated-image-in-nstextattachment
-            attributed.append(NSAttributedString(string: "\u{2009}\n", attributes: [NSAttributedString.Key.font: baseFont]))
-
-            let second = NSMutableAttributedString(string: "\(fileDesc) · \(UiUtils.bytesToHumanSize(Int64(size)))")
-            second.beginEditing()
-
-            let paragraph = NSMutableParagraphStyle()
-            paragraph.firstLineHeadIndent = Constants.kAttachmentIconSize.width + baseFont.capHeight * 0.25
-            paragraph.lineSpacing = 0
-            paragraph.lineHeightMultiple = 0.25
-            second.addAttributes([NSAttributedString.Key.paragraphStyle: paragraph, NSAttributedString.Key.foregroundColor: UIColor.gray
-            ], range: NSRange(location: 0, length: second.length))
-
-            second.endEditing()
-            attributed.append(second)
+            // Append file size.
+            second.append(NSAttributedString(string: " · \(UiUtils.bytesToHumanSize(Int64(size)))"))
         }
+
+        let paragraph = NSMutableParagraphStyle()
+        paragraph.firstLineHeadIndent = Constants.kAttachmentIconSize.width + baseFont.capHeight * 0.25
+        paragraph.lineSpacing = 0
+        paragraph.lineHeightMultiple = 0.25
+        second.addAttributes([NSAttributedString.Key.paragraphStyle: paragraph, NSAttributedString.Key.foregroundColor: UIColor.gray
+        ], range: NSRange(location: 0, length: second.length))
+
+        second.endEditing()
+        attributed.append(second)
+
 
         if isValid {
             // Insert linebreak then a clickable [↓ save] line
@@ -217,7 +252,7 @@ class FormatNode: CustomStringConvertible {
 
             // Add 'download file' icon
             let icon = NSTextAttachment()
-            icon.image = fileIcon ?? UIImage(named: "download-24")?.withRenderingMode(.alwaysTemplate)
+            icon.image = UIImage(named: "download")?.withRenderingMode(.alwaysTemplate)
             icon.bounds = CGRect(origin: CGPoint(x: 0, y: -2), size: CGSize(width: baseFont.lineHeight * 0.8, height: baseFont.lineHeight * 0.8))
             second.append(NSAttributedString(attachment: icon))
 
@@ -257,7 +292,7 @@ class FormatNode: CustomStringConvertible {
                 url = nil
             }
             // tinode:// and mid: schemes are not real external URLs.
-            let wrapper = url == nil || url?.scheme == "mid" || url?.scheme == "tinode" ? ImageTextAttachment() : AsyncTextAttachment(url: url!, afterDownloaded: attachment.afterRefDownloaded)
+            let wrapper = (url == nil || url!.scheme == "mid" || url!.scheme == "tinode") ? ImageTextAttachment() : AsyncTextAttachment(url: url!, afterDownloaded: attachment.afterRefDownloaded)
             wrapper.draftyEntityKey = attachment.draftyEntityKey
 
             var image: UIImage?
@@ -309,7 +344,7 @@ class FormatNode: CustomStringConvertible {
                 faceText.append(FormatNode.textToAttributed(text, defaultAttrs: attrs, fontTraits: fontTraits))
             } else if let children = children {
                 for child in children {
-                    faceText.append(try! child.toAttributed(withDefaultAttributes: attrs, fontTraits: fontTraits, fitIn: size))
+                    faceText.append(try! child.toAttributed(withAttributes: attrs, fontTraits: fontTraits, fitIn: size))
                 }
             } else {
                 faceText.append(NSAttributedString(string: entity, attributes: attrs))
@@ -345,18 +380,20 @@ class FormatNode: CustomStringConvertible {
             // Image or file attachment
             str += attachmentToString(attachment)
         } else if let text = self.text {
-            str += text
+            str += "'\(text)'"
         } else if let children = self.children {
             // Process children.
+            str += "["
             for child in children {
                 str += child.toString()
             }
+            str += "]"
         }
-        return str
+        return "{\(str)}"
     }
 
     /// Convert tree of nodes into an attributed string.
-    func toAttributed(withDefaultAttributes attributes: [NSAttributedString.Key: Any], fontTraits parentFontTraits: UIFontDescriptor.SymbolicTraits?, fitIn size: CGSize, upToLength maxLength: Int = Int.max) throws -> NSAttributedString {
+    func toAttributed(withAttributes attributes: [NSAttributedString.Key: Any], fontTraits parentFontTraits: UIFontDescriptor.SymbolicTraits?, fitIn size: CGSize) throws -> NSAttributedString {
 
         // Font traits for this substring and all its children.
         var fontTraits: UIFontDescriptor.SymbolicTraits? = cFont
@@ -374,25 +411,22 @@ class FormatNode: CustomStringConvertible {
 
         // First check for attachments.
         if let preAttachment = self.preformattedAttachment {
+            Log.default.info("Preformatted: '%@'", preAttachment)
             attributed.append(NSAttributedString(attachment: preAttachment))
         } else if let attachment = self.attachment {
-            // Image or file attachment
+            Log.default.info("Attachment %@", attachment.content.description)
+            // Attachment.
             attributed.append(attachmentToAttributed(attachment, defaultAttrs: attributes, fontTraits: fontTraits, maxSize: size))
         } else if let text = self.text {
             // Uniformly styled substring. Apply uniform font style.
             attributed.append(FormatNode.textToAttributed(text, defaultAttrs: attributes, fontTraits: fontTraits))
         }
-        if attributed.length > maxLength {
-            exceeded = true
-            attributed.setAttributedString(attributed.attributedSubstring(from: NSRange(location: 0, length: maxLength)))
-        }
 
-        if !exceeded, self.attachment == nil, let children = self.children {
+        if self.attachment == nil, let children = self.children {
             do {
                 // Pass calculated font styles to children.
                 for child in children {
-                    let curLen = attributed.length
-                    attributed.append(try child.toAttributed(withDefaultAttributes: attributes, fontTraits: fontTraits, fitIn: size, upToLength: maxLength - curLen))
+                    attributed.append(try child.toAttributed(withAttributes: attributes, fontTraits: fontTraits, fitIn: size))
                 }
             } catch LengthExceededError.runtimeError(let str) {
                 exceeded = true

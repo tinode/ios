@@ -34,13 +34,18 @@ import TinodeSDK
          } else {
              result.data = [:]
          }
+         /*
          if let bits = node.data?["val"]?.asData() {
              let thumbnail = UIImage(data: bits)?.resize(
                  width: CGFloat(UiUtils.kReplyThumbnailSize), height: CGFloat(UiUtils.kReplyThumbnailSize), clip: true)
-             let thumbnailBits = thumbnail?.pixelData(forMimeType: "image/jpeg")
-             result.data!["val"] = .bytes(thumbnailBits!)
-             result.data!["mime"] = .string("image/jpeg")
-             result.data!["size"] = .int(thumbnailBits!.count)
+             if let thumbnailBits = thumbnail?.pixelData(forMimeType: "image/jpeg") {
+                 result.data!["val"] = .bytes(thumbnailBits)
+                 result.data!["mime"] = .string("image/jpeg")
+                 result.data!["size"] = .int(thumbnailBits.count)
+                 Log.default.info("Thumbnail weight: %d", thumbnailBits.count)
+             } else {
+                 Log.default.info("Failed to create thumbnail from data[val]")
+             }
          } else if let ref = node.data?["ref"]?.asString() {
              if self.promises == nil {
                  self.promises = []
@@ -48,13 +53,16 @@ import TinodeSDK
              let done = Utils.fetchTinodeResource(from: Utils.tinodeResourceUrl(from: ref)).thenApply {
                  let thumbnail = $0?.resize(
                      width: CGFloat(UiUtils.kReplyThumbnailSize), height: CGFloat(UiUtils.kReplyThumbnailSize), clip: true)
-                 let thumbnailBits = thumbnail?.pixelData(forMimeType: "image/jpeg")
-                 result.data!["val"] = .bytes(thumbnailBits!)
-                 result.data!["mime"] = .string("image/jpeg")
+                 if let thumbnailBits = thumbnail?.pixelData(forMimeType: "image/jpeg") {
+                     result.data!["val"] = .bytes(thumbnailBits)
+                     result.data!["mime"] = .string("image/jpeg")
+                     result.data!["size"] = .int(thumbnailBits.count)
+                 }
                  return nil
              }
              self.promises!.append(done)
          }
+        */
          result.data!["name"] = node.data?["name"]
          result.data!["width"] = .int(UiUtils.kReplyThumbnailSize)
          result.data!["height"] = .int(UiUtils.kReplyThumbnailSize)

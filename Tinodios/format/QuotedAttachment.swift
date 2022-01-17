@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import TinodeSDK
 
 // An NSTextAttachment which renders quoted Drafty document.
 class QuotedAttachment: NSTextAttachment {
@@ -15,9 +16,11 @@ class QuotedAttachment: NSTextAttachment {
         // Quote width padding in characters.
         static let kWidthPadding: CGFloat = 3
         // Offset of the text from the top left corner.
-        static let kTextOffset: CGFloat = 6
+        static let kVerticalTextOffset: CGFloat = 4
+        static let kHorizontalTextOffset: CGFloat = 6
         static let kDefaultQuoteBackgroundColor = UIColor(fromHexCode: 0x20808080)
         static let kDefaultStripeColor = UIColor.link
+        static let kQuoteCornerRadius: CGFloat = 3.5
     }
 
     var attributedString: NSAttributedString
@@ -33,7 +36,7 @@ class QuotedAttachment: NSTextAttachment {
         self.stripeColor = Constants.kDefaultStripeColor
         super.init(data: nil, ofType: "public.text")
 
-        let textSize = TextSizeHelper().computeSize(for: quotedText, within: maxSize.width - Constants.kTextOffset * 2)
+        let textSize = TextSizeHelper().computeSize(for: quotedText, within: maxSize.width - Constants.kHorizontalTextOffset * 2)
         let absolutePosition = quotedText.boundingRect(with: maxSize, context: nil)
 
         let textBounds = CGRect(origin: absolutePosition.origin, size: textSize)
@@ -41,8 +44,8 @@ class QuotedAttachment: NSTextAttachment {
         // Calculate quote width: string width + some characters extra, but no less than kMinWidth
         let width = max(Constants.kMinWidth, textBounds.width / CGFloat(quotedText.length) * (CGFloat(quotedText.length) + self.widthPadding))
 
-        image = renderQuote(textBounds: textBounds, quoteBounds: CGRect(x: 0, y: 0, width: width, height: textBounds.height + Constants.kTextOffset * 2))
-        bounds = CGRect(x: 0, y: verticalOffset, width: width, height: textBounds.height + Constants.kTextOffset * 2)
+        image = renderQuote(textBounds: textBounds, quoteBounds: CGRect(x: 0, y: 0, width: width, height: textBounds.height + Constants.kVerticalTextOffset * 2))
+        bounds = CGRect(x: 0, y: verticalOffset, width: width, height: textBounds.height + Constants.kVerticalTextOffset * 2)
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -64,33 +67,32 @@ class QuotedAttachment: NSTextAttachment {
         // UIBezierPath with rounded corners
         let bkgRect = quoteBounds.insetBy(dx: 1, dy: 1)
 
-        let radius = min(bkgRect.height * 0.1, CGFloat(3.5))
-        let path = UIBezierPath(roundedRect: bkgRect, cornerRadius: radius)
+        let path = UIBezierPath(roundedRect: bkgRect, cornerRadius: Constants.kQuoteCornerRadius)
         path.fill()
 
         // Draw the stripe on the left of the quote box.
         let stripe = UIBezierPath()
-        let start = CGPoint(x: bkgRect.minX + radius, y: bkgRect.minY + radius)
+        let start = CGPoint(x: bkgRect.minX + Constants.kQuoteCornerRadius, y: bkgRect.minY + Constants.kQuoteCornerRadius)
         // Top rounded corner.
-        stripe.addArc(withCenter: start, radius: radius * 0.5, startAngle: 1.5 * CGFloat.pi, endAngle: CGFloat.pi, clockwise: false)
+        stripe.addArc(withCenter: start, radius: Constants.kQuoteCornerRadius * 0.5, startAngle: 1.5 * CGFloat.pi, endAngle: CGFloat.pi, clockwise: false)
         // Vertical stripe body.
-        stripe.move(to: CGPoint(x: bkgRect.minX + radius * 0.5, y: bkgRect.minY + radius))
-        let dest = CGPoint(x: bkgRect.minX + radius * 0.5, y: bkgRect.maxY - radius)
+        stripe.move(to: CGPoint(x: bkgRect.minX + Constants.kQuoteCornerRadius * 0.5, y: bkgRect.minY + Constants.kQuoteCornerRadius))
+        let dest = CGPoint(x: bkgRect.minX + Constants.kQuoteCornerRadius * 0.5, y: bkgRect.maxY - Constants.kQuoteCornerRadius)
         stripe.addLine(to: dest)
         // Botton rounded corner.
-        let pt = CGPoint(x: dest.x + radius * 0.5, y: dest.y)
-        stripe.addArc(withCenter: pt, radius: radius * 0.5, startAngle: CGFloat.pi, endAngle: CGFloat.pi * 0.5, clockwise: false)
+        let pt = CGPoint(x: dest.x + Constants.kQuoteCornerRadius * 0.5, y: dest.y)
+        stripe.addArc(withCenter: pt, radius: Constants.kQuoteCornerRadius * 0.5, startAngle: CGFloat.pi, endAngle: CGFloat.pi * 0.5, clockwise: false)
         // Give it some width and color.
-        stripe.lineWidth = radius
+        stripe.lineWidth = Constants.kQuoteCornerRadius
         self.stripeColor.setStroke()
         stripe.stroke()
 
         // Draw string
-        let drawAt = CGPoint(x: Constants.kTextOffset + radius, y: Constants.kTextOffset)
+        let drawAt = CGPoint(x: Constants.kHorizontalTextOffset + Constants.kQuoteCornerRadius, y: Constants.kVerticalTextOffset)
         let rect = CGRect(origin: drawAt, size: textBounds.size)
 
         // TODO: remove
-        UIRectFrame(rect)
+        // UIRectFrame(rect)
 
         // Make sure we wrap the line if we don't have enough space.
         let drawingOpts: NSStringDrawingOptions = .usesLineFragmentOrigin.union(.truncatesLastVisibleLine)

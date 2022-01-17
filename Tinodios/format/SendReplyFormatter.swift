@@ -18,7 +18,10 @@ class SendReplyFormatter: QuoteFormatter {
     var promise: PromisedReply<UIImage>?
 
     override func handleQuote(_ nodes: [FormatNode]) -> FormatNode {
-        return handleQuoteImpl(nodes)
+        let node = FormatNode(nodes)
+        node.attachment(Attachment(content: .quote))
+        let outer = FormatNode([node, FormatNode("\n")])
+        return outer
     }
 
     override func handleImage(using data: [String: JSONValue]?, fromDraftyEntity key: Int?) -> FormatNode {
