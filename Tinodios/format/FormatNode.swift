@@ -59,7 +59,8 @@ class FormatNode: CustomStringConvertible {
         /// Size of the document icon in attachments.
         static let kAttachmentIconSize = CGSize(width: 24, height: 32)
         /// URL and Button text color
-        static let kLinkColor = UIColor(red: 0, green: 122/255, blue: 1, alpha: 1)
+        static let kLinkColor = UIColor.link //(red: 0, green: 122/255, blue: 1, alpha: 1)
+        static let kQuoteTextColorAdj = 0.7 // Adjustment to font alpha in quote to make it less prominent.
     }
 
     // Thrown by the formatting function when the length budget gets exceeded.
@@ -338,6 +339,9 @@ class FormatNode: CustomStringConvertible {
                 attrs[.foregroundColor] = Constants.kLinkColor
                 entity = "button"
             } else {
+                if let fg = attributes[.foregroundColor] as? UIColor {
+                    attrs[.foregroundColor] = fg.withAlphaComponent(Constants.kQuoteTextColorAdj)
+                }
                 entity = "quote"
             }
 
