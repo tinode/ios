@@ -18,7 +18,7 @@ class QuotedAttachment: NSTextAttachment {
         // Offset of the text from the top left corner.
         static let kVerticalTextOffset: CGFloat = 4
         static let kHorizontalTextOffset: CGFloat = 6
-        static let kQuoteBackgroundColor = UIColor(fromHexCode: 0x80FFFFFF)
+        static let kQuoteBackgroundColor = UIColor(fromHexCode: 0x18000000)
         static let kStripeColor = UIColor.link
         static let kQuoteCornerRadius: CGFloat = 3.5
     }
@@ -62,13 +62,14 @@ class QuotedAttachment: NSTextAttachment {
         context.saveGState()
         context.clip(to: quoteBounds)
 
-        // Draw background.
-        context.setFillColor(self.backgroundColor.cgColor)
-        // UIBezierPath with rounded corners
+        // Background rectangle with rounded corners: UIBezierPath.
         let bkgRect = quoteBounds.insetBy(dx: 1, dy: 1)
 
-        let path = UIBezierPath(roundedRect: bkgRect, cornerRadius: Constants.kQuoteCornerRadius)
-        path.fill()
+        // Draw background.
+        context.setFillColor(self.backgroundColor.cgColor)
+        //context.setBlendMode(.multiply)
+        UIBezierPath(roundedRect: bkgRect, cornerRadius: Constants.kQuoteCornerRadius).fill()
+        //context.setBlendMode(.normal)
 
         // Draw the stripe on the left of the quote box.
         let stripe = UIBezierPath()
@@ -79,7 +80,7 @@ class QuotedAttachment: NSTextAttachment {
         stripe.move(to: CGPoint(x: bkgRect.minX + Constants.kQuoteCornerRadius * 0.5, y: bkgRect.minY + Constants.kQuoteCornerRadius))
         let dest = CGPoint(x: bkgRect.minX + Constants.kQuoteCornerRadius * 0.5, y: bkgRect.maxY - Constants.kQuoteCornerRadius)
         stripe.addLine(to: dest)
-        // Botton rounded corner.
+        // Rounded corner.
         let pt = CGPoint(x: dest.x + Constants.kQuoteCornerRadius * 0.5, y: dest.y)
         stripe.addArc(withCenter: pt, radius: Constants.kQuoteCornerRadius * 0.5, startAngle: CGFloat.pi, endAngle: CGFloat.pi * 0.5, clockwise: false)
         // Give it some width and color.

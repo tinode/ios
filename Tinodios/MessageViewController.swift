@@ -52,7 +52,7 @@ class MessageViewController: UIViewController {
         static let kProgressBarRightPadding: CGFloat = 25
 
         // Light/dark gray color: outgoing messages
-        static let kOutgoingBubbleColorLight = UIColor(red: 230/255, green: 230/255, blue: 230/255, alpha: 1)
+        static let kOutgoingBubbleColorLight = UIColor(red: 244/255, green: 244/255, blue: 244/255, alpha: 1)
         static let kOutgoingBubbleColorDark = UIColor(red: 51/255, green: 51/255, blue: 51/255, alpha: 1)
         // And corresponding text color
         static let kOutgoingTextColorLight = UIColor.darkText
