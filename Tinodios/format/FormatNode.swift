@@ -48,6 +48,7 @@ struct Attachment {
     var size: Int?
     var width: Int?
     var height: Int?
+    var offset: CGPoint?
     // Index of the entity in the original Drafty object.
     var draftyEntityKey: Int?
 }
@@ -320,7 +321,7 @@ class FormatNode: CustomStringConvertible {
             } else {
                 wrapper.image = image
             }
-            wrapper.bounds = CGRect(origin: .zero, size: scaledSize)
+            wrapper.bounds = CGRect(origin: attachment.offset ?? .zero, size: scaledSize)
 
             (wrapper as? AsyncTextAttachment)?.startDownload(onError: UiUtils.placeholderImage(named: "broken-image", withBackground: image, width: scaledSize.width, height: scaledSize.height))
 
@@ -414,7 +415,6 @@ class FormatNode: CustomStringConvertible {
             Log.default.info("Preformatted: '%@'", preAttachment)
             attributed.append(NSAttributedString(attachment: preAttachment))
         } else if let attachment = self.attachment {
-            Log.default.info("Attachment %@", attachment.content.description)
             // Attachment.
             attributed.append(attachmentToAttributed(attachment, defaultAttrs: attributes, fontTraits: fontTraits, maxSize: size))
         } else if let text = self.text {

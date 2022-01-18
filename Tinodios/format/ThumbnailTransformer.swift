@@ -34,7 +34,7 @@ import TinodeSDK
          } else {
              result.data = [:]
          }
-         /*
+
          if let bits = node.data?["val"]?.asData() {
              let thumbnail = UIImage(data: bits)?.resize(
                  width: CGFloat(UiUtils.kReplyThumbnailSize), height: CGFloat(UiUtils.kReplyThumbnailSize), clip: true)
@@ -42,7 +42,6 @@ import TinodeSDK
                  result.data!["val"] = .bytes(thumbnailBits)
                  result.data!["mime"] = .string("image/jpeg")
                  result.data!["size"] = .int(thumbnailBits.count)
-                 Log.default.info("Thumbnail weight: %d", thumbnailBits.count)
              } else {
                  Log.default.info("Failed to create thumbnail from data[val]")
              }
@@ -62,7 +61,7 @@ import TinodeSDK
              }
              self.promises!.append(done)
          }
-        */
+
          result.data!["name"] = node.data?["name"]
          result.data!["width"] = .int(UiUtils.kReplyThumbnailSize)
          result.data!["height"] = .int(UiUtils.kReplyThumbnailSize)

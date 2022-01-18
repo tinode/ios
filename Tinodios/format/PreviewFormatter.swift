@@ -11,12 +11,10 @@ import UIKit
 
 /// Creates a preview of the Drafty object as NSAttributedString .
 class PreviewFormatter: AbstractFormatter {
-    internal enum Constants {
-        static let kDefaultFont = UIFont.preferredFont(forTextStyle: .subheadline)
-    }
+    static let kDefaultFont = UIFont.preferredFont(forTextStyle: .subheadline)
 
     init(defaultAttributes attrs: [NSAttributedString.Key : Any]) {
-        super.init(defaultAttributes: attrs, defaultFont: Constants.kDefaultFont)
+        super.init(defaultAttributes: attrs, defaultFont: PreviewFormatter.kDefaultFont)
     }
 
     override func handleLineBreak() -> FormatNode {
@@ -36,7 +34,7 @@ class PreviewFormatter: AbstractFormatter {
     func annotatedIcon(iconName: String, annotation: String? = nil, comment: String? = nil) -> FormatNode {
         let icon = NSTextAttachment()
         icon.image = UIImage(named: iconName)?.withRenderingMode(.alwaysTemplate)
-        let baseFont = Constants.kDefaultFont
+        let baseFont = PreviewFormatter.kDefaultFont
         icon.bounds = CGRect(origin: CGPoint(x: 0, y: -2), size: CGSize(width: baseFont.lineHeight * 0.8, height: baseFont.lineHeight * 0.8))
 
         let iconNode = FormatNode()

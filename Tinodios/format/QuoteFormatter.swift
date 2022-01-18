@@ -18,7 +18,6 @@ class QuoteFormatter: PreviewFormatter {
     }
 
     override func handleImage(using data: [String : JSONValue]?, fromDraftyEntity key: Int?) -> FormatNode {
-        Log.default.info("Quote.handleImage %@", data!)
         var attachment = Attachment(content: .image)
         let img = FormatNode()
         var filename = ""
@@ -44,12 +43,15 @@ class QuoteFormatter: PreviewFormatter {
             attachment.draftyEntityKey = key
         }
 
+        // Vertical alignment of the image to the middle of the text.
+        attachment.offset = CGPoint(x: 0, y: min(QuoteFormatter.kDefaultFont.capHeight - CGFloat(QuoteFormatter.kThumbnailImageDim), 0) * 0.5)
+
         img.attachment(attachment)
         var children: [FormatNode] = []
         children.append(img)
         if !filename.isEmpty {
-            let node = FormatNode(filename)
-            node.style(cstyle: [.font: Constants.kDefaultFont.withTraits(traits: .traitItalic)])
+            let node = FormatNode(" " + filename)
+            node.style(cstyle: [.font: QuoteFormatter.kDefaultFont.withTraits(traits: .traitItalic)])
             children.append(node)
         }
         return FormatNode(children)

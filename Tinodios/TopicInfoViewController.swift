@@ -194,14 +194,9 @@ class TopicInfoViewController: UITableViewController {
 
         if let ts = topic?.lastSeen?.when {
             var date: String
-            if #available(iOS 13.0, *) {
-                let formatter = RelativeDateTimeFormatter()
-                formatter.unitsStyle = .short
-                date = formatter.localizedString(for: ts, relativeTo: Date())
-            } else {
-                // Fallback on earlier versions
-                date = RelativeDateFormatter.shared.shortDate(from: ts)
-            }
+            let formatter = RelativeDateTimeFormatter()
+            formatter.unitsStyle = .short
+            date = formatter.localizedString(for: ts, relativeTo: Date())
 
             self.lastSeenTimestampLabel?.text = date
         }

@@ -18,8 +18,8 @@ class QuotedAttachment: NSTextAttachment {
         // Offset of the text from the top left corner.
         static let kVerticalTextOffset: CGFloat = 4
         static let kHorizontalTextOffset: CGFloat = 6
-        static let kDefaultQuoteBackgroundColor = UIColor(fromHexCode: 0x20808080)
-        static let kDefaultStripeColor = UIColor.link
+        static let kQuoteBackgroundColor = UIColor(fromHexCode: 0x80FFFFFF)
+        static let kStripeColor = UIColor.link
         static let kQuoteCornerRadius: CGFloat = 3.5
     }
 
@@ -32,8 +32,8 @@ class QuotedAttachment: NSTextAttachment {
     init(quotedText: NSAttributedString, fitIn maxSize: CGSize, widthPadding: CGFloat = Constants.kWidthPadding, verticalOffset: CGFloat = 0) {
         attributedString = quotedText
         self.widthPadding = widthPadding
-        self.backgroundColor = Constants.kDefaultQuoteBackgroundColor
-        self.stripeColor = Constants.kDefaultStripeColor
+        self.backgroundColor = Constants.kQuoteBackgroundColor
+        self.stripeColor = Constants.kStripeColor
         super.init(data: nil, ofType: "public.text")
 
         let textSize = TextSizeHelper().computeSize(for: quotedText, within: maxSize.width - Constants.kHorizontalTextOffset * 2)
@@ -90,9 +90,6 @@ class QuotedAttachment: NSTextAttachment {
         // Draw string
         let drawAt = CGPoint(x: Constants.kHorizontalTextOffset + Constants.kQuoteCornerRadius, y: Constants.kVerticalTextOffset)
         let rect = CGRect(origin: drawAt, size: textBounds.size)
-
-        // TODO: remove
-        // UIRectFrame(rect)
 
         // Make sure we wrap the line if we don't have enough space.
         let drawingOpts: NSStringDrawingOptions = .usesLineFragmentOrigin.union(.truncatesLastVisibleLine)
