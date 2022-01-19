@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="18122" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="19529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="18093"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19519"/>
+        <capability name="Image references" minToolsVersion="12.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -46,18 +47,21 @@
                         <action selector="send:" destination="-1" eventType="touchUpInside" id="ofC-yl-FN1"/>
                     </connections>
                 </button>
-                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ql0-Xs-Vfe" userLabel="Cancel Preview Button">
-                    <rect key="frame" x="10" y="69" width="22" height="22"/>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ql0-Xs-Vfe" userLabel="Cancel Preview Button">
+                    <rect key="frame" x="10" y="67" width="26" height="26"/>
                     <constraints>
                         <constraint firstAttribute="width" secondItem="ql0-Xs-Vfe" secondAttribute="height" multiplier="1:1" id="sKk-L4-ddY"/>
                     </constraints>
-                    <state key="normal" image="x.circle" catalog="system"/>
+                    <state key="normal">
+                        <imageReference key="image" image="xmark.circle" catalog="system" symbolScale="large"/>
+                        <preferredSymbolConfiguration key="preferredSymbolConfiguration" scale="medium" weight="regular"/>
+                    </state>
                     <connections>
                         <action selector="cancelPreviewClicked:" destination="-1" eventType="touchUpInside" id="9Ih-uB-kDn"/>
                     </connections>
                 </button>
                 <textView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="redraw" editable="NO" textAlignment="natural" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="N38-2J-nw1" userLabel="Preview View" customClass="RichTextView" customModule="Tinodios" customModuleProvider="target">
-                    <rect key="frame" x="36" y="48" width="332" height="64"/>
+                    <rect key="frame" x="40" y="48" width="328" height="64"/>
                     <color key="textColor" systemColor="labelColor"/>
                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                     <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
@@ -89,7 +93,7 @@
     </objects>
     <resources>
         <image name="arrow-up-48" width="36" height="36"/>
-        <image name="x.circle" catalog="system" width="128" height="121"/>
+        <image name="xmark.circle" catalog="system" width="128" height="121"/>
         <systemColor name="labelColor">
             <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

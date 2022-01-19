@@ -4,6 +4,7 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19519"/>
+        <capability name="Image references" minToolsVersion="12.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -46,18 +47,21 @@
                         <action selector="attach:" destination="-1" eventType="touchUpInside" id="24B-da-FDG"/>
                     </connections>
                 </button>
-                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dee-Lg-Hb5" userLabel="Cancel Preview Button">
-                    <rect key="frame" x="380" y="13" width="22" height="22"/>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dee-Lg-Hb5" userLabel="Cancel Preview Button">
+                    <rect key="frame" x="378" y="11" width="26" height="26"/>
                     <constraints>
                         <constraint firstAttribute="width" secondItem="dee-Lg-Hb5" secondAttribute="height" multiplier="1:1" id="Rxe-gC-4rx"/>
                     </constraints>
-                    <state key="normal" image="xmark.circle" catalog="system"/>
+                    <state key="normal">
+                        <imageReference key="image" image="xmark.circle" catalog="system" symbolScale="large"/>
+                        <preferredSymbolConfiguration key="preferredSymbolConfiguration" scale="medium" weight="regular"/>
+                    </state>
                     <connections>
                         <action selector="cancelPreviewClicked:" destination="-1" eventType="touchUpInside" id="edO-lz-iHj"/>
                     </connections>
                 </button>
                 <textView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="redraw" editable="NO" textAlignment="natural" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="JUS-tF-V11" userLabel="Preview View" customClass="RichTextView" customModule="Tinodios" customModuleProvider="target">
-                    <rect key="frame" x="50" y="4" width="334" height="40"/>
+                    <rect key="frame" x="50" y="4" width="324" height="40"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="40" id="6uu-eX-bmg"/>
                     </constraints>
@@ -144,13 +148,13 @@
             </subviews>
             <viewLayoutGuide key="safeArea" id="UC5-i1-la2"/>
             <constraints>
-                <constraint firstItem="UC5-i1-la2" firstAttribute="trailing" secondItem="dee-Lg-Hb5" secondAttribute="trailing" constant="12" id="33Z-M2-b7O"/>
+                <constraint firstItem="dee-Lg-Hb5" firstAttribute="trailing" secondItem="UC5-i1-la2" secondAttribute="trailing" constant="-10" id="33Z-M2-b7O"/>
                 <constraint firstItem="yZd-O5-BVm" firstAttribute="trailing" secondItem="UC5-i1-la2" secondAttribute="trailing" id="4wH-hZ-eCL"/>
                 <constraint firstItem="JUS-tF-V11" firstAttribute="leading" secondItem="bxx-m5-ifU" secondAttribute="leading" id="5mj-iI-Dm0"/>
                 <constraint firstItem="yZd-O5-BVm" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="94X-fH-5hi"/>
                 <constraint firstItem="LQB-Eu-unW" firstAttribute="trailing" secondItem="bxx-m5-ifU" secondAttribute="trailing" constant="-4" id="C9M-dY-tg9"/>
                 <constraint firstAttribute="trailing" secondItem="Awf-Rd-vTa" secondAttribute="trailing" constant="4" id="D9y-3Z-SlW"/>
-                <constraint firstItem="JUS-tF-V11" firstAttribute="trailing" secondItem="dee-Lg-Hb5" secondAttribute="leading" constant="4" id="FZO-E7-Swq"/>
+                <constraint firstItem="dee-Lg-Hb5" firstAttribute="leading" secondItem="JUS-tF-V11" secondAttribute="trailing" constant="4" id="FZO-E7-Swq"/>
                 <constraint firstItem="Mh3-pG-tJg" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="FjB-HD-awt"/>
                 <constraint firstItem="JUS-tF-V11" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="4" id="IU9-Gp-XQV"/>
                 <constraint firstItem="Awf-Rd-vTa" firstAttribute="top" secondItem="bxx-m5-ifU" secondAttribute="bottom" constant="4" id="SiQ-Ca-JnV"/>

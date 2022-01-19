@@ -51,7 +51,9 @@ class QuoteFormatter: PreviewFormatter {
         children.append(img)
         if !filename.isEmpty {
             let node = FormatNode(" " + filename)
-            node.style(cstyle: [.font: QuoteFormatter.kDefaultFont.withTraits(traits: .traitItalic)])
+            var attributes = defaultAttrs
+            attributes[.font] = UIFont(name: "Courier", size: QuoteFormatter.kDefaultFont.pointSize - 0.5)!
+            node.style(cstyle: attributes)
             children.append(node)
         }
         return FormatNode(children)

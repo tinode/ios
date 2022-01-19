@@ -7,46 +7,71 @@
 
 public protocol Mergeable {
     // Merges self with |another|.
-    // Retuns the total number of modified fields.
-    mutating func merge(with another: Mergeable) -> Int
+    // Retuns true if the target object was modified.
+    mutating func merge(with another: Mergeable) -> Bool
 }
 
 extension String: Mergeable {
-    public mutating func merge(with another: Mergeable) -> Int {
-        guard another is String else { return 0 }
+    public mutating func merge(with another: Mergeable) -> Bool {
+        guard another is String else { return false }
         self = another as! String
-        return 1
+        return true
     }
 }
 
 public typealias PrivateType = [String: JSONValue]
 
 extension PrivateType: Mergeable {
+    public func getBoolValue(name: String) -> Bool? {
+        if case let .bool(v) = self[name] {
+            return v
+        }
+        return nil
+    }
+    public func getStringValue(name: String) -> String? {
+        if case let .string(v) = self[name] {
+            return v
+        }
+        return nil
+    }
+
     public var comment: String? {
         get {
-            if case let .string(v)? = self["comment"] {
-                return v
-            }
-            return nil
+            return getStringValue(name: "comment")
         }
-        set { self["comment"] = .string(newValue ?? Tinode.kNullValue) }
+        set {
+            self["comment"] = .string(newValue ?? Tinode.kNullValue)
+        }
     }
     public var archived: Bool? {
         get {
-            if case let .bool(v)? = self["arch"] {
-                return v
-            }
-            return nil
+            return getBoolValue(name: "arch")
         }
-        set { self["arch"] = newValue != nil ? .bool(newValue!) : nil }
+        set {
+            self["arch"] = newValue != nil ? .bool(newValue!) : nil
+        }
     }
-    public mutating func merge(with another: Mergeable) -> Int {
-        guard another is PrivateType else { return 0 }
+    public mutating func merge(with another: Mergeable) -> Bool {
+        guard another is PrivateType else { return false }
         let anotherPT = another as! PrivateType
         for (k, v) in anotherPT {
             self[k] = v
         }
-        return anotherPT.count
+        return !anotherPT.isEmpty
+    }
+}
+
+public typealias TrustedType = [String: JSONValue]
+
+extension TrustedType {
+    public var isVerified: Bool? {
+        return getBoolValue(name: "verified")
+    }
+    public var isStaffManaged: Bool? {
+        return getBoolValue(name: "staff")
+    }
+    public var isDangerous: Bool? {
+        return getBoolValue(name: "danger")
     }
 }
 

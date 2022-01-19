@@ -118,37 +118,37 @@ public class VCard: Codable, Mergeable {
         return vcardCopy
     }
 
-    public func merge(with another: Mergeable) -> Int {
-        guard another is VCard else { return 0 }
+    public func merge(with another: Mergeable) -> Bool {
+        guard another is VCard else { return false }
         let anotherVCard = another as! VCard
-        var changed = 0
+        var changed = false
         if anotherVCard.fn != nil {
             self.fn = !Tinode.isNull(obj: anotherVCard.fn) ? anotherVCard.fn : nil
-            changed += 1
+            changed = true
         }
         if anotherVCard.title != nil {
             self.title = !Tinode.isNull(obj: anotherVCard.title) ? anotherVCard.title : nil
-            changed += 1
+            changed = true
         }
         if anotherVCard.org != nil {
             self.org = !Tinode.isNull(obj: anotherVCard.org) ? anotherVCard.org : nil
-            changed += 1
+            changed = true
         }
         if anotherVCard.tel != nil {
             self.tel = !Tinode.isNull(obj: anotherVCard.tel) ? anotherVCard.tel : nil
-            changed += 1
+            changed = true
         }
         if anotherVCard.email != nil {
             self.email = !Tinode.isNull(obj: anotherVCard.email) ? anotherVCard.email : nil
-            changed += 1
+            changed = true
         }
         if anotherVCard.impp != nil {
             self.impp = !Tinode.isNull(obj: anotherVCard.impp) ? anotherVCard.impp : nil
-            changed += 1
+            changed = true
         }
         if anotherVCard.photo != nil {
             self.photo = !Tinode.isNull(obj: anotherVCard.photo) ? anotherVCard.photo : nil
-            changed += 1
+            changed = true
         }
         return changed
     }

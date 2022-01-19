@@ -37,15 +37,21 @@ public protocol TopicProto: AnyObject {
     var isBlocked: Bool { get }
     var isReader: Bool { get }
     var isMuted: Bool { get }
+    var isVerified: Bool { get }
+    var isStaffManaged: Bool { get }
+    var isDangerous: Bool { get }
     var unread: Int { get }
     var latestMessage: Message? { get set }
 
     func serializePub() -> String?
     func serializePriv() -> String?
+    func serializeTrusted() -> String?
     @discardableResult
     func deserializePub(from data: String?) -> Bool
     @discardableResult
     func deserializePriv(from data: String?) -> Bool
+    @discardableResult
+    func deserializeTrusted(from data: String?) -> Bool
     func topicLeft(unsub: Bool?, code: Int?, reason: String?)
 
     func updateAccessMode(ac: AccessChange?) -> Bool
@@ -291,6 +297,10 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
         get { return description.priv }
         set { description.priv = newValue }
     }
+    public var trusted: TrustedType? {
+        get { return description.trusted }
+        set { description.trusted = newValue }
+    }
     public var attached = false
     weak public var listener: Listener?
     // Cache of topic subscribers indexed by userID
@@ -380,6 +390,10 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
     public var isArchived: Bool {
         return false
     }
+
+    public var isVerified: Bool { return description.trusted?.isVerified ?? false }
+    public var isStaffManaged: Bool { return description.trusted?.isStaffManaged ?? false }
+    public var isDangerous: Bool { return description.trusted?.isDangerous ?? false }
 
     // Returns the maximum recv and read values across all subscriptions
     // that are not "me" (this user).
@@ -472,6 +486,10 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
         guard let p = priv else { return nil }
         return Tinode.serializeObject(p)
     }
+    public func serializeTrusted() -> String? {
+        guard let t = trusted else { return nil }
+        return Tinode.serializeObject(t)
+    }
     public func deserializePub(from data: String?) -> Bool {
         if let p: DP = Tinode.deserializeObject(from: data) {
             description.pub = p
@@ -482,6 +500,13 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
     public func deserializePriv(from data: String?) -> Bool {
         if let p: DR = Tinode.deserializeObject(from: data) {
             description.priv = p
+            return true
+        }
+        return false
+    }
+    public func deserializeTrusted(from data: String?) -> Bool {
+        if let t: TrustedType = Tinode.deserializeObject(from: data) {
+            description.trusted = t
             return true
         }
         return false

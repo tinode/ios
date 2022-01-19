@@ -297,6 +297,7 @@ public class MetaSetDesc<P: Encodable, R: Encodable>: Encodable {
     var defacs: Defacs?
     var pub: P?
     var priv: R?
+    var trusted: TrustedType?
     private enum CodingKeys: String, CodingKey {
         case defacs, pub = "public", priv = "private"
     }
@@ -306,6 +307,7 @@ public class MetaSetDesc<P: Encodable, R: Encodable>: Encodable {
     public init(pub: P?, priv: R?) {
         self.pub = pub
         self.priv = priv
+        self.trusted = nil
     }
     public init(auth: String, anon: String) {
         self.defacs = Defacs(auth: auth, anon: anon)

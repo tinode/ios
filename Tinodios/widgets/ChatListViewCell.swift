@@ -26,6 +26,12 @@ class ChatListViewCell: UITableViewCell {
     @IBOutlet weak var channelIndicatorWidth: NSLayoutConstraint!
     @IBOutlet weak var iconMessageStatus: UIImageView!
     @IBOutlet weak var iconMessageStatusWidth: NSLayoutConstraint!
+    @IBOutlet weak var badgeTrusted: UIImageView!
+    @IBOutlet weak var badgeTrustedWidth: NSLayoutConstraint!
+    @IBOutlet weak var badgeStaff: UIImageView!
+    @IBOutlet weak var badgeStaffWidth: NSLayoutConstraint!
+    @IBOutlet weak var badgeDanger: UIImageView!
+    @IBOutlet weak var badgeDangerWidth: NSLayoutConstraint!
 
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -68,6 +74,28 @@ class ChatListViewCell: UITableViewCell {
         } else {
             channelIndicator.isHidden = true
             channelIndicatorWidth.constant = .leastNonzeroMagnitude
+        }
+
+        if topic.isVerified {
+            badgeTrusted.isHidden = false
+            badgeTrustedWidth.constant = ChatListViewCell.kIconWidth
+        } else {
+            badgeTrusted.isHidden = true
+            badgeTrustedWidth.constant = .leastNonzeroMagnitude
+        }
+        if topic.isStaffManaged {
+            badgeStaff.isHidden = false
+            badgeStaffWidth.constant = ChatListViewCell.kIconWidth
+        } else {
+            badgeStaff.isHidden = true
+            badgeStaffWidth.constant = .leastNonzeroMagnitude
+        }
+        if topic.isDangerous {
+            badgeDanger.isHidden = false
+            badgeDangerWidth.constant = ChatListViewCell.kIconWidth
+        } else {
+            badgeDanger.isHidden = true
+            badgeDangerWidth.constant = .leastNonzeroMagnitude
         }
 
         let unread = topic.unread

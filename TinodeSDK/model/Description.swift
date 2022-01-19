@@ -2,7 +2,7 @@
 //  Description.swift
 //  ios
 //
-//  Copyright © 2019-2021 Tinode LLC. All rights reserved.
+//  Copyright © 2019-2022 Tinode LLC. All rights reserved.
 //
 
 import Foundation
@@ -31,29 +31,38 @@ public class Description<DP: Codable & Mergeable, DR: Codable & Mergeable>: Desc
 
     var pub: DP?
     var priv: DR?
+    var trusted: TrustedType?
 
     var seen: LastSeen?
 
     private enum CodingKeys: String, CodingKey {
         case created, updated, touched,
              defacs, acs, seq, read, recv, clear,
-             pub = "public", priv = "private", seen
+             pub = "public", priv = "private", trusted, seen
     }
 
-    private func mergePub(with another: DP) -> Int {
+    private func mergePub(with another: DP) -> Bool {
         guard self.pub != nil else {
             self.pub = another
-            return 1
+            return true
         }
         return self.pub!.merge(with: another)
     }
 
-    private func mergePriv(with another: DR) -> Int {
+    private func mergePriv(with another: DR) -> Bool {
         guard self.priv != nil else {
             self.priv = another
-            return 1
+            return true
         }
         return self.priv!.merge(with: another)
+    }
+
+    private func mergeTrusted(with another: TrustedType) -> Bool {
+        guard self.trusted != nil else {
+            self.trusted = another
+            return true
+        }
+        return self.trusted!.merge(with: another)
     }
 
     func merge(desc: Description<DP, DR>) -> Bool {
@@ -103,15 +112,17 @@ public class Description<DP: Codable & Mergeable, DR: Codable & Mergeable>: Desc
             changed = true
         }
         if let spub = desc.pub {
-            if mergePub(with: spub) > 0 {
-                changed = true
-            }
+            changed = mergePub(with: spub) || changed
         }
+
         if let spriv = desc.priv {
-            if mergePriv(with: spriv) > 0 {
-                changed = true
-            }
+            changed = mergePriv(with: spriv) || changed
         }
+
+        if let trusted = desc.trusted {
+            changed = mergeTrusted(with: trusted) || changed
+        }
+
         if let dseen = desc.seen {
             if seen == nil {
                 seen = dseen
@@ -159,16 +170,13 @@ public class Description<DP: Codable & Mergeable, DR: Codable & Mergeable>: Desc
             changed = true
         }
         if sub.pub != nil {
-            let spub = sub.pub as! DP
-            if mergePub(with: spub) > 0 {
-                changed = true
-            }
+            changed = mergePub(with: sub.pub as! DP) || changed
         }
         if sub.priv != nil {
-            let spriv = sub.priv as! DR
-            if mergePriv(with: spriv) > 0 {
-                changed = true
-            }
+            changed = mergePriv(with: sub.priv as! DR) || changed
+        }
+        if sub.trusted != nil {
+            changed = mergeTrusted(with: sub.trusted!) || changed
         }
         if sub.seen != nil {
             if seen == nil {
@@ -181,25 +189,24 @@ public class Description<DP: Codable & Mergeable, DR: Codable & Mergeable>: Desc
         return changed
     }
     func merge(desc: MetaSetDesc<DP, DR>) -> Bool {
-        var changed = 0
+        var changed = false
         if let defacs = desc.defacs {
             if self.defacs == nil {
                 self.defacs = defacs
-                changed += 1
+                changed = true
             } else {
-                changed += self.defacs!.merge(defacs: defacs) ? 1 : 0
+                changed = self.defacs!.merge(defacs: defacs)
             }
         }
         if let pub = desc.pub {
-            if mergePub(with: pub) > 0 {
-                changed += 1
-            }
+            changed = mergePub(with: pub) || changed
         }
         if let priv = desc.priv {
-            if mergePriv(with: priv) > 0 {
-                changed += 1
-            }
+            changed = mergePriv(with: priv) || changed
         }
-        return changed > 0
+        if let trusted = desc.trusted {
+            changed = mergeTrusted(with: trusted) || changed
+        }
+        return changed
     }
 }
