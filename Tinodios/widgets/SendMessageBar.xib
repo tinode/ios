@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="18122" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="19529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="18093"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19519"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -19,7 +19,6 @@
                 <outlet property="peerMessagingDisabledView" destination="Awf-Rd-vTa" id="AMC-Tn-coA"/>
                 <outlet property="previewView" destination="JUS-tF-V11" id="yzx-Wr-kEg"/>
                 <outlet property="previewViewHeight" destination="6uu-eX-bmg" id="hso-kB-DW0"/>
-                <outlet property="previewViewWidth" destination="ENz-ZY-rZ4" id="HOG-9r-8Pt"/>
                 <outlet property="sendButton" destination="LQB-Eu-unW" id="PaC-Hi-AC5"/>
             </connections>
         </placeholder>
@@ -48,20 +47,19 @@
                     </connections>
                 </button>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dee-Lg-Hb5" userLabel="Cancel Preview Button">
-                    <rect key="frame" x="146" y="13" width="22" height="22"/>
+                    <rect key="frame" x="380" y="13" width="22" height="22"/>
                     <constraints>
                         <constraint firstAttribute="width" secondItem="dee-Lg-Hb5" secondAttribute="height" multiplier="1:1" id="Rxe-gC-4rx"/>
                     </constraints>
-                    <state key="normal" image="x.circle" catalog="system"/>
+                    <state key="normal" image="xmark.circle" catalog="system"/>
                     <connections>
                         <action selector="cancelPreviewClicked:" destination="-1" eventType="touchUpInside" id="edO-lz-iHj"/>
                     </connections>
                 </button>
                 <textView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="redraw" editable="NO" textAlignment="natural" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="JUS-tF-V11" userLabel="Preview View" customClass="RichTextView" customModule="Tinodios" customModuleProvider="target">
-                    <rect key="frame" x="50" y="4" width="100" height="40"/>
+                    <rect key="frame" x="50" y="4" width="334" height="40"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="40" id="6uu-eX-bmg"/>
-                        <constraint firstAttribute="width" constant="100" id="ENz-ZY-rZ4"/>
                     </constraints>
                     <color key="textColor" systemColor="labelColor"/>
                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
@@ -146,6 +144,7 @@
             </subviews>
             <viewLayoutGuide key="safeArea" id="UC5-i1-la2"/>
             <constraints>
+                <constraint firstItem="UC5-i1-la2" firstAttribute="trailing" secondItem="dee-Lg-Hb5" secondAttribute="trailing" constant="12" id="33Z-M2-b7O"/>
                 <constraint firstItem="yZd-O5-BVm" firstAttribute="trailing" secondItem="UC5-i1-la2" secondAttribute="trailing" id="4wH-hZ-eCL"/>
                 <constraint firstItem="JUS-tF-V11" firstAttribute="leading" secondItem="bxx-m5-ifU" secondAttribute="leading" id="5mj-iI-Dm0"/>
                 <constraint firstItem="yZd-O5-BVm" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="94X-fH-5hi"/>
@@ -172,13 +171,13 @@
                 <constraint firstItem="UC5-i1-la2" firstAttribute="bottom" secondItem="Awf-Rd-vTa" secondAttribute="bottom" id="yZA-U6-QcI"/>
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
-            <point key="canvasLocation" x="-1407.2463768115942" y="165.06696428571428"/>
+            <point key="canvasLocation" x="-1407.2463768115942" y="164.73214285714286"/>
         </view>
     </objects>
     <resources>
         <image name="add-48" width="48" height="48"/>
         <image name="arrow-up-48" width="36" height="36"/>
-        <image name="x.circle" catalog="system" width="128" height="121"/>
+        <image name="xmark.circle" catalog="system" width="128" height="121"/>
         <systemColor name="groupTableViewBackgroundColor">
             <color red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>

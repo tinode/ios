@@ -306,7 +306,7 @@ class UiUtils {
     }
 
     public static func markTextFieldAsError(_ field: UITextField) {
-        let imageView = UIImageView(image: UIImage(named: "important-32"))
+        let imageView = UIImageView(image: UIImage(named: "important"))
         imageView.contentMode = .scaleAspectFit
         imageView.frame = CGRect(x: 0, y: 0, width: 24, height: 24)
         imageView.tintColor = .red
@@ -363,9 +363,9 @@ class UiUtils {
 
         var settings: (color: UInt, bgColor: UInt, icon: String)
         switch level {
-        case .error: settings = (color: 0xFFFFFFFF, bgColor: 0xFFFF6666, icon: "important-32")
-        case .warning: settings = (color: 0xFF666633, bgColor: 0xFFFFFFCC, icon: "warning-32")
-        case .info: settings = (color: 0xFF333366, bgColor: 0xFFCCCCFF, icon: "info-32")
+        case .error: settings = (color: 0xFFFFFFFF, bgColor: 0xFFFF6666, icon: "important")
+        case .warning: settings = (color: 0xFF666633, bgColor: 0xFFFFFFCC, icon: "warning")
+        case .info: settings = (color: 0xFF333366, bgColor: 0xFFCCCCFF, icon: "info")
         }
         let icon = UIImageView(image: UIImage(named: settings.icon))
         icon.tintColor = UIColor(fromHexCode: settings.color)

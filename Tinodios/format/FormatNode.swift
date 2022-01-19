@@ -201,8 +201,7 @@ class FormatNode: CustomStringConvertible {
         // The attachment is valid if it contains either data or a link to download the data.
         let isValid = bits != nil || ref != nil
         if isValid {
-            // TODO: use mime-specific file icon:
-            // let fileIcon = UIImage.defaultIcon(forMime: mimeType, preferredWidth: baseFont.lineHeight * 0.8)
+            // TODO: use mime-specific file icon: let fileIcon = UIImage.defaultIcon(forMime: mimeType, preferredWidth: baseFont.lineHeight * 0.8)
             let data = bits ?? Data(tinode.hostURL(useWebsocketProtocol: false)!.appendingPathComponent(ref!).absoluteString.utf8)
             let wrapper = NSTextAttachment(data: data, ofType: kUTTypeData as String)
             wrapper.bounds = CGRect(origin: CGPoint(x: 0, y: baseFont.capHeight - Constants.kAttachmentIconSize.height), size: Constants.kAttachmentIconSize)

@@ -2,7 +2,7 @@
 //  SendMessageBar.swift
 //  Tinodios
 //
-//  Copyright © 2019 Tinode. All rights reserved.
+//  Copyright © 2019-2022 Tinode LLC. All rights reserved.
 //
 
 import UIKit
@@ -37,7 +37,6 @@ class SendMessageBar: UIView {
     @IBOutlet weak var peerMessagingDisabledHeight: NSLayoutConstraint!
     @IBOutlet weak var previewView: RichTextView!
     @IBOutlet weak var previewViewHeight: NSLayoutConstraint!
-    @IBOutlet weak var previewViewWidth: NSLayoutConstraint!
 
     // MARK: Properties
     weak var foregroundView: UIView?
@@ -170,13 +169,11 @@ class SendMessageBar: UIView {
 
     public func togglePendingPreviewBar(with message: NSAttributedString?) {
         if let message = message, let delegate = self.delegate {
-            let b = delegate.pendingPreviewMessageSize(forMessage: message)
-            previewViewWidth.constant = b.width
-            previewViewHeight.constant = b.height
+            let textbounds = delegate.pendingPreviewMessageSize(forMessage: message)
+            previewViewHeight.constant = textbounds.height
             pendingPreviewText = message
             previewView.isHidden = false
         } else {
-            previewViewWidth.constant = CGFloat.zero
             previewViewHeight.constant = CGFloat.zero
             pendingPreviewText = nil
             previewView.isHidden = true

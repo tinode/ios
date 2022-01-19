@@ -60,7 +60,7 @@ class PreviewFormatter: AbstractFormatter {
             return FormatNode()
         }
 
-        return annotatedIcon(iconName: "attach-50", annotation: NSLocalizedString("Attachment", comment: "Label shown next to an attachment"), comment: "Attachment preview icon.")
+        return annotatedIcon(iconName: "paperclip", annotation: NSLocalizedString("Attachment", comment: "Label shown next to an attachment"), comment: "Attachment preview icon.")
     }
 
     override func handleForm(_ nodes: [FormatNode]) -> FormatNode {
@@ -95,6 +95,6 @@ class PreviewFormatter: AbstractFormatter {
     }
 
     override func handleUnknown(_ nodes: [FormatNode]) -> FormatNode {
-        return annotatedIcon(iconName: "question-mark-50")
+        return annotatedIcon(iconName: "puzzlepiece")
     }
 }

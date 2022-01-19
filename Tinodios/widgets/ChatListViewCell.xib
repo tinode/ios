@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="18122" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="19529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="18093"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19519"/>
+        <capability name="Image references" minToolsVersion="12.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -41,16 +42,47 @@
                         <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <nil key="highlightedColor"/>
                     </label>
-                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="channel" translatesAutoresizingMaskIntoConstraints="NO" id="4aB-Zd-9Qa" userLabel="Channel indicator">
-                        <rect key="frame" x="105" y="14" width="18" height="12"/>
-                        <color key="tintColor" systemColor="labelColor"/>
+                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="4aB-Zd-9Qa" userLabel="Channel indicator">
+                        <rect key="frame" x="105" y="12" width="18" height="15.5"/>
+                        <color key="tintColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="18" id="RpJ-qQ-Zoa"/>
                             <constraint firstAttribute="height" constant="12" id="ZR9-KD-FM2"/>
                         </constraints>
+                        <imageReference key="image" image="dot.radiowaves.left.and.right" catalog="system" symbolScale="large"/>
+                    </imageView>
+                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="BLB-H5-KE0" userLabel="Trusted">
+                        <rect key="frame" x="125" y="14" width="18" height="12"/>
+                        <color key="tintColor" red="0.011764705882352941" green="0.66274509803921566" blue="0.95686274509803915" alpha="1" colorSpace="calibratedRGB"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="18" id="1m8-y9-E4U"/>
+                            <constraint firstAttribute="height" constant="12" id="TVy-l1-kbC"/>
+                        </constraints>
+                        <imageReference key="image" image="trusted" symbolScale="large" renderingMode="original"/>
+                        <preferredSymbolConfiguration key="preferredSymbolConfiguration" scale="large" weight="regular"/>
+                    </imageView>
+                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="bD1-0L-fPQ" userLabel="Staff">
+                        <rect key="frame" x="143" y="14" width="18" height="12"/>
+                        <color key="tintColor" red="0.40784313725490196" green="0.62352941176470589" blue="0.2196078431372549" alpha="1" colorSpace="calibratedRGB"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="12" id="ZB9-mP-lHW"/>
+                            <constraint firstAttribute="width" constant="18" id="wo3-kV-F23"/>
+                        </constraints>
+                        <imageReference key="image" image="staff" symbolScale="large" renderingMode="original"/>
+                        <preferredSymbolConfiguration key="preferredSymbolConfiguration" scale="large" weight="regular"/>
+                    </imageView>
+                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="NFW-FC-rPZ" userLabel="Danger">
+                        <rect key="frame" x="161" y="14" width="18" height="12"/>
+                        <color key="tintColor" red="1" green="0.75686274509803919" blue="0.027450980392156862" alpha="1" colorSpace="calibratedRGB"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="12" id="2vm-wR-3Bp"/>
+                            <constraint firstAttribute="width" constant="18" id="Bc9-KS-scD"/>
+                        </constraints>
+                        <imageReference key="image" image="danger" symbolScale="large" renderingMode="original"/>
+                        <preferredSymbolConfiguration key="preferredSymbolConfiguration" scale="large" weight="regular"/>
                     </imageView>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="9+" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="18" translatesAutoresizingMaskIntoConstraints="NO" id="FaT-ra-R9w" userLabel="Unread Count">
-                        <rect key="frame" x="131" y="10" width="18" height="18"/>
+                        <rect key="frame" x="181" y="10" width="18" height="18"/>
                         <color key="backgroundColor" red="0.59607843140000005" green="0.68627450980000004" blue="0.78039215689999997" alpha="1" colorSpace="calibratedRGB"/>
                         <accessibility key="accessibilityConfiguration" identifier="unreadCount">
                             <accessibilityTraits key="traits" staticText="YES" notEnabled="YES"/>
@@ -70,7 +102,7 @@
                         </userDefinedRuntimeAttributes>
                     </label>
                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="block-25" translatesAutoresizingMaskIntoConstraints="NO" id="8zw-ko-8Ep" userLabel="Icon Blocked">
-                        <rect key="frame" x="153" y="10" width="26" height="18"/>
+                        <rect key="frame" x="199" y="10" width="26" height="18"/>
                         <color key="tintColor" red="0.80000000000000004" green="0.80000000000000004" blue="0.80000000000000004" alpha="1" colorSpace="calibratedRGB"/>
                         <accessibility key="accessibilityConfiguration">
                             <accessibilityTraits key="traits" image="YES" notEnabled="YES"/>
@@ -81,7 +113,7 @@
                         </constraints>
                     </imageView>
                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="alarm-off-25" translatesAutoresizingMaskIntoConstraints="NO" id="DSQ-ow-mzk" userLabel="Icon Muted">
-                        <rect key="frame" x="179" y="10" width="26" height="18"/>
+                        <rect key="frame" x="225" y="10" width="26" height="18"/>
                         <color key="tintColor" red="0.80000000000000004" green="0.80000000000000004" blue="0.80000000000000004" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="26" id="2op-7v-zNJ"/>
@@ -106,16 +138,22 @@
                     <constraint firstItem="g5B-Iw-vLQ" firstAttribute="leading" secondItem="qTs-2b-DEg" secondAttribute="trailing" constant="3" id="5l3-J3-Egb"/>
                     <constraint firstItem="qTs-2b-DEg" firstAttribute="leading" secondItem="wDJ-YF-7hy" secondAttribute="leading" id="89e-NW-Qtm"/>
                     <constraint firstItem="qTs-2b-DEg" firstAttribute="centerY" secondItem="g5B-Iw-vLQ" secondAttribute="centerY" id="ASp-Fd-fzO"/>
-                    <constraint firstItem="FaT-ra-R9w" firstAttribute="leading" secondItem="4aB-Zd-9Qa" secondAttribute="trailing" constant="8" symbolic="YES" id="Buq-wl-TfQ"/>
+                    <constraint firstItem="NFW-FC-rPZ" firstAttribute="leading" secondItem="bD1-0L-fPQ" secondAttribute="trailing" id="B5a-BI-n4N"/>
+                    <constraint firstItem="BLB-H5-KE0" firstAttribute="top" secondItem="R21-i3-9ML" secondAttribute="top" constant="14" id="BQy-9o-IEB"/>
+                    <constraint firstItem="FaT-ra-R9w" firstAttribute="leading" secondItem="NFW-FC-rPZ" secondAttribute="trailing" constant="2" id="Buq-wl-TfQ"/>
                     <constraint firstItem="DSQ-ow-mzk" firstAttribute="leading" secondItem="8zw-ko-8Ep" secondAttribute="trailing" id="Dvy-y5-fDa"/>
                     <constraint firstItem="epv-Q0-yKc" firstAttribute="leading" secondItem="R21-i3-9ML" secondAttribute="leading" constant="20" id="Gbe-pN-Eiv"/>
-                    <constraint firstItem="8zw-ko-8Ep" firstAttribute="leading" secondItem="FaT-ra-R9w" secondAttribute="trailing" constant="4" id="H0a-fR-ZZD"/>
+                    <constraint firstItem="8zw-ko-8Ep" firstAttribute="leading" secondItem="FaT-ra-R9w" secondAttribute="trailing" id="H0a-fR-ZZD"/>
                     <constraint firstItem="wDJ-YF-7hy" firstAttribute="top" secondItem="R21-i3-9ML" secondAttribute="top" constant="8" id="JeW-ZW-PLw"/>
+                    <constraint firstItem="NFW-FC-rPZ" firstAttribute="top" secondItem="R21-i3-9ML" secondAttribute="top" constant="14" id="Pw7-nC-SUG"/>
                     <constraint firstItem="FaT-ra-R9w" firstAttribute="top" secondItem="R21-i3-9ML" secondAttribute="top" constant="10" id="SRZ-zr-jmr"/>
                     <constraint firstItem="8zw-ko-8Ep" firstAttribute="top" secondItem="R21-i3-9ML" secondAttribute="top" constant="10" id="TbS-WN-bxr"/>
                     <constraint firstItem="g5B-Iw-vLQ" firstAttribute="top" secondItem="wDJ-YF-7hy" secondAttribute="bottom" id="YVh-qW-ktp"/>
+                    <constraint firstItem="BLB-H5-KE0" firstAttribute="leading" secondItem="4aB-Zd-9Qa" secondAttribute="trailing" constant="2" id="awy-PE-AOI"/>
                     <constraint firstItem="wDJ-YF-7hy" firstAttribute="leading" secondItem="epv-Q0-yKc" secondAttribute="trailing" constant="8" id="dyh-36-jCx"/>
                     <constraint firstItem="4aB-Zd-9Qa" firstAttribute="leading" secondItem="wDJ-YF-7hy" secondAttribute="trailing" constant="4" id="gBm-M8-A1Y"/>
+                    <constraint firstItem="bD1-0L-fPQ" firstAttribute="leading" secondItem="BLB-H5-KE0" secondAttribute="trailing" id="mlB-bA-IP3"/>
+                    <constraint firstItem="bD1-0L-fPQ" firstAttribute="top" secondItem="R21-i3-9ML" secondAttribute="top" constant="14" id="t1G-fA-ujn"/>
                     <constraint firstItem="epv-Q0-yKc" firstAttribute="centerY" secondItem="R21-i3-9ML" secondAttribute="centerY" id="uhs-iR-WDD"/>
                     <constraint firstItem="DSQ-ow-mzk" firstAttribute="top" secondItem="R21-i3-9ML" secondAttribute="top" constant="10" id="vLF-jl-wf1"/>
                 </constraints>
@@ -142,8 +180,11 @@
     <resources>
         <image name="alarm-off-25" width="25" height="25"/>
         <image name="block-25" width="25" height="25"/>
-        <image name="channel" width="32" height="32"/>
+        <image name="danger" width="13" height="13"/>
         <image name="done-30" width="30" height="30"/>
+        <image name="dot.radiowaves.left.and.right" catalog="system" width="128" height="89"/>
+        <image name="staff" width="11" height="13"/>
+        <image name="trusted" width="15" height="15"/>
         <systemColor name="labelColor">
             <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

@@ -87,7 +87,7 @@ class FilePreviewController: UIViewController, UIScrollViewDelegate {
     // Get icon name from mime type.
     // If more icons become available in material icons, add them to this mime-to-icon mapping.
     static let kMimeToIcon = ["text": "file-text-125", "image": "file-image-125", "video": "file-video-125", "audio": "file-audio-125"]
-    static let kDefaultIcon = "file-125"
+    static let kDefaultIcon = "file"
     private static func iconFromMime(_ mime: String?) -> String {
         guard let mime = mime else { return FilePreviewController.kDefaultIcon }
 

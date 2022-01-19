@@ -20,8 +20,7 @@ class SendReplyFormatter: QuoteFormatter {
     override func handleQuote(_ nodes: [FormatNode]) -> FormatNode {
         let node = FormatNode(nodes)
         node.attachment(Attachment(content: .quote))
-        let outer = FormatNode([node, FormatNode("\n")])
-        return outer
+        return node
     }
 
     override func handleImage(using data: [String: JSONValue]?, fromDraftyEntity key: Int?) -> FormatNode {

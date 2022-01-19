@@ -4,6 +4,7 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19519"/>
+        <capability name="Image references" minToolsVersion="12.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="Stack View standard spacing" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
@@ -300,8 +301,10 @@
                                                                 <constraint firstAttribute="height" constant="48" id="U7z-RZ-m0R"/>
                                                             </constraints>
                                                             <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                            <inset key="imageEdgeInsets" minX="10" minY="10" maxX="10" maxY="10"/>
-                                                            <state key="normal" title="Add Avatar" image="edit-48"/>
+                                                            <state key="normal">
+                                                                <imageReference key="image" image="pencil" catalog="system" symbolScale="large"/>
+                                                                <preferredSymbolConfiguration key="preferredSymbolConfiguration" scale="large" weight="regular"/>
+                                                            </state>
                                                             <userDefinedRuntimeAttributes>
                                                                 <userDefinedRuntimeAttribute type="boolean" keyPath="layer.masksToBounds" value="YES"/>
                                                                 <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
@@ -539,9 +542,12 @@
                                                                 <constraint firstAttribute="height" constant="48" id="B1i-lH-Jvi"/>
                                                                 <constraint firstAttribute="width" constant="48" identifier="loadAvatar.width" id="zPp-aw-u83"/>
                                                             </constraints>
+                                                            <fontDescription key="fontDescription" type="system" pointSize="18"/>
                                                             <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                            <inset key="imageEdgeInsets" minX="10" minY="10" maxX="10" maxY="10"/>
-                                                            <state key="normal" title="Add Avatar" image="edit-48"/>
+                                                            <state key="normal">
+                                                                <imageReference key="image" image="pencil" catalog="system" symbolScale="large"/>
+                                                                <preferredSymbolConfiguration key="preferredSymbolConfiguration" scale="large" weight="regular"/>
+                                                            </state>
                                                             <userDefinedRuntimeAttributes>
                                                                 <userDefinedRuntimeAttribute type="boolean" keyPath="layer.masksToBounds" value="YES"/>
                                                                 <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
@@ -1440,7 +1446,10 @@
                                                             </constraints>
                                                             <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                             <inset key="imageEdgeInsets" minX="10" minY="10" maxX="10" maxY="10"/>
-                                                            <state key="normal" image="edit-48"/>
+                                                            <state key="normal">
+                                                                <imageReference key="image" image="pencil" catalog="system" symbolScale="large"/>
+                                                                <preferredSymbolConfiguration key="preferredSymbolConfiguration" scale="large" weight="regular"/>
+                                                            </state>
                                                             <userDefinedRuntimeAttributes>
                                                                 <userDefinedRuntimeAttribute type="boolean" keyPath="layer.masksToBounds" value="YES"/>
                                                                 <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
@@ -2319,15 +2328,17 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Contact us" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="9Lj-hp-MkL">
-                                                    <rect key="frame" x="60" y="0.0" width="317.33333333333331" height="43.666667938232422"/>
+                                                    <rect key="frame" x="49" y="0.0" width="328.33333333333331" height="43.666667938232422"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleAspectFit" insetsLayoutMarginsFromSafeArea="NO" image="email-25" id="TNg-4p-wCN">
-                                                    <rect key="frame" x="20" y="9.3333333333333357" width="25" height="25"/>
+                                                <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleAspectFit" insetsLayoutMarginsFromSafeArea="NO" id="TNg-4p-wCN">
+                                                    <rect key="frame" x="20" y="16.333333333333332" width="14" height="11"/>
                                                     <autoresizingMask key="autoresizingMask"/>
+                                                    <imageReference key="image" image="email" symbolScale="medium"/>
+                                                    <preferredSymbolConfiguration key="preferredSymbolConfiguration" scale="default" weight="bold"/>
                                                 </imageView>
                                             </subviews>
                                         </tableViewCellContentView>
@@ -2522,7 +2533,10 @@
                                                             </constraints>
                                                             <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                             <inset key="imageEdgeInsets" minX="10" minY="10" maxX="10" maxY="10"/>
-                                                            <state key="normal" image="edit-48"/>
+                                                            <state key="normal">
+                                                                <imageReference key="image" image="pencil" catalog="system" symbolScale="large"/>
+                                                                <preferredSymbolConfiguration key="preferredSymbolConfiguration" scale="large" weight="regular"/>
+                                                            </state>
                                                             <userDefinedRuntimeAttributes>
                                                                 <userDefinedRuntimeAttribute type="boolean" keyPath="layer.masksToBounds" value="YES"/>
                                                                 <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
@@ -2873,8 +2887,7 @@
         <image name="data-25" width="25" height="25"/>
         <image name="delete-bin-22" width="22.333333969116211" height="22.333333969116211"/>
         <image name="delete-message-22" width="22.333333969116211" height="22.333333969116211"/>
-        <image name="edit-48" width="48" height="48"/>
-        <image name="email-25" width="25" height="25"/>
+        <image name="email" width="14" height="11"/>
         <image name="eye-30" width="30" height="30"/>
         <image name="invisible-30" width="30" height="30"/>
         <image name="invite-24" width="24" height="24"/>
@@ -2883,6 +2896,7 @@
         <image name="new-group-25" width="25" height="25"/>
         <image name="notification-22" width="22.333333969116211" height="22.333333969116211"/>
         <image name="password-22" width="22.333333969116211" height="22.333333969116211"/>
+        <image name="pencil" catalog="system" width="128" height="113"/>
         <image name="report-25" width="25" height="25"/>
         <image name="search-25" width="25" height="25"/>
         <image name="shield-25" width="25" height="25"/>
