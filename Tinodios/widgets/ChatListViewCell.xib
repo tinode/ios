@@ -165,8 +165,8 @@
                 <outlet property="badgeDangerWidth" destination="Bc9-KS-scD" id="fVo-eb-mRz"/>
                 <outlet property="badgeStaff" destination="bD1-0L-fPQ" id="GcQ-T0-rbY"/>
                 <outlet property="badgeStaffWidth" destination="wo3-kV-F23" id="ovy-V6-LZh"/>
-                <outlet property="badgeTrusted" destination="BLB-H5-KE0" id="GP4-sg-TPs"/>
-                <outlet property="badgeTrustedWidth" destination="1m8-y9-E4U" id="U0U-Sb-ojz"/>
+                <outlet property="badgeVerified" destination="BLB-H5-KE0" id="GP4-sg-TPs"/>
+                <outlet property="badgeVerifiedWidth" destination="1m8-y9-E4U" id="U0U-Sb-ojz"/>
                 <outlet property="channelIndicator" destination="4aB-Zd-9Qa" id="cKV-lC-l8J"/>
                 <outlet property="channelIndicatorWidth" destination="RpJ-qQ-Zoa" id="dQ8-i7-tey"/>
                 <outlet property="icon" destination="epv-Q0-yKc" id="NQP-XU-ztt"/>

@@ -26,8 +26,8 @@ class ChatListViewCell: UITableViewCell {
     @IBOutlet weak var channelIndicatorWidth: NSLayoutConstraint!
     @IBOutlet weak var iconMessageStatus: UIImageView!
     @IBOutlet weak var iconMessageStatusWidth: NSLayoutConstraint!
-    @IBOutlet weak var badgeTrusted: UIImageView!
-    @IBOutlet weak var badgeTrustedWidth: NSLayoutConstraint!
+    @IBOutlet weak var badgeVerified: UIImageView!
+    @IBOutlet weak var badgeVerifiedWidth: NSLayoutConstraint!
     @IBOutlet weak var badgeStaff: UIImageView!
     @IBOutlet weak var badgeStaffWidth: NSLayoutConstraint!
     @IBOutlet weak var badgeDanger: UIImageView!
@@ -77,11 +77,11 @@ class ChatListViewCell: UITableViewCell {
         }
 
         if topic.isVerified {
-            badgeTrusted.isHidden = false
-            badgeTrustedWidth.constant = ChatListViewCell.kIconWidth
+            badgeVerified.isHidden = false
+            badgeVerifiedWidth.constant = ChatListViewCell.kIconWidth
         } else {
-            badgeTrusted.isHidden = true
-            badgeTrustedWidth.constant = .leastNonzeroMagnitude
+            badgeVerified.isHidden = true
+            badgeVerifiedWidth.constant = .leastNonzeroMagnitude
         }
         if topic.isStaffManaged {
             badgeStaff.isHidden = false
