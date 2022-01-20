@@ -25,33 +25,49 @@ class SendReplyFormatter: QuoteFormatter {
 
     override func handleImage(using data: [String: JSONValue]?) -> FormatNode {
         var attachment = Attachment(content: .image)
-        let node = FormatNode()
+        let img = FormatNode()
+        var filename = ""
         if let attr = data {
             let dims = CGFloat(UiUtils.kReplyThumbnailSize)
             if let bits = attr["val"]?.asData() {
                 let thumbnail = UIImage(data: bits)?.resize(width: dims, height: dims, clip: true)
                 attachment.bits = thumbnail?.pixelData(forMimeType: "image/jpeg")
-                attachment.mime = "image/jpeg"
                 attachment.size = attachment.bits?.count
             } else if let ref = attr["ref"]?.asString() {
                 attachment.ref = ref
                 attachment.afterRefDownloaded = {
                     let resized = $0.resize(width: dims, height: dims, clip: true)
                     attachment.bits = resized?.pixelData(forMimeType: "image/jpeg")
-                    attachment.mime = "image/jpeg"
                     attachment.size = attachment.bits?.count
                     return resized
                 }
             }
-            // Vertical alignment of the image to the middle of the text.
-            attachment.offset = CGPoint(x: 0, y: min(QuoteFormatter.kDefaultFont.capHeight - CGFloat(QuoteFormatter.kThumbnailImageDim), 0) * 0.5)
 
-            attachment.name = attr["name"]?.asString()
-            attachment.width = UiUtils.kReplyThumbnailSize
-            attachment.height = UiUtils.kReplyThumbnailSize
+            attachment.mime = "image/jpeg"
+            if let name = attr["name"]?.asString() {
+                filename = UiUtils.previewFileName(from: name)
+                attachment.name = name
+            } else {
+                filename = NSLocalizedString("Picture", comment: "Label shown next to an inline image")
+            }
         }
-        node.attachment(attachment)
-        return node
-    }
 
+        // Vertical alignment of the image to the middle of the text.
+        attachment.offset = CGPoint(x: 0, y: min(QuoteFormatter.kDefaultFont.capHeight - CGFloat(UiUtils.kReplyThumbnailSize), 0) * 0.5)
+
+        attachment.width = UiUtils.kReplyThumbnailSize
+        attachment.height = UiUtils.kReplyThumbnailSize
+
+        img.attachment(attachment)
+        var children: [FormatNode] = []
+        children.append(img)
+        if !filename.isEmpty {
+            let node = FormatNode(" " + filename)
+            var attributes = defaultAttrs
+            attributes[.font] = UIFont(name: "Courier", size: QuoteFormatter.kDefaultFont.pointSize - 0.5)!
+            node.style(cstyle: attributes)
+            children.append(node)
+        }
+        return FormatNode(children)
+    }
 }

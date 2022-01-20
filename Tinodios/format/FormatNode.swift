@@ -120,10 +120,6 @@ class FormatNode: CustomStringConvertible {
         self.children = nodes
     }
 
-    var description: String {
-        return text?.description ?? children?.description ?? "nil"
-    }
-
     func style(cstyle: CharacterStyle) {
         cStyle = cstyle
     }
@@ -158,7 +154,7 @@ class FormatNode: CustomStringConvertible {
     }
 
     /// Simple representation of an attachment as plain string.
-    private func attachmentToString(_ attachment: Attachment) -> String {
+    private func attachmentDescription(_ attachment: Attachment) -> String {
         switch attachment.content {
         case .image:
             return "{img ref=\(attachment.ref ?? "nil") bits.count=\(attachment.bits?.count ?? -1) \(attachment.name ?? "unnamed") \(attachment.width ?? 0)x\(attachment.height ?? 0) \(attachment.size ?? 0)B}"
@@ -171,7 +167,7 @@ class FormatNode: CustomStringConvertible {
             } else if let children = children {
                 var faceText = ""
                 for child in children {
-                    faceText += child.toString()
+                    faceText += child.description
                 }
                 return "{\(entity): [\(faceText)]}"
             }
@@ -355,7 +351,7 @@ class FormatNode: CustomStringConvertible {
                 faceText.append(NSAttributedString(string: entity, attributes: attrs))
             }
             if isButton {
-                return NSAttributedString(attachment: DraftyButtonAttachment(face: faceText, data: URL(string: attachment.ref!)))
+                return NSAttributedString(attachment: ButtonAttachment(face: faceText, data: URL(string: attachment.ref!)))
             }
             return NSAttributedString(attachment: QuotedAttachment(quotedText: faceText, fitIn: size, fullWidth: attachment.fullWidth ?? false))
 
@@ -377,24 +373,46 @@ class FormatNode: CustomStringConvertible {
         return NSAttributedString(string: text, attributes: attributes)
     }
 
+    /// Convert tree of nodes into a string useful for debugging.
+    var description: String {
+        var str: String = ""
+        // First check for attachments.
+        if let preformatted = preformattedAttachment {
+            str += "[pf: \(preformatted.description)]"
+        }
+        if let attachment = self.attachment {
+            // Image or file attachment
+            str += attachmentDescription(attachment)
+        }
+        if let text = self.text {
+            str += "'\(text)'"
+        } else if let children = self.children {
+            // Process children.
+            str += "["
+            for child in children {
+                str += child.description
+            }
+            str += "]"
+        }
+        return "{\(str)}"
+    }
+
     /// Convert tree of nodes into a plain string.
     func toString() -> String {
         var str: String = ""
         // First check for attachments.
         if let attachment = self.attachment {
             // Image or file attachment
-            str += attachmentToString(attachment)
+            str += attachmentDescription(attachment)
         } else if let text = self.text {
-            str += "'\(text)'"
+            str += text
         } else if let children = self.children {
             // Process children.
-            str += "["
             for child in children {
                 str += child.toString()
             }
-            str += "]"
         }
-        return "{\(str)}"
+        return str
     }
 
     /// Convert tree of nodes into an attributed string.
@@ -416,7 +434,6 @@ class FormatNode: CustomStringConvertible {
 
         // First check for attachments.
         if let preAttachment = self.preformattedAttachment {
-            Log.default.info("Preformatted: '%@'", preAttachment)
             attributed.append(NSAttributedString(attachment: preAttachment))
         } else if let attachment = self.attachment {
             // Attachment.

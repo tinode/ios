@@ -77,16 +77,14 @@ class PreviewFormatter: AbstractFormatter {
         } else {
             faceText = NSAttributedString(string: FormatNode(nodes).toString(), attributes: attrs)
         }
-        let att = DraftyButtonAttachment(face: faceText, data: nil, traceBorder: true, widthPadding: 1, heightMultiplier: 1.1, verticalOffset: -2)
+        let att = ButtonAttachment(face: faceText, data: nil, traceBorder: true, widthPadding: 1, heightMultiplier: 1.2, verticalOffset: -3)
         let node = FormatNode()
         node.preformattedAttachment(att)
         return node
     }
 
     override func handleFormRow(_ nodes: [FormatNode]) -> FormatNode {
-        var result = [FormatNode(" "), FormatNode(nodes)]
-        result.append(contentsOf: nodes)
-        return FormatNode(result)
+        return FormatNode([FormatNode(" "), FormatNode(nodes)])
     }
 
     override func handleQuote(_ nodes: [FormatNode]) -> FormatNode {

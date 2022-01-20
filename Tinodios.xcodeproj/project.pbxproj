@@ -84,7 +84,7 @@
 		B09C5652246C0E6B00D6615D /* BlockedContactsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B09C5651246C0E6B00D6615D /* BlockedContactsTableViewController.swift */; };
 		B0A612AF228B08EC00569DFE /* RichTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0A612AE228B08EC00569DFE /* RichTextView.swift */; };
 		B0A612B1228C85C300569DFE /* MessageViewLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0A612B0228C85C300569DFE /* MessageViewLayout.swift */; };
-		B0A612B3228EDC7B00569DFE /* DraftyButtonAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0A612B2228EDC7B00569DFE /* DraftyButtonAttachment.swift */; };
+		B0A612B3228EDC7B00569DFE /* ButtonAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0A612B2228EDC7B00569DFE /* ButtonAttachment.swift */; };
 		B0A612B5229132CC00569DFE /* MessageBubbleDecorator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0A612B4229132CC00569DFE /* MessageBubbleDecorator.swift */; };
 		B0A612B72294289000569DFE /* MessageViewController+SendMessageBarDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0A612B62294288F00569DFE /* MessageViewController+SendMessageBarDelegate.swift */; };
 		B0BA208523D5D8CF00C59BD4 /* FilePreviewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0BA208423D5D8CF00C59BD4 /* FilePreviewController.swift */; };
@@ -230,7 +230,7 @@
 		B09C5651246C0E6B00D6615D /* BlockedContactsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockedContactsTableViewController.swift; sourceTree = "<group>"; };
 		B0A612AE228B08EC00569DFE /* RichTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RichTextView.swift; sourceTree = "<group>"; };
 		B0A612B0228C85C300569DFE /* MessageViewLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageViewLayout.swift; sourceTree = "<group>"; };
-		B0A612B2228EDC7B00569DFE /* DraftyButtonAttachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DraftyButtonAttachment.swift; sourceTree = "<group>"; };
+		B0A612B2228EDC7B00569DFE /* ButtonAttachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonAttachment.swift; sourceTree = "<group>"; };
 		B0A612B4229132CC00569DFE /* MessageBubbleDecorator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageBubbleDecorator.swift; sourceTree = "<group>"; };
 		B0A612B62294288F00569DFE /* MessageViewController+SendMessageBarDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MessageViewController+SendMessageBarDelegate.swift"; sourceTree = "<group>"; };
 		B0BA208423D5D8CF00C59BD4 /* FilePreviewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilePreviewController.swift; sourceTree = "<group>"; };
@@ -411,7 +411,7 @@
 			children = (
 				B01D2C702794E1E0009543F2 /* AbstractFormatter.swift */,
 				B0BB539E256B14A1000FE949 /* AsyncTextAttachment.swift */,
-				B0A612B2228EDC7B00569DFE /* DraftyButtonAttachment.swift */,
+				B0A612B2228EDC7B00569DFE /* ButtonAttachment.swift */,
 				B01D2C6E2793915D009543F2 /* FormatNode.swift */,
 				B008593B22741B89002C5168 /* FullFormatter.swift */,
 				B027E5AD278901CA00A34C17 /* PreviewFormatter.swift */,
@@ -731,7 +731,7 @@
 				B0A612B72294289000569DFE /* MessageViewController+SendMessageBarDelegate.swift in Sources */,
 				B0BA208523D5D8CF00C59BD4 /* FilePreviewController.swift in Sources */,
 				0A35BAA02283A37500AA5E2F /* Utils.swift in Sources */,
-				B0A612B3228EDC7B00569DFE /* DraftyButtonAttachment.swift in Sources */,
+				B0A612B3228EDC7B00569DFE /* ButtonAttachment.swift in Sources */,
 				0ADDBC8B2249F617000BD00D /* ChatListViewCell.swift in Sources */,
 				0A4B11FE2373DC1400199310 /* TagsEditDialogView.swift in Sources */,
 				0A69D47F22A6552300769426 /* TopicInfoViewController.swift in Sources */,

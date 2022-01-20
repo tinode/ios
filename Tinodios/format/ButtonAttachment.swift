@@ -1,14 +1,15 @@
 //
-//  DraftyButtonAttachment.swift
+//  ButtonAttachment.swift
 //  Tinodios
 //
-//  Copyright © 2019 Tinode. All rights reserved.
+//  Copyright © 2019-2022 Tinode LLC. All rights reserved.
 //
 
 import UIKit
+import TinodeSDK
 
 // An NSTextAttachment which draws a button-like image for use in Drafty forms.
-class DraftyButtonAttachment: NSTextAttachment {
+class ButtonAttachment: NSTextAttachment {
     private enum Constants {
         // Mimumum button width in points
         static let kMinWidth: CGFloat = 40
@@ -20,7 +21,7 @@ class DraftyButtonAttachment: NSTextAttachment {
     }
 
     var payload: URL?
-    var attributedString: NSAttributedString
+    var faceText: NSAttributedString
 
     let traceBorder: Bool
     let widthPadding: CGFloat
@@ -28,7 +29,7 @@ class DraftyButtonAttachment: NSTextAttachment {
     let backgroundColor: UIColor
 
     init(face: NSAttributedString, data: URL?, traceBorder: Bool = false, widthPadding: CGFloat = Constants.kWidthPadding, heightMultiplier: CGFloat = Constants.kHeightMultiplier, backgroundColor: UIColor = Constants.kDefaultButtonBackgroundColor, verticalOffset: CGFloat = 0) {
-        attributedString = face
+        faceText = face
         payload = data
         self.traceBorder = traceBorder
         self.widthPadding = widthPadding
@@ -68,7 +69,7 @@ class DraftyButtonAttachment: NSTextAttachment {
             path.stroke(with: .colorBurn, alpha: 0.67)
         }
         // Draw string
-        attributedString.draw(at: CGPoint(x: (buttonBounds.width - textBounds.width) * 0.5, y: (buttonBounds.height - textBounds.height) * 0.5))
+        faceText.draw(at: CGPoint(x: (buttonBounds.width - textBounds.width) * 0.5, y: (buttonBounds.height - textBounds.height) * 0.5))
         context.restoreGState()
 
         guard let renderedImage = UIGraphicsGetImageFromCurrentImageContext() else {

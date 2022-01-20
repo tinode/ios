@@ -11,8 +11,6 @@ import UIKit
 
 // Formatting of text inside a blockquote.
 class QuoteFormatter: PreviewFormatter {
-    static let kThumbnailImageDim = 32
-
     override func handleLineBreak() -> FormatNode {
         return FormatNode("\n")
     }
@@ -22,28 +20,31 @@ class QuoteFormatter: PreviewFormatter {
         let img = FormatNode()
         var filename = ""
         if let attr = data {
+            let dims = CGFloat(UiUtils.kReplyThumbnailSize)
             if let bits = attr["val"]?.asData() {
                 attachment.bits = bits
             } else if let ref = attr["ref"]?.asString() {
                 attachment.ref = ref
                 attachment.afterRefDownloaded = {
                     return $0.resize(
-                        width: CGFloat(UiUtils.kReplyThumbnailSize), height: CGFloat(UiUtils.kReplyThumbnailSize), clip: true)
+                        width: dims, height: dims, clip: true)
                 }
             }
             attachment.mime = "image/jpeg"
             if let name = attr["name"]?.asString() {
                 filename = UiUtils.previewFileName(from: name)
+                attachment.name = name
             } else {
                 filename = NSLocalizedString("Picture", comment: "Label shown next to an inline image")
             }
             attachment.size = attr["size"]?.asInt()
-            attachment.width = QuoteFormatter.kThumbnailImageDim
-            attachment.height = QuoteFormatter.kThumbnailImageDim
         }
 
         // Vertical alignment of the image to the middle of the text.
-        attachment.offset = CGPoint(x: 0, y: min(QuoteFormatter.kDefaultFont.capHeight - CGFloat(QuoteFormatter.kThumbnailImageDim), 0) * 0.5)
+        attachment.offset = CGPoint(x: 0, y: min(QuoteFormatter.kDefaultFont.capHeight - CGFloat(UiUtils.kReplyThumbnailSize), 0) * 0.5)
+
+        attachment.width = UiUtils.kReplyThumbnailSize
+        attachment.height = UiUtils.kReplyThumbnailSize
 
         img.attachment(attachment)
         var children: [FormatNode] = []

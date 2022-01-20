@@ -67,7 +67,7 @@ class RichTextView: UITextView {
         guard NSTextAttachment.character == (textStorage.string as NSString).character(at: characterIndex) else { return nil }
         guard let attachment = textStorage.attribute(.attachment, at: characterIndex, effectiveRange: nil) as? NSTextAttachment else { return nil }
 
-        if let button = attachment as? DraftyButtonAttachment {
+        if let button = attachment as? ButtonAttachment {
             return button.payload
         }
 

@@ -36,6 +36,13 @@ class ContactViewCell: UITableViewCell {
 }
 
 class ContactViewCellStatusLabel: PaddedLabel {
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+    }
 
     override var intrinsicContentSize: CGSize {
         let size = super.intrinsicContentSize
