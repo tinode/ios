@@ -48,9 +48,10 @@ struct Attachment {
     var size: Int?
     var width: Int?
     var height: Int?
+    // Offset from the origin.
     var offset: CGPoint?
-    // Index of the entity in the original Drafty object.
-    var draftyEntityKey: Int?
+    // Draw background over the entire available width, not just under the text.
+    var fullWidth: Bool?
 }
 
 // Class representing Drafty as a tree of nodes with content and styles attached.
@@ -201,7 +202,8 @@ class FormatNode: CustomStringConvertible {
         // The attachment is valid if it contains either data or a link to download the data.
         let isValid = bits != nil || ref != nil
         if isValid {
-            // TODO: use mime-specific file icon: let fileIcon = UIImage.defaultIcon(forMime: mimeType, preferredWidth: baseFont.lineHeight * 0.8)
+            // TODO: use mime-specific file icon:
+            // let fileIcon = UIImage.defaultIcon(forMime: mimeType, preferredWidth: baseFont.lineHeight * 0.8)
             let data = bits ?? Data(tinode.hostURL(useWebsocketProtocol: false)!.appendingPathComponent(ref!).absoluteString.utf8)
             let wrapper = NSTextAttachment(data: data, ofType: kUTTypeData as String)
             wrapper.bounds = CGRect(origin: CGPoint(x: 0, y: baseFont.capHeight - Constants.kAttachmentIconSize.height), size: Constants.kAttachmentIconSize)
@@ -294,7 +296,6 @@ class FormatNode: CustomStringConvertible {
             }
             // tinode:// and mid: schemes are not real external URLs.
             let wrapper = (url == nil || url!.scheme == "mid" || url!.scheme == "tinode") ? ImageTextAttachment() : AsyncTextAttachment(url: url!, afterDownloaded: attachment.afterRefDownloaded)
-            wrapper.draftyEntityKey = attachment.draftyEntityKey
 
             var image: UIImage?
             if let bits = attachment.bits, let preview = UIImage(data: bits) {
@@ -356,7 +357,7 @@ class FormatNode: CustomStringConvertible {
             if isButton {
                 return NSAttributedString(attachment: DraftyButtonAttachment(face: faceText, data: URL(string: attachment.ref!)))
             }
-            return NSAttributedString(attachment: QuotedAttachment(quotedText: faceText, fitIn: size))
+            return NSAttributedString(attachment: QuotedAttachment(quotedText: faceText, fitIn: size, fullWidth: attachment.fullWidth ?? false))
 
         // File attachment is harder: construct attributed string showing an attachment.
         case .data, .empty:

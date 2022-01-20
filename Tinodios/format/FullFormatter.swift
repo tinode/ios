@@ -51,7 +51,7 @@ class FullFormatter: AbstractFormatter {
         return node
     }
 
-    override func handleImage(using data: [String: JSONValue]?, fromDraftyEntity key: Int?) -> FormatNode {
+    override func handleImage(using data: [String: JSONValue]?) -> FormatNode {
         var attachment = Attachment(content: .image)
         let node = FormatNode()
         if let attr = data {
@@ -63,7 +63,6 @@ class FullFormatter: AbstractFormatter {
             attachment.width = attr["width"]?.asInt()
             attachment.height = attr["height"]?.asInt()
         }
-        attachment.draftyEntityKey = key
         node.attachment(attachment)
         return node
     }

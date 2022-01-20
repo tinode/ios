@@ -78,7 +78,7 @@ class AbstractFormatter: DraftyFormatter {
         return FormatNode(nodes)
     }
 
-    func handleImage(using: [String : JSONValue]?, fromDraftyEntity: Int?) -> FormatNode {
+    func handleImage(using: [String : JSONValue]?) -> FormatNode {
         return FormatNode()
     }
     func handleButton(content: [FormatNode], using: [String : JSONValue]?) -> FormatNode {
@@ -134,7 +134,7 @@ class AbstractFormatter: DraftyFormatter {
             case "HT":
                 return handleHashtag(content: children, using: data)
             case "IM":
-                return handleImage(using: data, fromDraftyEntity: key)
+                return handleImage(using: data)
             case "BN":
                 return handleButton(content: children, using: data)
             case "FM":

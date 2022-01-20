@@ -19,11 +19,11 @@ class SendReplyFormatter: QuoteFormatter {
 
     override func handleQuote(_ nodes: [FormatNode]) -> FormatNode {
         let node = FormatNode(nodes)
-        node.attachment(Attachment(content: .quote))
+        node.attachment(Attachment(content: .quote, fullWidth: true))
         return node
     }
 
-    override func handleImage(using data: [String: JSONValue]?, fromDraftyEntity key: Int?) -> FormatNode {
+    override func handleImage(using data: [String: JSONValue]?) -> FormatNode {
         var attachment = Attachment(content: .image)
         let node = FormatNode()
         if let attr = data {
@@ -43,12 +43,15 @@ class SendReplyFormatter: QuoteFormatter {
                     return resized
                 }
             }
+            // Vertical alignment of the image to the middle of the text.
+            attachment.offset = CGPoint(x: 0, y: min(QuoteFormatter.kDefaultFont.capHeight - CGFloat(QuoteFormatter.kThumbnailImageDim), 0) * 0.5)
+
             attachment.name = attr["name"]?.asString()
             attachment.width = UiUtils.kReplyThumbnailSize
             attachment.height = UiUtils.kReplyThumbnailSize
         }
-        attachment.draftyEntityKey = key
         node.attachment(attachment)
         return node
     }
+
 }

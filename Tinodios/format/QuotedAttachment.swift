@@ -29,7 +29,7 @@ class QuotedAttachment: NSTextAttachment {
     let backgroundColor: UIColor
     let stripeColor: UIColor
 
-    init(quotedText: NSAttributedString, fitIn maxSize: CGSize, widthPadding: CGFloat = Constants.kWidthPadding, verticalOffset: CGFloat = 0) {
+    init(quotedText: NSAttributedString, fitIn maxSize: CGSize, widthPadding: CGFloat = Constants.kWidthPadding, verticalOffset: CGFloat = 0, fullWidth: Bool = false) {
         attributedString = quotedText
         self.widthPadding = widthPadding
         self.backgroundColor = Constants.kQuoteBackgroundColor
@@ -42,7 +42,12 @@ class QuotedAttachment: NSTextAttachment {
         let textBounds = CGRect(origin: absolutePosition.origin, size: textSize)
 
         // Calculate quote width: string width + some characters extra, but no less than kMinWidth
-        let width = max(Constants.kMinWidth, textBounds.width / CGFloat(quotedText.length) * (CGFloat(quotedText.length) + self.widthPadding))
+        let width: CGFloat
+        if fullWidth {
+            width = maxSize.width - Constants.kHorizontalTextOffset * 2
+        } else {
+            width = max(Constants.kMinWidth, textBounds.width / CGFloat(quotedText.length) * (CGFloat(quotedText.length) + self.widthPadding))
+        }
 
         image = renderQuote(textBounds: textBounds, quoteBounds: CGRect(x: 0, y: 0, width: width, height: textBounds.height + Constants.kVerticalTextOffset * 2))
         bounds = CGRect(x: 0, y: verticalOffset, width: width, height: textBounds.height + Constants.kVerticalTextOffset * 2)

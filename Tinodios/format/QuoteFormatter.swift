@@ -17,7 +17,7 @@ class QuoteFormatter: PreviewFormatter {
         return FormatNode("\n")
     }
 
-    override func handleImage(using data: [String : JSONValue]?, fromDraftyEntity key: Int?) -> FormatNode {
+    override func handleImage(using data: [String : JSONValue]?) -> FormatNode {
         var attachment = Attachment(content: .image)
         let img = FormatNode()
         var filename = ""
@@ -40,7 +40,6 @@ class QuoteFormatter: PreviewFormatter {
             attachment.size = attr["size"]?.asInt()
             attachment.width = QuoteFormatter.kThumbnailImageDim
             attachment.height = QuoteFormatter.kThumbnailImageDim
-            attachment.draftyEntityKey = key
         }
 
         // Vertical alignment of the image to the middle of the text.
