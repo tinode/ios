@@ -9,6 +9,7 @@ import UIKit
 
 class ForwardMessageBar: UIView {
     @IBOutlet weak var previewView: RichTextView!
+    @IBOutlet weak var previewViewHeight: NSLayoutConstraint!
 
     weak var delegate: (SendMessageBarDelegate & PendingMessagePreviewDelegate)?
 
@@ -61,6 +62,19 @@ class ForwardMessageBar: UIView {
             previewView.attributedText = message
         } else {
             previewView.attributedText = nil
+        }
+    }
+
+    public func togglePreviewBar(with message: NSAttributedString?) {
+        if let message = message, let delegate = self.delegate {
+            let textBounds = delegate.pendingPreviewMessageSize(forMessage: message)
+            previewViewHeight.constant = textBounds.height
+            previewView.attributedText = message
+            previewView.isHidden = false
+        } else {
+            previewViewHeight.constant = CGFloat.zero
+            previewView.attributedText = nil
+            previewView.isHidden = true
         }
     }
 }

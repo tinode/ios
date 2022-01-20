@@ -14,7 +14,7 @@ class QuotedAttachment: NSTextAttachment {
         // Mimumum quote width in points
         static let kMinWidth: CGFloat = 40
         // Quote width padding in characters.
-        static let kWidthPadding: CGFloat = 3
+        static let kWidthPadding: CGFloat = 2
         // Offset of the text from the top left corner.
         static let kVerticalTextOffset: CGFloat = 4
         static let kHorizontalTextOffset: CGFloat = 6

@@ -1283,20 +1283,22 @@
                                 <rect key="frame" x="0.0" y="644" width="414" height="44"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="a7n-uv-vgp" userLabel="Cancel Preview Button">
-                                        <rect key="frame" x="120" y="11" width="22" height="22"/>
+                                        <rect key="frame" x="8.0000000000000018" y="9.333333333333373" width="25.666666666666671" height="25.666666666666671"/>
                                         <constraints>
                                             <constraint firstAttribute="width" secondItem="a7n-uv-vgp" secondAttribute="height" multiplier="1:1" id="xtD-6K-fAn"/>
                                         </constraints>
-                                        <state key="normal" image="x.circle" catalog="system"/>
+                                        <state key="normal">
+                                            <imageReference key="image" image="xmark.circle" catalog="system" symbolScale="large"/>
+                                            <preferredSymbolConfiguration key="preferredSymbolConfiguration" scale="large" weight="regular"/>
+                                        </state>
                                         <connections>
                                             <action selector="cancelPreviewClicked:" destination="ZTN-Oj-COh" eventType="touchUpInside" id="kYV-in-3f3"/>
                                         </connections>
                                     </button>
                                     <textView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="redraw" editable="NO" textAlignment="natural" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lUJ-7u-ECo" userLabel="Preview View" customClass="RichTextView" customModule="Tinodios" customModuleProvider="target">
-                                        <rect key="frame" x="16" y="2" width="100" height="40"/>
+                                        <rect key="frame" x="42" y="2" width="317" height="40"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="40" id="B0k-BY-l5X"/>
-                                            <constraint firstAttribute="width" constant="100" id="nTC-Rz-EpY"/>
                                         </constraints>
                                         <color key="textColor" systemColor="labelColor"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
@@ -1310,9 +1312,10 @@
                                 <constraints>
                                     <constraint firstItem="lUJ-7u-ECo" firstAttribute="centerY" secondItem="3wY-RF-FvK" secondAttribute="centerY" id="18z-77-sLD"/>
                                     <constraint firstItem="lUJ-7u-ECo" firstAttribute="height" secondItem="3wY-RF-FvK" secondAttribute="height" constant="-4" id="1gx-No-RY2"/>
+                                    <constraint firstAttribute="trailing" secondItem="lUJ-7u-ECo" secondAttribute="trailing" constant="55" id="EOf-Te-oQj"/>
                                     <constraint firstItem="lUJ-7u-ECo" firstAttribute="centerY" secondItem="a7n-uv-vgp" secondAttribute="centerY" id="PrH-HV-ZQP"/>
-                                    <constraint firstItem="lUJ-7u-ECo" firstAttribute="leading" secondItem="3wY-RF-FvK" secondAttribute="leading" constant="16" id="Wdy-dF-K4c"/>
-                                    <constraint firstItem="a7n-uv-vgp" firstAttribute="leading" secondItem="lUJ-7u-ECo" secondAttribute="trailing" constant="4" id="ZhX-NV-Wop"/>
+                                    <constraint firstItem="lUJ-7u-ECo" firstAttribute="leading" secondItem="a7n-uv-vgp" secondAttribute="trailing" constant="8" id="Wdy-dF-K4c"/>
+                                    <constraint firstItem="a7n-uv-vgp" firstAttribute="leading" secondItem="3wY-RF-FvK" secondAttribute="leading" constant="8" id="ZhX-NV-Wop"/>
                                     <constraint firstItem="a7n-uv-vgp" firstAttribute="height" relation="lessThanOrEqual" secondItem="lUJ-7u-ECo" secondAttribute="height" id="a2b-kd-iTe"/>
                                 </constraints>
                             </view>
@@ -1375,13 +1378,12 @@
                         <outlet property="imageView" destination="UUY-VO-981" id="vgO-PN-RVw"/>
                         <outlet property="previewView" destination="lUJ-7u-ECo" id="jpq-Uw-9ST"/>
                         <outlet property="previewViewHeight" destination="B0k-BY-l5X" id="aJR-Lx-nG5"/>
-                        <outlet property="previewViewWidth" destination="nTC-Rz-EpY" id="q8A-JQ-5hY"/>
                         <outlet property="sizeLabel" destination="wfA-TG-Chj" id="aXH-sE-x8Y"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="qqe-To-fWT" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="4725.6000000000004" y="-673.31334332833592"/>
+            <point key="canvasLocation" x="4724.6376811594209" y="-673.36956521739137"/>
         </scene>
         <!--TopicInfoViewController-->
         <scene sceneID="mxu-ZQ-Gyc">
@@ -2904,7 +2906,7 @@
         <image name="support-22" width="22.333333969116211" height="22.333333969116211"/>
         <image name="tags-24" width="24" height="24"/>
         <image name="user-96" width="125" height="125"/>
-        <image name="x.circle" catalog="system" width="128" height="121"/>
+        <image name="xmark.circle" catalog="system" width="128" height="121"/>
         <systemColor name="groupTableViewBackgroundColor">
             <color red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
