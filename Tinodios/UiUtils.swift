@@ -488,13 +488,13 @@ class UiUtils {
     }
     @discardableResult
     public static func updateAvatar(forTopic topic: DefaultTopic, image: UIImage) -> PromisedReply<ServerMessage>? {
-        let pub = topic.pub == nil ? VCard(fn: nil, avatar: image) : topic.pub!.copy()
+        let pub = topic.pub == nil ? TheCard(fn: nil, avatar: image) : topic.pub!.copy()
         pub.photo = Photo(image: image)
         return UiUtils.setTopicData(forTopic: topic, pub: pub, priv: nil)
     }
     @discardableResult
     public static func setTopicData(
-        forTopic topic: DefaultTopic, pub: VCard?, priv: PrivateType?) -> PromisedReply<ServerMessage>? {
+        forTopic topic: DefaultTopic, pub: TheCard?, priv: PrivateType?) -> PromisedReply<ServerMessage>? {
         return topic.setDescription(pub: pub, priv: priv).then(
             onSuccess: UiUtils.ToastSuccessHandler,
             onFailure: UiUtils.ToastFailureHandler)
@@ -545,9 +545,9 @@ class UiUtils {
 
     public static func presentManageTagsEditDialog(over viewController: UIViewController,
                                                    forTopic topic: TopicProto?) {
-        // Topic<VCard, PrivateType, VCard, PrivateType> is the least common ancestor for
+        // Topic<TheCard, PrivateType, TheCard, PrivateType> is the least common ancestor for
         // DefaultMeTopic (AccountSettingsVC) and DefaultComTopic (TopicInfoVC).
-        guard let topic = topic as? Topic<VCard, PrivateType, VCard, PrivateType> else { return }
+        guard let topic = topic as? Topic<TheCard, PrivateType, TheCard, PrivateType> else { return }
         guard let tags = topic.tags else {
             DispatchQueue.main.async { UiUtils.showToast(message: NSLocalizedString("Tags missing.", comment: "Toast notification"))}
             return

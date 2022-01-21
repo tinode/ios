@@ -20,13 +20,13 @@ protocol FindBusinessLogic: AnyObject {
 }
 
 class RemoteContactHolder: ContactHolder {
-    var sub: Subscription<VCard, [String]>?
+    var sub: Subscription<TheCard, [String]>?
 }
 
 class FindInteractor: FindBusinessLogic {
     private class FndListener: DefaultFndTopic.Listener {
         weak var interactor: FindBusinessLogic?
-        override func onMetaSub(sub: Subscription<VCard, [String]>) {
+        override func onMetaSub(sub: Subscription<TheCard, [String]>) {
             // bitmaps?
         }
         override func onSubsUpdated() {

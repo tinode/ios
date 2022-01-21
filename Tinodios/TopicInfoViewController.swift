@@ -69,7 +69,7 @@ class TopicInfoViewController: UITableViewController {
     private var tinode: Tinode!
     private var imagePicker: ImagePicker!
 
-    private var subscriptions: [Subscription<VCard, PrivateType>]?
+    private var subscriptions: [Subscription<TheCard, PrivateType>]?
 
     // Show row with Peer's permissions (p2p topic)
     private var showPeerPermissions: Bool = false
@@ -267,10 +267,10 @@ class TopicInfoViewController: UITableViewController {
     }
 
     private func updateTitles(newTitle: String?, newSubtitle: String?) {
-        var pub: VCard?
+        var pub: TheCard?
         if let nt = newTitle {
             if let oldPub = topic.pub, oldPub.fn != nt {
-                pub = VCard(fn: String(nt.prefix(UiUtils.kMaxTitleLength)), avatar: nil as Data?)
+                pub = TheCard(fn: String(nt.prefix(UiUtils.kMaxTitleLength)), avatar: nil as Data?)
             }
         }
         var priv: PrivateType?

@@ -161,7 +161,7 @@ class NewGroupViewController: UITableViewController {
     private func createGroupTopic(titled name: String, subtitled subtitle: String, with tags: [String]?, consistingOf members: [String], withAvatar avatar: UIImage?, asChannel isChannel: Bool) {
 
         let topic = DefaultComTopic(in: Cache.tinode, forwardingEventsTo: nil, isChannel: isChannel)
-        topic.pub = VCard(fn: name, avatar: avatar)
+        topic.pub = TheCard(fn: name, avatar: avatar)
         topic.priv = ["comment": .string(subtitle)] // No need to use Tinode.kNullValue here
         topic.tags = tags
         topic.subscribe().then(

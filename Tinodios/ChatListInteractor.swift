@@ -37,12 +37,12 @@ class ChatListInteractor: ChatListBusinessLogic, ChatListDataStore {
                 }
             }
         }
-        override func onMetaSub(sub: Subscription<VCard, PrivateType>) {
+        override func onMetaSub(sub: Subscription<TheCard, PrivateType>) {
             if Tinode.topicTypeByName(name: sub.topic) == .p2p {
                 ContactsManager.default.processSubscription(sub: sub)
             }
         }
-        override func onMetaDesc(desc: Description<VCard, PrivateType>) {
+        override func onMetaDesc(desc: Description<TheCard, PrivateType>) {
             // Handle description for me topic:
             // add/update user info for ME.
             if let uid = Cache.tinode.myUid {
@@ -52,7 +52,7 @@ class ChatListInteractor: ChatListBusinessLogic, ChatListDataStore {
         override func onSubsUpdated() {
             interactor?.loadAndPresentTopics()
         }
-        override func onContUpdate(sub: Subscription<VCard, PrivateType>) {
+        override func onContUpdate(sub: Subscription<TheCard, PrivateType>) {
             // Method makes no sense in context of MeTopic.
             // throw new UnsupportedOperationException();
         }

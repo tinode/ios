@@ -58,21 +58,21 @@ class ContactsManager {
         }
     }
 
-    public func processDescription(uid: String?, desc: Description<VCard, PrivateType>) {
+    public func processDescription(uid: String?, desc: Description<TheCard, PrivateType>) {
         queue.sync {
             processDescriptionInternal(uid: uid, desc: desc)
         }
     }
 
-    private func processDescriptionInternal(uid: String?, desc: Description<VCard, PrivateType>) {
+    private func processDescriptionInternal(uid: String?, desc: Description<TheCard, PrivateType>) {
         guard let uid = uid else { return }
-        if let user = userDb.readOne(uid: uid) as? User<VCard> {
+        if let user = userDb.readOne(uid: uid) as? User<TheCard> {
             // Existing contact.
             if user.merge(from: desc) {
                 userDb.update(user: user)
             }
         } else {
-            let user = User<VCard>(uid: uid, desc: desc)
+            let user = User<TheCard>(uid: uid, desc: desc)
             _ = userDb.insert(user: user)
         }
     }

@@ -19,7 +19,7 @@ public protocol UserProto: AnyObject {
 extension UserProto {
     public static func createFromPublicData(uid: String?, updated: Date?, data: String?) -> UserProto? {
         guard let data = data else { return nil }
-        if let p: VCard = Tinode.deserializeObject(from: data) {
+        if let p: TheCard = Tinode.deserializeObject(from: data) {
             return User(uid: uid, updated: updated, pub: p)
         }
         if let p: String = Tinode.deserializeObject(from: data) {
@@ -29,7 +29,7 @@ extension UserProto {
     }
 }
 
-public typealias DefaultUser = User<VCard>
+public typealias DefaultUser = User<TheCard>
 
 public class User<P: Codable>: UserProto {
     enum UserError: Error {

@@ -19,7 +19,7 @@
 		0A431C012244A14D00A837F7 /* Topic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A431BF82244A14D00A837F7 /* Topic.swift */; };
 		0A44B0052244AAC500A98866 /* ServerMessages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A431BEE2244A14B00A837F7 /* ServerMessages.swift */; };
 		0A44B0062244AAC500A98866 /* Subscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A431BEF2244A14B00A837F7 /* Subscription.swift */; };
-		0A44B0072244AAC500A98866 /* VCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A431BF02244A14B00A837F7 /* VCard.swift */; };
+		0A44B0072244AAC500A98866 /* TheCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A431BF02244A14B00A837F7 /* TheCard.swift */; };
 		0A44B0082244AAC500A98866 /* Defacs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A431BEB2244A14B00A837F7 /* Defacs.swift */; };
 		0A44B0092244AAC500A98866 /* Description.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A431BEC2244A14B00A837F7 /* Description.swift */; };
 		0A44B00A2244AAC500A98866 /* Acs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A431BE82244A14B00A837F7 /* Acs.swift */; };
@@ -63,7 +63,7 @@
 		0A431BED2244A14B00A837F7 /* Drafty.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Drafty.swift; sourceTree = "<group>"; };
 		0A431BEE2244A14B00A837F7 /* ServerMessages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerMessages.swift; sourceTree = "<group>"; };
 		0A431BEF2244A14B00A837F7 /* Subscription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Subscription.swift; sourceTree = "<group>"; };
-		0A431BF02244A14B00A837F7 /* VCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VCard.swift; sourceTree = "<group>"; };
+		0A431BF02244A14B00A837F7 /* TheCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TheCard.swift; sourceTree = "<group>"; };
 		0A431BF22244A14C00A837F7 /* PromisedReply.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromisedReply.swift; sourceTree = "<group>"; };
 		0A431BF32244A14C00A837F7 /* RFC3339Format.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RFC3339Format.swift; sourceTree = "<group>"; };
 		0A431BF42244A14C00A837F7 /* Connection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Connection.swift; sourceTree = "<group>"; };
@@ -167,7 +167,7 @@
 				0A431BEE2244A14B00A837F7 /* ServerMessages.swift */,
 				0A431BEF2244A14B00A837F7 /* Subscription.swift */,
 				0A81B316236FA896009AF14B /* Types.swift */,
-				0A431BF02244A14B00A837F7 /* VCard.swift */,
+				0A431BF02244A14B00A837F7 /* TheCard.swift */,
 			);
 			path = model;
 			sourceTree = "<group>";
@@ -352,7 +352,7 @@
 				0A44B00A2244AAC500A98866 /* Acs.swift in Sources */,
 				0A431BFA2244A14D00A837F7 /* PromisedReply.swift in Sources */,
 				0A44B0062244AAC500A98866 /* Subscription.swift in Sources */,
-				0A44B0072244AAC500A98866 /* VCard.swift in Sources */,
+				0A44B0072244AAC500A98866 /* TheCard.swift in Sources */,
 				0A44B0092244AAC500A98866 /* Description.swift in Sources */,
 				0A44B00B2244AAC500A98866 /* Drafty.swift in Sources */,
 				0A431BFB2244A14D00A837F7 /* Connection.swift in Sources */,

@@ -2,7 +2,7 @@
 //  Tinode.swift
 //  ios
 //
-//  Copyright © 2019-2021 Tinode LLC. All rights reserved.
+//  Copyright © 2019-2022 Tinode LLC. All rights reserved.
 //
 
 import Foundation
@@ -1330,7 +1330,7 @@ public class Tinode {
     }
 
     public static func isNull(obj: Any?) -> Bool {
-        guard let obj = obj as? String else { return false }
-        return obj == Tinode.kNullValue
+        guard let str = obj as? String else { return false }
+        return str == Tinode.kNullValue
     }
 }

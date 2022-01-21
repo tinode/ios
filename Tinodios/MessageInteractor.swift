@@ -700,14 +700,14 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
             self.presenter?.reloadAllMessages()
         }
     }
-    override func onMetaDesc(desc: Description<VCard, PrivateType>) {
+    override func onMetaDesc(desc: Description<TheCard, PrivateType>) {
         self.presenter?.applyTopicPermissions(withError: nil)
         if let pub = topic?.pub {
             let online = (self.topic?.isChannel ?? false) ? nil : self.topic?.online
             self.presenter?.updateTitleBar(icon: pub.photo?.image(), title: pub.fn, online: online)
         }
     }
-    override func onMetaSub(sub: Subscription<VCard, PrivateType>) {
+    override func onMetaSub(sub: Subscription<TheCard, PrivateType>) {
         guard let topic = topic else { return }
         if topic.isGrpType, let user = sub.user, !self.knownSubs.contains(user) {
             // New subscription.

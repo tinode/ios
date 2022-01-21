@@ -56,7 +56,7 @@ class AddByIDViewController: UIViewController {
         tinode.getMeta(topic: id, query: getMeta).then(
             onSuccess: { [weak self] msg in
                 // Valid topic id.
-                if let desc = msg?.meta?.desc as? Description<VCard, PrivateType> {
+                if let desc = msg?.meta?.desc as? Description<TheCard, PrivateType> {
                     ContactsManager.default.processDescription(uid: id, desc: desc)
                 }
                 self?.presentChatReplacingCurrentVC(with: id)

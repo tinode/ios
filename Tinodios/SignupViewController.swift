@@ -83,9 +83,9 @@ class SignupViewController: UITableViewController {
         let tinode = Cache.tinode
 
         let avatar = uploadedAvatar ? avatarImageView?.image?.resize(width: UiUtils.kAvatarSize, height: UiUtils.kAvatarSize, clip: true) : nil
-        let vcard = VCard(fn: name, avatar: avatar)
+        let vcard = TheCard(fn: name, avatar: avatar)
 
-        let desc = MetaSetDesc<VCard, String>(pub: vcard, priv: nil)
+        let desc = MetaSetDesc<TheCard, String>(pub: vcard, priv: nil)
         let cred = Credential(meth: method!, val: credential)
         var creds = [Credential]()
         creds.append(cred)

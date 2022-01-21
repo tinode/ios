@@ -76,12 +76,12 @@ extension TrustedType {
 }
 
 // Topic and Subscription types.
-public typealias DefaultDescription = Description<VCard, PrivateType>
-public typealias DefaultSubscription = Subscription<VCard, PrivateType>
+public typealias DefaultDescription = Description<TheCard, PrivateType>
+public typealias DefaultSubscription = Subscription<TheCard, PrivateType>
 public typealias FndDescription = Description<String, String>
-public typealias FndSubscription = Subscription<VCard, [String]>
+public typealias FndSubscription = Subscription<TheCard, [String]>
 
-public typealias DefaultTopic = Topic<VCard, PrivateType, VCard, PrivateType>
-public typealias DefaultComTopic = ComTopic<VCard>
-public typealias DefaultMeTopic = MeTopic<VCard>
-public typealias DefaultFndTopic = FndTopic<VCard>
+public typealias DefaultTopic = Topic<TheCard, PrivateType, TheCard, PrivateType>
+public typealias DefaultComTopic = ComTopic<TheCard>
+public typealias DefaultMeTopic = MeTopic<TheCard>
+public typealias DefaultFndTopic = FndTopic<TheCard>

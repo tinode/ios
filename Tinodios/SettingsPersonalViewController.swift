@@ -175,7 +175,7 @@ class SettingsPersonalViewController: UITableViewController {
 
     private func updateUserName(_ userName: String?) {
         guard let userName = userName else { return }
-        let pub = me.pub == nil ? VCard(fn: nil, avatar: nil as Data?) : me.pub!.copy()
+        let pub = me.pub == nil ? TheCard(fn: nil, avatar: nil as Data?) : me.pub!.copy()
         if pub.fn != userName {
             pub.fn = String(userName.prefix(UiUtils.kMaxTitleLength))
         }
