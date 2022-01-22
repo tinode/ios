@@ -312,7 +312,7 @@ class MessageViewController: UIViewController {
         // Setup UICollectionView constraints: fill the screen
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         let top = collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor) // FIXME: maybe it needs some spacing
-        let bottom = collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+        let bottom = collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -(inputAccessoryView?.frame.height ?? 0))
         let leading = collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor)
         let trailing = collectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor)
         NSLayoutConstraint.activate([top, bottom, trailing, leading])
@@ -339,6 +339,8 @@ class MessageViewController: UIViewController {
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
+
+        collectionView.contentInset.bottom = inputAccessoryView?.frame.height ?? 0
 
         // Otherwise setting contentInset after viewDidAppear will be animated.
         if isInitialLayout {
@@ -1148,11 +1150,8 @@ extension MessageViewController: MessageCellDelegate {
 
         UIMenuController.shared.menuItems = menuItems
 
-        // Tell the menu controller the first responder's frame and its super view
-        UIMenuController.shared.setTargetRect(cell.content.frame, in: cell.containerView)
-
-        // Animate the menu onto view
-        UIMenuController.shared.setMenuVisible(true, animated: true)
+        // Show the menu.
+        UIMenuController.shared.showMenu(from: cell.containerView, rect: cell.content.frame)
 
         // Capture menu dismissal
         NotificationCenter.default.addObserver(self, selector: #selector(willHidePopupMenu), name: UIMenuController.willHideMenuNotification, object: nil)

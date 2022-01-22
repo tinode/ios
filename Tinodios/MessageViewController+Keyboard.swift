@@ -2,7 +2,7 @@
 //  MessageViewController+Keyboard.swift
 //  Tinodios
 //
-//  Copyright © 2019 Tinode. All rights reserved.
+//  Copyright © 2019-2022 Tinode LLC. All rights reserved.
 //
 
 import UIKit
@@ -25,13 +25,9 @@ extension MessageViewController {
 
     @objc func adjustForKeyboard(_ notification: Notification) {
         // Apparently there is a bug in iOS 11 on iPad which sends useless notifications. This is a workaround.
-        guard
-            let keyboardInfo = KeyboardInfo(notification: notification),
-            !keyboardInfo.frameBegin.isEmpty
-        else { return }
+        guard let keyboardInfo = KeyboardInfo(notification: notification), !keyboardInfo.frameBegin.isEmpty else { return }
 
-        let change: CGFloat = keyboardInfo.frameEnd.height
-        collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: change, right: 0)
+        collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: keyboardInfo.frameEnd.height, right: 0)
         let inputAccessoryViewHeight = inputAccessoryView?.frame.height ?? 0
 
         let overlap: CGFloat
@@ -58,9 +54,5 @@ extension MessageViewController {
 
     @objc private func keyboardWillHide(_ notification: Notification) {
         collectionView.contentInset.bottom = inputAccessoryView?.frame.height ?? 0
-    }
-
-    private var bottomInset: CGFloat {
-        return collectionView.adjustedContentInset.bottom - collectionView.contentInset.bottom
     }
 }

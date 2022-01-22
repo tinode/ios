@@ -60,6 +60,18 @@ public class Photo: Codable {
     }
 }
 
+public class Organization: Codable {
+    var fn: String?
+    var title: String?
+    init() {}
+    public func copy() -> Organization {
+        let copy = Organization()
+        copy.fn = self.fn
+        copy.title = self.title
+        return copy
+    }
+}
+
 public class Contact: Codable {
     var type: String?
     var uri: String?
@@ -110,8 +122,7 @@ public class Birthday: Codable {
 public class TheCard: Codable, Mergeable {
     public var fn: String?
     public var n: Name?
-    public var org: String?
-    public var title: String?
+    public var org: Organization?
     // List of phone numbers associated with the contact.
     public var tel: [Contact]?
     // List of contact's email addresses.
@@ -141,16 +152,15 @@ public class TheCard: Codable, Mergeable {
         self.photo = Photo(image: avatar)
     }
     public func copy() -> TheCard {
-        let cardCopy = TheCard(fn: fn, avatar: self.photo?.copy())
-        cardCopy.n = self.n
-        cardCopy.org = self.org
-        cardCopy.title = self.title
-        cardCopy.tel = self.tel?.map { $0 }
-        cardCopy.email = self.email?.map { $0 }
-        cardCopy.impp = self.impp?.map { $0 }
-        cardCopy.bday = self.bday?.copy()
-        cardCopy.note = self.note
-        return cardCopy
+        let copy = TheCard(fn: fn, avatar: self.photo?.copy())
+        copy.n = self.n
+        copy.org = self.org?.copy()
+        copy.tel = self.tel?.map { $0 }
+        copy.email = self.email?.map { $0 }
+        copy.impp = self.impp?.map { $0 }
+        copy.bday = self.bday?.copy()
+        copy.note = self.note
+        return copy
     }
 
     public func merge(with another: Mergeable) -> Bool {
@@ -158,10 +168,6 @@ public class TheCard: Codable, Mergeable {
         var changed = false
         if another.fn != nil {
             self.fn = !Tinode.isNull(obj: another.fn) ? another.fn : nil
-            changed = true
-        }
-        if another.title != nil {
-            self.title = !Tinode.isNull(obj: another.title) ? another.title : nil
             changed = true
         }
         if another.org != nil {
