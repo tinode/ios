@@ -28,7 +28,6 @@ open class ImagePicker: NSObject {
 
         self.pickerController.delegate = self
         self.pickerController.allowsEditing = editable
-
         self.pickerController.mediaTypes = [kUTTypeImage as String]
     }
 

@@ -84,18 +84,18 @@ class BlockedContactsTableViewController: UITableViewController {
         )
     }
 
-    override func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
+    override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         // Delete item at indexPath
-        let delete = UITableViewRowAction(style: .destructive, title: NSLocalizedString("Delete", comment: "Swipe action")) { (_, indexPath) in
-            let topic = self.topics[indexPath.row]
-            self.deleteTopic(topic.name)
-        }
+        let delete = UIContextualAction(style: .destructive, title: NSLocalizedString("Delete", comment: "Swipe action"), handler: { _,_,_ in
+                let topic = self.topics[indexPath.row]
+                self.deleteTopic(topic.name)
+        })
         // Unblock item.
-        let unblock = UITableViewRowAction(style: .normal, title: NSLocalizedString("Unblock", comment: "Swipe action")) { (_, indexPath) in
-            let topic = self.topics[indexPath.row]
-            self.unblockTopic(topic: topic)
-        }
+        let unblock = UIContextualAction(style: .normal, title: NSLocalizedString("Unblock", comment: "Swipe action"), handler: { _,_,_ in
+                let topic = self.topics[indexPath.row]
+                self.unblockTopic(topic: topic)
+        })
 
-        return [delete, unblock]
+        return UISwipeActionsConfiguration(actions: [delete, unblock])
     }
 }

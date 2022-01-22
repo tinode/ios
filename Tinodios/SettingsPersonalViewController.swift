@@ -11,6 +11,10 @@ import UIKit
 class SettingsPersonalViewController: UITableViewController {
 
     private static let kSectionPersonal = 0
+    private static let kPersonalVerified = 3
+    private static let kPersonalStaff = 4
+    private static let kPersonalDanger = 5
+
     private static let kSectionContacts = 1
     private static let kSectionTags = 2
 
@@ -69,7 +73,6 @@ class SettingsPersonalViewController: UITableViewController {
         // Avatar.
         self.avatarImage.set(icon: me.pub?.photo?.image(), title: me.pub?.fn, id: self.tinode.myUid)
         self.avatarImage.letterTileFont = self.avatarImage.letterTileFont.withSize(CGFloat(50))
-
         self.manageTags.detailTextLabel?.text = me.tags?.joined(separator: ", ")
 
         // Note: tableView.reloadSections() would be better but
@@ -213,7 +216,7 @@ extension SettingsPersonalViewController {
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard indexPath.section == SettingsPersonalViewController.kSectionContacts else {
+        if indexPath.section != SettingsPersonalViewController.kSectionContacts {
             return super.tableView(tableView, cellForRowAt: indexPath)
         }
 
@@ -249,6 +252,14 @@ extension SettingsPersonalViewController {
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if indexPath.section == SettingsPersonalViewController.kSectionContacts && indexPath.row > 0 {
             return tableView.rowHeight
+        }
+
+        if indexPath.section == SettingsPersonalViewController.kSectionPersonal {
+            if (indexPath.row == SettingsPersonalViewController.kPersonalVerified && !me.isVerified) ||
+                (indexPath.row == SettingsPersonalViewController.kPersonalStaff && !me.isStaffManaged) ||
+                (indexPath.row == SettingsPersonalViewController.kPersonalDanger && !me.isDangerous) {
+                return CGFloat.leastNonzeroMagnitude
+            }
         }
 
         return super.tableView(tableView, heightForRowAt: indexPath)
