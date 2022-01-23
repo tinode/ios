@@ -314,12 +314,12 @@
 				0A2F81C5229677DD007E562C /* AddByIDViewController.swift */,
 				0A0380D721B3CC8100A3FA0E /* AppDelegate.swift */,
 				0AB5FDCD22C20D1900F44AFD /* ArchivedChatsTableViewController.swift */,
+				B09C5651246C0E6B00D6615D /* BlockedContactsTableViewController.swift */,
 				0A8A8BD921C380E80090BCBA /* Cache.swift */,
 				0AD5552921C625BB0027FD16 /* ChatListInteractor.swift */,
 				0ACB5F0D22097651008FE740 /* ChatListPresenter.swift */,
 				0ACB5F0F22097665008FE740 /* ChatListRouter.swift */,
 				0A0380D921B3CC8100A3FA0E /* ChatListViewController.swift */,
-				B09C5651246C0E6B00D6615D /* BlockedContactsTableViewController.swift */,
 				7DDADC5321D5C2E6009733B5 /* CredentialsViewController.swift */,
 				0A36776822B09C1900724873 /* EditMembersViewController.swift */,
 				B0BA208423D5D8CF00C59BD4 /* FilePreviewController.swift */,
@@ -452,9 +452,9 @@
 				B0DF032E2282FF46000F9492 /* SendMessageBar.swift */,
 				B0DF032C2282EE8A000F9492 /* SendMessageBar.xib */,
 				0A11912C22F03E3100A1BBA1 /* TagsEditView.swift */,
-				7DDADC5121D5C219009733B5 /* ValidatedCredential.swift */,
 				0A4B11FB2373D6E400199310 /* TagsEditDialogView.xib */,
 				0A4B11FD2373DC1400199310 /* TagsEditDialogView.swift */,
+				7DDADC5121D5C219009733B5 /* ValidatedCredential.swift */,
 			);
 			path = widgets;
 			sourceTree = "<group>";
