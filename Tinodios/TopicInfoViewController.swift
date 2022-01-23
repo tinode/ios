@@ -2,7 +2,7 @@
 //  TopicInfoViewController.swift
 //  Tinodios
 //
-//  Copyright © 2019 Tinode. All rights reserved.
+//  Copyright © 2019-2022 Tinode LLC. All rights reserved.
 //
 
 import UIKit
@@ -13,6 +13,9 @@ class TopicInfoViewController: UITableViewController {
 
     private static let kSectionBasic = 0
     private static let kSectionBasicLastSeen = 2
+    private static let kSectionBasicVerified = 3
+    private static let kSectionBasicStaff = 4
+    private static let kSectionBasicDanger = 5
 
     private static let kSectionMute = 1
 
@@ -484,8 +487,13 @@ extension TopicInfoViewController {
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if indexPath.section == TopicInfoViewController.kSectionMembers && indexPath.row != 0 {
             return 60
-        } else if indexPath.section == TopicInfoViewController.kSectionBasic && indexPath.row == TopicInfoViewController.kSectionBasicLastSeen && topic?.lastSeen == nil {
-            return CGFloat.leastNonzeroMagnitude
+        } else if indexPath.section == TopicInfoViewController.kSectionBasic {
+            if (indexPath.row == TopicInfoViewController.kSectionBasicLastSeen && topic?.lastSeen == nil) ||
+                (indexPath.row == TopicInfoViewController.kSectionBasicVerified && !(topic?.isVerified ?? false)) ||
+                (indexPath.row == TopicInfoViewController.kSectionBasicStaff && !(topic?.isStaffManaged ?? false)) ||
+                (indexPath.row == TopicInfoViewController.kSectionBasicDanger && !(topic?.isDangerous ?? false)) {
+                return CGFloat.leastNonzeroMagnitude
+            }
         } else if indexPath.section == TopicInfoViewController.kSectionActions {
             if indexPath.row == TopicInfoViewController.kSectionActionsManageTags && (!(topic?.isGrpType ?? false) || !(topic?.isOwner ?? false)) {
                 // P2P topic has no owner, hide [Manage Tags]
