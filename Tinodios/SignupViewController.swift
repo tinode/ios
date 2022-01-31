@@ -82,9 +82,8 @@ class SignupViewController: UITableViewController {
         signUpButton.isUserInteractionEnabled = false
         let tinode = Cache.tinode
 
-        let avatar = uploadedAvatar ? avatarImageView?.image?.resize(width: UiUtils.kAvatarSize, height: UiUtils.kAvatarSize, clip: true) : nil
+        let avatar = uploadedAvatar ? avatarImageView?.image?.resize(width: UiUtils.kMaxAvatarSize, height: UiUtils.kMaxAvatarSize, clip: true) : nil
         let vcard = TheCard(fn: name, avatar: avatar)
-
         let desc = MetaSetDesc<TheCard, String>(pub: vcard, priv: nil)
         let cred = Credential(meth: method!, val: credential)
         var creds = [Credential]()
@@ -136,9 +135,7 @@ class SignupViewController: UITableViewController {
 
 extension SignupViewController: ImagePickerDelegate {
     func didSelect(image: UIImage?, mimeType: String?, fileName: String?) {
-        guard let image = image?.resize(width: CGFloat(UiUtils.kAvatarSize), height: CGFloat(UiUtils.kAvatarSize), clip: true) else {
-            return
-        }
+        guard let image = image?.resize(width: CGFloat(UiUtils.kMaxAvatarSize), height: CGFloat(UiUtils.kMaxAvatarSize), clip: true) else { return }
 
         self.avatarImageView.image = image
         uploadedAvatar = true

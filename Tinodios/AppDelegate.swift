@@ -6,7 +6,6 @@
 //
 
 import Firebase
-// import FirebaseCrashlytics
 import Network
 import UIKit
 import TinodeSDK

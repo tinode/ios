@@ -79,7 +79,7 @@ class LoginViewController: UIViewController {
         let bottomInset = keyboardViewEndFrame.height - view.safeAreaInsets.bottom
 
         scrollView.contentInset.bottom = bottomInset
-        scrollView.scrollIndicatorInsets.bottom = bottomInset
+        scrollView.verticalScrollIndicatorInsets.bottom = bottomInset
     }
 
     @objc func keyboardWillHide(_ notification: Notification) {

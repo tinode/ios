@@ -534,7 +534,7 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
     }
 
     @discardableResult
-    public func subscribe() -> PromisedReply<ServerMessage> {
+    func subscribe() -> PromisedReply<ServerMessage> {
         var setMsg: MsgSetMeta<DP, DR>?
         var getMsg: MsgGetMeta?
         if isNew {
@@ -1199,11 +1199,19 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
     }
     private func publishInternal(content: Drafty, head: [String: JSONValue]?, msgId: Int64) -> PromisedReply<ServerMessage> {
         var headers = head
-        if content.isPlain && headers?["mime"] != nil {
+        var attachments: [String]?
+        if content.isPlain {
             // Plain text content should not have "mime" header. Clear it.
             headers?.removeValue(forKey: "mime")
+        } else {
+            if headers == nil {
+                headers = [:]
+            }
+            headers?["mime"] = .string(Drafty.kJSONMimeType)
+            attachments = content.getEntReferences()
         }
-        return tinode!.publish(topic: name, head: headers, content: content).then(
+
+        return tinode!.publish(topic: name, head: headers, content: content, attachments: attachments).then(
             onSuccess: { [weak self] msg in
                 self?.processDelivery(ctrl: msg?.ctrl, id: msgId)
                 return nil
@@ -1213,13 +1221,18 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
                 throw err
             })
     }
+
     public func publish(content: Drafty, withExtraHeaders extraHeaders: [String: JSONValue]? = nil) -> PromisedReply<ServerMessage> {
-        var head = !content.isPlain ? Tinode.draftyHeaders(for: content) : nil
-        if let extra = extraHeaders {
-            head = head ?? [:]
-            // Break conflicts by taking values from extras.
-            head!.merge(extra) { (_, new) in new }
+        var head = extraHeaders
+        if !content.isPlain {
+            if head == nil {
+                head = [:]
+            }
+            head!["mime"] = JSONValue.string(Drafty.kMimeType)
+        } else if head != nil {
+            head!.removeValue(forKey: "mime")
         }
+
         var id: Int64 = -1
         if let s = store {
             if let msg = s.msgSend(topic: self, data: content, head: head) {
@@ -1239,6 +1252,7 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
                 })
         }
     }
+
     private func sendPendingDeletes(hard: Bool) -> PromisedReply<ServerMessage>? {
         if let pendingDeletes = self.store?.getQueuedMessageDeletes(topic: self, hard: hard), !pendingDeletes.isEmpty {
             return self.tinode!.delMessage(

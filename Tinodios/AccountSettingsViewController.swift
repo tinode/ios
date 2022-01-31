@@ -38,7 +38,7 @@ class AccountSettingsViewController: UITableViewController {
         self.userNameLabel.text = me.pub?.fn ?? NSLocalizedString("Unknown", comment: "Placeholder for missing user name")
 
         // Avatar.
-        self.avatarImageView.set(icon: me.pub?.photo?.image(), title: me.pub?.fn, id: self.tinode.myUid)
+        self.avatarImageView.set(icon: me.pub?.photo?.image, title: me.pub?.fn, id: self.tinode.myUid)
         self.avatarImageView.letterTileFont = self.avatarImageView.letterTileFont.withSize(CGFloat(50))
 
         self.subtitleLabel.text = me.tags?.joined(separator: ", ")

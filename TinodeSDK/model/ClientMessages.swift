@@ -2,7 +2,7 @@
 //  ClientMessages.swift
 //  ios
 //
-//  Copyright © 2019 Tinode. All rights reserved.
+//  Copyright © 2019-2022 Tinode LLC. All rights reserved.
 //
 
 import Foundation
@@ -298,8 +298,12 @@ public class MetaSetDesc<P: Encodable, R: Encodable>: Encodable {
     var pub: P?
     var priv: R?
     var trusted: TrustedType?
+
+    // Not serialized
+    var attachments: [String]?
+
     private enum CodingKeys: String, CodingKey {
-        case defacs, pub = "public", priv = "private"
+        case defacs, pub = "public", priv = "private", trusted
     }
     public init(da: Defacs) {
         self.defacs = da
@@ -506,6 +510,14 @@ public class MsgClientDel: Encodable {
 
 }
 
+public class MsgClientExtra: Encodable {
+    let attachments: [String]?
+
+    init(attachments: [String]?) {
+        self.attachments = attachments
+    }
+}
+
 public class ClientMessage<Pu: Encodable, Pr: Encodable>: Encodable {
     var hi: MsgClientHi?
     var acc: MsgClientAcc<Pu, Pr>?
@@ -517,6 +529,9 @@ public class ClientMessage<Pu: Encodable, Pr: Encodable>: Encodable {
     var note: MsgClientNote?
     var pub: MsgClientPub?
     var del: MsgClientDel?
+
+    // Optional field for sending attachment references.
+    var extra: MsgClientExtra?
 
     init(hi: MsgClientHi) {
         self.hi = hi

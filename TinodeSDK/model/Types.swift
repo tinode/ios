@@ -2,7 +2,7 @@
 //  Types.swift
 //  TinodeSDK
 //
-//  Copyright © 2019 Tinode. All rights reserved.
+//  Copyright © 2019-2022 Tinode LLC. All rights reserved.
 //
 
 public protocol Mergeable {
@@ -82,6 +82,6 @@ public typealias FndDescription = Description<String, String>
 public typealias FndSubscription = Subscription<TheCard, [String]>
 
 public typealias DefaultTopic = Topic<TheCard, PrivateType, TheCard, PrivateType>
-public typealias DefaultComTopic = ComTopic<TheCard>
+public typealias DefaultComTopic = ComTopic
 public typealias DefaultMeTopic = MeTopic<TheCard>
 public typealias DefaultFndTopic = FndTopic<TheCard>

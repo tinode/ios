@@ -2,7 +2,7 @@
 //  MeTopic.swift
 //  TinodeSDK
 //
-//  Copyright © 2020-2021 Tinode LLC. All rights reserved.
+//  Copyright © 2020-2022 Tinode LLC. All rights reserved.
 //
 
 import Foundation

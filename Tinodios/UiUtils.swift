@@ -73,7 +73,12 @@ class UiUtils {
     static let kMinTagLength: Int64 = 4
     static let kMaxTagLength: Int64 = 96
 
-    static let kAvatarSize: CGFloat = 128
+    // Maximum size of avatar to send inband.
+    static let kMaxInbandAvatarBytes: Int = 4096
+    // Minimum size of an avatar image (pixels).
+    static let kMinAvatarSize: CGFloat = 8
+    // Maximum size of the avatar image in pixels
+    static let kMaxAvatarSize: CGFloat = 384
     // Maximum linear size of an image.
     static let kMaxBitmapSize: CGFloat = 1024
     // Maximum size of image preview when image is sent out-of-band.
@@ -486,12 +491,30 @@ class UiUtils {
                 return nil
             })
     }
+
     @discardableResult
     public static func updateAvatar(forTopic topic: DefaultTopic, image: UIImage) -> PromisedReply<ServerMessage>? {
-        let pub = topic.pub == nil ? TheCard(fn: nil, avatar: image) : topic.pub!.copy()
+        let pub = topic.pub == nil ? TheCard(fn: nil) : topic.pub!.copy()
         pub.photo = Photo(image: image)
-        return UiUtils.setTopicData(forTopic: topic, pub: pub, priv: nil)
+        let result = PromisedReply<ServerMessage>().thenApply { _ in
+            return UiUtils.setTopicData(forTopic: topic, pub: pub, priv: nil)
+        }
+        let helper = Cache.getLargeFileHelper()
+        helper.startAvatarUpload(mimetype: pub.photoMimeType, data: pub.photoBits!, topicId: topic.name, progressCallback: { _ in /* do nothing */}, completionCallback: { [weak self] (serverMessage, error) in
+            var success = false
+            guard error == nil else {
+                DispatchQueue.main.async {
+                    UiUtils.showToast(message: error!.localizedDescription)
+                }
+                return
+            }
+            guard let ctrl = serverMessage?.ctrl, ctrl.code == 200, let srvUrl = URL(string: ctrl.getStringParam(for: "url") ?? "") else { return }
+            pub.photo?.ref = srvUrl
+            result.resolve(result: serverMessage)
+        })
+        return result
     }
+
     @discardableResult
     public static func setTopicData(
         forTopic topic: DefaultTopic, pub: TheCard?, priv: PrivateType?) -> PromisedReply<ServerMessage>? {
@@ -725,7 +748,7 @@ extension UIImage {
     /// - Parameters:
     ///     - maxWidth: maxumum width of the image
     ///     - maxHeight: maximum height of the image
-    ///     - clip: first crops the image to the new aspect ratio then shrinks it; otherwise the
+    ///     - clip: first crop the image to the new aspect ratio then shrink it; otherwise the
     ///       image keeps the original aspect ratio but is shrunk to be under the
     ///       maxWidth/maxHeight
     public func resize(width: CGFloat, height: CGFloat, clip: Bool) -> UIImage? {

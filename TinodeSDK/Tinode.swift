@@ -649,7 +649,7 @@ public class Tinode {
             let r = FndTopic<SP>(tinode: self)
             return r
         }
-        return ComTopic<SP>(tinode: self, sub: sub as! Subscription<SP, PrivateType>)
+        return ComTopic(tinode: self, sub: sub as! Subscription<TheCard, PrivateType>)
     }
     public static func newTopic(withTinode tinode: Tinode?, forTopic name: String) -> TopicProto {
         if name == Tinode.kTopicMe {
@@ -731,26 +731,14 @@ public class Tinode {
     ///   - desc: account parameters, such as full name etc.
     ///   - creds:  account credential, such as email or phone
     /// - Returns: PromisedReply of the reply ctrl message
-    public func createAccountBasic<Pu: Codable, Pr: Codable>(
-        uname: String,
-        pwd: String,
-        login: Bool,
-        tags: [String]?,
-        desc: MetaSetDesc<Pu, Pr>,
-        creds: [Credential]?) -> PromisedReply<ServerMessage> {
+    public func createAccountBasic<Pu: Codable, Pr: Codable>(uname: String, pwd: String, login: Bool, tags: [String]?, desc: MetaSetDesc<Pu, Pr>, creds: [Credential]?) -> PromisedReply<ServerMessage> {
         let encodedSecret: String
         do {
             encodedSecret = try AuthScheme.encodeBasicToken(uname: uname, password: pwd)
         } catch {
             return PromisedReply(error: TinodeError.invalidArgument(error.localizedDescription))
         }
-        return account(uid: Tinode.kUserNew,
-            scheme: AuthScheme.kLoginBasic,
-            secret: encodedSecret,
-            loginNow: login,
-            tags: tags,
-            desc: desc,
-            creds: creds)
+        return account(uid: Tinode.kUserNew, scheme: AuthScheme.kLoginBasic, secret: encodedSecret, loginNow: login, tags: tags, desc: desc, creds: creds)
     }
 
     private func handleAuthenticationError(error: Error) {
@@ -779,14 +767,7 @@ public class Tinode {
     ///   - desc: default access parameters for this account
     ///   - creds: creds
     /// - Returns: PromisedReply of the reply ctrl message
-    public func account<Pu: Codable, Pr: Codable>(
-        uid: String?,
-        scheme: String,
-        secret: String,
-        loginNow: Bool,
-        tags: [String]?,
-        desc: MetaSetDesc<Pu, Pr>?,
-        creds: [Credential]?) -> PromisedReply<ServerMessage> {
+    public func account<Pu: Codable, Pr: Codable>(uid: String?, scheme: String, secret: String, loginNow: Bool, tags: [String]?, desc: MetaSetDesc<Pu, Pr>?, creds: [Credential]?) -> PromisedReply<ServerMessage> {
         let msgId = getNextMsgId()
         let msga = MsgClientAcc(id: msgId, uid: uid, scheme: scheme, secret: secret, doLogin: loginNow, desc: desc)
 
@@ -803,6 +784,10 @@ public class Tinode {
         }
 
         let msg = ClientMessage<Pu, Pr>(acc: msga)
+        if let attachments = desc?.attachments, !attachments.isEmpty {
+            msg.extra = MsgClientExtra(attachments: attachments)
+        }
+
         let future = sendWithPromise(payload: msg, with: msgId)
 
         if !loginNow {
@@ -818,6 +803,7 @@ public class Tinode {
                 return PromisedReply<ServerMessage>(error: err)
             })
     }
+
     private func setAutoLogin(using scheme: String?,
                               authenticateWith secret: String?) {
         guard let scheme = scheme, let secret = secret else {
@@ -828,9 +814,11 @@ public class Tinode {
         autoLogin = true
         loginCredentials = LoginCredentials(using: scheme, authenticateWith: secret)
     }
+
     public func setAutoLoginWithToken(token: String) {
         setAutoLogin(using: AuthScheme.kLoginToken, authenticateWith: token)
     }
+
     public func loginBasic(uname: String, password: String) -> PromisedReply<ServerMessage> {
         var encodedToken: String
         do {
@@ -1173,6 +1161,9 @@ public class Tinode {
                 topic: topicName,
                 set: set,
                 get: get))
+        if let attachments = set?.desc?.attachments {
+            msg.extra = MsgClientExtra(attachments: attachments)
+        }
         return sendWithPromise(payload: msg, with: msgId)
     }
 
@@ -1191,6 +1182,9 @@ public class Tinode {
         let msg = ClientMessage(
             set: MsgClientSet(id: msgId, topic: topic, meta: meta)
         )
+        if let attachments = meta?.desc?.attachments {
+            msg.extra = MsgClientExtra(attachments: attachments)
+        }
         return sendWithPromise(payload: msg, with: msgId)
     }
 
@@ -1201,20 +1195,10 @@ public class Tinode {
         return sendWithPromise(payload: msg, with: msgId)
     }
 
-    public static func draftyHeaders(for message: Drafty) -> [String: JSONValue]? {
-        guard !message.isPlain else { return nil }
-        var head: [String: JSONValue] = [:]
-        head["mime"] = JSONValue.string(Drafty.kMimeType)
-        if let refs = message.getEntReferences() {
-            head["attachments"] = JSONValue.array(refs.map { JSONValue.string($0) })
-        }
-        return head
-    }
-
-    public func publish(topic: String, head: [String: JSONValue]?, content: Drafty) -> PromisedReply<ServerMessage> {
+    public func publish(topic: String, head: [String: JSONValue]?, content: Drafty, attachments: [String]?) -> PromisedReply<ServerMessage> {
         let msgId = getNextMsgId()
-        let msg = ClientMessage<Int, Int>(
-            pub: MsgClientPub(id: msgId, topic: topic, noecho: true, head: head, content: content))
+        let msg = ClientMessage<Int, Int>(pub: MsgClientPub(id: msgId, topic: topic, noecho: true, head: head, content: content))
+        msg.extra = MsgClientExtra(attachments: attachments)
         return sendWithPromise(payload: msg, with: msgId)
     }
 

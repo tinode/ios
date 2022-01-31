@@ -89,10 +89,7 @@ class ContactsManager {
         // Turn users into contacts.
         return users?.map { user in
             let q = user as! DefaultUser
-            return ContactHolder(
-                displayName: q.pub?.fn,
-                image: q.pub?.photo?.image(),
-                uniqueId: q.uid)
+            return ContactHolder(displayName: q.pub?.fn, image: q.pub?.photo?.image, uniqueId: q.uid)
         }
     }
 }

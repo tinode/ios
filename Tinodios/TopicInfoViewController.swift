@@ -190,7 +190,7 @@ class TopicInfoViewController: UITableViewController {
         let subtitle = topic.comment ?? ""
         topicSubtitleTextView.text = !subtitle.isEmpty ? subtitle : NSLocalizedString("Private info: not set", comment: "Placeholder text in editor")
         topicSubtitleTextView.sizeToFit()
-        avatarImage.set(icon: topic.pub?.photo?.image(), title: topic.pub?.fn, id: topic?.name)
+        avatarImage.set(icon: topic.pub?.photo?.image, title: topic.pub?.fn, id: topic?.name)
         avatarImage.letterTileFont = self.avatarImage.letterTileFont.withSize(CGFloat(50))
         mutedSwitch.isOn = topic.isMuted
         let acs = topic.accessMode
@@ -273,7 +273,7 @@ class TopicInfoViewController: UITableViewController {
         var pub: TheCard?
         if let nt = newTitle {
             if let oldPub = topic.pub, oldPub.fn != nt {
-                pub = TheCard(fn: String(nt.prefix(UiUtils.kMaxTitleLength)), avatar: nil as Data?)
+                pub = TheCard(fn: String(nt.prefix(UiUtils.kMaxTitleLength)))
             }
         }
         var priv: PrivateType?
@@ -362,7 +362,7 @@ class TopicInfoViewController: UITableViewController {
             "action": JSONValue.string("report"),
             "target": JSONValue.string(self.topic.name)
             ])
-        _ = Cache.tinode.publish(topic: Tinode.kTopicSys, head: Tinode.draftyHeaders(for: msg), content: msg)
+        _ = Cache.tinode.publish(topic: Tinode.kTopicSys, head: ["mime": .string(Drafty.kJSONMimeType)], content: msg, attachments: nil)
     }
 
     @objc func deleteGroupClicked(sender: UITapGestureRecognizer) {
@@ -629,7 +629,7 @@ extension TopicInfoViewController {
         let isMe = self.tinode.isMe(uid: uid)
         let pub = sub.pub
 
-        cell.avatar.set(icon: pub?.photo?.image(), title: pub?.fn, id: uid)
+        cell.avatar.set(icon: pub?.photo?.image, title: pub?.fn, id: uid)
         cell.title.text = isMe ? NSLocalizedString("You", comment: "This is 'you'") : (pub?.fn ?? NSLocalizedString("Unknown", comment: "Placeholder for missing user name"))
         cell.title.sizeToFit()
         cell.subtitle.text = sub.acs?.givenString
@@ -732,7 +732,7 @@ extension TopicInfoViewController {
 extension TopicInfoViewController: EditMembersDelegate {
     func editMembersInitialSelection(_: UIView) -> [ContactHolder] {
         return subscriptions?.compactMap {
-            return ContactHolder(displayName: $0.pub?.fn, image: $0.pub?.photo?.image(), uniqueId: $0.user)
+            return ContactHolder(displayName: $0.pub?.fn, image: $0.pub?.photo?.image, uniqueId: $0.user)
         } ?? []
     }
 
@@ -752,7 +752,11 @@ extension TopicInfoViewController: EditMembersDelegate {
 
 extension TopicInfoViewController: ImagePickerDelegate {
     func didSelect(image: UIImage?, mimeType: String?, fileName: String?) {
-        guard let image = image?.resize(width: UiUtils.kAvatarSize, height: UiUtils.kAvatarSize, clip: true) else {
+        guard let image = image?.resize(width: UiUtils.kMaxAvatarSize, height: UiUtils.kMaxAvatarSize, clip: true) else {
+            return
+        }
+        if image.size.width < UiUtils.kMinAvatarSize || image.size.height < UiUtils.kMinAvatarSize {
+            UiUtils.showToast(message: NSLocalizedString("The avatar is too small.", comment: "Toast notification"))
             return
         }
         UiUtils.updateAvatar(forTopic: self.topic, image: image)?.then(onSuccess: self.promiseSuccessHandler)

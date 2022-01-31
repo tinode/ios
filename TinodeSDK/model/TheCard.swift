@@ -8,9 +8,12 @@
 import Foundation
 
 public class Photo: Codable {
+    public static let kDefaultType = "png"
+
+    // The specific part of the image mime type, e.g. if mime type is "image/png", the type is "png".
     public let type: String?
-    // base64-encoded byte array.
-    public let data: String?
+    // Image bits.
+    public let data: Data?
     // URL of the image for out-of-band avatars
     public let ref: String?
     // Width and height of the image.
@@ -23,40 +26,51 @@ public class Photo: Codable {
         case type, data, ref, width, height
     }
 
-    public init(type: String?, data: String?, width: Int? = nil, height: Int? = nil) {
-        self.type = type
+    public init(type tp: String?, data: Data?, ref: String?, width: Int? = nil, height: Int? = nil) {
+        if tp == nil {
+            self.type = Photo.kDefaultType
+        } else {
+            // Extract specific part from the full mime type.
+            let parts = tp!.components(separatedBy: "/")
+            if parts.count > 1 {
+                if parts[0] == "image" {
+                    // Drop the first component "image/", keep the rest.
+                    self.type = parts[1..<parts.count].joined(separator: "/")
+                } else {
+                    // Invalid mime type, use default value.
+                    self.type = Photo.kDefaultType
+                }
+            } else {
+                self.type = tp
+            }
+        }
         self.data = data
-        self.ref = nil
+        self.ref = ref
         self.width = width
         self.height = height
     }
 
-    public init(type: String?, ref: String?) {
-        self.type = type
-        self.data = nil
-        self.ref = ref
-        self.width = nil
-        self.height = nil
-    }
-
-    convenience public init(type: String?, data: Data?, width: Int? = nil, height: Int? = nil) {
-        self.init(type: type, data: data?.base64EncodedString())
+    convenience public init(type: String?, ref: String?) {
+        self.init(type: type, data: nil, ref: ref, width: nil, height: nil)
     }
 
     convenience public init(image: UIImage) {
-        self.init(type: "image/png", data: image.pngData(), width: Int(image.size.width), height: Int(image.size.height))
+        self.init(type: Photo.kDefaultType, data: image.pngData(), ref: nil, width: Int(image.size.width), height: Int(image.size.height))
+        self.cachedImage = image
     }
 
-    public func image() -> UIImage? {
+    public var image: UIImage? {
         if cachedImage == nil {
-            guard let b64data = self.data else { return nil }
-            guard let dataDecoded = Data(base64Encoded: b64data, options: .ignoreUnknownCharacters) else { return nil }
-            cachedImage = UIImage(data: dataDecoded)
+            guard let data = self.data else { return nil }
+            cachedImage = UIImage(data: data)
         }
         return cachedImage
     }
+
     public func copy() -> Photo {
-        return Photo(type: self.type, data: self.data)
+        let copy = Photo(type: self.type, data: self.data, ref: self.ref, width: self.width, height: self.height)
+        copy.cachedImage = self.cachedImage
+        return copy
     }
 }
 
@@ -134,15 +148,18 @@ public class TheCard: Codable, Mergeable {
     // Free-form description.
     public var note: String?
 
+    private enum CodingKeys: String, CodingKey {
+        case fn, n, org, tel, email, impp, photo, bday, note
+    }
+
     public init(fn: String?, avatar: Photo?) {
         self.fn = fn
         self.photo = avatar
     }
 
-    public init(fn: String?, avatar: Data?) {
+    public init(fn: String?) {
         self.fn = fn
-        guard let avatar = avatar else { return }
-        self.photo = Photo(type: nil, data: avatar)
+
     }
 
     public init(fn: String?, avatar: UIImage?) {
@@ -151,6 +168,7 @@ public class TheCard: Codable, Mergeable {
         guard let avatar = avatar else { return }
         self.photo = Photo(image: avatar)
     }
+
     public func copy() -> TheCard {
         let copy = TheCard(fn: fn, avatar: self.photo?.copy())
         copy.n = self.n
@@ -161,6 +179,19 @@ public class TheCard: Codable, Mergeable {
         copy.bday = self.bday?.copy()
         copy.note = self.note
         return copy
+    }
+
+    public var photoRefs: [String]? {
+        guard let ref = photo?.ref else { return nil }
+        return [ref]
+    }
+
+    public var photoBits: Data? {
+        return photo?.data
+    }
+
+    public var photoMimeType: String {
+        return "image/\(photo?.type ?? Photo.kDefaultType)"
     }
 
     public func merge(with another: Mergeable) -> Bool {

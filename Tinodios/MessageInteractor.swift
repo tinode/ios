@@ -130,7 +130,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         self.pagesToLoad = 1
 
         if let pub = self.topic?.pub {
-            self.presenter?.updateTitleBar(icon: pub.photo?.image(), title: pub.fn, online: (topic?.isChannel ?? false) ? nil : self.topic?.online)
+            self.presenter?.updateTitleBar(icon: pub.photo?.image, title: pub.fn, online: (topic?.isChannel ?? false) ? nil : self.topic?.online)
         }
 
         if let (maxRecv, maxRead) = self.topic?.maxRecvReadValues {
@@ -504,14 +504,14 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
     }
 
     func uploadImage(_ def: UploadDef) {
-        uploadAttachment(type: .image, def)
+        uploadMessageAttachment(type: .image, def)
     }
 
     func uploadFile(_ def: UploadDef) {
-        uploadAttachment(type: .file, def)
+        uploadMessageAttachment(type: .file, def)
     }
 
-    private func uploadAttachment(type: AttachmentType, _ def: UploadDef) {
+    private func uploadMessageAttachment(type: AttachmentType, _ def: UploadDef) {
         guard let filename = def.filename, let mimeType = def.mimeType, let topic = topic else { return }
 
         // Check if the attachment is too big even for out-of-band uploads.
@@ -557,6 +557,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
             }
             draft = MessageInteractor.draftyImage(caption: def.caption, filename: filename, refurl: ref, mimeType: mimeType, data: data, width: Int(def.width!), height: Int(def.height!), size: def.data.count)
         }
+
         if let d = draft, case let .replyTo(replyTo, replyToSeq) = self.pendingMessage {
             draft = replyTo.append(d)
             head = ["reply": .string(String(replyToSeq))]
@@ -567,17 +568,15 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         self.dismissPendingMessage()
         self.presenter?.dismissPendingMessagePreviewBar()
 
-        var headers = Tinode.draftyHeaders(for: content)
-        if let h = head {
-            headers = headers ?? [:]
-            _ = headers!.merge(with: h)
+        if !content.isPlain {
+            if head == nil {
+                head = [:]
+            }
+            head!["mime"] = JSONValue.string(Drafty.kJSONMimeType)
         }
-        if let msg = topic.store?.msgDraft(topic: topic, data: content, head: headers) {
+        if let msg = topic.store?.msgDraft(topic: topic, data: content, head: head) {
             let helper = Cache.getLargeFileHelper()
-            helper.startUpload(
-                filename: filename, mimetype: mimeType, d: def.data,
-                topicId: self.topicName!, msgId: msg.msgId,
-                progressCallback: { [weak self] progress in
+            helper.startMsgAttachmentUpload(filename: filename, mimetype: mimeType, data: def.data, topicId: self.topicName!, msgId: msg.msgId, progressCallback: { [weak self] progress in
                     let interactor = self ?? MessageInteractor.existingInteractor(for: topic.name)
                     interactor?.presenter?.updateProgress(forMsgId: msg.msgId, progress: progress)
                 },
@@ -704,7 +703,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         self.presenter?.applyTopicPermissions(withError: nil)
         if let pub = topic?.pub {
             let online = (self.topic?.isChannel ?? false) ? nil : self.topic?.online
-            self.presenter?.updateTitleBar(icon: pub.photo?.image(), title: pub.fn, online: online)
+            self.presenter?.updateTitleBar(icon: pub.photo?.image, title: pub.fn, online: online)
         }
     }
     override func onMetaSub(sub: Subscription<TheCard, PrivateType>) {
