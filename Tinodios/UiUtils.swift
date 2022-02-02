@@ -1,14 +1,14 @@
 //
 //  UiUtils.swift
-//  Tinodios
 //
-//  Copyright © 2019 Tinode. All rights reserved.
+//  Copyright © 2019-2022 Tinode LLC. All rights reserved.
 //
 
 import Firebase
 import Foundation
 import TinodiosDB
 import TinodeSDK
+import AVFAudio
 
 public typealias ScalingData = (dst: CGSize, src: CGRect, altered: Bool)
 
@@ -494,30 +494,42 @@ class UiUtils {
 
     @discardableResult
     public static func updateAvatar(forTopic topic: DefaultTopic, image: UIImage) -> PromisedReply<ServerMessage>? {
-        let pub = topic.pub == nil ? TheCard(fn: nil) : topic.pub!.copy()
-        pub.photo = Photo(image: image)
-        let result = PromisedReply<ServerMessage>().thenApply { _ in
+        let result = PromisedReply<ServerMessage>().thenApply { srvmsg in
+            // Image successfully uploaded. Use URL.
+            let pub = topic.pub?.copy() ?? TheCard(fn: nil)
+            let thumbnail = image.resize(width: kImagePreviewDimensions, height: kImagePreviewDimensions, clip: true)
+            let url = srvmsg?.ctrl?.getStringParam(for: "url")
+            pub.photo = Photo(type: Photo.kDefaultType, data: thumbnail?.pixelData(forMimeType: Photo.kDefaultType), ref: url, width: Int(image.size.width), height: Int(image.size.height))
             return UiUtils.setTopicData(forTopic: topic, pub: pub, priv: nil)
         }
-        let helper = Cache.getLargeFileHelper()
-        helper.startAvatarUpload(mimetype: pub.photoMimeType, data: pub.photoBits!, topicId: topic.name, progressCallback: { _ in /* do nothing */}, completionCallback: { [weak self] (serverMessage, error) in
-            var success = false
-            guard error == nil else {
-                DispatchQueue.main.async {
-                    UiUtils.showToast(message: error!.localizedDescription)
-                }
-                return
+
+        if let imageBits = image.pixelData(forMimeType: Photo.kDefaultType) {
+            if imageBits.count > UiUtils.kMaxInbandAvatarBytes {
+                // Sending image out of band.
+                Cache.getLargeFileHelper().startAvatarUpload(mimetype: Photo.kDefaultType, data: imageBits, topicId: topic.name, completionCallback: {(srvmsg, error) in
+                    guard error == nil else {
+                        try? result.reject(error: error!)
+                        DispatchQueue.main.async {
+                            UiUtils.showToast(message: error!.localizedDescription)
+                        }
+                        return
+                    }
+                    try? result.resolve(result: srvmsg)
+                })
+            } else {
+                // Image is small enough to be sent in-band.
+                let pub = topic.pub?.copy() ?? TheCard(fn: nil)
+                pub.photo = Photo(type: Photo.kDefaultType, data: image.pixelData(forMimeType: Photo.kDefaultType), ref: nil, width: Int(image.size.width), height: Int(image.size.height))
+                return UiUtils.setTopicData(forTopic: topic, pub: pub, priv: nil)
             }
-            guard let ctrl = serverMessage?.ctrl, ctrl.code == 200, let srvUrl = URL(string: ctrl.getStringParam(for: "url") ?? "") else { return }
-            pub.photo?.ref = srvUrl
-            result.resolve(result: serverMessage)
-        })
+        } else {
+            try? result.reject(error: ImageProcessingError.invalidImage)
+        }
         return result
     }
 
     @discardableResult
-    public static func setTopicData(
-        forTopic topic: DefaultTopic, pub: TheCard?, priv: PrivateType?) -> PromisedReply<ServerMessage>? {
+    public static func setTopicData(forTopic topic: DefaultTopic, pub: TheCard?, priv: PrivateType?) -> PromisedReply<ServerMessage>? {
         return topic.setDescription(pub: pub, priv: priv).then(
             onSuccess: UiUtils.ToastSuccessHandler,
             onFailure: UiUtils.ToastFailureHandler)
@@ -566,8 +578,7 @@ class UiUtils {
         }
     }
 
-    public static func presentManageTagsEditDialog(over viewController: UIViewController,
-                                                   forTopic topic: TopicProto?) {
+    public static func presentManageTagsEditDialog(over viewController: UIViewController, forTopic topic: TopicProto?) {
         // Topic<TheCard, PrivateType, TheCard, PrivateType> is the least common ancestor for
         // DefaultMeTopic (AccountSettingsVC) and DefaultComTopic (TopicInfoVC).
         guard let topic = topic as? Topic<TheCard, PrivateType, TheCard, PrivateType> else { return }
@@ -724,6 +735,15 @@ extension UITableViewController {
     }
 }
 
+/// Generic image processing error.
+public enum ImageProcessingError: Error {
+    case invalidImage
+
+    public var description: String {
+        return NSLocalizedString("Invalid image", comment: "Error message when the image cannot be processed")
+    }
+}
+
 extension UIImage {
     private static let kScaleFactor: CGFloat = 0.70710678118 // 1.0/SQRT(2)
 
@@ -799,7 +819,7 @@ extension UIImage {
     }
 
     public func pixelData(forMimeType mime: String?) -> Data? {
-        return mime != "image/png" ? jpegData(compressionQuality: 0.8) : pngData()
+        return mime == "image/png" ? pngData() : jpegData(compressionQuality: 0.8)
     }
 
     // Turns image into proper upright orientation.

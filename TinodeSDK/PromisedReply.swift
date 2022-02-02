@@ -85,7 +85,7 @@ public class PromisedReply<Value> {
     public init() {
         countDownLatch = CountDownLatch(count: 1)
     }
-    public init(value: Value) {
+    public init(value: Value?) {
         state = .resolved(value)
         countDownLatch = CountDownLatch(count: 0)
     }

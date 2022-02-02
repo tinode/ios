@@ -159,24 +159,44 @@ class NewGroupViewController: UITableViewController {
     }
 
     private func createGroupTopic(titled name: String, subtitled subtitle: String, with tags: [String]?, consistingOf members: [String], withAvatar avatar: UIImage?, asChannel isChannel: Bool) {
-
         let topic = DefaultComTopic(in: Cache.tinode, forwardingEventsTo: nil, isChannel: isChannel)
-        topic.pub = TheCard(fn: name, avatar: avatar)
-        topic.priv = ["comment": .string(subtitle)] // No need to use Tinode.kNullValue here
-        topic.tags = tags
-        topic.subscribe().then(
-            onSuccess: { _ in
-                for u in members {
-                    topic.invite(user: u, in: nil)
-                }
-                // Need to unsubscribe because routing to MessageVC (below)
-                // will subscribe to the topic again.
-                topic.leave()
-                // Route to chat.
-                self.presentChat(with: topic.name)
-                return nil
-            },
-            onFailure: UiUtils.ToastFailureHandler)
+        func doCreate(pub: TheCard) {
+            topic.pub = pub
+            topic.priv = ["comment": .string(subtitle)] // No need to use Tinode.kNullValue here
+            topic.tags = tags
+            topic.subscribe().then(
+                onSuccess: { _ in
+                    for u in members {
+                        topic.invite(user: u, in: nil)
+                    }
+                    // Need to unsubscribe because routing to MessageVC (below)
+                    // will subscribe to the topic again.
+                    topic.leave()
+                    // Route to chat.
+                    self.presentChat(with: topic.name)
+                    return nil
+                },
+                onFailure: UiUtils.ToastFailureHandler)
+        }
+
+        if let imageBits = avatar?.pixelData(forMimeType: Photo.kDefaultType) {
+            if imageBits.count > UiUtils.kMaxInbandAvatarBytes {
+                // Sending image out of band.
+                Cache.getLargeFileHelper().startAvatarUpload(mimetype: Photo.kDefaultType, data: imageBits, topicId: topic.name, completionCallback: {(srvmsg, error) in
+                    guard error == nil else {
+                        DispatchQueue.main.async {
+                            UiUtils.showToast(message: error!.localizedDescription)
+                        }
+                        return
+                    }
+                    doCreate(pub: TheCard(fn: name, ))
+                })
+            } else {
+                doCreate(pub: TheCard(fn: name, avatar: avatar))
+            }
+        } else {
+            UiUtils.showToast(message: ImageProcessingError.invalidImage.description)
+        }
     }
 }
 

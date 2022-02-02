@@ -126,9 +126,9 @@ public class LargeFileHelper: NSObject {
         upload.task!.resume()
     }
 
-    public func startAvatarUpload(mimetype: String, data payload: Data, topicId: String, progressCallback: @escaping (Float) -> Void, completionCallback: @escaping (ServerMessage?, Error?) -> Void) {
+    public func startAvatarUpload(mimetype: String, data payload: Data, topicId: String, completionCallback: @escaping (ServerMessage?, Error?) -> Void) {
         let fileName = "avatar-\(Utils.uniqueFilename(forMime: mimetype))"
-        startMsgAttachmentUpload(filename: fileName, mimetype: mimetype, data: payload, topicId: topicId, msgId: 0, progressCallback: progressCallback, completionCallback: completionCallback)
+        startMsgAttachmentUpload(filename: fileName, mimetype: mimetype, data: payload, topicId: topicId, msgId: 0, progressCallback: {_ in /* do nothing */}, completionCallback: completionCallback)
     }
 
     public func cancelUpload(topicId: String, msgId: Int64 = 0) -> Bool {
