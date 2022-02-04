@@ -1,6 +1,5 @@
 //
 //  LargeFileHelper.swift
-//  Tinodios
 //
 //  Copyright © 2020-2022 Tinode LLC. All rights reserved.
 //
@@ -194,7 +193,6 @@ extension LargeFileHelper: URLSessionTaskDelegate {
         guard uploadError == nil else {
             return
         }
-        Cache.log.debug("LargeFileHelper - finished task: id = %@, uploadId = %@", taskId, upload.id)
         guard let response = task.response as? HTTPURLResponse else {
             uploadError = TinodeError.invalidState(String(format: NSLocalizedString("Upload failed (%@). No server response.", comment: "Error message"), upload.id))
             return

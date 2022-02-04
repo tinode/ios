@@ -10,7 +10,7 @@ import TinodiosDB
 import TinodeSDK
 import AVFAudio
 
-public typealias ScalingData = (dst: CGSize, src: CGRect, altered: Bool)
+public typealias ScalingParams = (dst: CGSize, src: CGRect, scale: CGFloat, altered: Bool)
 
 class UiTinodeEventListener: TinodeEventListener {
     private var connected: Bool = false
@@ -81,6 +81,8 @@ class UiUtils {
     static let kMaxAvatarSize: CGFloat = 384
     // Maximum linear size of an image.
     static let kMaxBitmapSize: CGFloat = 1024
+    // Maximum size of avatar preview when it's sent out-of-band.
+    static let kAvatarPreviewDimensions: CGFloat = 36
     // Maximum size of image preview when image is sent out-of-band.
     static let kImagePreviewDimensions: CGFloat = 64
     // Default dimensions of a bitmap when the sender provided none.
@@ -432,6 +434,7 @@ class UiUtils {
         tap.cancelsTouchesInView = false
         view.addGestureRecognizer(tap)
     }
+
     @discardableResult
     public static func ToastFailureHandler(err: Error) -> PromisedReply<ServerMessage>? {
         DispatchQueue.main.async {
@@ -443,6 +446,7 @@ class UiUtils {
         }
         return nil
     }
+
     @discardableResult
     public static func ToastSuccessHandler(msg: ServerMessage?) -> PromisedReply<ServerMessage>? {
         if let ctrl = msg?.ctrl, ctrl.code >= 300 {
@@ -493,46 +497,52 @@ class UiUtils {
     }
 
     @discardableResult
-    public static func updateAvatar(forTopic topic: DefaultTopic, image: UIImage) -> PromisedReply<ServerMessage>? {
-        let result = PromisedReply<ServerMessage>().thenApply { srvmsg in
-            // Image successfully uploaded. Use URL.
-            let pub = topic.pub?.copy() ?? TheCard(fn: nil)
-            let thumbnail = image.resize(width: kImagePreviewDimensions, height: kImagePreviewDimensions, clip: true)
-            let url = srvmsg?.ctrl?.getStringParam(for: "url")
-            pub.photo = Photo(type: Photo.kDefaultType, data: thumbnail?.pixelData(forMimeType: Photo.kDefaultType), ref: url, width: Int(image.size.width), height: Int(image.size.height))
-            return UiUtils.setTopicData(forTopic: topic, pub: pub, priv: nil)
+    public static func updateAvatar(forTopic topic: DefaultTopic, image: UIImage?) -> PromisedReply<ServerMessage> {
+        guard let avatar = image?.resize(width: UiUtils.kMaxAvatarSize, height: UiUtils.kMaxAvatarSize, clip: true) else {
+            ToastFailureHandler(err: ImageProcessingError.invalidImage)
+            return PromisedReply(error: ImageProcessingError.invalidImage)
+        }
+        if avatar.size.width < UiUtils.kMinAvatarSize || avatar.size.height < UiUtils.kMinAvatarSize {
+            UiUtils.showToast(message: NSLocalizedString("The avatar is too small.", comment: "Toast notification"))
+            return PromisedReply(error: ImageProcessingError.invalidImage)
         }
 
-        if let imageBits = image.pixelData(forMimeType: Photo.kDefaultType) {
+        let result = PromisedReply<ServerMessage>()
+        if let imageBits = avatar.pixelData(forMimeType: Photo.kDefaultType) {
             if imageBits.count > UiUtils.kMaxInbandAvatarBytes {
                 // Sending image out of band.
                 Cache.getLargeFileHelper().startAvatarUpload(mimetype: Photo.kDefaultType, data: imageBits, topicId: topic.name, completionCallback: {(srvmsg, error) in
-                    guard error == nil else {
-                        try? result.reject(error: error!)
-                        DispatchQueue.main.async {
-                            UiUtils.showToast(message: error!.localizedDescription)
-                        }
+                    guard let error = error else {
+                        try? result.resolve(result: srvmsg)
                         return
                     }
-                    try? result.resolve(result: srvmsg)
+                    try? result.reject(error: error)
+                    ToastFailureHandler(err: error)
                 })
             } else {
                 // Image is small enough to be sent in-band.
                 let pub = topic.pub?.copy() ?? TheCard(fn: nil)
-                pub.photo = Photo(type: Photo.kDefaultType, data: image.pixelData(forMimeType: Photo.kDefaultType), ref: nil, width: Int(image.size.width), height: Int(image.size.height))
+                pub.photo = Photo(data: avatar.pixelData(forMimeType: Photo.kDefaultType), ref: nil, width: Int(avatar.size.width), height: Int(avatar.size.height))
                 return UiUtils.setTopicData(forTopic: topic, pub: pub, priv: nil)
             }
         } else {
             try? result.reject(error: ImageProcessingError.invalidImage)
         }
-        return result
+
+        return result.thenApply { srvmsg in
+            // Image successfully uploaded. Use URL.
+            let pub = topic.pub?.copy() ?? TheCard(fn: nil)
+            let thumbnail = avatar.resize(width: kAvatarPreviewDimensions, height: kAvatarPreviewDimensions, clip: true)
+            let tnBits = thumbnail?.pixelData(forMimeType: Photo.kDefaultType)
+            let url = srvmsg?.ctrl?.getStringParam(for: "url")
+            pub.photo = Photo(data: thumbnail?.pixelData(forMimeType: Photo.kDefaultType), ref: url, width: Int(avatar.size.width), height: Int(avatar.size.height))
+            return UiUtils.setTopicData(forTopic: topic, pub: pub, priv: nil)
+        }
     }
 
     @discardableResult
-    public static func setTopicData(forTopic topic: DefaultTopic, pub: TheCard?, priv: PrivateType?) -> PromisedReply<ServerMessage>? {
-        return topic.setDescription(pub: pub, priv: priv).then(
-            onSuccess: UiUtils.ToastSuccessHandler,
-            onFailure: UiUtils.ToastFailureHandler)
+    public static func setTopicData(forTopic topic: DefaultTopic, pub: TheCard?, priv: PrivateType?) -> PromisedReply<ServerMessage> {
+        return topic.setDescription(pub: pub, priv: priv).then(onSuccess: UiUtils.ToastSuccessHandler, onFailure: UiUtils.ToastFailureHandler)
     }
 
     public static func topViewController(rootViewController: UIViewController?) -> UIViewController? {
@@ -643,7 +653,7 @@ class UiUtils {
     ///     a tuple which contains destination image sizes, source sizes and offsets
     ///     into source (when 'clip' is true), an indicator that the new dimensions are different
     ///     from the original.
-    public static func sizeUnder(original: CGSize, fitUnder: CGSize, scale: CGFloat, clip: Bool) -> ScalingData {
+    public static func sizeUnder(original: CGSize, fitUnder: CGSize, scale: CGFloat, clip: Bool) -> ScalingParams {
         // Sanity check
         assert(fitUnder.width > 0 && fitUnder.height > 0 && scale > 0, "Maxumum dimensions must be positive")
 
@@ -673,6 +683,7 @@ class UiUtils {
                 width: srcWidth,
                 height: srcHeight
             ),
+            scale: scale,
             altered: originalWidth != dstSize.width || originalHeight != dstSize.height
         )
     }
@@ -747,18 +758,13 @@ public enum ImageProcessingError: Error {
 extension UIImage {
     private static let kScaleFactor: CGFloat = 0.70710678118 // 1.0/SQRT(2)
 
-    private static func resizeImage(image: UIImage, newSize size: ScalingData) -> UIImage? {
-        // cropRect for cropping the original image to the required aspect ratio.
-        let cropRect = size.src
-        let scaleDown = CGAffineTransform(scaleX: size.dst.width / size.src.width, y: size.dst.width / size.src.width)
-
-        // Scale image to the requested dimentions
-        guard let imageOut = CIImage(image: image)?.cropped(to: cropRect).transformed(by: scaleDown) else { return nil }
-
-        // This 'UIGraphicsBeginImageContext' is some iOS weirdness. The image cannot be converted to png without it.
-        UIGraphicsBeginImageContext(imageOut.extent.size)
+    private static func resizeImage(image: UIImage, newSize sp: ScalingParams) -> UIImage? {
+        let dX = sp.scale * image.size.width - sp.dst.width
+        let dY = sp.scale * image.size.height - sp.dst.height
+        UIGraphicsBeginImageContext(CGSize(width: sp.dst.width, height: sp.dst.height))
         defer { UIGraphicsEndImageContext() }
-        UIImage(ciImage: imageOut).draw(in: CGRect(origin: .zero, size: imageOut.extent.size))
+        // Canvas (context) contains the part to keep, unnecessary parts are outside of the context.
+        image.draw(in: CGRect(x: -dX * 0.5, y: -dY * 0.5, width: image.size.width * sp.scale, height: image.size.height * sp.scale))
         return UIGraphicsGetImageFromCurrentImageContext()
     }
 
@@ -773,7 +779,6 @@ extension UIImage {
     ///       maxWidth/maxHeight
     public func resize(width: CGFloat, height: CGFloat, clip: Bool) -> UIImage? {
         let size = sizeUnder(CGSize(width: width, height: height), clip: clip)
-
         // Don't mess with image if it does not need to be scaled.
         guard size.altered else { return self }
 
@@ -814,7 +819,7 @@ extension UIImage {
     ///     a tuple which contains destination image sizes, source sizes and offsets
     ///     into source (when 'clip' is true), an indicator that the new dimensions are different
     ///     from the original.
-    public func sizeUnder(_ size: CGSize, clip: Bool) -> ScalingData {
+    public func sizeUnder(_ size: CGSize, clip: Bool) -> ScalingParams {
         return UiUtils.sizeUnder(original: CGSize(width: self.size.width, height: self.size.height), fitUnder: size, scale: self.scale, clip: clip)
     }
 

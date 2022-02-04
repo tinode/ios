@@ -1,6 +1,5 @@
 //
 //  TopicInfoViewController.swift
-//  Tinodios
 //
 //  Copyright © 2019-2022 Tinode LLC. All rights reserved.
 //
@@ -284,7 +283,7 @@ class TopicInfoViewController: UITableViewController {
             }
         }
         if pub != nil || priv != nil {
-            UiUtils.setTopicData(forTopic: topic, pub: pub, priv: priv)?.thenFinally {
+            UiUtils.setTopicData(forTopic: topic, pub: pub, priv: priv).thenFinally {
                 DispatchQueue.main.async { self.reloadData() }
             }
         }
@@ -459,6 +458,7 @@ class TopicInfoViewController: UITableViewController {
     }
 
     private func promiseSuccessHandler(msg: ServerMessage?) throws -> PromisedReply<ServerMessage>? {
+        Cache.log.debug("promiseSuccessHandler - avatar update succeseeded")
         DispatchQueue.main.async { self.reloadData() }
         return nil
     }
@@ -752,13 +752,7 @@ extension TopicInfoViewController: EditMembersDelegate {
 
 extension TopicInfoViewController: ImagePickerDelegate {
     func didSelect(image: UIImage?, mimeType: String?, fileName: String?) {
-        guard let image = image?.resize(width: UiUtils.kMaxAvatarSize, height: UiUtils.kMaxAvatarSize, clip: true) else {
-            return
-        }
-        if image.size.width < UiUtils.kMinAvatarSize || image.size.height < UiUtils.kMinAvatarSize {
-            UiUtils.showToast(message: NSLocalizedString("The avatar is too small.", comment: "Toast notification"))
-            return
-        }
-        UiUtils.updateAvatar(forTopic: self.topic, image: image)?.then(onSuccess: self.promiseSuccessHandler)
+        UiUtils.updateAvatar(forTopic: self.topic, image: image)
+            .thenApply(self.promiseSuccessHandler)
     }
 }

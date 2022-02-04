@@ -25,31 +25,28 @@ public class Photo: Codable {
         case type, data, ref, width, height
     }
 
-    public init(type tp: String?, data: Data?, ref: String?, width: Int? = nil, height: Int? = nil) {
-        if tp == nil {
-            self.type = Photo.kDefaultType
-        } else {
-            // Extract specific part from the full mime type.
-            let parts = tp!.components(separatedBy: "/")
-            if parts.count > 1 {
-                if parts[0] == "image" {
-                    // Drop the first component "image/", keep the rest.
-                    self.type = parts[1..<parts.count].joined(separator: "/")
-                } else {
-                    // Invalid mime type, use default value.
-                    self.type = Photo.kDefaultType
-                }
+    public init(type tp: String = Photo.kDefaultType, data: Data?, ref: String?, width: Int? = nil, height: Int? = nil) {
+        // Extract specific part from the full mime type.
+        let parts = tp.components(separatedBy: "/")
+        if parts.count > 1 {
+            if parts[0] == "image" {
+                // Drop the first component "image/", keep the rest.
+                self.type = parts[1..<parts.count].joined(separator: "/")
             } else {
-                self.type = tp
+                // Invalid mime type, use default value.
+                self.type = Photo.kDefaultType
             }
+        } else {
+            self.type = tp
         }
+
         self.data = data
         self.ref = ref
         self.width = width
         self.height = height
     }
 
-    convenience public init(type: String?, ref: String?) {
+    convenience public init(type: String = Photo.kDefaultType, ref: String?) {
         self.init(type: type, data: nil, ref: ref, width: nil, height: nil)
     }
 
@@ -67,7 +64,7 @@ public class Photo: Codable {
     }
 
     public func copy() -> Photo {
-        let copy = Photo(type: self.type, data: self.data, ref: self.ref, width: self.width, height: self.height)
+        let copy = Photo(type: self.type ?? Photo.kDefaultType, data: self.data, ref: self.ref, width: self.width, height: self.height)
         copy.cachedImage = self.cachedImage
         return copy
     }

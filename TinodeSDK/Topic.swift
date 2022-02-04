@@ -953,6 +953,9 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
     }
 
     public func setMeta(meta: MsgSetMeta<DP, DR>) -> PromisedReply<ServerMessage> {
+        if let theCard = meta.desc?.pub as? TheCard {
+            meta.desc?.attachments = theCard.photoRefs
+        }
         return tinode!.setMeta(for: self.name, meta: meta).thenApply({ msg in
             if let ctrl = msg?.ctrl, ctrl.code < ServerMessage.kStatusMultipleChoices {
                 self.update(ctrl: ctrl, meta: meta)
@@ -960,12 +963,15 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
             return nil
         })
     }
+
     public func setDescription(desc: MetaSetDesc<DP, DR>) -> PromisedReply<ServerMessage> {
         return setMeta(meta: MsgSetMeta<DP, DR>(desc: desc, sub: nil, tags: nil, cred: nil))
     }
+
     public func setDescription(pub: DP?, priv: DR?) -> PromisedReply<ServerMessage> {
         return setDescription(desc: MetaSetDesc<DP, DR>(pub: pub, priv: priv))
     }
+
     public func updateDefacs(auth: String?, anon: String?) -> PromisedReply<ServerMessage> {
         let newdacs: Defacs
         if let olddacs = self.defacs {

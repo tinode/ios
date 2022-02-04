@@ -300,7 +300,7 @@ public class MetaSetDesc<P: Encodable, R: Encodable>: Encodable {
     var trusted: TrustedType?
 
     // Not serialized
-    var attachments: [String]?
+    public var attachments: [String]?
 
     private enum CodingKeys: String, CodingKey {
         case defacs, pub = "public", priv = "private", trusted

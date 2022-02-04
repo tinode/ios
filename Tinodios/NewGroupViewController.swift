@@ -1,8 +1,7 @@
 //
 //  NewGroupViewController.swift
-//  Tinodios
 //
-//  Copyright © 2019 Tinode. All rights reserved.
+//  Copyright © 2019-2022 Tinode LLC. All rights reserved.
 //
 
 import UIKit
@@ -24,7 +23,7 @@ class NewGroupViewController: UITableViewController {
     private var selectedUids = Set<String>()
     var selectedMembers: [String] { return selectedUids.map { $0 } }
 
-    private var imageUploaded: Bool = false
+    private var avatarReceived: Bool = false
 
     private var imagePicker: ImagePicker!
 
@@ -137,7 +136,7 @@ class NewGroupViewController: UITableViewController {
         // Optional
         let privateInfo = String((privateTextField.text ?? "").trimmingCharacters(in: .whitespacesAndNewlines).prefix(UiUtils.kMaxTitleLength))
         guard !groupName.isEmpty else { return }
-        let avatar = imageUploaded ? avatarView.image?.resize(width: CGFloat(UiUtils.kMaxAvatarSize), height: CGFloat(UiUtils.kMaxAvatarSize), clip: true) : nil
+        let avatar = avatarReceived ? avatarView.image?.resize(width: CGFloat(UiUtils.kMaxAvatarSize), height: CGFloat(UiUtils.kMaxAvatarSize), clip: true) : nil
         createGroupTopic(titled: groupName, subtitled: privateInfo, with: tagsTextField.tags, consistingOf: members, withAvatar: avatar, asChannel: channelSwitch.isOn)
     }
 
@@ -179,23 +178,28 @@ class NewGroupViewController: UITableViewController {
                 onFailure: UiUtils.ToastFailureHandler)
         }
 
-        if let imageBits = avatar?.pixelData(forMimeType: Photo.kDefaultType) {
+        guard let avatar = avatar?.resize(width: UiUtils.kMaxAvatarSize, height: UiUtils.kMaxAvatarSize, clip: true), avatar.size.width >= UiUtils.kMinAvatarSize && avatar.size.height >= UiUtils.kMinAvatarSize else {
+            doCreate(pub: TheCard(fn: name))
+            return
+        }
+
+        if let imageBits = avatar.pixelData(forMimeType: Photo.kDefaultType) {
             if imageBits.count > UiUtils.kMaxInbandAvatarBytes {
                 // Sending image out of band.
                 Cache.getLargeFileHelper().startAvatarUpload(mimetype: Photo.kDefaultType, data: imageBits, topicId: topic.name, completionCallback: {(srvmsg, error) in
-                    guard error == nil else {
-                        DispatchQueue.main.async {
-                            UiUtils.showToast(message: error!.localizedDescription)
-                        }
+                    guard let error = error else {
+                        let thumbnail = avatar.resize(width: UiUtils.kAvatarPreviewDimensions, height: UiUtils.kAvatarPreviewDimensions, clip: true)
+                        let photo = Photo(data: thumbnail?.pixelData(forMimeType: Photo.kDefaultType), ref: srvmsg?.ctrl?.getStringParam(for: "url"), width: Int(avatar.size.width), height: Int(avatar.size.height))
+                        doCreate(pub: TheCard(fn: name, avatar: photo))
                         return
                     }
-                    doCreate(pub: TheCard(fn: name, ))
+                    UiUtils.ToastFailureHandler(err: error)
                 })
             } else {
                 doCreate(pub: TheCard(fn: name, avatar: avatar))
             }
         } else {
-            UiUtils.showToast(message: ImageProcessingError.invalidImage.description)
+            UiUtils.ToastFailureHandler(err: ImageProcessingError.invalidImage)
         }
     }
 }
@@ -245,6 +249,6 @@ extension NewGroupViewController: ImagePickerDelegate {
         guard let image = image?.resize(width: CGFloat(UiUtils.kMaxAvatarSize), height: CGFloat(UiUtils.kMaxAvatarSize), clip: true) else { return }
 
         self.avatarView.image = image
-        imageUploaded = true
+        avatarReceived = true
     }
 }

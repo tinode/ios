@@ -182,7 +182,7 @@ class SettingsPersonalViewController: UITableViewController {
         if pub.fn != userName {
             pub.fn = String(userName.prefix(UiUtils.kMaxTitleLength))
         }
-        UiUtils.setTopicData(forTopic: self.me, pub: pub, priv: nil)?.then(
+        UiUtils.setTopicData(forTopic: self.me, pub: pub, priv: nil).then(
             onSuccess: { _ in
                 DispatchQueue.main.async { self.reloadData() }
                 return nil
@@ -193,17 +193,13 @@ class SettingsPersonalViewController: UITableViewController {
 
 extension SettingsPersonalViewController: ImagePickerDelegate {
     func didSelect(image: UIImage?, mimeType: String?, fileName: String?) {
-        guard let image = image?.resize(width: CGFloat(UiUtils.kMaxAvatarSize), height: CGFloat(UiUtils.kMaxAvatarSize), clip: true) else {
-            Cache.log.debug("SettingsPersonalVC - No image specified or failed to resize, skipping")
-            return
-        }
-        UiUtils.updateAvatar(forTopic: self.me, image: image)?.then(
-            onSuccess: { _ in
+        UiUtils.updateAvatar(forTopic: self.me, image: image)
+            .thenApply { _ in
                 DispatchQueue.main.async {
                     self.reloadData()
                 }
                 return nil
-            })
+            }
     }
 }
 
