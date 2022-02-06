@@ -74,7 +74,7 @@ More translations are welcome. See [instructions](https://github.com/tinode/chat
 ## Other
 
 * Demo avatars and some other graphics are from https://www.pexels.com/ under [CC0](https://www.pexels.com/photo-license/) license.
-* Some iOS icons are from https://icons8.com/ under [CC BY-ND 3.0](https://icons8.com/license) license.
+* Some icons are from [SF Symbols](https://developer.apple.com/design/human-interface-guidelines/sf-symbols/overview/) under [Apple license](https://developer.apple.com/support/terms/): .
 
 ## Screenshots
 <img src="ios-chats.png" alt="App screenshot - chat list" width="207" /> <img src="ios-chat.png" alt="App screenshot - conversation" width="207" /> <img src="ios-acc-personal.png" alt="App screenshot - account settings" width="207" />
