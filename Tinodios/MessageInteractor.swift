@@ -571,7 +571,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
             if head == nil {
                 head = [:]
             }
-            head!["mime"] = JSONValue.string(Drafty.kJSONMimeType)
+            head!["mime"] = JSONValue.string(Drafty.kMimeType)
         }
         if let msg = topic.store?.msgDraft(topic: topic, data: content, head: head) {
             let helper = Cache.getLargeFileHelper()

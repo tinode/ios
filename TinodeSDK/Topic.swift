@@ -1213,7 +1213,7 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
             if headers == nil {
                 headers = [:]
             }
-            headers?["mime"] = .string(Drafty.kJSONMimeType)
+            headers?["mime"] = .string(Drafty.kMimeType)
             attachments = content.getEntReferences()
         }
 
