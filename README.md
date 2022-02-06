@@ -17,32 +17,30 @@ Status: beta. Usable and mostly stable but bugs may happen.
 
 ### Completed
 
-* Login
-* Register new accounts.
-* Start new chats.
-* Edit personal details.
-* Edit chat parameters.
-* View the list of active chats
-* Send and receive plain text messages one-on-one or in group chats.
-* In-app presence notifications.
+* One-on-one conversations and group chats.
+* Channels with unlimited number of read-only subscribers.
 * Unread message counters.
-* Local data persistence.
-* Transport Level Security - https/wss.
-* Drafty: Markdown-style formatting of text, e.g. \*style\* → **style**.
-* Viewing attachments and inline images.
-* Delivery and received/read indicators for messages (little check marks in messages).
-* Muting/un-muting conversations and other permission management.
-* Invite contacts to the app by SMS or email.
-* Push notifications.
+* Push notifications and in-app presence notifications.
+* Message status notifications: message delivery to server; received and read notifications.
+* Markdown-style formatting of text, e.g. \*style\* → **style**.
+* Replying and forwarding messages.
+* Trusted account badges: verified account, staff, etc.
+* Form messages suitable for chatbots.
 * Attachments and inline images.
+* Muting/un-muting conversations and other granular permission management.
+* Integration with iOS's stock Contacts.
+* Invite contacts to the app by SMS or email.
+* Transport Level Security - https/wss.
+* Offline mode.
+
 
 ### Not Done Yet
 
 * Previews not generated for videos, audio, links or docs.
+* No voice or video messages. No video or audio calling.
 * Typing indicators.
 * No support for switching between multiple backends.
 * Mentions, hashtags.
-* Replying or forwarding messages.
 * End-to-End encryption.
 
 ## Dependencies
