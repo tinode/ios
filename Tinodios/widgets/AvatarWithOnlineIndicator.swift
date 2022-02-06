@@ -1,11 +1,11 @@
 //
 //  AvatarWithOnlineIndicator.swift
-//  Tinodios
 //
-//  Copyright © 2019 Tinode. All rights reserved.
+//  Copyright © 2019-2022 Tinode LLC. All rights reserved.
 //
 
 import UIKit
+import TinodeSDK
 
 class AvatarWithOnlineIndicator: UIView {
     @IBOutlet var contentView: UIView!
@@ -38,8 +38,8 @@ class AvatarWithOnlineIndicator: UIView {
         self.online.backgroundColor = online ?
             UIColor.init(fromHexCode: 0xFF40C040) : UIColor.init(fromHexCode: 0xFFE0E0E0)
     }
-    public func set(icon: UIImage?, title: String?, id: String?, online: Bool?) {
-        self.avatar.set(icon: icon, title: title, id: id)
+    public func set(pub: TheCard?, id: String?, online: Bool?) {
+        self.avatar.set(pub: pub, id: id)
         self.setOnline(online: online)
     }
 }

@@ -71,7 +71,7 @@ class SettingsPersonalViewController: UITableViewController {
         self.myUIDLabel.sizeToFit()
 
         // Avatar.
-        self.avatarImage.set(icon: me.pub?.photo?.image, title: me.pub?.fn, id: self.tinode.myUid)
+        self.avatarImage.set(pub: me.pub, id: self.tinode.myUid)
         self.avatarImage.letterTileFont = self.avatarImage.letterTileFont.withSize(CGFloat(50))
         self.manageTags.detailTextLabel?.text = me.tags?.joined(separator: ", ")
 

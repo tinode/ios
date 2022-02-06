@@ -533,7 +533,6 @@ class UiUtils {
             // Image successfully uploaded. Use URL.
             let pub = topic.pub?.copy() ?? TheCard(fn: nil)
             let thumbnail = avatar.resize(width: kAvatarPreviewDimensions, height: kAvatarPreviewDimensions, clip: true)
-            let tnBits = thumbnail?.pixelData(forMimeType: Photo.kDefaultType)
             let url = srvmsg?.ctrl?.getStringParam(for: "url")
             pub.photo = Photo(data: thumbnail?.pixelData(forMimeType: Photo.kDefaultType), ref: url, width: Int(avatar.size.width), height: Int(avatar.size.height))
             return UiUtils.setTopicData(forTopic: topic, pub: pub, priv: nil)

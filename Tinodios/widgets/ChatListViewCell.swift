@@ -1,8 +1,7 @@
 //
 //  ChatListTableViewCell.swift
-//  Tinodios
 //
-//  Copyright © 2019 Tinode. All rights reserved.
+//  Copyright © 2019-2022 Tinode LLC. All rights reserved.
 //
 
 import UIKit
@@ -114,6 +113,6 @@ class ChatListViewCell: UITableViewCell {
         iconMuted.isHidden = !topic.isMuted
 
         // Avatar image
-        icon.set(icon: topic.pub?.photo?.image, title: topic.pub?.fn, id: topic.name, online: topic.isChannel ? nil : topic.online)
+        icon.set(pub: topic.pub, id: topic.name, online: topic.isChannel ? nil : topic.online)
     }
 }

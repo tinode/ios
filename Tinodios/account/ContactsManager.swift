@@ -1,8 +1,7 @@
 //
 //  ContactsManager.swift
-//  Tinodios
 //
-//  Copyright © 2019 Tinode. All rights reserved.
+//  Copyright © 2019-2022 Tinode LLC. All rights reserved.
 //
 
 import Foundation
@@ -10,15 +9,13 @@ import TinodeSDK
 import TinodiosDB
 
 public class ContactHolder {
-    var displayName: String?
-    var image: UIImage?
+    var pub: TheCard?
     var uniqueId: String?
     // This is used when the contact was found in search: what was matched.
     var subtitle: String?
 
-    init(displayName: String?, image: UIImage?, uniqueId: String?, subtitle: String? = nil) {
-        self.displayName = displayName
-        self.image = image
+    init(pub: TheCard?, uniqueId: String?, subtitle: String? = nil) {
+        self.pub = pub
         self.uniqueId = uniqueId
         self.subtitle = subtitle
     }
@@ -89,7 +86,7 @@ class ContactsManager {
         // Turn users into contacts.
         return users?.map { user in
             let q = user as! DefaultUser
-            return ContactHolder(displayName: q.pub?.fn, image: q.pub?.photo?.image, uniqueId: q.uid)
+            return ContactHolder(pub: q.pub, uniqueId: q.uid)
         }
     }
 }

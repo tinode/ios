@@ -74,7 +74,7 @@ class FindInteractor: FindBusinessLogic {
     func updateAndPresentRemoteContacts() {
         if let subs = fndTopic?.getSubscriptions(), !(searchQuery?.isEmpty ?? true) {
             self.remoteContacts = subs.map { sub in
-                let contact = RemoteContactHolder(displayName: sub.pub?.fn, image: sub.pub?.photo?.image, uniqueId: sub.uniqueId, subtitle: sub.priv?.joined(separator: ", "))
+                let contact = RemoteContactHolder(pub: sub.pub, uniqueId: sub.uniqueId, subtitle: sub.priv?.joined(separator: ", "))
                 contact.sub = sub
                 return contact
             }
@@ -101,7 +101,7 @@ class FindInteractor: FindBusinessLogic {
             let contacts: [ContactHolder] =
                 self.searchQuery != nil ?
                     self.localContacts!.filter { u in
-                        guard let displayName = u.displayName else { return false }
+                        guard let displayName = u.pub?.fn else { return false }
                         guard let r = displayName.range(of: self.searchQuery!, options: .caseInsensitive) else {return false}
                         return r.contains(displayName.startIndex)
                     } :

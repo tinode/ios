@@ -1,8 +1,7 @@
 //
 //  MessageViewController.swift
-//  Tinodios
 //
-//  Copyright © 2019 Tinode. All rights reserved.
+//  Copyright © 2019-2022 Tinode LLC. All rights reserved.
 //
 
 import UIKit
@@ -11,7 +10,7 @@ import TinodiosDB
 
 protocol MessageDisplayLogic: AnyObject {
     func switchTopic(topic: String?)
-    func updateTitleBar(icon: UIImage?, title: String?, online: Bool?)
+    func updateTitleBar(pub: TheCard?, online: Bool?)
     func setOnline(online: Bool?)
     func runTypingAnimation()
     func displayChatMessages(messages: [StoredMessage], _ scrollToMostRecentMessage: Bool)
@@ -478,11 +477,11 @@ extension MessageViewController: MessageDisplayLogic {
         topicName = topic
     }
 
-    func updateTitleBar(icon: UIImage?, title: String?, online: Bool?) {
+    func updateTitleBar(pub: TheCard?, online: Bool?) {
         assert(Thread.isMainThread)
-        self.navigationItem.title = title ?? NSLocalizedString("Undefined", comment: "Undefined chat name")
+        self.navigationItem.title = pub?.fn ?? NSLocalizedString("Undefined", comment: "Undefined chat name")
 
-        navBarAvatarView.set(icon: icon, title: title, id: topicName, online: online)
+        navBarAvatarView.set(pub: pub, id: topicName, online: online)
         navBarAvatarView.bounds = CGRect(x: 0, y: 0, width: Constants.kNavBarAvatarSmallState, height: Constants.kNavBarAvatarSmallState)
 
         navBarAvatarView.translatesAutoresizingMaskIntoConstraints = false
@@ -691,11 +690,7 @@ extension MessageViewController: UICollectionViewDataSource {
         cell.avatarView.frame = attributes.avatarFrame
         if attributes.avatarFrame != .zero {
             // The avatar image should be assigned after setting the size. Otherwise it may be drawn twice.
-            if let sub = topic?.getSubscription(for: message.from) {
-                cell.avatarView.set(icon: sub.pub?.photo?.image, title: sub.pub?.fn, id: message.from)
-            } else {
-                cell.avatarView.set(icon: nil, title: nil, id: message.from)
-            }
+            cell.avatarView.set(pub: topic?.getSubscription(for: message.from)?.pub, id: message.from)
         }
 
         // Sender name under the avatar.

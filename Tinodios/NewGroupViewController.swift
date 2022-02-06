@@ -80,6 +80,7 @@ class NewGroupViewController: UITableViewController {
         return section == 0 ? super.tableView(tableView, numberOfRowsInSection: 0) : selectedContacts.count + 1
     }
 
+    // Group members.
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard indexPath.section == 1 && indexPath.row > 0 else { return super.tableView(tableView, cellForRowAt: indexPath) }
 
@@ -88,8 +89,8 @@ class NewGroupViewController: UITableViewController {
         // Configure the cell...
         let contact = selectedContacts[indexPath.row - 1]
 
-        cell.avatar.set(icon: contact.image, title: contact.displayName, id: contact.uniqueId)
-        cell.title.text = contact.displayName
+        cell.avatar.set(pub: contact.pub, id: contact.uniqueId)
+        cell.title.text = contact.pub?.fn
         cell.title.sizeToFit()
         cell.subtitle.text = contact.subtitle ?? contact.uniqueId
         cell.subtitle.sizeToFit()

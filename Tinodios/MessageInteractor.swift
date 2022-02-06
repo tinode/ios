@@ -1,8 +1,7 @@
 //
 //  MessageInteractor.swift
-//  Tinodios
 //
-//  Copyright © 2019 Tinode. All rights reserved.
+//  Copyright © 2019-2022 Tinode LLC. All rights reserved.
 //
 
 import Foundation
@@ -130,7 +129,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         self.pagesToLoad = 1
 
         if let pub = self.topic?.pub {
-            self.presenter?.updateTitleBar(icon: pub.photo?.image, title: pub.fn, online: (topic?.isChannel ?? false) ? nil : self.topic?.online)
+            self.presenter?.updateTitleBar(pub: pub, online: (topic?.isChannel ?? false) ? nil : self.topic?.online)
         }
 
         if let (maxRecv, maxRead) = self.topic?.maxRecvReadValues {
@@ -703,7 +702,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         self.presenter?.applyTopicPermissions(withError: nil)
         if let pub = topic?.pub {
             let online = (self.topic?.isChannel ?? false) ? nil : self.topic?.online
-            self.presenter?.updateTitleBar(icon: pub.photo?.image, title: pub.fn, online: online)
+            self.presenter?.updateTitleBar(pub: pub, online: online)
         }
     }
     override func onMetaSub(sub: Subscription<TheCard, PrivateType>) {

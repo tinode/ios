@@ -92,8 +92,8 @@ class EditMembersViewController: UIViewController, UITableViewDataSource {
         // Configure the cell...
         let contact = contacts[indexPath.row]
 
-        cell.avatar.set(icon: contact.image, title: contact.displayName, id: contact.uniqueId)
-        cell.title.text = contact.displayName
+        cell.avatar.set(pub: contact.pub, id: contact.uniqueId)
+        cell.title.text = contact.pub?.fn
         cell.title.sizeToFit()
         cell.subtitle.text = contact.subtitle ?? contact.uniqueId
         cell.subtitle.sizeToFit()
@@ -187,7 +187,7 @@ extension EditMembersViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SelectedMemberViewCell", for: indexPath) as! SelectedMemberViewCell
         let contact = contacts[selectedContacts[indexPath.item].item]
-        cell.avatarImageView.set(icon: contact.image, title: contact.displayName, id: contact.uniqueId)
+        cell.avatarImageView.set(pub: contact.pub, id: contact.uniqueId)
         return cell
     }
 }
