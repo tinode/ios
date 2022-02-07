@@ -1,6 +1,5 @@
 //
 //  FormatNode.swift
-//  Tinodios
 //
 //  Copyright © 2022 Tinode LLC. All rights reserved.
 //
@@ -52,6 +51,8 @@ struct Attachment {
     var offset: CGPoint?
     // Draw background over the entire available width, not just under the text.
     var fullWidth: Bool?
+    // Index of the entity in the original Drafty object.
+    var draftyEntityKey: Int?
 }
 
 // Class representing Drafty as a tree of nodes with content and styles attached.
@@ -268,7 +269,7 @@ class FormatNode: CustomStringConvertible {
 
             var baseUrl = URLComponents(string: "tinode://\(tinode.hostName)")!
             baseUrl.path = ref != nil ? "/large-attachment" : "/small-attachment"
-            baseUrl.queryItems = [URLQueryItem(name: "filename", value: originalFileName)]
+            baseUrl.queryItems = [URLQueryItem(name: "filename", value: originalFileName), URLQueryItem(name: "key", value: (attachment.draftyEntityKey != nil ? String(attachment.draftyEntityKey!) : nil))]
 
             second.addAttribute(.link, value: baseUrl.url! as Any, range: NSRange(location: 0, length: second.length))
             second.endEditing()
@@ -292,6 +293,7 @@ class FormatNode: CustomStringConvertible {
             }
             // tinode:// and mid: schemes are not real external URLs.
             let wrapper = (url == nil || url!.scheme == "mid" || url!.scheme == "tinode") ? ImageTextAttachment() : AsyncTextAttachment(url: url!, afterDownloaded: attachment.afterRefDownloaded)
+            wrapper.draftyEntityKey = attachment.draftyEntityKey
 
             var image: UIImage?
             if let bits = attachment.bits, let preview = UIImage(data: bits) {

@@ -29,7 +29,7 @@ class AbstractFormatter: DraftyFormatter {
     func handleLineBreak() -> FormatNode {
         return FormatNode()
     }
-    func handleAttachment(using: [String : JSONValue]?) -> FormatNode {
+    func handleAttachment(using: [String : JSONValue]?, draftyKey: Int?) -> FormatNode {
         return FormatNode()
     }
     func handleHidden() -> FormatNode {
@@ -78,7 +78,7 @@ class AbstractFormatter: DraftyFormatter {
         return FormatNode(nodes)
     }
 
-    func handleImage(using: [String : JSONValue]?) -> FormatNode {
+    func handleImage(using: [String : JSONValue]?, draftyKey: Int?) -> FormatNode {
         return FormatNode()
     }
     func handleButton(content: [FormatNode], using: [String : JSONValue]?) -> FormatNode {
@@ -109,7 +109,7 @@ class AbstractFormatter: DraftyFormatter {
             case "BR":
                 return handleLineBreak()
             case "EX":
-                return handleAttachment(using: data)
+                return handleAttachment(using: data, draftyKey: key)
             case "HD":
                 return FormatNode()
             default:
@@ -134,7 +134,7 @@ class AbstractFormatter: DraftyFormatter {
             case "HT":
                 return handleHashtag(content: children, using: data)
             case "IM":
-                return handleImage(using: data)
+                return handleImage(using: data, draftyKey: key)
             case "BN":
                 return handleButton(content: children, using: data)
             case "FM":

@@ -1,6 +1,5 @@
 //
 //  QuoteFormatter.swift
-//  Tinodios
 //
 //  Copyright © 2022 Tinode LLC. All rights reserved.
 //
@@ -15,7 +14,7 @@ class QuoteFormatter: PreviewFormatter {
         return FormatNode("\n")
     }
 
-    override func handleImage(using data: [String : JSONValue]?) -> FormatNode {
+    override func handleImage(using data: [String : JSONValue]?, draftyKey key: Int?) -> FormatNode {
         var attachment = Attachment(content: .image)
         let img = FormatNode()
         var filename = ""
@@ -45,6 +44,7 @@ class QuoteFormatter: PreviewFormatter {
 
         attachment.width = UiUtils.kReplyThumbnailSize
         attachment.height = UiUtils.kReplyThumbnailSize
+        attachment.draftyEntityKey = key
 
         img.attachment(attachment)
         var children: [FormatNode] = []
@@ -59,7 +59,7 @@ class QuoteFormatter: PreviewFormatter {
         return FormatNode(children)
     }
 
-    override func handleAttachment(using attr: [String: JSONValue]?) -> FormatNode {
+    override func handleAttachment(using attr: [String: JSONValue]?, draftyKey _: Int?) -> FormatNode {
         var annotation: String
         if let filename = attr?["name"]?.asString() {
             annotation = UiUtils.previewFileName(from: filename)

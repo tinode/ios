@@ -46,11 +46,11 @@ class PreviewFormatter: AbstractFormatter {
         return iconNode
     }
 
-    override func handleImage(using attr: [String: JSONValue]?) -> FormatNode {
+    override func handleImage(using attr: [String: JSONValue]?, draftyKey _: Int?) -> FormatNode {
         return annotatedIcon(iconName: "image-50", annotation: NSLocalizedString("Picture", comment: "Label shown next to an inline image"), comment: "Image preview icon.")
     }
 
-    override func handleAttachment(using attr: [String: JSONValue]?) -> FormatNode {
+    override func handleAttachment(using attr: [String: JSONValue]?, draftyKey _: Int?) -> FormatNode {
         guard let attr = attr else {
             return FormatNode()
         }

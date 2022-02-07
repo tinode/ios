@@ -23,7 +23,7 @@ class SendReplyFormatter: QuoteFormatter {
         return node
     }
 
-    override func handleImage(using data: [String: JSONValue]?) -> FormatNode {
+    override func handleImage(using data: [String: JSONValue]?, draftyKey key: Int?) -> FormatNode {
         var attachment = Attachment(content: .image)
         let img = FormatNode()
         var filename = ""
@@ -57,6 +57,7 @@ class SendReplyFormatter: QuoteFormatter {
 
         attachment.width = UiUtils.kReplyThumbnailSize
         attachment.height = UiUtils.kReplyThumbnailSize
+        attachment.draftyEntityKey = key
 
         img.attachment(attachment)
         var children: [FormatNode] = []

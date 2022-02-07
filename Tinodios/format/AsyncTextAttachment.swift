@@ -1,6 +1,5 @@
 //
 //  AsyncTextAttachment.swift
-//  Tinodios
 //
 //  Copyright © 2020-2022 Tinode LLC. All rights reserved.
 //
