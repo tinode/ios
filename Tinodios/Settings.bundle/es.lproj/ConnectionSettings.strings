@@ -1,0 +1,9 @@
+/* (No Comment) */
+"Host name" = "Nombre de host";
+
+/* (No Comment) */
+"Use TLS" = "Usar TLS";
+
+/* A single strings file, whose title is specified in your preferences schema. The strings files provide the localized content to display to the user for each of your preferences. */
+"Wire transport" = "Transporte por cable";
+
