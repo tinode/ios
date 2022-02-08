@@ -111,7 +111,7 @@ class WebSocket: NSObject, URLSessionWebSocketDelegate, URLSessionDelegate {
 
             switch result {
             case .failure(let error):
-                self.delegate?.onError(connection: self, error: error)
+                self.errorHandler(error)
             case .success(let message):
                 switch message {
                 case .string(let text):
@@ -132,16 +132,21 @@ class WebSocket: NSObject, URLSessionWebSocketDelegate, URLSessionDelegate {
 
         self.state = .closed
 
+        var code = -1
+        var serverOriginated = false
         if let error = error as NSError? {
-            switch Int32(error.code) {
+            code = error.code
+            switch Int32(code) {
             case ENETDOWN, ENETUNREACH, ECONNRESET, ETIMEDOUT, ECONNREFUSED:
                 socket.cancel(with: .goingAway, reason: nil)
                 delegate?.onError(connection: self, error: WebSocketError.network(code: error.code))
-                // delegate?.onDisconnected(connection: self, isServerOriginated: false, closeCode: .invalid, reason: error.localizedDescription)
             default:
                 delegate?.onError(connection: self, error: error)
+                serverOriginated = true
             }
         }
+
+        self.delegate?.onDisconnected(connection: self, isServerOriginated: serverOriginated, closeCode: URLSessionWebSocketTask.CloseCode(rawValue: code) ?? .abnormalClosure, reason: error.localizedDescription)
     }
 }
 

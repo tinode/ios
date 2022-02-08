@@ -1,6 +1,6 @@
 //
 //  Connection.swift
-//  ios
+//  TinodeSDK
 //
 //  Copyright © 2019-2022 Tinode LLC. All rights reserved.
 //
@@ -134,9 +134,7 @@ public class Connection: WebSocketConnectionDelegate {
     private func connectWithBackoffAsync() {
         let delay = Double(self.backoffSteps.getNextDelay()) / 1000
         maybeInitReconnectClosure()
-        self.connectQueue.asyncAfter(
-            deadline: .now() + delay,
-            execute: reconnectClosure!)
+        self.connectQueue.asyncAfter(deadline: .now() + delay, execute: reconnectClosure!)
     }
 
     @discardableResult

@@ -1232,9 +1232,9 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
     /// Publish content to topic.
     ///
     /// - Parameters
-    ///  - content: message content to publish
-    ///  - withExtraHeaders: additional message headers, such as `reply` and `forwarded`; `mime: text/x-drafty` header is added automatically.
-    /// - Returns: PromisedReply of the reply ctrl message
+    ///   - content: message content to publish
+    ///   - withExtraHeaders: additional message headers, such as `reply` and `forwarded`; `mime: text/x-drafty` header is added automatically.
+    /// - Returns: `PromisedReply` of the reply `ctrl` message
     public func publish(content: Drafty, withExtraHeaders extraHeaders: [String: JSONValue]? = nil) -> PromisedReply<ServerMessage> {
         var id: Int64 = -1
         if let s = store {
