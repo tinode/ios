@@ -24,7 +24,7 @@
 "Archived Chats" = "已封存的對話";
 
 /* Button to open chat archive */
-"Archived Chats (%d)" = "已封存的對話 (%d)";
+"Archived Chats (%@)" = "已封存的對話 (%@)";
 
 /* Warning in delete account alert */
 "Are you sure you want to delete your account? It cannot be undone." = "您確定要刪除您的帳號嗎？此操作無法還原。";

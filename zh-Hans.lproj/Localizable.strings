@@ -23,7 +23,7 @@
 "Archived Chats" = "存档的聊天";
 
 /* Button to open chat archive */
-"Archived Chats (%d)" = "存档的聊天 (%d)";
+"Archived Chats (%@)" = "存档的聊天 (%@)";
 
 /* Warning in delete account alert */
 "Are you sure you want to delete your account? It cannot be undone." = "您确定要删除您的帐户吗?无法撤销。";

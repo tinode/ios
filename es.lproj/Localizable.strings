@@ -1,4 +1,3 @@
-
 /* Replacement for chat message with no content */
 "  Content deleted" = "  Este mensaje fue eliminado";
 
@@ -24,13 +23,19 @@
 "Archived Chats" = "Chats archivados";
 
 /* Button to open chat archive */
-"Archived Chats (%d)" = "Chats archivados (%d)";
+"Archived Chats (%@)" = "Chats archivados (%@)";
 
 /* Warning in delete account alert */
 "Are you sure you want to delete your account? It cannot be undone." = "¿Estás seguro de que deseas eliminar permanentemente tu cuenta? Esta acción es irreversible.";
 
 /* Warning in logout alert */
 "Are you sure you want to log out?" = "¿Estás seguro de que quieres cerrar la sesión?";
+
+/* Label shown next to an attachment */
+"Attachment" = "Apego";
+
+/* Error message: attachment too large */
+"Attachment exceeds maximum size" = "El accesorio supera el tamaño máximo";
 
 /* Alert action
    Invite reaction button */
@@ -66,6 +71,9 @@
 /* Alert title */
 "Clear all messages?" = "¿Borrar todos los mensajes?";
 
+/* Button text */
+"confirm" = "confirmar";
+
 /* Alert title */
 "Confirm contact" = "Confirmar contacto";
 
@@ -87,11 +95,8 @@
 /* Error message */
 "Could not change password: %@" = "No se pudo cambiar la contraseña: %@";
 
-/*  */
-"Couldn't connect to server at %@: %@" = "No se pudo conectar al servidor en %@: %@";
-
 /* Error message */
-"Couldn't connect to server: %@" = "No se pudo conectar al servidor: %@";
+"Couldn't connect to server at %@: %@" = "No se pudo conectar al servidor en %@: %@";
 
 /* Alert action
    Menu item
@@ -105,10 +110,10 @@
 "Directory" = "Directorio";
 
 /* Alert title */
-"Edit Group" = "Editar grupo";
+"Edit account name" = "Editar nombre de la cuenta";
 
 /* Alert title */
-"Edit account name" = "Editar nombre de la cuenta";
+"Edit Group" = "Editar grupo";
 
 /* Alert action */
 "Email" = "Correo electrónico";
@@ -138,6 +143,9 @@
 "Failed to save group and contact info." = "No se pudo guardar el grupo y la información de contacto.";
 
 /* Error message */
+"Failed to send email: %@" = "No se pudo enviar el correo electrónico: %@";
+
+/* Error message */
 "Failed to subscribe to topic: %@" = "Error al suscribirse al tema: %@";
 
 /* Alert action qualifier as in 'Delete for all' */
@@ -145,6 +153,12 @@
 
 /* Alert action 'Delete for me' */
 "For me" = "Para mí";
+
+/* Label shown next to a form in preview */
+"Form" = "Formulario";
+
+/* Menu item */
+"Forward" = "Reenviar";
 
 /* User name prompt */
 "Full name, e.g. John Doe" = "Nombre completo, p.ej. Juan González Hernández";
@@ -154,6 +168,9 @@
 
 /* Error message */
 "Invalid group ID: %d (%@)" = "ID del grupo no es válido %1$d (%2$@)";
+
+/* Error message when the image cannot be processed */
+"Invalid image" = "Imagen no válida";
 
 /* Dialog title: call to action */
 "Invite" = "Invitar";
@@ -228,6 +245,9 @@
 /* Toast notification */
 "Permissions not modified: %d (%s)" = "No se pudo modificar los permisos %1$d (%2$s)";
 
+/* Label shown next to an inline image */
+"Picture" = "Fotografía";
+
 /* Progress overlay */
 "Please wait..." = "Por favor, espera...";
 
@@ -246,14 +266,17 @@
 /* Confirmation */
 "Remove and ban %@ from %@?" = "Eliminar y bloquear a %1$@ del %2$@?";
 
+/* Menu item */
+"Reply" = "Respuesta";
+
 /* Alert action */
 "Report" = "Reportar";
 
 /* Alert title */
-"Report Group?" = "¿Report grupo?";
+"Report contact?" = "¿Reportar contacto?";
 
 /* Alert title */
-"Report contact?" = "¿Reportar contacto?";
+"Report Group?" = "¿Report grupo?";
 
 /* Error message */
 "Request failed: %@" = "Se produjo un error al procesar la solicitud: %@";
@@ -279,6 +302,9 @@
 /* Toast notification */
 "Tags missing." = "Faltan las etiquetas.";
 
+/* Toast notification */
+"The avatar is too small." = "El avatar es demasiado pequeño.";
+
 /* Error message */
 "The file size exceeds the limit %@" = "El tamaño del archivo excede el límite %@";
 
@@ -287,6 +313,14 @@
 
 /* Swipe action */
 "Unarchive" = "Desarchivar";
+
+/* Swipe action */
+"Unblock" = "Desatascar";
+
+/* Button with missing text
+   Placeholder for missing file name
+   Placeholder for missing file type */
+"undefined" = "indefinido";
 
 /* Undefined chat name */
 "Undefined" = "Sin nombre";
@@ -298,14 +332,17 @@
 /* Sender with missing name */
 "Unknown %@" = "Desconocido %@";
 
-/* Error message */
-"Upload failed (%@). No server response." = "Error al subir el archivo (%@). No hay respuesta del servidor.";
+/* Displayed when the type of attachment cannot be determined */
+"Unknown type" = "Tipo desconocido";
 
 /* Error message */
 "Upload failed (%@): empty response body." = "Error al subir el archivo (%@): respuesta vacía.";
 
 /* Error message */
 "Upload failed (%@): response code %d." = "Error al subir el archivo (%1$@): código de la respuesta %2$d.";
+
+/* Error message */
+"Upload failed (%@). No server response." = "Error al subir el archivo (%@). No hay respuesta del servidor.";
 
 /* Error message */
 "Verification failure: %d %@" = "Error de verificación: %1$d %2$@";
@@ -320,12 +357,5 @@
 "You are offline." = "Estás desconectado.";
 
 /* Placeholder when no chats found */
-"You have no chats\n\n¯\\_(ツ)_/¯" = "No tienes chats\n\n¯\_(ツ)_/¯";
+"You have no chats\n\n¯\\_(ツ)_/¯" = "No tienes chats\n\n¯\\_(ツ)_/¯";
 
-/* Button text */
-"confirm" = "confirmar";
-
-/* Button with missing text
-   Placeholder for missing file name
-   Placeholder for missing file type */
-"undefined" = "indefinido";

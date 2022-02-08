@@ -31,13 +31,13 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>$(APP_NAME) takes photos with the camera to use as avatar or to send them to your contacts</string>
+	<string>Tinode takes photos with the camera to use as avatar or to send them to your contacts</string>
 	<key>NSContactsUsageDescription</key>
-	<string>$(APP_NAME) sends only emails and phone numbers to the $(APP_NAME) server to help you connect with other users</string>
+	<string>Tinode sends only emails and phone numbers to the Tinode server to help you connect with other users</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>Images and pictures from $(APP_NAME) can be saved in the photo library</string>
+	<string>Images and pictures from Tinode can be saved in the photo library</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>$(APP_NAME) needs access to your photos to let you you send them to your contacts</string>
+	<string>Tinode needs access to your photos to let you you send them to your contacts</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>

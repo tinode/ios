@@ -24,7 +24,7 @@
 "Archived Chats" = "Архив чатов";
 
 /* Button to open chat archive */
-"Archived Chats (%d)" = "Архив чатов (%d)";
+"Archived Chats (%@)" = "Архив чатов (%@)";
 
 /* Warning in delete account alert */
 "Are you sure you want to delete your account? It cannot be undone." = "Вы уверены, что хотите удалить аккунт? Удаление окончательно.";
