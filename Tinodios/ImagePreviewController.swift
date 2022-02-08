@@ -2,7 +2,7 @@
 //  ImagePreviewController.swift
 //  Tinodios
 //
-//  Copyright © 2019-2020 Tinode. All rights reserved.
+//  Copyright © 2019-2022 Tinode LLC. All rights reserved.
 //
 
 // Shows full-screen
@@ -65,6 +65,7 @@ class ImagePreviewController: UIViewController, UIScrollViewDelegate {
                 named: "broken-image", withBackground: nil,
                 width: CGFloat(content.width ?? 64), height: CGFloat(content.height ?? 64))
             // Viewing received image.
+
             imageView.image = bits != nil ? UIImage(data: bits!) : errorImage
 
             // Fill out details panel for the received image.
@@ -76,6 +77,8 @@ class ImagePreviewController: UIViewController, UIScrollViewDelegate {
             }
             if let width = content.width, let height = content.height {
                 sizeString += "; \(width)×\(height)"
+            } else {
+                sizeString += "; ??×??"
             }
             sizeLabel.text = sizeString
 
@@ -87,7 +90,9 @@ class ImagePreviewController: UIViewController, UIScrollViewDelegate {
         }
 
         if imageView.image == nil {
-            imageView.image = UIImage(named: "broken-image")
+            imageView.image = UiUtils.placeholderImage(
+                named: "broken-image", withBackground: nil,
+                width: CGFloat(content.width ?? 64), height: CGFloat(content.height ?? 64))
         }
 
         scrollView.minimumZoomScale = 1.0

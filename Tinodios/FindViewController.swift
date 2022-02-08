@@ -219,8 +219,8 @@ class FindViewController: UITableViewController, FindDisplayLogic {
 
             // Configure the cell...
             let contact = indexPath.section == FindViewController.kLocalContactsSection ? localContacts[indexPath.row] : remoteContacts[indexPath.row]
-            cell.avatar.set(icon: contact.image, title: contact.displayName, id: contact.uniqueId)
-            cell.title.text = contact.displayName
+            cell.avatar.set(pub: contact.pub, id: contact.uniqueId)
+            cell.title.text = contact.pub?.fn
             cell.title.sizeToFit()
             cell.subtitle.text = contact.subtitle ?? contact.uniqueId
             cell.subtitle.sizeToFit()
@@ -348,16 +348,6 @@ extension FindViewController: MFMessageComposeViewControllerDelegate {
 // Needed so we can change placeholder font size in the search bar.
 extension UISearchBar {
     var textField: UITextField? {
-        if #available(iOS 13.0, *) {
-            return self.searchTextField
-        } else {
-            // Fallback on earlier versions
-            for view: UIView in (self.subviews[0]).subviews {
-                if let textField = view as? UITextField {
-                    return textField
-                }
-            }
-        }
-        return nil
+        return self.searchTextField
     }
 }

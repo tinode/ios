@@ -19,7 +19,7 @@
 		0ACE9E6C2381356B006BE575 /* AccountDb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACE9E612381356B006BE575 /* AccountDb.swift */; };
 		0ACE9E6D2381356B006BE575 /* SubscriberDb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACE9E622381356B006BE575 /* SubscriberDb.swift */; };
 		0ACE9E832381418A006BE575 /* TinodeSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0ACE9E822381418A006BE575 /* TinodeSDK.framework */; };
-		81E552C57A611B0337154F1A /* Pods_TinodiosDB.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B351FFA61AB7A59DE7E76A0 /* Pods_TinodiosDB.framework */; };
+		6731E13B4112433782ABFBB2 /* libPods-TinodiosDB.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 788B7F97AC0AC2A82DBD8ED5 /* libPods-TinodiosDB.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -38,7 +38,7 @@
 		0ACE9E642381356B006BE575 /* TopicDb.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopicDb.swift; sourceTree = "<group>"; };
 		0ACE9E652381356B006BE575 /* SqlStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SqlStore.swift; sourceTree = "<group>"; };
 		0ACE9E822381418A006BE575 /* TinodeSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = TinodeSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		2B351FFA61AB7A59DE7E76A0 /* Pods_TinodiosDB.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TinodiosDB.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		788B7F97AC0AC2A82DBD8ED5 /* libPods-TinodiosDB.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-TinodiosDB.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D5959013F0A2AD0F91DAD8A /* Pods-TinodiosDB.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TinodiosDB.release.xcconfig"; path = "Target Support Files/Pods-TinodiosDB/Pods-TinodiosDB.release.xcconfig"; sourceTree = "<group>"; };
 		AEE0CC9C2915B09EB3E7D8E1 /* Pods-TinodiosDB.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TinodiosDB.debug.xcconfig"; path = "Target Support Files/Pods-TinodiosDB/Pods-TinodiosDB.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -49,7 +49,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0ACE9E832381418A006BE575 /* TinodeSDK.framework in Frameworks */,
-				81E552C57A611B0337154F1A /* Pods_TinodiosDB.framework in Frameworks */,
+				6731E13B4112433782ABFBB2 /* libPods-TinodiosDB.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -107,7 +107,7 @@
 			children = (
 				0ACD8F7B24AC704C00043871 /* Pods_TinodeSDK.framework */,
 				0ACE9E822381418A006BE575 /* TinodeSDK.framework */,
-				2B351FFA61AB7A59DE7E76A0 /* Pods_TinodiosDB.framework */,
+				788B7F97AC0AC2A82DBD8ED5 /* libPods-TinodiosDB.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -152,7 +152,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 1210;
-				ORGANIZATIONNAME = Tinode;
+				ORGANIZATIONNAME = "Tinode LLC";
 				TargetAttributes = {
 					0ACE9E4F2381342B006BE575 = {
 						CreatedOnToolsVersion = 11.1;
@@ -285,7 +285,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -343,7 +343,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -368,11 +368,10 @@
 					"$(inherited)",
 					"\"${PODS_CONFIGURATION_BUILD_DIR}/SQLite.swift\"",
 					"\"${PODS_CONFIGURATION_BUILD_DIR}/SwiftKeychainWrapper\"",
-					"\"${PODS_CONFIGURATION_BUILD_DIR}/SwiftWebSocket\"",
 				);
 				INFOPLIST_FILE = TinodiosDB/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -401,11 +400,10 @@
 					"$(inherited)",
 					"\"${PODS_CONFIGURATION_BUILD_DIR}/SQLite.swift\"",
 					"\"${PODS_CONFIGURATION_BUILD_DIR}/SwiftKeychainWrapper\"",
-					"\"${PODS_CONFIGURATION_BUILD_DIR}/SwiftWebSocket\"",
 				);
 				INFOPLIST_FILE = TinodiosDB/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

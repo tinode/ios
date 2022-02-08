@@ -1,11 +1,9 @@
 //
-//  LargeFileHelperDelegates.swift
-//  Tinodios
+//  LargeFileHelper.swift
 //
-//  Copyright © 2020 Tinode. All rights reserved.
+//  Copyright © 2020-2022 Tinode LLC. All rights reserved.
 //
 
-import UIKit
 import TinodeSDK
 
 public class Upload {
@@ -83,12 +81,13 @@ public class LargeFileHelper: NSObject {
     }
 
     public static func uploadKeyFor(topicId: String, msgId: Int64) -> String {
-        return "\(topicId)-\(msgId)"
+        if msgId != 0 {
+            return "\(topicId)-\(msgId)"
+        }
+        return "\(topicId)-avatar"
     }
 
-    public func startUpload(filename: String, mimetype: String, d: Data, topicId: String, msgId: Int64,
-                     progressCallback: @escaping (Float) -> Void,
-                     completionCallback: @escaping (ServerMessage?, Error?) -> Void) {
+    public func startMsgAttachmentUpload(filename: String, mimetype: String, data payload: Data, topicId: String, msgId: Int64, progressCallback: @escaping (Float) -> Void, completionCallback: @escaping (ServerMessage?, Error?) -> Void) {
         guard var url = tinode.baseURL(useWebsocketProtocol: false) else { return }
         url.appendPathComponent("file/u/")
         let upload = Upload(url: url)
@@ -102,12 +101,9 @@ public class LargeFileHelper: NSObject {
         LargeFileHelper.addCommonHeaders(to: &request, using: self.tinode)
 
         var newData = Data()
-        let header = LargeFileHelper.kTwoHyphens + LargeFileHelper.kBoundary + LargeFileHelper.kLineEnd +
-            "Content-Disposition: form-data; name=\"file\"; filename=\"\(filename)\"" + LargeFileHelper.kLineEnd +
-            "Content-Type: \(mimetype)" + LargeFileHelper.kLineEnd +
-            "Content-Transfer-Encoding: binary" + LargeFileHelper.kLineEnd + LargeFileHelper.kLineEnd
+        let header = LargeFileHelper.kTwoHyphens + LargeFileHelper.kBoundary + LargeFileHelper.kLineEnd + "Content-Disposition: form-data; name=\"file\"; filename=\"\(filename)\"" + LargeFileHelper.kLineEnd + "Content-Type: \(mimetype)" + LargeFileHelper.kLineEnd + "Content-Transfer-Encoding: binary" + LargeFileHelper.kLineEnd + LargeFileHelper.kLineEnd
         newData.append(contentsOf: header.utf8)
-        newData.append(d)
+        newData.append(payload)
         let footer = LargeFileHelper.kLineEnd + LargeFileHelper.kTwoHyphens + LargeFileHelper.kBoundary + LargeFileHelper.kTwoHyphens + LargeFileHelper.kLineEnd
         newData.append(contentsOf: footer.utf8)
 
@@ -129,7 +125,12 @@ public class LargeFileHelper: NSObject {
         upload.task!.resume()
     }
 
-    public func cancelUpload(topicId: String, msgId: Int64) -> Bool {
+    public func startAvatarUpload(mimetype: String, data payload: Data, topicId: String, completionCallback: @escaping (ServerMessage?, Error?) -> Void) {
+        let fileName = "avatar-\(Utils.uniqueFilename(forMime: mimetype))"
+        startMsgAttachmentUpload(filename: fileName, mimetype: mimetype, data: payload, topicId: topicId, msgId: 0, progressCallback: {_ in /* do nothing */}, completionCallback: completionCallback)
+    }
+
+    public func cancelUpload(topicId: String, msgId: Int64 = 0) -> Bool {
         let uploadKey = LargeFileHelper.uploadKeyFor(topicId: topicId, msgId: msgId)
         var upload = activeUploads[uploadKey]
         guard upload != nil else { return false }
@@ -192,7 +193,6 @@ extension LargeFileHelper: URLSessionTaskDelegate {
         guard uploadError == nil else {
             return
         }
-        Cache.log.debug("LargeFileHelper - finished task: id = %@, uploadId = %@", taskId, upload.id)
         guard let response = task.response as? HTTPURLResponse else {
             uploadError = TinodeError.invalidState(String(format: NSLocalizedString("Upload failed (%@). No server response.", comment: "Error message"), upload.id))
             return
@@ -215,8 +215,7 @@ extension LargeFileHelper: URLSessionTaskDelegate {
 
     public func urlSession(_ session: URLSession, task: URLSessionTask, didSendBodyData: Int64, totalBytesSent: Int64, totalBytesExpectedToSend: Int64) {
         if let taskId = task.taskDescription, let upload = self.getActiveUpload(for: taskId) {
-            let progress: Float = totalBytesExpectedToSend > 0 ?
-                Float(totalBytesSent) / Float(totalBytesExpectedToSend) : 0
+            let progress: Float = totalBytesExpectedToSend > 0 ? Float(totalBytesSent) / Float(totalBytesExpectedToSend) : 0
             upload.progress(progress)
         }
     }
@@ -224,8 +223,7 @@ extension LargeFileHelper: URLSessionTaskDelegate {
 
 // Downloads.
 extension LargeFileHelper: URLSessionDownloadDelegate {
-    public func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask,
-                    didFinishDownloadingTo location: URL) {
+    public func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
         guard downloadTask.error == nil else {
             Cache.log.error("LargeFileHelper - download failed: %@", downloadTask.error!.localizedDescription)
             return

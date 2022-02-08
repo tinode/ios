@@ -1,8 +1,7 @@
 //
 //  MessageInteractor.swift
-//  Tinodios
 //
-//  Copyright © 2019 Tinode. All rights reserved.
+//  Copyright © 2019-2022 Tinode LLC. All rights reserved.
 //
 
 import Foundation
@@ -130,7 +129,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         self.pagesToLoad = 1
 
         if let pub = self.topic?.pub {
-            self.presenter?.updateTitleBar(icon: pub.photo?.image(), title: pub.fn, online: (topic?.isChannel ?? false) ? nil : self.topic?.online)
+            self.presenter?.updateTitleBar(pub: pub, online: (topic?.isChannel ?? false) ? nil : self.topic?.online)
         }
 
         if let (maxRecv, maxRead) = self.topic?.maxRecvReadValues {
@@ -237,72 +236,6 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         return false
     }
 
-    // Turns images into thumbnails when preparing a reply quote to a message.
-    private class ReplyTransformer: Drafty.PreviewTransformer {
-        // Keeps track of the chain of images which need to be asynchronously downloaded
-        // and downsized.
-        var promise: PromisedReply<UIImage>?
-
-        override func transform(node: Drafty.Span) -> Drafty.Span? {
-            guard node.type == "IM" else {
-                return super.transform(node: node)
-            }
-            let result = Drafty.Span(from: node)
-            if result.data != nil {
-                result.data?.removeAll()
-            } else {
-                result.data = [:]
-            }
-            result.data!["name"] = node.data?["name"]
-            if let bits = node.data?["val"]?.asData() {
-                let thumbnail = UIImage(data: bits)?.resize(
-                    width: CGFloat(UiUtils.kReplyThumbnailSize), height: CGFloat(UiUtils.kReplyThumbnailSize), clip: true)
-                let thumbnailBits = thumbnail?.pixelData(forMimeType: "image/jpeg")
-                result.data!["val"] = .bytes(thumbnailBits!)
-                result.data!["mime"] = .string("image/jpeg")
-
-                result.data!["size"] = .int(thumbnailBits!.count)
-            } else if let ref = node.data?["ref"]?.asString() {
-                let origPromise = self.promise
-                let url = Utils.tinodeResourceUrl(from: ref)
-                let p = Utils.fetchTinodeResource(from: url)?.thenApply {
-                    let thumbnail = $0?.resize(
-                        width: CGFloat(UiUtils.kReplyThumbnailSize), height: CGFloat(UiUtils.kReplyThumbnailSize), clip: true)
-                    let thumbnailBits = thumbnail?.pixelData(forMimeType: "image/jpeg")
-                    result.data!["val"] = .bytes(thumbnailBits!)
-                    result.data!["mime"] = .string("image/jpeg")
-                    return origPromise
-                }
-                // Chain promises.
-                self.promise = p
-            }
-            result.data!["width"] = .int(UiUtils.kReplyThumbnailSize)
-            result.data!["height"] = .int(UiUtils.kReplyThumbnailSize)
-            return result
-        }
-    }
-
-    // Strips the first mention (i.e. forwarded from mention) from the document.
-    private class ForwardingTransformer: SpanTreeTransformer {
-        private var mentionStripped = false
-        // If true, will substitute the message origin (➦ User Name) for a "➦ ".
-        // Otherwise, will strip the origin string altogether.
-        private var keepForwardedSign: Bool
-        public init(shouldKeepForwardedSign: Bool) {
-            self.keepForwardedSign = shouldKeepForwardedSign
-        }
-        func transform(node: Drafty.Span) -> Drafty.Span? {
-            guard node.type == "MN" && !mentionStripped else { return node }
-            mentionStripped = true
-            if self.keepForwardedSign {
-                let span = Drafty.Span()
-                span.text = "➦ "
-                return span
-            }
-            return nil
-        }
-    }
-
     private func senderName(for message: Message) -> String {
         var senderName: String?
         if let sub = topic?.getSubscription(for: message.from), let pub = sub.pub {
@@ -311,39 +244,26 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         return senderName ?? String(format: NSLocalizedString("Unknown %@", comment: ""), message.from ?? "none")
     }
 
-    // Creates a reply quote.
+    // Convert message into a quote ready for sending as a reply.
     func prepareReply(to msg: Message?) -> PromisedReply<Drafty>? {
-        guard let msg = msg, let replyTo = msg.content else {
+        guard let msg = msg, let content = msg.content else {
             self.dismissPendingMessage()
             return nil
         }
         let seqId = msg.seqId
         let sender = senderName(for: msg)
-        // Trim any mentions (starting with a ➦).
-        let content =
-            msg.isForwarded ? replyTo.preview(ofMaxLength: Int.max, using: ForwardingTransformer(shouldKeepForwardedSign: true)) : replyTo
-
-        let transformer = ReplyTransformer()
-        let p = content!.preview(ofMaxLength: UiUtils.kQuotedReplyLength, using: ReplyTransformer())
-        if transformer.promise != nil {
-            // We have images to download and downsize.
-            let result = PromisedReply<Drafty>()
-            transformer.promise!.then(onSuccess: {_ in
-                let finalMsg = Drafty.quote(quoteHeader: sender, authorUid: msg.from ?? "", quoteContent: p!)
-                self.pendingMessage = .replyTo(message: finalMsg, seqId: seqId)
-                try? result.resolve(result: finalMsg)
-                return nil
-            }, onFailure: { err in
-                try? result.reject(error: err)
-                return nil
-            })
-            return result
-        } else {
-            // We are done. So form a reply and return a resolved promise.
-            let finalMsg = Drafty.quote(quoteHeader: sender, authorUid: msg.from ?? "", quoteContent: p!)
+        // Strip unneeded content and shorten.
+        var reply = content.replyContent(length: SendReplyFormatter.kQuotedReplyLength, maxAttachments: 1)
+        let createThumbnails = ThumbnailTransformer()
+        reply = reply.transform(createThumbnails)
+        let whenDone = PromisedReply<Drafty>()
+        createThumbnails.completionPromise.thenApply {_ in
+            let finalMsg = Drafty.quote(quoteHeader: sender, authorUid: msg.from ?? "", quoteContent: reply)
             self.pendingMessage = .replyTo(message: finalMsg, seqId: seqId)
-            return PromisedReply<Drafty>(value: finalMsg)
+            try? whenDone.resolve(result: finalMsg)
+            return nil
         }
+        return whenDone
     }
 
     func dismissPendingMessage() {
@@ -359,23 +279,14 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
             Cache.log.error("prepareForwardedMessage error: could not determine sender id for message %@", content.string)
             return nil
         }
-        var transformed: Drafty!
-        if original.isForwarded {
-            guard let p = content.preview(ofMaxLength: Int.max, using: ForwardingTransformer(shouldKeepForwardedSign: false)) else {
-                Cache.log.error("prepareForwardedMessage error: could not transform the original message for forwarding - %@", content.string)
-                return nil
-            }
-            transformed = p
-        } else {
-            transformed = content
-        }
+        let transformed = content.forwardedContent()
         let forwardedContent = Drafty.mention(userWithName: sender, uid: from)
             .appendLineBreak()
             .append(transformed)
         let fwdHeader = "\(topicName):\(original.seqId)"
         // Preview. We may have images to download and downsize. Have to do it asynchronously.
-        let transformer = ReplyTransformer()
-        let preview = transformed.preview(ofMaxLength: UiUtils.kQuotedReplyLength, using: transformer)!
+        let transformer = SendReplyFormatter(defaultAttributes: [:])
+        let preview = transformed.preview(previewLen: UiUtils.kQuotedReplyLength)
         if let p = transformer.promise {
             let result = PromisedReply<PendingMessage>()
             p.then(onSuccess: { value in
@@ -592,14 +503,14 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
     }
 
     func uploadImage(_ def: UploadDef) {
-        uploadAttachment(type: .image, def)
+        uploadMessageAttachment(type: .image, def)
     }
 
     func uploadFile(_ def: UploadDef) {
-        uploadAttachment(type: .file, def)
+        uploadMessageAttachment(type: .file, def)
     }
 
-    private func uploadAttachment(type: AttachmentType, _ def: UploadDef) {
+    private func uploadMessageAttachment(type: AttachmentType, _ def: UploadDef) {
         guard let filename = def.filename, let mimeType = def.mimeType, let topic = topic else { return }
 
         // Check if the attachment is too big even for out-of-band uploads.
@@ -645,6 +556,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
             }
             draft = MessageInteractor.draftyImage(caption: def.caption, filename: filename, refurl: ref, mimeType: mimeType, data: data, width: Int(def.width!), height: Int(def.height!), size: def.data.count)
         }
+
         if let d = draft, case let .replyTo(replyTo, replyToSeq) = self.pendingMessage {
             draft = replyTo.append(d)
             head = ["reply": .string(String(replyToSeq))]
@@ -655,17 +567,15 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         self.dismissPendingMessage()
         self.presenter?.dismissPendingMessagePreviewBar()
 
-        var headers = Tinode.draftyHeaders(for: content)
-        if let h = head {
-            headers = headers ?? [:]
-            _ = headers!.merge(with: h)
+        if !content.isPlain {
+            if head == nil {
+                head = [:]
+            }
+            head!["mime"] = JSONValue.string(Drafty.kMimeType)
         }
-        if let msg = topic.store?.msgDraft(topic: topic, data: content, head: headers) {
+        if let msg = topic.store?.msgDraft(topic: topic, data: content, head: head) {
             let helper = Cache.getLargeFileHelper()
-            helper.startUpload(
-                filename: filename, mimetype: mimeType, d: def.data,
-                topicId: self.topicName!, msgId: msg.msgId,
-                progressCallback: { [weak self] progress in
+            helper.startMsgAttachmentUpload(filename: filename, mimetype: mimeType, data: def.data, topicId: self.topicName!, msgId: msg.msgId, progressCallback: { [weak self] progress in
                     let interactor = self ?? MessageInteractor.existingInteractor(for: topic.name)
                     interactor?.presenter?.updateProgress(forMsgId: msg.msgId, progress: progress)
                 },
@@ -788,14 +698,14 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
             self.presenter?.reloadAllMessages()
         }
     }
-    override func onMetaDesc(desc: Description<VCard, PrivateType>) {
+    override func onMetaDesc(desc: Description<TheCard, PrivateType>) {
         self.presenter?.applyTopicPermissions(withError: nil)
         if let pub = topic?.pub {
             let online = (self.topic?.isChannel ?? false) ? nil : self.topic?.online
-            self.presenter?.updateTitleBar(icon: pub.photo?.image(), title: pub.fn, online: online)
+            self.presenter?.updateTitleBar(pub: pub, online: online)
         }
     }
-    override func onMetaSub(sub: Subscription<VCard, PrivateType>) {
+    override func onMetaSub(sub: Subscription<TheCard, PrivateType>) {
         guard let topic = topic else { return }
         if topic.isGrpType, let user = sub.user, !self.knownSubs.contains(user) {
             // New subscription.

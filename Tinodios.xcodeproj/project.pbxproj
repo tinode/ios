@@ -54,10 +54,10 @@
 		0AE50D4822156A5B0021F7B7 /* FindPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AE50D4722156A5B0021F7B7 /* FindPresenter.swift */; };
 		0AE7339C22C33FEF0089C8D8 /* ChatListViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0AE7339B22C33FEF0089C8D8 /* ChatListViewCell.xib */; };
 		0AEE8BEE226456080022EC3F /* UiUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AEE8BED226456080022EC3F /* UiUtils.swift */; };
-		58CBE6CE018029121E923407 /* Pods_Tinodios.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3B787A84CD010EF920890105 /* Pods_Tinodios.framework */; };
+		6AB6957DBFD1FB12CA01DCE4 /* libPods-Tinodios.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E30BDE2C5D7E82671DD7DE4 /* libPods-Tinodios.a */; };
 		7DDADC5221D5C219009733B5 /* ValidatedCredential.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DDADC5121D5C219009733B5 /* ValidatedCredential.swift */; };
 		7DDADC5421D5C2E6009733B5 /* CredentialsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DDADC5321D5C2E6009733B5 /* CredentialsViewController.swift */; };
-		B008593C22741B8A002C5168 /* AttributedStringFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B008593B22741B89002C5168 /* AttributedStringFormatter.swift */; };
+		B008593C22741B8A002C5168 /* FullFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B008593B22741B89002C5168 /* FullFormatter.swift */; };
 		B0125998229C982900688FCE /* ContactViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0125996229C982900688FCE /* ContactViewCell.swift */; };
 		B0125999229C982900688FCE /* ContactViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B0125997229C982900688FCE /* ContactViewCell.xib */; };
 		B012599C229CEBE600688FCE /* SelectedMemberViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B012599A229CEBE600688FCE /* SelectedMemberViewCell.swift */; };
@@ -65,8 +65,14 @@
 		B0133AE323D1AADF00C813CA /* SendImageBar.xib in Resources */ = {isa = PBXBuildFile; fileRef = B0133AE223D1AADF00C813CA /* SendImageBar.xib */; };
 		B0133AE523D1ACBD00C813CA /* SendImageBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0133AE423D1ACBC00C813CA /* SendImageBar.swift */; };
 		B01C693F22F87B5C003C0AA7 /* SignupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B01C693E22F87B5C003C0AA7 /* SignupViewController.swift */; };
+		B01D2C6D27910B1E009543F2 /* ThumbnailTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B01D2C6C27910B1E009543F2 /* ThumbnailTransformer.swift */; };
+		B01D2C6F2793915D009543F2 /* FormatNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = B01D2C6E2793915D009543F2 /* FormatNode.swift */; };
+		B01D2C712794E1E0009543F2 /* AbstractFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B01D2C702794E1E0009543F2 /* AbstractFormatter.swift */; };
 		B026F243257C59CA003BA14B /* ProgressView.xib in Resources */ = {isa = PBXBuildFile; fileRef = B026F242257C59CA003BA14B /* ProgressView.xib */; };
 		B026F247257C5EFF003BA14B /* ProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B026F246257C5EFF003BA14B /* ProgressView.swift */; };
+		B027E5AE278901CA00A34C17 /* PreviewFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B027E5AD278901CA00A34C17 /* PreviewFormatter.swift */; };
+		B027E5B02789020D00A34C17 /* QuoteFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B027E5AF2789020D00A34C17 /* QuoteFormatter.swift */; };
+		B027E5B22789026200A34C17 /* SendReplyFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B027E5B12789026200A34C17 /* SendReplyFormatter.swift */; };
 		B02F5C8B22679BC80079A97E /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = B02F5C8A22679BC80079A97E /* ImagePicker.swift */; };
 		B031BE552263075E004160AE /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = B031BE542263075E004160AE /* Settings.bundle */; };
 		B05ACEB322FDAB5200276713 /* ResetPasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B05ACEB222FDAB5200276713 /* ResetPasswordViewController.swift */; };
@@ -78,7 +84,7 @@
 		B09C5652246C0E6B00D6615D /* BlockedContactsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B09C5651246C0E6B00D6615D /* BlockedContactsTableViewController.swift */; };
 		B0A612AF228B08EC00569DFE /* RichTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0A612AE228B08EC00569DFE /* RichTextView.swift */; };
 		B0A612B1228C85C300569DFE /* MessageViewLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0A612B0228C85C300569DFE /* MessageViewLayout.swift */; };
-		B0A612B3228EDC7B00569DFE /* DraftyButtonAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0A612B2228EDC7B00569DFE /* DraftyButtonAttachment.swift */; };
+		B0A612B3228EDC7B00569DFE /* ButtonAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0A612B2228EDC7B00569DFE /* ButtonAttachment.swift */; };
 		B0A612B5229132CC00569DFE /* MessageBubbleDecorator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0A612B4229132CC00569DFE /* MessageBubbleDecorator.swift */; };
 		B0A612B72294289000569DFE /* MessageViewController+SendMessageBarDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0A612B62294288F00569DFE /* MessageViewController+SendMessageBarDelegate.swift */; };
 		B0BA208523D5D8CF00C59BD4 /* FilePreviewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0BA208423D5D8CF00C59BD4 /* FilePreviewController.swift */; };
@@ -184,12 +190,12 @@
 		0AE50D4722156A5B0021F7B7 /* FindPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FindPresenter.swift; sourceTree = "<group>"; };
 		0AE7339B22C33FEF0089C8D8 /* ChatListViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ChatListViewCell.xib; sourceTree = "<group>"; };
 		0AEE8BED226456080022EC3F /* UiUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UiUtils.swift; sourceTree = "<group>"; };
-		3B787A84CD010EF920890105 /* Pods_Tinodios.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Tinodios.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5900B7863CDFB018A86DD3AC /* Pods-Tinodios.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Tinodios.release.xcconfig"; path = "Pods/Target Support Files/Pods-Tinodios/Pods-Tinodios.release.xcconfig"; sourceTree = "<group>"; };
+		5E30BDE2C5D7E82671DD7DE4 /* libPods-Tinodios.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Tinodios.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		75BC852198885F22E865D563 /* Pods-Tinodios.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Tinodios.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Tinodios/Pods-Tinodios.debug.xcconfig"; sourceTree = "<group>"; };
 		7DDADC5121D5C219009733B5 /* ValidatedCredential.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ValidatedCredential.swift; sourceTree = "<group>"; };
 		7DDADC5321D5C2E6009733B5 /* CredentialsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CredentialsViewController.swift; sourceTree = "<group>"; };
-		B008593B22741B89002C5168 /* AttributedStringFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttributedStringFormatter.swift; sourceTree = "<group>"; };
+		B008593B22741B89002C5168 /* FullFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullFormatter.swift; sourceTree = "<group>"; };
 		B01120B72357469300EFCB1F /* devel.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = devel.xcconfig; sourceTree = "<group>"; };
 		B01120B8235746BF00EFCB1F /* prod.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = prod.xcconfig; sourceTree = "<group>"; };
 		B0125996229C982900688FCE /* ContactViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactViewCell.swift; sourceTree = "<group>"; };
@@ -199,8 +205,14 @@
 		B0133AE223D1AADF00C813CA /* SendImageBar.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SendImageBar.xib; sourceTree = "<group>"; };
 		B0133AE423D1ACBC00C813CA /* SendImageBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendImageBar.swift; sourceTree = "<group>"; };
 		B01C693E22F87B5C003C0AA7 /* SignupViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignupViewController.swift; sourceTree = "<group>"; };
+		B01D2C6C27910B1E009543F2 /* ThumbnailTransformer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThumbnailTransformer.swift; sourceTree = "<group>"; };
+		B01D2C6E2793915D009543F2 /* FormatNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormatNode.swift; sourceTree = "<group>"; };
+		B01D2C702794E1E0009543F2 /* AbstractFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AbstractFormatter.swift; sourceTree = "<group>"; };
 		B026F242257C59CA003BA14B /* ProgressView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ProgressView.xib; sourceTree = "<group>"; };
 		B026F246257C5EFF003BA14B /* ProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressView.swift; sourceTree = "<group>"; };
+		B027E5AD278901CA00A34C17 /* PreviewFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewFormatter.swift; sourceTree = "<group>"; };
+		B027E5AF2789020D00A34C17 /* QuoteFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuoteFormatter.swift; sourceTree = "<group>"; };
+		B027E5B12789026200A34C17 /* SendReplyFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendReplyFormatter.swift; sourceTree = "<group>"; };
 		B02F5C8A22679BC80079A97E /* ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
 		B031BE542263075E004160AE /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		B05ACEB222FDAB5200276713 /* ResetPasswordViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResetPasswordViewController.swift; sourceTree = "<group>"; };
@@ -218,7 +230,7 @@
 		B09C5651246C0E6B00D6615D /* BlockedContactsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockedContactsTableViewController.swift; sourceTree = "<group>"; };
 		B0A612AE228B08EC00569DFE /* RichTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RichTextView.swift; sourceTree = "<group>"; };
 		B0A612B0228C85C300569DFE /* MessageViewLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageViewLayout.swift; sourceTree = "<group>"; };
-		B0A612B2228EDC7B00569DFE /* DraftyButtonAttachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DraftyButtonAttachment.swift; sourceTree = "<group>"; };
+		B0A612B2228EDC7B00569DFE /* ButtonAttachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonAttachment.swift; sourceTree = "<group>"; };
 		B0A612B4229132CC00569DFE /* MessageBubbleDecorator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageBubbleDecorator.swift; sourceTree = "<group>"; };
 		B0A612B62294288F00569DFE /* MessageViewController+SendMessageBarDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MessageViewController+SendMessageBarDelegate.swift"; sourceTree = "<group>"; };
 		B0BA208423D5D8CF00C59BD4 /* FilePreviewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilePreviewController.swift; sourceTree = "<group>"; };
@@ -252,7 +264,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0A431C032244A26200A837F7 /* TinodeSDK.framework in Frameworks */,
-				58CBE6CE018029121E923407 /* Pods_Tinodios.framework in Frameworks */,
+				6AB6957DBFD1FB12CA01DCE4 /* libPods-Tinodios.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -296,18 +308,18 @@
 			isa = PBXGroup;
 			children = (
 				0A4E1D3122829C52006C0912 /* account */,
+				B027E5AC2789010C00A34C17 /* format */,
 				B0C496B022787C020084FA0D /* widgets */,
 				0A95F4D3229BD95900AEF7D3 /* AccountSettingsViewController.swift */,
 				0A2F81C5229677DD007E562C /* AddByIDViewController.swift */,
 				0A0380D721B3CC8100A3FA0E /* AppDelegate.swift */,
 				0AB5FDCD22C20D1900F44AFD /* ArchivedChatsTableViewController.swift */,
-				B008593B22741B89002C5168 /* AttributedStringFormatter.swift */,
+				B09C5651246C0E6B00D6615D /* BlockedContactsTableViewController.swift */,
 				0A8A8BD921C380E80090BCBA /* Cache.swift */,
 				0AD5552921C625BB0027FD16 /* ChatListInteractor.swift */,
 				0ACB5F0D22097651008FE740 /* ChatListPresenter.swift */,
 				0ACB5F0F22097665008FE740 /* ChatListRouter.swift */,
 				0A0380D921B3CC8100A3FA0E /* ChatListViewController.swift */,
-				B09C5651246C0E6B00D6615D /* BlockedContactsTableViewController.swift */,
 				7DDADC5321D5C2E6009733B5 /* CredentialsViewController.swift */,
 				0A36776822B09C1900724873 /* EditMembersViewController.swift */,
 				B0BA208423D5D8CF00C59BD4 /* FilePreviewController.swift */,
@@ -380,7 +392,7 @@
 			isa = PBXGroup;
 			children = (
 				0ACE9E7E23814157006BE575 /* TinodiosDB.framework */,
-				3B787A84CD010EF920890105 /* Pods_Tinodios.framework */,
+				5E30BDE2C5D7E82671DD7DE4 /* libPods-Tinodios.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -394,10 +406,26 @@
 			name = Pods;
 			sourceTree = "<group>";
 		};
+		B027E5AC2789010C00A34C17 /* format */ = {
+			isa = PBXGroup;
+			children = (
+				B01D2C702794E1E0009543F2 /* AbstractFormatter.swift */,
+				B0BB539E256B14A1000FE949 /* AsyncTextAttachment.swift */,
+				B0A612B2228EDC7B00569DFE /* ButtonAttachment.swift */,
+				B01D2C6E2793915D009543F2 /* FormatNode.swift */,
+				B008593B22741B89002C5168 /* FullFormatter.swift */,
+				B027E5AD278901CA00A34C17 /* PreviewFormatter.swift */,
+				0AD6873C27233C0800A39486 /* QuotedAttachment.swift */,
+				B027E5AF2789020D00A34C17 /* QuoteFormatter.swift */,
+				B027E5B12789026200A34C17 /* SendReplyFormatter.swift */,
+				B01D2C6C27910B1E009543F2 /* ThumbnailTransformer.swift */,
+			);
+			path = format;
+			sourceTree = "<group>";
+		};
 		B0C496B022787C020084FA0D /* widgets */ = {
 			isa = PBXGroup;
 			children = (
-				B0BB539E256B14A1000FE949 /* AsyncTextAttachment.swift */,
 				0A8D945922BEF08100DC154E /* AvatarWithOnlineIndicator.swift */,
 				0A8D945722BEED3700DC154E /* AvatarWithOnlineIndicator.xib */,
 				0A8D945B22BF5B7F00DC154E /* AvatarWithOnlineIndicator+TypingAnimation.swift */,
@@ -405,7 +433,6 @@
 				0AE7339B22C33FEF0089C8D8 /* ChatListViewCell.xib */,
 				B0125996229C982900688FCE /* ContactViewCell.swift */,
 				B0125997229C982900688FCE /* ContactViewCell.xib */,
-				B0A612B2228EDC7B00569DFE /* DraftyButtonAttachment.swift */,
 				0A3AE3B4274CAD2500CB673E /* ForwardMessageBar.swift */,
 				0A3AE3B6274CAD5800CB673E /* ForwardMessageBar.xib */,
 				B02F5C8A22679BC80079A97E /* ImagePicker.swift */,
@@ -418,7 +445,6 @@
 				B026F246257C5EFF003BA14B /* ProgressView.swift */,
 				B0A612AE228B08EC00569DFE /* RichTextView.swift */,
 				B0DF03162279F027000F9492 /* RoundImageView.swift */,
-				0AD6873C27233C0800A39486 /* QuotedAttachment.swift */,
 				B012599A229CEBE600688FCE /* SelectedMemberViewCell.swift */,
 				B012599B229CEBE600688FCE /* SelectedMemberViewCell.xib */,
 				B0133AE423D1ACBC00C813CA /* SendImageBar.swift */,
@@ -426,9 +452,9 @@
 				B0DF032E2282FF46000F9492 /* SendMessageBar.swift */,
 				B0DF032C2282EE8A000F9492 /* SendMessageBar.xib */,
 				0A11912C22F03E3100A1BBA1 /* TagsEditView.swift */,
-				7DDADC5121D5C219009733B5 /* ValidatedCredential.swift */,
 				0A4B11FB2373D6E400199310 /* TagsEditDialogView.xib */,
 				0A4B11FD2373DC1400199310 /* TagsEditDialogView.swift */,
+				7DDADC5121D5C219009733B5 /* ValidatedCredential.swift */,
 			);
 			path = widgets;
 			sourceTree = "<group>";
@@ -445,10 +471,10 @@
 				0A0380D121B3CC8100A3FA0E /* Frameworks */,
 				0A0380D221B3CC8100A3FA0E /* Resources */,
 				0A431C052244A26200A837F7 /* Embed Frameworks */,
-				A5A27E48338DE610B94531E7 /* [CP] Embed Pods Frameworks */,
 				B094C9AA2315841E00C98B64 /* Assign build version from git */,
 				B0BC2B5423589CE100BEEB4B /* Assign DefaultValue in app preferences */,
 				0ACE9E7A23813A1D006BE575 /* Embed App Extensions */,
+				9F57E04FA7B9924948AFF5D2 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -486,7 +512,7 @@
 			attributes = {
 				LastSwiftUpdateCheck = 1110;
 				LastUpgradeCheck = 1210;
-				ORGANIZATIONNAME = Tinode;
+				ORGANIZATIONNAME = "Tinode LLC";
 				TargetAttributes = {
 					0A0380D321B3CC8100A3FA0E = {
 						CreatedOnToolsVersion = 10.1;
@@ -571,21 +597,21 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		A5A27E48338DE610B94531E7 /* [CP] Embed Pods Frameworks */ = {
+		9F57E04FA7B9924948AFF5D2 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Tinodios/Pods-Tinodios-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-Tinodios/Pods-Tinodios-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
-			name = "[CP] Embed Pods Frameworks";
+			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Tinodios/Pods-Tinodios-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+				"${PODS_ROOT}/Target Support Files/Pods-Tinodios/Pods-Tinodios-resources-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Tinodios/Pods-Tinodios-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Tinodios/Pods-Tinodios-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		B094C9AA2315841E00C98B64 /* Assign build version from git */ = {
@@ -649,13 +675,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B008593C22741B8A002C5168 /* AttributedStringFormatter.swift in Sources */,
+				B008593C22741B8A002C5168 /* FullFormatter.swift in Sources */,
 				0A0380DA21B3CC8100A3FA0E /* ChatListViewController.swift in Sources */,
 				0A2F81C6229677DD007E562C /* AddByIDViewController.swift in Sources */,
 				0AE50D4422156A250021F7B7 /* FindViewController.swift in Sources */,
 				B01C693F22F87B5C003C0AA7 /* SignupViewController.swift in Sources */,
 				0AD5552A21C625BB0027FD16 /* ChatListInteractor.swift in Sources */,
 				0A8A8BDA21C380E80090BCBA /* Cache.swift in Sources */,
+				B027E5AE278901CA00A34C17 /* PreviewFormatter.swift in Sources */,
 				B0DF031D227C604C000F9492 /* MessageCell.swift in Sources */,
 				B0DF0323228051B4000F9492 /* MessageViewController+Keyboard.swift in Sources */,
 				FA37AD24238B0D6F00301261 /* KeyboardInfo.swift in Sources */,
@@ -663,12 +690,14 @@
 				B09C5652246C0E6B00D6615D /* BlockedContactsTableViewController.swift in Sources */,
 				B09C564E246975F700D6615D /* SettingsHelpViewController.swift in Sources */,
 				B0DF03312283FFD8000F9492 /* PlaceholderTextView.swift in Sources */,
+				B027E5B22789026200A34C17 /* SendReplyFormatter.swift in Sources */,
 				0A35BA9E22836CCF00AA5E2F /* ContactsSynchronizer.swift in Sources */,
 				B09C564A2469362A00D6615D /* SettingsPersonalViewController.swift in Sources */,
 				0A11912D22F03E3100A1BBA1 /* TagsEditView.swift in Sources */,
 				B0BB53C3256DD5C9000FE949 /* LargeFileHelper.swift in Sources */,
 				0A8D945A22BEF08100DC154E /* AvatarWithOnlineIndicator.swift in Sources */,
 				0A0016E721E7236900088188 /* MessageInteractor.swift in Sources */,
+				B027E5B02789020D00A34C17 /* QuoteFormatter.swift in Sources */,
 				0A36776922B09C1900724873 /* EditMembersViewController.swift in Sources */,
 				B0125998229C982900688FCE /* ContactViewCell.swift in Sources */,
 				0ACB5F1022097665008FE740 /* ChatListRouter.swift in Sources */,
@@ -683,6 +712,7 @@
 				B05ACEB322FDAB5200276713 /* ResetPasswordViewController.swift in Sources */,
 				B0DF031F227C6898000F9492 /* PaddedLabel.swift in Sources */,
 				0A8D945C22BF5B7F00DC154E /* AvatarWithOnlineIndicator+TypingAnimation.swift in Sources */,
+				B01D2C6F2793915D009543F2 /* FormatNode.swift in Sources */,
 				B0C6A3C2229EDF14009B0B5D /* ImagePreviewController.swift in Sources */,
 				B09C564C2469756B00D6615D /* SettingsNotificationsViewController.swift in Sources */,
 				B0DF032F2282FF46000F9492 /* SendMessageBar.swift in Sources */,
@@ -692,6 +722,7 @@
 				7DDADC5221D5C219009733B5 /* ValidatedCredential.swift in Sources */,
 				B0A612B5229132CC00569DFE /* MessageBubbleDecorator.swift in Sources */,
 				B0DF0319227C2517000F9492 /* MessageView.swift in Sources */,
+				B01D2C6D27910B1E009543F2 /* ThumbnailTransformer.swift in Sources */,
 				7DDADC5421D5C2E6009733B5 /* CredentialsViewController.swift in Sources */,
 				B0A612AF228B08EC00569DFE /* RichTextView.swift in Sources */,
 				0AD6873D27233C0800A39486 /* QuotedAttachment.swift in Sources */,
@@ -700,7 +731,7 @@
 				B0A612B72294289000569DFE /* MessageViewController+SendMessageBarDelegate.swift in Sources */,
 				B0BA208523D5D8CF00C59BD4 /* FilePreviewController.swift in Sources */,
 				0A35BAA02283A37500AA5E2F /* Utils.swift in Sources */,
-				B0A612B3228EDC7B00569DFE /* DraftyButtonAttachment.swift in Sources */,
+				B0A612B3228EDC7B00569DFE /* ButtonAttachment.swift in Sources */,
 				0ADDBC8B2249F617000BD00D /* ChatListViewCell.swift in Sources */,
 				0A4B11FE2373DC1400199310 /* TagsEditDialogView.swift in Sources */,
 				0A69D47F22A6552300769426 /* TopicInfoViewController.swift in Sources */,
@@ -710,6 +741,7 @@
 				B0F98C8322E381C300444121 /* MessageMenuItem.swift in Sources */,
 				B0A612B1228C85C300569DFE /* MessageViewLayout.swift in Sources */,
 				B0133AE523D1ACBD00C813CA /* SendImageBar.swift in Sources */,
+				B01D2C712794E1E0009543F2 /* AbstractFormatter.swift in Sources */,
 				B012599C229CEBE600688FCE /* SelectedMemberViewCell.swift in Sources */,
 				0AEE8BEE226456080022EC3F /* UiUtils.swift in Sources */,
 				0AC33D032293C7A00060D263 /* NewGroupViewController.swift in Sources */,
@@ -831,7 +863,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -889,7 +921,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -911,7 +943,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = Tinodios/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -936,7 +968,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = Tinodios/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -962,7 +994,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = TinodiosNSExtension/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -988,7 +1020,7 @@
 				CURRENT_PROJECT_VERSION = "Assigned by build script: `git rev-list HEAD --count`";
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = TinodiosNSExtension/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="18122" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="19529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="18093"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19519"/>
+        <capability name="Image references" minToolsVersion="12.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -12,6 +13,7 @@
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="ForwardMessageBar" customModule="Tinodios" customModuleProvider="target">
             <connections>
                 <outlet property="previewView" destination="N38-2J-nw1" id="Ij7-sg-a8q"/>
+                <outlet property="previewViewHeight" destination="sz7-PR-48B" id="Dqc-gv-8TA"/>
             </connections>
         </placeholder>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
@@ -46,18 +48,24 @@
                         <action selector="send:" destination="-1" eventType="touchUpInside" id="ofC-yl-FN1"/>
                     </connections>
                 </button>
-                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ql0-Xs-Vfe" userLabel="Cancel Preview Button">
-                    <rect key="frame" x="10" y="69" width="22" height="22"/>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ql0-Xs-Vfe" userLabel="Cancel Preview Button">
+                    <rect key="frame" x="8" y="67" width="26" height="26"/>
                     <constraints>
                         <constraint firstAttribute="width" secondItem="ql0-Xs-Vfe" secondAttribute="height" multiplier="1:1" id="sKk-L4-ddY"/>
                     </constraints>
-                    <state key="normal" image="x.circle" catalog="system"/>
+                    <state key="normal">
+                        <imageReference key="image" image="xmark.circle" catalog="system" symbolScale="large"/>
+                        <preferredSymbolConfiguration key="preferredSymbolConfiguration" scale="medium" weight="regular"/>
+                    </state>
                     <connections>
                         <action selector="cancelPreviewClicked:" destination="-1" eventType="touchUpInside" id="9Ih-uB-kDn"/>
                     </connections>
                 </button>
                 <textView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="redraw" editable="NO" textAlignment="natural" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="N38-2J-nw1" userLabel="Preview View" customClass="RichTextView" customModule="Tinodios" customModuleProvider="target">
-                    <rect key="frame" x="36" y="48" width="332" height="64"/>
+                    <rect key="frame" x="42" y="48" width="326" height="64"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="64" id="sz7-PR-48B"/>
+                    </constraints>
                     <color key="textColor" systemColor="labelColor"/>
                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                     <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
@@ -71,14 +79,13 @@
                 <constraint firstItem="tAT-EI-20d" firstAttribute="leading" secondItem="NHg-S4-bIP" secondAttribute="leading" id="1vD-mH-hpJ"/>
                 <constraint firstItem="tAT-EI-20d" firstAttribute="top" secondItem="vsm-5d-Xa0" secondAttribute="top" id="2WE-Hp-p0w"/>
                 <constraint firstItem="N38-2J-nw1" firstAttribute="centerY" secondItem="ql0-Xs-Vfe" secondAttribute="centerY" id="JoS-pj-rCx"/>
-                <constraint firstItem="N38-2J-nw1" firstAttribute="leading" secondItem="ql0-Xs-Vfe" secondAttribute="trailing" constant="4" id="KbU-az-zwW"/>
+                <constraint firstItem="N38-2J-nw1" firstAttribute="leading" secondItem="ql0-Xs-Vfe" secondAttribute="trailing" constant="8" id="KbU-az-zwW"/>
                 <constraint firstItem="NHg-S4-bIP" firstAttribute="bottom" secondItem="N38-2J-nw1" secondAttribute="bottom" constant="4" id="L0C-HM-RwP"/>
                 <constraint firstItem="TGw-6X-4Ag" firstAttribute="width" secondItem="TGw-6X-4Ag" secondAttribute="height" multiplier="1:1" id="Mwc-Wn-Bf3"/>
-                <constraint firstItem="ql0-Xs-Vfe" firstAttribute="leading" secondItem="NHg-S4-bIP" secondAttribute="leading" constant="10" id="Pdj-CD-Wqh"/>
+                <constraint firstItem="ql0-Xs-Vfe" firstAttribute="leading" secondItem="NHg-S4-bIP" secondAttribute="leading" constant="8" id="Pdj-CD-Wqh"/>
                 <constraint firstItem="N38-2J-nw1" firstAttribute="trailing" secondItem="TGw-6X-4Ag" secondAttribute="leading" constant="-4" id="R7Y-po-WgB"/>
                 <constraint firstItem="NHg-S4-bIP" firstAttribute="trailing" secondItem="TGw-6X-4Ag" secondAttribute="trailing" constant="10" id="XgX-aV-Xtg"/>
                 <constraint firstItem="tAT-EI-20d" firstAttribute="bottom" secondItem="vsm-5d-Xa0" secondAttribute="bottom" id="eAj-jo-XeG"/>
-                <constraint firstItem="ql0-Xs-Vfe" firstAttribute="width" secondItem="ql0-Xs-Vfe" secondAttribute="height" multiplier="1:1" id="hKi-k3-aBh"/>
                 <constraint firstItem="TGw-6X-4Ag" firstAttribute="centerY" secondItem="ql0-Xs-Vfe" secondAttribute="centerY" id="op5-oh-2iy"/>
                 <constraint firstItem="N38-2J-nw1" firstAttribute="top" secondItem="NHg-S4-bIP" secondAttribute="top" constant="4" id="qP3-iR-1dX"/>
                 <constraint firstItem="tAT-EI-20d" firstAttribute="trailing" secondItem="NHg-S4-bIP" secondAttribute="trailing" id="qYZ-xo-V4k"/>
@@ -89,7 +96,7 @@
     </objects>
     <resources>
         <image name="arrow-up-48" width="36" height="36"/>
-        <image name="x.circle" catalog="system" width="128" height="121"/>
+        <image name="xmark.circle" catalog="system" width="128" height="121"/>
         <systemColor name="labelColor">
             <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

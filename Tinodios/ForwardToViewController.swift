@@ -1,6 +1,8 @@
 //
 //  ForwardToViewController.swift
 //
+//  Copyright © 2019-2022 Tinode LLC. All rights reserved.
+//
 
 import TinodeSDK
 import UIKit
@@ -18,10 +20,7 @@ class ForwardToInteractor: FindInteractor {
         guard let topics = Utils.fetchTopics(archived: false) else { return [] }
         let finalTopics = topics.filter { $0.name != filterTopic }
         return finalTopics.map { (topic) -> ContactHolder in
-            return ContactHolder(
-                displayName: topic.pub?.fn,
-                image: topic.pub?.photo?.image(),
-                uniqueId: topic.name)
+            return ContactHolder(pub: topic.pub, uniqueId: topic.name)
         }
     }
 }

@@ -173,19 +173,19 @@ extension ChatListViewController {
         return cell
     }
 
-    override func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
+    override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         // Delete item at indexPath
-        let delete = UITableViewRowAction(style: .destructive, title: NSLocalizedString("Delete", comment: "Swipe action")) { (_, indexPath) in
+        let delete = UIContextualAction(style: .destructive, title: NSLocalizedString("Delete", comment: "Swipe action"), handler: { _,_,_ in
             let topic = self.topics[indexPath.row]
             self.interactor?.deleteTopic(topic.name)
-        }
-        let archive = UITableViewRowAction(style: .normal, title: NSLocalizedString("Archive", comment: "Swipe action")) { (_, indexPath) in
+        })
+        let archive = UIContextualAction(style: .normal, title: NSLocalizedString("Archive", comment: "Swipe action"), handler: { _,_,_ in
             let topic = self.topics[indexPath.row]
             self.interactor?.changeArchivedStatus(
                 forTopic: topic.name, archived: !topic.isArchived)
-        }
+        })
 
-        return [delete, archive]
+        return UISwipeActionsConfiguration(actions: [delete, archive])
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

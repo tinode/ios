@@ -14,13 +14,24 @@
  * limitations under the License.
  */
 
-#import "GoogleDataTransport/GDTCORLibrary/Public/GoogleDataTransport/GDTCORRegistrar.h"
+#import "GoogleDataTransport/GDTCORLibrary/Internal/GDTCORRegistrar.h"
 #import "GoogleDataTransport/GDTCORLibrary/Private/GDTCORRegistrar_Private.h"
 
 #import "GoogleDataTransport/GDTCORLibrary/Public/GoogleDataTransport/GDTCORConsoleLogger.h"
 
 id<GDTCORStorageProtocol> _Nullable GDTCORStorageInstanceForTarget(GDTCORTarget target) {
   return [GDTCORRegistrar sharedInstance].targetToStorage[@(target)];
+}
+
+FOUNDATION_EXPORT
+id<GDTCORStoragePromiseProtocol> _Nullable GDTCORStoragePromiseInstanceForTarget(
+    GDTCORTarget target) {
+  id storage = [GDTCORRegistrar sharedInstance].targetToStorage[@(target)];
+  if ([storage conformsToProtocol:@protocol(GDTCORStoragePromiseProtocol)]) {
+    return storage;
+  } else {
+    return nil;
+  }
 }
 
 @implementation GDTCORRegistrar {

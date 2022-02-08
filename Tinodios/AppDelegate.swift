@@ -2,11 +2,10 @@
 //  AppDelegate.swift
 //  ios
 //
-//  Copyright © 2019 Tinode. All rights reserved.
+//  Copyright © 2019-2022 Tinode LLC. All rights reserved.
 //
 
 import Firebase
-import FirebaseCrashlytics
 import Network
 import UIKit
 import TinodeSDK
@@ -181,8 +180,9 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
 }
 
 extension AppDelegate: MessagingDelegate {
-    func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String) {
+    func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
         // Update token. Send to the app server.
-        Cache.tinode.setDeviceToken(token: fcmToken)
+        guard let token = fcmToken else { return }
+        Cache.tinode.setDeviceToken(token: token)
     }
 }

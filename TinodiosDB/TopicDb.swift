@@ -55,6 +55,7 @@ public class TopicDb {
     public let creds: Expression<String?>
     public let pub: Expression<String?>
     public let priv: Expression<String?>
+    public let trusted: Expression<String?>
 
     private let baseDb: BaseDb!
 
@@ -85,6 +86,7 @@ public class TopicDb {
         self.creds = Expression<String?>("creds")
         self.pub = Expression<String?>("pub")
         self.priv = Expression<String?>("priv")
+        self.trusted = Expression<String?>("trusted")
     }
     func destroyTable() {
         try! self.db.run(self.table.dropIndex(accountId, topic, ifExists: true))
@@ -121,6 +123,7 @@ public class TopicDb {
             t.column(creds)
             t.column(pub)
             t.column(priv)
+            t.column(trusted)
         })
         try! db.run(self.table.createIndex(accountId, topic, unique: true, ifNotExists: true))
     }
@@ -147,6 +150,7 @@ public class TopicDb {
         topic.defacs = Defacs.deserialize(from: row[self.defacs])
         topic.deserializePub(from: row[self.pub])
         topic.deserializePriv(from: row[self.priv])
+        topic.deserializeTrusted(from: row[self.trusted])
         topic.payload = st
     }
     public func getId(topic: String?) -> Int64 {
@@ -236,7 +240,8 @@ public class TopicDb {
                     tags <- topic.tags?.joined(separator: ","),
                     creds <- (topic as? MeTopicProto)?.serializeCreds(),
                     pub <- topic.serializePub(),
-                    priv <- topic.serializePriv()
+                    priv <- topic.serializePriv(),
+                    trusted <- topic.serializeTrusted()
                 ))
             if rowid > 0 {
                 let st = StoredTopic()
@@ -281,6 +286,7 @@ public class TopicDb {
         }
         setters.append(self.pub <- topic.serializePub())
         setters.append(self.priv <- topic.serializePriv())
+        setters.append(self.trusted <- topic.serializeTrusted())
         if let touched = topic.touched {
             setters.append(self.lastUsed <- touched)
         }

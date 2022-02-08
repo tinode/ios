@@ -264,19 +264,6 @@ public class TagsEditView: UIScrollView {
         internalInit()
     }
 
-    deinit {
-        if #available(iOS 13, *) {
-            // Observers should be cleared when NSKeyValueObservation is deallocated.
-            // Let's just keep the code for older iOS versions unmodified to make
-            // sure we don't break anything.
-        } else {
-            if let observer = layerBoundsObserver {
-                removeObserver(observer, forKeyPath: "layer.bounds")
-                observer.invalidate()
-            }
-        }
-    }
-
     public override func willMove(toSuperview newSuperview: UIView?) {
         super.willMove(toSuperview: newSuperview)
         tagViews.forEach { $0.setNeedsLayout() }

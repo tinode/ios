@@ -74,7 +74,7 @@ class PermissionsEditViewController: UIViewController, UITableViewDelegate, UITa
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell")!
-        cell.backgroundColor = .groupTableViewBackground
+        cell.backgroundColor = .systemGroupedBackground
 
         let x = visiblePermissions[indexPath.row]
         cell.textLabel?.text = PermissionsEditViewController.kPermissions[x]

@@ -2,7 +2,7 @@
 //  ArchivedChatsTableViewController.swift
 //  Tinodios
 //
-//  Copyright © 2019 Tinode. All rights reserved.
+//  Copyright © 2019-2022 Tinode LLC. All rights reserved.
 //
 
 import UIKit
@@ -62,14 +62,16 @@ class ArchivedChatsTableViewController: UITableViewController {
             onFailure: UiUtils.ToastFailureHandler)
     }
 
-    override func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
-        let unarchive = UITableViewRowAction(style: .normal, title: NSLocalizedString("Unarchive", comment: "Swipe action")) { (_, indexPath) in
-            let topic = self.topics[indexPath.row]
-            self.unarchiveTopic(topic: topic)
-        }
+    override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let unarchive = UIContextualAction(style: .normal, title: NSLocalizedString("Unarchive", comment: "Swipe action"),
+            handler: { _,_,_ in
+                let topic = self.topics[indexPath.row]
+                self.unarchiveTopic(topic: topic)
+        })
 
-        return [unarchive]
+        return UISwipeActionsConfiguration(actions: [unarchive])
     }
+
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         self.performSegue(withIdentifier: "ArchivedChats2Messages",

@@ -17,41 +17,33 @@ Status: beta. Usable and mostly stable but bugs may happen.
 
 ### Completed
 
-* Login
-* Register new accounts.
-* Start new chats.
-* Edit personal details.
-* Edit chat parameters.
-* View the list of active chats
-* Send and receive plain text messages one-on-one or in group chats.
-* In-app presence notifications.
+* One-on-one conversations and group chats.
+* Channels with unlimited number of read-only subscribers.
 * Unread message counters.
-* Local data persistence.
-* Transport Level Security - https/wss.
-* Drafty: Markdown-style formatting of text, e.g. \*style\* → **style**.
-* Viewing attachments and inline images.
-* Delivery and received/read indicators for messages (little check marks in messages).
-* Muting/un-muting conversations and other permission management.
-* Invite contacts to the app by SMS or email.
-* Push notifications.
+* Push notifications and in-app presence notifications.
+* Message status notifications: message delivery to server; received and read notifications.
+* Markdown-style formatting of text, e.g. \*style\* → **style**.
+* Replying and forwarding messages.
+* Trusted account badges: verified account, staff, etc.
+* Form messages suitable for chatbots.
 * Attachments and inline images.
+* Muting/un-muting conversations and other granular permission management.
+* Integration with iOS's stock Contacts.
+* Invite contacts to the app by SMS or email.
+* Transport Level Security - https/wss.
+* Offline mode.
+
 
 ### Not Done Yet
 
 * Previews not generated for videos, audio, links or docs.
+* No voice or video messages. No video or audio calling.
 * Typing indicators.
 * No support for switching between multiple backends.
 * Mentions, hashtags.
-* Replying or forwarding messages.
 * End-to-End encryption.
 
 ## Dependencies
-
-### SDK
-
-* https://github.com/tidwall/SwiftWebSocket for websocket support
-
-### Application
 
 * [SQLite.swift](https://github.com/stephencelis/SQLite.swift) for convenience of SQLite use.
 * [SwiftKeychainWrapper](https://github.com/jrendel/SwiftKeychainWrapper) for convenience of Keychain access.
@@ -82,8 +74,8 @@ More translations are welcome. See [instructions](https://github.com/tinode/chat
 ## Other
 
 * Demo avatars and some other graphics are from https://www.pexels.com/ under [CC0](https://www.pexels.com/photo-license/) license.
-* Some iOS icons are from https://icons8.com/ under [CC BY-ND 3.0](https://icons8.com/license) license.
+* Some icons are from [SF Symbols](https://developer.apple.com/design/human-interface-guidelines/sf-symbols/overview/) under [Apple license](https://developer.apple.com/support/terms/): .
 
 ## Screenshots
 <img src="ios-chats.png" alt="App screenshot - chat list" width="207" /> <img src="ios-chat.png" alt="App screenshot - conversation" width="207" /> <img src="ios-acc-personal.png" alt="App screenshot - account settings" width="207" />
-<img src="ios-topic-info.png" alt="App screenshot - topic info" width="207" /> <img src="ios-find-people.png" alt="App screenshot - find people" width="207" />
+<img src="ios-topic-info.png" alt="App screenshot - topic info" width="207" /> <img src="ios-find-people.png" alt="App screenshot - find people" width="207" /> <img src="ios-forward-to.png" alt="App screenshot - forward message" width="207" />

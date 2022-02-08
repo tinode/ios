@@ -1,18 +1,18 @@
 //
 //  MessagePresenter.swift
-//  Tinodios
 //
-//  Copyright © 2019 Tinode. All rights reserved.
+//  Copyright © 2019-2022 Tinode LLC. All rights reserved.
 //
 
 import Foundation
 import UIKit
 
+import TinodeSDK
 import TinodiosDB
 
 protocol MessagePresentationLogic {
     func switchTopic(topic: String?)
-    func updateTitleBar(icon: UIImage?, title: String?, online: Bool?)
+    func updateTitleBar(pub: TheCard?, online: Bool?)
     func setOnline(online: Bool?)
     func runTypingAnimation()
     func presentMessages(messages: [StoredMessage], _ scrollToMostRecentMessage: Bool)
@@ -34,9 +34,9 @@ class MessagePresenter: MessagePresentationLogic {
         }
     }
 
-    func updateTitleBar(icon: UIImage?, title: String?, online: Bool?) {
+    func updateTitleBar(pub: TheCard?, online: Bool?) {
         DispatchQueue.main.async {
-            self.viewController?.updateTitleBar(icon: icon, title: title, online: online)
+            self.viewController?.updateTitleBar(pub: pub, online: online)
         }
     }
     func setOnline(online: Bool?) {

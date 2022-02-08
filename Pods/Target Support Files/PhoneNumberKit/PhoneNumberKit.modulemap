@@ -1,4 +1,4 @@
-framework module PhoneNumberKit {
+module PhoneNumberKit {
   umbrella header "PhoneNumberKit-umbrella.h"
 
   export *

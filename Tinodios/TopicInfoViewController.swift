@@ -1,8 +1,7 @@
 //
 //  TopicInfoViewController.swift
-//  Tinodios
 //
-//  Copyright © 2019 Tinode. All rights reserved.
+//  Copyright © 2019-2022 Tinode LLC. All rights reserved.
 //
 
 import UIKit
@@ -13,6 +12,9 @@ class TopicInfoViewController: UITableViewController {
 
     private static let kSectionBasic = 0
     private static let kSectionBasicLastSeen = 2
+    private static let kSectionBasicVerified = 3
+    private static let kSectionBasicStaff = 4
+    private static let kSectionBasicDanger = 5
 
     private static let kSectionMute = 1
 
@@ -69,7 +71,7 @@ class TopicInfoViewController: UITableViewController {
     private var tinode: Tinode!
     private var imagePicker: ImagePicker!
 
-    private var subscriptions: [Subscription<VCard, PrivateType>]?
+    private var subscriptions: [Subscription<TheCard, PrivateType>]?
 
     // Show row with Peer's permissions (p2p topic)
     private var showPeerPermissions: Bool = false
@@ -187,21 +189,16 @@ class TopicInfoViewController: UITableViewController {
         let subtitle = topic.comment ?? ""
         topicSubtitleTextView.text = !subtitle.isEmpty ? subtitle : NSLocalizedString("Private info: not set", comment: "Placeholder text in editor")
         topicSubtitleTextView.sizeToFit()
-        avatarImage.set(icon: topic.pub?.photo?.image(), title: topic.pub?.fn, id: topic?.name)
+        avatarImage.set(pub: topic.pub, id: topic?.name)
         avatarImage.letterTileFont = self.avatarImage.letterTileFont.withSize(CGFloat(50))
         mutedSwitch.isOn = topic.isMuted
         let acs = topic.accessMode
 
         if let ts = topic?.lastSeen?.when {
             var date: String
-            if #available(iOS 13.0, *) {
-                let formatter = RelativeDateTimeFormatter()
-                formatter.unitsStyle = .short
-                date = formatter.localizedString(for: ts, relativeTo: Date())
-            } else {
-                // Fallback on earlier versions
-                date = RelativeDateFormatter.shared.shortDate(from: ts)
-            }
+            let formatter = RelativeDateTimeFormatter()
+            formatter.unitsStyle = .short
+            date = formatter.localizedString(for: ts, relativeTo: Date())
 
             self.lastSeenTimestampLabel?.text = date
         }
@@ -272,10 +269,10 @@ class TopicInfoViewController: UITableViewController {
     }
 
     private func updateTitles(newTitle: String?, newSubtitle: String?) {
-        var pub: VCard?
+        var pub: TheCard?
         if let nt = newTitle {
             if let oldPub = topic.pub, oldPub.fn != nt {
-                pub = VCard(fn: String(nt.prefix(UiUtils.kMaxTitleLength)), avatar: nil as Data?)
+                pub = TheCard(fn: String(nt.prefix(UiUtils.kMaxTitleLength)))
             }
         }
         var priv: PrivateType?
@@ -286,7 +283,7 @@ class TopicInfoViewController: UITableViewController {
             }
         }
         if pub != nil || priv != nil {
-            UiUtils.setTopicData(forTopic: topic, pub: pub, priv: priv)?.thenFinally {
+            UiUtils.setTopicData(forTopic: topic, pub: pub, priv: priv).thenFinally {
                 DispatchQueue.main.async { self.reloadData() }
             }
         }
@@ -364,7 +361,7 @@ class TopicInfoViewController: UITableViewController {
             "action": JSONValue.string("report"),
             "target": JSONValue.string(self.topic.name)
             ])
-        _ = Cache.tinode.publish(topic: Tinode.kTopicSys, head: Tinode.draftyHeaders(for: msg), content: msg)
+        _ = Cache.tinode.publish(topic: Tinode.kTopicSys, head: ["mime": .string(Drafty.kJSONMimeType)], content: msg, attachments: nil)
     }
 
     @objc func deleteGroupClicked(sender: UITapGestureRecognizer) {
@@ -461,6 +458,7 @@ class TopicInfoViewController: UITableViewController {
     }
 
     private func promiseSuccessHandler(msg: ServerMessage?) throws -> PromisedReply<ServerMessage>? {
+        Cache.log.debug("promiseSuccessHandler - avatar update succeseeded")
         DispatchQueue.main.async { self.reloadData() }
         return nil
     }
@@ -489,8 +487,13 @@ extension TopicInfoViewController {
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if indexPath.section == TopicInfoViewController.kSectionMembers && indexPath.row != 0 {
             return 60
-        } else if indexPath.section == TopicInfoViewController.kSectionBasic && indexPath.row == TopicInfoViewController.kSectionBasicLastSeen && topic?.lastSeen == nil {
-            return CGFloat.leastNonzeroMagnitude
+        } else if indexPath.section == TopicInfoViewController.kSectionBasic {
+            if (indexPath.row == TopicInfoViewController.kSectionBasicLastSeen && topic?.lastSeen == nil) ||
+                (indexPath.row == TopicInfoViewController.kSectionBasicVerified && !(topic?.isVerified ?? false)) ||
+                (indexPath.row == TopicInfoViewController.kSectionBasicStaff && !(topic?.isStaffManaged ?? false)) ||
+                (indexPath.row == TopicInfoViewController.kSectionBasicDanger && !(topic?.isDangerous ?? false)) {
+                return CGFloat.leastNonzeroMagnitude
+            }
         } else if indexPath.section == TopicInfoViewController.kSectionActions {
             if indexPath.row == TopicInfoViewController.kSectionActionsManageTags && (!(topic?.isGrpType ?? false) || !(topic?.isOwner ?? false)) {
                 // P2P topic has no owner, hide [Manage Tags]
@@ -626,7 +629,7 @@ extension TopicInfoViewController {
         let isMe = self.tinode.isMe(uid: uid)
         let pub = sub.pub
 
-        cell.avatar.set(icon: pub?.photo?.image(), title: pub?.fn, id: uid)
+        cell.avatar.set(pub: pub, id: uid)
         cell.title.text = isMe ? NSLocalizedString("You", comment: "This is 'you'") : (pub?.fn ?? NSLocalizedString("Unknown", comment: "Placeholder for missing user name"))
         cell.title.sizeToFit()
         cell.subtitle.text = sub.acs?.givenString
@@ -729,7 +732,7 @@ extension TopicInfoViewController {
 extension TopicInfoViewController: EditMembersDelegate {
     func editMembersInitialSelection(_: UIView) -> [ContactHolder] {
         return subscriptions?.compactMap {
-            return ContactHolder(displayName: $0.pub?.fn, image: $0.pub?.photo?.image(), uniqueId: $0.user)
+            return ContactHolder(pub: $0.pub, uniqueId: $0.user)
         } ?? []
     }
 
@@ -749,9 +752,7 @@ extension TopicInfoViewController: EditMembersDelegate {
 
 extension TopicInfoViewController: ImagePickerDelegate {
     func didSelect(image: UIImage?, mimeType: String?, fileName: String?) {
-        guard let image = image?.resize(width: UiUtils.kAvatarSize, height: UiUtils.kAvatarSize, clip: true) else {
-            return
-        }
-        UiUtils.updateAvatar(forTopic: self.topic, image: image)?.then(onSuccess: self.promiseSuccessHandler)
+        UiUtils.updateAvatar(forTopic: self.topic, image: image)
+            .thenApply(self.promiseSuccessHandler)
     }
 }

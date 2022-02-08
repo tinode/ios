@@ -1,8 +1,7 @@
 //
 //  NewGroupViewController.swift
-//  Tinodios
 //
-//  Copyright © 2019 Tinode. All rights reserved.
+//  Copyright © 2019-2022 Tinode LLC. All rights reserved.
 //
 
 import UIKit
@@ -24,7 +23,7 @@ class NewGroupViewController: UITableViewController {
     private var selectedUids = Set<String>()
     var selectedMembers: [String] { return selectedUids.map { $0 } }
 
-    private var imageUploaded: Bool = false
+    private var avatarReceived: Bool = false
 
     private var imagePicker: ImagePicker!
 
@@ -81,6 +80,7 @@ class NewGroupViewController: UITableViewController {
         return section == 0 ? super.tableView(tableView, numberOfRowsInSection: 0) : selectedContacts.count + 1
     }
 
+    // Group members.
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard indexPath.section == 1 && indexPath.row > 0 else { return super.tableView(tableView, cellForRowAt: indexPath) }
 
@@ -89,8 +89,8 @@ class NewGroupViewController: UITableViewController {
         // Configure the cell...
         let contact = selectedContacts[indexPath.row - 1]
 
-        cell.avatar.set(icon: contact.image, title: contact.displayName, id: contact.uniqueId)
-        cell.title.text = contact.displayName
+        cell.avatar.set(pub: contact.pub, id: contact.uniqueId)
+        cell.title.text = contact.pub?.fn
         cell.title.sizeToFit()
         cell.subtitle.text = contact.subtitle ?? contact.uniqueId
         cell.subtitle.sizeToFit()
@@ -137,7 +137,7 @@ class NewGroupViewController: UITableViewController {
         // Optional
         let privateInfo = String((privateTextField.text ?? "").trimmingCharacters(in: .whitespacesAndNewlines).prefix(UiUtils.kMaxTitleLength))
         guard !groupName.isEmpty else { return }
-        let avatar = imageUploaded ? avatarView.image?.resize(width: CGFloat(Float(UiUtils.kAvatarSize)), height: CGFloat(Float(UiUtils.kAvatarSize)), clip: true) : nil
+        let avatar = avatarReceived ? avatarView.image?.resize(width: CGFloat(UiUtils.kMaxAvatarSize), height: CGFloat(UiUtils.kMaxAvatarSize), clip: true) : nil
         createGroupTopic(titled: groupName, subtitled: privateInfo, with: tagsTextField.tags, consistingOf: members, withAvatar: avatar, asChannel: channelSwitch.isOn)
     }
 
@@ -159,24 +159,49 @@ class NewGroupViewController: UITableViewController {
     }
 
     private func createGroupTopic(titled name: String, subtitled subtitle: String, with tags: [String]?, consistingOf members: [String], withAvatar avatar: UIImage?, asChannel isChannel: Bool) {
-
         let topic = DefaultComTopic(in: Cache.tinode, forwardingEventsTo: nil, isChannel: isChannel)
-        topic.pub = VCard(fn: name, avatar: avatar)
-        topic.priv = ["comment": .string(subtitle)] // No need to use Tinode.kNullValue here
-        topic.tags = tags
-        topic.subscribe().then(
-            onSuccess: { _ in
-                for u in members {
-                    topic.invite(user: u, in: nil)
-                }
-                // Need to unsubscribe because routing to MessageVC (below)
-                // will subscribe to the topic again.
-                topic.leave()
-                // Route to chat.
-                self.presentChat(with: topic.name)
-                return nil
-            },
-            onFailure: UiUtils.ToastFailureHandler)
+        func doCreate(pub: TheCard) {
+            topic.pub = pub
+            topic.priv = ["comment": .string(subtitle)] // No need to use Tinode.kNullValue here
+            topic.tags = tags
+            topic.subscribe().then(
+                onSuccess: { _ in
+                    for u in members {
+                        topic.invite(user: u, in: nil)
+                    }
+                    // Need to unsubscribe because routing to MessageVC (below)
+                    // will subscribe to the topic again.
+                    topic.leave()
+                    // Route to chat.
+                    self.presentChat(with: topic.name)
+                    return nil
+                },
+                onFailure: UiUtils.ToastFailureHandler)
+        }
+
+        guard let avatar = avatar?.resize(width: UiUtils.kMaxAvatarSize, height: UiUtils.kMaxAvatarSize, clip: true), avatar.size.width >= UiUtils.kMinAvatarSize && avatar.size.height >= UiUtils.kMinAvatarSize else {
+            doCreate(pub: TheCard(fn: name))
+            return
+        }
+
+        if let imageBits = avatar.pixelData(forMimeType: Photo.kDefaultType) {
+            if imageBits.count > UiUtils.kMaxInbandAvatarBytes {
+                // Sending image out of band.
+                Cache.getLargeFileHelper().startAvatarUpload(mimetype: Photo.kDefaultType, data: imageBits, topicId: topic.name, completionCallback: {(srvmsg, error) in
+                    guard let error = error else {
+                        let thumbnail = avatar.resize(width: UiUtils.kAvatarPreviewDimensions, height: UiUtils.kAvatarPreviewDimensions, clip: true)
+                        let photo = Photo(data: thumbnail?.pixelData(forMimeType: Photo.kDefaultType), ref: srvmsg?.ctrl?.getStringParam(for: "url"), width: Int(avatar.size.width), height: Int(avatar.size.height))
+                        doCreate(pub: TheCard(fn: name, avatar: photo))
+                        return
+                    }
+                    UiUtils.ToastFailureHandler(err: error)
+                })
+            } else {
+                doCreate(pub: TheCard(fn: name, avatar: avatar))
+            }
+        } else {
+            UiUtils.ToastFailureHandler(err: ImageProcessingError.invalidImage)
+        }
     }
 }
 
@@ -222,11 +247,9 @@ extension NewGroupViewController: EditMembersDelegate {
 
 extension NewGroupViewController: ImagePickerDelegate {
     func didSelect(image: UIImage?, mimeType: String?, fileName: String?) {
-        guard let image = image?.resize(width: CGFloat(UiUtils.kAvatarSize), height: CGFloat(UiUtils.kAvatarSize), clip: true) else {
-            return
-        }
+        guard let image = image?.resize(width: CGFloat(UiUtils.kMaxAvatarSize), height: CGFloat(UiUtils.kMaxAvatarSize), clip: true) else { return }
 
         self.avatarView.image = image
-        imageUploaded = true
+        avatarReceived = true
     }
 }

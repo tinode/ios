@@ -1,8 +1,7 @@
 //
 //  ChatListTableViewCell.swift
-//  Tinodios
 //
-//  Copyright © 2019 Tinode. All rights reserved.
+//  Copyright © 2019-2022 Tinode LLC. All rights reserved.
 //
 
 import UIKit
@@ -26,6 +25,12 @@ class ChatListViewCell: UITableViewCell {
     @IBOutlet weak var channelIndicatorWidth: NSLayoutConstraint!
     @IBOutlet weak var iconMessageStatus: UIImageView!
     @IBOutlet weak var iconMessageStatusWidth: NSLayoutConstraint!
+    @IBOutlet weak var badgeVerified: UIImageView!
+    @IBOutlet weak var badgeVerifiedWidth: NSLayoutConstraint!
+    @IBOutlet weak var badgeStaff: UIImageView!
+    @IBOutlet weak var badgeStaffWidth: NSLayoutConstraint!
+    @IBOutlet weak var badgeDanger: UIImageView!
+    @IBOutlet weak var badgeDangerWidth: NSLayoutConstraint!
 
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -70,6 +75,28 @@ class ChatListViewCell: UITableViewCell {
             channelIndicatorWidth.constant = .leastNonzeroMagnitude
         }
 
+        if topic.isVerified {
+            badgeVerified.isHidden = false
+            badgeVerifiedWidth.constant = ChatListViewCell.kIconWidth
+        } else {
+            badgeVerified.isHidden = true
+            badgeVerifiedWidth.constant = .leastNonzeroMagnitude
+        }
+        if topic.isStaffManaged {
+            badgeStaff.isHidden = false
+            badgeStaffWidth.constant = ChatListViewCell.kIconWidth
+        } else {
+            badgeStaff.isHidden = true
+            badgeStaffWidth.constant = .leastNonzeroMagnitude
+        }
+        if topic.isDangerous {
+            badgeDanger.isHidden = false
+            badgeDangerWidth.constant = ChatListViewCell.kIconWidth
+        } else {
+            badgeDanger.isHidden = true
+            badgeDangerWidth.constant = .leastNonzeroMagnitude
+        }
+
         let unread = topic.unread
         if unread > 0 {
             unreadCount.text = unread > 9 ? "9+" : String(unread)
@@ -86,6 +113,6 @@ class ChatListViewCell: UITableViewCell {
         iconMuted.isHidden = !topic.isMuted
 
         // Avatar image
-        icon.set(icon: topic.pub?.photo?.image(), title: topic.pub?.fn, id: topic.name, online: topic.isChannel ? nil : topic.online)
+        icon.set(pub: topic.pub, id: topic.name, online: topic.isChannel ? nil : topic.online)
     }
 }

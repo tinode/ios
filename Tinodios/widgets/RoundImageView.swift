@@ -1,14 +1,14 @@
 //
 //  RoundImageView.swift
-//  Tinodios
 //
-//  Copyright © 2019 Tinode. All rights reserved.
+//  Copyright © 2019-2022 Tinode LLC. All rights reserved.
 //
 
-// Implementation of a circular image view with either an image or letters
+// Circular image view with either an image or letters.
 
-import TinodeSDK
 import UIKit
+import TinodeSDK
+import Kingfisher
 
 @IBDesignable class RoundImageView: UIImageView {
     internal enum Constants {
@@ -75,7 +75,7 @@ import UIKit
             setCornerRadius()
             if let initials = initials {
                 // Rescale letters on size changes.
-                image = getImageFrom(initials: initials)
+                image = letterTileImage(initials: initials)
             }
         }
     }
@@ -96,13 +96,23 @@ import UIKit
         self.init(frame: .zero)
     }
 
-    convenience public init(icon: UIImage?, title: String?, id: String?) {
-        self.init(frame: .zero)
-        self.set(icon: icon, title: title, id: id)
-    }
+    public func set(pub: TheCard?, id: String?) {
+        if let ref = pub?.photo?.ref, let url = URL(string: ref, relativeTo: Cache.tinode.baseURL(useWebsocketProtocol: false)) {
+            let modifier = AnyModifier { request in
+                var request = request
+                LargeFileHelper.addCommonHeaders(to: &request, using: Cache.tinode)
+                return request
+            }
 
-    public func set(icon: UIImage?, title: String?, id: String?) {
-        if let icon = icon {
+            KingfisherManager.shared.retrieveImage(with: url.downloadURL, options: [.requestModifier(modifier)], completionHandler: { result in
+                if case .success(let value) = result {
+                    self.image = value.image
+                }
+                // Ignoring the error: just keep the placeholder image.
+            })
+        }
+
+        if let icon = pub?.photo?.image {
             // Avatar image provided.
             self.image = icon
             // Clear background color.
@@ -116,7 +126,7 @@ import UIKit
                 }
             }
 
-            if let title = title, !title.isEmpty {
+            if let title = pub?.fn, !title.isEmpty {
                 // No avatar image but have avatar name, show initial.
                 self.letterTileFont = UIFont.preferredFont(forTextStyle: .title2)
                 let (fg, bg) = RoundImageView.selectBackground(id: id, dark: iconType == .p2p)
@@ -147,10 +157,10 @@ import UIKit
 
     private func setImageFrom(initials: String?) {
         guard let initials = initials else { return }
-        image = getImageFrom(initials: initials)
+        image = letterTileImage(initials: initials)
     }
 
-    private func getImageFrom(initials: String) -> UIImage {
+    private func letterTileImage(initials: String) -> UIImage {
         let width = frame.width
         let height = frame.height
         if width == 0 || height == 0 { return UIImage() }

@@ -21,6 +21,8 @@ extern NSString *const FIRCLSReportExceptionFile;
 extern NSString *const FIRCLSReportCustomExceptionAFile;
 extern NSString *const FIRCLSReportCustomExceptionBFile;
 extern NSString *const FIRCLSReportSignalFile;
+extern NSString *const FIRCLSMetricKitFatalReportFile;
+extern NSString *const FIRCLSMetricKitNonfatalReportFile;
 #if CLS_MACH_EXCEPTION_SUPPORTED
 extern NSString *const FIRCLSReportMachExceptionFile;
 #endif
@@ -49,7 +51,7 @@ extern NSString *const FIRCLSReportUserCompactedKVFile;
 
 @property(nonatomic, copy, readonly) NSString *directoryName;
 @property(nonatomic, copy) NSString *path;
-@property(nonatomic, assign, readonly) BOOL needsToBeSubmitted;
+@property(nonatomic, assign, readonly) BOOL hasAnyEvents;
 
 // content paths
 @property(nonatomic, copy, readonly) NSString *binaryImagePath;

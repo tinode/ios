@@ -20,6 +20,9 @@ public class PaddedLabel: UILabel {
     @IBInspectable var rightInset: CGFloat = 0.0 {
         didSet { updateInsets() }
     }
+    @IBInspectable var cornerRadius: CGFloat = 0.0 {
+        didSet { updateCornerRadius() }
+    }
 
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
@@ -33,6 +36,11 @@ public class PaddedLabel: UILabel {
 
     private func updateInsets() {
         textInsets = UIEdgeInsets(top: topInset, left: leftInset, bottom: bottomInset, right: rightInset)
+    }
+
+    private func updateCornerRadius() {
+        layer.cornerRadius = cornerRadius
+        setNeedsDisplay()
     }
 
     public var textInsets: UIEdgeInsets = .zero {

@@ -1,0 +1,1 @@
+../../../FirebaseMessaging/Interop/Analytics/Public/FIRAnalyticsInterop.h

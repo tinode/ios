@@ -1,4 +1,4 @@
-framework module Pods_TinodeSDKTests {
+module Pods_TinodeSDKTests {
   umbrella header "Pods-TinodeSDKTests-umbrella.h"
 
   export *

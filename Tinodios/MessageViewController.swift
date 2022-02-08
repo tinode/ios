@@ -1,8 +1,7 @@
 //
 //  MessageViewController.swift
-//  Tinodios
 //
-//  Copyright © 2019 Tinode. All rights reserved.
+//  Copyright © 2019-2022 Tinode LLC. All rights reserved.
 //
 
 import UIKit
@@ -11,7 +10,7 @@ import TinodiosDB
 
 protocol MessageDisplayLogic: AnyObject {
     func switchTopic(topic: String?)
-    func updateTitleBar(icon: UIImage?, title: String?, online: Bool?)
+    func updateTitleBar(pub: TheCard?, online: Bool?)
     func setOnline(online: Bool?)
     func runTypingAnimation()
     func displayChatMessages(messages: [StoredMessage], _ scrollToMostRecentMessage: Bool)
@@ -52,7 +51,7 @@ class MessageViewController: UIViewController {
         static let kProgressBarRightPadding: CGFloat = 25
 
         // Light/dark gray color: outgoing messages
-        static let kOutgoingBubbleColorLight = UIColor(red: 230/255, green: 230/255, blue: 230/255, alpha: 1)
+        static let kOutgoingBubbleColorLight = UIColor(red: 244/255, green: 244/255, blue: 244/255, alpha: 1)
         static let kOutgoingBubbleColorDark = UIColor(red: 51/255, green: 51/255, blue: 51/255, alpha: 1)
         // And corresponding text color
         static let kOutgoingTextColorLight = UIColor.darkText
@@ -312,7 +311,7 @@ class MessageViewController: UIViewController {
         // Setup UICollectionView constraints: fill the screen
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         let top = collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor) // FIXME: maybe it needs some spacing
-        let bottom = collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+        let bottom = collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -(inputAccessoryView?.frame.height ?? 0))
         let leading = collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor)
         let trailing = collectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor)
         NSLayoutConstraint.activate([top, bottom, trailing, leading])
@@ -339,6 +338,8 @@ class MessageViewController: UIViewController {
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
+
+        collectionView.contentInset.bottom = inputAccessoryView?.frame.height ?? 0
 
         // Otherwise setting contentInset after viewDidAppear will be animated.
         if isInitialLayout {
@@ -476,11 +477,11 @@ extension MessageViewController: MessageDisplayLogic {
         topicName = topic
     }
 
-    func updateTitleBar(icon: UIImage?, title: String?, online: Bool?) {
+    func updateTitleBar(pub: TheCard?, online: Bool?) {
         assert(Thread.isMainThread)
-        self.navigationItem.title = title ?? NSLocalizedString("Undefined", comment: "Undefined chat name")
+        self.navigationItem.title = pub?.fn ?? NSLocalizedString("Undefined", comment: "Undefined chat name")
 
-        navBarAvatarView.set(icon: icon, title: title, id: topicName, online: online)
+        navBarAvatarView.set(pub: pub, id: topicName, online: online)
         navBarAvatarView.bounds = CGRect(x: 0, y: 0, width: Constants.kNavBarAvatarSmallState, height: Constants.kNavBarAvatarSmallState)
 
         navBarAvatarView.translatesAutoresizingMaskIntoConstraints = false
@@ -689,11 +690,7 @@ extension MessageViewController: UICollectionViewDataSource {
         cell.avatarView.frame = attributes.avatarFrame
         if attributes.avatarFrame != .zero {
             // The avatar image should be assigned after setting the size. Otherwise it may be drawn twice.
-            if let sub = topic?.getSubscription(for: message.from) {
-                cell.avatarView.set(icon: sub.pub?.photo?.image(), title: sub.pub?.fn, id: message.from)
-            } else {
-                cell.avatarView.set(icon: nil, title: nil, id: message.from)
-            }
+            cell.avatarView.set(pub: topic?.getSubscription(for: message.from)?.pub, id: message.from)
         }
 
         // Sender name under the avatar.
@@ -1099,10 +1096,8 @@ extension MessageViewController: MessageCellDelegate {
                 handleButtonPost(in: cell, using: url)
             case "/small-attachment":
                 handleSmallAttachment(in: cell, using: url)
-                Cache.log.debug("MessageViewController - small attachment: %@", url.description)
             case "/large-attachment":
                 handleLargeAttachment(in: cell, using: url)
-                Cache.log.debug("MessageViewController - large attachment: %@", url.description)
             case "/preview-image":
                 showImagePreview(in: cell, draftyEntityKey: Int(url.extractQueryParam(named: "key") ?? ""))
             case "/quote":
@@ -1148,11 +1143,8 @@ extension MessageViewController: MessageCellDelegate {
 
         UIMenuController.shared.menuItems = menuItems
 
-        // Tell the menu controller the first responder's frame and its super view
-        UIMenuController.shared.setTargetRect(cell.content.frame, in: cell.containerView)
-
-        // Animate the menu onto view
-        UIMenuController.shared.setMenuVisible(true, animated: true)
+        // Show the menu.
+        UIMenuController.shared.showMenu(from: cell.containerView, rect: cell.content.frame)
 
         // Capture menu dismissal
         NotificationCenter.default.addObserver(self, selector: #selector(willHidePopupMenu), name: UIMenuController.willHideMenuNotification, object: nil)
@@ -1186,10 +1178,8 @@ extension MessageViewController: MessageCellDelegate {
         let maxWidth = sendMessageBar.previewMaxWidth
         let maxHeight = collectionView.frame.height
         // Make sure it's properly formatted.
-        let formattedPreview = AttributedStringFormatter.toAttributed(
-            content, fitIn: CGSize(width: maxWidth, height: maxHeight),
-            fmt: ReplyFormatter.self)
-        self.togglePreviewBar(with: formattedPreview)
+        let replyPreview = SendReplyFormatter(defaultAttributes: [:]).toAttributed(content, fitIn: CGSize(width: maxWidth, height: maxHeight))
+        self.togglePreviewBar(with: replyPreview)
     }
 
     @objc func showReplyPreview(sender: UIMenuController) {
@@ -1200,7 +1190,7 @@ extension MessageViewController: MessageCellDelegate {
                 DispatchQueue.main.async { self.showInPreviewBar(content: value) }
                 return nil
             }, onFailure: { err in
-                DispatchQueue.main.async { UiUtils.showToast(message: "Failed to prepare reply: \(err)") }
+                DispatchQueue.main.async { UiUtils.showToast(message: "Failed to create reply: \(err)") }
                 return nil
             })
         }

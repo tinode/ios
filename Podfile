@@ -12,30 +12,14 @@ workspace 'Tinodios'
 project 'Tinodios'
 project 'TinodeSDK'
 
-def sdk_pods
-    pod 'SwiftWebSocket', '~> 2.7.0'
-end
 
 def db_pods
-    pod 'SQLite.swift', '~> 0.12.2'
-    pod 'SwiftKeychainWrapper', '~> 3.2'
-end
-
-def ui_pods
-    pod 'Firebase/Messaging'
-    pod 'Firebase/Analytics'
-    pod 'PhoneNumberKit', '~> 3.1'
-    pod 'Kingfisher', '~> 5.0'
-end
-
-target 'TinodeSDK' do
-    project 'TinodeSDK'
-    sdk_pods
+  pod 'SQLite.swift', '~> 0.12.2'
+  pod 'SwiftKeychainWrapper', '~> 3.2'
 end
 
 target 'TinodeSDKTests' do
-    project 'TinodeSDK'
-    sdk_pods
+  project 'TinodeSDK'
 end
 
 target 'TinodiosDB' do
@@ -45,11 +29,14 @@ end
 
 target 'Tinodios' do
     project 'Tinodios'
-    sdk_pods
-    ui_pods
     db_pods
-    # Crashlytics
-    pod 'Firebase/Crashlytics'
+    pod 'Firebase'
+    pod 'FirebaseCore'
+    pod 'FirebaseMessaging'
+    pod 'FirebaseAnalytics'
+    pod 'PhoneNumberKit', '~> 3.1'
+    pod 'Kingfisher', '~> 5.0'
+    pod 'FirebaseCrashlytics'
 end
 
 post_install do | installer |

@@ -37,15 +37,21 @@ public protocol TopicProto: AnyObject {
     var isBlocked: Bool { get }
     var isReader: Bool { get }
     var isMuted: Bool { get }
+    var isVerified: Bool { get }
+    var isStaffManaged: Bool { get }
+    var isDangerous: Bool { get }
     var unread: Int { get }
     var latestMessage: Message? { get set }
 
     func serializePub() -> String?
     func serializePriv() -> String?
+    func serializeTrusted() -> String?
     @discardableResult
     func deserializePub(from data: String?) -> Bool
     @discardableResult
     func deserializePriv(from data: String?) -> Bool
+    @discardableResult
+    func deserializeTrusted(from data: String?) -> Bool
     func topicLeft(unsub: Bool?, code: Int?, reason: String?)
 
     func updateAccessMode(ac: AccessChange?) -> Bool
@@ -291,6 +297,10 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
         get { return description.priv }
         set { description.priv = newValue }
     }
+    public var trusted: TrustedType? {
+        get { return description.trusted }
+        set { description.trusted = newValue }
+    }
     public var attached = false
     weak public var listener: Listener?
     // Cache of topic subscribers indexed by userID
@@ -380,6 +390,10 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
     public var isArchived: Bool {
         return false
     }
+
+    public var isVerified: Bool { return description.trusted?.isVerified ?? false }
+    public var isStaffManaged: Bool { return description.trusted?.isStaffManaged ?? false }
+    public var isDangerous: Bool { return description.trusted?.isDangerous ?? false }
 
     // Returns the maximum recv and read values across all subscriptions
     // that are not "me" (this user).
@@ -472,6 +486,10 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
         guard let p = priv else { return nil }
         return Tinode.serializeObject(p)
     }
+    public func serializeTrusted() -> String? {
+        guard let t = trusted else { return nil }
+        return Tinode.serializeObject(t)
+    }
     public func deserializePub(from data: String?) -> Bool {
         if let p: DP = Tinode.deserializeObject(from: data) {
             description.pub = p
@@ -482,6 +500,13 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
     public func deserializePriv(from data: String?) -> Bool {
         if let p: DR = Tinode.deserializeObject(from: data) {
             description.priv = p
+            return true
+        }
+        return false
+    }
+    public func deserializeTrusted(from data: String?) -> Bool {
+        if let t: TrustedType = Tinode.deserializeObject(from: data) {
+            description.trusted = t
             return true
         }
         return false
@@ -509,7 +534,7 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
     }
 
     @discardableResult
-    public func subscribe() -> PromisedReply<ServerMessage> {
+    func subscribe() -> PromisedReply<ServerMessage> {
         var setMsg: MsgSetMeta<DP, DR>?
         var getMsg: MsgGetMeta?
         if isNew {
@@ -928,6 +953,9 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
     }
 
     public func setMeta(meta: MsgSetMeta<DP, DR>) -> PromisedReply<ServerMessage> {
+        if let theCard = meta.desc?.pub as? TheCard {
+            meta.desc?.attachments = theCard.photoRefs
+        }
         return tinode!.setMeta(for: self.name, meta: meta).thenApply({ msg in
             if let ctrl = msg?.ctrl, ctrl.code < ServerMessage.kStatusMultipleChoices {
                 self.update(ctrl: ctrl, meta: meta)
@@ -935,12 +963,15 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
             return nil
         })
     }
+
     public func setDescription(desc: MetaSetDesc<DP, DR>) -> PromisedReply<ServerMessage> {
         return setMeta(meta: MsgSetMeta<DP, DR>(desc: desc, sub: nil, tags: nil, cred: nil))
     }
+
     public func setDescription(pub: DP?, priv: DR?) -> PromisedReply<ServerMessage> {
         return setDescription(desc: MetaSetDesc<DP, DR>(pub: pub, priv: priv))
     }
+
     public func updateDefacs(auth: String?, anon: String?) -> PromisedReply<ServerMessage> {
         let newdacs: Defacs
         if let olddacs = self.defacs {
@@ -1172,13 +1203,22 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
             self.latestMessage = msg
         }
     }
+
     private func publishInternal(content: Drafty, head: [String: JSONValue]?, msgId: Int64) -> PromisedReply<ServerMessage> {
         var headers = head
-        if content.isPlain && headers?["mime"] != nil {
+        var attachments: [String]?
+        if content.isPlain {
             // Plain text content should not have "mime" header. Clear it.
             headers?.removeValue(forKey: "mime")
+        } else {
+            if headers == nil {
+                headers = [:]
+            }
+            headers!["mime"] = .string(Drafty.kMimeType)
+            attachments = content.entReferences
         }
-        return tinode!.publish(topic: name, head: headers, content: content).then(
+
+        return tinode!.publish(topic: name, head: headers, content: content, attachments: attachments).then(
             onSuccess: { [weak self] msg in
                 self?.processDelivery(ctrl: msg?.ctrl, id: msgId)
                 return nil
@@ -1188,32 +1228,34 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
                 throw err
             })
     }
+
+    /// Publish content to topic.
+    ///
+    /// - Parameters
+    ///   - content: message content to publish
+    ///   - withExtraHeaders: additional message headers, such as `reply` and `forwarded`; `mime: text/x-drafty` header is added automatically.
+    /// - Returns: `PromisedReply` of the reply `ctrl` message
     public func publish(content: Drafty, withExtraHeaders extraHeaders: [String: JSONValue]? = nil) -> PromisedReply<ServerMessage> {
-        var head = !content.isPlain ? Tinode.draftyHeaders(for: content) : nil
-        if let extra = extraHeaders {
-            head = head ?? [:]
-            // Break conflicts by taking values from extras.
-            head!.merge(extra) { (_, new) in new }
-        }
         var id: Int64 = -1
         if let s = store {
-            if let msg = s.msgSend(topic: self, data: content, head: head) {
+            if let msg = s.msgSend(topic: self, data: content, head: extraHeaders) {
                 self.latestMessage = msg
                 id = msg.msgId
             }
         }
         if attached {
-            return publishInternal(content: content, head: head, msgId: id)
+            return publishInternal(content: content, head: extraHeaders, msgId: id)
         } else {
             return subscribe()
                 .thenApply({ [weak self] _ in
-                    return self?.publishInternal(content: content, head: head, msgId: id)
+                    return self?.publishInternal(content: content, head: extraHeaders, msgId: id)
                 }).thenCatch({ [weak self] err in
                     self?.store?.msgSyncing(topic: self!, dbMessageId: id, sync: false)
                     throw err
                 })
         }
     }
+
     private func sendPendingDeletes(hard: Bool) -> PromisedReply<ServerMessage>? {
         if let pendingDeletes = self.store?.getQueuedMessageDeletes(topic: self, hard: hard), !pendingDeletes.isEmpty {
             return self.tinode!.delMessage(

@@ -11,6 +11,10 @@ import UIKit
 class SettingsPersonalViewController: UITableViewController {
 
     private static let kSectionPersonal = 0
+    private static let kPersonalVerified = 3
+    private static let kPersonalStaff = 4
+    private static let kPersonalDanger = 5
+
     private static let kSectionContacts = 1
     private static let kSectionTags = 2
 
@@ -67,9 +71,8 @@ class SettingsPersonalViewController: UITableViewController {
         self.myUIDLabel.sizeToFit()
 
         // Avatar.
-        self.avatarImage.set(icon: me.pub?.photo?.image(), title: me.pub?.fn, id: self.tinode.myUid)
+        self.avatarImage.set(pub: me.pub, id: self.tinode.myUid)
         self.avatarImage.letterTileFont = self.avatarImage.letterTileFont.withSize(CGFloat(50))
-
         self.manageTags.detailTextLabel?.text = me.tags?.joined(separator: ", ")
 
         // Note: tableView.reloadSections() would be better but
@@ -175,11 +178,11 @@ class SettingsPersonalViewController: UITableViewController {
 
     private func updateUserName(_ userName: String?) {
         guard let userName = userName else { return }
-        let pub = me.pub == nil ? VCard(fn: nil, avatar: nil as Data?) : me.pub!.copy()
+        let pub = me.pub == nil ? TheCard(fn: nil) : me.pub!.copy()
         if pub.fn != userName {
             pub.fn = String(userName.prefix(UiUtils.kMaxTitleLength))
         }
-        UiUtils.setTopicData(forTopic: self.me, pub: pub, priv: nil)?.then(
+        UiUtils.setTopicData(forTopic: self.me, pub: pub, priv: nil).then(
             onSuccess: { _ in
                 DispatchQueue.main.async { self.reloadData() }
                 return nil
@@ -190,17 +193,13 @@ class SettingsPersonalViewController: UITableViewController {
 
 extension SettingsPersonalViewController: ImagePickerDelegate {
     func didSelect(image: UIImage?, mimeType: String?, fileName: String?) {
-        guard let image = image?.resize(width: CGFloat(UiUtils.kAvatarSize), height: CGFloat(UiUtils.kAvatarSize), clip: true) else {
-            Cache.log.debug("SettingsPersonalVC - No image specified or failed to resize, skipping")
-            return
-        }
-        UiUtils.updateAvatar(forTopic: self.me, image: image)?.then(
-            onSuccess: { _ in
+        UiUtils.updateAvatar(forTopic: self.me, image: image)
+            .thenApply { _ in
                 DispatchQueue.main.async {
                     self.reloadData()
                 }
                 return nil
-            })
+            }
     }
 }
 
@@ -213,7 +212,7 @@ extension SettingsPersonalViewController {
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard indexPath.section == SettingsPersonalViewController.kSectionContacts else {
+        if indexPath.section != SettingsPersonalViewController.kSectionContacts {
             return super.tableView(tableView, cellForRowAt: indexPath)
         }
 
@@ -249,6 +248,14 @@ extension SettingsPersonalViewController {
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if indexPath.section == SettingsPersonalViewController.kSectionContacts && indexPath.row > 0 {
             return tableView.rowHeight
+        }
+
+        if indexPath.section == SettingsPersonalViewController.kSectionPersonal {
+            if (indexPath.row == SettingsPersonalViewController.kPersonalVerified && !me.isVerified) ||
+                (indexPath.row == SettingsPersonalViewController.kPersonalStaff && !me.isStaffManaged) ||
+                (indexPath.row == SettingsPersonalViewController.kPersonalDanger && !me.isDangerous) {
+                return CGFloat.leastNonzeroMagnitude
+            }
         }
 
         return super.tableView(tableView, heightForRowAt: indexPath)

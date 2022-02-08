@@ -8,7 +8,6 @@
 import UIKit
 import os
 import SwiftKeychainWrapper
-import SwiftWebSocket
 import TinodeSDK
 import TinodiosDB
 
@@ -80,7 +79,7 @@ class LoginViewController: UIViewController {
         let bottomInset = keyboardViewEndFrame.height - view.safeAreaInsets.bottom
 
         scrollView.contentInset.bottom = bottomInset
-        scrollView.scrollIndicatorInsets.bottom = bottomInset
+        scrollView.verticalScrollIndicatorInsets.bottom = bottomInset
     }
 
     @objc func keyboardWillHide(_ notification: Notification) {
@@ -134,11 +133,9 @@ class LoginViewController: UIViewController {
                         var toastMsg: String
                         if let tinodeErr = err as? TinodeError {
                             toastMsg = "Tinode: \(tinodeErr.description)"
-                        } else if let nwErr = err as? SwiftWebSocket.WebSocketError {
-                            let (hostName, _) = Tinode.getConnectionParams()
-                            toastMsg = String(format: NSLocalizedString("Couldn't connect to server at %@: %@", comment: "Error message"), hostName, nwErr.localizedDescription)
                         } else {
-                            toastMsg = err.localizedDescription
+                            let (hostName, _) = Tinode.getConnectionParams()
+                            toastMsg = String(format: NSLocalizedString("Couldn't connect to server at %@: %@", comment: "Error message"), hostName, err.localizedDescription)
                         }
                         DispatchQueue.main.async {
                             UiUtils.showToast(message: toastMsg)

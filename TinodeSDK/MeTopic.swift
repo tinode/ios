@@ -2,7 +2,7 @@
 //  MeTopic.swift
 //  TinodeSDK
 //
-//  Copyright © 2020-2021 Tinode LLC. All rights reserved.
+//  Copyright © 2020-2022 Tinode LLC. All rights reserved.
 //
 
 import Foundation
@@ -302,9 +302,9 @@ open class MeTopic<DP: Codable & Mergeable>: Topic<DP, PrivateType, DP, PrivateT
                         tinode!.stopTrackingTopic(topicName: sub.topic!)
                     } else {
                         if let t = topic as? DefaultTopic {
-                            t.update(sub: sub as! Subscription<VCard, PrivateType>)
+                            t.update(sub: sub as! Subscription<TheCard, PrivateType>)
                         } else if let t = topic as? DefaultMeTopic {
-                            t.update(sub: sub as! Subscription<VCard, PrivateType>)
+                            t.update(sub: sub as! Subscription<TheCard, PrivateType>)
                         } else {
                             Tinode.log.fault("ME.routeMetaSub - failed to update topic %@", String(describing: topic))
                             assert(false)

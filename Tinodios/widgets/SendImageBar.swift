@@ -2,7 +2,7 @@
 //  SendMessageBar.swift
 //  Tinodios
 //
-//  Copyright © 2020 Tinode. All rights reserved.
+//  Copyright © 2020-2022 Tinode LLC. All rights reserved.
 //
 
 import UIKit
@@ -27,7 +27,6 @@ class SendImageBar: UIView {
     // Reply/forward previews.
     @IBOutlet weak var previewView: RichTextView!
     @IBOutlet weak var previewViewHeight: NSLayoutConstraint!
-    @IBOutlet weak var previewViewWidth: NSLayoutConstraint!
 
     // Overlay for 'writing disabled'. Hidden by default.
     @IBOutlet weak var allDisabledView: UIView!
@@ -119,13 +118,11 @@ class SendImageBar: UIView {
 
     public func togglePreviewBar(with message: NSAttributedString?) {
         if let message = message, let delegate = self.replyPreviewDelegate {
-            let b = delegate.pendingPreviewMessageSize(forMessage: message)
-            previewViewWidth.constant = b.width
-            previewViewHeight.constant = b.height
+            let textBounds = delegate.pendingPreviewMessageSize(forMessage: message)
+            previewViewHeight.constant = textBounds.height
             previewView.attributedText = message
             previewView.isHidden = false
         } else {
-            previewViewWidth.constant = CGFloat.zero
             previewViewHeight.constant = CGFloat.zero
             previewView.attributedText = nil
             previewView.isHidden = true
