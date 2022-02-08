@@ -73,6 +73,9 @@
 /* Class = "UILabel"; text = "App Version"; ObjectID = "AXP-O2-x5k"; */
 "AXP-O2-x5k.text" = "Versión de la app";
 
+/* Class = "UILabel"; text = "Verified"; ObjectID = "axr-PN-Xcr"; */
+"axr-PN-Xcr.text" = "Verificado";
+
 /* Class = "UILabel"; text = "Last active"; ObjectID = "bEA-WA-uoH"; */
 "bEA-WA-uoH.text" = "Estaba activo";
 
@@ -84,6 +87,9 @@
 
 /* Class = "UILabel"; text = " MyUID"; ObjectID = "bvN-my-ZPi"; */
 "bvN-my-ZPi.text" = " MiUID";
+
+/* Class = "UILabel"; text = "No results"; ObjectID = "bYc-bz-7iK"; */
+"bYc-bz-7iK.text" = "No hay resultados";
 
 /* Class = "UILabel"; text = "N"; ObjectID = "bZv-2Q-BI9"; */
 "bZv-2Q-BI9.text" = "N";
@@ -120,6 +126,9 @@
 
 /* Class = "UILabel"; text = "Add another"; ObjectID = "fLh-oI-CRP"; */
 "fLh-oI-CRP.text" = "Añadir contacto";
+
+/* Class = "UINavigationItem"; title = "Forward To"; ObjectID = "fO5-2o-Zk6"; */
+"fO5-2o-Zk6.title" = "Reenviar";
 
 /* Class = "UINavigationItem"; title = "Archived chats"; ObjectID = "fP4-sa-3Wz"; */
 "fP4-sa-3Wz.title" = "Chats archivados";
@@ -190,6 +199,9 @@
 /* Class = "UITableViewSection"; headerTitle = "Permissions"; ObjectID = "kJw-Pr-jNc"; */
 "kJw-Pr-jNc.headerTitle" = "Permisos";
 
+/* Class = "UILabel"; text = "Untrustworthy"; ObjectID = "KL3-O0-A0I"; */
+"KL3-O0-A0I.text" = "De poca confianza";
+
 /* Class = "UILabel"; text = "File name:"; ObjectID = "kSc-xN-hqx"; */
 "kSc-xN-hqx.text" = "Nombre del archivo:";
 
@@ -223,6 +235,9 @@
 /* Class = "UITextField"; placeholder = "Login"; ObjectID = "nho-5Y-Mt8"; */
 "nho-5Y-Mt8.placeholder" = "Iniciar sesión";
 
+/* Class = "UILabel"; text = "Staff-managed"; ObjectID = "nih-1p-AyF"; */
+"nih-1p-AyF.text" = "Gestionado por el personal";
+
 /* Class = "UILabel"; text = "No results"; ObjectID = "ntt-8z-Ay2"; */
 "ntt-8z-Ay2.text" = "No hay resultados";
 
@@ -246,6 +261,9 @@
 
 /* Class = "UILabel"; text = "Address"; ObjectID = "OwU-2N-QQV"; */
 "OwU-2N-QQV.text" = "Dirección";
+
+/* Class = "UILabel"; text = "Verified"; ObjectID = "OZr-73-5vP"; */
+"OZr-73-5vP.text" = "Verificado";
 
 /* Class = "UITableViewController"; title = "Account Settings"; ObjectID = "Pnk-9m-ZVg"; */
 "Pnk-9m-ZVg.title" = "Ajustes de la cuenta";
@@ -279,6 +297,9 @@
 
 /* Class = "UIBarButtonItem"; title = "Profile"; ObjectID = "rlG-v4-QUc"; */
 "rlG-v4-QUc.title" = "Perfil";
+
+/* Class = "UILabel"; text = "Staff-managed"; ObjectID = "ROK-aW-Tlk"; */
+"ROK-aW-Tlk.text" = "Gestionado por el personal";
 
 /* Class = "UITabBarItem"; title = "Find"; ObjectID = "rqZ-eR-8TP"; */
 "rqZ-eR-8TP.title" = "Encontrar";
@@ -345,6 +366,9 @@
 
 /* Class = "UILabel"; text = "Incognito mode"; ObjectID = "xyg-ee-0pd"; Note = "Label for incognito mode switch"; */
 "xyg-ee-0pd.text" = "Modo incógnito";
+
+/* Class = "UILabel"; text = "Untrusworthy"; ObjectID = "y1s-eC-LVl"; */
+"y1s-eC-LVl.text" = "Intrusable";
 
 /* Class = "UILabel"; text = "Get reset code by email or phone"; ObjectID = "Ykj-eb-phs"; */
 "Ykj-eb-phs.text" = "Obtenga el código de recuperación por correo electrónico o teléfono";

@@ -139,6 +139,9 @@
 /* Error message */
 "Failed to create account: %@" = "No se pudo crear cuenta: %@";
 
+/* Error message: malformed URL string */
+"Failed to create URL string for file: %@" = "Error al crear una cadena de URL para el archivo: %@";
+
 /* Error message */
 "Failed to save group and contact info." = "No se pudo guardar el grupo y la información de contacto.";
 
