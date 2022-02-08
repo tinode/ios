@@ -1400,22 +1400,22 @@
         <note>Bundle name</note>
       </trans-unit>
       <trans-unit id="NSCameraUsageDescription" xml:space="preserve">
-        <source>Tinodios takes photos with the camera to use as avatar or to send them to your contacts</source>
+        <source>Tinode takes photos with the camera to use as avatar or to send them to your contacts</source>
         <target>Tinode用相機拍照，用作頭像或傳送給您的聯絡人</target>
         <note>Privacy - Camera Usage Description</note>
       </trans-unit>
       <trans-unit id="NSContactsUsageDescription" xml:space="preserve">
-        <source>Tinodios sends only emails and phone numbers to the Tinodios server to help you connect with other users</source>
+        <source>Tinode sends only emails and phone numbers to the Tinode server to help you connect with other users</source>
         <target>Tinode只向Tinode伺服器傳送電子郵件和電話號碼，以幫助您與其他使用者聯絡</target>
         <note>Privacy - Contacts Usage Description</note>
       </trans-unit>
       <trans-unit id="NSPhotoLibraryAddUsageDescription" xml:space="preserve">
-        <source>Images and pictures from Tinodios can be saved in the photo library</source>
+        <source>Images and pictures from Tinode can be saved in the photo library</source>
         <target>Tinode的影象和圖片可以儲存在照片庫中</target>
         <note>Privacy - Photo Library Additions Usage Description</note>
       </trans-unit>
       <trans-unit id="NSPhotoLibraryUsageDescription" xml:space="preserve">
-        <source>Tinodios needs access to your photos to let you you send them to your contacts</source>
+        <source>Tinode needs access to your photos to let you you send them to your contacts</source>
         <target>Tinode需要訪問您的照片，以便您將它們傳送給您的聯絡人</target>
         <note>Privacy - Photo Library Usage Description</note>
       </trans-unit>

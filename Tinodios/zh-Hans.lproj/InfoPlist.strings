@@ -1,0 +1,12 @@
+/* Privacy - Camera Usage Description */
+"NSCameraUsageDescription" = "Tinode用相机拍照，用作头像或发送给您的联系人";
+
+/* Privacy - Contacts Usage Description */
+"NSContactsUsageDescription" = "Tinode只向Tinode服务器发送电子邮件和电话号码，以帮助您与其他用户联系";
+
+/* Privacy - Photo Library Additions Usage Description */
+"NSPhotoLibraryAddUsageDescription" = "来自Tinode的图像和图片可以保存在照片库中";
+
+/* Privacy - Photo Library Usage Description */
+"NSPhotoLibraryUsageDescription" = "Tinode需要访问您的照片，以便您将它们发送给联系人";
+

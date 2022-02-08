@@ -240,6 +240,8 @@
 		B0BC2B5B235E0DB800BEEB4B /* Tinodios.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Tinodios.entitlements; sourceTree = "<group>"; };
 		B0BE301B27B3367E00B04631 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		B0BE301D27B3378100B04631 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		B0BE301E27B3388700B04631 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
+		B0BE301F27B3389100B04631 /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
 		B0C6A3C1229EDF14009B0B5D /* ImagePreviewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePreviewController.swift; sourceTree = "<group>"; };
 		B0CEF8D726B5EC21000028C2 /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/Main.strings"; sourceTree = "<group>"; };
 		B0CEF8D826B5EC5D000028C2 /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/LaunchScreen.strings"; sourceTree = "<group>"; };
@@ -804,6 +806,8 @@
 			children = (
 				B0BE301B27B3367E00B04631 /* ru */,
 				B0BE301D27B3378100B04631 /* es */,
+				B0BE301E27B3388700B04631 /* zh-Hans */,
+				B0BE301F27B3389100B04631 /* zh-Hant */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
