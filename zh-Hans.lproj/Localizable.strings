@@ -31,6 +31,12 @@
 /* Warning in logout alert */
 "Are you sure you want to log out?" = "您确定要注销吗？";
 
+/* Label shown next to an attachment */
+"Attachment" = "依恋";
+
+/* Error message: attachment too large */
+"Attachment exceeds maximum size" = "附件超过最大尺寸";
+
 /* Alert action
    Invite reaction button */
 "Block" = "防止";
@@ -137,6 +143,9 @@
 "Failed to save group and contact info." = "无法保存群组和联系信息。";
 
 /* Error message */
+"Failed to send email: %@" = "发送电子邮件失败：%@";
+
+/* Error message */
 "Failed to subscribe to topic: %@" = "无法订阅群组：%@";
 
 /* Alert action qualifier as in 'Delete for all' */
@@ -144,6 +153,12 @@
 
 /* Alert action 'Delete for me' */
 "For me" = "只对我来说";
+
+/* Label shown next to a form in preview */
+"Form" = "表格";
+
+/* Menu item */
+"Forward" = "重定向";
 
 /* User name prompt */
 "Full name, e.g. John Doe" = "全名，例如张伟";
@@ -153,6 +168,9 @@
 
 /* Error message */
 "Invalid group ID: %d (%@)" = "无效的群组ID：%1$d (%2$@)";
+
+/* Error message when the image cannot be processed */
+"Invalid image" = "图像无效";
 
 /* Dialog title: call to action */
 "Invite" = "邀请";
@@ -227,6 +245,9 @@
 /* Toast notification */
 "Permissions not modified: %d (%s)" = "权限未修改：%1$d (%2$s)";
 
+/* Label shown next to an inline image */
+"Picture" = "照片";
+
 /* Progress overlay */
 "Please wait..." = "请耐心等待...";
 
@@ -244,6 +265,9 @@
 
 /* Confirmation */
 "Remove and ban %@ from %@?" = "从%2$@中删除并禁止%1$@？";
+
+/* Menu item */
+"Reply" = "答复";
 
 /* Alert action */
 "Report" = "向当局报告";
@@ -278,6 +302,9 @@
 /* Toast notification */
 "Tags missing." = "标签缺失。";
 
+/* Toast notification */
+"The avatar is too small." = "头像太小了。";
+
 /* Error message */
 "The file size exceeds the limit %@" = "文件大小超过限制%@";
 
@@ -287,13 +314,16 @@
 /* Swipe action */
 "Unarchive" = "取消存档";
 
-/* Undefined chat name */
-"Undefined" = "未定义";
+/* Swipe action */
+"Unblock" = "疏通";
 
 /* Button with missing text
    Placeholder for missing file name
    Placeholder for missing file type */
 "undefined" = "未定义";
+
+/* Undefined chat name */
+"Undefined" = "未定义";
 
 /* Placeholder for missing topic name
    Placeholder for missing user name */
@@ -302,8 +332,8 @@
 /* Sender with missing name */
 "Unknown %@" = "未知 %@";
 
-/* Error message */
-"Upload failed (%@). No server response." = "上传失败（％@）。没有服务器响应。";
+/* Displayed when the type of attachment cannot be determined */
+"Unknown type" = "未知类型";
 
 /* Error message */
 "Upload failed (%@): empty response body." = "上传失败（％@）：响应正文为空。";
@@ -312,9 +342,12 @@
 "Upload failed (%@): response code %d." = "上传失败（％1$@）：响应代码％2$d。";
 
 /* Error message */
+"Upload failed (%@). No server response." = "上传失败（％@）。没有服务器响应。";
+
+/* Error message */
 "Verification failure: %d %@" = "验证失败：%1$d (%2$@)";
 
-/* This is 'you' (pronoun) */
+/* This is 'you' */
 "You" = "您";
 
 /* Call to action */
@@ -325,3 +358,4 @@
 
 /* Placeholder when no chats found */
 "You have no chats\n\n¯\\_(ツ)_/¯" = "您没有聊天记录\n\n¯\\_(ツ)_/¯";
+

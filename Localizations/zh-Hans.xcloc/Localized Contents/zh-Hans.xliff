@@ -62,10 +62,12 @@
       </trans-unit>
       <trans-unit id="Attachment" xml:space="preserve">
         <source>Attachment</source>
+        <target>依恋</target>
         <note>Label shown next to an attachment</note>
       </trans-unit>
       <trans-unit id="Attachment exceeds maximum size" xml:space="preserve">
         <source>Attachment exceeds maximum size</source>
+        <target>附件超过最大尺寸</target>
         <note>Error message: attachment too large</note>
       </trans-unit>
       <trans-unit id="Block" xml:space="preserve">
@@ -242,6 +244,7 @@
       </trans-unit>
       <trans-unit id="Failed to send email: %@" xml:space="preserve">
         <source>Failed to send email: %@</source>
+        <target>发送电子邮件失败：%@</target>
         <note>Error message</note>
       </trans-unit>
       <trans-unit id="Failed to subscribe to topic: %@" xml:space="preserve">
@@ -261,10 +264,12 @@
       </trans-unit>
       <trans-unit id="Form" xml:space="preserve">
         <source>Form</source>
+        <target>表格</target>
         <note>Label shown next to a form in preview</note>
       </trans-unit>
       <trans-unit id="Forward" xml:space="preserve">
         <source>Forward</source>
+        <target>重定向</target>
         <note>Menu item</note>
       </trans-unit>
       <trans-unit id="Full name, e.g. John Doe" xml:space="preserve">
@@ -284,6 +289,7 @@
       </trans-unit>
       <trans-unit id="Invalid image" xml:space="preserve">
         <source>Invalid image</source>
+        <target>图像无效</target>
         <note>Error message when the image cannot be processed</note>
       </trans-unit>
       <trans-unit id="Invite" xml:space="preserve">
@@ -409,6 +415,7 @@
       </trans-unit>
       <trans-unit id="Picture" xml:space="preserve">
         <source>Picture</source>
+        <target>照片</target>
         <note>Label shown next to an inline image</note>
       </trans-unit>
       <trans-unit id="Please wait..." xml:space="preserve">
@@ -443,6 +450,7 @@
       </trans-unit>
       <trans-unit id="Reply" xml:space="preserve">
         <source>Reply</source>
+        <target>答复</target>
         <note>Menu item</note>
       </trans-unit>
       <trans-unit id="Report" xml:space="preserve">
@@ -502,6 +510,7 @@
       </trans-unit>
       <trans-unit id="The avatar is too small." xml:space="preserve">
         <source>The avatar is too small.</source>
+        <target>头像太小了。</target>
         <note>Toast notification</note>
       </trans-unit>
       <trans-unit id="The file size exceeds the limit %@" xml:space="preserve">
@@ -521,6 +530,7 @@
       </trans-unit>
       <trans-unit id="Unblock" xml:space="preserve">
         <source>Unblock</source>
+        <target>疏通</target>
         <note>Swipe action</note>
       </trans-unit>
       <trans-unit id="Undefined" xml:space="preserve">
@@ -541,6 +551,7 @@
       </trans-unit>
       <trans-unit id="Unknown type" xml:space="preserve">
         <source>Unknown type</source>
+        <target>未知类型</target>
         <note>Displayed when the type of attachment cannot be determined</note>
       </trans-unit>
       <trans-unit id="Upload failed (%@). No server response." xml:space="preserve">
@@ -683,7 +694,7 @@
       </trans-unit>
       <trans-unit id="6rW-B5-NCp.text" xml:space="preserve">
         <source>placeholder_file_name</source>
-        <target>placeholder_file_name</target>
+        <target>占位_文件_名称</target>
         <note>Class = "UILabel"; text = "placeholder_file_name"; ObjectID = "6rW-B5-NCp";</note>
       </trans-unit>
       <trans-unit id="7EV-I9-csz.text" xml:space="preserve">
@@ -832,6 +843,7 @@
       </trans-unit>
       <trans-unit id="KL3-O0-A0I.text" xml:space="preserve">
         <source>Untrustworthy</source>
+        <target>可疑的</target>
         <note>Class = "UILabel"; text = "Untrustworthy"; ObjectID = "KL3-O0-A0I";</note>
       </trans-unit>
       <trans-unit id="LRu-ae-drd.title" xml:space="preserve">
@@ -856,6 +868,7 @@
       </trans-unit>
       <trans-unit id="OZr-73-5vP.text" xml:space="preserve">
         <source>Verified</source>
+        <target>值得信赖</target>
         <note>Class = "UILabel"; text = "Verified"; ObjectID = "OZr-73-5vP";</note>
       </trans-unit>
       <trans-unit id="OeG-Kx-gwG.text" xml:space="preserve">
@@ -885,6 +898,7 @@
       </trans-unit>
       <trans-unit id="ROK-aW-Tlk.text" xml:space="preserve">
         <source>Staff-managed</source>
+        <target>在员工管理下</target>
         <note>Class = "UILabel"; text = "Staff-managed"; ObjectID = "ROK-aW-Tlk";</note>
       </trans-unit>
       <trans-unit id="Rgo-YL-uPZ.title" xml:space="preserve">
@@ -1018,6 +1032,7 @@
       </trans-unit>
       <trans-unit id="axr-PN-Xcr.text" xml:space="preserve">
         <source>Verified</source>
+        <target>值得信赖</target>
         <note>Class = "UILabel"; text = "Verified"; ObjectID = "axr-PN-Xcr";</note>
       </trans-unit>
       <trans-unit id="bEA-WA-uoH.text" xml:space="preserve">
@@ -1027,6 +1042,7 @@
       </trans-unit>
       <trans-unit id="bYc-bz-7iK.text" xml:space="preserve">
         <source>No results</source>
+        <target>没有结果</target>
         <note>Class = "UILabel"; text = "No results"; ObjectID = "bYc-bz-7iK";</note>
       </trans-unit>
       <trans-unit id="bZv-2Q-BI9.text" xml:space="preserve">
@@ -1066,6 +1082,7 @@
       </trans-unit>
       <trans-unit id="fO5-2o-Zk6.title" xml:space="preserve">
         <source>Forward To</source>
+        <target>重定向消息</target>
         <note>Class = "UINavigationItem"; title = "Forward To"; ObjectID = "fO5-2o-Zk6";</note>
       </trans-unit>
       <trans-unit id="fP4-sa-3Wz.title" xml:space="preserve">
@@ -1109,7 +1126,7 @@
       </trans-unit>
       <trans-unit id="hTR-e8-PeX.title" xml:space="preserve">
         <source>Blocked Contacts</source>
-        <target>Contactos bloqueados</target>
+        <target>被阻止的联系人</target>
         <note>Class = "UINavigationItem"; title = "Blocked Contacts"; ObjectID = "hTR-e8-PeX";</note>
       </trans-unit>
       <trans-unit id="hUo-8f-ZiA.title" xml:space="preserve">
@@ -1199,6 +1216,7 @@
       </trans-unit>
       <trans-unit id="nih-1p-AyF.text" xml:space="preserve">
         <source>Staff-managed</source>
+        <target>在员工管理下</target>
         <note>Class = "UILabel"; text = "Staff-managed"; ObjectID = "nih-1p-AyF";</note>
       </trans-unit>
       <trans-unit id="ntt-8z-Ay2.text" xml:space="preserve">
@@ -1333,6 +1351,7 @@
       </trans-unit>
       <trans-unit id="y1s-eC-LVl.text" xml:space="preserve">
         <source>Untrusworthy</source>
+        <target>可疑的</target>
         <note>Class = "UILabel"; text = "Untrusworthy"; ObjectID = "y1s-eC-LVl";</note>
       </trans-unit>
       <trans-unit id="yKx-xt-rdn.placeholder" xml:space="preserve">
@@ -1382,18 +1401,22 @@
       </trans-unit>
       <trans-unit id="NSCameraUsageDescription" xml:space="preserve">
         <source>Tinodios takes photos with the camera to use as avatar or to send them to your contacts</source>
+        <target>Tinode用相机拍照，用作头像或发送给您的联系人</target>
         <note>Privacy - Camera Usage Description</note>
       </trans-unit>
       <trans-unit id="NSContactsUsageDescription" xml:space="preserve">
         <source>Tinodios sends only emails and phone numbers to the Tinodios server to help you connect with other users</source>
+        <target>Tinode只向Tinode服务器发送电子邮件和电话号码，以帮助您与其他用户联系</target>
         <note>Privacy - Contacts Usage Description</note>
       </trans-unit>
       <trans-unit id="NSPhotoLibraryAddUsageDescription" xml:space="preserve">
         <source>Images and pictures from Tinodios can be saved in the photo library</source>
+        <target>来自Tinode的图像和图片可以保存在照片库中</target>
         <note>Privacy - Photo Library Additions Usage Description</note>
       </trans-unit>
       <trans-unit id="NSPhotoLibraryUsageDescription" xml:space="preserve">
         <source>Tinodios needs access to your photos to let you you send them to your contacts</source>
+        <target>Tinode需要访问您的照片，以便您将它们发送给联系人</target>
         <note>Privacy - Photo Library Usage Description</note>
       </trans-unit>
     </body>
@@ -1405,14 +1428,17 @@
     <body>
       <trans-unit id="Host name" xml:space="preserve">
         <source>Host name</source>
+        <target>主机名</target>
         <note/>
       </trans-unit>
       <trans-unit id="Use TLS" xml:space="preserve">
         <source>Use TLS</source>
+        <target>使用TLS</target>
         <note/>
       </trans-unit>
       <trans-unit id="Wire transport" xml:space="preserve">
         <source>Wire transport</source>
+        <target>电线运输</target>
         <note>A single strings file, whose title is specified in your preferences schema. The strings files provide the localized content to display to the user for each of your preferences.</note>
       </trans-unit>
     </body>
@@ -1424,6 +1450,7 @@
     <body>
       <trans-unit id="Connection settings" xml:space="preserve">
         <source>Connection settings</source>
+        <target>连接设置</target>
         <note>A single strings file, whose title is specified in your preferences schema. The strings files provide the localized content to display to the user for each of your preferences.</note>
       </trans-unit>
     </body>
