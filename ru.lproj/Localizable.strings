@@ -317,7 +317,7 @@
 "You are offline." = "Вы оффлайн.";
 
 /* Placeholder when no chats found */
-"You have no chats\n\n¯\\_(ツ)_/¯" = "Нет чатов\n\n¯\_(ツ)_/¯";
+"You have no chats\n\n¯\\_(ツ)_/¯" = "Нет чатов\n\n¯\\_(ツ)_/¯";
 
 /* Button text */
 "confirm" = "подтвердить";
