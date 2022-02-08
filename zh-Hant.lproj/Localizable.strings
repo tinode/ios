@@ -1,4 +1,3 @@
-
 /* Replacement for chat message with no content */
 "  Content deleted" = "內容已刪除";
 
@@ -31,6 +30,12 @@
 
 /* Warning in logout alert */
 "Are you sure you want to log out?" = "您確定要登出嗎？";
+
+/* Label shown next to an attachment */
+"Attachment" = "附加檔案";
+
+/* Error message: attachment too large */
+"Attachment exceeds maximum size" = "附件超過最大尺寸";
 
 /* Alert action
    Invite reaction button */
@@ -65,6 +70,9 @@
 
 /* Alert title */
 "Clear all messages?" = "確定要清除所有訊息嗎？";
+
+/* Button text */
+"confirm" = "確認";
 
 /* Alert title */
 "Confirm contact" = "確認聯絡人";
@@ -102,10 +110,10 @@
 "Directory" = "目錄";
 
 /* Alert title */
-"Edit Group" = "編輯群組";
+"Edit account name" = "編輯帳號名稱";
 
 /* Alert title */
-"Edit account name" = "編輯帳號名稱";
+"Edit Group" = "編輯群組";
 
 /* Alert action */
 "Email" = "電子郵件地址";
@@ -131,8 +139,14 @@
 /* Error message */
 "Failed to create account: %@" = "建立帳號失敗：%@";
 
+/* Error message: malformed URL string */
+"Failed to create URL string for file: %@" = "無法為檔案建立URL字串：%@";
+
 /* Error message */
 "Failed to save group and contact info." = "無法儲存群組及聯絡資訊。";
+
+/* Error message */
+"Failed to send email: %@" = "未能傳送電子郵件：%@";
 
 /* Error message */
 "Failed to subscribe to topic: %@" = "無法訂閱主題：%@";
@@ -143,6 +157,12 @@
 /* Alert action 'Delete for me' */
 "For me" = "僅我自己";
 
+/* Label shown next to a form in preview */
+"Form" = "表單";
+
+/* Menu item */
+"Forward" = "重定向";
+
 /* User name prompt */
 "Full name, e.g. John Doe" = "全名，例如：王小明";
 
@@ -151,6 +171,9 @@
 
 /* Error message */
 "Invalid group ID: %d (%@)" = "群組 ID 無效：%1$d (%2$@)";
+
+/* Error message when the image cannot be processed */
+"Invalid image" = "影象無效";
 
 /* Dialog title: call to action */
 "Invite" = "邀請";
@@ -225,6 +248,9 @@
 /* Toast notification */
 "Permissions not modified: %d (%s)" = "未修改權限：%1$d (%2$s)";
 
+/* Label shown next to an inline image */
+"Picture" = "圖片";
+
 /* Progress overlay */
 "Please wait..." = "請稍候...";
 
@@ -243,14 +269,17 @@
 /* Confirmation */
 "Remove and ban %@ from %@?" = "要將 %1$@ 從 %2$@ 移除並封禁嗎？";
 
+/* Menu item */
+"Reply" = "回答";
+
 /* Alert action */
 "Report" = "檢舉";
 
 /* Alert title */
-"Report Group?" = "要檢舉群組嗎？";
+"Report contact?" = "要檢舉聯絡人嗎？";
 
 /* Alert title */
-"Report contact?" = "要檢舉聯絡人嗎？";
+"Report Group?" = "要檢舉群組嗎？";
 
 /* Error message */
 "Request failed: %@" = "請求失敗：%@";
@@ -285,6 +314,14 @@
 /* Swipe action */
 "Unarchive" = "未封存";
 
+/* Swipe action */
+"Unblock" = "解除封鎖";
+
+/* Button with missing text
+   Placeholder for missing file name
+   Placeholder for missing file type */
+"undefined" = "未定義";
+
 /* Undefined chat name */
 "Undefined" = "未定義";
 
@@ -295,14 +332,17 @@
 /* Sender with missing name */
 "Unknown %@" = "未知 %@";
 
-/* Error message */
-"Upload failed (%@). No server response." = "上傳失敗 (%@)。伺服器無回應。";
+/* Displayed when the type of attachment cannot be determined */
+"Unknown type" = "未知型別";
 
 /* Error message */
 "Upload failed (%@): empty response body." = "上傳失敗 (%@)：回應本體空白。";
 
 /* Error message */
 "Upload failed (%@): response code %d." = "上傳失敗 (%1$@)：回傳碼 %2$d。";
+
+/* Error message */
+"Upload failed (%@). No server response." = "上傳失敗 (%@)。伺服器無回應。";
 
 /* Error message */
 "Verification failure: %d %@" = "驗證失敗：%1$d %2$@";
@@ -317,12 +357,5 @@
 "You are offline." = "您處於離線狀態。";
 
 /* Placeholder when no chats found */
-"You have no chats\n\n¯\\_(ツ)_/¯" = "您沒有任何對話\n\n¯\_(ツ)_/¯";
+"You have no chats\n\n¯\\_(ツ)_/¯" = "您沒有任何對話\n\n¯\\_(ツ)_/¯";
 
-/* Button text */
-"confirm" = "確認";
-
-/* Button with missing text
-   Placeholder for missing file name
-   Placeholder for missing file type */
-"undefined" = "未定義";
