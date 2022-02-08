@@ -1,0 +1,9 @@
+/* (No Comment) */
+"Host name" = "Имя сервера";
+
+/* (No Comment) */
+"Use TLS" = "Использовать TLS";
+
+/* A single strings file, whose title is specified in your preferences schema. The strings files provide the localized content to display to the user for each of your preferences. */
+"Wire transport" = "Протокол обмена";
+
