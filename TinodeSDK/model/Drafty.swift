@@ -435,7 +435,7 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
     /// Extract attachment references for use in message header.
     ///
     /// - Returns: string array of attachment references or nil if no attachments with references were found.
-    public func getEntReferences() -> [String]? {
+    public var entReferences: [String]? {
         guard let ent = ent else { return nil }
 
         var result: [String] = []

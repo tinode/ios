@@ -512,7 +512,7 @@
 			attributes = {
 				LastSwiftUpdateCheck = 1110;
 				LastUpgradeCheck = 1210;
-				ORGANIZATIONNAME = Tinode;
+				ORGANIZATIONNAME = "Tinode LLC";
 				TargetAttributes = {
 					0A0380D321B3CC8100A3FA0E = {
 						CreatedOnToolsVersion = 10.1;

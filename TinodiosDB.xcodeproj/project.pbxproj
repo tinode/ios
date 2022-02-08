@@ -152,7 +152,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 1210;
-				ORGANIZATIONNAME = Tinode;
+				ORGANIZATIONNAME = "Tinode LLC";
 				TargetAttributes = {
 					0ACE9E4F2381342B006BE575 = {
 						CreatedOnToolsVersion = 11.1;

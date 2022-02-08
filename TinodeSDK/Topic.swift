@@ -1203,6 +1203,7 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
             self.latestMessage = msg
         }
     }
+
     private func publishInternal(content: Drafty, head: [String: JSONValue]?, msgId: Int64) -> PromisedReply<ServerMessage> {
         var headers = head
         var attachments: [String]?
@@ -1213,8 +1214,8 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
             if headers == nil {
                 headers = [:]
             }
-            headers?["mime"] = .string(Drafty.kMimeType)
-            attachments = content.getEntReferences()
+            headers!["mime"] = .string(Drafty.kMimeType)
+            attachments = content.entReferences
         }
 
         return tinode!.publish(topic: name, head: headers, content: content, attachments: attachments).then(
@@ -1228,30 +1229,26 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
             })
     }
 
+    /// Publish content to topic.
+    ///
+    /// - Parameters
+    ///  - content: message content to publish
+    ///  - withExtraHeaders: additional message headers, such as `reply` and `forwarded`; `mime: text/x-drafty` header is added automatically.
+    /// - Returns: PromisedReply of the reply ctrl message
     public func publish(content: Drafty, withExtraHeaders extraHeaders: [String: JSONValue]? = nil) -> PromisedReply<ServerMessage> {
-        var head = extraHeaders
-        if !content.isPlain {
-            if head == nil {
-                head = [:]
-            }
-            head!["mime"] = JSONValue.string(Drafty.kMimeType)
-        } else if head != nil {
-            head!.removeValue(forKey: "mime")
-        }
-
         var id: Int64 = -1
         if let s = store {
-            if let msg = s.msgSend(topic: self, data: content, head: head) {
+            if let msg = s.msgSend(topic: self, data: content, head: extraHeaders) {
                 self.latestMessage = msg
                 id = msg.msgId
             }
         }
         if attached {
-            return publishInternal(content: content, head: head, msgId: id)
+            return publishInternal(content: content, head: extraHeaders, msgId: id)
         } else {
             return subscribe()
                 .thenApply({ [weak self] _ in
-                    return self?.publishInternal(content: content, head: head, msgId: id)
+                    return self?.publishInternal(content: content, head: extraHeaders, msgId: id)
                 }).thenCatch({ [weak self] err in
                     self?.store?.msgSyncing(topic: self!, dbMessageId: id, sync: false)
                     throw err
