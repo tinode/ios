@@ -1386,7 +1386,7 @@
       </trans-unit>
     </body>
   </file>
-  <file original="Tinodios/en.lproj/InfoPlist.strings" datatype="plaintext" source-language="en" target-language="zh-Hant">
+  <file original="Tinodios/en.lproj/InfoPlist.strings" source-language="en" target-language="zh-Hant" datatype="plaintext">
     <header>
       <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="13.2.1" build-num="13C100"/>
     </header>
@@ -1421,7 +1421,7 @@
       </trans-unit>
     </body>
   </file>
-  <file original="Tinodios/Settings.bundle/en.lproj/ConnectionSettings.strings" datatype="plaintext" source-language="en" target-language="zh-Hant">
+  <file original="Tinodios/Settings.bundle/en.lproj/ConnectionSettings.strings" source-language="en" target-language="zh-Hant" datatype="plaintext">
     <header>
       <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="13.2.1" build-num="13C100"/>
     </header>
@@ -1443,7 +1443,7 @@
       </trans-unit>
     </body>
   </file>
-  <file original="Tinodios/Settings.bundle/en.lproj/Root.strings" datatype="plaintext" source-language="en" target-language="zh-Hant">
+  <file original="Tinodios/Settings.bundle/en.lproj/Root.strings" source-language="en" target-language="zh-Hant" datatype="plaintext">
     <header>
       <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="13.2.1" build-num="13C100"/>
     </header>

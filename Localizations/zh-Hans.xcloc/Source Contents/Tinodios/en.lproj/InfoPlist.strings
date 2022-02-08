@@ -3,10 +3,10 @@
 /* Bundle name */
 "CFBundleName" = "Tinodios";
 /* Privacy - Camera Usage Description */
-"NSCameraUsageDescription" = "Tinodios takes photos with the camera to use as avatar or to send them to your contacts";
+"NSCameraUsageDescription" = "Tinode takes photos with the camera to use as avatar or to send them to your contacts";
 /* Privacy - Contacts Usage Description */
-"NSContactsUsageDescription" = "Tinodios sends only emails and phone numbers to the Tinodios server to help you connect with other users";
+"NSContactsUsageDescription" = "Tinode sends only emails and phone numbers to the Tinode server to help you connect with other users";
 /* Privacy - Photo Library Additions Usage Description */
-"NSPhotoLibraryAddUsageDescription" = "Images and pictures from Tinodios can be saved in the photo library";
+"NSPhotoLibraryAddUsageDescription" = "Images and pictures from Tinode can be saved in the photo library";
 /* Privacy - Photo Library Usage Description */
-"NSPhotoLibraryUsageDescription" = "Tinodios needs access to your photos to let you you send them to your contacts";
+"NSPhotoLibraryUsageDescription" = "Tinode needs access to your photos to let you you send them to your contacts";
