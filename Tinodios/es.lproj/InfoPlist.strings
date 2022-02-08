@@ -1,0 +1,12 @@
+/* Privacy - Camera Usage Description */
+"NSCameraUsageDescription" = "Tinode toma fotos con la cámara para usarlas como avatar o para enviarlas a tus contactos";
+
+/* Privacy - Contacts Usage Description */
+"NSContactsUsageDescription" = "Tinode envía solo correos electrónicos y números de teléfono al servidor de Tinode para ayudarte a conectarte con otros usuarios";
+
+/* Privacy - Photo Library Additions Usage Description */
+"NSPhotoLibraryAddUsageDescription" = "Las imágenes e imágenes de Tinode se pueden guardar en la fototeca";
+
+/* Privacy - Photo Library Usage Description */
+"NSPhotoLibraryUsageDescription" = "Tinode necesita acceso a tus fotos para que puedas enviarlas a tus contactos";
+

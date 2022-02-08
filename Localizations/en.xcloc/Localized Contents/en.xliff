@@ -1418,23 +1418,23 @@
         <note>Bundle name</note>
       </trans-unit>
       <trans-unit id="NSCameraUsageDescription" xml:space="preserve">
-        <source>Tinodios takes photos with the camera to use as avatar or to send them to your contacts</source>
-        <target>Tinodios takes photos with the camera to use as avatar or to send them to your contacts</target>
+        <source>Tinode takes photos with the camera to use as avatar or to send them to your contacts</source>
+        <target>Tinode takes photos with the camera to use as avatar or to send them to your contacts</target>
         <note>Privacy - Camera Usage Description</note>
       </trans-unit>
       <trans-unit id="NSContactsUsageDescription" xml:space="preserve">
-        <source>Tinodios sends only emails and phone numbers to the Tinodios server to help you connect with other users</source>
-        <target>Tinodios sends only emails and phone numbers to the Tinodios server to help you connect with other users</target>
+        <source>Tinode sends only emails and phone numbers to the Tinode server to help you connect with other users</source>
+        <target>Tinode sends only emails and phone numbers to the Tinode server to help you connect with other users</target>
         <note>Privacy - Contacts Usage Description</note>
       </trans-unit>
       <trans-unit id="NSPhotoLibraryAddUsageDescription" xml:space="preserve">
-        <source>Images and pictures from Tinodios can be saved in the photo library</source>
-        <target>Images and pictures from Tinodios can be saved in the photo library</target>
+        <source>Images and pictures from Tinode can be saved in the photo library</source>
+        <target>Images and pictures from Tinode can be saved in the photo library</target>
         <note>Privacy - Photo Library Additions Usage Description</note>
       </trans-unit>
       <trans-unit id="NSPhotoLibraryUsageDescription" xml:space="preserve">
-        <source>Tinodios needs access to your photos to let you you send them to your contacts</source>
-        <target>Tinodios needs access to your photos to let you you send them to your contacts</target>
+        <source>Tinode needs access to your photos to let you you send them to your contacts</source>
+        <target>Tinode needs access to your photos to let you you send them to your contacts</target>
         <note>Privacy - Photo Library Usage Description</note>
       </trans-unit>
     </body>
