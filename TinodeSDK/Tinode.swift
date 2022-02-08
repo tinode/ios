@@ -1160,7 +1160,7 @@ public class Tinode {
                 topic: topicName,
                 set: set,
                 get: get))
-        if let attachments = set?.desc?.attachments {
+        if let attachments = set?.desc?.attachments, !attachments.isEmpty {
             msg.extra = MsgClientExtra(attachments: attachments)
         }
         return sendWithPromise(payload: msg, with: msgId)
@@ -1181,7 +1181,7 @@ public class Tinode {
         let msg = ClientMessage(
             set: MsgClientSet(id: msgId, topic: topic, meta: meta)
         )
-        if let attachments = meta?.desc?.attachments {
+        if let attachments = meta?.desc?.attachments, !attachments.isEmpty {
             msg.extra = MsgClientExtra(attachments: attachments)
         }
         return sendWithPromise(payload: msg, with: msgId)
@@ -1197,7 +1197,9 @@ public class Tinode {
     public func publish(topic: String, head: [String: JSONValue]?, content: Drafty, attachments: [String]?) -> PromisedReply<ServerMessage> {
         let msgId = getNextMsgId()
         let msg = ClientMessage<Int, Int>(pub: MsgClientPub(id: msgId, topic: topic, noecho: true, head: head, content: content))
-        msg.extra = MsgClientExtra(attachments: attachments)
+        if let attachments = attachments, !attachments.isEmpty {
+            msg.extra = MsgClientExtra(attachments: attachments)
+        }
         return sendWithPromise(payload: msg, with: msgId)
     }
 

@@ -23,21 +23,15 @@ public typealias PrivateType = [String: JSONValue]
 
 extension PrivateType: Mergeable {
     public func getBoolValue(name: String) -> Bool? {
-        if case let .bool(v) = self[name] {
-            return v
-        }
-        return nil
+        return self[name]?.asBool()
     }
     public func getStringValue(name: String) -> String? {
-        if case let .string(v) = self[name] {
-            return v
-        }
-        return nil
+        return self[name]?.asString()
     }
 
     public var comment: String? {
         get {
-            return getStringValue(name: "comment")
+            return self["comment"]?.asString()
         }
         set {
             self["comment"] = .string(newValue ?? Tinode.kNullValue)
@@ -45,7 +39,7 @@ extension PrivateType: Mergeable {
     }
     public var archived: Bool? {
         get {
-            return getBoolValue(name: "arch")
+            self["arch"]?.asBool()
         }
         set {
             self["arch"] = newValue != nil ? .bool(newValue!) : nil

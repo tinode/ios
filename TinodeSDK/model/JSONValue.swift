@@ -1,8 +1,7 @@
 //
 //  JSONValue.swift
-//  ios
 //
-//  Copyright © 2019 Tinode. All rights reserved.
+//  Copyright © 2019-2022 Tinode LLC. All rights reserved.
 //
 
 import Foundation
@@ -67,21 +66,17 @@ public enum JSONValue: Codable, Equatable {
     // MARK: Convenience accessors.
 
     public func asString() -> String? {
-        switch self {
-        case .string(let val):
-            return val
-        default:
-            return nil
+        if case let .string(v) = self {
+            return v
         }
+        return nil
     }
 
     public func asInt() -> Int? {
-        switch self {
-        case .int(let val):
-            return val
-        default:
-            return nil
+        if case let .int(v) = self {
+            return v
         }
+        return nil
     }
 
     public func asInt64() -> Int64? {
@@ -96,11 +91,16 @@ public enum JSONValue: Codable, Equatable {
     }
 
     public func asData() -> Data? {
-        switch self {
-        case .bytes(let val):
-            return val
-        default:
-            return nil
+        if case let .bytes(v) = self {
+            return v
         }
+        return nil
+    }
+
+    public func asBool() -> Bool? {
+        if case let .bool(v) = self {
+            return v
+        }
+        return nil
     }
 }

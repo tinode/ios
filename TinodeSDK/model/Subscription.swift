@@ -155,7 +155,7 @@ public class Subscription<SP: Codable, SR: Codable>: SubscriptionProto {
                 self.acs = Acs(from: sub.acs!)
                 changed = true
             } else {
-                changed = acs!.merge(from: sub.acs)
+                changed = acs!.merge(from: sub.acs) || changed
             }
         }
 
@@ -190,7 +190,7 @@ public class Subscription<SP: Codable, SR: Codable>: SubscriptionProto {
                 seen = sub.seen
                 changed = true
             } else {
-                changed = seen!.merge(seen: sub.seen)
+                changed = seen!.merge(seen: sub.seen) || changed
             }
         }
 
