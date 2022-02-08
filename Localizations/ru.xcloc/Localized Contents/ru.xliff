@@ -1401,22 +1401,22 @@
         <note>Bundle name</note>
       </trans-unit>
       <trans-unit id="NSCameraUsageDescription" xml:space="preserve">
-        <source>Tinodios takes photos with the camera to use as avatar or to send them to your contacts</source>
+        <source>Tinode takes photos with the camera to use as avatar or to send them to your contacts</source>
         <target>Tinode использует камеру для того, чтобы создать аватар или для того, чтобы отправить фото вашим контактам</target>
         <note>Privacy - Camera Usage Description</note>
       </trans-unit>
       <trans-unit id="NSContactsUsageDescription" xml:space="preserve">
-        <source>Tinodios sends only emails and phone numbers to the Tinodios server to help you connect with other users</source>
+        <source>Tinode sends only emails and phone numbers to the Tinode server to help you connect with other users</source>
         <target>Tinode сохраняет емейлы и номера телефонов на сервере для того, чтобы найти по ним ваших знакомых</target>
         <note>Privacy - Contacts Usage Description</note>
       </trans-unit>
       <trans-unit id="NSPhotoLibraryAddUsageDescription" xml:space="preserve">
-        <source>Images and pictures from Tinodios can be saved in the photo library</source>
+        <source>Images and pictures from Tinode can be saved in the photo library</source>
         <target>Фото и картинки из Tinode могут быть сохранены в фото-библиотеке</target>
         <note>Privacy - Photo Library Additions Usage Description</note>
       </trans-unit>
       <trans-unit id="NSPhotoLibraryUsageDescription" xml:space="preserve">
-        <source>Tinodios needs access to your photos to let you you send them to your contacts</source>
+        <source>Tinode needs access to your photos to let you you send them to your contacts</source>
         <target>Tinode-у нужно получить доступ к вашим фото для того, чтобы вы могли прикреплять их к сообщениям</target>
         <note>Privacy - Photo Library Usage Description</note>
       </trans-unit>

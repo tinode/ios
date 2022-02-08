@@ -90,6 +90,7 @@
 		B0BA208523D5D8CF00C59BD4 /* FilePreviewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0BA208423D5D8CF00C59BD4 /* FilePreviewController.swift */; };
 		B0BB539F256B14A1000FE949 /* AsyncTextAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0BB539E256B14A1000FE949 /* AsyncTextAttachment.swift */; };
 		B0BB53C3256DD5C9000FE949 /* LargeFileHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0BB53C2256DD5C9000FE949 /* LargeFileHelper.swift */; };
+		B0BE301C27B3367E00B04631 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = B0BE301A27B3367E00B04631 /* InfoPlist.strings */; };
 		B0C6A3C2229EDF14009B0B5D /* ImagePreviewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0C6A3C1229EDF14009B0B5D /* ImagePreviewController.swift */; };
 		B0CF83E0244E074A00E79D22 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = B0CF83E2244E074A00E79D22 /* Localizable.strings */; };
 		B0DF03172279F027000F9492 /* RoundImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0DF03162279F027000F9492 /* RoundImageView.swift */; };
@@ -237,6 +238,7 @@
 		B0BB539E256B14A1000FE949 /* AsyncTextAttachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncTextAttachment.swift; sourceTree = "<group>"; };
 		B0BB53C2256DD5C9000FE949 /* LargeFileHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LargeFileHelper.swift; sourceTree = "<group>"; };
 		B0BC2B5B235E0DB800BEEB4B /* Tinodios.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Tinodios.entitlements; sourceTree = "<group>"; };
+		B0BE301B27B3367E00B04631 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		B0C6A3C1229EDF14009B0B5D /* ImagePreviewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePreviewController.swift; sourceTree = "<group>"; };
 		B0CEF8D726B5EC21000028C2 /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/Main.strings"; sourceTree = "<group>"; };
 		B0CEF8D826B5EC5D000028C2 /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/LaunchScreen.strings"; sourceTree = "<group>"; };
@@ -356,6 +358,7 @@
 				B031BE542263075E004160AE /* Settings.bundle */,
 				0A0380E921B3CCB000A3FA0E /* Supporting Files */,
 				0A0380E321B3CC8200A3FA0E /* Info.plist */,
+				B0BE301A27B3367E00B04631 /* InfoPlist.strings */,
 			);
 			path = Tinodios;
 			sourceTree = "<group>";
@@ -555,6 +558,7 @@
 				B031BE552263075E004160AE /* Settings.bundle in Resources */,
 				B0CF83E0244E074A00E79D22 /* Localizable.strings in Resources */,
 				0AE7339C22C33FEF0089C8D8 /* ChatListViewCell.xib in Resources */,
+				B0BE301C27B3367E00B04631 /* InfoPlist.strings in Resources */,
 				0A3AE3B7274CAD5800CB673E /* ForwardMessageBar.xib in Resources */,
 				B0133AE323D1AADF00C813CA /* SendImageBar.xib in Resources */,
 				B0DF032D2282EE8A000F9492 /* SendMessageBar.xib in Resources */,
@@ -792,6 +796,14 @@
 				B0CEF8DA26B603E3000028C2 /* ru */,
 			);
 			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+		B0BE301A27B3367E00B04631 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				B0BE301B27B3367E00B04631 /* ru */,
+			);
+			name = InfoPlist.strings;
 			sourceTree = "<group>";
 		};
 		B0CF83E2244E074A00E79D22 /* Localizable.strings */ = {
