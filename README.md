@@ -6,6 +6,10 @@ Status: beta. Usable and mostly stable but bugs may happen.
 
 <a href="https://apps.apple.com/us/app/tinode/id1483763538"><img src="app-store.svg" height=36></a>
 
+## Installing and running
+
+This is NOT a standalone app, this is just a frontend, a client. It requires a [backend](https://github.com/tinode/chat/). See [installation instructions](https://github.com/tinode/chat/blob/master/INSTALL.md).
+
 ## Getting support
 
 * Read [server-side](https://github.com/tinode/chat/blob/master/docs/API.md) API documentation.
