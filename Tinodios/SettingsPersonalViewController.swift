@@ -1,8 +1,7 @@
 //
 //  SettingsPersonalViewController.swift
-//  Tinodios
 //
-//  Copyright © 2020 Tinode. All rights reserved.
+//  Copyright © 2020-2022 Tinode LLC. All rights reserved.
 //
 
 import TinodeSDK
@@ -11,21 +10,20 @@ import UIKit
 class SettingsPersonalViewController: UITableViewController {
 
     private static let kSectionPersonal = 0
-    private static let kPersonalVerified = 3
-    private static let kPersonalStaff = 4
-    private static let kPersonalDanger = 5
+    private static let kPersonalDescription = 1
 
     private static let kSectionContacts = 1
     private static let kSectionTags = 2
 
     @IBOutlet weak var userNameLabel: UILabel!
+    @IBOutlet weak var descriptionLabel: UILabel!
     @IBOutlet weak var avatarImage: RoundImageView!
     @IBOutlet weak var loadAvatarButton: UIButton!
 
-    @IBOutlet weak var myUIDLabel: UILabel!
-
     @IBOutlet weak var manageContacts: UITableViewCell!
     @IBOutlet weak var manageTags: UITableViewCell!
+
+    // let descriptionEditor = UITextView(frame: CGRect.zero)
 
     weak var tinode: Tinode!
     weak var me: DefaultMeTopic!
@@ -51,6 +49,10 @@ class SettingsPersonalViewController: UITableViewController {
             action: #selector(SettingsPersonalViewController.userNameTapped),
             actionTarget: self)
         UiUtils.setupTapRecognizer(
+            forView: descriptionLabel,
+            action: #selector(SettingsPersonalViewController.descriptionTapped),
+            actionTarget: self)
+        UiUtils.setupTapRecognizer(
             forView: manageTags,
             action: #selector(SettingsPersonalViewController.manageTagsClicked),
             actionTarget: self)
@@ -66,9 +68,14 @@ class SettingsPersonalViewController: UITableViewController {
         // Title.
         self.userNameLabel.text = me.pub?.fn ?? NSLocalizedString("Unknown", comment: "Placeholder for missing user name")
 
-        // My UID/Address label.
-        self.myUIDLabel.text = self.tinode.myUid
-        self.myUIDLabel.sizeToFit()
+        // Description (note)
+        if let note = me.pub?.note {
+            self.descriptionLabel.text = note
+            self.descriptionLabel.textColor = UIColor.secondaryLabel
+        } else {
+            self.descriptionLabel.text = NSLocalizedString("Add optional description", comment: "Placeholder for missing user description")
+            self.descriptionLabel.textColor = UIColor.placeholderText
+        }
 
         // Avatar.
         self.avatarImage.set(pub: me.pub, id: self.tinode.myUid)
@@ -100,6 +107,16 @@ class SettingsPersonalViewController: UITableViewController {
             }
         }))
         self.present(alert, animated: true)
+    }
+
+    @objc
+    func descriptionTapped(sender: UITapGestureRecognizer) {
+        let alert = MultilineAlertViewController(with: self.me?.pub?.note)
+        alert.title = NSLocalizedString("Edit description", comment: "Alert title")
+        alert.completionHandler = { text in
+            self.updateDescription(text)
+        }
+        alert.show(over: self)
     }
 
     @objc func manageTagsClicked(sender: UITapGestureRecognizer) {
@@ -189,6 +206,20 @@ class SettingsPersonalViewController: UITableViewController {
             },
             onFailure: UiUtils.ToastFailureHandler)
     }
+
+    private func updateDescription(_ note: String?) {
+        let pub = me.pub == nil ? TheCard(fn: nil) : me.pub!.copy()
+        let upd = (note == nil || note!.isEmpty) ? Tinode.kNullValue : note
+        if pub.note != upd {
+            pub.note = String(upd!.prefix(UiUtils.kMaxTopicDdescriptionLength))
+        }
+        UiUtils.setTopicData(forTopic: self.me, pub: pub, priv: nil).then(
+            onSuccess: { _ in
+                DispatchQueue.main.async { self.reloadData() }
+                return nil
+            },
+            onFailure: UiUtils.ToastFailureHandler)
+    }
 }
 
 extension SettingsPersonalViewController: ImagePickerDelegate {
@@ -248,14 +279,6 @@ extension SettingsPersonalViewController {
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if indexPath.section == SettingsPersonalViewController.kSectionContacts && indexPath.row > 0 {
             return tableView.rowHeight
-        }
-
-        if indexPath.section == SettingsPersonalViewController.kSectionPersonal {
-            if (indexPath.row == SettingsPersonalViewController.kPersonalVerified && !me.isVerified) ||
-                (indexPath.row == SettingsPersonalViewController.kPersonalStaff && !me.isStaffManaged) ||
-                (indexPath.row == SettingsPersonalViewController.kPersonalDanger && !me.isDangerous) {
-                return CGFloat.leastNonzeroMagnitude
-            }
         }
 
         return super.tableView(tableView, heightForRowAt: indexPath)

@@ -1,8 +1,7 @@
 //
 //  PlaceholderTextView.swift
-//  Tinodios
 //
-//  Copyright © 2019 Tinode. All rights reserved.
+//  Copyright © 2019-2022 Tinode LLC. All rights reserved.
 //
 
 import UIKit
@@ -41,18 +40,25 @@ import UIKit
         }
     }
 
+    @IBInspectable
+    public var fontSize: CGFloat = UIFont.preferredFont(forTextStyle: .body).pointSize {
+        didSet {
+            self.font = self.font?.withSize(self.fontSize)
+        }
+    }
+
     // MARK: overridden UITextView variables
 
-    // "text" and "attributedText" vars should not accessed
-    // via "actualText" and "actualAttributedText" which takes into account
+    // The "text" and "attributedText" vars should not be read directly.
+    // Read them via "actualText" and "actualAttributedText" which take into account
     // whether the placeholder is being shown.
-    override internal var text: String! {
+    override public var text: String! {
         didSet {
             checkForEmptyText()
         }
     }
 
-    override internal var attributedText: NSAttributedString! {
+    override public var attributedText: NSAttributedString! {
         didSet {
             checkForEmptyText()
         }
@@ -128,6 +134,8 @@ import UIKit
             isShowingPlaceholder = true
             textColor = placeholderColor ?? Constants.defaultPlaceholderColorLight
             text = placeholderText
+        } else {
+            isShowingPlaceholder = false
         }
     }
 
@@ -144,6 +152,8 @@ import UIKit
             text = placeholderText
             textColor = placeholderColor
             isShowingPlaceholder = true
+        } else {
+            isShowingPlaceholder = false
         }
     }
 

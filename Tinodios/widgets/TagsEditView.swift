@@ -26,6 +26,7 @@ internal struct Constants {
 
 public typealias TinodeTag = String
 
+@IBDesignable
 public class TagView: UIView {
     fileprivate let textLabel = UILabel()
 

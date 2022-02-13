@@ -1,8 +1,7 @@
 //
 //  TagsEditDialogView.swift
-//  Tinodios
 //
-//  Copyright © 2019 Tinode. All rights reserved.
+//  Copyright © 2019-2022 Tinode LLC. All rights reserved.
 //
 
 import Foundation
@@ -20,6 +19,7 @@ class TagsEditDialogViewController: UIViewController {
     @IBOutlet weak var okButton: UIButton!
     @IBOutlet weak var cancelButton: UIButton!
     @IBOutlet weak var tagsEditView: TagsEditView!
+
     private var initialTags: [TinodeTag] = []
     public var completionHandler: CompletionHandler?
 
@@ -44,6 +44,9 @@ class TagsEditDialogViewController: UIViewController {
 
         let maxTagCount = Cache.tinode.getServerLimit(for: Tinode.kMaxTagCount, withDefault: TagsEditDialogViewController.kDefaultMaxTagCount)
         tagsEditView.fontSize = 17
+        tagsEditView.layer.cornerRadius = 8
+        tagsEditView.layer.borderColor = TagsEditDialogViewController.kButtonBorderColor.cgColor
+        tagsEditView.layer.borderWidth = 0.5
         tagsEditView.onShouldAcceptTag = { v in
             // Make sure we don't add more than maxTagCount.
             return v.tagViews.count < maxTagCount
@@ -52,6 +55,7 @@ class TagsEditDialogViewController: UIViewController {
             return Utils.isValidTag(tag: tag)
         }
         tagsEditView.addTags(initialTags)
+        tagsEditView.becomeFirstResponder()
     }
 
     func show(over viewController: UIViewController?) {

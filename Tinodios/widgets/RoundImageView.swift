@@ -10,7 +10,8 @@ import UIKit
 import TinodeSDK
 import Kingfisher
 
-@IBDesignable class RoundImageView: UIImageView {
+@IBDesignable
+public class RoundImageView: UIImageView {
     internal enum Constants {
         static let kForegroundColorDark = UIColor(red: 0xDE/255, green: 0xDE/255, blue: 0xDE/255, alpha: 1.0)
         static let kForegroundColorLight = UIColor.white
@@ -64,13 +65,13 @@ import Kingfisher
     private var radius: CGFloat?
 
     // MARK: - Overridden Properties
-    override var frame: CGRect {
+    override public var frame: CGRect {
         didSet {
             setCornerRadius()
         }
     }
 
-    override var bounds: CGRect {
+    override public var bounds: CGRect {
         didSet {
             setCornerRadius()
             if let initials = initials {
@@ -161,8 +162,8 @@ import Kingfisher
     }
 
     private func letterTileImage(initials: String) -> UIImage {
-        let width = frame.width
-        let height = frame.height
+        let width = bounds.width
+        let height = bounds.height
         if width == 0 || height == 0 { return UIImage() }
         var font = letterTileFont
 
@@ -231,7 +232,7 @@ import Kingfisher
     }
 
     private func setCornerRadius() {
-        layer.cornerRadius = min(frame.width, frame.height)/2
+        layer.cornerRadius = min(bounds.width, bounds.height)/2
     }
 }
 

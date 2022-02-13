@@ -89,6 +89,8 @@ class UiUtils {
     static let kDefaultBitmapSize: CGFloat = 256
     // Maximum length of topic title or user name.
     static let kMaxTitleLength = 60
+    // Maximum length of topic description.
+    static let kMaxTopicDdescriptionLength = 360
 
     // Color of "read" delivery marker.
     static let kDeliveryMarkerTint = UIColor(red: 19/255, green: 144/255, blue: 255/255, alpha: 0.8)
