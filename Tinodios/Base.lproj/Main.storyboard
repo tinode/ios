@@ -615,22 +615,24 @@
                             <tableViewSection headerTitle="Contacts" id="bvE-OV-sy1">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" accessoryType="disclosureIndicator" indentationWidth="10" focusStyle="custom" textLabel="fLh-oI-CRP" imageView="6z9-5Y-HKA" style="IBUITableViewCellStyleDefault" id="WNR-81-Xt2">
-                                        <rect key="frame" x="0.0" y="294.33333206176752" width="414" height="43.666667938232422"/>
+                                        <rect key="frame" x="0.0" y="294.33333206176758" width="414" height="43.666667938232422"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="WNR-81-Xt2" id="Ovf-BC-JGG">
                                             <rect key="frame" x="0.0" y="0.0" width="385.33333333333331" height="43.666667938232422"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Add another" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="fLh-oI-CRP">
-                                                    <rect key="frame" x="60" y="0.0" width="317.33333333333331" height="43.666667938232422"/>
+                                                    <rect key="frame" x="57" y="0.0" width="320.33333333333331" height="43.666667938232422"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" image="add-25" id="6z9-5Y-HKA">
-                                                    <rect key="frame" x="20" y="9.3333333333333357" width="25" height="25"/>
+                                                <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="6z9-5Y-HKA">
+                                                    <rect key="frame" x="18.666666666666671" y="10.666666666666664" width="23.333333333333332" height="22"/>
                                                     <autoresizingMask key="autoresizingMask"/>
+                                                    <imageReference key="image" image="plus" catalog="system" symbolScale="large"/>
+                                                    <preferredSymbolConfiguration key="preferredSymbolConfiguration" scale="large" weight="medium"/>
                                                 </imageView>
                                             </subviews>
                                         </tableViewCellContentView>
@@ -641,7 +643,7 @@
                             <tableViewSection headerTitle="Tags (Content Discovery)" id="jal-tR-OpF">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" accessoryType="disclosureIndicator" indentationWidth="10" focusStyle="custom" textLabel="eHa-mE-ZbY" detailTextLabel="K7L-Uc-b68" imageView="iGu-Eb-fCF" style="IBUITableViewCellStyleSubtitle" id="Nl1-fA-AeA">
-                                        <rect key="frame" x="0.0" y="370.66666603088373" width="414" height="55.666667938232422"/>
+                                        <rect key="frame" x="0.0" y="370.66666603088379" width="414" height="55.666667938232422"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Nl1-fA-AeA" id="SiW-3F-rOw">
                                             <rect key="frame" x="0.0" y="0.0" width="385.33333333333331" height="55.666667938232422"/>
@@ -1731,7 +1733,7 @@
                             <tableViewSection id="ZEt-A4-kIu" userLabel="Quick actions">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" rowHeight="44" id="MXD-lQ-qMa" userLabel="Muted">
-                                        <rect key="frame" x="0.0" y="398.66667175292963" width="414" height="44"/>
+                                        <rect key="frame" x="0.0" y="398.66667175292969" width="414" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="MXD-lQ-qMa" id="GhK-qo-uk3">
                                             <rect key="frame" x="0.0" y="0.0" width="414" height="44"/>
@@ -1761,7 +1763,7 @@
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" rowHeight="44" id="aJ5-1M-C4F" userLabel="Archived">
-                                        <rect key="frame" x="0.0" y="442.66667175292963" width="414" height="44"/>
+                                        <rect key="frame" x="0.0" y="442.66667175292969" width="414" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="aJ5-1M-C4F" id="IFc-3m-izs">
                                             <rect key="frame" x="0.0" y="0.0" width="414" height="44"/>
@@ -1862,15 +1864,17 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Add Members" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="jZE-Vv-ggf">
-                                                    <rect key="frame" x="60" y="0.0" width="317.33333333333331" height="43.666667938232422"/>
+                                                    <rect key="frame" x="57" y="0.0" width="320.33333333333331" height="43.666667938232422"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <imageView opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" image="add-25" id="h4a-x9-hXq">
-                                                    <rect key="frame" x="20" y="9.3333333333333357" width="25" height="25"/>
+                                                <imageView opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="h4a-x9-hXq">
+                                                    <rect key="frame" x="18.666666666666671" y="10.666666666666664" width="23.333333333333332" height="22"/>
                                                     <autoresizingMask key="autoresizingMask"/>
+                                                    <imageReference key="image" image="plus" catalog="system" symbolScale="large"/>
+                                                    <preferredSymbolConfiguration key="preferredSymbolConfiguration" scale="large" weight="medium"/>
                                                 </imageView>
                                             </subviews>
                                         </tableViewCellContentView>
@@ -2996,22 +3000,24 @@
                             <tableViewSection headerTitle="Group Members" id="26s-2T-nI0">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="FeF-3T-sWp" imageView="i4w-uL-EcP" style="IBUITableViewCellStyleDefault" id="IF5-Bs-9cB" userLabel="Add Members">
-                                        <rect key="frame" x="0.0" y="462.66666603088373" width="414" height="50.000000000000057"/>
+                                        <rect key="frame" x="0.0" y="462.66666603088379" width="414" height="50"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="IF5-Bs-9cB" id="uqg-aO-L4d">
                                             <rect key="frame" x="0.0" y="0.0" width="385.33333333333331" height="50"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Add members" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="FeF-3T-sWp">
-                                                    <rect key="frame" x="60" y="0.0" width="317.33333333333331" height="50"/>
+                                                    <rect key="frame" x="57" y="0.0" width="320.33333333333331" height="50"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" image="add-25" id="i4w-uL-EcP">
-                                                    <rect key="frame" x="20" y="12.333333333333336" width="25" height="25"/>
+                                                <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="i4w-uL-EcP">
+                                                    <rect key="frame" x="18.666666666666671" y="14" width="23.333333333333332" height="22"/>
                                                     <autoresizingMask key="autoresizingMask"/>
+                                                    <imageReference key="image" image="plus" catalog="system" symbolScale="large"/>
+                                                    <preferredSymbolConfiguration key="preferredSymbolConfiguration" scale="large" weight="medium"/>
                                                 </imageView>
                                             </subviews>
                                         </tableViewCellContentView>
@@ -3211,7 +3217,6 @@
         <segue reference="11u-RR-BAc"/>
     </inferredMetricsTieBreakers>
     <resources>
-        <image name="add-25" width="25" height="25"/>
         <image name="arrow-up-48" width="36" height="36"/>
         <image name="bell.badge" catalog="system" width="128" height="124"/>
         <image name="bin.xmark.fill" catalog="system" width="128" height="93"/>
@@ -3228,6 +3233,7 @@
         <image name="new-group-25" width="25" height="25"/>
         <image name="nosign" catalog="system" width="128" height="121"/>
         <image name="pencil" catalog="system" width="128" height="113"/>
+        <image name="plus" catalog="system" width="128" height="113"/>
         <image name="plus.bubble" catalog="system" width="128" height="110"/>
         <image name="questionmark.circle" catalog="system" width="128" height="121"/>
         <image name="rectangle.portrait.and.arrow.right" catalog="system" width="128" height="108"/>
