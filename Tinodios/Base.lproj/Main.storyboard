@@ -710,16 +710,18 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Change password" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="qvs-D4-f94">
-                                                    <rect key="frame" x="57.333333333333314" y="0.0" width="320" height="43.666667938232422"/>
+                                                    <rect key="frame" x="56.166666666666686" y="0.0" width="321.16666666666663" height="43.666667938232422"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" image="password-22" id="yia-dl-TYs">
-                                                    <rect key="frame" x="20" y="10.666666666666666" width="22.333333333333332" height="22.333333333333332"/>
+                                                <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="yia-dl-TYs">
+                                                    <rect key="frame" x="19.5" y="12.333333333333336" width="21.666666666666668" height="19"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <color key="tintColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                    <imageReference key="image" image="lock.rotation" catalog="system" symbolScale="medium"/>
+                                                    <preferredSymbolConfiguration key="preferredSymbolConfiguration" scale="medium" weight="regular"/>
                                                 </imageView>
                                             </subviews>
                                         </tableViewCellContentView>
@@ -733,17 +735,19 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Log out" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="8RW-nB-5t3">
-                                                    <rect key="frame" x="60" y="0.0" width="317.33333333333331" height="43.666667938232422"/>
+                                                    <rect key="frame" x="57" y="0.0" width="320.33333333333331" height="43.666667938232422"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <color key="tintColor" systemColor="labelColor"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" image="sign-out-25" id="MiG-tt-8oB">
-                                                    <rect key="frame" x="20" y="9.3333333333333357" width="25" height="25"/>
+                                                <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="MiG-tt-8oB">
+                                                    <rect key="frame" x="18.666666666666671" y="11.666666666666664" width="23.333333333333332" height="20"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <color key="tintColor" systemColor="systemBlueColor"/>
+                                                    <imageReference key="image" image="rectangle.portrait.and.arrow.right" catalog="system" symbolScale="medium"/>
+                                                    <preferredSymbolConfiguration key="preferredSymbolConfiguration" scale="medium" weight="regular"/>
                                                 </imageView>
                                             </subviews>
                                             <color key="tintColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -758,15 +762,17 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Delete account" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Fjs-5K-JCI">
-                                                    <rect key="frame" x="57.333333333333314" y="0.0" width="320" height="43.666667938232422"/>
+                                                    <rect key="frame" x="57.333333333333343" y="0.0" width="320" height="43.666667938232422"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" image="delete-bin-22" id="dD4-Ln-row">
-                                                    <rect key="frame" x="20" y="10.666666666666666" width="22.333333333333332" height="22.333333333333332"/>
+                                                <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="dD4-Ln-row">
+                                                    <rect key="frame" x="18.333333333333336" y="12.999999999999998" width="24" height="17.333333333333332"/>
                                                     <autoresizingMask key="autoresizingMask"/>
+                                                    <imageReference key="image" image="bin.xmark.fill" catalog="system" symbolScale="medium"/>
+                                                    <preferredSymbolConfiguration key="preferredSymbolConfiguration" scale="medium" weight="regular"/>
                                                 </imageView>
                                             </subviews>
                                         </tableViewCellContentView>
@@ -836,16 +842,18 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Blocked contacts" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Lh9-1X-ez1">
-                                                    <rect key="frame" x="60" y="0.0" width="317.33333333333331" height="43.666667938232422"/>
+                                                    <rect key="frame" x="55.666666666666657" y="0.0" width="321.66666666666663" height="43.666667938232422"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" image="block-25" id="CwX-I6-c0E">
-                                                    <rect key="frame" x="20" y="9.3333333333333357" width="25" height="25"/>
+                                                <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="CwX-I6-c0E">
+                                                    <rect key="frame" x="20.5" y="12.333333333333336" width="19.666666666666664" height="19"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <color key="tintColor" systemColor="labelColor"/>
+                                                    <imageReference key="image" image="nosign" catalog="system" symbolScale="medium"/>
+                                                    <preferredSymbolConfiguration key="preferredSymbolConfiguration" scale="medium" weight="regular"/>
                                                 </imageView>
                                             </subviews>
                                         </tableViewCellContentView>
@@ -1048,15 +1056,17 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Account and Security" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="z08-iK-CeG">
-                                                    <rect key="frame" x="57.333333333333314" y="0.0" width="320" height="43.666667938232422"/>
+                                                    <rect key="frame" x="55.666666666666686" y="0.0" width="321.66666666666663" height="43.666667938232422"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" image="password-22" id="sTI-4c-guB">
-                                                    <rect key="frame" x="20" y="10.666666666666666" width="22.333333333333332" height="22.333333333333332"/>
+                                                <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="sTI-4c-guB">
+                                                    <rect key="frame" x="20.166666666666671" y="12.333333333333336" width="20.333333333333332" height="19"/>
                                                     <autoresizingMask key="autoresizingMask"/>
+                                                    <imageReference key="image" image="lock.shield" catalog="system" symbolScale="medium"/>
+                                                    <preferredSymbolConfiguration key="preferredSymbolConfiguration" scale="large" weight="regular"/>
                                                 </imageView>
                                             </subviews>
                                         </tableViewCellContentView>
@@ -1072,15 +1082,17 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Notifications" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="aCk-Z4-8m7">
-                                                    <rect key="frame" x="57.333333333333314" y="0.0" width="320" height="43.666667938232422"/>
+                                                    <rect key="frame" x="55.666666666666686" y="0.0" width="321.66666666666663" height="43.666667938232422"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" image="notification-22" id="Cmv-ie-mJi">
-                                                    <rect key="frame" x="20" y="10.666666666666666" width="22.333333333333332" height="22.333333333333332"/>
+                                                <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="Cmv-ie-mJi">
+                                                    <rect key="frame" x="20.833333333333336" y="11.999999999999998" width="19" height="19.333333333333332"/>
                                                     <autoresizingMask key="autoresizingMask"/>
+                                                    <imageReference key="image" image="bell.badge" catalog="system" symbolScale="medium"/>
+                                                    <preferredSymbolConfiguration key="preferredSymbolConfiguration" scale="medium" weight="regular"/>
                                                 </imageView>
                                             </subviews>
                                         </tableViewCellContentView>
@@ -1096,15 +1108,17 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Help and About" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="fPM-Ht-gZz">
-                                                    <rect key="frame" x="57.333333333333314" y="0.0" width="320" height="43.666667938232422"/>
+                                                    <rect key="frame" x="55.666666666666657" y="0.0" width="321.66666666666663" height="43.666667938232422"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" image="support-22" id="WxA-G3-yy0">
-                                                    <rect key="frame" x="20" y="10.666666666666666" width="22.333333333333332" height="22.333333333333332"/>
+                                                <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="WxA-G3-yy0">
+                                                    <rect key="frame" x="20.5" y="12.333333333333336" width="19.666666666666664" height="19"/>
                                                     <autoresizingMask key="autoresizingMask"/>
+                                                    <imageReference key="image" image="questionmark.circle" catalog="system" symbolScale="medium"/>
+                                                    <preferredSymbolConfiguration key="preferredSymbolConfiguration" scale="medium" weight="regular"/>
                                                 </imageView>
                                             </subviews>
                                         </tableViewCellContentView>
@@ -2618,16 +2632,16 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Contact us" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="9Lj-hp-MkL">
-                                                    <rect key="frame" x="49" y="0.0" width="328.33333333333331" height="43.666667938232422"/>
+                                                    <rect key="frame" x="57" y="0.0" width="320.33333333333331" height="43.666667938232422"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleAspectFit" insetsLayoutMarginsFromSafeArea="NO" id="TNg-4p-wCN">
-                                                    <rect key="frame" x="20" y="16.333333333333332" width="14" height="11"/>
+                                                <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="TNg-4p-wCN">
+                                                    <rect key="frame" x="18.666666666666671" y="12.666666666666666" width="23.333333333333332" height="17.999999999999996"/>
                                                     <autoresizingMask key="autoresizingMask"/>
-                                                    <imageReference key="image" image="email" symbolScale="medium"/>
+                                                    <imageReference key="image" image="envelope.fill" catalog="system" symbolScale="medium"/>
                                                     <preferredSymbolConfiguration key="preferredSymbolConfiguration" scale="default" weight="bold"/>
                                                 </imageView>
                                             </subviews>
@@ -2642,15 +2656,17 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Terms of use" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="9dk-JW-5z0">
-                                                    <rect key="frame" x="60" y="0.0" width="317.33333333333331" height="43.666667938232422"/>
+                                                    <rect key="frame" x="55.833333333333343" y="0.0" width="321.5" height="43.666667938232422"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleAspectFit" insetsLayoutMarginsFromSafeArea="NO" image="contract-25" id="JbM-aa-yFe">
-                                                    <rect key="frame" x="20" y="9.3333333333333357" width="25" height="25"/>
+                                                <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="JbM-aa-yFe">
+                                                    <rect key="frame" x="19.833333333333336" y="12.333333333333334" width="21" height="17.666666666666668"/>
                                                     <autoresizingMask key="autoresizingMask"/>
+                                                    <imageReference key="image" image="text.badge.checkmark" catalog="system" symbolScale="medium"/>
+                                                    <preferredSymbolConfiguration key="preferredSymbolConfiguration" scale="medium" weight="regular"/>
                                                 </imageView>
                                             </subviews>
                                         </tableViewCellContentView>
@@ -2664,15 +2680,17 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Privacy policy" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Zn8-7V-BcX">
-                                                    <rect key="frame" x="60" y="0.0" width="317.33333333333331" height="43.666667938232422"/>
+                                                    <rect key="frame" x="58.166666666666686" y="0.0" width="319.16666666666663" height="43.666667938232422"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleAspectFit" insetsLayoutMarginsFromSafeArea="NO" image="shield-25" id="N8i-7L-4Xr">
-                                                    <rect key="frame" x="20" y="9.3333333333333357" width="25" height="25"/>
+                                                <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="N8i-7L-4Xr">
+                                                    <rect key="frame" x="17.5" y="9.0000000000000018" width="25.666666666666668" height="25.666666666666668"/>
                                                     <autoresizingMask key="autoresizingMask"/>
+                                                    <imageReference key="image" image="shield.checkerboard" catalog="system" symbolScale="large"/>
+                                                    <preferredSymbolConfiguration key="preferredSymbolConfiguration" scale="medium" weight="regular"/>
                                                 </imageView>
                                             </subviews>
                                         </tableViewCellContentView>
@@ -3195,31 +3213,29 @@
     <resources>
         <image name="add-25" width="25" height="25"/>
         <image name="arrow-up-48" width="36" height="36"/>
-        <image name="block-25" width="25" height="25"/>
-        <image name="contract-25" width="25" height="25"/>
+        <image name="bell.badge" catalog="system" width="128" height="124"/>
+        <image name="bin.xmark.fill" catalog="system" width="128" height="93"/>
         <image name="danger" width="13" height="13"/>
         <image name="data-25" width="25" height="25"/>
-        <image name="delete-bin-22" width="22.333333969116211" height="22.333333969116211"/>
-        <image name="email" width="14" height="11"/>
+        <image name="envelope.fill" catalog="system" width="128" height="93"/>
         <image name="eye-30" width="30" height="30"/>
         <image name="hand.raised.fill" catalog="system" width="128" height="124"/>
         <image name="invisible-30" width="30" height="30"/>
         <image name="invite-24" width="24" height="24"/>
+        <image name="lock.rotation" catalog="system" width="128" height="110"/>
         <image name="lock.shield" catalog="system" width="128" height="118"/>
         <image name="logo-ios" width="288" height="288"/>
         <image name="new-group-25" width="25" height="25"/>
         <image name="nosign" catalog="system" width="128" height="121"/>
-        <image name="notification-22" width="22.333333969116211" height="22.333333969116211"/>
-        <image name="password-22" width="22.333333969116211" height="22.333333969116211"/>
         <image name="pencil" catalog="system" width="128" height="113"/>
         <image name="plus.bubble" catalog="system" width="128" height="110"/>
+        <image name="questionmark.circle" catalog="system" width="128" height="121"/>
         <image name="rectangle.portrait.and.arrow.right" catalog="system" width="128" height="108"/>
         <image name="search-25" width="25" height="25"/>
-        <image name="shield-25" width="25" height="25"/>
-        <image name="sign-out-25" width="25" height="25"/>
+        <image name="shield.checkerboard" catalog="system" width="128" height="121"/>
         <image name="staff" width="11" height="13"/>
-        <image name="support-22" width="22.333333969116211" height="22.333333969116211"/>
         <image name="tags-24" width="24" height="24"/>
+        <image name="text.badge.checkmark" catalog="system" width="128" height="109"/>
         <image name="trusted" width="15" height="15"/>
         <image name="user-96" width="125" height="125"/>
         <image name="xmark.bin" catalog="system" width="128" height="93"/>

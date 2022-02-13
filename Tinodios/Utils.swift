@@ -299,7 +299,7 @@ extension StoredMessage {
 
         // Add 'block' icon.
         let icon = NSTextAttachment()
-        icon.image = UIImage(named: "block-25")?.withRenderingMode(.alwaysTemplate)
+        icon.image = UIImage(systemName: "nosign")?.withRenderingMode(.alwaysTemplate)
         // Make image smaller
         icon.bounds = CGRect(x: 0, y: 0, width: 18, height: 18)
         second.append(NSAttributedString(attachment: icon))

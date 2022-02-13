@@ -101,8 +101,8 @@
                             </userDefinedRuntimeAttribute>
                         </userDefinedRuntimeAttributes>
                     </label>
-                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="block-25" translatesAutoresizingMaskIntoConstraints="NO" id="8zw-ko-8Ep" userLabel="Icon Blocked">
-                        <rect key="frame" x="199" y="10" width="26" height="18"/>
+                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="8zw-ko-8Ep" userLabel="Icon Blocked">
+                        <rect key="frame" x="199" y="10.5" width="26" height="17"/>
                         <color key="tintColor" red="0.80000000000000004" green="0.80000000000000004" blue="0.80000000000000004" alpha="1" colorSpace="calibratedRGB"/>
                         <accessibility key="accessibilityConfiguration">
                             <accessibilityTraits key="traits" image="YES" notEnabled="YES"/>
@@ -111,14 +111,18 @@
                             <constraint firstAttribute="height" constant="18" id="Ka8-Mu-xbu"/>
                             <constraint firstAttribute="width" constant="26" id="azP-Ol-mbp"/>
                         </constraints>
+                        <imageReference key="image" image="nosign" catalog="system" symbolScale="medium"/>
+                        <preferredSymbolConfiguration key="preferredSymbolConfiguration" scale="medium" weight="regular"/>
                     </imageView>
-                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="alarm-off-25" translatesAutoresizingMaskIntoConstraints="NO" id="DSQ-ow-mzk" userLabel="Icon Muted">
-                        <rect key="frame" x="225" y="10" width="26" height="18"/>
+                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="DSQ-ow-mzk" userLabel="Icon Muted">
+                        <rect key="frame" x="225" y="10" width="26" height="17.5"/>
                         <color key="tintColor" red="0.80000000000000004" green="0.80000000000000004" blue="0.80000000000000004" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="26" id="2op-7v-zNJ"/>
                             <constraint firstAttribute="height" constant="18" id="nJz-QB-fyD"/>
                         </constraints>
+                        <imageReference key="image" image="bell.slash" catalog="system" symbolScale="medium"/>
+                        <preferredSymbolConfiguration key="preferredSymbolConfiguration" scale="medium" weight="regular"/>
                     </imageView>
                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="done-30" translatesAutoresizingMaskIntoConstraints="NO" id="qTs-2b-DEg" userLabel="Message Status">
                         <rect key="frame" x="68" y="31" width="14" height="14"/>
@@ -184,11 +188,11 @@
         </tableViewCell>
     </objects>
     <resources>
-        <image name="alarm-off-25" width="25" height="25"/>
-        <image name="block-25" width="25" height="25"/>
+        <image name="bell.slash" catalog="system" width="124" height="128"/>
         <image name="danger" width="13" height="13"/>
         <image name="done-30" width="30" height="30"/>
         <image name="dot.radiowaves.left.and.right" catalog="system" width="128" height="89"/>
+        <image name="nosign" catalog="system" width="128" height="121"/>
         <image name="staff" width="11" height="13"/>
         <image name="trusted" width="15" height="15"/>
         <systemColor name="labelColor">
