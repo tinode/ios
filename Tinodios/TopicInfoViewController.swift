@@ -16,55 +16,26 @@ class TopicInfoViewController: UITableViewController {
     private static let kSectionBasicStaff = 4
     private static let kSectionBasicDanger = 5
 
-    private static let kSectionMute = 1
+    private static let kSectionQuickAction = 1
+    private static let kSectionQuickActionMute = 0
+    private static let kSectionQuickActionArchive = 1
 
     private static let kSectionActions = 2
-    private static let kSectionActionsManageTags = 0
-    private static let kSectionActionsDelMessages = 1
-    private static let kSectionActionsLeaveGroup = 2
-    private static let kSectionActionsLeaveConversation = 3
-    private static let kSectionActionsDelTopic = 4
-    private static let kSectionActionsBlock = 5
-    private static let kSectionActionsReport = 6
-    private static let kSectionActionsReportGroup = 7
+    private static let kSectionActionsAdminSecurity = 0
+    private static let kSectionActionsManageTags = 1
 
-    private static let kSectionPermissions = 3
-    private static let kSectionPermissionsMine = 0
-    private static let kSectionPermissionsPeer = 1
+    private static let kSectionMembers = 3
 
-    private static let kSectionDefaultPermissions = 4
-    private static let kSectionDefaultPermissionsAuth = 0
-    private static let kSectionDefaultPermissionsAnon = 1
-
-    private static let kSectionMembers = 5
+    @IBOutlet weak var actionManageTags: UITableViewCell!
 
     @IBOutlet weak var topicTitleTextView: UITextView!
     @IBOutlet weak var topicSubtitleTextView: UITextView!
     @IBOutlet weak var avatarImage: RoundImageView!
     @IBOutlet weak var loadAvatarButton: UIButton!
     @IBOutlet weak var mutedSwitch: UISwitch!
+    @IBOutlet weak var archivedSwitch: UISwitch!
     @IBOutlet weak var topicIDLabel: UILabel!
     @IBOutlet weak var lastSeenTimestampLabel: UILabel!
-
-    @IBOutlet weak var actionMyPermissions: UITableViewCell!
-    @IBOutlet weak var myPermissionsLabel: UILabel!
-    @IBOutlet weak var actionPeerPermissions: UITableViewCell!
-    @IBOutlet weak var peerNameLabel: UILabel!
-    @IBOutlet weak var peerPermissionsLabel: UILabel!
-
-    @IBOutlet weak var authUsersPermissionsLabel: UILabel!
-    @IBOutlet weak var anonUsersPermissionsLabel: UILabel!
-    @IBOutlet weak var actionAuthPermissions: UITableViewCell!
-    @IBOutlet weak var actionAnonPermissions: UITableViewCell!
-
-    @IBOutlet weak var actionManageTags: UITableViewCell!
-    @IBOutlet weak var actionDeleteMessages: UITableViewCell!
-    @IBOutlet weak var actionDeleteGroup: UITableViewCell!
-    @IBOutlet weak var actionLeaveGroup: UITableViewCell!
-    @IBOutlet weak var actionLeaveConversation: UITableViewCell!
-    @IBOutlet weak var actionBlockContact: UITableViewCell!
-    @IBOutlet weak var actionReportContact: UITableViewCell!
-    @IBOutlet weak var actionReportGroup: UITableViewCell!
 
     var topicName = ""
     private var topic: DefaultComTopic!
@@ -73,10 +44,6 @@ class TopicInfoViewController: UITableViewController {
 
     private var subscriptions: [Subscription<TheCard, PrivateType>]?
 
-    // Show row with Peer's permissions (p2p topic)
-    private var showPeerPermissions: Bool = false
-    // Show section with default topic permissions (manager of a grp topic)
-    private var showDefaultPermissions: Bool = false
     // Show section with group members
     private var showGroupMembers: Bool = false
 
@@ -100,16 +67,17 @@ class TopicInfoViewController: UITableViewController {
 
         if self.topic.isGrpType {
             loadAvatarButton.isHidden = !topic.isManager
-            showDefaultPermissions = topic.isManager
-            showPeerPermissions = false
             showGroupMembers = topic.isManager || topic.isSharer
             tableView.register(UINib(nibName: "ContactViewCell", bundle: nil), forCellReuseIdentifier: "ContactViewCell")
         } else {
             loadAvatarButton.isHidden = true
-            showDefaultPermissions = false
             showGroupMembers = false
-            showPeerPermissions = true
         }
+
+        UiUtils.setupTapRecognizer(
+            forView: actionManageTags,
+            action: #selector(TopicInfoViewController.manageTagsClicked),
+            actionTarget: self)
         UiUtils.setupTapRecognizer(
             forView: topicSubtitleTextView,
             action: #selector(TopicInfoViewController.topicTitleTapped),
@@ -118,62 +86,6 @@ class TopicInfoViewController: UITableViewController {
             UiUtils.setupTapRecognizer(
                 forView: topicTitleTextView,
                 action: #selector(TopicInfoViewController.topicTitleTapped),
-                actionTarget: self)
-        }
-
-        UiUtils.setupTapRecognizer(
-            forView: actionManageTags,
-            action: #selector(TopicInfoViewController.manageTagsClicked),
-            actionTarget: self)
-        UiUtils.setupTapRecognizer(
-            forView: actionDeleteMessages,
-            action: #selector(TopicInfoViewController.deleteMessagesClicked),
-            actionTarget: self)
-        UiUtils.setupTapRecognizer(
-            forView: actionDeleteGroup,
-            action: #selector(TopicInfoViewController.deleteGroupClicked),
-            actionTarget: self)
-        UiUtils.setupTapRecognizer(
-            forView: actionLeaveGroup,
-            action: #selector(TopicInfoViewController.leaveGroupClicked),
-            actionTarget: self)
-        UiUtils.setupTapRecognizer(
-            forView: actionLeaveConversation,
-            action: #selector(TopicInfoViewController.leaveConversationClicked),
-            actionTarget: self)
-        UiUtils.setupTapRecognizer(
-            forView: actionBlockContact,
-            action: #selector(TopicInfoViewController.blockContactClicked),
-            actionTarget: self)
-        UiUtils.setupTapRecognizer(
-            forView: actionReportContact,
-            action: #selector(TopicInfoViewController.reportContactClicked),
-            actionTarget: self)
-        UiUtils.setupTapRecognizer(
-            forView: actionReportGroup,
-            action: #selector(TopicInfoViewController.reportGroupClicked),
-            actionTarget: self)
-
-        UiUtils.setupTapRecognizer(
-            forView: actionMyPermissions,
-            action: #selector(TopicInfoViewController.permissionsTapped),
-            actionTarget: self)
-
-        if showPeerPermissions {
-            UiUtils.setupTapRecognizer(
-                forView: actionPeerPermissions,
-                action: #selector(TopicInfoViewController.permissionsTapped),
-                actionTarget: self)
-        }
-
-        if showDefaultPermissions {
-            UiUtils.setupTapRecognizer(
-                forView: actionAuthPermissions,
-                action: #selector(TopicInfoViewController.permissionsTapped),
-                actionTarget: self)
-            UiUtils.setupTapRecognizer(
-                forView: actionAnonPermissions,
-                action: #selector(TopicInfoViewController.permissionsTapped),
                 actionTarget: self)
         }
 
@@ -192,7 +104,7 @@ class TopicInfoViewController: UITableViewController {
         avatarImage.set(pub: topic.pub, id: topic?.name)
         avatarImage.letterTileFont = self.avatarImage.letterTileFont.withSize(CGFloat(50))
         mutedSwitch.isOn = topic.isMuted
-        let acs = topic.accessMode
+        archivedSwitch.isOn = topic.isArchived
 
         if let ts = topic?.lastSeen?.when {
             var date: String
@@ -204,17 +116,9 @@ class TopicInfoViewController: UITableViewController {
         }
 
         if self.topic.isGrpType {
-            authUsersPermissionsLabel?.text = topic.defacs?.getAuth()
-            anonUsersPermissionsLabel?.text = topic.defacs?.getAnon()
-            myPermissionsLabel?.text = acs?.modeString
             subscriptions = topic.getSubscriptions()
             // FIXME: reload just the members section.
             tableView.reloadData()
-        } else {
-            peerNameLabel?.text = topic.pub?.fn ?? NSLocalizedString("Unknown", comment: "Placeholder for missing user name")
-            myPermissionsLabel?.text = acs?.wantString
-            let sub = topic.getSubscription(for: self.topic.name)
-            peerPermissionsLabel?.text = sub?.acs?.givenString
         }
     }
 
@@ -229,6 +133,23 @@ class TopicInfoViewController: UITableViewController {
             onFailure: { err in
                 DispatchQueue.main.async {
                     self.mutedSwitch.isOn = !isChecked
+                    if let e = err as? TinodeError, case .notConnected(_) = e {
+                        UiUtils.showToast(message: NSLocalizedString("You are offline.", comment: "Toast notification"))
+                    }
+                }
+                return nil
+            }).thenFinally({
+                DispatchQueue.main.async { self.reloadData() }
+            })
+    }
+
+    @IBAction func archivedSwitched(_ sender: Any) {
+        let isChecked = archivedSwitch.isOn
+        topic.updateArchived(archived: isChecked)?.then(
+            onSuccess: UiUtils.ToastSuccessHandler,
+            onFailure: { err in
+                DispatchQueue.main.async {
+                    self.archivedSwitch.isOn = !isChecked
                     if let e = err as? TinodeError, case .notConnected(_) = e {
                         UiUtils.showToast(message: NSLocalizedString("You are offline.", comment: "Toast notification"))
                     }
@@ -289,176 +210,25 @@ class TopicInfoViewController: UITableViewController {
         }
     }
 
-    private func changePermissions(acs: AcsHelper?, uid: String?, changeType: UiUtils.PermissionsChangeType, disabledPermissions: String?) {
-        guard let acs = acs else {
-            Cache.log.error("TopicInfoVC - can't change nil permissions")
-            return
-        }
-        UiUtils.showPermissionsEditDialog(over: self, acs: acs, callback: {
-            permissions in
-            UiUtils.handlePermissionsChange(onTopic: self.topic, forUid: uid, changeType: changeType, newPermissions: permissions)?.then(onSuccess: self.promiseSuccessHandler)
-        }, disabledPermissions: disabledPermissions)
-    }
-
-    @objc func permissionsTapped(sender: UITapGestureRecognizer) {
-        switch sender.view { // apparently there is no need for === operator.
-        case actionMyPermissions:
-            if let acs = topic.accessMode {
-                var disabled: String = ""
-                if acs.isOwner {
-                    // The owner should be able to change any permission except unsetting the 'O'
-                    disabled = "O"
-                } else {
-                    // Allow accepting any of A S D O permissions but don't allow asking for them.
-                    let controlled = AcsHelper(str: "ASDO")
-                    if let notGiven = AcsHelper.diff(a1: controlled, a2: AcsHelper.and(a1: acs.given, a2: controlled)) {
-                        disabled = notGiven.description
-                    } else {
-                        disabled = "ASDO"
-                    }
-                }
-                changePermissions(acs: acs.want, uid: nil, changeType: .updateSelfSub, disabledPermissions: disabled)
-            } else {
-                Cache.log.error("Access mode is nil")
-            }
-        case actionPeerPermissions:
-            changePermissions(acs: topic.getSubscription(for: self.topic.name)?.acs?.given, uid: topic.name, changeType: .updateSub, disabledPermissions: "ASDO")
-        case actionAuthPermissions:
-            changePermissions(acs: topic.defacs?.auth, uid: nil, changeType: .updateAuth, disabledPermissions: "O")
-        case actionAnonPermissions:
-            changePermissions(acs: topic.defacs?.anon, uid: nil, changeType: .updateAnon, disabledPermissions: "O")
-        default:
-            return
-        }
-    }
-
-    private func deleteTopic() {
-        topic.delete(hard: true).then(
-            onSuccess: { _ in
-                DispatchQueue.main.async {
-                    self.performSegue(withIdentifier: "TopicInfo2Chats", sender: nil)
-                }
-                return nil
-            },
-            onFailure: UiUtils.ToastFailureHandler)
-    }
-
-    private func blockContact() {
-        topic.updateMode(uid: nil, update: "-JP").then(
-            onSuccess: { _ in
-                DispatchQueue.main.async {
-                    self.performSegue(withIdentifier: "TopicInfo2Chats", sender: nil)
-                }
-                return nil
-            },
-            onFailure: UiUtils.ToastFailureHandler)
-    }
-
-    private func reportTopic(reason: String) {
-        blockContact()
-        // Create and send spam report.
-        let msg = Drafty().attachJSON([
-            "action": JSONValue.string("report"),
-            "target": JSONValue.string(self.topic.name)
-            ])
-        _ = Cache.tinode.publish(topic: Tinode.kTopicSys, head: ["mime": .string(Drafty.kJSONMimeType)], content: msg, attachments: nil)
-    }
-
-    @objc func deleteGroupClicked(sender: UITapGestureRecognizer) {
-        guard topic.isOwner else {
-            UiUtils.showToast(message: NSLocalizedString("Only Owner can delete group", comment: "Toast notification"))
-            return
-        }
-        let alert = UIAlertController(title: NSLocalizedString("Delete the group?", comment: "Alert title"), message: nil, preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Alert action"), style: .cancel, handler: nil))
-        alert.addAction(UIAlertAction(
-            title: NSLocalizedString("Delete", comment: "Alert action"), style: .destructive,
-            handler: { _ in self.deleteTopic() }))
-        present(alert, animated: true)
-    }
-
     @objc func manageTagsClicked(sender: UITapGestureRecognizer) {
         UiUtils.presentManageTagsEditDialog(over: self, forTopic: self.topic)
     }
 
-    @objc func deleteMessagesClicked(sender: UITapGestureRecognizer) {
-        let handler: (Bool) -> Void = { (hard: Bool) -> Void in
-            self.topic?.delMessages(hard: hard).thenCatch(UiUtils.ToastFailureHandler)
-        }
-
-        let alert = UIAlertController(title: NSLocalizedString("Clear all messages?", comment: "Alert title"), message: nil, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Alert action"), style: .cancel, handler: nil))
-        if topic.isDeleter {
-            alert.addAction(UIAlertAction(
-                title: NSLocalizedString("For all", comment: "Alert action qualifier as in 'Delete for all'"), style: .destructive,
-                handler: { _ in handler(true) }))
-        }
-        alert.addAction(UIAlertAction(
-            title: topic.isDeleter ? NSLocalizedString("For me", comment: "Alert action 'Delete for me'") : NSLocalizedString("OK", comment: "Alert action"), style: .destructive,
-            handler: { _ in handler(false) }))
-        present(alert, animated: true)
-    }
-
-    @objc func leaveConversationClicked(sender: UITapGestureRecognizer) {
-        let alert = UIAlertController(title: NSLocalizedString("Leave the conversation?", comment: "Alert title"), message: nil, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Alert action"), style: .cancel, handler: nil))
-        alert.addAction(UIAlertAction(
-            title: NSLocalizedString("Leave", comment: "Alert action"), style: .destructive,
-            handler: { _ in self.deleteTopic() }))
-        present(alert, animated: true)
-    }
-
-    @objc func leaveGroupClicked(sender: UITapGestureRecognizer) {
-        guard !topic.isOwner else {
-            UiUtils.showToast(message: NSLocalizedString("Owner cannot leave the group", comment: "Toast notification"))
-            return
-        }
-
-        let alert = UIAlertController(title: NSLocalizedString("Leave the group?", comment: "Alert title"), message: nil, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Alert action"), style: .cancel, handler: nil))
-        alert.addAction(UIAlertAction(
-            title: NSLocalizedString("Leave", comment: "Alert action"), style: .destructive,
-            handler: { _ in self.deleteTopic() }))
-        present(alert, animated: true)
-    }
-
-    @objc func blockContactClicked(sender: UITapGestureRecognizer) {
-        let alert = UIAlertController(title: NSLocalizedString("Block contact?", comment: "Alert action"), message: nil, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Alert action"), style: .cancel, handler: nil))
-        alert.addAction(UIAlertAction(
-            title: NSLocalizedString("Block", comment: "Alert action"), style: .destructive,
-            handler: { _ in self.blockContact() }))
-        present(alert, animated: true)
-    }
-
-    @objc func reportContactClicked(sender: UITapGestureRecognizer) {
-        let alert = UIAlertController(title: NSLocalizedString("Report contact?", comment: "Alert title"), message: NSLocalizedString("Also block and remove all messages", comment: "Alert explanation"), preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Alert action"), style: .cancel, handler: nil))
-        alert.addAction(UIAlertAction(
-            title: NSLocalizedString("Report", comment: "Alert action"), style: .destructive,
-            handler: { _ in self.reportTopic(reason: "TODO") }))
-        present(alert, animated: true)
-    }
-
-    @objc func reportGroupClicked(sender: UITapGestureRecognizer) {
-        let alert = UIAlertController(title: NSLocalizedString("Report Group?", comment: "Alert title"), message: NSLocalizedString("Also block and remove all messages", comment: "Alert explanation"), preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
-        alert.addAction(UIAlertAction(
-            title: NSLocalizedString("Report", comment: "Alert action"), style: .destructive,
-            handler: { _ in self.reportTopic(reason: "TODO") }))
-        present(alert, animated: true)
-    }
-
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "TopicInfo2EditMembers" {
+        switch segue.identifier {
+        case "TopicInfo2EditMembers":
             let navigator = segue.destination as! UINavigationController
             let destination = navigator.viewControllers.first as! EditMembersViewController
             destination.delegate = self
+        case "TopicInfo2TopicSecurity":
+            let destinationVC = segue.destination as! TopicSecurityViewController
+            destinationVC.topicName = self.topicName
+        default:
+            break
         }
     }
 
     private func promiseSuccessHandler(msg: ServerMessage?) throws -> PromisedReply<ServerMessage>? {
-        Cache.log.debug("promiseSuccessHandler - avatar update succeseeded")
         DispatchQueue.main.async { self.reloadData() }
         return nil
     }
@@ -474,12 +244,6 @@ extension TopicInfoViewController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if section == TopicInfoViewController.kSectionMembers {
             return showGroupMembers ? (subscriptions?.count ?? 0) + 1 : 0
-        }
-        if section == TopicInfoViewController.kSectionDefaultPermissions && !showDefaultPermissions {
-            return 0
-        }
-        if section == TopicInfoViewController.kSectionPermissions && !showPeerPermissions {
-            return 1
         }
         return super.tableView(tableView, numberOfRowsInSection: section)
     }
@@ -499,39 +263,6 @@ extension TopicInfoViewController {
                 // P2P topic has no owner, hide [Manage Tags]
                 return CGFloat.leastNonzeroMagnitude
             }
-            if indexPath.row == TopicInfoViewController.kSectionActionsDelMessages && (topic?.isChannel ?? false) {
-                // Channel readers cannot delete messages
-                return CGFloat.leastNonzeroMagnitude
-            }
-            if indexPath.row == TopicInfoViewController.kSectionActionsLeaveGroup && !(topic?.isGrpType ?? false) {
-                // P2P topic, hide [Leave Group]
-                return CGFloat.leastNonzeroMagnitude
-            }
-            if indexPath.row == TopicInfoViewController.kSectionActionsLeaveConversation && topic?.isGrpType ?? false {
-                // Group topic, hide [Leave Conversation]
-                return CGFloat.leastNonzeroMagnitude
-            }
-            // Hide either [Leave] or [Delete Topic] actions.
-            if indexPath.row == TopicInfoViewController.kSectionActionsLeaveGroup && topic?.isOwner ?? false {
-                // Owner, hide [Leave]
-                return CGFloat.leastNonzeroMagnitude
-            }
-            if indexPath.row == TopicInfoViewController.kSectionActionsDelTopic && !(topic?.isOwner ?? false) {
-                // Not an owner, hide [Delete Topic]
-                return CGFloat.leastNonzeroMagnitude
-            }
-            if indexPath.row == TopicInfoViewController.kSectionActionsBlock && topic?.isGrpType ?? false {
-                // Group topic, hide [Block Contact]
-                return CGFloat.leastNonzeroMagnitude
-            }
-            if indexPath.row == TopicInfoViewController.kSectionActionsReport && topic?.isGrpType ?? false {
-                // Group topic, hide [Report Contact]
-                return CGFloat.leastNonzeroMagnitude
-            }
-            if indexPath.row == TopicInfoViewController.kSectionActionsReportGroup && (!(topic?.isGrpType ?? false) || (topic?.isOwner ?? false)) {
-                // P2P topic or the owner, hide [Report Group]
-                return CGFloat.leastNonzeroMagnitude
-            }
         }
 
         return super.tableView(tableView, heightForRowAt: indexPath)
@@ -539,9 +270,6 @@ extension TopicInfoViewController {
 
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         if section == TopicInfoViewController.kSectionMembers && !showGroupMembers {
-            return nil
-        }
-        if section == TopicInfoViewController.kSectionDefaultPermissions && !showDefaultPermissions {
             return nil
         }
 
@@ -556,10 +284,6 @@ extension TopicInfoViewController {
         }
 
         if section == TopicInfoViewController.kSectionMembers && !showGroupMembers {
-            return CGFloat.leastNormalMagnitude
-        }
-
-        if section == TopicInfoViewController.kSectionDefaultPermissions && !showDefaultPermissions {
             return CGFloat.leastNormalMagnitude
         }
 
@@ -652,10 +376,10 @@ extension TopicInfoViewController {
         return cell
     }
 
-    enum MemberActinos {
+    enum MemberActions {
         case remove, ban
     }
-    private func showConfirmationDialog(forAction memberAction: MemberActinos, withUid uid: String?,
+    private func showConfirmationDialog(forAction memberAction: MemberActions, withUid uid: String?,
                                         message: String) {
         guard let uid = uid else { return }
         let alert = UIAlertController(title: nil, message: message, preferredStyle: .alert)
@@ -700,8 +424,8 @@ extension TopicInfoViewController {
                 UiUtils.showToast(message: NSLocalizedString("Can't change permissions for this user.", comment: "Toast notification"))
                 return
             }
-            self.changePermissions(acs: acsUnwrapped, uid: sub.user, changeType: .updateSub, disabledPermissions: nil)
-
+            UiUtils.showPermissionsEditDialog(over: self, acs: acsUnwrapped, callback: { perm in
+                    UiUtils.handlePermissionsChange(onTopic: self.topic, forUid: sub.user, changeType: .updateSub, newPermissions: perm)?.then(onSuccess: self.promiseSuccessHandler) }, disabledPermissions: nil)
         }))
         alert.addAction(UIAlertAction(title: NSLocalizedString("Make owner", comment: "Alert action"), style: .default, handler: { _ in
             guard let uid = sub.user else {
@@ -715,14 +439,10 @@ extension TopicInfoViewController {
         let topicTitle = self.topic.pub?.fn ?? NSLocalizedString("Unknown", comment: "Placeholder for missing topic name")
         let title = sub.pub?.fn ?? NSLocalizedString("Unknown", comment: "Placeholder for missing user name")
         alert.addAction(UIAlertAction(title: NSLocalizedString("Remove", comment: "Alert action"), style: .default, handler: { _ in
-            self.showConfirmationDialog(
-                forAction: .remove, withUid: sub.user,
-                message: String(format: NSLocalizedString("Remove %@ from %@?", comment: "Confirmation"), title, topicTitle))
+            self.showConfirmationDialog( forAction: .remove, withUid: sub.user, message: String(format: NSLocalizedString("Remove %@ from %@?", comment: "Confirmation"), title, topicTitle))
         }))
         alert.addAction(UIAlertAction(title: NSLocalizedString("Block", comment: "Alert action"), style: .default, handler: { _ in
-            self.showConfirmationDialog(
-                forAction: .ban, withUid: sub.user,
-                message: String(format: NSLocalizedString("Remove and ban %@ from %@?", comment: "Confirmation"), title, topicTitle))
+            self.showConfirmationDialog(forAction: .ban, withUid: sub.user, message: String(format: NSLocalizedString("Remove and ban %@ from %@?", comment: "Confirmation"), title, topicTitle))
         }))
         alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Alert action"), style: .cancel, handler: nil))
         self.present(alert, animated: true)

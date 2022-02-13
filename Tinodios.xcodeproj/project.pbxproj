@@ -93,6 +93,7 @@
 		B0BE302327B771E100B04631 /* MultilineAlertView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0BE302227B771E100B04631 /* MultilineAlertView.swift */; };
 		B0BE302427B831BD00B04631 /* TagsEditDialogView.xib in Resources */ = {isa = PBXBuildFile; fileRef = B0BE302627B831BD00B04631 /* TagsEditDialogView.xib */; };
 		B0BE302727B831D400B04631 /* MultilineAlertView.xib in Resources */ = {isa = PBXBuildFile; fileRef = B0BE302927B831D400B04631 /* MultilineAlertView.xib */; };
+		B0BE302B27B8A3B600B04631 /* TopicSecurityViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0BE302A27B8A3B600B04631 /* TopicSecurityViewController.swift */; };
 		B0C6A3C2229EDF14009B0B5D /* ImagePreviewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0C6A3C1229EDF14009B0B5D /* ImagePreviewController.swift */; };
 		B0CF83E0244E074A00E79D22 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = B0CF83E2244E074A00E79D22 /* Localizable.strings */; };
 		B0DF03172279F027000F9492 /* RoundImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0DF03162279F027000F9492 /* RoundImageView.swift */; };
@@ -246,6 +247,7 @@
 		B0BE302227B771E100B04631 /* MultilineAlertView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultilineAlertView.swift; sourceTree = "<group>"; };
 		B0BE302527B831BD00B04631 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/TagsEditDialogView.xib; sourceTree = "<group>"; };
 		B0BE302827B831D400B04631 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MultilineAlertView.xib; sourceTree = "<group>"; };
+		B0BE302A27B8A3B600B04631 /* TopicSecurityViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopicSecurityViewController.swift; sourceTree = "<group>"; };
 		B0C6A3C1229EDF14009B0B5D /* ImagePreviewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePreviewController.swift; sourceTree = "<group>"; };
 		B0CEF8D726B5EC21000028C2 /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/Main.strings"; sourceTree = "<group>"; };
 		B0CEF8D826B5EC5D000028C2 /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/LaunchScreen.strings"; sourceTree = "<group>"; };
@@ -358,6 +360,7 @@
 				B09C564F246976AC00D6615D /* SettingsSecurityViewController.swift */,
 				B01C693E22F87B5C003C0AA7 /* SignupViewController.swift */,
 				0A69D47E22A6552300769426 /* TopicInfoViewController.swift */,
+				B0BE302A27B8A3B600B04631 /* TopicSecurityViewController.swift */,
 				0AEE8BED226456080022EC3F /* UiUtils.swift */,
 				0A35BA9F2283A37500AA5E2F /* Utils.swift */,
 				0A0380DB21B3CC8100A3FA0E /* Main.storyboard */,
@@ -693,6 +696,7 @@
 				0A0380DA21B3CC8100A3FA0E /* ChatListViewController.swift in Sources */,
 				0A2F81C6229677DD007E562C /* AddByIDViewController.swift in Sources */,
 				0AE50D4422156A250021F7B7 /* FindViewController.swift in Sources */,
+				B0BE302B27B8A3B600B04631 /* TopicSecurityViewController.swift in Sources */,
 				B01C693F22F87B5C003C0AA7 /* SignupViewController.swift in Sources */,
 				0AD5552A21C625BB0027FD16 /* ChatListInteractor.swift in Sources */,
 				0A8A8BDA21C380E80090BCBA /* Cache.swift in Sources */,

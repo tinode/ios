@@ -458,7 +458,11 @@ class UiUtils {
         }
         return nil
     }
-    public static func showPermissionsEditDialog(over viewController: UIViewController?, acs: AcsHelper, callback: PermissionsEditViewController.ChangeHandler?, disabledPermissions: String?) {
+    public static func showPermissionsEditDialog(over viewController: UIViewController?, acs: AcsHelper?, callback: PermissionsEditViewController.ChangeHandler?, disabledPermissions: String?) {
+        guard let acs = acs else {
+            Cache.log.error("%@: can't change nil permissions", viewController.debugDescription)
+            return
+        }
         let alertVC = PermissionsEditViewController(set: acs.description, disabled: disabledPermissions, changeHandler: callback)
         alertVC.show(over: viewController)
     }
