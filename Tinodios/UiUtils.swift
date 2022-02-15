@@ -502,6 +502,23 @@ class UiUtils {
             })
     }
 
+    // Alert dialog with a single-line editable field.
+    public static func alertLabelEditor(over viewController: UIViewController, _ val: String?, placeholder: String, title: String, done: @escaping (_: String?) -> Void) {
+        let alert = UIAlertController(title: title, message: nil, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Alert action"), style: .cancel, handler: nil))
+        alert.addTextField(configurationHandler: { textField in
+            textField.placeholder = placeholder
+            textField.text = val ?? ""
+            textField.font = UIFont.preferredFont(forTextStyle: .body)
+        })
+        alert.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: "Alert action"), style: .default, handler: { _ in
+            if let name = alert.textFields?.first?.text {
+                done(name)
+            }
+        }))
+        viewController.present(alert, animated: true)
+    }
+
     @discardableResult
     public static func updateAvatar(forTopic topic: DefaultTopic, image: UIImage?) -> PromisedReply<ServerMessage> {
         guard let avatar = image?.resize(width: UiUtils.kMaxAvatarSize, height: UiUtils.kMaxAvatarSize, clip: true) else {

@@ -148,6 +148,8 @@ public class TheCard: Codable, Mergeable {
         case fn, n, org, tel, email, impp, photo, bday, note
     }
 
+    public init() {}
+
     public init(fn: String?, avatar: Photo?) {
         self.fn = fn
         self.photo = avatar

@@ -73,7 +73,7 @@ class SettingsPersonalViewController: UITableViewController {
             self.descriptionLabel.text = note
             self.descriptionLabel.textColor = UIColor.secondaryLabel
         } else {
-            self.descriptionLabel.text = NSLocalizedString("Add optional description", comment: "Placeholder for missing user description")
+            self.descriptionLabel.text = NSLocalizedString("Add optional description", comment: "Placeholder for missing topic description")
             self.descriptionLabel.textColor = UIColor.placeholderText
         }
 
@@ -94,19 +94,10 @@ class SettingsPersonalViewController: UITableViewController {
 
     @objc
     func userNameTapped(sender: UITapGestureRecognizer) {
-        let alert = UIAlertController(title: NSLocalizedString("Edit account name", comment: "Alert title"), message: nil, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Alert action"), style: .cancel, handler: nil))
-        alert.addTextField(configurationHandler: { textField in
-            textField.placeholder = NSLocalizedString("Full name, e.g. John Doe", comment: "User name prompt")
-            textField.text = self.me?.pub?.fn ?? ""
-        })
-        alert.addAction(UIAlertAction(title: NSLocalizedString("OK", comment: "Alert action"), style: .default,
-                                      handler: { _ in
-            if let name = alert.textFields?.first?.text {
+        UiUtils.alertLabelEditor(over: self, self.me?.pub?.fn, placeholder: NSLocalizedString("Full name, e.g. John Doe", comment: "User name prompt"), title: NSLocalizedString("Edit account name", comment: "Alert title"), done: { newVal in if let name = newVal {
                 self.updateUserName(name)
             }
-        }))
-        self.present(alert, animated: true)
+        })
     }
 
     @objc

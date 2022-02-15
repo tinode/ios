@@ -22,16 +22,14 @@ class TopicInfoViewController: UITableViewController {
 
     private static let kSectionActions = 2
     private static let kSectionActionsAdminSecurity = 0
-    private static let kSectionActionsManageTags = 1
 
     private static let kSectionMembers = 3
 
-    @IBOutlet weak var actionManageTags: UITableViewCell!
-
     @IBOutlet weak var topicTitleTextView: UITextView!
-    @IBOutlet weak var topicSubtitleTextView: UITextView!
+    @IBOutlet weak var topicDescriptionTextView: UITextView!
+    @IBOutlet weak var topicPrivateTextView: UITextView!
     @IBOutlet weak var avatarImage: RoundImageView!
-    @IBOutlet weak var loadAvatarButton: UIButton!
+
     @IBOutlet weak var mutedSwitch: UISwitch!
     @IBOutlet weak var archivedSwitch: UISwitch!
     @IBOutlet weak var topicIDLabel: UILabel!
@@ -66,41 +64,27 @@ class TopicInfoViewController: UITableViewController {
         }
 
         if self.topic.isGrpType {
-            loadAvatarButton.isHidden = !topic.isManager
             showGroupMembers = topic.isManager || topic.isSharer
             tableView.register(UINib(nibName: "ContactViewCell", bundle: nil), forCellReuseIdentifier: "ContactViewCell")
         } else {
-            loadAvatarButton.isHidden = true
             showGroupMembers = false
         }
-
-        UiUtils.setupTapRecognizer(
-            forView: actionManageTags,
-            action: #selector(TopicInfoViewController.manageTagsClicked),
-            actionTarget: self)
-        UiUtils.setupTapRecognizer(
-            forView: topicSubtitleTextView,
-            action: #selector(TopicInfoViewController.topicTitleTapped),
-            actionTarget: self)
-        if topic.isOwner {
-            UiUtils.setupTapRecognizer(
-                forView: topicTitleTextView,
-                action: #selector(TopicInfoViewController.topicTitleTapped),
-                actionTarget: self)
-        }
-
-        self.imagePicker = ImagePicker(
-            presentationController: self, delegate: self, editable: true)
     }
 
     private func reloadData() {
         topicTitleTextView.text = topic.pub?.fn ?? NSLocalizedString("Unknown", comment: "Placeholder for missing user name")
         topicTitleTextView.sizeToFit()
+
+        let descPlaceholder: String? = topic.isOwner ? NSLocalizedString("Add optional description", comment: "Placeholder for missing topic description") : nil
+        topicDescriptionTextView.text = !(topic.pub?.note ?? "").isEmpty ? descPlaceholder : topic.pub?.note
+        topicDescriptionTextView.sizeToFit()
+
+        topicPrivateTextView.text = !(topic.comment ?? "").isEmpty ? NSLocalizedString("Private info: not set", comment: "Placeholder text in editor") : topic.comment
+        topicPrivateTextView.sizeToFit()
+
         topicIDLabel.text = topic?.name
         topicIDLabel.sizeToFit()
-        let subtitle = topic.comment ?? ""
-        topicSubtitleTextView.text = !subtitle.isEmpty ? subtitle : NSLocalizedString("Private info: not set", comment: "Placeholder text in editor")
-        topicSubtitleTextView.sizeToFit()
+
         avatarImage.set(pub: topic.pub, id: topic?.name)
         avatarImage.letterTileFont = self.avatarImage.letterTileFont.withSize(CGFloat(50))
         mutedSwitch.isOn = topic.isMuted
@@ -120,10 +104,6 @@ class TopicInfoViewController: UITableViewController {
             // FIXME: reload just the members section.
             tableView.reloadData()
         }
-    }
-
-    @IBAction func loadAvatarClicked(_ sender: Any) {
-        imagePicker.present(from: self.view)
     }
 
     @IBAction func mutedSwitched(_ sender: Any) {
@@ -160,60 +140,6 @@ class TopicInfoViewController: UITableViewController {
             })
     }
 
-    @objc
-    func topicTitleTapped(sender: UITapGestureRecognizer) {
-        let alert = UIAlertController(title: NSLocalizedString("Edit Group", comment: "Alert title"), message: nil, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Alert action"), style: .cancel, handler: nil))
-        if topic.isOwner {
-            alert.addTextField(configurationHandler: { textField in
-                textField.placeholder = NSLocalizedString("Name of the group", comment: "Alert placeholder")
-                textField.text = self.topic?.pub?.fn ?? ""
-                textField.borderStyle = .none
-                textField.font = UIFont.preferredFont(forTextStyle: .body)
-            })
-        }
-        alert.addTextField(configurationHandler: { textField in
-            textField.placeholder = NSLocalizedString("Additional info (private)", comment: "Alert placeholder")
-            textField.text = self.topic?.comment ?? ""
-            textField.borderStyle = .none
-            textField.font = UIFont.preferredFont(forTextStyle: .body)
-        })
-        alert.addAction(UIAlertAction(
-            title: NSLocalizedString("OK", comment: "Alert action"), style: .default,
-            handler: { _ in
-                let textFields = alert.textFields!
-                let newTitle = self.topic.isOwner ? textFields[0].text : nil
-                let newSubtitle = textFields[self.topic.isOwner ? 1 : 0].text
-                self.updateTitles(newTitle: newTitle, newSubtitle: newSubtitle)
-        }))
-        self.present(alert, animated: true)
-    }
-
-    private func updateTitles(newTitle: String?, newSubtitle: String?) {
-        var pub: TheCard?
-        if let nt = newTitle {
-            if let oldPub = topic.pub, oldPub.fn != nt {
-                pub = TheCard(fn: String(nt.prefix(UiUtils.kMaxTitleLength)))
-            }
-        }
-        var priv: PrivateType?
-        if let ns = newSubtitle {
-            if topic.comment == nil || (topic.comment! != ns) {
-                priv = PrivateType()
-                priv!.comment = String(ns.prefix(UiUtils.kMaxTitleLength))
-            }
-        }
-        if pub != nil || priv != nil {
-            UiUtils.setTopicData(forTopic: topic, pub: pub, priv: priv).thenFinally {
-                DispatchQueue.main.async { self.reloadData() }
-            }
-        }
-    }
-
-    @objc func manageTagsClicked(sender: UITapGestureRecognizer) {
-        UiUtils.presentManageTagsEditDialog(over: self, forTopic: self.topic)
-    }
-
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         switch segue.identifier {
         case "TopicInfo2EditMembers":
@@ -222,6 +148,9 @@ class TopicInfoViewController: UITableViewController {
             destination.delegate = self
         case "TopicInfo2TopicSecurity":
             let destinationVC = segue.destination as! TopicSecurityViewController
+            destinationVC.topicName = self.topicName
+        case "TopicInfo2TopicGeneral":
+            let destinationVC = segue.destination as! TopicGeneralViewController
             destinationVC.topicName = self.topicName
         default:
             break
@@ -256,11 +185,6 @@ extension TopicInfoViewController {
                 (indexPath.row == TopicInfoViewController.kSectionBasicVerified && !(topic?.isVerified ?? false)) ||
                 (indexPath.row == TopicInfoViewController.kSectionBasicStaff && !(topic?.isStaffManaged ?? false)) ||
                 (indexPath.row == TopicInfoViewController.kSectionBasicDanger && !(topic?.isDangerous ?? false)) {
-                return CGFloat.leastNonzeroMagnitude
-            }
-        } else if indexPath.section == TopicInfoViewController.kSectionActions {
-            if indexPath.row == TopicInfoViewController.kSectionActionsManageTags && (!(topic?.isGrpType ?? false) || !(topic?.isOwner ?? false)) {
-                // P2P topic has no owner, hide [Manage Tags]
                 return CGFloat.leastNonzeroMagnitude
             }
         }
@@ -467,12 +391,5 @@ extension TopicInfoViewController: EditMembersDelegate {
 
     func editMembersWillChangeState(_: UIView, uid: String, added: Bool, initiallySelected: Bool) -> Bool {
         return !tinode.isMe(uid: uid) && (added || topic.isAdmin || !initiallySelected)
-    }
-}
-
-extension TopicInfoViewController: ImagePickerDelegate {
-    func didSelect(image: UIImage?, mimeType: String?, fileName: String?) {
-        UiUtils.updateAvatar(forTopic: self.topic, image: image)
-            .thenApply(self.promiseSuccessHandler)
     }
 }

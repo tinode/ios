@@ -224,9 +224,12 @@ public class RoundImageView: UIImageView {
     private func updateDefaultIcon() {
         let icon: UIImage?
         switch iconType {
-        case .p2p: icon = UIImage(named: "user-96")
-        case .grp: icon = UIImage(named: "group-96")
-        default: icon =  nil
+        case .p2p:
+            icon = UIImage(systemName: "person", withConfiguration: UIImage.SymbolConfiguration(pointSize: 32, weight: .light, scale: .large))
+        case .grp:
+            icon = UIImage(systemName: "person.2", withConfiguration: UIImage.SymbolConfiguration(pointSize: 32, weight: .light, scale: .large))
+        default:
+            icon =  nil
         }
         self.image = icon
     }

@@ -8,8 +8,6 @@ import TinodeSDK
 import UIKit
 
 class MultilineAlertViewController: UIViewController {
-    // private static let kButtonBorderColor = UIColor(fromHexCode: 0xFFE0E0E0)
-
     private static let kButtonBorderColor = UIColor.lightGray
 
     @IBOutlet weak var alertView: UIView!
@@ -19,16 +17,18 @@ class MultilineAlertViewController: UIViewController {
     @IBOutlet weak var titleLabel: UILabel!
 
     private var initialText: String?
+    private var placeholderText: String?
 
     public typealias CompletionHandler = ((_: String?) -> Void)
     public var completionHandler: CompletionHandler?
 
-    init(with text: String?) {
+    init(with text: String?, placeholder: String? = nil) {
         super.init(nibName: nil, bundle: nil)
         modalTransitionStyle = .crossDissolve
         modalPresentationStyle = .overCurrentContext
 
         self.initialText = text
+        self.placeholderText = placeholder
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -46,6 +46,9 @@ class MultilineAlertViewController: UIViewController {
         textEditView.fontSize = 17
         textEditView.layer.cornerRadius = 8
         textEditView.text = initialText
+        if let placeholder = placeholderText {
+            textEditView.placeholderText = placeholder
+        }
         textEditView.layer.borderColor = MultilineAlertViewController.kButtonBorderColor.cgColor
         textEditView.layer.borderWidth = 0.5
         textEditView.becomeFirstResponder()
@@ -63,7 +66,7 @@ class MultilineAlertViewController: UIViewController {
 
     @IBAction func okayClicked(_ sender: Any) {
         if textEditView.text != initialText {
-            completionHandler?(textEditView.text)
+            completionHandler?(textEditView.actualText)
         }
         self.dismiss(animated: true, completion: nil)
     }

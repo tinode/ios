@@ -136,6 +136,7 @@ import UIKit
             text = placeholderText
         } else {
             isShowingPlaceholder = false
+            textColor = mainTextColor
         }
     }
 
@@ -154,6 +155,7 @@ import UIKit
             isShowingPlaceholder = true
         } else {
             isShowingPlaceholder = false
+            textColor = mainTextColor
         }
     }
 

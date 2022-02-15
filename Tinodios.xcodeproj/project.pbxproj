@@ -94,6 +94,7 @@
 		B0BE302427B831BD00B04631 /* TagsEditDialogView.xib in Resources */ = {isa = PBXBuildFile; fileRef = B0BE302627B831BD00B04631 /* TagsEditDialogView.xib */; };
 		B0BE302727B831D400B04631 /* MultilineAlertView.xib in Resources */ = {isa = PBXBuildFile; fileRef = B0BE302927B831D400B04631 /* MultilineAlertView.xib */; };
 		B0BE302B27B8A3B600B04631 /* TopicSecurityViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0BE302A27B8A3B600B04631 /* TopicSecurityViewController.swift */; };
+		B0BE302D27BAC90E00B04631 /* TopicGeneralViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0BE302C27BAC90E00B04631 /* TopicGeneralViewController.swift */; };
 		B0C6A3C2229EDF14009B0B5D /* ImagePreviewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0C6A3C1229EDF14009B0B5D /* ImagePreviewController.swift */; };
 		B0CF83E0244E074A00E79D22 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = B0CF83E2244E074A00E79D22 /* Localizable.strings */; };
 		B0DF03172279F027000F9492 /* RoundImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0DF03162279F027000F9492 /* RoundImageView.swift */; };
@@ -248,6 +249,7 @@
 		B0BE302527B831BD00B04631 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/TagsEditDialogView.xib; sourceTree = "<group>"; };
 		B0BE302827B831D400B04631 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MultilineAlertView.xib; sourceTree = "<group>"; };
 		B0BE302A27B8A3B600B04631 /* TopicSecurityViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopicSecurityViewController.swift; sourceTree = "<group>"; };
+		B0BE302C27BAC90E00B04631 /* TopicGeneralViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopicGeneralViewController.swift; sourceTree = "<group>"; };
 		B0C6A3C1229EDF14009B0B5D /* ImagePreviewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePreviewController.swift; sourceTree = "<group>"; };
 		B0CEF8D726B5EC21000028C2 /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/Main.strings"; sourceTree = "<group>"; };
 		B0CEF8D826B5EC5D000028C2 /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/LaunchScreen.strings"; sourceTree = "<group>"; };
@@ -359,6 +361,7 @@
 				B09C56492469362A00D6615D /* SettingsPersonalViewController.swift */,
 				B09C564F246976AC00D6615D /* SettingsSecurityViewController.swift */,
 				B01C693E22F87B5C003C0AA7 /* SignupViewController.swift */,
+				B0BE302C27BAC90E00B04631 /* TopicGeneralViewController.swift */,
 				0A69D47E22A6552300769426 /* TopicInfoViewController.swift */,
 				B0BE302A27B8A3B600B04631 /* TopicSecurityViewController.swift */,
 				0AEE8BED226456080022EC3F /* UiUtils.swift */,
@@ -708,6 +711,7 @@
 				B09C5652246C0E6B00D6615D /* BlockedContactsTableViewController.swift in Sources */,
 				B09C564E246975F700D6615D /* SettingsHelpViewController.swift in Sources */,
 				B0DF03312283FFD8000F9492 /* PlaceholderTextView.swift in Sources */,
+				B0BE302D27BAC90E00B04631 /* TopicGeneralViewController.swift in Sources */,
 				B027E5B22789026200A34C17 /* SendReplyFormatter.swift in Sources */,
 				0A35BA9E22836CCF00AA5E2F /* ContactsSynchronizer.swift in Sources */,
 				B09C564A2469362A00D6615D /* SettingsPersonalViewController.swift in Sources */,
