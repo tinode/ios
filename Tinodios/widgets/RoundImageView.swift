@@ -114,10 +114,11 @@ public class RoundImageView: UIImageView {
         }
 
         if let icon = pub?.photo?.image {
+            // Clean up.
+            self.backgroundColor = nil
+            self.initials = nil
             // Avatar image provided.
             self.image = icon
-            // Clear background color.
-            self.backgroundColor = nil
         } else {
             if let id = id, !id.isEmpty {
                 switch Tinode.topicTypeByName(name: id) {

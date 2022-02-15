@@ -110,6 +110,7 @@ class FindViewController: UITableViewController, FindDisplayLogic {
         self.localContacts = newContacts
         self.tableView.reloadData()
     }
+
     func displayRemoteContacts(contacts newContacts: [RemoteContactHolder]) {
         assert(Thread.isMainThread)
         self.remoteContacts = newContacts
