@@ -64,11 +64,11 @@ import UIKit
         }
     }
 
-    var actualText: String! {
+    var actualText: String {
         return isShowingPlaceholder ? "" : text
     }
 
-    var actualAttributedText: NSAttributedString! {
+    var actualAttributedText: NSAttributedString {
         return isShowingPlaceholder ? NSAttributedString() : attributedText
     }
 
@@ -134,9 +134,6 @@ import UIKit
             isShowingPlaceholder = true
             textColor = placeholderColor ?? Constants.defaultPlaceholderColorLight
             text = placeholderText
-        } else {
-            isShowingPlaceholder = false
-            textColor = mainTextColor
         }
     }
 
@@ -148,14 +145,12 @@ import UIKit
         }
     }
 
+    // Called when new text is assigned or editing is finished.
     @objc private func checkForEmptyText() {
-        if text.isEmpty && !isShowingPlaceholder && !isFirstResponder {
-            text = placeholderText
-            textColor = placeholderColor
+        if text.isEmpty && !isFirstResponder {
             isShowingPlaceholder = true
-        } else {
-            isShowingPlaceholder = false
-            textColor = mainTextColor
+            text = placeholderText
+            textColor = placeholderColor ?? Constants.defaultPlaceholderColorLight
         }
     }
 

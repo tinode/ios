@@ -13,11 +13,10 @@ class MultilineAlertViewController: UIViewController {
     @IBOutlet weak var alertView: UIView!
     @IBOutlet weak var okButton: UIButton!
     @IBOutlet weak var cancelButton: UIButton!
-    @IBOutlet weak var textEditView: PlaceholderTextView!
+    @IBOutlet weak var textEditView: UITextView!
     @IBOutlet weak var titleLabel: UILabel!
 
-    private var initialText: String?
-    private var placeholderText: String?
+    private var initialText: String = ""
 
     public typealias CompletionHandler = ((_: String?) -> Void)
     public var completionHandler: CompletionHandler?
@@ -27,8 +26,7 @@ class MultilineAlertViewController: UIViewController {
         modalTransitionStyle = .crossDissolve
         modalPresentationStyle = .overCurrentContext
 
-        self.initialText = text
-        self.placeholderText = placeholder
+        self.initialText = text ?? ""
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -43,12 +41,9 @@ class MultilineAlertViewController: UIViewController {
         cancelButton.addBorder(side: .right, color: MultilineAlertViewController.kButtonBorderColor, width: 0.5)
         okButton.addBorder(side: .top, color: MultilineAlertViewController.kButtonBorderColor, width: 0.5)
 
-        textEditView.fontSize = 17
+        textEditView.font = UIFont.systemFont(ofSize: 16)
         textEditView.layer.cornerRadius = 8
         textEditView.text = initialText
-        if let placeholder = placeholderText {
-            textEditView.placeholderText = placeholder
-        }
         textEditView.layer.borderColor = MultilineAlertViewController.kButtonBorderColor.cgColor
         textEditView.layer.borderWidth = 0.5
         textEditView.becomeFirstResponder()
@@ -65,8 +60,8 @@ class MultilineAlertViewController: UIViewController {
     }
 
     @IBAction func okayClicked(_ sender: Any) {
-        if textEditView.text != initialText {
-            completionHandler?(textEditView.actualText)
+        if (textEditView.text ?? "") != initialText {
+            completionHandler?(textEditView.text)
         }
         self.dismiss(animated: true, completion: nil)
     }
