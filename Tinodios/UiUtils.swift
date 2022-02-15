@@ -918,6 +918,17 @@ extension UIImage {
         return UIImage(cgImage: newCGImage, scale: 1, orientation: .up)
     }
 
+    func withInset(_ inset: CGFloat) -> UIImage? {
+        let cgSize = CGSize(width: self.size.width + inset * self.scale + inset * self.scale,
+                            height: self.size.height + inset * self.scale + inset * self.scale)
+
+        UIGraphicsBeginImageContextWithOptions(cgSize, false, self.scale)
+        defer { UIGraphicsEndImageContext() }
+
+        self.draw(at: CGPoint(x: inset * self.scale, y: inset * self.scale))
+        return UIGraphicsGetImageFromCurrentImageContext()?.withRenderingMode(self.renderingMode)
+    }
+
     /// Get default iOS icon for the given file name (the file does not need to exist).
     /// It will likely return nil when running under simulator, but will likely work on a real device.
     public class func defaultIcon(forMime mime: String, preferredWidth width: CGFloat) -> UIImage? {

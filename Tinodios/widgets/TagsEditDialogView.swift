@@ -9,7 +9,7 @@ import TinodeSDK
 import UIKit
 
 class TagsEditDialogViewController: UIViewController {
-    private static let kButtonBorderColor = UIColor(fromHexCode: 0xFFE0E0E0)
+    private static let kButtonBorderColor = UIColor.lightGray
 
     private static let kDefaultMaxTagCount: Int64 = 16
 

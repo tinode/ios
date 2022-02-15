@@ -32,7 +32,7 @@ public class RoundImageView: UIImageView {
     // MARK: - Properties
     public var iconType: IconType = .none {
         didSet {
-            updateDefaultIcon()
+            useDefaultIcon()
         }
     }
 
@@ -107,6 +107,8 @@ public class RoundImageView: UIImageView {
 
             KingfisherManager.shared.retrieveImage(with: url.downloadURL, options: [.requestModifier(modifier)], completionHandler: { result in
                 if case .success(let value) = result {
+                    self.initials = nil
+                    self.backgroundColor = nil
                     self.image = value.image
                 }
                 // Ignoring the error: just keep the placeholder image.
@@ -138,7 +140,7 @@ public class RoundImageView: UIImageView {
                 self.initials = String(title[title.startIndex]).uppercased()
             } else {
                 // Placeholder image
-                updateDefaultIcon()
+                useDefaultIcon()
                 self.backgroundColor = nil
             }
         }
@@ -219,10 +221,10 @@ public class RoundImageView: UIImageView {
         layer.masksToBounds = true
         clipsToBounds = true
         setCornerRadius()
-        updateDefaultIcon()
+        useDefaultIcon()
     }
 
-    private func updateDefaultIcon() {
+    private func useDefaultIcon() {
         let icon: UIImage?
         switch iconType {
         case .p2p:
@@ -232,7 +234,7 @@ public class RoundImageView: UIImageView {
         default:
             icon =  nil
         }
-        self.image = icon
+        self.image = icon?.withTintColor(UIColor.systemBackground).withInset(8)
     }
 
     private func setCornerRadius() {

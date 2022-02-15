@@ -1,8 +1,7 @@
 //
 //  SettingsSecurityViewController.swift
-//  Tinodios
 //
-//  Copyright © 2020 Tinode. All rights reserved.
+//  Copyright © 2020-2022 Tinode LLC. All rights reserved.
 //
 
 import TinodeSDK
@@ -68,8 +67,7 @@ class SettingsSecurityViewController: UITableViewController {
         self.anonPermissionsLabel.text = me.defacs?.getAnon() ?? ""
         self.anonPermissionsLabel.sizeToFit()
 
-        if self.tinode.countFilteredTopics(filter: { topic in
-            return topic.topicType.matches(TopicType.user) && !topic.isJoiner }) == 0 {
+        if self.tinode.countFilteredTopics(filter: { topic in return topic.topicType.matches(TopicType.user) && !topic.isJoiner }) == 0 {
             // No blocked contacts, disable cell.
             self.actionBlockedContacts.isUserInteractionEnabled = false
             self.actionBlockedContacts.textLabel?.isEnabled = false
