@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="19529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19519"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="MultilineAlertViewController" customModule="Tinodios" customModuleProvider="target">
+            <connections>
+                <outlet property="alertView" destination="53n-il-5Vo" id="5Ft-WY-sih"/>
+                <outlet property="cancelButton" destination="AMx-JQ-2f8" id="HGJ-dG-kdD"/>
+                <outlet property="okButton" destination="A57-2v-ao9" id="G45-OW-E9u"/>
+                <outlet property="textEditView" destination="sa7-ug-IeK" id="V2u-KZ-41V"/>
+                <outlet property="titleLabel" destination="W0P-gB-P5h" id="uXH-tM-LiT"/>
+                <outlet property="view" destination="BgD-Vm-3z6" id="anf-fK-g1a"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="BgD-Vm-3z6">
+            <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <subviews>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="53n-il-5Vo" userLabel="Alert View">
+                    <rect key="frame" x="66" y="354.5" width="282" height="187"/>
+                    <subviews>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="751" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="W0P-gB-P5h">
+                            <rect key="frame" x="126" y="18" width="30" height="17"/>
+                            <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
+                            <nil key="textColor"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                        <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="sa7-ug-IeK" customClass="UITextView">
+                            <rect key="frame" x="5" y="40" width="272" height="96"/>
+                            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="96" id="TcJ-ZH-U2P"/>
+                            </constraints>
+                        </view>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="AMx-JQ-2f8">
+                            <rect key="frame" x="0.0" y="141" width="141" height="46"/>
+                            <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="17"/>
+                            <state key="normal" title="Cancel"/>
+                            <connections>
+                                <action selector="cancelClicked:" destination="-1" eventType="touchUpInside" id="4kw-50-cdo"/>
+                            </connections>
+                        </button>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="A57-2v-ao9">
+                            <rect key="frame" x="141" y="141" width="141" height="46"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="46" id="KRe-z5-BqW"/>
+                            </constraints>
+                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                            <state key="normal" title="OK"/>
+                            <connections>
+                                <action selector="okayClicked:" destination="-1" eventType="touchUpInside" id="Rht-Bk-BSv"/>
+                            </connections>
+                        </button>
+                    </subviews>
+                    <color key="backgroundColor" systemColor="groupTableViewBackgroundColor"/>
+                    <constraints>
+                        <constraint firstItem="AMx-JQ-2f8" firstAttribute="leading" secondItem="53n-il-5Vo" secondAttribute="leading" id="0BS-Mg-cjk"/>
+                        <constraint firstItem="sa7-ug-IeK" firstAttribute="top" secondItem="W0P-gB-P5h" secondAttribute="bottom" constant="5" id="5SW-fK-R4k"/>
+                        <constraint firstItem="AMx-JQ-2f8" firstAttribute="top" secondItem="sa7-ug-IeK" secondAttribute="bottom" constant="5" id="Cjd-bv-JCv"/>
+                        <constraint firstItem="W0P-gB-P5h" firstAttribute="top" secondItem="53n-il-5Vo" secondAttribute="top" constant="18" id="D7q-8L-jw0"/>
+                        <constraint firstItem="A57-2v-ao9" firstAttribute="bottom" secondItem="53n-il-5Vo" secondAttribute="bottom" id="Fbh-MV-Enr"/>
+                        <constraint firstItem="sa7-ug-IeK" firstAttribute="leading" secondItem="53n-il-5Vo" secondAttribute="leading" constant="5" id="Gwb-xe-m06"/>
+                        <constraint firstAttribute="trailing" secondItem="sa7-ug-IeK" secondAttribute="trailing" constant="5" id="Idg-1s-5cp"/>
+                        <constraint firstItem="A57-2v-ao9" firstAttribute="firstBaseline" secondItem="AMx-JQ-2f8" secondAttribute="baseline" id="KtT-KJ-e9D"/>
+                        <constraint firstItem="A57-2v-ao9" firstAttribute="leading" secondItem="AMx-JQ-2f8" secondAttribute="trailing" id="OHv-Ix-8ce"/>
+                        <constraint firstItem="AMx-JQ-2f8" firstAttribute="width" secondItem="53n-il-5Vo" secondAttribute="width" multiplier="0.5" id="Orj-id-vCh"/>
+                        <constraint firstAttribute="trailing" secondItem="A57-2v-ao9" secondAttribute="trailing" id="Pty-BH-Iri"/>
+                        <constraint firstItem="W0P-gB-P5h" firstAttribute="centerX" secondItem="53n-il-5Vo" secondAttribute="centerX" id="abn-eD-zXw"/>
+                        <constraint firstItem="AMx-JQ-2f8" firstAttribute="height" secondItem="A57-2v-ao9" secondAttribute="height" id="bie-zu-jl7"/>
+                        <constraint firstItem="A57-2v-ao9" firstAttribute="top" secondItem="AMx-JQ-2f8" secondAttribute="top" id="fQj-Oo-7NG"/>
+                        <constraint firstAttribute="width" constant="282" id="mgt-HX-MZT"/>
+                    </constraints>
+                    <userDefinedRuntimeAttributes>
+                        <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                            <integer key="value" value="13"/>
+                        </userDefinedRuntimeAttribute>
+                    </userDefinedRuntimeAttributes>
+                </view>
+            </subviews>
+            <viewLayoutGuide key="safeArea" id="U7E-Jv-ze8"/>
+            <color key="backgroundColor" systemColor="placeholderTextColor"/>
+            <constraints>
+                <constraint firstItem="53n-il-5Vo" firstAttribute="centerX" secondItem="BgD-Vm-3z6" secondAttribute="centerX" id="4rP-EZ-YTJ"/>
+                <constraint firstItem="53n-il-5Vo" firstAttribute="centerY" secondItem="BgD-Vm-3z6" secondAttribute="centerY" id="8wb-bA-o1n"/>
+            </constraints>
+            <userDefinedRuntimeAttributes>
+                <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                    <integer key="value" value="13"/>
+                </userDefinedRuntimeAttribute>
+            </userDefinedRuntimeAttributes>
+            <point key="canvasLocation" x="230" y="110"/>
+        </view>
+    </objects>
+    <resources>
+        <systemColor name="groupTableViewBackgroundColor">
+            <color red="0.94901960780000005" green="0.94901960780000005" blue="0.96862745100000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+        <systemColor name="placeholderTextColor">
+            <color red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.29999999999999999" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+    </resources>
+</document>
