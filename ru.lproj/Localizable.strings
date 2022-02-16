@@ -10,6 +10,9 @@
 /* Alert title */
 "Add contact" = "Добавить контакт";
 
+/* Placeholder for missing topic description */
+"Add optional description" = "Описание (не обязательно)";
+
 /* Alert placeholder */
 "Additional info (private)" = "Дополнительно (только для себя)";
 
@@ -113,7 +116,13 @@
 "Edit account name" = "Редактировать аккаунт";
 
 /* Alert title */
+"Edit Description" = "Описание";
+
+/* Alert title */
 "Edit Group" = "Редактировать группу";
+
+/* Alert title */
+"Edit Title" = "Название";
 
 /* Alert action */
 "Email" = "Емейл";
@@ -253,6 +262,9 @@
 
 /* Progress overlay */
 "Please wait..." = "Подождите...";
+
+/* Alert title */
+"Private Comment" = "Комментарий";
 
 /* Placeholder text in editor */
 "Private info: not set" = "Только для себя: отсутствует";

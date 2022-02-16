@@ -229,6 +229,8 @@
 		B0941BC62487CEE100A891B7 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Localizable.strings; sourceTree = "<group>"; };
 		B0979FCB27BD99B80045FC73 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/MultilineAlertView.strings; sourceTree = "<group>"; };
 		B0979FCC27BD99B80045FC73 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/TagsEditDialogView.strings; sourceTree = "<group>"; };
+		B0979FCD27BD9A070045FC73 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/MultilineAlertView.strings; sourceTree = "<group>"; };
+		B0979FCE27BD9A070045FC73 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/TagsEditDialogView.strings; sourceTree = "<group>"; };
 		B09C56492469362A00D6615D /* SettingsPersonalViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsPersonalViewController.swift; sourceTree = "<group>"; };
 		B09C564B2469756B00D6615D /* SettingsNotificationsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsNotificationsViewController.swift; sourceTree = "<group>"; };
 		B09C564D246975F700D6615D /* SettingsHelpViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsHelpViewController.swift; sourceTree = "<group>"; };
@@ -835,6 +837,7 @@
 			children = (
 				B0BE302527B831BD00B04631 /* Base */,
 				B0979FCC27BD99B80045FC73 /* es */,
+				B0979FCE27BD9A070045FC73 /* ru */,
 			);
 			name = TagsEditDialogView.xib;
 			sourceTree = "<group>";
@@ -844,6 +847,7 @@
 			children = (
 				B0BE302827B831D400B04631 /* Base */,
 				B0979FCB27BD99B80045FC73 /* es */,
+				B0979FCD27BD9A070045FC73 /* ru */,
 			);
 			name = MultilineAlertView.xib;
 			sourceTree = "<group>";
