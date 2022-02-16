@@ -1549,6 +1549,7 @@
     <body>
       <trans-unit id="A57-2v-ao9.normalTitle" xml:space="preserve">
         <source>OK</source>
+        <target>OK</target>
         <note>Class = "UIButton"; normalTitle = "OK"; ObjectID = "A57-2v-ao9";</note>
       </trans-unit>
       <trans-unit id="AMx-JQ-2f8.normalTitle" xml:space="preserve">

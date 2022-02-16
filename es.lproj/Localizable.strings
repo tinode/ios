@@ -10,6 +10,9 @@
 /* Alert title */
 "Add contact" = "Añadir contacto";
 
+/* Placeholder for missing topic description */
+"Add optional description" = "Añadir descripción opcional";
+
 /* Alert placeholder */
 "Additional info (private)" = "Información adicional (sólo visible para tí)";
 
@@ -113,7 +116,13 @@
 "Edit account name" = "Editar nombre de la cuenta";
 
 /* Alert title */
+"Edit Description" = "Editar descripción";
+
+/* Alert title */
 "Edit Group" = "Editar grupo";
+
+/* Alert title */
+"Edit Title" = "Editar título";
 
 /* Alert action */
 "Email" = "Correo electrónico";
@@ -253,6 +262,9 @@
 
 /* Progress overlay */
 "Please wait..." = "Por favor, espera...";
+
+/* Alert title */
+"Private Comment" = "Comentario privado";
 
 /* Placeholder text in editor */
 "Private info: not set" = "Información privada: no establecida";
