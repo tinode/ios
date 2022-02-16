@@ -62,9 +62,7 @@ class TopicGeneralViewController: UITableViewController {
             forView: topicPrivateLabel,
             action: #selector(TopicGeneralViewController.topicPrivateTapped),
             actionTarget: self)
-        topicPrivateLabel.textColor = topic?.comment?.isEmpty ?? true ? .placeholderText : .secondaryLabel
         if topic.isOwner {
-            topicDescriptionLabel.textColor = topic?.pub?.note?.isEmpty ?? true ? .placeholderText : .secondaryLabel
             UiUtils.setupTapRecognizer(
                 forView: topicTitleLabel,
                 action: #selector(TopicGeneralViewController.topicTitleTapped),
@@ -74,7 +72,6 @@ class TopicGeneralViewController: UITableViewController {
                 action: #selector(TopicGeneralViewController.topicDescriptionTapped),
                 actionTarget: self)
         }
-
         self.imagePicker = ImagePicker(
             presentationController: self, delegate: self, editable: true)
     }
@@ -82,8 +79,15 @@ class TopicGeneralViewController: UITableViewController {
     private func reloadData() {
         topicTitleLabel.text = (topic.pub?.fn ?? "").isEmpty ? NSLocalizedString("Unknown", comment: "Placeholder for missing user name") : topic.pub?.fn
 
-        topicDescriptionLabel.text = (topic.pub?.note ?? "").isEmpty ? NSLocalizedString("Add optional description", comment: "Placeholder for missing topic description") : topic.pub?.note
+        topicDescriptionLabel.textColor = topic?.pub?.note?.isEmpty ?? true ? .placeholderText : .secondaryLabel
+        if topic.isOwner {
+            topicDescriptionLabel.isHidden = false
+            topicDescriptionLabel.text = (topic.pub?.note ?? "").isEmpty ? NSLocalizedString("Add optional description", comment: "Placeholder for missing topic description") : topic.pub?.note
+        } else {
+            topicDescriptionLabel.isHidden = topic?.pub?.note?.isEmpty ?? true
+        }
 
+        topicPrivateLabel.textColor = topic?.comment?.isEmpty ?? true ? .placeholderText : .secondaryLabel
         topicPrivateLabel.text = (topic.comment ?? "").isEmpty ? NSLocalizedString("Private info: not set", comment: "Placeholder text in editor") : topic.comment
 
         avatarImage.set(pub: topic.pub, id: topic?.name)
@@ -96,7 +100,7 @@ class TopicGeneralViewController: UITableViewController {
 
     @objc
     func topicTitleTapped(sender: UITapGestureRecognizer) {
-        UiUtils.alertLabelEditor(over: self, self.topic?.pub?.fn, placeholder: NSLocalizedString("Name of the group", comment: "Alert placeholder"), title: NSLocalizedString("Edit Group", comment: "Alert title"), done: { text in
+        UiUtils.alertLabelEditor(over: self, self.topic?.pub?.fn, placeholder: NSLocalizedString("Name of the group", comment: "Alert placeholder"), title: NSLocalizedString("Edit Title", comment: "Alert title"), done: { text in
             if let nt = text, !nt.isEmpty {
                 if let oldPub = self.topic.pub, oldPub.fn != nt {
                     let pub = TheCard(fn: String(nt.prefix(UiUtils.kMaxTitleLength)))
@@ -111,7 +115,7 @@ class TopicGeneralViewController: UITableViewController {
     @objc
     func topicDescriptionTapped(sender: UITapGestureRecognizer) {
         let alert = MultilineAlertViewController(with: self.topic?.pub?.note)
-        alert.title = NSLocalizedString("Edit Group", comment: "Alert title")
+        alert.title = NSLocalizedString("Edit Description", comment: "Alert title")
         alert.completionHandler = { text in
             let pub = TheCard()
             if let nd = text, !nd.isEmpty {
@@ -130,7 +134,7 @@ class TopicGeneralViewController: UITableViewController {
 
     @objc
     func topicPrivateTapped(sender: UITapGestureRecognizer) {
-        UiUtils.alertLabelEditor(over: self, self.topic?.comment, placeholder: NSLocalizedString("Additional info (private)", comment: "Alert placeholder"), title: NSLocalizedString("Add Comment", comment: "Alert title"), done: { text in
+        UiUtils.alertLabelEditor(over: self, self.topic?.comment, placeholder: NSLocalizedString("Additional info (private)", comment: "Alert placeholder"), title: NSLocalizedString("Private Comment", comment: "Alert title"), done: { text in
             var priv = PrivateType()
             if let ns = text, !ns.isEmpty {
                 if self.topic.comment == nil || (self.topic.comment! != ns) {

@@ -103,7 +103,7 @@ class SettingsPersonalViewController: UITableViewController {
     @objc
     func descriptionTapped(sender: UITapGestureRecognizer) {
         let alert = MultilineAlertViewController(with: self.me?.pub?.note)
-        alert.title = NSLocalizedString("Edit description", comment: "Alert title")
+        alert.title = NSLocalizedString("Edit Description", comment: "Alert title")
         alert.completionHandler = { text in
             self.updateDescription(text)
         }

@@ -616,7 +616,7 @@
                             <tableViewSection headerTitle="Contacts" id="bvE-OV-sy1">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" accessoryType="disclosureIndicator" indentationWidth="10" focusStyle="custom" textLabel="fLh-oI-CRP" imageView="6z9-5Y-HKA" style="IBUITableViewCellStyleDefault" id="WNR-81-Xt2">
-                                        <rect key="frame" x="0.0" y="294.33333206176752" width="414" height="43.666667938232422"/>
+                                        <rect key="frame" x="0.0" y="294.33333206176758" width="414" height="43.666667938232422"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="WNR-81-Xt2" id="Ovf-BC-JGG">
                                             <rect key="frame" x="0.0" y="0.0" width="385.33333333333331" height="43.666667938232422"/>
@@ -644,25 +644,27 @@
                             <tableViewSection headerTitle="Tags (Content Discovery)" id="jal-tR-OpF">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" accessoryType="disclosureIndicator" indentationWidth="10" focusStyle="custom" textLabel="eHa-mE-ZbY" detailTextLabel="K7L-Uc-b68" imageView="iGu-Eb-fCF" style="IBUITableViewCellStyleSubtitle" id="Nl1-fA-AeA">
-                                        <rect key="frame" x="0.0" y="370.66666603088373" width="414" height="55.666667938232422"/>
+                                        <rect key="frame" x="0.0" y="370.66666603088379" width="414" height="55.666667938232422"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Nl1-fA-AeA" id="SiW-3F-rOw">
                                             <rect key="frame" x="0.0" y="0.0" width="385.33333333333331" height="55.666667938232422"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Manage" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="eHa-mE-ZbY">
-                                                    <rect key="frame" x="59" y="8.9999999999999982" width="61.333333333333336" height="20.333333333333332"/>
+                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Manage tags" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="eHa-mE-ZbY">
+                                                    <rect key="frame" x="56.666666666666664" y="8.9999999999999982" width="98.666666666666671" height="20.333333333333332"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" image="tags-24" id="iGu-Eb-fCF">
-                                                    <rect key="frame" x="20" y="15.666666666666664" width="24" height="24"/>
+                                                <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="iGu-Eb-fCF">
+                                                    <rect key="frame" x="19" y="17.666666666666668" width="22.666666666666668" height="21"/>
                                                     <autoresizingMask key="autoresizingMask"/>
+                                                    <imageReference key="image" image="tag.fill" catalog="system" symbolScale="medium"/>
+                                                    <preferredSymbolConfiguration key="preferredSymbolConfiguration" scale="medium" weight="regular"/>
                                                 </imageView>
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Subtitle" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="K7L-Uc-b68">
-                                                    <rect key="frame" x="59" y="31.333333333333332" width="43.666666666666664" height="14.333333333333334"/>
+                                                    <rect key="frame" x="56.666666666666671" y="31.333333333333332" width="43.666666666666664" height="14.333333333333334"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                                     <nil key="textColor"/>
@@ -2441,7 +2443,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Manage Tags" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="r8j-wT-BLF">
-                                                    <rect key="frame" x="56.666666666666679" y="7.9999999999999982" width="101.33333333333333" height="20.333333333333332"/>
+                                                    <rect key="frame" x="56.666666666666679" y="9.9999999999999982" width="101.33333333333333" height="20.333333333333332"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
@@ -2452,7 +2454,7 @@
                                                     <autoresizingMask key="autoresizingMask"/>
                                                 </imageView>
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Others can find group by these tags" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Zdw-nR-1tB">
-                                                    <rect key="frame" x="56.666666666666686" y="28.333333333333329" width="246" height="18"/>
+                                                    <rect key="frame" x="56.666666666666671" y="30.333333333333332" width="203.33333333333334" height="14.333333333333334"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" style="UICTFontTextStyleSubhead"/>
                                                     <nil key="textColor"/>
@@ -2909,7 +2911,7 @@
                         <imageReference key="image" image="magnifyingglass" catalog="system" symbolScale="medium"/>
                     </tabBarItem>
                     <toolbarItems>
-                        <barButtonItem title="Item" image="invite-24" id="3zN-CC-6bS">
+                        <barButtonItem title="Invite" id="3zN-CC-6bS">
                             <connections>
                                 <action selector="inviteActionClicked:" destination="UgX-En-K1m" id="AM7-7B-dj3"/>
                             </connections>
@@ -3366,7 +3368,6 @@
         <image name="eye-30" width="30" height="30"/>
         <image name="hand.raised.fill" catalog="system" width="128" height="124"/>
         <image name="invisible-30" width="30" height="30"/>
-        <image name="invite-24" width="24" height="24"/>
         <image name="lock.rotation" catalog="system" width="128" height="110"/>
         <image name="lock.shield" catalog="system" width="128" height="118"/>
         <image name="logo-ios" width="288" height="288"/>
@@ -3382,7 +3383,6 @@
         <image name="rectangle.portrait.and.arrow.right" catalog="system" width="128" height="108"/>
         <image name="staff" width="11" height="13"/>
         <image name="tag.fill" catalog="system" width="128" height="119"/>
-        <image name="tags-24" width="24" height="24"/>
         <image name="text.badge.checkmark" catalog="system" width="128" height="109"/>
         <image name="trusted" width="15" height="15"/>
         <image name="xmark.bin" catalog="system" width="128" height="93"/>

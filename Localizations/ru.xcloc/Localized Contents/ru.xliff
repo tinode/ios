@@ -25,6 +25,11 @@
         <target>Добавить контакт</target>
         <note>Alert title</note>
       </trans-unit>
+      <trans-unit id="Add optional description" xml:space="preserve">
+        <source>Add optional description</source>
+        <target>Описание (не обязательно)</target>
+        <note>Placeholder for missing topic description</note>
+      </trans-unit>
       <trans-unit id="Additional info (private)" xml:space="preserve">
         <source>Additional info (private)</source>
         <target>Дополнительно (только для себя)</target>
@@ -183,14 +188,29 @@
         <target>Директория</target>
         <note>Section title</note>
       </trans-unit>
+      <trans-unit id="Edit Description" xml:space="preserve">
+        <source>Edit Description</source>
+        <target>Описание</target>
+        <note>Alert title</note>
+      </trans-unit>
       <trans-unit id="Edit Group" xml:space="preserve">
         <source>Edit Group</source>
         <target>Редактировать группу</target>
         <note>Alert title</note>
       </trans-unit>
+      <trans-unit id="Edit Title" xml:space="preserve">
+        <source>Edit Title</source>
+        <target>Название</target>
+        <note>Alert title</note>
+      </trans-unit>
       <trans-unit id="Edit account name" xml:space="preserve">
         <source>Edit account name</source>
         <target>Редактировать аккаунт</target>
+        <note>Alert title</note>
+      </trans-unit>
+      <trans-unit id="Edit description" xml:space="preserve">
+        <source>Edit description</source>
+        <target>Описание</target>
         <note>Alert title</note>
       </trans-unit>
       <trans-unit id="Email" xml:space="preserve">
@@ -423,6 +443,11 @@
         <source>Please wait...</source>
         <target>Подождите...</target>
         <note>Progress overlay</note>
+      </trans-unit>
+      <trans-unit id="Private Comment" xml:space="preserve">
+        <source>Private Comment</source>
+        <target>Комментарий</target>
+        <note>Alert title</note>
       </trans-unit>
       <trans-unit id="Private info: not set" xml:space="preserve">
         <source>Private info: not set</source>
@@ -679,9 +704,15 @@
         <target>Регистрация</target>
         <note>Class = "UIButton"; normalTitle = "Sign Up"; ObjectID = "1tv-os-KfJ";</note>
       </trans-unit>
+      <trans-unit id="3hX-RM-7Ha.text" xml:space="preserve">
+        <source>Administration and Security</source>
+        <target>Административные настройки</target>
+        <note>Class = "UILabel"; text = "Administration and Security"; ObjectID = "3hX-RM-7Ha";</note>
+      </trans-unit>
       <trans-unit id="3zN-CC-6bS.title" xml:space="preserve">
-        <source>Item</source>
-        <note>Class = "UIBarButtonItem"; title = "Item"; ObjectID = "3zN-CC-6bS";</note>
+        <source>Invite</source>
+        <target>Пригласить</target>
+        <note>Class = "UIBarButtonItem"; title = "Invite"; ObjectID = "3zN-CC-6bS";</note>
       </trans-unit>
       <trans-unit id="4dd-0I-UFm.title" xml:space="preserve">
         <source>General Settings</source>
@@ -693,25 +724,30 @@
         <target>Индикатор печати</target>
         <note>Class = "UILabel"; text = "Send typing notifications"; ObjectID = "4ll-eW-b8Z";</note>
       </trans-unit>
+      <trans-unit id="6Nd-3S-JBo.text" xml:space="preserve">
+        <source>Optional comment (private)</source>
+        <target>Комментарий (только для себя)</target>
+        <note>Class = "UILabel"; text = "Optional comment (private)"; ObjectID = "6Nd-3S-JBo";</note>
+      </trans-unit>
+      <trans-unit id="6ON-kt-aM9.text" xml:space="preserve">
+        <source>John Doe</source>
+        <target>Иван Петров</target>
+        <note>Class = "UILabel"; text = "John Doe"; ObjectID = "6ON-kt-aM9";</note>
+      </trans-unit>
       <trans-unit id="6rW-B5-NCp.text" xml:space="preserve">
         <source>placeholder_file_name</source>
         <target>placeholder_file_name</target>
         <note>Class = "UILabel"; text = "placeholder_file_name"; ObjectID = "6rW-B5-NCp";</note>
       </trans-unit>
-      <trans-unit id="7EV-I9-csz.text" xml:space="preserve">
-        <source>Delete Messages</source>
-        <target>Удалить сообщения</target>
-        <note>Class = "UILabel"; text = "Delete Messages"; ObjectID = "7EV-I9-csz";</note>
-      </trans-unit>
-      <trans-unit id="07M-9x-zBK.text" xml:space="preserve">
-        <source>Block Contact</source>
-        <target>Заблокировать</target>
-        <note>Class = "UILabel"; text = "Block Contact"; ObjectID = "07M-9x-zBK";</note>
-      </trans-unit>
       <trans-unit id="8RW-nB-5t3.text" xml:space="preserve">
         <source>Log out</source>
         <target>Выйти</target>
         <note>Class = "UILabel"; text = "Log out"; ObjectID = "8RW-nB-5t3";</note>
+      </trans-unit>
+      <trans-unit id="8eC-OS-Net.text" xml:space="preserve">
+        <source>Report Contact</source>
+        <target>Пожаловаться</target>
+        <note>Class = "UILabel"; text = "Report Contact"; ObjectID = "8eC-OS-Net";</note>
       </trans-unit>
       <trans-unit id="8wo-Rg-iTZ.text" xml:space="preserve">
         <source>Anonymous users</source>
@@ -763,6 +799,11 @@
         <target>Версия приложения</target>
         <note>Class = "UILabel"; text = "App Version"; ObjectID = "AXP-O2-x5k";</note>
       </trans-unit>
+      <trans-unit id="Akq-Gr-LNH.text" xml:space="preserve">
+        <source>Private comment</source>
+        <target>Комментарий (только для себя)</target>
+        <note>Class = "UITextView"; text = "Private comment"; ObjectID = "Akq-Gr-LNH";</note>
+      </trans-unit>
       <trans-unit id="AoI-xo-VbS.text" xml:space="preserve">
         <source>Muted</source>
         <target>Без уведомлений</target>
@@ -778,15 +819,25 @@
         <target>image/jpeg</target>
         <note>Class = "UILabel"; text = "image/jpeg"; ObjectID = "C6Z-tO-4g8";</note>
       </trans-unit>
+      <trans-unit id="Cy6-Bq-QCi.placeholder" xml:space="preserve">
+        <source>Optional description</source>
+        <target>Описание (не обязательно)</target>
+        <note>Class = "UITextField"; placeholder = "Optional description"; ObjectID = "Cy6-Bq-QCi";</note>
+      </trans-unit>
       <trans-unit id="D3z-yf-zJA.text" xml:space="preserve">
-        <source>Topic subtitle (private)</source>
+        <source>Description</source>
         <target>Пояснение (только для себя)</target>
-        <note>Class = "UITextView"; text = "Topic subtitle (private)"; ObjectID = "D3z-yf-zJA";</note>
+        <note>Class = "UITextView"; text = "Description"; ObjectID = "D3z-yf-zJA";</note>
       </trans-unit>
       <trans-unit id="D6H-jy-Zh4.text" xml:space="preserve">
         <source>Address</source>
         <target>Адрес</target>
         <note>Class = "UILabel"; text = "Address"; ObjectID = "D6H-jy-Zh4";</note>
+      </trans-unit>
+      <trans-unit id="DEM-ia-TIj.text" xml:space="preserve">
+        <source>Archived</source>
+        <target>Архивировано</target>
+        <note>Class = "UILabel"; text = "Archived"; ObjectID = "DEM-ia-TIj";</note>
       </trans-unit>
       <trans-unit id="DMQ-om-04T.normalTitle" xml:space="preserve">
         <source>OK</source>
@@ -822,10 +873,15 @@
         <target>placeholder_file_name</target>
         <note>Class = "UILabel"; text = "placeholder_file_name"; ObjectID = "HIs-n4-sFa";</note>
       </trans-unit>
-      <trans-unit id="HwV-ri-EBc.headerTitle" xml:space="preserve">
-        <source>Actions</source>
-        <target>Действия</target>
-        <note>Class = "UITableViewSection"; headerTitle = "Actions"; ObjectID = "HwV-ri-EBc";</note>
+      <trans-unit id="IbJ-of-vl0.text" xml:space="preserve">
+        <source>Add optional description</source>
+        <target>Добавить описание (не обязательно)</target>
+        <note>Class = "UILabel"; text = "Add optional description"; ObjectID = "IbJ-of-vl0";</note>
+      </trans-unit>
+      <trans-unit id="IzY-DL-wiS.text" xml:space="preserve">
+        <source>Verified</source>
+        <target>Официальный</target>
+        <note>Class = "UILabel"; text = "Verified"; ObjectID = "IzY-DL-wiS";</note>
       </trans-unit>
       <trans-unit id="JlG-TH-asZ.text" xml:space="preserve">
         <source>Confirmation code</source>
@@ -847,6 +903,11 @@
         <target>Подозрительный</target>
         <note>Class = "UILabel"; text = "Untrustworthy"; ObjectID = "KL3-O0-A0I";</note>
       </trans-unit>
+      <trans-unit id="KSy-US-Bkx.text" xml:space="preserve">
+        <source>Block Contact</source>
+        <target>Заблокировать контакт</target>
+        <note>Class = "UILabel"; text = "Block Contact"; ObjectID = "KSy-US-Bkx";</note>
+      </trans-unit>
       <trans-unit id="LRu-ae-drd.title" xml:space="preserve">
         <source>Edit Members</source>
         <target>Изменить участников</target>
@@ -857,6 +918,11 @@
         <target>Новый чат</target>
         <note>Class = "UIBarButtonItem"; title = "New Chat"; ObjectID = "LVG-dB-flA";</note>
       </trans-unit>
+      <trans-unit id="LVW-qL-KG8.text" xml:space="preserve">
+        <source>Untrusworthy</source>
+        <target>Подозрительный</target>
+        <note>Class = "UILabel"; text = "Untrusworthy"; ObjectID = "LVW-qL-KG8";</note>
+      </trans-unit>
       <trans-unit id="Lh9-1X-ez1.text" xml:space="preserve">
         <source>Blocked contacts</source>
         <target>Заблокированные контакты</target>
@@ -866,11 +932,6 @@
         <source>Notifications</source>
         <target>Уведомления</target>
         <note>Class = "UINavigationItem"; title = "Notifications"; ObjectID = "O9h-LB-2lW";</note>
-      </trans-unit>
-      <trans-unit id="OZr-73-5vP.text" xml:space="preserve">
-        <source>Verified</source>
-        <target>Верифицированный</target>
-        <note>Class = "UILabel"; text = "Verified"; ObjectID = "OZr-73-5vP";</note>
       </trans-unit>
       <trans-unit id="OeG-Kx-gwG.text" xml:space="preserve">
         <source>Content type:</source>
@@ -917,20 +978,15 @@
         <target>По адресу</target>
         <note>Class = "UITabBarItem"; title = "By ID"; ObjectID = "T7l-iC-Rs6";</note>
       </trans-unit>
-      <trans-unit id="TCK-gb-1BS.text" xml:space="preserve">
-        <source>John Doe</source>
-        <target>Иван Петров</target>
-        <note>Class = "UILabel"; text = "John Doe"; ObjectID = "TCK-gb-1BS";</note>
-      </trans-unit>
-      <trans-unit id="TRR-fA-HKj.text" xml:space="preserve">
-        <source>Leave Group</source>
-        <target>Покинуть группу</target>
-        <note>Class = "UILabel"; text = "Leave Group"; ObjectID = "TRR-fA-HKj";</note>
-      </trans-unit>
       <trans-unit id="TvF-F9-blO.normalTitle" xml:space="preserve">
         <source>Sign In</source>
         <target>Войти</target>
         <note>Class = "UIButton"; normalTitle = "Sign In"; ObjectID = "TvF-F9-blO";</note>
+      </trans-unit>
+      <trans-unit id="U5T-k4-DgP.headerTitle" xml:space="preserve">
+        <source>Actions</source>
+        <target>Действия</target>
+        <note>Class = "UITableViewSection"; headerTitle = "Actions"; ObjectID = "U5T-k4-DgP";</note>
       </trans-unit>
       <trans-unit id="UgX-En-K1m.title" xml:space="preserve">
         <source>Find Controller</source>
@@ -947,6 +1003,11 @@
         <target>N</target>
         <note>Class = "UILabel"; text = "N"; ObjectID = "Un9-ds-iQd";</note>
       </trans-unit>
+      <trans-unit id="WVu-hr-VVU.text" xml:space="preserve">
+        <source>The name of the group</source>
+        <target>Название группы</target>
+        <note>Class = "UILabel"; text = "The name of the group"; ObjectID = "WVu-hr-VVU";</note>
+      </trans-unit>
       <trans-unit id="YLX-fZ-c26.text" xml:space="preserve">
         <source>image/jpeg</source>
         <target>image/jpeg</target>
@@ -961,11 +1022,6 @@
         <source>SignUp</source>
         <target>SignUp</target>
         <note>Class = "UITableViewController"; title = "SignUp"; ObjectID = "YmQ-cB-rjH";</note>
-      </trans-unit>
-      <trans-unit id="ZEt-A4-kIu.headerTitle" xml:space="preserve">
-        <source>Notifications</source>
-        <target>Нотификации</target>
-        <note>Class = "UITableViewSection"; headerTitle = "Notifications"; ObjectID = "ZEt-A4-kIu";</note>
       </trans-unit>
       <trans-unit id="ZQy-2N-acy.placeholder" xml:space="preserve">
         <source>Password</source>
@@ -992,6 +1048,11 @@
         <target>Предпросмотр</target>
         <note>Class = "UIViewController"; title = "File Preview"; ObjectID = "ZTN-Oj-COh";</note>
       </trans-unit>
+      <trans-unit id="Zdw-nR-1tB.text" xml:space="preserve">
+        <source>Others can find group by these tags</source>
+        <target>Тэги для поиска</target>
+        <note>Class = "UILabel"; text = "Others can find group by these tags"; ObjectID = "Zdw-nR-1tB";</note>
+      </trans-unit>
       <trans-unit id="Zn8-7V-BcX.text" xml:space="preserve">
         <source>Privacy policy</source>
         <target>Политика конфиденциальности</target>
@@ -1001,6 +1062,11 @@
         <source>Image Preview</source>
         <target>Предпросмотр</target>
         <note>Class = "UIViewController"; title = "Image Preview"; ObjectID = "a2m-CR-0Zc";</note>
+      </trans-unit>
+      <trans-unit id="a4o-bz-GPx.text" xml:space="preserve">
+        <source>Report Group</source>
+        <target>Пожаловаться на группу</target>
+        <note>Class = "UILabel"; text = "Report Group"; ObjectID = "a4o-bz-GPx";</note>
       </trans-unit>
       <trans-unit id="a45-p0-44d.text" xml:space="preserve">
         <source>GROUP MEMBERS</source>
@@ -1031,9 +1097,14 @@
         <source>ForwardTo</source>
         <note>Class = "UITableViewController"; title = "ForwardTo"; ObjectID = "af7-97-1pu";</note>
       </trans-unit>
+      <trans-unit id="awR-up-0dD.title" xml:space="preserve">
+        <source>General Settings</source>
+        <target>Общие настройки</target>
+        <note>Class = "UITableViewController"; title = "General Settings"; ObjectID = "awR-up-0dD";</note>
+      </trans-unit>
       <trans-unit id="axr-PN-Xcr.text" xml:space="preserve">
         <source>Verified</source>
-        <target>Верифицированный</target>
+        <target>Официальный</target>
         <note>Class = "UILabel"; text = "Verified"; ObjectID = "axr-PN-Xcr";</note>
       </trans-unit>
       <trans-unit id="bEA-WA-uoH.text" xml:space="preserve">
@@ -1061,15 +1132,25 @@
         <target> MyUID</target>
         <note>Class = "UILabel"; text = " MyUID"; ObjectID = "bvN-my-ZPi";</note>
       </trans-unit>
+      <trans-unit id="cD6-Om-VgZ.text" xml:space="preserve">
+        <source>Add optional description</source>
+        <target>Добавить описание (не обязательно)</target>
+        <note>Class = "UILabel"; text = "Add optional description"; ObjectID = "cD6-Om-VgZ";</note>
+      </trans-unit>
       <trans-unit id="d7l-9Y-8mk.title" xml:space="preserve">
         <source>Help and About</source>
         <target>Помощь, о приложении</target>
         <note>Class = "UINavigationItem"; title = "Help and About"; ObjectID = "d7l-9Y-8mk";</note>
       </trans-unit>
+      <trans-unit id="dT7-dW-WFv.text" xml:space="preserve">
+        <source>Delete Group</source>
+        <target>Удалить группу</target>
+        <note>Class = "UILabel"; text = "Delete Group"; ObjectID = "dT7-dW-WFv";</note>
+      </trans-unit>
       <trans-unit id="eHa-mE-ZbY.text" xml:space="preserve">
-        <source>Manage</source>
+        <source>Manage tags</source>
         <target>Управлять</target>
-        <note>Class = "UILabel"; text = "Manage"; ObjectID = "eHa-mE-ZbY";</note>
+        <note>Class = "UILabel"; text = "Manage tags"; ObjectID = "eHa-mE-ZbY";</note>
       </trans-unit>
       <trans-unit id="eVu-vx-CU8.text" xml:space="preserve">
         <source>128x365; 35KB</source>
@@ -1146,9 +1227,9 @@
         <note>Class = "UIButton"; normalTitle = "Request"; ObjectID = "i0f-S8-O1v";</note>
       </trans-unit>
       <trans-unit id="ity-bg-zqr.text" xml:space="preserve">
-        <source>Topic title (public)</source>
+        <source>Title</source>
         <target>Название группы</target>
-        <note>Class = "UITextView"; text = "Topic title (public)"; ObjectID = "ity-bg-zqr";</note>
+        <note>Class = "UITextView"; text = "Title"; ObjectID = "ity-bg-zqr";</note>
       </trans-unit>
       <trans-unit id="jZE-Vv-ggf.text" xml:space="preserve">
         <source>Add Members</source>
@@ -1215,11 +1296,6 @@
         <target>Логин</target>
         <note>Class = "UITextField"; placeholder = "Login"; ObjectID = "nho-5Y-Mt8";</note>
       </trans-unit>
-      <trans-unit id="nih-1p-AyF.text" xml:space="preserve">
-        <source>Staff-managed</source>
-        <target>Административный</target>
-        <note>Class = "UILabel"; text = "Staff-managed"; ObjectID = "nih-1p-AyF";</note>
-      </trans-unit>
       <trans-unit id="ntt-8z-Ay2.text" xml:space="preserve">
         <source>No results</source>
         <target>Не найдено</target>
@@ -1255,10 +1331,10 @@
         <target>Новый чат</target>
         <note>Class = "UITabBarController"; title = "New chat"; ObjectID = "qBo-ye-avT";</note>
       </trans-unit>
-      <trans-unit id="qaR-VW-Rfy.text" xml:space="preserve">
-        <source>Report Group</source>
-        <target>Уведомить о нарушении</target>
-        <note>Class = "UILabel"; text = "Report Group"; ObjectID = "qaR-VW-Rfy";</note>
+      <trans-unit id="qeU-hX-VEM.title" xml:space="preserve">
+        <source>Administrative and Security</source>
+        <target>Административные настройки</target>
+        <note>Class = "UINavigationItem"; title = "Administrative and Security"; ObjectID = "qeU-hX-VEM";</note>
       </trans-unit>
       <trans-unit id="qvs-D4-f94.text" xml:space="preserve">
         <source>Change password</source>
@@ -1280,6 +1356,11 @@
         <target>Профиль</target>
         <note>Class = "UIBarButtonItem"; title = "Profile"; ObjectID = "rlG-v4-QUc";</note>
       </trans-unit>
+      <trans-unit id="rlX-B4-4KE.text" xml:space="preserve">
+        <source>Leave Group</source>
+        <target>Покинуть группу</target>
+        <note>Class = "UILabel"; text = "Leave Group"; ObjectID = "rlX-B4-4KE";</note>
+      </trans-unit>
       <trans-unit id="rqZ-eR-8TP.title" xml:space="preserve">
         <source>Find</source>
         <target>Найти</target>
@@ -1300,20 +1381,10 @@
         <target>Иван Петров</target>
         <note>Class = "UILabel"; text = "John Doe"; ObjectID = "syF-Vp-vRc";</note>
       </trans-unit>
-      <trans-unit id="t2m-Xv-gTF.text" xml:space="preserve">
-        <source>Leave Conversation</source>
-        <target>Выйти из чата</target>
-        <note>Class = "UILabel"; text = "Leave Conversation"; ObjectID = "t2m-Xv-gTF";</note>
-      </trans-unit>
       <trans-unit id="te7-Jx-ztq.accessibilityLabel" xml:space="preserve">
         <source>Footer</source>
         <target>Footer</target>
         <note>Class = "UIView"; accessibilityLabel = "Footer"; ObjectID = "te7-Jx-ztq";</note>
-      </trans-unit>
-      <trans-unit id="ub9-mK-yqf.text" xml:space="preserve">
-        <source>Report Contact</source>
-        <target>Уведомить о нарушении</target>
-        <note>Class = "UILabel"; text = "Report Contact"; ObjectID = "ub9-mK-yqf";</note>
       </trans-unit>
       <trans-unit id="wPJ-94-8aV.text" xml:space="preserve">
         <source>Yours</source>
@@ -1335,10 +1406,20 @@
         <target>128x365; 35KB</target>
         <note>Class = "UILabel"; text = "128x365; 35KB"; ObjectID = "wfA-TG-Chj";</note>
       </trans-unit>
+      <trans-unit id="wnZ-ve-5xb.text" xml:space="preserve">
+        <source>Delete Messages</source>
+        <target>Удалить сообщения</target>
+        <note>Class = "UILabel"; text = "Delete Messages"; ObjectID = "wnZ-ve-5xb";</note>
+      </trans-unit>
       <trans-unit id="xIw-r0-6Pv.accessibilityLabel" xml:space="preserve">
         <source>Footer</source>
         <target>Footer</target>
         <note>Class = "UIView"; accessibilityLabel = "Footer"; ObjectID = "xIw-r0-6Pv";</note>
+      </trans-unit>
+      <trans-unit id="xMh-7W-PhM.text" xml:space="preserve">
+        <source>Subtitle</source>
+        <target>Подзаголовок</target>
+        <note>Class = "UILabel"; text = "Subtitle"; ObjectID = "xMh-7W-PhM";</note>
       </trans-unit>
       <trans-unit id="xmn-wq-Hpr.placeholder" xml:space="preserve">
         <source>usr123aBcDef</source>
@@ -1350,25 +1431,10 @@
         <target>Инкогнито</target>
         <note>Class = "UILabel"; text = "Incognito mode"; ObjectID = "xyg-ee-0pd"; Note = "Label for incognito mode switch";</note>
       </trans-unit>
-      <trans-unit id="y1s-eC-LVl.text" xml:space="preserve">
-        <source>Untrusworthy</source>
-        <target>Подозрительный</target>
-        <note>Class = "UILabel"; text = "Untrusworthy"; ObjectID = "y1s-eC-LVl";</note>
-      </trans-unit>
       <trans-unit id="yKx-xt-rdn.placeholder" xml:space="preserve">
         <source>First and last name</source>
         <target>Имя и фамилия</target>
         <note>Class = "UITextField"; placeholder = "First and last name"; ObjectID = "yKx-xt-rdn";</note>
-      </trans-unit>
-      <trans-unit id="yL1-ka-zNK.text" xml:space="preserve">
-        <source>Subtitle</source>
-        <target>Подзаголовок</target>
-        <note>Class = "UILabel"; text = "Subtitle"; ObjectID = "yL1-ka-zNK";</note>
-      </trans-unit>
-      <trans-unit id="z6C-JF-Mnb.text" xml:space="preserve">
-        <source>Delete Group</source>
-        <target>Удалить группу</target>
-        <note>Class = "UILabel"; text = "Delete Group"; ObjectID = "z6C-JF-Mnb";</note>
       </trans-unit>
       <trans-unit id="z08-iK-CeG.text" xml:space="preserve">
         <source>Account and Security</source>
@@ -1380,10 +1446,30 @@
         <target>Права доступа по умолчанию</target>
         <note>Class = "UITableViewSection"; headerTitle = "Default Permissions"; ObjectID = "zW8-KF-N8J";</note>
       </trans-unit>
+      <trans-unit id="zkl-8R-Tma.text" xml:space="preserve">
+        <source>Staff-managed</source>
+        <target>Административный</target>
+        <note>Class = "UILabel"; text = "Staff-managed"; ObjectID = "zkl-8R-Tma";</note>
+      </trans-unit>
       <trans-unit id="zmL-3Y-R2r.placeholder" xml:space="preserve">
         <source>Email or phone number</source>
         <target>Емейл или телефон</target>
         <note>Class = "UITextField"; placeholder = "Email or phone number"; ObjectID = "zmL-3Y-R2r";</note>
+      </trans-unit>
+      <trans-unit id="zr8-yN-F8L.text" xml:space="preserve">
+        <source>Leave Conversation</source>
+        <target>Покинуть чат</target>
+        <note>Class = "UILabel"; text = "Leave Conversation"; ObjectID = "zr8-yN-F8L";</note>
+      </trans-unit>
+      <trans-unit id="zww-h7-9s0.title" xml:space="preserve">
+        <source>Settings</source>
+        <target>Настройки</target>
+        <note>Class = "UINavigationItem"; title = "Settings"; ObjectID = "zww-h7-9s0";</note>
+      </trans-unit>
+      <trans-unit id="zz2-fg-2IG.text" xml:space="preserve">
+        <source>Permissions, block or report chat</source>
+        <target>Разрешения, заблокировать или пожаловаться</target>
+        <note>Class = "UILabel"; text = "Permissions, block or report chat"; ObjectID = "zz2-fg-2IG";</note>
       </trans-unit>
     </body>
   </file>
@@ -1453,6 +1539,48 @@
         <source>Connection settings</source>
         <target>Настройки соединения</target>
         <note>A single strings file, whose title is specified in your preferences schema. The strings files provide the localized content to display to the user for each of your preferences.</note>
+      </trans-unit>
+    </body>
+  </file>
+  <file original="Tinodios/widgets/Base.lproj/MultilineAlertView.xib" datatype="plaintext" source-language="en" target-language="ru">
+    <header>
+      <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="13.2.1" build-num="13C100"/>
+    </header>
+    <body>
+      <trans-unit id="A57-2v-ao9.normalTitle" xml:space="preserve">
+        <source>OK</source>
+        <note>Class = "UIButton"; normalTitle = "OK"; ObjectID = "A57-2v-ao9";</note>
+      </trans-unit>
+      <trans-unit id="AMx-JQ-2f8.normalTitle" xml:space="preserve">
+        <source>Cancel</source>
+        <target>Отменить</target>
+        <note>Class = "UIButton"; normalTitle = "Cancel"; ObjectID = "AMx-JQ-2f8";</note>
+      </trans-unit>
+      <trans-unit id="W0P-gB-P5h.text" xml:space="preserve">
+        <source>Title</source>
+        <target>Название</target>
+        <note>Class = "UILabel"; text = "Title"; ObjectID = "W0P-gB-P5h";</note>
+      </trans-unit>
+    </body>
+  </file>
+  <file original="Tinodios/widgets/Base.lproj/TagsEditDialogView.xib" datatype="plaintext" source-language="en" target-language="ru">
+    <header>
+      <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="13.2.1" build-num="13C100"/>
+    </header>
+    <body>
+      <trans-unit id="PJ7-dH-ATp.normalTitle" xml:space="preserve">
+        <source>OK</source>
+        <note>Class = "UIButton"; normalTitle = "OK"; ObjectID = "PJ7-dH-ATp";</note>
+      </trans-unit>
+      <trans-unit id="eeW-SH-URg.text" xml:space="preserve">
+        <source>Tags (content discovery)</source>
+        <target>Тэги (поиск контактов)</target>
+        <note>Class = "UILabel"; text = "Tags (content discovery)"; ObjectID = "eeW-SH-URg";</note>
+      </trans-unit>
+      <trans-unit id="vOv-C1-oEb.normalTitle" xml:space="preserve">
+        <source>Cancel</source>
+        <target>Отменить</target>
+        <note>Class = "UIButton"; normalTitle = "Cancel"; ObjectID = "vOv-C1-oEb";</note>
       </trans-unit>
     </body>
   </file>
