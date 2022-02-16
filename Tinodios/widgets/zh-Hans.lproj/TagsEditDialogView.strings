@@ -1,0 +1,9 @@
+/* Class = "UILabel"; text = "Tags (content discovery)"; ObjectID = "eeW-SH-URg"; */
+"eeW-SH-URg.text" = "标签（内容发现）";
+
+/* Class = "UIButton"; normalTitle = "OK"; ObjectID = "PJ7-dH-ATp"; */
+"PJ7-dH-ATp.normalTitle" = "好的";
+
+/* Class = "UIButton"; normalTitle = "Cancel"; ObjectID = "vOv-C1-oEb"; */
+"vOv-C1-oEb.normalTitle" = "取消";
+

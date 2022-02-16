@@ -10,6 +10,9 @@
 /* Alert title */
 "Add contact" = "添加联系人";
 
+/* Placeholder for missing topic description */
+"Add optional description" = "添加可选描述";
+
 /* Alert placeholder */
 "Additional info (private)" = "附加信息（私人）";
 
@@ -113,7 +116,13 @@
 "Edit account name" = "修改帐号名称";
 
 /* Alert title */
+"Edit Description" = "编辑描述";
+
+/* Alert title */
 "Edit Group" = "编辑主题";
+
+/* Alert title */
+"Edit Title" = "编辑标题";
 
 /* Alert action */
 "Email" = "电子邮件";
@@ -138,6 +147,9 @@
 
 /* Error message */
 "Failed to create account: %@" = "无法创建帐户：%@";
+
+/* Error message: malformed URL string */
+"Failed to create URL string for file: %@" = "未能为文件创建URL字符串：%@";
 
 /* Error message */
 "Failed to save group and contact info." = "无法保存群组和联系信息。";
@@ -250,6 +262,9 @@
 
 /* Progress overlay */
 "Please wait..." = "请耐心等待...";
+
+/* Alert title */
+"Private Comment" = "私人评论";
 
 /* Placeholder text in editor */
 "Private info: not set" = "私人信息：未设置";
