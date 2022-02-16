@@ -208,11 +208,6 @@
         <target>Edit account name</target>
         <note>Alert title</note>
       </trans-unit>
-      <trans-unit id="Edit description" xml:space="preserve">
-        <source>Edit description</source>
-        <target>Edit description</target>
-        <note>Alert title</note>
-      </trans-unit>
       <trans-unit id="Email" xml:space="preserve">
         <source>Email</source>
         <target>Email</target>
