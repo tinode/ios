@@ -624,6 +624,11 @@
         <target>确认</target>
         <note>Button text</note>
       </trans-unit>
+      <trans-unit id="online now" xml:space="preserve">
+        <source>online now</source>
+        <target>现在在线</target>
+        <note>The topic or user is currently online</note>
+      </trans-unit>
       <trans-unit id="undefined" xml:space="preserve">
         <source>undefined</source>
         <target>未定义</target>

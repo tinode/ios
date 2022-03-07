@@ -245,6 +245,9 @@
 /* Alert action */
 "OK" = "OK";
 
+/* The topic or user is currently online */
+"online now" = "en línea ahora";
+
 /* Toast notification */
 "Only Owner can delete group" = "Sólo el propietario puede eliminar el grupo";
 

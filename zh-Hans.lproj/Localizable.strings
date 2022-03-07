@@ -245,6 +245,9 @@
 /* Alert action */
 "OK" = "好";
 
+/* The topic or user is currently online */
+"online now" = "现在在线";
+
 /* Toast notification */
 "Only Owner can delete group" = "只有所有者可以删除组";
 

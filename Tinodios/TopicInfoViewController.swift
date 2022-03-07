@@ -76,10 +76,12 @@ class TopicInfoViewController: UITableViewController {
         topicTitleTextView.sizeToFit()
 
         let descPlaceholder: String? = topic.isOwner ? NSLocalizedString("Add optional description", comment: "Placeholder for missing topic description") : nil
-        topicDescriptionTextView.text = !(topic.pub?.note ?? "").isEmpty ? descPlaceholder : topic.pub?.note
+        topicDescriptionTextView.textColor = (topic.pub?.note ?? "").isEmpty ? .placeholderText : .secondaryLabel
+        topicDescriptionTextView.text = (topic.pub?.note ?? "").isEmpty ? descPlaceholder : topic.pub?.note
         topicDescriptionTextView.sizeToFit()
 
-        topicPrivateTextView.text = !(topic.comment ?? "").isEmpty ? NSLocalizedString("Private info: not set", comment: "Placeholder text in editor") : topic.comment
+        topicPrivateTextView.textColor = (topic.comment ?? "").isEmpty ? .placeholderText : .secondaryLabel
+        topicPrivateTextView.text = (topic.comment ?? "").isEmpty ? NSLocalizedString("Private info: not set", comment: "Placeholder text in editor") : topic.comment
         topicPrivateTextView.sizeToFit()
 
         topicIDLabel.text = topic?.name
@@ -90,7 +92,9 @@ class TopicInfoViewController: UITableViewController {
         mutedSwitch.isOn = topic.isMuted
         archivedSwitch.isOn = topic.isArchived
 
-        if let ts = topic?.lastSeen?.when {
+        if topic.online {
+            self.lastSeenTimestampLabel?.text = NSLocalizedString("online now", comment: "The topic or user is currently online")
+        } else if let ts = topic?.lastSeen?.when {
             var date: String
             let formatter = RelativeDateTimeFormatter()
             formatter.unitsStyle = .short

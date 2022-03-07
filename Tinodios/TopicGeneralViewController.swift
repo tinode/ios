@@ -79,12 +79,13 @@ class TopicGeneralViewController: UITableViewController {
     private func reloadData() {
         topicTitleLabel.text = (topic.pub?.fn ?? "").isEmpty ? NSLocalizedString("Unknown", comment: "Placeholder for missing user name") : topic.pub?.fn
 
-        topicDescriptionLabel.textColor = topic?.pub?.note?.isEmpty ?? true ? .placeholderText : .secondaryLabel
-        if topic.isOwner {
+        let isEmpty = topic?.pub?.note?.isEmpty ?? true
+        topicDescriptionLabel.textColor = isEmpty ? .placeholderText : .secondaryLabel
+        if topic.isOwner || !isEmpty {
             topicDescriptionLabel.isHidden = false
-            topicDescriptionLabel.text = (topic.pub?.note ?? "").isEmpty ? NSLocalizedString("Add optional description", comment: "Placeholder for missing topic description") : topic.pub?.note
+            topicDescriptionLabel.text = isEmpty ? NSLocalizedString("Add optional description", comment: "Placeholder for missing topic description") : topic.pub?.note
         } else {
-            topicDescriptionLabel.isHidden = topic?.pub?.note?.isEmpty ?? true
+            topicDescriptionLabel.isHidden = true
         }
 
         topicPrivateLabel.textColor = topic?.comment?.isEmpty ?? true ? .placeholderText : .secondaryLabel

@@ -624,6 +624,11 @@
         <target>confirmar</target>
         <note>Button text</note>
       </trans-unit>
+      <trans-unit id="online now" xml:space="preserve">
+        <source>online now</source>
+        <target>en línea ahora</target>
+        <note>The topic or user is currently online</note>
+      </trans-unit>
       <trans-unit id="undefined" xml:space="preserve">
         <source>undefined</source>
         <target>indefinido</target>
