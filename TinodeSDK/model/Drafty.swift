@@ -41,7 +41,7 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
 
     // Entity data field names which will be processed.
     private static let kKnownDataFelds =
-            ["act", "height", "mime", "name", "ref", "size", "title", "url", "val", "width"]
+            ["act", "duration", "height", "mime", "name", "preview", "ref", "size", "title", "url", "val", "width"]
 
     // Regular expressions for parsing inline formats.
     private static let kInlineStyles = try! [

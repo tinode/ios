@@ -131,9 +131,27 @@ class FullFormatter: AbstractFormatter {
         return FormatNode(nodes)
     }
 
-    override func handleUnknown(_ nodes: [FormatNode]) -> FormatNode {
-        // Unknown formatting, treat as plain text
-        return FormatNode(nodes)
+    override func handleUnknown(content nodes: [FormatNode], using data: [String: JSONValue]?, draftyKey: Int?) -> FormatNode {
+        guard let attr = data else { return FormatNode(nodes) }
+
+        // Does object have viewport dimensions?
+        let width = attr["width"]?.asInt() ?? -1
+        let height = attr["height"]?.asInt() ?? -1
+        if width <= 0 || height <= 0 {
+            return handleAttachment(using: data, draftyKey: draftyKey)
+        }
+
+        var attachment = Attachment(content: .image)
+        if let attr = data {
+            attachment.icon = "puzzlepiece"
+            attachment.name = attr["name"]?.asString()
+            attachment.width = width
+            attachment.height = height
+        }
+        attachment.draftyEntityKey = draftyKey
+        let node = FormatNode()
+        node.attachment(attachment)
+        return node;
     }
 
     override func handleQuote(_ nodes: [FormatNode]) -> FormatNode {

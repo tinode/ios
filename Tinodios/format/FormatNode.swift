@@ -38,10 +38,14 @@ struct Attachment {
 
     var content: AttachmentType
 
+    // Literal payload
     var bits: Data?
+    // Reference to payload
+    var ref: String?
+    // Reference to app or system icon.
+    var icon: String?
     var mime: String?
     var name: String?
-    var ref: String?
     // Callback to run after the image has been downloaded from ref.
     var afterRefDownloaded: ((UIImage) -> UIImage?)?
     var size: Int?
@@ -300,6 +304,8 @@ class FormatNode: CustomStringConvertible {
                 // FIXME: maybe cache result of converting Data to image (using topic+message_id as key).
                 // KingfisherManager.shared.cache.store(T##image: KFCrossPlatformImage##KFCrossPlatformImage, forKey: T##String)
                 image = preview
+            } else if let iconNamed = attachment.icon {
+                image = UIImage(named: iconNamed)
             }
 
             var originalSize: CGSize

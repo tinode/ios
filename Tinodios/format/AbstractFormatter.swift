@@ -78,22 +78,31 @@ class AbstractFormatter: DraftyFormatter {
         return FormatNode(nodes)
     }
 
+    func handleAudio(using: [String : JSONValue]?, draftyKey: Int?) -> FormatNode {
+        return FormatNode()
+    }
+
     func handleImage(using: [String : JSONValue]?, draftyKey: Int?) -> FormatNode {
         return FormatNode()
     }
+
     func handleButton(content: [FormatNode], using: [String : JSONValue]?) -> FormatNode {
         return FormatNode()
     }
+
     func handleForm(_: [FormatNode]) -> FormatNode {
         return FormatNode()
     }
+
     func handleFormRow(_: [FormatNode]) -> FormatNode {
         return FormatNode()
     }
+
     func handleQuote(_: [FormatNode]) -> FormatNode {
         return FormatNode()
     }
-    func handleUnknown(_: [FormatNode]) -> FormatNode {
+
+    func handleUnknown(content: [FormatNode], using: [String : JSONValue]?, draftyKey: Int?) -> FormatNode {
         return FormatNode()
     }
 
@@ -133,6 +142,8 @@ class AbstractFormatter: DraftyFormatter {
                 return handleMention(content: children, using: data)
             case "HT":
                 return handleHashtag(content: children, using: data)
+            case "AU":
+                return handleAudio(using: data, draftyKey: key)
             case "IM":
                 return handleImage(using: data, draftyKey: key)
             case "BN":
@@ -144,7 +155,7 @@ class AbstractFormatter: DraftyFormatter {
             case "QQ":
                 return handleQuote(children)
             default:
-                return handleUnknown(children)
+                return handleUnknown(content: children, using: data, draftyKey: key)
             }
         }
         // Non-void and no children (invalid).
@@ -165,5 +176,22 @@ class AbstractFormatter: DraftyFormatter {
 
         let formatTree: FormatNode = content.format(formatWith: self, resultType: FormatNode.self) ?? FormatNode()
         return (try? formatTree.toAttributed(withAttributes: allAttribs, fontTraits: nil, fitIn: maxSize)) ?? NSAttributedString()
+    }
+
+    // Convert milliseconds to '00:00' format.
+    static func millisToTime(millis: Int, fixedMin: Bool = false) -> String {
+        var result = ""
+        let duration: Float = Float(millis) / 1000.0
+        let mins = floor(duration / 60)
+        if (fixedMin && mins < 10) {
+            result.append("0")
+        }
+        result.append("\(Int(mins)):")
+        let sec = duration.truncatingRemainder(dividingBy: 60)
+        if sec < 10 {
+            result.append("0")
+        }
+        result.append("\(Int(sec))")
+        return result
     }
 }

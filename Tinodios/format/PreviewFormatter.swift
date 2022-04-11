@@ -46,6 +46,16 @@ class PreviewFormatter: AbstractFormatter {
         return iconNode
     }
 
+    override func handleAudio(using attr: [String: JSONValue]?, draftyKey _: Int?) -> FormatNode {
+        var annotation: String
+        if let attr = attr, let duration = attr["duration"]?.asInt() {
+            annotation = PreviewFormatter.millisToTime(millis: duration, fixedMin: true)
+        } else {
+            annotation = "-:--"
+        }
+        return annotatedIcon(iconName: "mic", annotation: annotation, comment: "Audio recording.")
+    }
+
     override func handleImage(using attr: [String: JSONValue]?, draftyKey _: Int?) -> FormatNode {
         return annotatedIcon(iconName: "image-50", annotation: NSLocalizedString("Picture", comment: "Label shown next to an inline image"), comment: "Image preview icon.")
     }
@@ -92,7 +102,7 @@ class PreviewFormatter: AbstractFormatter {
         return FormatNode()
     }
 
-    override func handleUnknown(_ nodes: [FormatNode]) -> FormatNode {
-        return annotatedIcon(iconName: "puzzlepiece")
+    override func handleUnknown(content _: [FormatNode], using _: [String: JSONValue]?, draftyKey _: Int?) -> FormatNode {
+        return annotatedIcon(iconName: "puzzlepiece", annotation: NSLocalizedString("Unsupported", comment: "Label shown next to an unsupported Drafty format element"), comment: "Unsupported.")
     }
 }
