@@ -7,14 +7,10 @@
 import TinodeSDK
 import UIKit
 
-public class ImageTextAttachment: NSTextAttachment {
-    public var draftyEntityKey: Int?
-}
-
 /// An image text attachment which gets updated after loading an image from URL.
-public class AsyncTextAttachment: ImageTextAttachment {
+public class AsyncImageTextAttachment: EntityTextAttachment {
     /// Container to be notified when the image is updated: successfully fetched or failed.
-    weak var textContainer: NSTextContainer?
+    private weak var textContainer: NSTextContainer?
 
     /// Source of the image
     public var url: URL
@@ -28,6 +24,7 @@ public class AsyncTextAttachment: ImageTextAttachment {
         self.postprocessing = afterDownloaded
 
         super.init(data: nil, ofType: nil)
+        self.type = "image"
     }
 
     required public init?(coder aDecoder: NSCoder) {

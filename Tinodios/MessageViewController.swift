@@ -1094,16 +1094,16 @@ extension MessageViewController: MessageCellDelegate {
             switch url.path {
             case "/post":
                 handleButtonPost(in: cell, using: url)
-            case "/small-attachment":
+            case "/attachment/small":
                 handleSmallAttachment(in: cell, using: url)
-            case "/large-attachment":
+            case "/attachment/large":
                 handleLargeAttachment(in: cell, using: url)
-            case "/preview-image":
+            case "/image/preview":
                 showImagePreview(in: cell, draftyEntityKey: Int(url.extractQueryParam(named: "key") ?? ""))
             case "/quote":
                 handleQuoteClick(in: cell)
             default:
-                Cache.log.error("MessageVC - unknown tinode:// action: %@", url.path)
+                Cache.log.error("MessageVC - unknown tinode:// action: %@", url.description)
                 break
             }
             return

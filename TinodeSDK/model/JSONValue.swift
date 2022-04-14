@@ -91,10 +91,14 @@ public enum JSONValue: Codable, Equatable {
     }
 
     public func asData() -> Data? {
-        if case let .bytes(v) = self {
-            return v
+        switch self {
+        case .bytes(let val):
+            return val
+        case .string(let val):
+            return Data(base64Encoded: val)
+        default:
+            return nil
         }
-        return nil
     }
 
     public func asBool() -> Bool? {

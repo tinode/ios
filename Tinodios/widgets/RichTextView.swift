@@ -75,15 +75,29 @@ class RichTextView: UITextView {
             return URL(string: "tinode:///quote")
         }
 
-        if let att = attachment as? ImageTextAttachment {
-            var urlComps = URLComponents(string: "tinode:///preview-image")
-            if let key = att.draftyEntityKey {
-                let queryItems = [URLQueryItem(name: "key", value: String(key))]
-                urlComps?.queryItems = queryItems
+        guard let att = attachment as? EntityTextAttachment else { return URL(string: "tinode:///attachment/generic") }
+
+        var urlComps = URLComponents(string: "tinode://")!
+        if att.type == "image" {
+            urlComps.path = "/image/preview"
+        } else if att.type?.starts(with: "audio") ?? false {
+            urlComps.path = "/\(att.type!)"
+            // Click position in glyphRect coordinates
+            if att.type == "audio/seek" {
+                let pos: CGFloat = (location.x - glyphRect.minX) / glyphRect.width
+                urlComps.queryItems = [URLQueryItem(name: "pos", value: pos.description)]
+            } else if att.type == "audio/toggle-play" {
+                let multi = att as! MultiImageTextAttachment
+                multi.next()
             }
-            return urlComps?.url
         }
 
-        return URL(string: "tinode:///generic-attachment")
+        if let key = att.draftyEntityKey {
+            var queryItems = urlComps.queryItems ?? []
+            queryItems.append(URLQueryItem(name: "key", value: String(key)))
+            urlComps.queryItems = queryItems
+        }
+
+        return urlComps.url
     }
 }

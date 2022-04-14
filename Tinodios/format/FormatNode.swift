@@ -12,6 +12,7 @@ import TinodeSDK
 // File or image attachment.
 struct Attachment {
     enum AttachmentType {
+        case audio
         case data
         case image
         case button
@@ -21,6 +22,8 @@ struct Attachment {
         var description: String {
           get {
             switch self {
+            case .audio:
+                return "audio"
             case .data:
                 return "data"
             case .image:
@@ -51,9 +54,13 @@ struct Attachment {
     var size: Int?
     var width: Int?
     var height: Int?
-    // Offset from the origin.
+    // Image offset from the origin.
     var offset: CGPoint?
-    // Draw background over the entire available width, not just under the text.
+    // Audio duration
+    var duration: Int?
+    // Audio preview.
+    var preview: Data?
+    // Draw background over the entire available width, not just under the text (quoted text).
     var fullWidth: Bool?
     // Index of the entity in the original Drafty object.
     var draftyEntityKey: Int?
@@ -64,9 +71,14 @@ class FormatNode: CustomStringConvertible {
     internal enum Constants {
         /// Size of the document icon in attachments.
         static let kAttachmentIconSize = CGSize(width: 24, height: 32)
+        /// Size of the play/pause icon (square)
+        static let kPlayIconSize: CGFloat = 28
+        /// Size of the audio wave.
+        static let kWaveSize = CGSize(width: 144, height: 32)
         /// URL and Button text color
         static let kLinkColor = UIColor.link //(red: 0, green: 122/255, blue: 1, alpha: 1)
         static let kQuoteTextColorAdj = 0.7 // Adjustment to font alpha in quote to make it less prominent.
+        static let kPlayButtonColorAdj = 0.5 // Adjustment to alpha for showing Play/Pause buttons.
     }
 
     // Thrown by the formatting function when the length budget gets exceeded.
@@ -161,6 +173,8 @@ class FormatNode: CustomStringConvertible {
     /// Simple representation of an attachment as plain string.
     private func attachmentDescription(_ attachment: Attachment) -> String {
         switch attachment.content {
+        case .audio:
+            return "{audio ref=\(attachment.ref ?? "nil") bits.count=\(attachment.bits?.count ?? -1) \(attachment.name ?? "unnamed") \(attachment.duration ?? 0)ms \(attachment.size ?? 0)B}"
         case .image:
             return "{img ref=\(attachment.ref ?? "nil") bits.count=\(attachment.bits?.count ?? -1) \(attachment.name ?? "unnamed") \(attachment.width ?? 0)x\(attachment.height ?? 0) \(attachment.size ?? 0)B}"
         case .quote:
@@ -188,7 +202,7 @@ class FormatNode: CustomStringConvertible {
         }
     }
 
-    private func makeFileAttachmentString(_ attachment: Attachment, withData bits: Data?, withRef ref: String?, defaultAttrs attributes: [NSAttributedString.Key: Any], maxSize size: CGSize) -> NSAttributedString {
+    private func createFileAttachmentString(_ attachment: Attachment, withData bits: Data?, withRef ref: String?, defaultAttrs attributes: [NSAttributedString.Key: Any], maxSize size: CGSize) -> NSAttributedString {
         let attributed = NSMutableAttributedString()
         let baseFont = attributes[.font] as! UIFont
         attributed.beginEditing()
@@ -272,7 +286,7 @@ class FormatNode: CustomStringConvertible {
             ], range: NSRange(location: 0, length: second.length))
 
             var baseUrl = URLComponents(string: "tinode://\(tinode.hostName)")!
-            baseUrl.path = ref != nil ? "/large-attachment" : "/small-attachment"
+            baseUrl.path = ref != nil ? "/attachment/large" : "/attachment/small"
             baseUrl.queryItems = [URLQueryItem(name: "filename", value: originalFileName), URLQueryItem(name: "key", value: (attachment.draftyEntityKey != nil ? String(attachment.draftyEntityKey!) : nil))]
 
             second.addAttribute(.link, value: baseUrl.url! as Any, range: NSRange(location: 0, length: second.length))
@@ -284,11 +298,77 @@ class FormatNode: CustomStringConvertible {
         return attributed
     }
 
+    private func createAudioAttachmentString(_ attachment: Attachment, withData bits: Data?, withRef ref: String?, defaultAttrs attributes: [NSAttributedString.Key: Any], maxSize size: CGSize) -> NSAttributedString {
+        /*
+        let url: URL?
+        if let ref = attachment.ref {
+            url = Utils.tinodeResourceUrl(from: ref)
+        } else {
+            url = nil
+        }
+        */
+
+        let baseFont = attributes[.font] as! UIFont
+        var baseUrl = URLComponents(string: "tinode://\(ref != nil ? "/audio/large" : "/audio/small")")!
+        baseUrl.queryItems = [URLQueryItem(name: "key", value: (attachment.draftyEntityKey != nil ? String(attachment.draftyEntityKey!) : nil))]
+
+        let attributed = NSMutableAttributedString(string: "\u{2009}")
+        attributed.beginEditing()
+
+        var attrs = attributes
+        if let fg = attributes[.foregroundColor] as? UIColor {
+            attrs[.foregroundColor] = fg.withAlphaComponent(Constants.kPlayButtonColorAdj)
+        }
+
+        // Play icon.
+        let play = MultiImageTextAttachment(images: [UIImage(named: "play.circle.fill")!.withRenderingMode(.alwaysTemplate), UIImage(named: "pause.circle")!.withRenderingMode(.alwaysTemplate)])
+        play.type = "audio/toggle-play"
+        play.draftyEntityKey = attachment.draftyEntityKey
+        play.bounds = CGRect(origin: CGPoint(x: 0, y: -2), size: CGSize(width: Constants.kPlayIconSize, height: Constants.kPlayIconSize))
+
+        var second = NSMutableAttributedString()
+        second.beginEditing()
+        second.append(NSAttributedString(attachment: play))
+        second.addAttributes(attrs, range: NSRange(location: 0, length: attributed.length))
+        second.endEditing()
+
+        attributed.append(second)
+
+        let wave = WaveTextAttachment(frame: CGRect(origin: CGPoint(x: 0, y: 0), size: Constants.kWaveSize), data: attachment.preview)
+        wave.type = "audio/seek"
+        wave.draftyEntityKey = attachment.draftyEntityKey
+        attributed.append(NSAttributedString(attachment: wave))
+
+        // Linebreak.
+        attributed.append(NSAttributedString(string: "\u{2009}\n", attributes: [NSAttributedString.Key.font: baseFont]))
+
+        // Second line: duration
+        let duration = attachment.duration != nil ? AbstractFormatter.millisToTime(millis: attachment.duration!) : "-:--"
+        second = NSMutableAttributedString(string: duration)
+        second.beginEditing()
+        let paragraph = NSMutableParagraphStyle()
+        paragraph.firstLineHeadIndent = Constants.kPlayIconSize + baseFont.capHeight * 0.25
+        paragraph.lineSpacing = 0
+        paragraph.lineHeightMultiple = 0.5
+        second.addAttributes([NSAttributedString.Key.paragraphStyle: paragraph, NSAttributedString.Key.foregroundColor: UIColor.gray
+        ], range: NSRange(location: 0, length: second.length))
+        second.endEditing()
+
+        attributed.append(second)
+
+        attributed.endEditing()
+        return attributed
+    }
+
     /// Create custom layout for attachments.
     private func attachmentToAttributed(_ attachment: Attachment, defaultAttrs attributes: [NSAttributedString.Key: Any], fontTraits: UIFontDescriptor.SymbolicTraits?, maxSize size: CGSize) -> NSAttributedString {
         switch attachment.content {
-        // Image handling is easy.
+
+        case .audio:
+            return createAudioAttachmentString(attachment, withData: attachment.bits, withRef: attachment.ref, defaultAttrs: attributes, maxSize: size)
         case .image:
+            // Image handling is easy.
+
             let url: URL?
             if let ref = attachment.ref {
                 url = Utils.tinodeResourceUrl(from: ref)
@@ -296,7 +376,8 @@ class FormatNode: CustomStringConvertible {
                 url = nil
             }
             // tinode:// and mid: schemes are not real external URLs.
-            let wrapper = (url == nil || url!.scheme == "mid" || url!.scheme == "tinode") ? ImageTextAttachment() : AsyncTextAttachment(url: url!, afterDownloaded: attachment.afterRefDownloaded)
+            let wrapper = (url == nil || url!.scheme == "mid" || url!.scheme == "tinode") ? EntityTextAttachment() : AsyncImageTextAttachment(url: url!, afterDownloaded: attachment.afterRefDownloaded)
+            wrapper.type = "image"
             wrapper.draftyEntityKey = attachment.draftyEntityKey
 
             var image: UIImage?
@@ -328,7 +409,7 @@ class FormatNode: CustomStringConvertible {
             }
             wrapper.bounds = CGRect(origin: attachment.offset ?? .zero, size: scaledSize)
 
-            (wrapper as? AsyncTextAttachment)?.startDownload(onError: UiUtils.placeholderImage(named: "broken-image", withBackground: image, width: scaledSize.width, height: scaledSize.height))
+            (wrapper as? AsyncImageTextAttachment)?.startDownload(onError: UiUtils.placeholderImage(named: "broken-image", withBackground: image, width: scaledSize.width, height: scaledSize.height))
 
             return NSAttributedString(attachment: wrapper)
 
@@ -365,7 +446,7 @@ class FormatNode: CustomStringConvertible {
 
         // File attachment is harder: construct attributed string showing an attachment.
         case .data, .empty:
-            return makeFileAttachmentString(attachment, withData: attachment.bits, withRef: attachment.ref, defaultAttrs: attributes, maxSize: size)
+            return createFileAttachmentString(attachment, withData: attachment.bits, withRef: attachment.ref, defaultAttrs: attributes, maxSize: size)
         }
     }
 

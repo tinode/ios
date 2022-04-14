@@ -51,6 +51,24 @@ class FullFormatter: AbstractFormatter {
         return node
     }
 
+    override func handleAudio(using data: [String: JSONValue]?, draftyKey: Int?) -> FormatNode {
+        var attachment = Attachment(content: .audio)
+        let node = FormatNode()
+        if let attr = data {
+            attachment.bits = attr["val"]?.asData()
+            attachment.mime = attr["mime"]?.asString()
+            attachment.name = attr["name"]?.asString()
+            attachment.ref = attr["ref"]?.asString()
+            attachment.size = attr["size"]?.asInt()
+            attachment.duration = attr["duration"]?.asInt()
+            attachment.preview = attr["preview"]?.asData()
+        }
+
+        attachment.draftyEntityKey = draftyKey
+        node.attachment(attachment)
+        return node
+    }
+
     override func handleImage(using data: [String: JSONValue]?, draftyKey: Int?) -> FormatNode {
         var attachment = Attachment(content: .image)
         let node = FormatNode()
