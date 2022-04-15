@@ -10,7 +10,7 @@ import UIKit
 
 /// An image text attachment with multiple images and ability to flip through them.
 public class MultiImageTextAttachment: EntityTextAttachment {
-    /// Container to be notified when the image is updated: successfully fetched or failed.
+    /// Container to be notified when the image is changed.
     private weak var textContainer: NSTextContainer?
 
     var images: [UIImage]

@@ -4,6 +4,7 @@
 //  Copyright © 2019-2022 Tinode LLC. All rights reserved.
 //
 
+import AVFoundation
 import UIKit
 import TinodeSDK
 import TinodiosDB
@@ -109,7 +110,7 @@ class MessageViewController: UIViewController {
     }
 
     /// The `sendMessageBar` is used as the `inputAccessoryView` in the view controller.
-    private lazy var sendMessageBar: SendMessageBar = {
+    lazy var sendMessageBar: SendMessageBar = {
         let view = SendMessageBar()
         view.autoresizingMask = .flexibleHeight
         return view
@@ -171,7 +172,7 @@ class MessageViewController: UIViewController {
     var isInitialLayout = true
 
     // Highlight this cell when scroll finishes (after the user tapped on a quote).
-    private var highlightCellAtPathAfterScroll: IndexPath?
+    var highlightCellAtPathAfterScroll: IndexPath?
 
     // Size of the present update batch.
     private var updateBatchSize = 0
@@ -184,6 +185,8 @@ class MessageViewController: UIViewController {
     internal var sendReadReceipts = false
 
     internal var textSizeHelper = TextSizeHelper()
+
+    var audioPlayer: AVAudioPlayer?
 
     // MARK: initializers
 
@@ -1077,269 +1080,6 @@ extension MessageViewController: MessageViewLayoutDelegate {
                                         options: [.usesLineFragmentOrigin, .usesFontLeading],
                                         context: nil).integral.size :
             textSizeHelper.computeSize(for: attributedText, within: maxWidth)
-    }
-}
-
-// Methods for handling taps in messages.
-
-extension MessageViewController: MessageCellDelegate {
-    func didLongTap(in cell: MessageCell) {
-        createPopupMenu(in: cell)
-    }
-
-    func didTapContent(in cell: MessageCell, url: URL?) {
-        guard let url = url else { return }
-
-        if url.scheme == "tinode" {
-            switch url.path {
-            case "/post":
-                handleButtonPost(in: cell, using: url)
-            case "/attachment/small":
-                handleSmallAttachment(in: cell, using: url)
-            case "/attachment/large":
-                handleLargeAttachment(in: cell, using: url)
-            case "/image/preview":
-                showImagePreview(in: cell, draftyEntityKey: Int(url.extractQueryParam(named: "key") ?? ""))
-            case "/quote":
-                handleQuoteClick(in: cell)
-            default:
-                Cache.log.error("MessageVC - unknown tinode:// action: %@", url.description)
-                break
-            }
-            return
-        }
-
-        UIApplication.shared.open(url)
-    }
-
-    // TODO: remove as unused
-    func didTapMessage(in cell: MessageCell) {}
-
-    // TODO: remove as unused or go to user's profile (p2p topic?)
-    func didTapAvatar(in cell: MessageCell) {}
-
-    func createPopupMenu(in cell: MessageCell) {
-        guard !cell.isDeleted else { return }
-
-        // Make cell the first responder otherwise menu will show wrong items.
-        if sendMessageBar.inputField.isFirstResponder {
-            sendMessageBar.inputField.nextResponderOverride = cell
-        } else {
-            cell.becomeFirstResponder()
-        }
-
-        // Set up the shared UIMenuController
-        var menuItems: [MessageMenuItem] = []
-        menuItems.append(MessageMenuItem(title: NSLocalizedString("Copy", comment: "Menu item"), action: #selector(copyMessageContent(sender:)), seqId: cell.seqId))
-        if !(topic?.isChannel ?? true) {
-            // Channel users cannot delete messages.
-            menuItems.append(MessageMenuItem(title: NSLocalizedString("Delete", comment: "Menu item"), action: #selector(deleteMessage(sender:)), seqId: cell.seqId))
-        }
-
-        if !cell.isDeleted, let msgIndex = messageSeqIdIndex[cell.seqId], messages[msgIndex].isSynced {
-            menuItems.append(MessageMenuItem(title: NSLocalizedString("Reply", comment: "Menu item"), action: #selector(showReplyPreview(sender:)), seqId: cell.seqId))
-            menuItems.append(MessageMenuItem(title: NSLocalizedString("Forward", comment: "Menu item"), action: #selector(showForwardSelector(sender:)), seqId: cell.seqId))
-        }
-
-        UIMenuController.shared.menuItems = menuItems
-
-        // Show the menu.
-        UIMenuController.shared.showMenu(from: cell.containerView, rect: cell.content.frame)
-
-        // Capture menu dismissal
-        NotificationCenter.default.addObserver(self, selector: #selector(willHidePopupMenu), name: UIMenuController.willHideMenuNotification, object: nil)
-    }
-
-    @objc func willHidePopupMenu() {
-        if sendMessageBar.inputField.nextResponderOverride != nil {
-            sendMessageBar.inputField.nextResponderOverride!.resignFirstResponder()
-            sendMessageBar.inputField.nextResponderOverride = nil
-        }
-
-        UIMenuController.shared.menuItems = nil
-        NotificationCenter.default.removeObserver(self, name: UIMenuController.willHideMenuNotification, object: nil)
-    }
-
-    @objc func copyMessageContent(sender: UIMenuController) {
-        guard let menuItem = sender.menuItems?.first as? MessageMenuItem, menuItem.seqId > 0, let msgIndex = messageSeqIdIndex[menuItem.seqId] else { return }
-
-        let msg = messages[msgIndex]
-
-        var senderName: String?
-        if let sub = topic?.getSubscription(for: msg.from), let pub = sub.pub {
-            senderName = pub.fn
-        }
-        senderName = senderName ?? String(format: NSLocalizedString("Unknown %@", comment: ""), msg.from ?? "none")
-        UIPasteboard.general.string = "[\(senderName!)]: \(msg.content?.string ?? ""); \(RelativeDateFormatter.shared.shortDate(from: msg.ts))"
-    }
-
-    private func showInPreviewBar(content: Drafty?) {
-        guard let content = content else { return }
-        let maxWidth = sendMessageBar.previewMaxWidth
-        let maxHeight = collectionView.frame.height
-        // Make sure it's properly formatted.
-        let replyPreview = SendReplyFormatter(defaultAttributes: [:]).toAttributed(content, fitIn: CGSize(width: maxWidth, height: maxHeight))
-        self.togglePreviewBar(with: replyPreview)
-    }
-
-    @objc func showReplyPreview(sender: UIMenuController) {
-        guard let menuItem = sender.menuItems?.first as? MessageMenuItem, menuItem.seqId > 0, let msgIndex = messageSeqIdIndex[menuItem.seqId] else { return }
-        let msg = messages[msgIndex]
-        if let reply = interactor?.prepareReply(to: msg) {
-            reply.then(onSuccess: { value in
-                DispatchQueue.main.async { self.showInPreviewBar(content: value) }
-                return nil
-            }, onFailure: { err in
-                DispatchQueue.main.async { UiUtils.showToast(message: "Failed to create reply: \(err)") }
-                return nil
-            })
-        }
-    }
-
-    @objc func showForwardSelector(sender: UIMenuController) {
-        guard let menuItem = sender.menuItems?.first as? MessageMenuItem, menuItem.seqId > 0, let msgIndex = messageSeqIdIndex[menuItem.seqId] else { return }
-        let msg = messages[msgIndex]
-        guard let p = interactor?.createForwardedMessage(from: msg) else {
-            return
-        }
-        p.then(onSuccess: { value in
-            guard case let .forwarded(forwardedMsg, forwardedFrom, forwardedPreview) = value else {
-                return nil
-            }
-            DispatchQueue.main.async {
-                let navigator = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "ForwardToNavController") as! UINavigationController
-                navigator.modalPresentationStyle = .pageSheet
-                let forwardToVC = navigator.viewControllers.first as! ForwardToViewController
-                forwardToVC.delegate = self
-                forwardToVC.forwardedContent = forwardedMsg
-                forwardToVC.forwardedFrom = forwardedFrom
-                forwardToVC.forwardedPreview = forwardedPreview
-                self.present(navigator, animated: true, completion: nil)
-            }
-            return nil
-        }, onFailure: { err in
-            DispatchQueue.main.async { UiUtils.showToast(message: "Failed for form forwarded message: \(err)") }
-            return nil
-        })
-    }
-
-    @objc func deleteMessage(sender: UIMenuController) {
-        guard let menuItem = sender.menuItems?.first as? MessageMenuItem, menuItem.seqId > 0 else { return }
-        interactor?.deleteMessage(seqId: menuItem.seqId)
-    }
-
-    func didTapOutsideContent(in cell: MessageCell) {
-        _ = self.sendMessageBar.inputField.resignFirstResponder()
-    }
-
-    func didTapCancelUpload(in cell: MessageCell) {
-        guard let topicId = self.topicName,
-            let msgIdx = self.messageSeqIdIndex[cell.seqId] else { return }
-        _ = Cache.getLargeFileHelper().cancelUpload(topicId: topicId, msgId: self.messages[msgIdx].msgId)
-    }
-
-    private func handleButtonPost(in cell: MessageCell, using url: URL) {
-        let parts = URLComponents(url: url, resolvingAgainstBaseURL: false)
-        var query: [String: String]?
-        if let queryItems = parts?.queryItems {
-            query = [:]
-            for item in queryItems {
-                query![item.name] = item.value
-            }
-        }
-        let newMsg = Drafty(content: query?["title"] ?? NSLocalizedString("undefined", comment: "Button with missing text"))
-        var json: [String: JSONValue] = [:]
-        // {"seq":6,"resp":{"yes":1}}
-        if let name = query?["name"], let val = query?["val"] {
-            var resp: [String: JSONValue] = [:]
-            resp[name] = JSONValue.string(val)
-            json["resp"] = JSONValue.dict(resp)
-        }
-        json["seq"] = JSONValue.int(cell.seqId)
-
-        _ = interactor?.sendMessage(content: newMsg.attachJSON(json))
-    }
-
-    static func extractAttachment(from cell: MessageCell) -> [Data]? {
-        guard let text = cell.content.attributedText else { return nil }
-        var parts = [Data]()
-
-        let range = NSRange(location: 0, length: text.length)
-        text.enumerateAttributes(in: range, options: NSAttributedString.EnumerationOptions(rawValue: 0)) { (object, _, _) in
-            if object.keys.contains(.attachment) {
-                if let attachment = object[.attachment] as? NSTextAttachment, let data = attachment.contents {
-                    parts.append(data)
-                }
-            }
-        }
-        return parts
-    }
-
-    private func handleLargeAttachment(in cell: MessageCell, using url: URL) {
-        guard let data = MessageViewController.extractAttachment(from: cell), !data.isEmpty else { return }
-        let downloadFrom = String(decoding: data[0], as: UTF8.self)
-        guard var urlComps = URLComponents(string: downloadFrom) else { return }
-        if let filename = url.extractQueryParam(named: "filename") {
-            urlComps.queryItems = [URLQueryItem(name: "origfn", value: filename)]
-        }
-        if let targetUrl = urlComps.url, targetUrl.scheme == "http" || targetUrl.scheme == "https" {
-            Cache.getLargeFileHelper().startDownload(from: targetUrl)
-        }
-    }
-
-    private func handleSmallAttachment(in cell: MessageCell, using url: URL) {
-        // TODO: move logic to MessageInteractor.
-        guard let data = MessageViewController.extractAttachment(from: cell), !data.isEmpty else { return }
-        let d = data[0]
-        // FIXME: use actual mime instead of nil when generating file name.
-        let filename = url.extractQueryParam(named: "filename") ?? Utils.uniqueFilename(forMime: nil)
-        let documentsUrl: URL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-        let destinationURL = documentsUrl.appendingPathComponent(filename)
-        do {
-            try FileManager.default.createDirectory(at: documentsUrl, withIntermediateDirectories: true, attributes: nil)
-            try d.write(to: destinationURL)
-            UiUtils.presentFileSharingVC(for: destinationURL)
-        } catch {
-            Cache.log.error("MessageVC - save attachment failed: %@", error.localizedDescription)
-        }
-    }
-
-    private func showImagePreview(in cell: MessageCell, draftyEntityKey: Int?) {
-        // TODO: maybe pass nil to show "broken image" preview instead of returning.
-        guard let index = messageSeqIdIndex[cell.seqId], let draftyKey = draftyEntityKey else { return }
-        let msg = messages[index]
-        guard let entity = msg.content?.entities?[draftyKey] else { return }
-        let bits = entity.data?["val"]?.asData()
-        let ref = entity.data?["ref"]?.asString()
-        // Need to have at least one.
-        guard bits != nil || ref != nil else { return }
-
-        let content = ImagePreviewContent(
-            imgContent: ImagePreviewContent.ImageContent.rawdata(bits, ref),
-            caption: nil,
-            fileName: entity.data?["name"]?.asString(),
-            contentType: entity.data?["mime"]?.asString(),
-            size: entity.data?["size"]?.asInt64() ?? Int64(bits?.count ?? 0),
-            width: entity.data?["width"]?.asInt(),
-            height: entity.data?["height"]?.asInt(),
-            pendingMessagePreview: nil)
-        performSegue(withIdentifier: "ShowImagePreview", sender: content)
-    }
-
-    func handleQuoteClick(in cell: MessageCell) {
-        guard let index = messageSeqIdIndex[cell.seqId] else { return }
-        let msg = messages[index]
-        guard let seqId = Int(msg.head?["reply"]?.asString() ?? ""), let itemIdx = messageSeqIdIndex[seqId] else { return }
-        let path = IndexPath(item: itemIdx, section: 0)
-        if let cell = collectionView.cellForItem(at: path) as? MessageCell {
-            // If the cell is already visible.
-            cell.highlightAnimated(withDuration: 4.0)
-        } else {
-            // Not visible? Memorize the cell and highlight it
-            // after the view scrolls the cell into the viewport.
-            self.highlightCellAtPathAfterScroll = path
-        }
-        self.collectionView.scrollToItem(at: path, at: .top, animated: true)
     }
 }
 

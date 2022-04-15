@@ -78,7 +78,7 @@ class FormatNode: CustomStringConvertible {
         /// URL and Button text color
         static let kLinkColor = UIColor.link //(red: 0, green: 122/255, blue: 1, alpha: 1)
         static let kQuoteTextColorAdj = 0.7 // Adjustment to font alpha in quote to make it less prominent.
-        static let kPlayButtonColorAdj = 0.5 // Adjustment to alpha for showing Play/Pause buttons.
+        static let kPlayButtonColorAdj = 0.6 // Adjustment to alpha for showing Play/Pause buttons.
     }
 
     // Thrown by the formatting function when the length budget gets exceeded.
@@ -299,14 +299,6 @@ class FormatNode: CustomStringConvertible {
     }
 
     private func createAudioAttachmentString(_ attachment: Attachment, withData bits: Data?, withRef ref: String?, defaultAttrs attributes: [NSAttributedString.Key: Any], maxSize size: CGSize) -> NSAttributedString {
-        /*
-        let url: URL?
-        if let ref = attachment.ref {
-            url = Utils.tinodeResourceUrl(from: ref)
-        } else {
-            url = nil
-        }
-        */
 
         let baseFont = attributes[.font] as! UIFont
         var baseUrl = URLComponents(string: "tinode://\(ref != nil ? "/audio/large" : "/audio/small")")!
@@ -337,6 +329,14 @@ class FormatNode: CustomStringConvertible {
         let wave = WaveTextAttachment(frame: CGRect(origin: CGPoint(x: 0, y: 0), size: Constants.kWaveSize), data: attachment.preview)
         wave.type = "audio/seek"
         wave.draftyEntityKey = attachment.draftyEntityKey
+        if attachment.duration ?? 0 > 0 {
+            _ = wave.seekTo(0.01)
+        }
+        if let fg = attributes[.foregroundColor] as? UIColor {
+            wave.pastBarColor = fg.withAlphaComponent(0.7).cgColor
+            wave.futureBarColor = fg.withAlphaComponent(0.5).cgColor
+            wave.update(recalc: false)
+        }
         attributed.append(NSAttributedString(attachment: wave))
 
         // Linebreak.

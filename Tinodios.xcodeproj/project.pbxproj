@@ -79,6 +79,9 @@
 		B03B51342803AF26006C714B /* WaveTextAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = B03B51332803AF26006C714B /* WaveTextAttachment.swift */; };
 		B05ACEB322FDAB5200276713 /* ResetPasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B05ACEB222FDAB5200276713 /* ResetPasswordViewController.swift */; };
 		B079062523EEA0C90019ED75 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B079062423EEA0C90019ED75 /* GoogleService-Info.plist */; };
+		B091BA442808ED6000317CDC /* MessageViewController+AVAudioPlayerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B091BA432808ED6000317CDC /* MessageViewController+AVAudioPlayerDelegate.swift */; };
+		B091BA462808FE8500317CDC /* MessageViewController+MessageCellDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B091BA452808FE8500317CDC /* MessageViewController+MessageCellDelegate.swift */; };
+		B091BA482809048000317CDC /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B091BA472809048000317CDC /* AVFoundation.framework */; };
 		B09C564A2469362A00D6615D /* SettingsPersonalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B09C56492469362A00D6615D /* SettingsPersonalViewController.swift */; };
 		B09C564C2469756B00D6615D /* SettingsNotificationsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B09C564B2469756B00D6615D /* SettingsNotificationsViewController.swift */; };
 		B09C564E246975F700D6615D /* SettingsHelpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B09C564D246975F700D6615D /* SettingsHelpViewController.swift */; };
@@ -227,6 +230,9 @@
 		B03B51332803AF26006C714B /* WaveTextAttachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaveTextAttachment.swift; sourceTree = "<group>"; };
 		B05ACEB222FDAB5200276713 /* ResetPasswordViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResetPasswordViewController.swift; sourceTree = "<group>"; };
 		B079062423EEA0C90019ED75 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		B091BA432808ED6000317CDC /* MessageViewController+AVAudioPlayerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MessageViewController+AVAudioPlayerDelegate.swift"; sourceTree = "<group>"; };
+		B091BA452808FE8500317CDC /* MessageViewController+MessageCellDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MessageViewController+MessageCellDelegate.swift"; sourceTree = "<group>"; };
+		B091BA472809048000317CDC /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		B093F50126C5BBF300FAA4E8 /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		B093F50426C5BD4200FAA4E8 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Main.strings; sourceTree = "<group>"; };
 		B093F50526C5BD8800FAA4E8 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -292,6 +298,7 @@
 			files = (
 				0A431C032244A26200A837F7 /* TinodeSDK.framework in Frameworks */,
 				6AB6957DBFD1FB12CA01DCE4 /* libPods-Tinodios.a in Frameworks */,
+				B091BA482809048000317CDC /* AVFoundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -365,6 +372,8 @@
 				B0DF0318227C2517000F9492 /* MessageView.swift */,
 				B0A612B0228C85C300569DFE /* MessageViewLayout.swift */,
 				0A8C8A4521E5E72D00D8751E /* MessageViewController.swift */,
+				B091BA452808FE8500317CDC /* MessageViewController+MessageCellDelegate.swift */,
+				B091BA432808ED6000317CDC /* MessageViewController+AVAudioPlayerDelegate.swift */,
 				B0A612B62294288F00569DFE /* MessageViewController+SendMessageBarDelegate.swift */,
 				B0DF0322228051B4000F9492 /* MessageViewController+Keyboard.swift */,
 				0AC33D022293C7A00060D263 /* NewGroupViewController.swift */,
@@ -421,6 +430,7 @@
 		4805E89223B1ECF4F9F439D5 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B091BA472809048000317CDC /* AVFoundation.framework */,
 				0ACE9E7E23814157006BE575 /* TinodiosDB.framework */,
 				5E30BDE2C5D7E82671DD7DE4 /* libPods-Tinodios.a */,
 			);
@@ -744,6 +754,7 @@
 				0ACB5F1022097665008FE740 /* ChatListRouter.swift in Sources */,
 				0A6F260A21BE51D800B9726E /* LoginViewController.swift in Sources */,
 				0A95F4D4229BD95900AEF7D3 /* AccountSettingsViewController.swift in Sources */,
+				B091BA442808ED6000317CDC /* MessageViewController+AVAudioPlayerDelegate.swift in Sources */,
 				0A4E1D3022829C46006C0912 /* ContactsManager.swift in Sources */,
 				0ACB5F0E22097651008FE740 /* ChatListPresenter.swift in Sources */,
 				0A3AE3B5274CAD2500CB673E /* ForwardMessageBar.swift in Sources */,
@@ -752,6 +763,7 @@
 				0A0380D821B3CC8100A3FA0E /* AppDelegate.swift in Sources */,
 				B05ACEB322FDAB5200276713 /* ResetPasswordViewController.swift in Sources */,
 				B0DF031F227C6898000F9492 /* PaddedLabel.swift in Sources */,
+				B091BA462808FE8500317CDC /* MessageViewController+MessageCellDelegate.swift in Sources */,
 				0A8D945C22BF5B7F00DC154E /* AvatarWithOnlineIndicator+TypingAnimation.swift in Sources */,
 				B03B51342803AF26006C714B /* WaveTextAttachment.swift in Sources */,
 				B01D2C6F2793915D009543F2 /* FormatNode.swift in Sources */,

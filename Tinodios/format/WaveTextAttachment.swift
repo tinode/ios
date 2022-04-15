@@ -16,6 +16,11 @@ class WaveTextAttachment: EntityTextAttachment {
     // Minimum time between redraws in milliseconds.
     private static let kMinFrameDuration = 50 // ms
 
+    /// Container to be notified when the image is changed.
+    private weak var textContainer: NSTextContainer?
+
+    private var cachedImage: UIImage = UIImage()
+
     public var pastBarColor: CGColor
     public var futureBarColor: CGColor
     public var thumbColor: CGColor
@@ -29,14 +34,7 @@ class WaveTextAttachment: EntityTextAttachment {
     // Original preview data to use for drawing the bars.
     private var original: Data? {
         didSet {
-            if let val = original {
-                buffer = WaveTextAttachment.resampleBars(src: val, dstLen: maxBars)
-            } else {
-                buffer = []
-            }
-            contains = buffer.count
-            recalcBars()
-            image = renderWaveImage(bounds: bounds)
+            self.update(recalc: true)
         }
     }
 
@@ -53,7 +51,7 @@ class WaveTextAttachment: EntityTextAttachment {
     // Canvas width which fits whole number of bars.
     private var effectiveWidth: Int = 0
     // Extra padding on the left to avoid clipping the thumb.
-    private var leftPadding: Int = 0
+    private var leftPadding: Int = Int(WaveTextAttachment.kThumbRadius - 1)
     // If the Drawable is animated.
     private var running: Bool  = false
 
@@ -65,7 +63,7 @@ class WaveTextAttachment: EntityTextAttachment {
     public init(frame rect: CGRect) {
         pastBarColor = CGColor.init(gray: 0.5, alpha: 1.0)
         futureBarColor = CGColor.init(gray: 0.40, alpha: 1.0)
-        thumbColor = CGColor.init(gray: 1, alpha: 1.0)
+        thumbColor = UIColor.link.cgColor
 
         super.init(data: nil, ofType: nil)
 
@@ -89,6 +87,41 @@ class WaveTextAttachment: EntityTextAttachment {
             // Must be deferred otherwise observer is not called.
             self.original = data
         }
+    }
+
+    public override func image(forBounds imageBounds: CGRect, textContainer: NSTextContainer?, characterIndex charIndex: Int) -> UIImage? {
+        // Keep reference to text container. It will be updated if image changes.
+        self.textContainer = textContainer
+        return cachedImage
+    }
+
+    /// Update image with optionally recalculating the data.
+    public func update(recalc: Bool) {
+        if recalc {
+            if let val = original {
+                buffer = WaveTextAttachment.resampleBars(src: val, dstLen: maxBars)
+            } else {
+                buffer = []
+            }
+            contains = buffer.count
+            recalcBars()
+        }
+        cachedImage = renderWaveImage(bounds: bounds)
+        DispatchQueue.main.async {
+            // Force container redraw.
+            let length = self.textContainer?.layoutManager?.textStorage?.length
+            self.textContainer?.layoutManager?.invalidateDisplay(forCharacterRange: NSRange(location: 0, length: length ?? 1))
+        }
+    }
+
+    /// Move thumb to specified position and refresh the image.
+    public func seekTo(_ pos: Float) -> Bool {
+        if seekPosition != pos {
+            seekPosition = pos
+            update(recalc: false)
+            return true
+        }
+        return false
     }
 
     // Calculate vertices of amplitude bars.
@@ -165,8 +198,6 @@ class WaveTextAttachment: EntityTextAttachment {
             return UIImage()
         }
 
-        print("Rendering image")
-
         UIGraphicsBeginImageContextWithOptions(CGSize(width: bounds.width, height: bounds.height), false, UIScreen.main.scale)
 
         defer { UIGraphicsEndImageContext() }
@@ -211,8 +242,10 @@ class WaveTextAttachment: EntityTextAttachment {
             path.stroke()
 
             // Draw thumb.
-            context.setStrokeColor(self.thumbColor)
-            UIBezierPath(ovalIn: CGRect(x: CGFloat(seekPositionToX()), y: bounds.height * 0.5, width: CGFloat(WaveTextAttachment.kThumbRadius) * 2, height: CGFloat(WaveTextAttachment.kThumbRadius) * 2)).stroke()
+            context.setFillColor(self.thumbColor)
+            let size = CGFloat(WaveTextAttachment.kThumbRadius) * 2
+            let x = seekPositionToX()
+            UIBezierPath(ovalIn: CGRect(x: CGFloat(x) - size / 2, y: bounds.height * 0.5 - size / 2, width: size, height: size)).fill()
         }
 
         context.restoreGState()
