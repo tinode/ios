@@ -8,6 +8,8 @@ Status: beta. Usable and mostly stable but bugs may happen.
 
 ## Installing and running
 
+**Important!** This repository contains large files which require a git extension [git-lfs](https://git-lfs.github.com/). 
+
 This is NOT a standalone app, this is just a frontend, a client. It requires a [backend](https://github.com/tinode/chat/). See [installation instructions](https://github.com/tinode/chat/blob/master/INSTALL.md).
 
 ## Getting support
@@ -30,7 +32,7 @@ This is NOT a standalone app, this is just a frontend, a client. It requires a [
 * Replying and forwarding messages.
 * Trusted account badges: verified account, staff, etc.
 * Form messages suitable for chatbots.
-* Attachments and inline images.
+* Attachments and inline images, voice/audio messages.
 * Muting/un-muting conversations and other granular permission management.
 * Integration with iOS's stock Contacts.
 * Invite contacts to the app by SMS or email.
@@ -41,7 +43,7 @@ This is NOT a standalone app, this is just a frontend, a client. It requires a [
 ### Not Done Yet
 
 * Previews not generated for videos, audio, links or docs.
-* No voice or video messages. No video or audio calling.
+* No video messages. No video or audio calling.
 * Typing indicators.
 * No support for switching between multiple backends.
 * Mentions, hashtags.
@@ -49,11 +51,12 @@ This is NOT a standalone app, this is just a frontend, a client. It requires a [
 
 ## Dependencies
 
+* Google Firebase for [push notifications](https://firebase.google.com/docs/cloud-messaging/ios/client), [analytics](https://firebase.google.com/docs/analytics/get-started?platform=ios), and [crash reporting](https://firebase.google.com/docs/crashlytics/get-started?platform=ios). See below.
+* [Kingfisher](https://github.com/onevcat/Kingfisher) for out-of-band image handling.
+* [MobileVLCKit](https://code.videolan.org/videolan/VLCKit) for voice messages (iOS does not support WebM, Chrome can only produce WebM).
+* [PhoneNumberKit](https://github.com/marmelroy/PhoneNumberKit) for normalizing phone numbers.
 * [SQLite.swift](https://github.com/stephencelis/SQLite.swift) for convenience of SQLite use.
 * [SwiftKeychainWrapper](https://github.com/jrendel/SwiftKeychainWrapper) for convenience of Keychain access.
-* [PhoneNumberKit](https://github.com/marmelroy/PhoneNumberKit) for normalizing phone numbers.
-* [Kingfisher](https://github.com/onevcat/Kingfisher) for out-of-band image handling.
-* Google Firebase for [push notifications](https://firebase.google.com/docs/cloud-messaging/ios/client), [analytics](https://firebase.google.com/docs/analytics/get-started?platform=ios), and [crash reporting](https://firebase.google.com/docs/crashlytics/get-started?platform=ios). See below.
 
 
 ## Push notifications
