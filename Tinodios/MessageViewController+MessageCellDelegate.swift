@@ -31,9 +31,10 @@ extension MessageViewController: MessageCellDelegate {
             case "/quote":
                 handleQuoteClick(in: cell)
             case "/audio/seek":
+                handleAudioSeek(in: cell, using: url)
                 break
             case "/audio/toggle-play":
-                handleAudioPlay(in: cell, draftyEntityKey: Int(url.extractQueryParam(named: "key") ?? ""))
+                handleToggleAudioPlay(in: cell, draftyEntityKey: Int(url.extractQueryParam(named: "key") ?? ""))
                 break
             default:
                 Cache.log.error("MessageVC - unknown tinode:// action: %@", url.description)
@@ -241,13 +242,22 @@ extension MessageViewController: MessageCellDelegate {
         }
     }
 
-    private func handleAudioPlay(in cell: MessageCell, draftyEntityKey key: Int?) {
+    private func handleToggleAudioPlay(in cell: MessageCell, draftyEntityKey key: Int?) {
         guard let entity = extractEntity(from: cell, draftyEntityKey: key) else { return }
+
         let bits = entity.data?["val"]?.asData()
         let ref = entity.data?["ref"]?.asString()
-        let url = ref == nil ? nil : URL.init(string: ref!)
-        let mimeType = entity.data?["mime"]?.asString()
-        playAudio(url: url, data: bits, mimeType: mimeType)
+        toggleAudioPlay(url: ref == nil ? nil : URL.init(string: ref!), data: bits, seqId: cell.seqId, key: key!)
+    }
+
+    private func handleAudioSeek(in cell: MessageCell, using url: URL) {
+        let key = Int(url.extractQueryParam(named: "key") ?? "")
+        guard let entity = extractEntity(from: cell, draftyEntityKey: key) else { return }
+
+        let bits = entity.data?["val"]?.asData()
+        let ref = entity.data?["ref"]?.asString()
+        guard let seekTo = Float(url.extractQueryParam(named: "pos") ?? "0") else { return }
+        audioSeekTo(seekTo, url: ref == nil ? nil : URL.init(string: ref!), data: bits, seqId: cell.seqId, key: key!)
     }
 
     private func showImagePreview(in cell: MessageCell, draftyEntityKey: Int?) {
