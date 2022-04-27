@@ -520,6 +520,7 @@
 				B0BC2B5423589CE100BEEB4B /* Assign DefaultValue in app preferences */,
 				0ACE9E7A23813A1D006BE575 /* Embed App Extensions */,
 				9F57E04FA7B9924948AFF5D2 /* [CP] Copy Pods Resources */,
+				E39DF56D400E4A17F40FBB09 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -714,6 +715,23 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "${SRCROOT}/Scripts/set_build_number.sh\n";
+		};
+		E39DF56D400E4A17F40FBB09 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Tinodios/Pods-Tinodios-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Tinodios/Pods-Tinodios-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Tinodios/Pods-Tinodios-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
 

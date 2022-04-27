@@ -37,6 +37,7 @@ target 'Tinodios' do
     pod 'PhoneNumberKit', '~> 3.1'
     pod 'Kingfisher', '~> 5.0'
     pod 'FirebaseCrashlytics'
+    pod 'MobileVLCKit', '~>3.3.0'
 end
 
 post_install do | installer |

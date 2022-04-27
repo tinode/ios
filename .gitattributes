@@ -1,0 +1,2 @@
+Pods/MobileVLCKit/MobileVLCKit.xcframework/ios-arm64_i386_x86_64-simulator/MobileVLCKit.framework/MobileVLCKit filter=lfs diff=lfs merge=lfs -text
+Pods/MobileVLCKit/MobileVLCKit.xcframework/ios-arm64_armv7_armv7s/MobileVLCKit.framework/MobileVLCKit filter=lfs diff=lfs merge=lfs -text
