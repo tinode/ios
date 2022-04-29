@@ -294,7 +294,7 @@ class UiUtils {
             }
             let messageViewController =
                 storyboard.instantiateViewController(
-                    withIdentifier: "MessageViewController") as! MessageViewController
+                    withIdentifier: "MessageViewController") as! MessageCell
             messageViewController.topicName = topicId
             rootVC.pushViewController(messageViewController, animated: false)
             if let window = UIApplication.shared.keyWindow, shouldReplaceRootVC {
@@ -745,7 +745,7 @@ extension UIViewController {
             if let navController = self.navigationController {
                 navController.popToRootViewController(animated: false)
 
-                let messageVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "MessageViewController") as! MessageViewController
+                let messageVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "MessageViewController") as! MessageCell
                 messageVC.topicName = topicName
                 initializationCallback?(messageVC)
                 navController.pushViewController(messageVC, animated: true)

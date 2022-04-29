@@ -39,7 +39,7 @@ class FilePreviewController: UIViewController, UIScrollViewDelegate {
 
     @IBAction func sendFileAttachment(_ sender: UIButton) {
         // This notification is received by the MessageViewController.
-        NotificationCenter.default.post(name: Notification.Name(MessageViewController.kNotificationSendAttachment), object: previewContent)
+        NotificationCenter.default.post(name: Notification.Name(MessageCell.kNotificationSendAttachment), object: previewContent)
         // Return to MessageViewController.
         navigationController?.popViewController(animated: true)
     }

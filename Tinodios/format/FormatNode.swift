@@ -316,6 +316,7 @@ class FormatNode: CustomStringConvertible {
         let play = MultiImageTextAttachment(images: [UIImage(named: "play.circle.fill")!.withRenderingMode(.alwaysTemplate), UIImage(named: "pause.circle")!.withRenderingMode(.alwaysTemplate)])
         play.type = "audio/toggle-play"
         play.draftyEntityKey = attachment.draftyEntityKey
+        play.delegate = PlayTextAttachmentDelegate(parent: play)
         play.bounds = CGRect(origin: CGPoint(x: 0, y: -2), size: CGSize(width: Constants.kPlayIconSize, height: Constants.kPlayIconSize))
 
         var second = NSMutableAttributedString()
@@ -329,6 +330,7 @@ class FormatNode: CustomStringConvertible {
         let wave = WaveTextAttachment(frame: CGRect(origin: CGPoint(x: 0, y: 0), size: Constants.kWaveSize), data: attachment.preview)
         wave.type = "audio/seek"
         wave.draftyEntityKey = attachment.draftyEntityKey
+        wave.delegate = WaveTextAttachmentDelegate(parent: wave)
         if attachment.duration ?? 0 > 0 {
             _ = wave.seekTo(0.01)
         }
@@ -559,3 +561,26 @@ class FormatNode: CustomStringConvertible {
     }
 }
 
+class WaveTextAttachmentDelegate: EntityTextAttachmentDelegate {
+    weak var parent: EntityTextAttachment?
+
+    init(parent: EntityTextAttachment) {
+        self.parent = parent
+    }
+
+    public func action(value: URL, fromEntityKey key: Int) {
+        print("Wave action: \(value), \(key)")
+    }
+}
+
+class PlayTextAttachmentDelegate: EntityTextAttachmentDelegate {
+    weak var parent: EntityTextAttachment?
+
+    init(parent: EntityTextAttachment) {
+        self.parent = parent
+    }
+
+    public func action(value: URL, fromEntityKey key: Int) {
+        print("Play action: \(value), \(key)")
+    }
+}

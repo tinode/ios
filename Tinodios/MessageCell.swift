@@ -1,10 +1,10 @@
 //
 //  MessageCell.swift
-//  Tinodios
 //
-//  Copyright © 2019 Tinode. All rights reserved.
+//  Copyright © 2019-2022 Tinode. All rights reserved.
 //
 
+import MobileVLCKit
 import UIKit
 import TinodeSDK
 
@@ -26,6 +26,16 @@ protocol MessageCellDelegate: AnyObject {
 
 // Optional date, avatar, sender name, message bubble: content, delivery marker, timestamp.
 class MessageCell: UICollectionViewCell {
+
+    var seqId: Int = 0
+    var isDeleted: Bool = false
+
+    // Player for audio messages.
+    var audioPlayer: VLCMediaPlayer?
+    // VLCMediaPlayer keeps only a weak reference to the stream. Must keep a hard reference.
+    var mediaStream: InputStream?
+    // Which media is configured in the player: seqId of the message and entity key.
+    var mediaId: (Int, Int)?
 
     // MARK: - Initializers
 
@@ -110,9 +120,6 @@ class MessageCell: UICollectionViewCell {
     /// The `MessageCellDelegate` for the cell.
     weak var delegate: MessageCellDelegate?
 
-    var seqId: Int = 0
-    var isDeleted: Bool = false
-
     func setupSubviews() {
         contentView.addSubview(newDateLabel)
         contentView.addSubview(senderNameLabel)
@@ -139,6 +146,10 @@ class MessageCell: UICollectionViewCell {
         deliveryMarker.image = nil
         avatarView.image = nil
         progressView.isHidden = true
+
+        self.seqId = 0
+        self.isDeleted = false
+        self.audioPlayer?.stop()
     }
 
     /// Handle tap gesture on contentView and its subviews.

@@ -213,6 +213,20 @@ extension MessageViewController: MessageCellDelegate {
         return messages[index].content?.entities?[draftyKey]
     }
 
+    // Call EntityTextattachmentDelegate for each text attachment in the cell.
+    func attachmentDelegate(from cell: MessageCell, value url: URL, draftyEntityKey key: Int) {
+        guard let text = cell.content.attributedText else { return }
+
+        let range = NSRange(location: 0, length: text.length)
+        text.enumerateAttributes(in: range, options: NSAttributedString.EnumerationOptions(rawValue: 0)) { (object, _, _) in
+            if object.keys.contains(.attachment) {
+                if let attachment = object[.attachment] as? EntityTextAttachment {
+                    attachment.delegate?.action(value: url, fromEntityKey: key)
+                }
+            }
+        }
+    }
+
     private func handleLargeAttachment(in cell: MessageCell, using url: URL) {
         guard let data = MessageViewController.extractAttachment(from: cell), !data.isEmpty else { return }
         let downloadFrom = String(decoding: data[0], as: UTF8.self)
@@ -245,19 +259,21 @@ extension MessageViewController: MessageCellDelegate {
     private func handleToggleAudioPlay(in cell: MessageCell, draftyEntityKey key: Int?) {
         guard let entity = extractEntity(from: cell, draftyEntityKey: key) else { return }
 
+        let duration = entity.data?["duration"]?.asInt() ?? 0
         let bits = entity.data?["val"]?.asData()
         let ref = entity.data?["ref"]?.asString()
-        toggleAudioPlay(url: ref == nil ? nil : URL.init(string: ref!), data: bits, seqId: cell.seqId, key: key!)
+        toggleAudioPlay(url: ref == nil ? nil : URL.init(string: ref!), data: bits, duration: duration, seqId: cell.seqId, key: key!)
     }
 
     private func handleAudioSeek(in cell: MessageCell, using url: URL) {
         let key = Int(url.extractQueryParam(named: "key") ?? "")
         guard let entity = extractEntity(from: cell, draftyEntityKey: key) else { return }
 
+        let duration = entity.data?["duration"]?.asInt() ?? 0
         let bits = entity.data?["val"]?.asData()
         let ref = entity.data?["ref"]?.asString()
         guard let seekTo = Float(url.extractQueryParam(named: "pos") ?? "0") else { return }
-        audioSeekTo(seekTo, url: ref == nil ? nil : URL.init(string: ref!), data: bits, seqId: cell.seqId, key: key!)
+        audioSeekTo(seekTo, url: ref == nil ? nil : URL.init(string: ref!), data: bits, duration: duration, seqId: cell.seqId, key: key!)
     }
 
     private func showImagePreview(in cell: MessageCell, draftyEntityKey: Int?) {

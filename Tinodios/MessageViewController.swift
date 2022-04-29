@@ -4,7 +4,6 @@
 //  Copyright © 2019-2022 Tinode LLC. All rights reserved.
 //
 
-import MobileVLCKit
 import UIKit
 import TinodeSDK
 import TinodiosDB
@@ -185,12 +184,6 @@ class MessageViewController: UIViewController {
     internal var sendReadReceipts = false
 
     internal var textSizeHelper = TextSizeHelper()
-
-    var audioPlayer: VLCMediaPlayer?
-    // VLCMediaPlayer keeps only a weak reference to the stream. Must keep a hard reference.
-    var mediaStream: InputStream?
-    // Which media is configured in the player: seqId of the message and entity key.
-    var mediaId: (Int, Int)?
 
     // MARK: initializers
 
