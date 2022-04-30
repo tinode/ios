@@ -20,13 +20,20 @@ class WaveTextAttachment: EntityTextAttachment {
     private weak var textContainer: NSTextContainer?
 
     private var cachedImage: UIImage = UIImage()
+    private var animationTimer: Timer?
 
     public var pastBarColor: CGColor
     public var futureBarColor: CGColor
     public var thumbColor: CGColor
 
+
     // Duration of the audio in milliseconds.
-    private var duration: Int = 0
+    public var duration: Int = 0 {
+        didSet {
+            // Recalculate frame duration (2 pixels per frame but not shorter than kMinFrameDuration).
+            frameDuration = max(duration / effectiveWidth * 2, WaveTextAttachment.kMinFrameDuration)
+        }
+    }
 
     // Current thumb position as a fraction of the total 0..1
     private var seekPosition: Float = -1
@@ -71,9 +78,6 @@ class WaveTextAttachment: EntityTextAttachment {
 
         effectiveWidth = Int(Float(maxBars) * (WaveTextAttachment.kLineWidth + WaveTextAttachment.kSpacing) + WaveTextAttachment.kSpacing)
 
-        // Recalculate frame duration (2 pixels per frame).
-        frameDuration = max(duration / effectiveWidth * 2, WaveTextAttachment.kMinFrameDuration)
-
         bounds = CGRect(x: 0, y: 0, width: rect.width, height: rect.height)
     }
 
@@ -114,8 +118,23 @@ class WaveTextAttachment: EntityTextAttachment {
         }
     }
 
+    /// Start playback animation.
+    public func play() {
+
+    }
+
+    /// Pause playback animation.
+    public func pause() {
+
+    }
+
     /// Move thumb to specified position and refresh the image.
+    @discardableResult
     public func seekTo(_ pos: Float) -> Bool {
+        if duration <= 0 {
+            return false
+        }
+
         if seekPosition != pos {
             seekPosition = pos
             update(recalc: false)

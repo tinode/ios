@@ -16,7 +16,7 @@ class ChatListRouter: ChatListRoutingLogic {
     weak var viewController: ChatListViewController?
 
     func routeToChat(withName name: String, for segue: UIStoryboardSegue) {
-        let messageController = segue.destination as! MessageCell
+        let messageController = segue.destination as! MessageViewController
         messageController.topicName = name
     }
     func routeToLogin() {

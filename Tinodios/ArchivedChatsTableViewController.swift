@@ -81,7 +81,7 @@ class ArchivedChatsTableViewController: UITableViewController {
     // MARK: - Navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "ArchivedChats2Messages", let topicName = sender as? String {
-            let messageController = segue.destination as! MessageCell
+            let messageController = segue.destination as! MessageViewController
             messageController.topicName = topicName
         }
     }

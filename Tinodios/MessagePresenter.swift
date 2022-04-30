@@ -4,9 +4,7 @@
 //  Copyright © 2019-2022 Tinode LLC. All rights reserved.
 //
 
-import Foundation
 import UIKit
-
 import TinodeSDK
 import TinodiosDB
 

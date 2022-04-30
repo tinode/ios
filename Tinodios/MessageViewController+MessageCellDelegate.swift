@@ -5,6 +5,7 @@
 //  Copyright © 2022 Tinode LLC. All rights reserved.
 //
 
+import MobileVLCKit
 import UIKit
 import TinodeSDK
 
@@ -50,6 +51,30 @@ extension MessageViewController: MessageCellDelegate {
 
     // TODO: remove as unused or go to user's profile (p2p topic?)
     func didTapAvatar(in cell: MessageCell) {}
+
+    func didTapOutsideContent(in cell: MessageCell) {
+        _ = self.sendMessageBar.inputField.resignFirstResponder()
+    }
+
+    func didTapCancelUpload(in cell: MessageCell) {
+        guard let topicId = self.topicName,
+            let msgIdx = self.messageSeqIdIndex[cell.seqId] else { return }
+        _ = Cache.getLargeFileHelper().cancelUpload(topicId: topicId, msgId: self.messages[msgIdx].msgId)
+    }
+
+    func mediaPlaybackEnded(in cell: MessageCell, audioPlayer: VLCMediaPlayer, entityKey key: Int) {
+        if self.currentAudioPlayer == audioPlayer {
+            self.currentAudioPlayer = nil
+        }
+        attachmentDelegate(from: cell, value: URL(fileURLWithPath: "file:///reset_playback"), draftyEntityKey: key)
+    }
+
+    func didActivateMedia(in cell: MessageCell, audioPlayer: VLCMediaPlayer) {
+        if let player = self.currentAudioPlayer, player != audioPlayer {
+            player.stop()
+        }
+        self.currentAudioPlayer = audioPlayer
+    }
 
     func createPopupMenu(in cell: MessageCell) {
         guard !cell.isDeleted else { return }
@@ -161,16 +186,6 @@ extension MessageViewController: MessageCellDelegate {
         interactor?.deleteMessage(seqId: menuItem.seqId)
     }
 
-    func didTapOutsideContent(in cell: MessageCell) {
-        _ = self.sendMessageBar.inputField.resignFirstResponder()
-    }
-
-    func didTapCancelUpload(in cell: MessageCell) {
-        guard let topicId = self.topicName,
-            let msgIdx = self.messageSeqIdIndex[cell.seqId] else { return }
-        _ = Cache.getLargeFileHelper().cancelUpload(topicId: topicId, msgId: self.messages[msgIdx].msgId)
-    }
-
     private func handleButtonPost(in cell: MessageCell, using url: URL) {
         let parts = URLComponents(url: url, resolvingAgainstBaseURL: false)
         var query: [String: String]?
@@ -262,7 +277,7 @@ extension MessageViewController: MessageCellDelegate {
         let duration = entity.data?["duration"]?.asInt() ?? 0
         let bits = entity.data?["val"]?.asData()
         let ref = entity.data?["ref"]?.asString()
-        toggleAudioPlay(url: ref == nil ? nil : URL.init(string: ref!), data: bits, duration: duration, seqId: cell.seqId, key: key!)
+        cell.toggleAudioPlay(url: ref == nil ? nil : URL.init(string: ref!), data: bits, duration: duration, key: key!)
     }
 
     private func handleAudioSeek(in cell: MessageCell, using url: URL) {
@@ -273,7 +288,7 @@ extension MessageViewController: MessageCellDelegate {
         let bits = entity.data?["val"]?.asData()
         let ref = entity.data?["ref"]?.asString()
         guard let seekTo = Float(url.extractQueryParam(named: "pos") ?? "0") else { return }
-        audioSeekTo(seekTo, url: ref == nil ? nil : URL.init(string: ref!), data: bits, duration: duration, seqId: cell.seqId, key: key!)
+        cell.audioSeekTo(seekTo, url: ref == nil ? nil : URL.init(string: ref!), data: bits, duration: duration, key: key!)
     }
 
     private func showImagePreview(in cell: MessageCell, draftyEntityKey: Int?) {

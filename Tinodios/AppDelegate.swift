@@ -146,7 +146,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         guard let topicName = userInfo["topic"] as? String, !topicName.isEmpty,
             what == nil || what == "msg",
             let seqStr = userInfo["seq"] as? String, let seq = Int(seqStr) else { return }
-        if let messageVC = UiUtils.topViewController(rootViewController: UIApplication.shared.keyWindow?.rootViewController) as? MessageCell, messageVC.topicName == topicName {
+        if let messageVC = UiUtils.topViewController(rootViewController: UIApplication.shared.keyWindow?.rootViewController) as? MessageViewController, messageVC.topicName == topicName {
             // We are already in the correct topic. Do not present the notification.
             completionHandler([])
         } else {

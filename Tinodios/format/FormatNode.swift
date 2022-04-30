@@ -332,7 +332,8 @@ class FormatNode: CustomStringConvertible {
         wave.draftyEntityKey = attachment.draftyEntityKey
         wave.delegate = WaveTextAttachmentDelegate(parent: wave)
         if attachment.duration ?? 0 > 0 {
-            _ = wave.seekTo(0.01)
+            wave.duration = attachment.duration!
+            wave.seekTo(0.01)
         }
         if let fg = attributes[.foregroundColor] as? UIColor {
             wave.pastBarColor = fg.withAlphaComponent(0.7).cgColor
@@ -352,8 +353,11 @@ class FormatNode: CustomStringConvertible {
         paragraph.firstLineHeadIndent = Constants.kPlayIconSize + baseFont.capHeight * 0.25
         paragraph.lineSpacing = 0
         paragraph.lineHeightMultiple = 0.5
-        second.addAttributes([NSAttributedString.Key.paragraphStyle: paragraph, NSAttributedString.Key.foregroundColor: UIColor.gray
-        ], range: NSRange(location: 0, length: second.length))
+        var strAttrs: [NSAttributedString.Key: Any] = [NSAttributedString.Key.paragraphStyle: paragraph]
+        if let fg = attributes[.foregroundColor] {
+            strAttrs[NSAttributedString.Key.foregroundColor] = fg
+        }
+        second.addAttributes(strAttrs, range: NSRange(location: 0, length: second.length))
         second.endEditing()
 
         attributed.append(second)
@@ -570,6 +574,7 @@ class WaveTextAttachmentDelegate: EntityTextAttachmentDelegate {
 
     public func action(value: URL, fromEntityKey key: Int) {
         print("Wave action: \(value), \(key)")
+        (self.parent as! WaveTextAttachment).seekTo(0.01)
     }
 }
 
@@ -581,6 +586,7 @@ class PlayTextAttachmentDelegate: EntityTextAttachmentDelegate {
     }
 
     public func action(value: URL, fromEntityKey key: Int) {
-        print("Play action: \(value), \(key)")
+        print("Play action: \(value), entity_key=\(key)")
+        (parent as! MultiImageTextAttachment).reset()
     }
 }

@@ -10,18 +10,22 @@ import TinodeSDK
 
 /// A protocol used to detect taps in the chat message.
 protocol MessageCellDelegate: AnyObject {
-    /// Long tap anywhere in massage cell
+    /// Long tap anywhere in massage cell.
     func didLongTap(in cell: MessageCell)
-    /// Tap on the message bubble
+    /// Tap on the message bubble.
     func didTapMessage(in cell: MessageCell)
-    /// Tap on message content
+    /// Tap on message content.
     func didTapContent(in cell: MessageCell, url: URL?)
-    /// Tap on avatar
+    /// Tap on avatar.
     func didTapAvatar(in cell: MessageCell)
-    /// Tap outside of message
+    /// Tap outside of message.
     func didTapOutsideContent(in cell: MessageCell)
-    /// Clicked on cancel upload
+    /// Clicked on cancel upload.
     func didTapCancelUpload(in cell: MessageCell)
+    /// Activated media player.
+    func didActivateMedia(in cell: MessageCell, audioPlayer: VLCMediaPlayer)
+    /// Media playback reached the end of the record.
+    func mediaPlaybackEnded(in cell: MessageCell, audioPlayer: VLCMediaPlayer, entityKey: Int)
 }
 
 // Optional date, avatar, sender name, message bubble: content, delivery marker, timestamp.
@@ -34,8 +38,8 @@ class MessageCell: UICollectionViewCell {
     var audioPlayer: VLCMediaPlayer?
     // VLCMediaPlayer keeps only a weak reference to the stream. Must keep a hard reference.
     var mediaStream: InputStream?
-    // Which media is configured in the player: seqId of the message and entity key.
-    var mediaId: (Int, Int)?
+    // Which entity is configured in the player: entity key.
+    var mediaEntityKey: Int?
 
     // MARK: - Initializers
 
@@ -138,6 +142,9 @@ class MessageCell: UICollectionViewCell {
 
     override func prepareForReuse() {
         super.prepareForReuse()
+
+        self.audioPlayer?.stop()
+
         content.text = nil
         content.attributedText = nil
         newDateLabel.text = nil
@@ -149,7 +156,7 @@ class MessageCell: UICollectionViewCell {
 
         self.seqId = 0
         self.isDeleted = false
-        self.audioPlayer?.stop()
+        self.mediaEntityKey = nil
     }
 
     /// Handle tap gesture on contentView and its subviews.

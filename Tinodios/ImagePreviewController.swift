@@ -194,7 +194,7 @@ extension ImagePreviewController: SendImageBarDelegate {
         )
 
         // This notification is received by the MessageViewController.
-        NotificationCenter.default.post(name: Notification.Name(MessageCell.kNotificationSendAttachment), object: content)
+        NotificationCenter.default.post(name: Notification.Name(MessageViewController.kNotificationSendAttachment), object: content)
         // Return to MessageViewController.
         navigationController?.popViewController(animated: true)
     }

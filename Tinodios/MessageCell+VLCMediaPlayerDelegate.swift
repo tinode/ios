@@ -25,10 +25,12 @@ extension MessageCell: VLCMediaPlayerDelegate {
         case .stopped:
             // Must reopen: VLCMedia closes the InputStrem.
             self.mediaStream = nil
+            self.audioPlayer?.media = nil
             print("VLCMediaPlayerDelegate: STOPPED")
         case .paused:
             print("VLCMediaPlayerDelegate: PAUSED")
         case .ended:
+            self.delegate?.mediaPlaybackEnded(in: self, audioPlayer: player, entityKey: self.mediaEntityKey ?? -1)
             print("VLCMediaPlayerDelegate: ENDED")
         case .esAdded:
             print("VLCMediaPlayerDelegate: ELEMENTARY STREAM ADDED")
@@ -58,8 +60,8 @@ extension MessageCell: VLCMediaPlayerDelegate {
         }
     }
 
-    fileprivate func initMedia(url: URL?, data: Data?, duration: Int, seqId: Int, key: Int) {
-        if let id = self.mediaId, id == (seqId, key), self.mediaStream != nil {
+    fileprivate func initMedia(url: URL?, data: Data?, duration: Int, key: Int) {
+        if (self.mediaEntityKey ?? -1) == key && self.mediaStream != nil {
             // Already properly initialized with the same data.
             return
         }
@@ -82,10 +84,12 @@ extension MessageCell: VLCMediaPlayerDelegate {
             print("Duration not assigned player=\(audioPlayer!.media.length.intValue), app=\(duration)")
         }
         print("Duration: \(audioPlayer!.media.length.value)")
-        self.mediaId = (seqId, key)
+
+        self.mediaEntityKey = key
+        self.delegate?.didActivateMedia(in: self, audioPlayer: self.audioPlayer!)
     }
 
-    func toggleAudioPlay(url: URL?, data: Data?, duration: Int, seqId: Int, key: Int) {
+    func toggleAudioPlay(url: URL?, data: Data?, duration: Int, key: Int) {
         initAudioPlayer()
 
         if audioPlayer!.isPlaying {
@@ -94,19 +98,19 @@ extension MessageCell: VLCMediaPlayerDelegate {
             return
         }
 
-        initMedia(url: url, data: data, duration: duration, seqId: seqId, key: key)
+        initMedia(url: url, data: data, duration: duration, key: key)
         print("Playing")
         audioPlayer!.play()
     }
 
-    func audioSeekTo(_ seekTo: Float, url: URL?, data: Data?, duration: Int, seqId: Int, key: Int) {
+    func audioSeekTo(_ seekTo: Float, url: URL?, data: Data?, duration: Int, key: Int) {
         initAudioPlayer()
 
         print("Player is seekable: \(audioPlayer?.isSeekable)")
 
-        initMedia(url: url, data: data, duration: duration, seqId: seqId, key: key)
+        initMedia(url: url, data: data, duration: duration, key: key)
         var doPause = false
-        if audioPlayer!.isPlaying {
+        if !audioPlayer!.isPlaying {
             audioPlayer!.play()
             doPause = true
         }

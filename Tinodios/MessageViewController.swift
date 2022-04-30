@@ -4,6 +4,7 @@
 //  Copyright © 2019-2022 Tinode LLC. All rights reserved.
 //
 
+import MobileVLCKit
 import UIKit
 import TinodeSDK
 import TinodiosDB
@@ -184,6 +185,9 @@ class MessageViewController: UIViewController {
     internal var sendReadReceipts = false
 
     internal var textSizeHelper = TextSizeHelper()
+
+    // Currently playing or paused media player.
+    internal var currentAudioPlayer: VLCMediaPlayer?
 
     // MARK: initializers
 

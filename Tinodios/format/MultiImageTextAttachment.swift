@@ -36,6 +36,16 @@ public class MultiImageTextAttachment: EntityTextAttachment {
         }
     }
 
+    /// Reset the attachment to initial state.
+    public func reset() {
+        index = 0
+        DispatchQueue.main.async {
+            // Force container redraw.
+            let length = self.textContainer?.layoutManager?.textStorage?.length
+            self.textContainer?.layoutManager?.invalidateDisplay(forCharacterRange: NSRange(location: 0, length: length ?? 1))
+        }
+    }
+
     public override func image(forBounds imageBounds: CGRect, textContainer: NSTextContainer?, characterIndex charIndex: Int) -> UIImage? {
         // Keep reference to text container. It will be updated if image changes.
         self.textContainer = textContainer
