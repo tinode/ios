@@ -260,7 +260,6 @@ class FormatNode: CustomStringConvertible {
         second.endEditing()
         attributed.append(second)
 
-
         if isValid {
             // Insert linebreak then a clickable [↓ save] line
             attributed.append(NSAttributedString(string: "\u{2009}\n", attributes: [NSAttributedString.Key.font: baseFont]))
@@ -331,9 +330,8 @@ class FormatNode: CustomStringConvertible {
         wave.type = "audio/seek"
         wave.draftyEntityKey = attachment.draftyEntityKey
         wave.delegate = WaveTextAttachmentDelegate(parent: wave)
-        if attachment.duration ?? 0 > 0 {
-            wave.duration = attachment.duration!
-            wave.seekTo(0.01)
+        if let duration = attachment.duration, duration > 0 {
+            wave.duration = duration
         }
         if let fg = attributes[.foregroundColor] as? UIColor {
             wave.pastBarColor = fg.withAlphaComponent(0.7).cgColor
@@ -574,7 +572,7 @@ class WaveTextAttachmentDelegate: EntityTextAttachmentDelegate {
 
     public func action(value: URL, fromEntityKey key: Int) {
         print("Wave action: \(value), \(key)")
-        (self.parent as! WaveTextAttachment).seekTo(0.01)
+        (self.parent as? WaveTextAttachment)?.reset()
     }
 }
 
@@ -587,6 +585,6 @@ class PlayTextAttachmentDelegate: EntityTextAttachmentDelegate {
 
     public func action(value: URL, fromEntityKey key: Int) {
         print("Play action: \(value), entity_key=\(key)")
-        (parent as! MultiImageTextAttachment).reset()
+        (parent as? MultiImageTextAttachment)?.reset()
     }
 }

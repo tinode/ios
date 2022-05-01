@@ -21,6 +21,7 @@ class WaveTextAttachment: EntityTextAttachment {
 
     private var cachedImage: UIImage = UIImage()
     private var animationTimer: Timer?
+    private var timerStartedAt: Date?
 
     public var pastBarColor: CGColor
     public var futureBarColor: CGColor
@@ -36,7 +37,7 @@ class WaveTextAttachment: EntityTextAttachment {
     }
 
     // Current thumb position as a fraction of the total 0..1
-    private var seekPosition: Float = -1
+    private var seekPosition: Float = 0
 
     // Original preview data to use for drawing the bars.
     private var original: Data? {
@@ -120,12 +121,29 @@ class WaveTextAttachment: EntityTextAttachment {
 
     /// Start playback animation.
     public func play() {
+        if self.animationTimer != nil {
+            // Animation is already running.
+            return
+        }
+        if duration <= 0 {
+            return
+        }
 
+        self.timerStartedAt = Date()
+        self.animationTimer = Timer.scheduledTimer(timeInterval: Double(frameDuration) * 0.001, target: self, selector: #selector(animateFrame), userInfo: nil, repeats: true)
     }
 
     /// Pause playback animation.
     public func pause() {
+        self.animationTimer?.invalidate()
+        self.animationTimer = nil
+        self.timerStartedAt = nil
+    }
 
+    /// Move thumb to initial position and stop animation.
+    public func reset() {
+        pause()
+        seekTo(0)
     }
 
     /// Move thumb to specified position and refresh the image.
@@ -135,12 +153,24 @@ class WaveTextAttachment: EntityTextAttachment {
             return false
         }
 
-        if seekPosition != pos {
-            seekPosition = pos
+        let newPos = min(1, max(0, pos))
+        if seekPosition != newPos {
+            seekPosition = newPos
             update(recalc: false)
             return true
         }
         return false
+    }
+
+    @objc func animateFrame(timer: Timer) {
+        if duration <= 0 {
+            return
+        }
+        let pos = seekPosition - Float(self.timerStartedAt?.timeIntervalSinceNow ?? 0) / Float(duration)
+        if pos >= 1 {
+            pause()
+        }
+        seekTo(pos)
     }
 
     // Calculate vertices of amplitude bars.
@@ -175,7 +205,7 @@ class WaveTextAttachment: EntityTextAttachment {
 
     // Get thumb position for level.
     private func seekPositionToX() -> Float {
-        let base: Float = Float(bars.count) / 2.0 * (seekPosition - 0.01)
+        let base: Float = Float(bars.count) / 2.0 * seekPosition
         return Float(bars[Int(base * 2)].x) + (base - floor(base)) * (WaveTextAttachment.kLineWidth + WaveTextAttachment.kSpacing);
     }
 
@@ -237,7 +267,7 @@ class WaveTextAttachment: EntityTextAttachment {
                 path.move(to: bars[i])
                 path.addLine(to: bars[i+1])
             }
-            context.setStrokeColor(self.pastBarColor)
+            context.setStrokeColor(self.futureBarColor)
             path.stroke()
         } else {
             // Draw past - future bars and thumb on top of them.
@@ -259,7 +289,9 @@ class WaveTextAttachment: EntityTextAttachment {
                 path.addLine(to: bars[i+1])
             }
             path.stroke()
+        }
 
+        if self.duration > 0 {
             // Draw thumb.
             context.setFillColor(self.thumbColor)
             let size = CGFloat(WaveTextAttachment.kThumbRadius) * 2
