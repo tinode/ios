@@ -86,9 +86,6 @@ class RichTextView: UITextView {
             if att.type == "audio/seek" {
                 let pos: CGFloat = (location.x - glyphRect.minX) / glyphRect.width
                 urlComps.queryItems = [URLQueryItem(name: "pos", value: pos.description)]
-                _ = (att as! WaveTextAttachment).seekTo(Float(pos))
-            } else if att.type == "audio/toggle-play" {
-                (att as! MultiImageTextAttachment).next()
             }
         }
 

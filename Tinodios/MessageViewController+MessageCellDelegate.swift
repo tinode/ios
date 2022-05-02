@@ -62,11 +62,11 @@ extension MessageViewController: MessageCellDelegate {
         _ = Cache.getLargeFileHelper().cancelUpload(topicId: topicId, msgId: self.messages[msgIdx].msgId)
     }
 
-    func mediaPlaybackEnded(in cell: MessageCell, audioPlayer: VLCMediaPlayer, entityKey key: Int) {
+    func didEndMediaPlayback(in cell: MessageCell, audioPlayer: VLCMediaPlayer) {
         if self.currentAudioPlayer == audioPlayer {
             self.currentAudioPlayer = nil
         }
-        attachmentDelegate(from: cell, value: URL(fileURLWithPath: "file:///reset_playback"), draftyEntityKey: key)
+        attachmentDelegate(from: cell, action: "reset", payload: nil)
     }
 
     func didActivateMedia(in cell: MessageCell, audioPlayer: VLCMediaPlayer) {
@@ -74,6 +74,23 @@ extension MessageViewController: MessageCellDelegate {
             player.stop()
         }
         self.currentAudioPlayer = audioPlayer
+        attachmentDelegate(from: cell, action: "play", payload: nil)
+    }
+
+    func didPauseMedia(in cell: MessageCell, audioPlayer: VLCMediaPlayer) {
+        if let player = self.currentAudioPlayer, player != audioPlayer {
+            player.stop()
+        }
+        self.currentAudioPlayer = audioPlayer
+        attachmentDelegate(from: cell, action: "pause", payload: nil)
+    }
+
+    func didSeekMedia(in cell: MessageCell, audioPlayer: VLCMediaPlayer, pos: Float) {
+        if let player = self.currentAudioPlayer, player != audioPlayer {
+            player.stop()
+        }
+        self.currentAudioPlayer = audioPlayer
+        attachmentDelegate(from: cell, action: "seek", payload: pos)
     }
 
     func createPopupMenu(in cell: MessageCell) {
@@ -229,14 +246,14 @@ extension MessageViewController: MessageCellDelegate {
     }
 
     // Call EntityTextattachmentDelegate for each text attachment in the cell.
-    func attachmentDelegate(from cell: MessageCell, value url: URL, draftyEntityKey key: Int) {
+    func attachmentDelegate(from cell: MessageCell, action: String, payload: Any?) {
         guard let text = cell.content.attributedText else { return }
 
         let range = NSRange(location: 0, length: text.length)
         text.enumerateAttributes(in: range, options: NSAttributedString.EnumerationOptions(rawValue: 0)) { (object, _, _) in
             if object.keys.contains(.attachment) {
                 if let attachment = object[.attachment] as? EntityTextAttachment {
-                    attachment.delegate?.action(value: url, fromEntityKey: key)
+                    attachment.delegate?.action(action, payload: payload)
                 }
             }
         }

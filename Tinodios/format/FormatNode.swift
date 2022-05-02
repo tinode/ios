@@ -570,9 +570,23 @@ class WaveTextAttachmentDelegate: EntityTextAttachmentDelegate {
         self.parent = parent
     }
 
-    public func action(value: URL, fromEntityKey key: Int) {
-        print("Wave action: \(value), \(key)")
-        (self.parent as? WaveTextAttachment)?.reset()
+    public func action(_ value: String, payload: Any? = nil) {
+        guard let wave = (self.parent as? WaveTextAttachment) else  { return }
+        switch value {
+        case "play":
+            wave.play()
+        case "pause":
+            wave.pause()
+        case "reset":
+            wave.reset()
+        case "seek":
+            if let pos = payload as? Float {
+                wave.seekTo(pos)
+            }
+        default:
+            // Unknown action, ignore.
+            break
+        }
     }
 }
 
@@ -583,8 +597,18 @@ class PlayTextAttachmentDelegate: EntityTextAttachmentDelegate {
         self.parent = parent
     }
 
-    public func action(value: URL, fromEntityKey key: Int) {
-        print("Play action: \(value), entity_key=\(key)")
-        (parent as? MultiImageTextAttachment)?.reset()
+    public func action(_ value: String, payload: Any? = nil) {
+        guard let playButton = (parent as? MultiImageTextAttachment) else { return }
+        switch value {
+        case "start":
+            playButton.setFrame(1)
+        case "pause":
+            playButton.setFrame(0)
+        case "reset":
+            playButton.reset()
+        default:
+            // Unsupported action like "seek", ignore.
+            break
+        }
     }
 }

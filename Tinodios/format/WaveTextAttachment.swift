@@ -22,6 +22,7 @@ class WaveTextAttachment: EntityTextAttachment {
     private var cachedImage: UIImage = UIImage()
     private var animationTimer: Timer?
     private var timerStartedAt: Date?
+    private var positionStartedAt: Float?
 
     public var pastBarColor: CGColor
     public var futureBarColor: CGColor
@@ -130,6 +131,7 @@ class WaveTextAttachment: EntityTextAttachment {
         }
 
         self.timerStartedAt = Date()
+        self.positionStartedAt = self.seekPosition
         self.animationTimer = Timer.scheduledTimer(timeInterval: Double(frameDuration) * 0.001, target: self, selector: #selector(animateFrame), userInfo: nil, repeats: true)
     }
 
@@ -138,6 +140,7 @@ class WaveTextAttachment: EntityTextAttachment {
         self.animationTimer?.invalidate()
         self.animationTimer = nil
         self.timerStartedAt = nil
+        self.positionStartedAt = nil
     }
 
     /// Move thumb to initial position and stop animation.
@@ -149,13 +152,17 @@ class WaveTextAttachment: EntityTextAttachment {
     /// Move thumb to specified position and refresh the image.
     @discardableResult
     public func seekTo(_ pos: Float) -> Bool {
-        if duration <= 0 {
+        if self.duration <= 0 {
             return false
         }
 
-        let newPos = min(1, max(0, pos))
-        if seekPosition != newPos {
-            seekPosition = newPos
+        let newPos = min(0.999, max(0, pos))
+        if self.seekPosition != newPos {
+            self.seekPosition = newPos
+            if timerStartedAt != nil {
+                self.timerStartedAt = Date()
+                self.positionStartedAt = self.seekPosition
+            }
             update(recalc: false)
             return true
         }
@@ -163,10 +170,12 @@ class WaveTextAttachment: EntityTextAttachment {
     }
 
     @objc func animateFrame(timer: Timer) {
-        if duration <= 0 {
+        if self.duration <= 0 {
             return
         }
-        let pos = seekPosition - Float(self.timerStartedAt?.timeIntervalSinceNow ?? 0) / Float(duration)
+
+        guard let startedAt = self.timerStartedAt, let initPosition = self.positionStartedAt else { return }
+        let pos = initPosition - 1000 * Float(startedAt.timeIntervalSinceNow) / Float(duration)
         if pos >= 1 {
             pause()
         }

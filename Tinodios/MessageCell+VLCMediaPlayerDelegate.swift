@@ -14,35 +14,25 @@ extension MessageCell: VLCMediaPlayerDelegate {
         guard let player = notification.object as? VLCMediaPlayer else { return }
 
         switch player.state {
-        case .playing:
-            print("VLCMediaPlayerDelegate: PLAYING")
-        case .opening:
-            print("VLCMediaPlayerDelegate: OPENING")
+        case .playing, .opening, .paused, .buffering, .esAdded:
+            break
         case .error:
-            print("VLCMediaPlayerDelegate: ERROR")
-        case .buffering:
-            print("VLCMediaPlayerDelegate: BUFFERING")
+            self.delegate?.didEndMediaPlayback(in: self, audioPlayer: player)
+            Cache.log.error("MessageCell - media playback failed")
+            fallthrough
         case .stopped:
             // Must reopen: VLCMedia closes the InputStrem.
             self.mediaStream = nil
             self.audioPlayer?.media = nil
-            print("VLCMediaPlayerDelegate: STOPPED")
-        case .paused:
-            print("VLCMediaPlayerDelegate: PAUSED")
         case .ended:
-            self.delegate?.mediaPlaybackEnded(in: self, audioPlayer: player, entityKey: self.mediaEntityKey ?? -1)
-            print("VLCMediaPlayerDelegate: ENDED")
-        case .esAdded:
-            print("VLCMediaPlayerDelegate: ELEMENTARY STREAM ADDED")
+            self.delegate?.didEndMediaPlayback(in: self, audioPlayer: player)
         default:
             break
         }
     }
 
     func mediaPlayerTimeChanged(_ notification: Notification) {
-        guard let player = notification.object as? VLCMediaPlayer else { return }
-
-        print("Time changed: \(player.time.value ?? -1)")
+        // guard let player = notification.object as? VLCMediaPlayer else { return }
     }
 
     func stopAudio() {
@@ -66,8 +56,6 @@ extension MessageCell: VLCMediaPlayerDelegate {
             return
         }
 
-        print("Reinitializing")
-
         if let url = url {
             audioPlayer!.media = VLCMedia(url: url)
         } else if let data = data {
@@ -75,18 +63,14 @@ extension MessageCell: VLCMediaPlayerDelegate {
             self.mediaStream = InputStream(data: data)
             audioPlayer!.media = VLCMedia(stream: self.mediaStream!)
         } else {
-            Cache.log.error("MessageVC - unable to play audio: no data")
+            Cache.log.error("MessageCell - unable to play audio: no data")
             return
         }
         if audioPlayer!.media.length.intValue <= 0 && duration > 0 {
             audioPlayer!.media.length = VLCTime(int: Int32(duration))
-        } else {
-            print("Duration not assigned player=\(audioPlayer!.media.length.intValue), app=\(duration)")
         }
-        print("Duration: \(audioPlayer!.media.length.value)")
 
         self.mediaEntityKey = key
-        self.delegate?.didActivateMedia(in: self, audioPlayer: self.audioPlayer!)
     }
 
     func toggleAudioPlay(url: URL?, data: Data?, duration: Int, key: Int) {
@@ -94,13 +78,13 @@ extension MessageCell: VLCMediaPlayerDelegate {
 
         if audioPlayer!.isPlaying {
             audioPlayer!.pause()
-            print("Paused")
+            self.delegate?.didPauseMedia(in: self, audioPlayer: self.audioPlayer!)
             return
         }
 
         initMedia(url: url, data: data, duration: duration, key: key)
-        print("Playing")
         audioPlayer!.play()
+        self.delegate?.didActivateMedia(in: self, audioPlayer: self.audioPlayer!)
     }
 
     func audioSeekTo(_ seekTo: Float, url: URL?, data: Data?, duration: Int, key: Int) {
@@ -114,11 +98,10 @@ extension MessageCell: VLCMediaPlayerDelegate {
             audioPlayer!.play()
             doPause = true
         }
-        print("Before seeking \(audioPlayer!.time)")
         audioPlayer!.position = seekTo
         if doPause {
             audioPlayer!.pause()
         }
-        print("After seeking \(audioPlayer!.time)")
+        self.delegate?.didSeekMedia(in: self, audioPlayer: self.audioPlayer!, pos: seekTo)
     }
 }

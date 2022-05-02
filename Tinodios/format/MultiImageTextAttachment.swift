@@ -26,9 +26,9 @@ public class MultiImageTextAttachment: EntityTextAttachment {
         fatalError("not implemented")
     }
 
-    /// Show the next image in stack. If the end is reached, go back to the first image.
-    public func next() {
-        index = (index + 1) % images.count
+    // Show specific image.
+    public func setFrame(_ frame: Int) {
+        index = frame
         DispatchQueue.main.async {
             // Force container redraw.
             let length = self.textContainer?.layoutManager?.textStorage?.length
@@ -36,14 +36,14 @@ public class MultiImageTextAttachment: EntityTextAttachment {
         }
     }
 
+    /// Show the next image in stack. If the end is reached, go back to the first image.
+    public func next() {
+        setFrame((index + 1) % images.count)
+    }
+
     /// Reset the attachment to initial state.
     public func reset() {
-        index = 0
-        DispatchQueue.main.async {
-            // Force container redraw.
-            let length = self.textContainer?.layoutManager?.textStorage?.length
-            self.textContainer?.layoutManager?.invalidateDisplay(forCharacterRange: NSRange(location: 0, length: length ?? 1))
-        }
+        setFrame(0)
     }
 
     public override func image(forBounds imageBounds: CGRect, textContainer: NSTextContainer?, characterIndex charIndex: Int) -> UIImage? {

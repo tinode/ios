@@ -24,8 +24,12 @@ protocol MessageCellDelegate: AnyObject {
     func didTapCancelUpload(in cell: MessageCell)
     /// Activated media player.
     func didActivateMedia(in cell: MessageCell, audioPlayer: VLCMediaPlayer)
+    /// Activated media player.
+    func didPauseMedia(in cell: MessageCell, audioPlayer: VLCMediaPlayer)
     /// Media playback reached the end of the record.
-    func mediaPlaybackEnded(in cell: MessageCell, audioPlayer: VLCMediaPlayer, entityKey: Int)
+    func didEndMediaPlayback(in cell: MessageCell, audioPlayer: VLCMediaPlayer)
+    /// Seek operation completed.
+    func didSeekMedia(in cell: MessageCell, audioPlayer: VLCMediaPlayer, pos: Float)
 }
 
 // Optional date, avatar, sender name, message bubble: content, delivery marker, timestamp.

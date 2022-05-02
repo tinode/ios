@@ -9,7 +9,7 @@ import TinodeSDK
 import UIKit
 
 public protocol EntityTextAttachmentDelegate: AnyObject {
-    func action(value: URL, fromEntityKey: Int)
+    func action(_ action: String, payload: Any?)
 }
 
 public class EntityTextAttachment: NSTextAttachment {
