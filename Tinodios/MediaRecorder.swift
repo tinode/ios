@@ -1,0 +1,152 @@
+//
+//  MediaRecorder.swift
+//  Tinodios
+//
+//  Copyright © 2022 Tinode LLC. All rights reserved.
+//
+
+import Foundation
+import AVFoundation
+
+protocol MediaRecorderDelegate: AnyObject {
+    func didStartRecording()
+    func didFinishRecording(url: URL?, duration: TimeInterval)
+    func didUpdate(amplitude: Float, atTime: TimeInterval)
+    func didFailRecording(_ error: Error)
+}
+
+enum MediaRecorderError: Error {
+    case permissionDenyedError
+    case unknownPermissionError
+}
+
+/// MediaRecorder currenly support audio recording only.
+class MediaRecorder: NSObject {
+    static let shared = MediaRecorder()
+
+    private static let kTimerPrecision: TimeInterval = 0.01
+
+    private var session = AVAudioSession.sharedInstance()
+    private var audioRecorder: AVAudioRecorder!
+
+    private var settings = [
+        AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
+        AVSampleRateKey: 16000,
+        AVNumberOfChannelsKey: 1,
+        AVEncoderAudioQualityKey: AVAudioQuality.medium.rawValue
+    ]
+
+    fileprivate var updateTimer: Timer!
+    fileprivate var latestRecordName: String?
+
+    public var delegate: MediaRecorderDelegate?
+    public var timerPrecision = MediaRecorder.kTimerPrecision
+
+    /// URL of the latest record.
+    public var recordFileURL: URL? {
+        guard let name = self.latestRecordName else { return nil }
+        let path = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        return path.appendingPathComponent("\(name).m4a")
+    }
+
+    public func start() {
+        switch self.session.recordPermission {
+        case .undetermined:
+            self.session.requestRecordPermission({response in
+                DispatchQueue.main.async {
+                    if response {
+                        self.startRecording()
+                    } else {
+                        // Permission denyed.
+                        self.delegate?.didFailRecording(MediaRecorderError.permissionDenyedError)
+                    }
+                }
+            })
+            break
+        case .granted:
+            self.startRecording()
+        case .denied:
+            self.delegate?.didFailRecording(MediaRecorderError.unknownPermissionError)
+        @unknown default:
+            // Ignored: do nothing.
+            break
+        }
+    }
+
+    private func startRecording() {
+        self.latestRecordName = NSUUID().uuidString
+        do {
+            try self.session.setCategory(AVAudioSession.Category.playAndRecord, options: .defaultToSpeaker)
+            self.audioRecorder = try AVAudioRecorder(url: self.recordFileURL!, settings: settings)
+            self.audioRecorder.delegate = self
+            self.audioRecorder.isMeteringEnabled = true
+            self.audioRecorder.prepareToRecord()
+        } catch {
+            self.delegate?.didFailRecording(error)
+            print("Error setting up: %@", error.localizedDescription)
+            return
+        }
+
+        if !audioRecorder.isRecording {
+            do {
+                try self.session.setActive(true)
+                self.updateTimer = Timer.scheduledTimer(timeInterval: self.timerPrecision, target: self, selector: #selector(self.recordUpdate), userInfo: nil, repeats: true)
+                self.audioRecorder.record()
+                self.delegate?.didStartRecording()
+            } catch {
+                self.delegate?.didFailRecording(error)
+                print("Error recording: %@", error.localizedDescription)
+            }
+        }
+    }
+
+    public func stop() {
+        let duration = self.audioRecorder.currentTime
+        self.audioRecorder.stop()
+        self.delegate?.didFinishRecording(url: recordFileURL, duration: duration)
+        do {
+            try self.session.setActive(false)
+        } catch {
+            print("Failed to stop recording: %@", error.localizedDescription)
+        }
+    }
+
+    public func pause() {
+        self.audioRecorder.pause()
+    }
+
+    func delete() {
+        guard let recordURL = self.recordFileURL else { return }
+        let manager = FileManager.default
+        if manager.fileExists(atPath: recordURL.path) {
+            do {
+                try manager.removeItem(at: recordURL)
+                self.latestRecordName = nil
+            } catch {
+                print("Failed to delete recording: %@", error.localizedDescription)
+            }
+        } else {
+            // The recording does not exist.
+            self.latestRecordName = nil
+        }
+    }
+
+    @objc func recordUpdate() {
+        if self.audioRecorder.isRecording {
+            self.audioRecorder.updateMeters()
+            self.delegate?.didUpdate(amplitude: self.audioRecorder.averagePower(forChannel: 0), atTime: self.audioRecorder.currentTime)
+        } else {
+            self.updateTimer.invalidate()
+        }
+    }
+}
+
+
+extension MediaRecorder: AVAudioRecorderDelegate {
+    func audioRecorderDidFinishRecording(_ recorder: AVAudioRecorder, successfully flag: Bool) {
+        updateTimer.invalidate()
+    }
+
+    func audioRecorderEncodeErrorDidOccur(_ recorder: AVAudioRecorder, error: Error?) {
+    }
+}

@@ -8,7 +8,7 @@ import MobileVLCKit
 import UIKit
 import TinodeSDK
 
-/// A protocol used to detect taps in the chat message.
+/// A protocol used to detect events in the chat message.
 protocol MessageCellDelegate: AnyObject {
     /// Long tap anywhere in massage cell.
     func didLongTap(in cell: MessageCell)
@@ -67,6 +67,10 @@ class MessageCell: UICollectionViewCell {
         }
         contentView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         setupSubviews()
+    }
+
+    deinit {
+        self.audioPlayer?.stop()
     }
 
     /// The image view with the avatar.
@@ -145,6 +149,8 @@ class MessageCell: UICollectionViewCell {
     }
 
     override func prepareForReuse() {
+        print("prepare for reuse")
+
         super.prepareForReuse()
 
         self.audioPlayer?.stop()

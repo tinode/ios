@@ -21,6 +21,7 @@ extension MessageCell: VLCMediaPlayerDelegate {
             Cache.log.error("MessageCell - media playback failed")
             fallthrough
         case .stopped:
+            print("stopped")
             // Must reopen: VLCMedia closes the InputStrem.
             self.mediaStream = nil
             self.audioPlayer?.media = nil
@@ -89,8 +90,6 @@ extension MessageCell: VLCMediaPlayerDelegate {
 
     func audioSeekTo(_ seekTo: Float, url: URL?, data: Data?, duration: Int, key: Int) {
         initAudioPlayer()
-
-        print("Player is seekable: \(audioPlayer?.isSeekable)")
 
         initMedia(url: url, data: data, duration: duration, key: key)
         var doPause = false

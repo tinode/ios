@@ -32,6 +32,8 @@
 	<true/>
 	<key>NSCameraUsageDescription</key>
 	<string>Tinode takes photos with the camera to use as avatar or to send them to your contacts</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Tinode uses microphone to record audio messages you send to your contacts</string>
 	<key>NSContactsUsageDescription</key>
 	<string>Tinode sends only emails and phone numbers to the Tinode server to help you connect with other users</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>

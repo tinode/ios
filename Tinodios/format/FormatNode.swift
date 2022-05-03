@@ -600,7 +600,7 @@ class PlayTextAttachmentDelegate: EntityTextAttachmentDelegate {
     public func action(_ value: String, payload: Any? = nil) {
         guard let playButton = (parent as? MultiImageTextAttachment) else { return }
         switch value {
-        case "start":
+        case "play":
             playButton.setFrame(1)
         case "pause":
             playButton.setFrame(0)
