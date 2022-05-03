@@ -14,7 +14,7 @@ class WaveTextAttachment: EntityTextAttachment {
     private static let kThumbRadius: Float = 4
     private static let kSpacing: Float = 1
     // Minimum time between redraws in milliseconds.
-    private static let kMinFrameDuration = 50 // ms
+    private static let kMinFrameDuration = 30 // ms
 
     /// Container to be notified when the image is changed.
     private weak var textContainer: NSTextContainer?

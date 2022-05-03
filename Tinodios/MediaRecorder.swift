@@ -11,7 +11,7 @@ import AVFoundation
 protocol MediaRecorderDelegate: AnyObject {
     func didStartRecording()
     func didFinishRecording(url: URL?, duration: TimeInterval)
-    func didUpdate(amplitude: Float, atTime: TimeInterval)
+    func didUpdateRecording(amplitude: Float, atTime: TimeInterval)
     func didFailRecording(_ error: Error)
 }
 
@@ -24,28 +24,30 @@ enum MediaRecorderError: Error {
 class MediaRecorder: NSObject {
     static let shared = MediaRecorder()
 
-    private static let kTimerPrecision: TimeInterval = 0.01
+    private static let kTimerPrecision: TimeInterval = 0.03
+    private static let kSampleRate = 16000
 
     private var session = AVAudioSession.sharedInstance()
     private var audioRecorder: AVAudioRecorder!
 
     private var settings = [
         AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
-        AVSampleRateKey: 16000,
+        AVSampleRateKey: MediaRecorder.kSampleRate,
         AVNumberOfChannelsKey: 1,
         AVEncoderAudioQualityKey: AVAudioQuality.medium.rawValue
     ]
 
-    fileprivate var updateTimer: Timer!
-    fileprivate var latestRecordName: String?
+    private var updateTimer: Timer!
+    private var latestRecordName: String?
 
     public var delegate: MediaRecorderDelegate?
     public var timerPrecision = MediaRecorder.kTimerPrecision
+    public var saveRecordingToPath = FileManager.SearchPathDirectory.cachesDirectory
 
     /// URL of the latest record.
     public var recordFileURL: URL? {
         guard let name = self.latestRecordName else { return nil }
-        let path = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        let path = FileManager.default.urls(for: self.saveRecordingToPath, in: .userDomainMask)[0]
         return path.appendingPathComponent("\(name).m4a")
     }
 
@@ -134,7 +136,7 @@ class MediaRecorder: NSObject {
     @objc func recordUpdate() {
         if self.audioRecorder.isRecording {
             self.audioRecorder.updateMeters()
-            self.delegate?.didUpdate(amplitude: self.audioRecorder.averagePower(forChannel: 0), atTime: self.audioRecorder.currentTime)
+            self.delegate?.didUpdateRecording(amplitude: self.audioRecorder.averagePower(forChannel: 0), atTime: self.audioRecorder.currentTime)
         } else {
             self.updateTimer.invalidate()
         }
