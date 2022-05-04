@@ -14,6 +14,7 @@
             <connections>
                 <outlet property="allDisabledView" destination="yZd-O5-BVm" id="NDo-mO-Zal"/>
                 <outlet property="attachButton" destination="Sxl-U7-4Vy" id="Qpf-Oc-dWr"/>
+                <outlet property="horizontalSliderView" destination="9oE-ml-o30" id="chu-AU-gyC"/>
                 <outlet property="inputField" destination="bxx-m5-ifU" id="wwU-HN-RWu"/>
                 <outlet property="inputFieldHeight" destination="gP4-QC-iyW" id="XbB-0g-jEE"/>
                 <outlet property="peerMessagingDisabledHeight" destination="MET-cJ-zIv" id="MsA-sq-Vgr"/>
@@ -21,6 +22,10 @@
                 <outlet property="previewView" destination="JUS-tF-V11" id="yzx-Wr-kEg"/>
                 <outlet property="previewViewHeight" destination="6uu-eX-bmg" id="hso-kB-DW0"/>
                 <outlet property="sendButton" destination="LQB-Eu-unW" id="PaC-Hi-AC5"/>
+                <outlet property="sendButtonHorizontal" destination="C9M-dY-tg9" id="RYe-ly-CdZ"/>
+                <outlet property="sendButtonSize" destination="Ths-Pf-Iw7" id="SRd-jg-3ai"/>
+                <outlet property="sendButtonVertical" destination="eBK-B1-HA5" id="XTb-xi-9Ax"/>
+                <outlet property="verticalSliderView" destination="9bL-Nu-2Fw" id="u1b-vM-hzs"/>
             </connections>
         </placeholder>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
@@ -88,20 +93,104 @@
                         <userDefinedRuntimeAttribute type="string" keyPath="placeholderText" value="AbCd..."/>
                     </userDefinedRuntimeAttributes>
                 </textView>
-                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LQB-Eu-unW" userLabel="sendButton">
+                <view hidden="YES" opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="9bL-Nu-2Fw" userLabel="verticalSlider">
+                    <rect key="frame" x="376" y="60" width="26" height="80"/>
+                    <subviews>
+                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" image="chevron.up" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="d59-a4-gfI">
+                            <rect key="frame" x="6" y="30.5" width="14" height="10.5"/>
+                            <color key="tintColor" systemColor="secondaryLabelColor"/>
+                            <constraints>
+                                <constraint firstAttribute="width" constant="14" id="696-sV-3bN"/>
+                            </constraints>
+                        </imageView>
+                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" image="lock" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="WuY-74-Z7J">
+                            <rect key="frame" x="4" y="4.5" width="18.5" height="18.5"/>
+                            <color key="tintColor" systemColor="secondaryLabelColor"/>
+                        </imageView>
+                    </subviews>
+                    <viewLayoutGuide key="safeArea" id="eyh-06-AkL"/>
+                    <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="80" id="IMQ-kv-r9A"/>
+                        <constraint firstItem="d59-a4-gfI" firstAttribute="centerX" secondItem="9bL-Nu-2Fw" secondAttribute="centerX" id="KNF-na-MJi"/>
+                        <constraint firstItem="WuY-74-Z7J" firstAttribute="top" secondItem="9bL-Nu-2Fw" secondAttribute="top" constant="4" id="Uea-n6-lU4"/>
+                        <constraint firstAttribute="width" constant="26" id="Vq4-Pp-09V"/>
+                        <constraint firstItem="d59-a4-gfI" firstAttribute="top" secondItem="WuY-74-Z7J" secondAttribute="bottom" constant="2" id="rT8-Pr-MZd"/>
+                        <constraint firstItem="WuY-74-Z7J" firstAttribute="centerX" secondItem="9bL-Nu-2Fw" secondAttribute="centerX" id="ysX-gW-bDG"/>
+                    </constraints>
+                    <userDefinedRuntimeAttributes>
+                        <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                            <integer key="value" value="13"/>
+                        </userDefinedRuntimeAttribute>
+                        <userDefinedRuntimeAttribute type="number" keyPath="layer.shadowOpacity">
+                            <real key="value" value="0.25"/>
+                        </userDefinedRuntimeAttribute>
+                        <userDefinedRuntimeAttribute type="number" keyPath="layer.shadowRadius">
+                            <integer key="value" value="3"/>
+                        </userDefinedRuntimeAttribute>
+                        <userDefinedRuntimeAttribute type="size" keyPath="layer.shadowOffset">
+                            <size key="value" width="0.0" height="0.0"/>
+                        </userDefinedRuntimeAttribute>
+                    </userDefinedRuntimeAttributes>
+                </view>
+                <view hidden="YES" opaque="NO" alpha="0.80000000000000004" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="9oE-ml-o30" userLabel="horizontalSlider">
+                    <rect key="frame" x="322" y="114" width="80" height="26"/>
+                    <subviews>
+                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" image="chevron.left" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="6L4-hC-ggo">
+                            <rect key="frame" x="29.5" y="8" width="12.5" height="10.5"/>
+                            <color key="tintColor" systemColor="secondaryLabelColor"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="14" id="trV-Iw-Hkq"/>
+                            </constraints>
+                        </imageView>
+                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" image="trash" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="xR8-I3-sc2">
+                            <rect key="frame" x="6" y="2" width="19.5" height="20.5"/>
+                            <color key="tintColor" systemColor="secondaryLabelColor"/>
+                        </imageView>
+                    </subviews>
+                    <viewLayoutGuide key="safeArea" id="6G7-X6-8cC"/>
+                    <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
+                    <constraints>
+                        <constraint firstItem="6L4-hC-ggo" firstAttribute="centerY" secondItem="9oE-ml-o30" secondAttribute="centerY" id="HRj-AY-lq6"/>
+                        <constraint firstItem="xR8-I3-sc2" firstAttribute="centerY" secondItem="9oE-ml-o30" secondAttribute="centerY" id="Hcj-0i-YpQ"/>
+                        <constraint firstItem="xR8-I3-sc2" firstAttribute="leading" secondItem="9oE-ml-o30" secondAttribute="leading" constant="6" id="cEn-Wf-aMZ"/>
+                        <constraint firstAttribute="height" constant="26" id="gwu-Jg-bCA"/>
+                        <constraint firstAttribute="width" constant="80" id="hC6-tt-VIK"/>
+                        <constraint firstItem="6L4-hC-ggo" firstAttribute="leading" secondItem="xR8-I3-sc2" secondAttribute="trailing" constant="4" id="rSs-xp-3y3"/>
+                    </constraints>
+                    <userDefinedRuntimeAttributes>
+                        <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                            <integer key="value" value="13"/>
+                        </userDefinedRuntimeAttribute>
+                        <userDefinedRuntimeAttribute type="number" keyPath="layer.shadowOpacity">
+                            <real key="value" value="0.25"/>
+                        </userDefinedRuntimeAttribute>
+                        <userDefinedRuntimeAttribute type="number" keyPath="layer.shadowRadius">
+                            <integer key="value" value="3"/>
+                        </userDefinedRuntimeAttribute>
+                        <userDefinedRuntimeAttribute type="size" keyPath="layer.shadowOffset">
+                            <size key="value" width="0.0" height="0.0"/>
+                        </userDefinedRuntimeAttribute>
+                    </userDefinedRuntimeAttributes>
+                </view>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LQB-Eu-unW" userLabel="sendButton">
                     <rect key="frame" x="374" y="110" width="32" height="32"/>
                     <gestureRecognizers/>
                     <constraints>
                         <constraint firstAttribute="width" secondItem="LQB-Eu-unW" secondAttribute="height" multiplier="1:1" id="O3z-8u-PRJ"/>
                         <constraint firstAttribute="width" constant="32" id="Ths-Pf-Iw7"/>
                     </constraints>
-                    <fontDescription key="fontDescription" type="system" pointSize="15"/>
                     <color key="tintColor" systemColor="systemGreenColor"/>
                     <state key="normal">
                         <color key="titleColor" systemColor="systemGreenColor"/>
-                        <imageReference key="image" image="waveform.circle.fill" symbolScale="large"/>
-                        <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="26" scale="large" weight="regular"/>
+                        <imageReference key="image" image="waveform.circle.fill" catalog="system" symbolScale="large"/>
+                        <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="96" scale="large" weight="regular"/>
                     </state>
+                    <buttonConfiguration key="configuration" style="plain">
+                        <imageReference key="image" image="waveform.circle.fill" catalog="system" symbolScale="large"/>
+                        <preferredSymbolConfiguration key="preferredSymbolConfigurationForImage" configurationType="pointSize" pointSize="26" scale="large" weight="regular"/>
+                        <color key="baseForegroundColor" systemColor="systemGreenColor"/>
+                    </buttonConfiguration>
                     <connections>
                         <action selector="send:" destination="-1" eventType="touchUpInside" id="7cQ-kx-erM"/>
                         <outletCollection property="gestureRecognizers" destination="GEe-0f-ZcN" appends="YES" id="Sit-Or-T8O"/>
@@ -152,8 +241,10 @@
                 <constraint firstItem="yZd-O5-BVm" firstAttribute="trailing" secondItem="UC5-i1-la2" secondAttribute="trailing" id="4wH-hZ-eCL"/>
                 <constraint firstItem="JUS-tF-V11" firstAttribute="leading" secondItem="bxx-m5-ifU" secondAttribute="leading" id="5mj-iI-Dm0"/>
                 <constraint firstItem="yZd-O5-BVm" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="94X-fH-5hi"/>
-                <constraint firstItem="LQB-Eu-unW" firstAttribute="trailing" secondItem="bxx-m5-ifU" secondAttribute="trailing" constant="-4" id="C9M-dY-tg9"/>
+                <constraint firstItem="bxx-m5-ifU" firstAttribute="trailing" secondItem="9oE-ml-o30" secondAttribute="trailing" constant="8" id="9ag-de-0rc"/>
+                <constraint firstItem="LQB-Eu-unW" firstAttribute="centerX" secondItem="bxx-m5-ifU" secondAttribute="trailing" constant="-20" id="C9M-dY-tg9"/>
                 <constraint firstAttribute="trailing" secondItem="Awf-Rd-vTa" secondAttribute="trailing" constant="4" id="D9y-3Z-SlW"/>
+                <constraint firstItem="bxx-m5-ifU" firstAttribute="trailing" secondItem="9bL-Nu-2Fw" secondAttribute="trailing" constant="8" id="EkR-cM-Tdz"/>
                 <constraint firstItem="dee-Lg-Hb5" firstAttribute="leading" secondItem="JUS-tF-V11" secondAttribute="trailing" id="FZO-E7-Swq"/>
                 <constraint firstItem="Mh3-pG-tJg" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="FjB-HD-awt"/>
                 <constraint firstItem="JUS-tF-V11" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="4" id="IU9-Gp-XQV"/>
@@ -164,8 +255,10 @@
                 <constraint firstItem="dee-Lg-Hb5" firstAttribute="height" relation="lessThanOrEqual" secondItem="JUS-tF-V11" secondAttribute="height" id="cdl-7L-fcC"/>
                 <constraint firstItem="bxx-m5-ifU" firstAttribute="leading" secondItem="Sxl-U7-4Vy" secondAttribute="trailing" constant="10" id="cn1-M7-S72"/>
                 <constraint firstItem="JUS-tF-V11" firstAttribute="bottom" secondItem="bxx-m5-ifU" secondAttribute="top" constant="-4" id="cvG-er-6bg"/>
-                <constraint firstItem="LQB-Eu-unW" firstAttribute="bottom" secondItem="bxx-m5-ifU" secondAttribute="bottom" constant="-4" id="eBK-B1-HA5"/>
+                <constraint firstItem="bxx-m5-ifU" firstAttribute="bottom" secondItem="9bL-Nu-2Fw" secondAttribute="bottom" constant="6" id="dQb-Cb-6KE"/>
+                <constraint firstItem="LQB-Eu-unW" firstAttribute="centerY" secondItem="bxx-m5-ifU" secondAttribute="bottom" constant="-20" id="eBK-B1-HA5"/>
                 <constraint firstItem="JUS-tF-V11" firstAttribute="centerY" secondItem="dee-Lg-Hb5" secondAttribute="centerY" id="eFC-Eh-wwi"/>
+                <constraint firstItem="bxx-m5-ifU" firstAttribute="bottom" secondItem="9oE-ml-o30" secondAttribute="bottom" constant="6" id="efM-Kq-fHY"/>
                 <constraint firstItem="Sxl-U7-4Vy" firstAttribute="bottom" secondItem="bxx-m5-ifU" secondAttribute="bottom" constant="-4" id="gBG-6N-LRx"/>
                 <constraint firstItem="Mh3-pG-tJg" firstAttribute="trailing" secondItem="UC5-i1-la2" secondAttribute="trailing" id="jxj-Dw-oTU"/>
                 <constraint firstAttribute="bottom" secondItem="Mh3-pG-tJg" secondAttribute="bottom" id="kbY-qT-wTJ"/>
@@ -185,13 +278,23 @@
     </objects>
     <resources>
         <image name="add-48" width="48" height="48"/>
-        <image name="waveform.circle.fill" width="11" height="11"/>
+        <image name="chevron.left" catalog="system" width="96" height="128"/>
+        <image name="chevron.up" catalog="system" width="128" height="72"/>
+        <image name="lock" catalog="system" width="128" height="128"/>
+        <image name="trash" catalog="system" width="121" height="128"/>
+        <image name="waveform.circle.fill" catalog="system" width="128" height="121"/>
         <image name="xmark.circle" catalog="system" width="128" height="121"/>
         <systemColor name="groupTableViewBackgroundColor">
             <color red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="labelColor">
             <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+        <systemColor name="secondaryLabelColor">
+            <color red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+        <systemColor name="secondarySystemBackgroundColor">
+            <color red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>

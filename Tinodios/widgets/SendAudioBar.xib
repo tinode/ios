@@ -55,7 +55,7 @@
                     </userDefinedRuntimeAttributes>
                 </textView>
                 <button opaque="NO" contentMode="scaleAspectFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="NYA-tg-FW1" userLabel="sendButton">
-                    <rect key="frame" x="374" y="52" width="32" height="32"/>
+                    <rect key="frame" x="374" y="50" width="32" height="32"/>
                     <constraints>
                         <constraint firstAttribute="width" secondItem="NYA-tg-FW1" secondAttribute="height" multiplier="1:1" id="7ow-1B-hZv"/>
                         <constraint firstAttribute="width" constant="32" id="Unp-qg-iB1"/>
@@ -66,7 +66,7 @@
                         <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="64" scale="large" weight="regular"/>
                     </state>
                     <buttonConfiguration key="configuration" style="plain">
-                        <imageReference key="image" image="arrow.up.circle.fill" symbolScale="large"/>
+                        <imageReference key="image" image="arrow.up.circle.fill" catalog="system" symbolScale="large"/>
                         <preferredSymbolConfiguration key="preferredSymbolConfigurationForImage" configurationType="pointSize" pointSize="26" scale="large" weight="regular"/>
                         <color key="baseForegroundColor" systemColor="systemGreenColor"/>
                     </buttonConfiguration>
@@ -145,7 +145,7 @@
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="raP-W5-MNa" secondAttribute="trailing" id="ef0-sB-o0X"/>
                 <constraint firstItem="FVw-dD-oxb" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="2" id="hTH-0V-kuj"/>
                 <constraint firstItem="Xnx-eg-2Wv" firstAttribute="trailing" secondItem="vUN-kp-3ea" secondAttribute="trailing" id="hbi-N4-xZH"/>
-                <constraint firstItem="NYA-tg-FW1" firstAttribute="bottom" secondItem="B7j-wq-K6b" secondAttribute="bottom" constant="-4" id="jwG-VP-YOz"/>
+                <constraint firstItem="NYA-tg-FW1" firstAttribute="bottom" secondItem="B7j-wq-K6b" secondAttribute="bottom" constant="-6" id="jwG-VP-YOz"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="B7j-wq-K6b" secondAttribute="trailing" constant="4" id="n2b-kX-4ES"/>
                 <constraint firstItem="NYA-tg-FW1" firstAttribute="trailing" secondItem="B7j-wq-K6b" secondAttribute="trailing" constant="-4" id="nwn-Ut-1EQ"/>
                 <constraint firstItem="Xnx-eg-2Wv" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="qeo-m5-3jV"/>
@@ -158,6 +158,7 @@
     </objects>
     <resources>
         <image name="arrow.up.circle.fill" width="11" height="11"/>
+        <image name="arrow.up.circle.fill" catalog="system" width="128" height="121"/>
         <image name="play.fill" width="8" height="9"/>
         <image name="record.circle" catalog="system" width="128" height="121"/>
         <image name="trash" catalog="system" width="121" height="128"/>

@@ -26,6 +26,13 @@ protocol SendMessageBarDelegate: AnyObject {
 }
 
 class SendMessageBar: UIView {
+    private static let kSendButtonPointsNormal: CGFloat = 26
+    private static let kSendButtonPointsPressed: CGFloat = 40
+    private static let kSendButtonSizeNormal: CGFloat = 32
+    private static let kSendButtonSizePressed: CGFloat = 48
+    private static let kSendButtonImageWave = UIImage(systemName: "waveform.circle.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: SendMessageBar.kSendButtonPointsNormal))!
+    private static let kSendButtonImageWavePressed = UIImage(systemName: "waveform.circle.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: SendMessageBar.kSendButtonPointsPressed))!
+    private static let kSendButtonImageArrow = UIImage(systemName: "arrow.up.circle.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: SendMessageBar.kSendButtonPointsNormal))!
 
     // MARK: Action delegate
 
@@ -35,6 +42,19 @@ class SendMessageBar: UIView {
 
     @IBOutlet weak var attachButton: UIButton!
     @IBOutlet weak var sendButton: UIButton!
+    @IBOutlet weak var sendButtonSize: NSLayoutConstraint!
+    @IBOutlet weak var sendButtonHorizontal: NSLayoutConstraint!
+    @IBOutlet weak var sendButtonVertical: NSLayoutConstraint!
+
+    // 
+    @IBOutlet weak var verticalSliderView: UIView!
+    @IBOutlet weak var horizontalSliderView: UIView!
+
+    // Constraints.
+    private var sendButtonConstrains: CGPoint!
+    // Position in SendMessageBar coordinates.
+    private var sendButtonLocation: CGPoint!
+
     @IBOutlet weak var inputField: PlaceholderTextView!
     @IBOutlet weak var inputFieldHeight: NSLayoutConstraint!
 
@@ -84,12 +104,50 @@ class SendMessageBar: UIView {
         textViewDidChange(inputField)
     }
 
+    // Handle audio recorder button swipes and presses.
     @IBAction func longPressed(sender: UILongPressGestureRecognizer) {
+        if !inputField.actualText.isEmpty {
+            return
+        }
+
         switch sender.state {
         case .began:
+            let loc = sender.location(in: self)
+            self.sendButtonConstrains = CGPoint(x: self.sendButtonHorizontal.constant, y: self.sendButtonVertical.constant)
+            self.sendButtonLocation = CGPoint(x: loc.x, y: loc.y)
+            DispatchQueue.main.async {
+                UIView.animate(withDuration: 0.2, delay: 0, options: UIView.AnimationOptions.curveEaseIn, animations: {
+                    self.sendButtonSize.constant = SendMessageBar.kSendButtonSizePressed
+                    self.sendButton.imageView?.image = SendMessageBar.kSendButtonImageWavePressed
+                }, completion: nil)
+            }
             self.delegate?.sendMessageBar(recordAudio: .start)
         case .ended:
+            UIView.animate(withDuration: 0.15, delay: 0, options: UIView.AnimationOptions.curveEaseIn, animations: {
+                self.sendButton.imageView?.image = SendMessageBar.kSendButtonImageWave
+                self.sendButtonSize.constant = SendMessageBar.kSendButtonSizeNormal
+                self.sendButtonHorizontal.constant = self.sendButtonConstrains.x
+                self.sendButtonVertical.constant = self.sendButtonConstrains.y
+                self.layoutIfNeeded()
+            }, completion: nil)
             self.delegate?.sendMessageBar(recordAudio: .stopAndSend)
+        case .changed:
+            // Constrain movements to either strictly horizontal or strictly vertical.
+            let loc = sender.location(in: self)
+            // dX and dY are negative: the movement is up and to the left.
+            var dX = min(0, loc.x - sendButtonLocation.x)
+            var dY = min(0, loc.y - sendButtonLocation.y)
+
+            if abs(dX) > abs(dY) {
+                // Horizontal move.
+                dY = 0
+            } else {
+                // Vertical move.
+                dX = 0
+            }
+
+            self.sendButtonHorizontal.constant = sendButtonConstrains.x + dX
+            self.sendButtonVertical.constant = sendButtonConstrains.y + dY
         default:
             print(sender.state.rawValue)
         }
@@ -153,6 +211,9 @@ class SendMessageBar: UIView {
     }
 
     private func configure() {
+        horizontalSliderView.alpha = 0.8
+        verticalSliderView.alpha = 0.8
+
         inputField.layer.borderWidth = 0
         inputField.layer.cornerRadius = 18
         inputField.autoresizingMask = [.flexibleHeight]
@@ -215,10 +276,10 @@ extension SendMessageBar: UITextViewDelegate {
             textView.isScrollEnabled = true
         }
 
-        if textView.text.isEmpty {
-            sendButton.imageView?.image = UIImage(named: "waveform.circle.fill")
+        if inputField.actualText.isEmpty {
+            self.sendButton.imageView?.image = SendMessageBar.kSendButtonImageWave
         } else {
-            sendButton.imageView?.image = UIImage(named: "arrow.up.circle.fill")
+            self.sendButton.imageView?.image = SendMessageBar.kSendButtonImageArrow
         }
     }
 }

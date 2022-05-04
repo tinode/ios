@@ -74,20 +74,22 @@
                         <userDefinedRuntimeAttribute type="boolean" keyPath="autoAdjustHeight" value="NO"/>
                     </userDefinedRuntimeAttributes>
                 </textView>
-                <button opaque="NO" contentMode="scaleAspectFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LQB-Eu-unW" userLabel="sendButton">
+                <button opaque="NO" contentMode="scaleAspectFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LQB-Eu-unW" userLabel="sendButton">
                     <rect key="frame" x="374" y="140" width="32" height="32"/>
                     <constraints>
                         <constraint firstAttribute="width" secondItem="LQB-Eu-unW" secondAttribute="height" multiplier="1:1" id="O3z-8u-PRJ"/>
                         <constraint firstAttribute="width" constant="32" id="Ths-Pf-Iw7"/>
                     </constraints>
                     <color key="tintColor" systemColor="systemGreenColor"/>
+                    <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
                     <state key="normal">
-                        <imageReference key="image" image="arrow.up.circle.fill" symbolScale="large"/>
-                        <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="64" scale="large" weight="regular"/>
+                        <color key="titleColor" systemColor="systemGreenColor"/>
+                        <imageReference key="image" image="arrow.up.circle.fill" catalog="system" symbolScale="large"/>
+                        <preferredSymbolConfiguration key="preferredSymbolConfiguration" scale="large" weight="regular"/>
                     </state>
                     <buttonConfiguration key="configuration" style="plain">
-                        <imageReference key="image" image="arrow.up.circle.fill" symbolScale="large"/>
-                        <preferredSymbolConfiguration key="preferredSymbolConfigurationForImage" configurationType="pointSize" pointSize="26" scale="large" weight="regular"/>
+                        <imageReference key="image" image="arrow.up.circle.fill" catalog="system" symbolScale="large"/>
+                        <preferredSymbolConfiguration key="preferredSymbolConfigurationForImage" scale="large" weight="regular"/>
                         <color key="baseForegroundColor" systemColor="systemGreenColor"/>
                     </buttonConfiguration>
                     <userDefinedRuntimeAttributes>
@@ -143,7 +145,7 @@
         </view>
     </objects>
     <resources>
-        <image name="arrow.up.circle.fill" width="11" height="11"/>
+        <image name="arrow.up.circle.fill" catalog="system" width="128" height="121"/>
         <image name="xmark.circle" catalog="system" width="128" height="121"/>
         <systemColor name="groupTableViewBackgroundColor">
             <color red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>

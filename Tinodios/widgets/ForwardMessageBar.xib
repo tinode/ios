@@ -37,7 +37,7 @@
                     </constraints>
                     <color key="tintColor" systemColor="systemGreenColor"/>
                     <state key="normal">
-                        <imageReference key="image" image="arrow.up.circle.fill" symbolScale="large"/>
+                        <imageReference key="image" image="arrow.up.circle.fill" catalog="system" symbolScale="large"/>
                         <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="26" scale="large" weight="regular"/>
                     </state>
                     <userDefinedRuntimeAttributes>
@@ -94,7 +94,7 @@
         </view>
     </objects>
     <resources>
-        <image name="arrow.up.circle.fill" width="11" height="11"/>
+        <image name="arrow.up.circle.fill" catalog="system" width="128" height="121"/>
         <image name="xmark.circle" catalog="system" width="128" height="121"/>
         <systemColor name="labelColor">
             <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>

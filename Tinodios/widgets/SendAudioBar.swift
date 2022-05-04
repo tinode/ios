@@ -43,6 +43,11 @@ class SendAudioBar: UIView {
     @IBAction func deleteRecord(_ sender: Any) {
     }
 
+    @IBAction func cancelPreviewClicked(_ sender: Any) {
+        self.togglePreviewBar(with: nil)
+        self.delegate?.dismissPreview()
+    }
+
     // MARK: - Constants
     private enum Constants {
         static let maxLines: CGFloat = 4
@@ -92,11 +97,6 @@ class SendAudioBar: UIView {
         waveBackground.layer.cornerRadius = 18
 
         sendButton.isEnabled = true
-    }
-
-    @IBAction func cancelPreviewClicked(_ sender: Any) {
-        self.togglePreviewBar(with: nil)
-        self.delegate?.dismissPreview()
     }
 
     public func togglePreviewBar(with message: NSAttributedString?) {
