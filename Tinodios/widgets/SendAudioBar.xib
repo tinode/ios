@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="20037" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="20020"/>
+        <capability name="Image references" minToolsVersion="12.0"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="SendAudioBar" customModule="Tinodios" customModuleProvider="target">
+            <connections>
+                <outlet property="deleteButton" destination="FVw-dD-oxb" id="X4D-F4-jBe"/>
+                <outlet property="durationLabel" destination="nRJ-Zh-NKS" id="4u4-dk-mZt"/>
+                <outlet property="playButton" destination="XiI-dQ-VTN" id="oct-PY-qUE"/>
+                <outlet property="previewView" destination="Xnx-eg-2Wv" id="KXc-Qb-Jgb"/>
+                <outlet property="previewViewHeight" destination="azD-UF-ITw" id="Dqy-PY-3ZT"/>
+                <outlet property="recordButton" destination="9rh-a7-hjD" id="fuL-rA-hO5"/>
+                <outlet property="sendButton" destination="NYA-tg-FW1" id="s7J-yk-U6I"/>
+                <outlet property="waveBackground" destination="B7j-wq-K6b" id="q3C-0n-Auy"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB">
+            <rect key="frame" x="0.0" y="0.0" width="414" height="84"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <visualEffectView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="raP-W5-MNa">
+                    <rect key="frame" x="0.0" y="0.0" width="414" height="84"/>
+                    <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="pFQ-Ed-1SW">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="84"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                    </view>
+                    <blurEffect style="regular"/>
+                </visualEffectView>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="B7j-wq-K6b" userLabel="waveBackground">
+                    <rect key="frame" x="96" y="40" width="314" height="48"/>
+                    <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    <constraints>
+                        <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="40" id="Wge-DJ-JJr"/>
+                    </constraints>
+                </view>
+                <textView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="redraw" editable="NO" textAlignment="natural" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Xnx-eg-2Wv" userLabel="Preview View" customClass="RichTextView" customModule="Tinodios" customModuleProvider="target">
+                    <rect key="frame" x="0.0" y="0.0" width="414" height="40"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="40" id="azD-UF-ITw"/>
+                    </constraints>
+                    <color key="textColor" systemColor="labelColor"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                    <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                    <userDefinedRuntimeAttributes>
+                        <userDefinedRuntimeAttribute type="boolean" keyPath="autoAdjustHeight" value="NO"/>
+                    </userDefinedRuntimeAttributes>
+                </textView>
+                <button opaque="NO" contentMode="scaleAspectFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="NYA-tg-FW1" userLabel="sendButton">
+                    <rect key="frame" x="374" y="52" width="32" height="32"/>
+                    <constraints>
+                        <constraint firstAttribute="width" secondItem="NYA-tg-FW1" secondAttribute="height" multiplier="1:1" id="7ow-1B-hZv"/>
+                        <constraint firstAttribute="width" constant="32" id="Unp-qg-iB1"/>
+                    </constraints>
+                    <color key="tintColor" systemColor="systemGreenColor"/>
+                    <state key="normal">
+                        <imageReference key="image" image="arrow.up.circle.fill" symbolScale="large"/>
+                        <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="64" scale="large" weight="regular"/>
+                    </state>
+                    <buttonConfiguration key="configuration" style="plain">
+                        <imageReference key="image" image="arrow.up.circle.fill" symbolScale="large"/>
+                        <preferredSymbolConfiguration key="preferredSymbolConfigurationForImage" configurationType="pointSize" pointSize="26" scale="large" weight="regular"/>
+                        <color key="baseForegroundColor" systemColor="systemGreenColor"/>
+                    </buttonConfiguration>
+                    <userDefinedRuntimeAttributes>
+                        <userDefinedRuntimeAttribute type="boolean" keyPath="layer.masksToBounds" value="NO"/>
+                    </userDefinedRuntimeAttributes>
+                    <connections>
+                        <action selector="send:" destination="-1" eventType="touchUpInside" id="rEr-oQ-pCv"/>
+                    </connections>
+                </button>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="FVw-dD-oxb" userLabel="deleteButton">
+                    <rect key="frame" x="2" y="50" width="32" height="32"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="32" id="61F-mR-z5X"/>
+                        <constraint firstAttribute="width" constant="32" id="Gkc-n5-bLl"/>
+                    </constraints>
+                    <state key="normal" title="Button"/>
+                    <buttonConfiguration key="configuration" style="plain" image="trash" catalog="system"/>
+                    <connections>
+                        <action selector="delete:" destination="-1" eventType="touchUpInside" id="uot-Y5-HlG"/>
+                    </connections>
+                </button>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="00:00" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="nRJ-Zh-NKS" userLabel="durationLabel">
+                    <rect key="frame" x="42" y="54.5" width="46" height="21"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                    <nil key="textColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="9rh-a7-hjD" userLabel="recordButton">
+                    <rect key="frame" x="96" y="49" width="32" height="32"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="32" id="JLo-ok-4C1"/>
+                        <constraint firstAttribute="height" constant="32" id="X3H-CX-CVn"/>
+                    </constraints>
+                    <color key="tintColor" systemColor="systemRedColor"/>
+                    <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                    <state key="normal">
+                        <imageReference key="image" image="record.circle" catalog="system" symbolScale="large"/>
+                        <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="14" weight="regular"/>
+                    </state>
+                    <connections>
+                        <action selector="record:" destination="-1" eventType="touchUpInside" id="eUQ-dD-9bl"/>
+                    </connections>
+                </button>
+                <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="XiI-dQ-VTN" userLabel="playButton">
+                    <rect key="frame" x="96" y="49" width="32" height="32"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="32" id="1PK-Lk-8hB"/>
+                        <constraint firstAttribute="height" constant="32" id="mf4-Gj-aZB"/>
+                    </constraints>
+                    <color key="tintColor" systemColor="tintColor"/>
+                    <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                    <state key="normal">
+                        <imageReference key="image" image="play.fill" symbolScale="large"/>
+                        <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="16" weight="regular"/>
+                    </state>
+                    <connections>
+                        <action selector="play:" destination="-1" eventType="touchUpInside" id="lrQ-HO-mBb"/>
+                    </connections>
+                </button>
+            </subviews>
+            <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
+            <constraints>
+                <constraint firstItem="B7j-wq-K6b" firstAttribute="bottom" secondItem="vUN-kp-3ea" secondAttribute="bottom" constant="4" id="1ev-fp-HZ1"/>
+                <constraint firstItem="raP-W5-MNa" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="2ae-mH-ytl"/>
+                <constraint firstItem="Xnx-eg-2Wv" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="5vD-u0-wzT"/>
+                <constraint firstItem="XiI-dQ-VTN" firstAttribute="centerY" secondItem="nRJ-Zh-NKS" secondAttribute="centerY" id="7gu-d0-0wk"/>
+                <constraint firstItem="FVw-dD-oxb" firstAttribute="centerY" secondItem="nRJ-Zh-NKS" secondAttribute="centerY" constant="1" id="D4a-vd-k4W"/>
+                <constraint firstItem="XiI-dQ-VTN" firstAttribute="leading" secondItem="nRJ-Zh-NKS" secondAttribute="trailing" constant="8" id="Hes-eL-rTR"/>
+                <constraint firstItem="Xnx-eg-2Wv" firstAttribute="bottom" secondItem="B7j-wq-K6b" secondAttribute="top" id="JhB-df-vkr"/>
+                <constraint firstItem="9rh-a7-hjD" firstAttribute="centerY" secondItem="nRJ-Zh-NKS" secondAttribute="centerY" id="KQx-AT-RjL"/>
+                <constraint firstItem="nRJ-Zh-NKS" firstAttribute="leading" secondItem="FVw-dD-oxb" secondAttribute="trailing" constant="8" id="Xui-ma-ZJn"/>
+                <constraint firstItem="9rh-a7-hjD" firstAttribute="leading" secondItem="nRJ-Zh-NKS" secondAttribute="trailing" constant="8" id="bFT-Gr-KN9"/>
+                <constraint firstItem="raP-W5-MNa" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="bfn-lN-XV8"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="FVw-dD-oxb" secondAttribute="bottom" constant="2" id="dxv-s4-FV9"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="raP-W5-MNa" secondAttribute="trailing" id="ef0-sB-o0X"/>
+                <constraint firstItem="FVw-dD-oxb" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="2" id="hTH-0V-kuj"/>
+                <constraint firstItem="Xnx-eg-2Wv" firstAttribute="trailing" secondItem="vUN-kp-3ea" secondAttribute="trailing" id="hbi-N4-xZH"/>
+                <constraint firstItem="NYA-tg-FW1" firstAttribute="bottom" secondItem="B7j-wq-K6b" secondAttribute="bottom" constant="-4" id="jwG-VP-YOz"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="B7j-wq-K6b" secondAttribute="trailing" constant="4" id="n2b-kX-4ES"/>
+                <constraint firstItem="NYA-tg-FW1" firstAttribute="trailing" secondItem="B7j-wq-K6b" secondAttribute="trailing" constant="-4" id="nwn-Ut-1EQ"/>
+                <constraint firstItem="Xnx-eg-2Wv" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="qeo-m5-3jV"/>
+                <constraint firstItem="B7j-wq-K6b" firstAttribute="leading" secondItem="nRJ-Zh-NKS" secondAttribute="trailing" constant="8" id="vkp-e6-njt"/>
+                <constraint firstAttribute="bottom" secondItem="raP-W5-MNa" secondAttribute="bottom" id="z9z-aH-G2k"/>
+            </constraints>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <point key="canvasLocation" x="137.68115942028987" y="91.741071428571431"/>
+        </view>
+    </objects>
+    <resources>
+        <image name="arrow.up.circle.fill" width="11" height="11"/>
+        <image name="play.fill" width="8" height="9"/>
+        <image name="record.circle" catalog="system" width="128" height="121"/>
+        <image name="trash" catalog="system" width="121" height="128"/>
+        <systemColor name="labelColor">
+            <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+        <systemColor name="systemGreenColor">
+            <color red="0.20392156862745098" green="0.7803921568627451" blue="0.34901960784313724" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+        <systemColor name="systemRedColor">
+            <color red="1" green="0.23137254901960785" blue="0.18823529411764706" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+        <systemColor name="tintColor">
+            <color red="0.0" green="0.47843137254901963" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+    </resources>
+</document>

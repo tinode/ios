@@ -37,6 +37,7 @@ extension MessageViewController: SendMessageBarDelegate {
     private func attachImage() {
         imagePicker?.present(from: self.view)
     }
+
     func sendMessageBar(textChangedTo text: String) {
         if self.sendTypingNotifications {
             interactor?.sendTypingNotification()
@@ -46,6 +47,17 @@ extension MessageViewController: SendMessageBarDelegate {
     func sendMessageBar(enablePeersMessaging: Bool) {
         if enablePeersMessaging {
             interactor?.enablePeersMessaging()
+        }
+    }
+
+    func sendMessageBar(recordAudio action: AudioRecordingAction) {
+        switch action {
+        case .start:
+            print("start recording audio")
+        case .stopAndSend:
+            print("end recording audio and send")
+        default:
+            print("some other recording action \(action)")
         }
     }
 }

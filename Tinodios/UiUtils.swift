@@ -373,7 +373,7 @@ class UiUtils {
         var settings: (color: UInt, bgColor: UInt, icon: String)
         switch level {
         case .error: settings = (color: 0xFFFFFFFF, bgColor: 0xFFFF6666, icon: "important")
-        case .warning: settings = (color: 0xFF666633, bgColor: 0xFFFFFFCC, icon: "warning")
+        case .warning: settings = (color: 0xFF666633, bgColor: 0xFFFFFFCC, icon: "exclamationmark.triangle")
         case .info: settings = (color: 0xFF333366, bgColor: 0xFFCCCCFF, icon: "info")
         }
         let icon = UIImageView(image: UIImage(named: settings.icon))

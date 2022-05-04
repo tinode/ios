@@ -7,14 +7,22 @@
 
 import UIKit
 
+enum AudioRecordingAction {
+    case start
+    case stopAndSend
+    case lock
+    case cancel
+    case pauseRecording
+    case playback
+    case pausePlayback
+}
+
 protocol SendMessageBarDelegate: AnyObject {
     func sendMessageBar(sendText: String)
-
     func sendMessageBar(attachment: Bool)
-
     func sendMessageBar(textChangedTo text: String)
-
     func sendMessageBar(enablePeersMessaging: Bool)
+    func sendMessageBar(recordAudio: AudioRecordingAction)
 }
 
 class SendMessageBar: UIView {
@@ -74,6 +82,17 @@ class SendMessageBar: UIView {
         delegate?.sendMessageBar(sendText: msg)
         inputField.text = nil
         textViewDidChange(inputField)
+    }
+
+    @IBAction func longPressed(sender: UILongPressGestureRecognizer) {
+        switch sender.state {
+        case .began:
+            self.delegate?.sendMessageBar(recordAudio: .start)
+        case .ended:
+            self.delegate?.sendMessageBar(recordAudio: .stopAndSend)
+        default:
+            print(sender.state.rawValue)
+        }
     }
 
     @IBAction func enablePeerMessagingClicked(_ sender: Any) {
@@ -148,7 +167,7 @@ class SendMessageBar: UIView {
             inputFieldMaxHeight = font.lineHeight * Constants.maxLines
         }
 
-        sendButton.isEnabled = false
+        sendButton.isEnabled = true
         toggleNotAvailableOverlay(visible: false)
         togglePeerMessagingDisabled(visible: false)
         togglePendingPreviewBar(with: nil)
@@ -196,6 +215,10 @@ extension SendMessageBar: UITextViewDelegate {
             textView.isScrollEnabled = true
         }
 
-        sendButton.isEnabled = !textView.text.isEmpty
+        if textView.text.isEmpty {
+            sendButton.imageView?.image = UIImage(named: "waveform.circle.fill")
+        } else {
+            sendButton.imageView?.image = UIImage(named: "arrow.up.circle.fill")
+        }
     }
 }

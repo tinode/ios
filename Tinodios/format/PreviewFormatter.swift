@@ -103,6 +103,6 @@ class PreviewFormatter: AbstractFormatter {
     }
 
     override func handleUnknown(content _: [FormatNode], using _: [String: JSONValue]?, draftyKey _: Int?) -> FormatNode {
-        return annotatedIcon(iconName: "puzzlepiece", annotation: NSLocalizedString("Unsupported", comment: "Label shown next to an unsupported Drafty format element"), comment: "Unsupported.")
+        return annotatedIcon(iconName: "puzzlepiece.extension", annotation: NSLocalizedString("Unsupported", comment: "Label shown next to an unsupported Drafty format element"), comment: "Unsupported.")
     }
 }

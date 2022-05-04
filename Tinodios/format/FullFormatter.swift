@@ -161,7 +161,7 @@ class FullFormatter: AbstractFormatter {
 
         var attachment = Attachment(content: .image)
         if let attr = data {
-            attachment.icon = "puzzlepiece"
+            attachment.icon = "puzzlepiece.extension"
             attachment.name = attr["name"]?.asString()
             attachment.width = width
             attachment.height = height
