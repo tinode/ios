@@ -86,7 +86,6 @@
 		B091BA4C2820A98B00317CDC /* RecordedMediaPlayback.swift in Sources */ = {isa = PBXBuildFile; fileRef = B091BA4B2820A98B00317CDC /* RecordedMediaPlayback.swift */; };
 		B091BA4E2821A5DB00317CDC /* SendAudioBar.xib in Resources */ = {isa = PBXBuildFile; fileRef = B091BA4D2821A5DB00317CDC /* SendAudioBar.xib */; };
 		B091BA502821F75400317CDC /* SendAudioBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = B091BA4F2821F75400317CDC /* SendAudioBar.swift */; };
-		B091BA522821F8A900317CDC /* AudioRecorderWidget.xib in Resources */ = {isa = PBXBuildFile; fileRef = B091BA512821F8A900317CDC /* AudioRecorderWidget.xib */; };
 		B09C564A2469362A00D6615D /* SettingsPersonalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B09C56492469362A00D6615D /* SettingsPersonalViewController.swift */; };
 		B09C564C2469756B00D6615D /* SettingsNotificationsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B09C564B2469756B00D6615D /* SettingsNotificationsViewController.swift */; };
 		B09C564E246975F700D6615D /* SettingsHelpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B09C564D246975F700D6615D /* SettingsHelpViewController.swift */; };
@@ -242,7 +241,6 @@
 		B091BA4B2820A98B00317CDC /* RecordedMediaPlayback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordedMediaPlayback.swift; sourceTree = "<group>"; };
 		B091BA4D2821A5DB00317CDC /* SendAudioBar.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SendAudioBar.xib; sourceTree = "<group>"; };
 		B091BA4F2821F75400317CDC /* SendAudioBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendAudioBar.swift; sourceTree = "<group>"; };
-		B091BA512821F8A900317CDC /* AudioRecorderWidget.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AudioRecorderWidget.xib; sourceTree = "<group>"; };
 		B093F50126C5BBF300FAA4E8 /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		B093F50426C5BD4200FAA4E8 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Main.strings; sourceTree = "<group>"; };
 		B093F50526C5BD8800FAA4E8 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -481,7 +479,6 @@
 		B0C496B022787C020084FA0D /* widgets */ = {
 			isa = PBXGroup;
 			children = (
-				B091BA512821F8A900317CDC /* AudioRecorderWidget.xib */,
 				0A8D945922BEF08100DC154E /* AvatarWithOnlineIndicator.swift */,
 				0A8D945722BEED3700DC154E /* AvatarWithOnlineIndicator.xib */,
 				0A8D945B22BF5B7F00DC154E /* AvatarWithOnlineIndicator+TypingAnimation.swift */,
@@ -627,7 +624,6 @@
 				0A6AC322229FAA130025A4EC /* PermissionsEditView.xib in Resources */,
 				0A0380DF21B3CC8200A3FA0E /* Assets.xcassets in Resources */,
 				0A0380DD21B3CC8100A3FA0E /* Main.storyboard in Resources */,
-				B091BA522821F8A900317CDC /* AudioRecorderWidget.xib in Resources */,
 				B026F243257C59CA003BA14B /* ProgressView.xib in Resources */,
 				0A8D945822BEED3700DC154E /* AvatarWithOnlineIndicator.xib in Resources */,
 				B0BE302427B831BD00B04631 /* TagsEditDialogView.xib in Resources */,
