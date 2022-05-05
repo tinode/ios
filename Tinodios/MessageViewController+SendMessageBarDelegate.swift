@@ -56,6 +56,8 @@ extension MessageViewController: SendMessageBarDelegate {
             print("start recording audio")
         case .stopAndSend:
             print("end recording audio and send")
+        case .cancel:
+            print("cancel recording")
         default:
             print("some other recording action \(action)")
         }

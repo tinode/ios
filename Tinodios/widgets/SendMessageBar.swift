@@ -104,6 +104,18 @@ class SendMessageBar: UIView {
         textViewDidChange(inputField)
     }
 
+    private func endRecording() {
+        UIView.animate(withDuration: 0.15, delay: 0, options: UIView.AnimationOptions.curveEaseIn, animations: {
+            self.sendButton.imageView?.image = SendMessageBar.kSendButtonImageWave
+            self.sendButtonSize.constant = SendMessageBar.kSendButtonSizeNormal
+            self.sendButtonHorizontal.constant = self.sendButtonConstrains.x
+            self.sendButtonVertical.constant = self.sendButtonConstrains.y
+            self.verticalSliderView.isHidden = true
+            self.horizontalSliderView.isHidden = true
+            self.layoutIfNeeded()
+        }, completion: nil)
+    }
+
     // Handle audio recorder button swipes and presses.
     @IBAction func longPressed(sender: UILongPressGestureRecognizer) {
         if !inputField.actualText.isEmpty {
@@ -119,17 +131,13 @@ class SendMessageBar: UIView {
                 UIView.animate(withDuration: 0.2, delay: 0, options: UIView.AnimationOptions.curveEaseIn, animations: {
                     self.sendButtonSize.constant = SendMessageBar.kSendButtonSizePressed
                     self.sendButton.imageView?.image = SendMessageBar.kSendButtonImageWavePressed
+                    self.verticalSliderView.isHidden = false
+                    self.horizontalSliderView.isHidden = false
                 }, completion: nil)
             }
             self.delegate?.sendMessageBar(recordAudio: .start)
         case .ended:
-            UIView.animate(withDuration: 0.15, delay: 0, options: UIView.AnimationOptions.curveEaseIn, animations: {
-                self.sendButton.imageView?.image = SendMessageBar.kSendButtonImageWave
-                self.sendButtonSize.constant = SendMessageBar.kSendButtonSizeNormal
-                self.sendButtonHorizontal.constant = self.sendButtonConstrains.x
-                self.sendButtonVertical.constant = self.sendButtonConstrains.y
-                self.layoutIfNeeded()
-            }, completion: nil)
+            endRecording()
             self.delegate?.sendMessageBar(recordAudio: .stopAndSend)
         case .changed:
             // Constrain movements to either strictly horizontal or strictly vertical.
@@ -145,9 +153,15 @@ class SendMessageBar: UIView {
                 // Vertical move.
                 dX = 0
             }
-
-            self.sendButtonHorizontal.constant = sendButtonConstrains.x + dX
-            self.sendButtonVertical.constant = sendButtonConstrains.y + dY
+            if dX < -56 {
+                sender.isEnabled = false
+                endRecording()
+                self.delegate?.sendMessageBar(recordAudio: .cancel)
+                sender.isEnabled = true
+            } else {
+                self.sendButtonHorizontal.constant = sendButtonConstrains.x + dX
+                self.sendButtonVertical.constant = sendButtonConstrains.y + dY
+            }
         default:
             print(sender.state.rawValue)
         }

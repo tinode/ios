@@ -170,7 +170,7 @@
 "ftJ-J6-tqx.text" = "ВСЕ ПОЛЬЗОВАТЕЛИ";
 
 /* Class = "UILabel"; text = "Send read receipts"; ObjectID = "geh-gC-6qO"; */
-"geh-gC-6qO.text" = "Отправлять уведомления о прочтении";
+"geh-gC-6qO.text" = "Уведомления о прочтении";
 
 /* Class = "UITextField"; accessibilityHint = "Password"; ObjectID = "gLF-JR-ZfF"; */
 "gLF-JR-ZfF.accessibilityHint" = "Пароль";
