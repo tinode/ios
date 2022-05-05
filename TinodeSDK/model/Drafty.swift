@@ -481,6 +481,52 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
         }
     }
 
+    /// Insert audio message.
+    ///
+    /// - Parameters:
+    ///     - at: location to insert audio at
+    ///     - mime: Content-type, such as 'image/jpeg'.
+    ///     - bits: Content as an array of bytes
+    ///     - preview: an array of amplitudes to use as preview.
+    ///     - duration:record duration in milliseconds.
+    ///     - fname: name of the file to suggest to the receiver.
+    ///     - refurl: Reference to full/extended image.
+    ///     - size: file size hint (in bytes) as reported by the client.
+    /// - Returns: 'self' Drafty object.
+    public func insertAudio(at: Int, mime: String?, bits: Data?, preview: Data, duration: Int, fname: String?, refurl: URL?, size: Int) throws -> Drafty {
+        guard bits != nil || refurl != nil else {
+            throw DraftyError.illegalArgument("Either image bits or reference URL must not be null.")
+        }
+
+        guard txt.count > at && at >= 0 else {
+            throw DraftyError.invalidIndex("Invalid insertion position")
+        }
+
+        prepareForEntity(at: at, len: 1)
+
+        var data: [String: JSONValue] = [:]
+        if let mime = mime, !mime.isEmpty {
+            data["mime"] = JSONValue.string(mime)
+        }
+        if let bits = bits {
+            data["val"] = JSONValue.bytes(bits)
+        }
+        data["preview"] = JSONValue.bytes(preview)
+        data["duration"] = JSONValue.int(duration)
+        if let fname = fname, !fname.isEmpty {
+            data["name"] = JSONValue.string(fname)
+        }
+        if let refurl = refurl {
+            data["ref"] = JSONValue.string(refurl.absoluteString)
+        }
+        if size > 0 {
+            data["size"] = JSONValue.int(size)
+        }
+        ent!.append(Entity(tp: "AU", data: data))
+
+        return self
+    }
+
     /// Insert inline image
     ///
     /// - Parameters:

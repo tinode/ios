@@ -312,7 +312,7 @@ class MessageViewController: UIViewController {
         self.collectionView = collectionView
 
         collectionView.addSubview(refreshControl)
-        refreshControl.addTarget(self, action: #selector(loadNextPage), for: .valueChanged)
+        refreshControl.addTarget(self, action: #selector(self.loadNextPage), for: .valueChanged)
 
         // Setup "Go to latest message" button.
         let buttonGoToLatest = UIButton(type: .custom)
@@ -323,6 +323,8 @@ class MessageViewController: UIViewController {
         buttonGoToLatest.layer.cornerRadius = 16
         buttonGoToLatest.layer.shadowOpacity = 0.25
         buttonGoToLatest.layer.shadowOffset = CGSize()
+        buttonGoToLatest.addTarget(self, action: #selector(self.goToLastMessage), for: .touchUpInside)
+
         view.addSubview(buttonGoToLatest)
         self.goToLatestButton = buttonGoToLatest
         buttonGoToLatest.isHidden = true
@@ -402,6 +404,10 @@ class MessageViewController: UIViewController {
         self.interactor?.loadNextPage()
     }
 
+    @objc func goToLastMessage() {
+        collectionView.scrollToBottom(animated: true)
+    }
+
     @objc func sendAttachment(notification: NSNotification) {
         // Attachment size less base64 expansion and overhead.
         let maxInbandSize = Cache.tinode.getServerLimit(for: Tinode.kMaxMessageSize, withDefault: MessageViewController.kMaxInbandAttachmentSize) * 3 / 4 - 1024
@@ -428,6 +434,31 @@ class MessageViewController: UIViewController {
             }
         default:
             break
+        }
+    }
+
+    func sendAudioAttachment(url: URL, duration: Int, preview: Data) {
+        print("sendAudioAttachment")
+        // Attachment size less base64 expansion and overhead.
+        let maxInbandSize = Cache.tinode.getServerLimit(for: Tinode.kMaxMessageSize, withDefault: MessageViewController.kMaxInbandAttachmentSize) * 3 / 4 - 1024
+
+        let data: Data
+        do {
+            data = try Data(contentsOf: url)
+        } catch {
+            Cache.log.error("MessageVC - failed to read audio record: %@", error.localizedDescription)
+            return
+        }
+
+        let mime = Utils.mimeForUrl(url: url, ifMissing: "audio/m4a")
+        if data.count > maxInbandSize {
+            self.interactor?.uploadAudio(UploadDef(mimeType: mime, data: data, duration: duration, preview: preview))
+        } else {
+            print("Sending short audio of size \(data.count), duration=\(duration)")
+            if let drafty = try? Drafty(plainText: " ").insertAudio(at: 0, mime: mime, bits: data, preview: preview, duration: duration, fname: nil, refurl: nil, size: data.count) {
+                print("Drafty: \(drafty)")
+                _ = interactor?.sendMessage(content: drafty)
+            }
         }
     }
 
@@ -1134,10 +1165,12 @@ extension MessageViewController: ForwardToDelegate {
 }
 
 extension MessageViewController: UICollectionViewDelegate {
-    func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset offset: UnsafeMutablePointer<CGPoint>) {
-
-        if !collectionView.visibleCells.isEmpty && !messages.isEmpty {
-            self.goToLatestButton.isHidden = (messages.last?.seqId ?? -1) == (collectionView.visibleCells.last as! MessageCell).seqId
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let isHidden = scrollView.contentOffset.y + scrollView.frame.size.height + 40 >= scrollView.contentSize.height
+        if self.goToLatestButton.isHidden != isHidden {
+            UIView.transition(with: self.goToLatestButton, duration: 0.4, options: .transitionCrossDissolve, animations: {
+                self.goToLatestButton.isHidden = isHidden
+            }, completion: nil)
         }
     }
 

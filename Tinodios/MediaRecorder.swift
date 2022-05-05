@@ -22,8 +22,6 @@ enum MediaRecorderError: Error {
 
 /// MediaRecorder currenly support audio recording only.
 class MediaRecorder: NSObject {
-    static let shared = MediaRecorder()
-
     private static let kTimerPrecision: TimeInterval = 0.03
     private static let kSampleRate = 16000
 
@@ -43,6 +41,7 @@ class MediaRecorder: NSObject {
     public var delegate: MediaRecorderDelegate?
     public var timerPrecision = MediaRecorder.kTimerPrecision
     public var saveRecordingToPath = FileManager.SearchPathDirectory.cachesDirectory
+    public var duration: Int?
 
     /// URL of the latest record.
     public var recordFileURL: URL? {
@@ -93,6 +92,7 @@ class MediaRecorder: NSObject {
             do {
                 try self.session.setActive(true)
                 self.updateTimer = Timer.scheduledTimer(timeInterval: self.timerPrecision, target: self, selector: #selector(self.recordUpdate), userInfo: nil, repeats: true)
+                self.duration = 0
                 self.audioRecorder.record()
                 self.delegate?.didStartRecording()
             } catch {
@@ -103,9 +103,12 @@ class MediaRecorder: NSObject {
     }
 
     public func stop() {
+        guard let recordURL = self.recordFileURL else { return }
+
         let duration = self.audioRecorder.currentTime
+        self.duration = Int(duration * 1000)
         self.audioRecorder.stop()
-        self.delegate?.didFinishRecording(url: recordFileURL, duration: duration)
+        self.delegate?.didFinishRecording(url: recordURL, duration: duration)
         do {
             try self.session.setActive(false)
         } catch {
@@ -114,11 +117,13 @@ class MediaRecorder: NSObject {
     }
 
     public func pause() {
+        guard self.recordFileURL != nil else { return }
         self.audioRecorder.pause()
     }
 
     func delete() {
         guard let recordURL = self.recordFileURL else { return }
+
         let manager = FileManager.default
         if manager.fileExists(atPath: recordURL.path) {
             do {
@@ -130,6 +135,7 @@ class MediaRecorder: NSObject {
         } else {
             // The recording does not exist.
             self.latestRecordName = nil
+            self.duration = nil
         }
     }
 
@@ -137,6 +143,7 @@ class MediaRecorder: NSObject {
         if self.audioRecorder.isRecording {
             self.audioRecorder.updateMeters()
             self.delegate?.didUpdateRecording(amplitude: self.audioRecorder.averagePower(forChannel: 0), atTime: self.audioRecorder.currentTime)
+            self.duration = Int(self.audioRecorder.currentTime * 1000)
         } else {
             self.updateTimer.invalidate()
         }

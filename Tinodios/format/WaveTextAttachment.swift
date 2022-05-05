@@ -193,11 +193,6 @@ class WaveTextAttachment: EntityTextAttachment {
             return
         }
 
-        // Values for scaling amplitude.
-        guard let maxAmp = buffer.max(), maxAmp > 0 else {
-            return
-        }
-
         bars = []
         for i in 0 ..< contains {
             let amp = max(buffer[(index + i) % contains], 0)
@@ -205,7 +200,7 @@ class WaveTextAttachment: EntityTextAttachment {
             // startX, endX
             let x = Float(Float(1.0) + Float(leftPadding) + Float(i) * (WaveTextAttachment.kLineWidth + WaveTextAttachment.kSpacing) + WaveTextAttachment.kLineWidth * Float(0.5))
             // Y length
-            let y = amp / maxAmp * height * 0.9
+            let y = amp * height * 0.9
             // starting point
             bars.append(CGPoint(x: Double(x), y: Double((height - y) * 0.5)))
             bars.append(CGPoint(x: Double(x), y: Double((height + y) * 0.5)))
@@ -219,7 +214,12 @@ class WaveTextAttachment: EntityTextAttachment {
     }
 
     // Quick and dirty resampling of the original preview bars into a smaller (or equal) number of bars we can display here.
+    // The bar height is normalized to 0..1.
     private static func resampleBars(src: Data, dstLen: Int) -> [Float] {
+        guard !src.isEmpty else {
+            return [Float].init(repeating: 0.01, count: dstLen)
+        }
+
         var dst = [Float].init(repeating: 0, count: dstLen)
         // Resampling factor. Could be lower or higher than 1.
         // src = 100, dst = 200, factor = 0.5

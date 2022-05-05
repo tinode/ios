@@ -2,7 +2,7 @@
 //  Cache.swift
 //  Tinodios
 //
-//  Copyright © 2019 Tinode. All rights reserved.
+//  Copyright © 2019-2022 Tinode. All rights reserved.
 //
 
 import UIKit
@@ -11,8 +11,9 @@ import TinodiosDB
 import Firebase
 
 class Cache {
-    private static let `default` = Cache()
+    private static let shared = Cache()
 
+    private var mediaRecorderInstance: MediaRecorder?
     private var tinodeInstance: Tinode?
     private var timer = RepeatingTimer(timeInterval: 60 * 60 * 4) // Once every 4 hours.
     private var largeFileHelper: LargeFileHelper?
@@ -20,31 +21,31 @@ class Cache {
     internal static let log = TinodeSDK.Log(subsystem: "co.tinode.tinodios")
 
     public static var tinode: Tinode {
-        return Cache.default.getTinode()
+        return Cache.shared.getTinode()
     }
     public static func getLargeFileHelper(withIdentifier identifier: String? = nil) -> LargeFileHelper {
-        return Cache.default.getLargeFileHelper(withIdentifier: identifier)
+        return Cache.shared.getLargeFileHelper(withIdentifier: identifier)
     }
     public static func invalidate() {
-        if let tinode = Cache.default.tinodeInstance {
-            Cache.default.timer.suspend()
+        if let tinode = Cache.shared.tinodeInstance {
+            Cache.shared.timer.suspend()
             tinode.logout()
             Messaging.messaging().deleteToken { error in
                 Cache.log.debug("Failed to delete FCM token: %@", error.debugDescription)
             }
-            Cache.default.tinodeInstance = nil
+            Cache.shared.tinodeInstance = nil
         }
     }
     public static func isContactSynchronizerActive() -> Bool {
-        return Cache.default.timer.state == .resumed
+        return Cache.shared.timer.state == .resumed
     }
     public static func synchronizeContactsPeriodically() {
-        Cache.default.timer.suspend()
+        Cache.shared.timer.suspend()
         // Try to synchronize contacts immediately
         ContactsSynchronizer.default.run()
         // And repeat once every 4 hours.
-        Cache.default.timer.eventHandler = { ContactsSynchronizer.default.run() }
-        Cache.default.timer.resume()
+        Cache.shared.timer.eventHandler = { ContactsSynchronizer.default.run() }
+        Cache.shared.timer.resume()
     }
     private func getTinode() -> Tinode {
         // TODO: fix tsan false positive.
@@ -78,5 +79,17 @@ class Cache {
         return topics.reduce(into: 0, { result, topic in
             result += topic.isReader && !topic.isMuted ? topic.unread : 0
         })
+    }
+
+    private func initMediaRecorder() -> MediaRecorder {
+        mediaRecorderInstance = MediaRecorder()
+        return mediaRecorderInstance!
+    }
+
+    public static var mediaRecorder: MediaRecorder {
+        if let recorder = Cache.shared.mediaRecorderInstance {
+            return recorder
+        }
+        return Cache.shared.initMediaRecorder()
     }
 }

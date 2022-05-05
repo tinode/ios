@@ -149,8 +149,6 @@ class MessageCell: UICollectionViewCell {
     }
 
     override func prepareForReuse() {
-        print("prepare for reuse")
-
         super.prepareForReuse()
 
         self.audioPlayer?.stop()

@@ -31,8 +31,11 @@ protocol MessageBusinessLogic: AnyObject {
     func acceptInvitation()
     func ignoreInvitation()
     func blockTopic()
+
+    func uploadAudio(_ def: UploadDef)
     func uploadFile(_ def: UploadDef)
     func uploadImage(_ def: UploadDef)
+
     func prepareReply(to msg: Message?) -> PromisedReply<Drafty>?
     func dismissPendingMessage()
 
@@ -59,10 +62,13 @@ struct UploadDef {
     var data: Data
     var width: CGFloat?
     var height: CGFloat?
+    var duration: Int?
+    var preview: Data?
 }
 
 class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, MessageDataStore {
     public enum AttachmentType: Int {
+        case audio // Audio record
         case file // File attachment
         case image // Image attachment
     }
@@ -510,8 +516,14 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         uploadMessageAttachment(type: .file, def)
     }
 
+    func uploadAudio(_ def: UploadDef) {
+        uploadMessageAttachment(type: .audio, def)
+    }
+
     private func uploadMessageAttachment(type: AttachmentType, _ def: UploadDef) {
-        guard let filename = def.filename, let mimeType = def.mimeType, let topic = topic else { return }
+        guard let mimeType = def.mimeType, let topic = topic else { return }
+
+        let filename = def.filename ?? ""
 
         // Check if the attachment is too big even for out-of-band uploads.
         if def.data.count > Cache.tinode.getServerLimit(for: Tinode.kMaxFileUploadSize, withDefault: MessageViewController.kMaxAttachmentSize) {
@@ -538,8 +550,11 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         let previewData: Data?
         var head: [String: JSONValue]?
         switch type {
+        case .audio:
+            draft = MessageInteractor.draftyAudio(refurl: ref, mimeType: mimeType, data: nil, duration: def.duration!, preview: def.preview!, size: def.data.count)
+            previewData = nil
         case .file:
-            draft = MessageInteractor.draftyFile(filename: filename, refurl: ref, mimeType: mimeType, data: nil)
+            draft = MessageInteractor.draftyFile(filename: filename, refurl: ref, mimeType: mimeType, data: nil, size: def.data.count)
             previewData = nil
         case .image:
             let image = def.image!
@@ -600,6 +615,8 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
 
                     var draft: Drafty?
                     switch type {
+                    case .audio:
+                        draft = MessageInteractor.draftyAudio(refurl: ref, mimeType: mimeType, data: nil, duration: def.duration!, preview: def.preview!, size: def.data.count)
                     case .file:
                         draft = try? Drafty().attachFile(mime: mimeType, fname: filename, refurl: srvUrl, size: def.data.count)
                     case .image:
@@ -622,8 +639,8 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         }
     }
 
-    private static func draftyFile(filename: String?, refurl: URL, mimeType: String?, data: Data?) -> Drafty? {
-        return try? Drafty().attachFile(mime: mimeType, bits: data, fname: filename, refurl: refurl, size: data?.count ?? 0)
+    private static func draftyFile(filename: String?, refurl: URL, mimeType: String?, data: Data?, size: Int) -> Drafty? {
+        return try? Drafty().attachFile(mime: mimeType, bits: data, fname: filename, refurl: refurl, size: size)
     }
 
     private static func draftyImage(caption: String?, filename: String?, refurl: URL?, mimeType: String?, data: Data, width: Int, height: Int, size: Int) -> Drafty? {
@@ -643,6 +660,16 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         }
 
         return content
+    }
+
+    private static func draftyAudio(refurl: URL?, mimeType: String?, data: Data?, duration: Int, preview: Data, size: Int) -> Drafty? {
+        let ref: URL?
+        if let refurl = refurl, let base = Cache.tinode.baseURL(useWebsocketProtocol: false) {
+            ref = URL(string: refurl.relativize(from: base))
+        } else {
+            ref = nil
+        }
+        return try? Drafty(plainText: " ").insertAudio(at: 0, mime: mimeType, bits: data, preview: preview, duration: duration, fname: nil, refurl: ref, size: size)
     }
 
     override func onData(data: MsgServerData?) {

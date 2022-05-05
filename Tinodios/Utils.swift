@@ -87,6 +87,14 @@ public class Utils {
         return ProcessInfo.processInfo.globallyUniqueString + "." + (ext ?? "bin")
     }
 
+    public static func mimeForUrl(url: URL, ifMissing: String = "application/octet-stream") -> String {
+        if let uti = try? url.resourceValues(forKeys: [.typeIdentifierKey]).typeIdentifier {
+            let unmanaged = UTTypeCopyPreferredTagWithClass(uti as CFString, kUTTagClassMIMEType)
+            return unmanaged?.takeRetainedValue() as String? ?? ifMissing
+        }
+        return ifMissing
+    }
+
     public static func fetchTopics(archived: Bool) -> [DefaultComTopic]? {
         return Cache.tinode.getFilteredTopics(filter: {(topic: TopicProto) in
             return topic.topicType.matches(TopicType.user) && topic.isArchived == archived && topic.isJoiner

@@ -53,11 +53,18 @@ extension MessageViewController: SendMessageBarDelegate {
     func sendMessageBar(recordAudio action: AudioRecordingAction) {
         switch action {
         case .start:
-            print("start recording audio")
+            Cache.mediaRecorder.start()
+            print("recording started")
         case .stopAndSend:
-            print("end recording audio and send")
+            print("end recording audio and send, url=\(Cache.mediaRecorder.recordFileURL ?? URL(fileURLWithPath: "nil"))")
+            Cache.mediaRecorder.stop()
+            if let recordURL = Cache.mediaRecorder.recordFileURL {
+                sendAudioAttachment(url: recordURL, duration: Cache.mediaRecorder.duration!, preview: Data())
+            }
         case .cancel:
-            print("cancel recording")
+            Cache.mediaRecorder.stop()
+            Cache.mediaRecorder.delete()
+            print("cancelled recording")
         default:
             print("some other recording action \(action)")
         }
@@ -87,11 +94,7 @@ extension MessageViewController: UIDocumentPickerDelegate {
 
             let bits = try Data(contentsOf: urls[0], options: .mappedIfSafe)
             let fname = urls[0].lastPathComponent
-            var mimeType: String?
-            if let uti = try urls[0].resourceValues(forKeys: [.typeIdentifierKey]).typeIdentifier {
-                let unmanaged = UTTypeCopyPreferredTagWithClass(uti as CFString, kUTTagClassMIMEType)
-                mimeType = unmanaged?.takeRetainedValue() as String? ?? "application/octet-stream"
-            }
+            let mimeType: String = Utils.mimeForUrl(url: urls[0], ifMissing: "application/octet-stream")
             let maxAttachmentSize = Cache.tinode.getServerLimit(for: Tinode.kMaxFileUploadSize, withDefault: MessageViewController.kMaxAttachmentSize)
             guard bits.count <= maxAttachmentSize else {
                 UiUtils.showToast(message: String(format: NSLocalizedString("The file size exceeds the limit %@", comment: "Error message"), UiUtils.bytesToHumanSize(maxAttachmentSize)))
