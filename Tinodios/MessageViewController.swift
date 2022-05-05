@@ -82,7 +82,7 @@ class MessageViewController: UIViewController {
         static let kMinimumCellWidth: CGFloat = 94
         // This is the space between the other side of the message and the edge of screen.
         // I.e. for incoming messages the space between the message and the *right* edge, for
-        // outfoing between the message and the left edge.
+        // outgoing between the message and the left edge.
         static let kFarSideHorizontalSpacing: CGFloat = 45
 
         // Insets around collection view, i.e. main view padding
@@ -135,6 +135,8 @@ class MessageViewController: UIViewController {
 
     /// Pointer to the view holding messages.
     weak var collectionView: MessageView!
+    /// Pointer to the view holding messages.
+    weak var goToLatestButton: UIButton!
 
     var interactor: (MessageBusinessLogic & MessageDataStore)?
     private let refreshControl = UIRefreshControl()
@@ -312,13 +314,18 @@ class MessageViewController: UIViewController {
         collectionView.addSubview(refreshControl)
         refreshControl.addTarget(self, action: #selector(loadNextPage), for: .valueChanged)
 
-        // Setup UICollectionView constraints: fill the screen
-        collectionView.translatesAutoresizingMaskIntoConstraints = false
-        let top = collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor) // FIXME: maybe it needs some spacing
-        let bottom = collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -(inputAccessoryView?.frame.height ?? 0))
-        let leading = collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor)
-        let trailing = collectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor)
-        NSLayoutConstraint.activate([top, bottom, trailing, leading])
+        // Setup "Go to latest message" button.
+        let buttonGoToLatest = UIButton(type: .custom)
+        buttonGoToLatest.backgroundColor = .secondarySystemBackground
+        buttonGoToLatest.imageView?.tintColor = .secondaryLabel
+        buttonGoToLatest.setImage(UIImage(systemName: "chevron.down", withConfiguration: UIImage.SymbolConfiguration(pointSize: 18)), for: .normal)
+        buttonGoToLatest.sizeToFit()
+        buttonGoToLatest.layer.cornerRadius = 16
+        buttonGoToLatest.layer.shadowOpacity = 0.25
+        buttonGoToLatest.layer.shadowOffset = CGSize()
+        view.addSubview(buttonGoToLatest)
+        self.goToLatestButton = buttonGoToLatest
+        buttonGoToLatest.isHidden = true
     }
 
     override func viewDidLoad() {
@@ -343,7 +350,24 @@ class MessageViewController: UIViewController {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
 
-        collectionView.contentInset.bottom = inputAccessoryView?.frame.height ?? 0
+        collectionView.contentInset.bottom = 8
+
+        // Setup UICollectionView constraints: fill the screen
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -(inputAccessoryView?.frame.height ?? 0)),
+            collectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+            collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor)
+        ])
+
+        // Button on the bottom-right.
+        self.goToLatestButton.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            self.goToLatestButton.widthAnchor.constraint(equalToConstant: 32.0),
+            self.goToLatestButton.heightAnchor.constraint(equalToConstant: 32.0),
+            self.goToLatestButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -(inputAccessoryView?.frame.height ?? 0) - 16),
+            self.goToLatestButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -8)])
 
         // Otherwise setting contentInset after viewDidAppear will be animated.
         if isInitialLayout {
@@ -373,16 +397,6 @@ class MessageViewController: UIViewController {
         self.interactor?.sendReadNotification(explicitSeq: nil, when: .now() + .seconds(1))
         self.applyTopicPermissions()
     }
-    // Continue listening for events even when the VC isn't visible.
-    // TODO: remote this.
-    // override func viewWillDisappear(_ animated: Bool) {
-    //    if let viewControllers = self.navigationController?.viewControllers, viewControllers.count > 1, viewControllers[viewControllers.count - 2] === self {
-    //        // It's a push. No need to detach.
-    //        print("keeping topic attached")
-    //    } else {
-    //        self.interactor?.cleanup()
-    //    }
-    // }
 
     @objc func loadNextPage() {
         self.interactor?.loadNextPage()
@@ -1120,6 +1134,13 @@ extension MessageViewController: ForwardToDelegate {
 }
 
 extension MessageViewController: UICollectionViewDelegate {
+    func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset offset: UnsafeMutablePointer<CGPoint>) {
+
+        if !collectionView.visibleCells.isEmpty && !messages.isEmpty {
+            self.goToLatestButton.isHidden = (messages.last?.seqId ?? -1) == (collectionView.visibleCells.last as! MessageCell).seqId
+        }
+    }
+
     func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
         guard let path = self.highlightCellAtPathAfterScroll else { return }
         self.highlightCellAtPathAfterScroll = nil
