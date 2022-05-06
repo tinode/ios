@@ -107,6 +107,10 @@ class MessageViewController: UIViewController {
         static let kUpdateBatchFullRefreshThreshold = 5
         // Max time difference between successive messages to count them as one batch.
         static let kUpdateBatchTimeDeltaThresholdMs: Int64 = 300
+
+        // Minimum and manimum duration of an audio recording.
+        static let kMinDuration = 2000
+        static let kMaxDuration = 600_000
     }
 
     /// The `sendMessageBar` is used as the `inputAccessoryView` in the view controller.
@@ -438,7 +442,11 @@ class MessageViewController: UIViewController {
     }
 
     func sendAudioAttachment(url: URL, duration: Int, preview: Data) {
-        print("sendAudioAttachment")
+
+        if duration < Constants.kMinDuration {
+            return
+        }
+
         // Attachment size less base64 expansion and overhead.
         let maxInbandSize = Cache.tinode.getServerLimit(for: Tinode.kMaxMessageSize, withDefault: MessageViewController.kMaxInbandAttachmentSize) * 3 / 4 - 1024
 

@@ -17,6 +17,7 @@ protocol MediaRecorderDelegate: AnyObject {
 enum MediaRecorderError: Error {
     case permissionDenyedError
     case unknownPermissionError
+    case permissionRequested
 }
 
 /// MediaRecorder currenly support audio recording only.
@@ -43,6 +44,7 @@ class MediaRecorder: NSObject {
     public var timerPrecision = MediaRecorder.kTimerPrecision
     public var saveRecordingToPath = FileManager.SearchPathDirectory.cachesDirectory
     public var duration: Int?
+    public var maxDuration: Int?
 
     /// URL of the latest record.
     public var recordFileURL: URL? {
@@ -52,12 +54,15 @@ class MediaRecorder: NSObject {
     }
 
     public func start() {
+        let recordTimeLimit: TimeInterval? = self.maxDuration != nil ? TimeInterval(self.maxDuration!) / 1000 : nil
+
         switch self.session.recordPermission {
         case .undetermined:
+            self.delegate?.didFailRecording(MediaRecorderError.permissionRequested)
             self.session.requestRecordPermission({response in
                 DispatchQueue.main.async {
                     if response {
-                        self.startRecording()
+                        self.startRecording(forDuration: recordTimeLimit)
                     } else {
                         // Permission denyed.
                         self.delegate?.didFailRecording(MediaRecorderError.permissionDenyedError)
@@ -66,7 +71,7 @@ class MediaRecorder: NSObject {
             })
             break
         case .granted:
-            self.startRecording()
+            self.startRecording(forDuration: recordTimeLimit)
         case .denied:
             self.delegate?.didFailRecording(MediaRecorderError.unknownPermissionError)
         @unknown default:
@@ -75,7 +80,7 @@ class MediaRecorder: NSObject {
         }
     }
 
-    private func startRecording() {
+    private func startRecording(forDuration: TimeInterval?) {
         self.latestRecordName = NSUUID().uuidString
         do {
             try self.session.setCategory(AVAudioSession.Category.playAndRecord, options: .defaultToSpeaker)
@@ -94,7 +99,11 @@ class MediaRecorder: NSObject {
                 try self.session.setActive(true)
                 self.updateTimer = Timer.scheduledTimer(timeInterval: self.timerPrecision, target: self, selector: #selector(self.recordUpdate), userInfo: nil, repeats: true)
                 self.duration = 0
-                self.audioRecorder.record()
+                if let maxDuration = forDuration {
+                    self.audioRecorder.record(forDuration: maxDuration)
+                } else {
+                    self.audioRecorder.record()
+                }
                 self.delegate?.didStartRecording()
             } catch {
                 self.delegate?.didFailRecording(error)

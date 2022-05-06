@@ -83,6 +83,7 @@ class Cache {
 
     private func initMediaRecorder() -> MediaRecorder {
         mediaRecorderInstance = MediaRecorder()
+        mediaRecorderInstance!.maxDuration = 600_000 // 10 min
         return mediaRecorderInstance!
     }
 
