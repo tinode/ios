@@ -150,7 +150,7 @@ class MediaRecorder: NSObject {
     @objc func recordUpdate() {
         if self.audioRecorder.isRecording {
             self.audioRecorder.updateMeters()
-            let amplitude = self.audioRecorder.averagePower(forChannel: 0)
+            let amplitude = pow(10, 0.1 * self.audioRecorder.averagePower(forChannel: 0))
             self.audioSampler.put(amplitude)
             self.delegate?.didUpdateRecording(amplitude: amplitude, atTime: self.audioRecorder.currentTime)
             self.duration = Int(self.audioRecorder.currentTime * 1000)
@@ -203,7 +203,7 @@ private class AudioSampler {
         }
 
         // Check if the current bucket is full.
-        if (samplesPerBucket == aggregateCount) {
+        if samplesPerBucket == aggregateCount {
             // Normalize the bucket.
             scratchBuff[bucketIndex] = scratchBuff[bucketIndex] / Float(samplesPerBucket)
             bucketIndex += 1
