@@ -93,6 +93,11 @@ public class WaveImage {
         self.init(size: size, data: nil)
     }
 
+    convenience public init(size: CGSize, count: Int) {
+        self.init(size: size, data: Data(count: count))
+    }
+
+    /// Current image.
     public var image: UIImage? {
         return cachedImage
     }
@@ -159,6 +164,20 @@ public class WaveImage {
             return true
         }
         return false
+    }
+
+    /// Add another bar to waveform.
+    public func put(_ amplitude: Float) {
+        if contains < buffer.count {
+            buffer[index + contains] = amplitude
+            contains += 1
+        } else {
+            index += 1
+            index %= buffer.count
+            buffer[index] = amplitude
+        }
+        recalcBars()
+        delegate?.invalidate(in: self)
     }
 
     @objc func animateFrame(timer: Timer) {
@@ -237,6 +256,7 @@ public class WaveImage {
             for i in 0 ..< dst.count {
                 dst[i] = dst[i] / maxAmp
             }
+            return dst
         }
 
         return [Float].init(repeating: 0.01, count: dstLen)
@@ -309,4 +329,3 @@ public class WaveImage {
         return renderedImage
     }
 }
-
