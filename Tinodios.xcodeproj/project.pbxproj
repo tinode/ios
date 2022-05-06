@@ -86,6 +86,7 @@
 		B091BA4C2820A98B00317CDC /* RecordedMediaPlayback.swift in Sources */ = {isa = PBXBuildFile; fileRef = B091BA4B2820A98B00317CDC /* RecordedMediaPlayback.swift */; };
 		B091BA4E2821A5DB00317CDC /* SendAudioBar.xib in Resources */ = {isa = PBXBuildFile; fileRef = B091BA4D2821A5DB00317CDC /* SendAudioBar.xib */; };
 		B091BA502821F75400317CDC /* SendAudioBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = B091BA4F2821F75400317CDC /* SendAudioBar.swift */; };
+		B091BA542824916800317CDC /* WaveImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B091BA532824916800317CDC /* WaveImage.swift */; };
 		B09C564A2469362A00D6615D /* SettingsPersonalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B09C56492469362A00D6615D /* SettingsPersonalViewController.swift */; };
 		B09C564C2469756B00D6615D /* SettingsNotificationsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B09C564B2469756B00D6615D /* SettingsNotificationsViewController.swift */; };
 		B09C564E246975F700D6615D /* SettingsHelpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B09C564D246975F700D6615D /* SettingsHelpViewController.swift */; };
@@ -241,6 +242,7 @@
 		B091BA4B2820A98B00317CDC /* RecordedMediaPlayback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordedMediaPlayback.swift; sourceTree = "<group>"; };
 		B091BA4D2821A5DB00317CDC /* SendAudioBar.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SendAudioBar.xib; sourceTree = "<group>"; };
 		B091BA4F2821F75400317CDC /* SendAudioBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendAudioBar.swift; sourceTree = "<group>"; };
+		B091BA532824916800317CDC /* WaveImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaveImage.swift; sourceTree = "<group>"; };
 		B093F50126C5BBF300FAA4E8 /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		B093F50426C5BD4200FAA4E8 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Main.strings; sourceTree = "<group>"; };
 		B093F50526C5BD8800FAA4E8 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -512,6 +514,7 @@
 				B0BE302627B831BD00B04631 /* TagsEditDialogView.xib */,
 				0A4B11FD2373DC1400199310 /* TagsEditDialogView.swift */,
 				7DDADC5121D5C219009733B5 /* ValidatedCredential.swift */,
+				B091BA532824916800317CDC /* WaveImage.swift */,
 			);
 			path = widgets;
 			sourceTree = "<group>";
@@ -765,6 +768,7 @@
 				B027E5AE278901CA00A34C17 /* PreviewFormatter.swift in Sources */,
 				B0DF031D227C604C000F9492 /* MessageCell.swift in Sources */,
 				B0DF0323228051B4000F9492 /* MessageViewController+Keyboard.swift in Sources */,
+				B091BA542824916800317CDC /* WaveImage.swift in Sources */,
 				FA37AD24238B0D6F00301261 /* KeyboardInfo.swift in Sources */,
 				0AE50D4822156A5B0021F7B7 /* FindPresenter.swift in Sources */,
 				B09C5652246C0E6B00D6615D /* BlockedContactsTableViewController.swift in Sources */,
