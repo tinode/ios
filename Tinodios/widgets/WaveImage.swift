@@ -54,7 +54,7 @@ public class WaveImage {
     public var futureBarColor: CGColor
     public var thumbColor: CGColor
 
-    public var delegate: WaveImageDelegate?
+    public weak var delegate: WaveImageDelegate?
 
     // Duration of the audio in milliseconds.
     public var duration: Int = 0 {

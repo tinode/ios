@@ -1002,3 +1002,38 @@ extension UIButton {
         self.layer.addSublayer(border)
     }
 }
+
+extension UIView {
+    /// Hide/show UI view by height and/or width, like Android View.GONE.
+    ///  - Parameters:
+    ///    - show: true to show the view, false to hide
+    ///    - dimension: width and height of the square view to make visible.
+    ///    - width: width of the view to make visible
+    ///    - height: height of the view to make visible.
+    func show(_ show: Bool, dimension: CGFloat? = nil, width: CGFloat? = nil, height: CGFloat? = nil, debug: Bool = false) {
+        for constraint in self.constraints {
+            self.isHidden = !show
+            if constraint.firstAttribute == .width {
+                if !show {
+                    constraint.constant = .leastNonzeroMagnitude
+                } else if let width = width ?? dimension {
+                    constraint.constant = width
+                    if debug {
+                        print("width = \(constraint.constant)")
+                    }
+                }
+                self.setNeedsLayout()
+            } else if constraint.firstAttribute == .height {
+                if !show {
+                    constraint.constant = .leastNonzeroMagnitude
+                } else if let height = height ?? dimension {
+                    constraint.constant = height
+                    if debug {
+                        print("height = \(constraint.constant)")
+                    }
+                }
+                self.setNeedsLayout()
+            }
+        }
+    }
+}

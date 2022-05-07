@@ -40,7 +40,7 @@ class MediaRecorder: NSObject {
     private var latestRecordName: String?
     private var audioSampler = AudioSampler()
 
-    public var delegate: MediaRecorderDelegate?
+    public weak var delegate: MediaRecorderDelegate?
     public var timerPrecision = MediaRecorder.kTimerPrecision
     public var saveRecordingToPath = FileManager.SearchPathDirectory.cachesDirectory
     public var duration: Int?

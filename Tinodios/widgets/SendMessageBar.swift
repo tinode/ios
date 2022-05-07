@@ -46,7 +46,7 @@ class SendMessageBar: UIView {
     @IBOutlet weak var sendButtonHorizontal: NSLayoutConstraint!
     @IBOutlet weak var sendButtonVertical: NSLayoutConstraint!
 
-    // 
+    // Sliders for locking and deleting audio recording.
     @IBOutlet weak var verticalSliderView: UIView!
     @IBOutlet weak var horizontalSliderView: UIView!
 
@@ -66,8 +66,21 @@ class SendMessageBar: UIView {
     @IBOutlet weak var previewView: RichTextView!
     @IBOutlet weak var previewViewHeight: NSLayoutConstraint!
 
+    @IBOutlet weak var audioView: UIView!
+    @IBOutlet weak var deleteAudioButton: UIButton!
+    @IBOutlet weak var deleteAudioButtonWidth: NSLayoutConstraint!
+    @IBOutlet weak var stopAudioRecordingButton: UIButton!
+    @IBOutlet weak var playAudioButton: UIButton!
+    @IBOutlet weak var pauseAudioButton: UIButton!
+
+    @IBOutlet weak var audioDurationLabel: UILabel!
+    @IBOutlet weak var audioDurationLabelHeight: NSLayoutConstraint!
+    @IBOutlet weak var audioViewHeight: NSLayoutConstraint!
+    @IBOutlet weak var wavePreviewImageView: UIImageView!
+    @IBOutlet weak var wavePreviewLeading: NSLayoutConstraint! // 40 <-> 8
     // MARK: Properties
-    weak var foregroundView: UIView?
+
+    private var audioLocked: Bool = false
 
     public var pendingPreviewText: NSAttributedString? {
         get { return previewView.attributedText.length != .zero ? previewView.attributedText : nil }
@@ -99,26 +112,120 @@ class SendMessageBar: UIView {
         if msg.isEmpty {
             return
         }
+        audioLocked = false
         delegate?.sendMessageBar(sendText: msg)
         inputField.text = nil
         textViewDidChange(inputField)
     }
 
-    private func endRecording() {
+    @IBAction func deleteRecording(_ sender: Any) {
+        showAudioBar(.hidden)
+        audioLocked = false
+    }
+
+    @IBAction func stopRecording(_ sender: Any) {
+    }
+
+    @IBAction func playRecording(_ sender: Any) {
+    }
+
+    @IBAction func pauseRecording(_ sender: Any) {
+    }
+
+    private enum AudioBarState {
+        case longInitial // Initial locked state: recording audio
+        case longPlayback // Locked state: play back of the recording
+        case longPaused // Locked state: playback paused
+        case short
+        case hidden
+    }
+
+    // Un-locked audio recording, show duration label & wave.
+    private func showAudioBar(_ state: AudioBarState) {
+        if state == .hidden || state == .short {
+            deleteAudioButton.show(false)
+            playAudioButton.show(false)
+            pauseAudioButton.show(false)
+            stopAudioRecordingButton.show(false)
+        } else {
+            // Long bar
+            deleteAudioButton.show(true, dimension: 32)
+            switch state {
+            case .longInitial:
+                playAudioButton.show(false)
+                pauseAudioButton.show(false)
+                stopAudioRecordingButton.show(true, dimension: 32)
+            case .longPlayback:
+                playAudioButton.show(false)
+                pauseAudioButton.show(true, dimension: 32)
+                stopAudioRecordingButton.show(false)
+            case .longPaused:
+                playAudioButton.show(true, dimension: 32)
+                pauseAudioButton.show(false)
+                stopAudioRecordingButton.show(false)
+            default:
+                break
+            }
+        }
+
+        if state == .hidden {
+            // Bar hidden.
+            inputField.show(true, height: 40)
+            attachButton.isHidden = false
+            // audioDurationLabel.show(false)
+            audioDurationLabel.isHidden = true
+            wavePreviewImageView.isHidden = true
+            audioViewHeight.constant = CGFloat.leastNonzeroMagnitude
+            audioView.isHidden = true
+            sendButton.setImage(SendMessageBar.kSendButtonImageWave, for: .normal)
+        } else {
+            // Long or short bar visible.
+            inputField.resignFirstResponder() // Otherwise it does not hide
+            inputField.show(false)
+            attachButton.isHidden = true
+            audioDurationLabel.isHidden = false
+            audioDurationLabel.show(true, height: 40, debug: true)
+            audioDurationLabel.sizeToFit()
+            audioDurationLabel.backgroundColor = .brown
+            audioView.isHidden = false
+            audioViewHeight.constant = 40
+            print("audioDurationLabel frame=\(audioDurationLabel.frame)")
+            wavePreviewImageView.isHidden = false
+            if state == .short {
+                wavePreviewLeading.constant = 8
+            } else {
+                wavePreviewLeading.constant = 40
+            }
+        }
+
+        audioView.setNeedsLayout()
+    }
+
+    private func endRecording(reason: AudioRecordingAction) {
         UIView.animate(withDuration: 0.15, delay: 0, options: UIView.AnimationOptions.curveEaseIn, animations: {
-            self.sendButton.imageView?.image = SendMessageBar.kSendButtonImageWave
-            self.sendButtonSize.constant = SendMessageBar.kSendButtonSizeNormal
             self.sendButtonHorizontal.constant = self.sendButtonConstrains.x
             self.sendButtonVertical.constant = self.sendButtonConstrains.y
             self.verticalSliderView.isHidden = true
             self.horizontalSliderView.isHidden = true
+            if reason == .lock {
+                self.sendButtonSize.constant = SendMessageBar.kSendButtonSizeNormal
+                self.sendButton.setImage(SendMessageBar.kSendButtonImageArrow, for: .normal)
+                self.showAudioBar(.longInitial)
+            } else {
+                self.sendButtonSize.constant = SendMessageBar.kSendButtonSizeNormal
+                self.sendButton.setImage(SendMessageBar.kSendButtonImageWave, for: .normal)
+                self.showAudioBar(.hidden)
+            }
             self.layoutIfNeeded()
         }, completion: nil)
     }
 
     // Handle audio recorder button swipes and presses.
     @IBAction func longPressed(sender: UILongPressGestureRecognizer) {
-        if !inputField.actualText.isEmpty {
+        if !inputField.actualText.isEmpty || audioLocked {
+            // Cancel long press.
+            sender.isEnabled = false
+            sender.isEnabled = true
             return
         }
 
@@ -129,16 +236,20 @@ class SendMessageBar: UIView {
             self.sendButtonLocation = CGPoint(x: loc.x, y: loc.y)
             DispatchQueue.main.async {
                 UIView.animate(withDuration: 0.2, delay: 0, options: UIView.AnimationOptions.curveEaseIn, animations: {
+                    self.showAudioBar(.short)
                     self.sendButtonSize.constant = SendMessageBar.kSendButtonSizePressed
-                    self.sendButton.imageView?.image = SendMessageBar.kSendButtonImageWavePressed
+                    self.sendButton.setImage(SendMessageBar.kSendButtonImageWavePressed, for: .normal)
                     self.verticalSliderView.isHidden = false
                     self.horizontalSliderView.isHidden = false
+                    self.layoutIfNeeded()
                 }, completion: nil)
             }
-            self.delegate?.sendMessageBar(recordAudio: .start)
+            // self.delegate?.sendMessageBar(recordAudio: .start)
         case .ended:
-            endRecording()
-            self.delegate?.sendMessageBar(recordAudio: .stopAndSend)
+            if inputField.actualText.isEmpty && !audioLocked {
+                endRecording(reason: .cancel)
+                self.delegate?.sendMessageBar(recordAudio: .stopAndSend)
+            }
         case .changed:
             // Constrain movements to either strictly horizontal or strictly vertical.
             let loc = sender.location(in: self)
@@ -154,10 +265,20 @@ class SendMessageBar: UIView {
                 dX = 0
             }
             if dX < -56 {
+                // User swiped to "Trash".
+                UIImpactFeedbackGenerator(style: .light).impactOccurred()
                 sender.isEnabled = false
-                endRecording()
+                endRecording(reason: .cancel)
                 self.delegate?.sendMessageBar(recordAudio: .cancel)
                 sender.isEnabled = true
+            } else if dY < -56 {
+                // User swiped to "Lock".
+                UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                audioLocked = true
+                sender.isEnabled = false
+                endRecording(reason: .lock)
+                sender.isEnabled = true
+                self.layoutIfNeeded()
             } else {
                 self.sendButtonHorizontal.constant = sendButtonConstrains.x + dX
                 self.sendButtonVertical.constant = sendButtonConstrains.y + dY
@@ -225,8 +346,8 @@ class SendMessageBar: UIView {
     }
 
     private func configure() {
-        horizontalSliderView.alpha = 0.8
-        verticalSliderView.alpha = 0.8
+        horizontalSliderView.alpha = 0.9
+        verticalSliderView.alpha = 0.9
 
         inputField.layer.borderWidth = 0
         inputField.layer.cornerRadius = 18
@@ -246,6 +367,8 @@ class SendMessageBar: UIView {
         toggleNotAvailableOverlay(visible: false)
         togglePeerMessagingDisabled(visible: false)
         togglePendingPreviewBar(with: nil)
+
+        showAudioBar(.hidden)
     }
 
     // MARK: - Subviews handling
@@ -268,7 +391,7 @@ class SendMessageBar: UIView {
             pendingPreviewText = message
             previewView.isHidden = false
         } else {
-            previewViewHeight.constant = CGFloat.zero
+            previewViewHeight.constant = .zero
             pendingPreviewText = nil
             previewView.isHidden = true
         }
@@ -285,15 +408,15 @@ extension SendMessageBar: UITextViewDelegate {
 
         if !(fittingSize.height > inputFieldMaxHeight) {
             inputField.isScrollEnabled = false
-            inputFieldHeight.constant = fittingSize.height + 1 // Not sure why but it seems to be off by 1
+            inputFieldHeight.constant = fittingSize.height + 2 // Not sure why but it seems to be off by 2
         } else {
             textView.isScrollEnabled = true
         }
 
         if inputField.actualText.isEmpty {
-            self.sendButton.imageView?.image = SendMessageBar.kSendButtonImageWave
+            self.sendButton.setImage(SendMessageBar.kSendButtonImageWave, for: .normal)
         } else {
-            self.sendButton.imageView?.image = SendMessageBar.kSendButtonImageArrow
+            self.sendButton.setImage(SendMessageBar.kSendButtonImageArrow, for: .normal)
         }
     }
 }
