@@ -85,6 +85,7 @@
 		B091BA4A282087D700317CDC /* MediaRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = B091BA49282087D700317CDC /* MediaRecorder.swift */; };
 		B091BA4C2820A98B00317CDC /* RecordedMediaPlayback.swift in Sources */ = {isa = PBXBuildFile; fileRef = B091BA4B2820A98B00317CDC /* RecordedMediaPlayback.swift */; };
 		B091BA542824916800317CDC /* WaveImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B091BA532824916800317CDC /* WaveImage.swift */; };
+		B091BA5628272A2400317CDC /* WaveImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B091BA5528272A2400317CDC /* WaveImageView.swift */; };
 		B09C564A2469362A00D6615D /* SettingsPersonalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B09C56492469362A00D6615D /* SettingsPersonalViewController.swift */; };
 		B09C564C2469756B00D6615D /* SettingsNotificationsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B09C564B2469756B00D6615D /* SettingsNotificationsViewController.swift */; };
 		B09C564E246975F700D6615D /* SettingsHelpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B09C564D246975F700D6615D /* SettingsHelpViewController.swift */; };
@@ -239,6 +240,7 @@
 		B091BA49282087D700317CDC /* MediaRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaRecorder.swift; sourceTree = "<group>"; };
 		B091BA4B2820A98B00317CDC /* RecordedMediaPlayback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordedMediaPlayback.swift; sourceTree = "<group>"; };
 		B091BA532824916800317CDC /* WaveImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaveImage.swift; sourceTree = "<group>"; };
+		B091BA5528272A2400317CDC /* WaveImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaveImageView.swift; sourceTree = "<group>"; };
 		B093F50126C5BBF300FAA4E8 /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		B093F50426C5BD4200FAA4E8 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Main.strings; sourceTree = "<group>"; };
 		B093F50526C5BD8800FAA4E8 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -509,6 +511,7 @@
 				0A4B11FD2373DC1400199310 /* TagsEditDialogView.swift */,
 				7DDADC5121D5C219009733B5 /* ValidatedCredential.swift */,
 				B091BA532824916800317CDC /* WaveImage.swift */,
+				B091BA5528272A2400317CDC /* WaveImageView.swift */,
 			);
 			path = widgets;
 			sourceTree = "<group>";
@@ -768,6 +771,7 @@
 				B09C564E246975F700D6615D /* SettingsHelpViewController.swift in Sources */,
 				B0DF03312283FFD8000F9492 /* PlaceholderTextView.swift in Sources */,
 				B0BE302D27BAC90E00B04631 /* TopicGeneralViewController.swift in Sources */,
+				B091BA5628272A2400317CDC /* WaveImageView.swift in Sources */,
 				B027E5B22789026200A34C17 /* SendReplyFormatter.swift in Sources */,
 				0A35BA9E22836CCF00AA5E2F /* ContactsSynchronizer.swift in Sources */,
 				B03066432805F2AA00497EF4 /* EntityTextAttachment.swift in Sources */,

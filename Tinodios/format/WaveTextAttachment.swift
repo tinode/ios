@@ -56,11 +56,7 @@ class WaveTextAttachment: EntityTextAttachment {
         super.init(data: nil, ofType: nil)
         bounds = CGRect(x: 0, y: 0, width: rect.width, height: rect.height)
 
-        waveImage = WaveImage(size: CGSize(width: rect.width, height: rect.height))
-        waveImage.delegate = self
-        waveImage.pastBarColor = CGColor.init(gray: 0.5, alpha: 1.0)
-        waveImage.futureBarColor = CGColor.init(gray: 0.40, alpha: 1.0)
-        waveImage.thumbColor = UIColor.link.cgColor
+        self.waveInit(frame: rect, data: nil)
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -69,7 +65,16 @@ class WaveTextAttachment: EntityTextAttachment {
 
     convenience public init(frame rect: CGRect, data: Data?) {
         self.init(frame: rect)
-        waveImage.original = data
+
+        self.waveInit(frame: rect, data: data)
+    }
+
+    private func waveInit(frame rect: CGRect, data: Data?) {
+        waveImage = WaveImage(size: CGSize(width: rect.width, height: rect.height), data: data)
+        waveImage.delegate = self
+        waveImage.pastBarColor = CGColor.init(gray: 0.5, alpha: 1.0)
+        waveImage.futureBarColor = CGColor.init(gray: 0.40, alpha: 1.0)
+        waveImage.thumbColor = UIColor.link.cgColor
     }
 
     public override func image(forBounds imageBounds: CGRect, textContainer: NSTextContainer?, characterIndex charIndex: Int) -> UIImage? {

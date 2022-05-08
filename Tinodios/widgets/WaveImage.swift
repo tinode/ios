@@ -74,8 +74,8 @@ public class WaveImage {
     // MARK: - Initializers
 
     public init(size: CGSize, data: Data?) {
-        pastBarColor = CGColor.init(gray: 0.5, alpha: 1.0)
-        futureBarColor = CGColor.init(gray: 0.40, alpha: 1.0)
+        pastBarColor = CGColor.init(gray: 0.7, alpha: 0.9)
+        futureBarColor = CGColor.init(gray: 0.50, alpha: 0.9)
         thumbColor = UIColor.link.cgColor
 
         maxBars = Int((Float(size.width) - WaveImage.kSpacing - Float(leftPadding)) / (WaveImage.kLineWidth + WaveImage.kSpacing))
@@ -85,12 +85,8 @@ public class WaveImage {
 
         defer {
             // Must be deferred otherwise observer is not called.
-            self.original = data
+            self.original = data ?? Data(count: maxBars)
         }
-    }
-
-    convenience public init(size: CGSize) {
-        self.init(size: size, data: nil)
     }
 
     convenience public init(size: CGSize, count: Int) {

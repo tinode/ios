@@ -189,7 +189,6 @@ class SendMessageBar: UIView {
             audioDurationLabel.backgroundColor = .brown
             audioView.isHidden = false
             audioViewHeight.constant = 40
-            print("audioDurationLabel frame=\(audioDurationLabel.frame)")
             wavePreviewImageView.isHidden = false
             if state == .short {
                 wavePreviewLeading.constant = 8
