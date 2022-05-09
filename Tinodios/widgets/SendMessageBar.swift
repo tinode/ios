@@ -10,8 +10,9 @@ import UIKit
 enum AudioRecordingAction {
     case start
     case stopAndSend
+    case stopAndDelete
     case lock
-    case cancel
+    case stopRecording
     case pauseRecording
     case playback
     case pausePlayback
@@ -33,6 +34,8 @@ class SendMessageBar: UIView {
     private static let kSendButtonImageWave = UIImage(systemName: "waveform.circle.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: SendMessageBar.kSendButtonPointsNormal))!
     private static let kSendButtonImageWavePressed = UIImage(systemName: "waveform.circle.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: SendMessageBar.kSendButtonPointsPressed))!
     private static let kSendButtonImageArrow = UIImage(systemName: "arrow.up.circle.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: SendMessageBar.kSendButtonPointsNormal))!
+    private static let kWaveInsetsShort = UIEdgeInsets(top: 2, left: 6, bottom: 2, right: 88)
+    private static let kWaveInsetsLong = UIEdgeInsets(top: 2, left: 6, bottom: 2, right: 52)
 
     // MARK: Action delegate
 
@@ -76,7 +79,7 @@ class SendMessageBar: UIView {
     @IBOutlet weak var audioDurationLabel: UILabel!
     @IBOutlet weak var audioDurationLabelHeight: NSLayoutConstraint!
     @IBOutlet weak var audioViewHeight: NSLayoutConstraint!
-    @IBOutlet weak var wavePreviewImageView: UIImageView!
+    @IBOutlet weak var wavePreviewImageView: WaveImageView!
     @IBOutlet weak var wavePreviewLeading: NSLayoutConstraint! // 40 <-> 8
     // MARK: Properties
 
@@ -121,22 +124,27 @@ class SendMessageBar: UIView {
     @IBAction func deleteRecording(_ sender: Any) {
         showAudioBar(.hidden)
         audioLocked = false
+        self.delegate?.sendMessageBar(recordAudio: .stopAndDelete)
     }
 
     @IBAction func stopRecording(_ sender: Any) {
+        showAudioBar(.longPaused)
+        self.delegate?.sendMessageBar(recordAudio: .stopRecording)
     }
 
     @IBAction func playRecording(_ sender: Any) {
+        self.delegate?.sendMessageBar(recordAudio: .playback)
     }
 
     @IBAction func pauseRecording(_ sender: Any) {
+        self.delegate?.sendMessageBar(recordAudio: .pauseRecording)
     }
 
     private enum AudioBarState {
-        case longInitial // Initial locked state: recording audio
-        case longPlayback // Locked state: play back of the recording
+        case longInitial // Initial locked state: recording audio.
+        case longPlayback // Locked state: playing back the recording
         case longPaused // Locked state: playback paused
-        case short
+        case short // Not locked state: recording.
         case hidden
     }
 
@@ -175,6 +183,7 @@ class SendMessageBar: UIView {
             // audioDurationLabel.show(false)
             audioDurationLabel.isHidden = true
             wavePreviewImageView.isHidden = true
+            wavePreviewImageView.reset()
             audioViewHeight.constant = CGFloat.leastNonzeroMagnitude
             audioView.isHidden = true
             sendButton.setImage(SendMessageBar.kSendButtonImageWave, for: .normal)
@@ -184,29 +193,30 @@ class SendMessageBar: UIView {
             inputField.show(false)
             attachButton.isHidden = true
             audioDurationLabel.isHidden = false
-            audioDurationLabel.show(true, height: 40, debug: true)
+            audioDurationLabel.show(true, height: 40)
             audioDurationLabel.sizeToFit()
-            audioDurationLabel.backgroundColor = .brown
             audioView.isHidden = false
             audioViewHeight.constant = 40
             wavePreviewImageView.isHidden = false
             if state == .short {
                 wavePreviewLeading.constant = 8
+                wavePreviewImageView.waveInsets = SendMessageBar.kWaveInsetsShort
             } else {
                 wavePreviewLeading.constant = 40
+                wavePreviewImageView.waveInsets = SendMessageBar.kWaveInsetsLong
             }
         }
 
         audioView.setNeedsLayout()
     }
 
-    private func endRecording(reason: AudioRecordingAction) {
+    private func audioBarState(_ state: AudioRecordingAction) {
         UIView.animate(withDuration: 0.15, delay: 0, options: UIView.AnimationOptions.curveEaseIn, animations: {
             self.sendButtonHorizontal.constant = self.sendButtonConstrains.x
             self.sendButtonVertical.constant = self.sendButtonConstrains.y
             self.verticalSliderView.isHidden = true
             self.horizontalSliderView.isHidden = true
-            if reason == .lock {
+            if state == .lock {
                 self.sendButtonSize.constant = SendMessageBar.kSendButtonSizeNormal
                 self.sendButton.setImage(SendMessageBar.kSendButtonImageArrow, for: .normal)
                 self.showAudioBar(.longInitial)
@@ -243,10 +253,10 @@ class SendMessageBar: UIView {
                     self.layoutIfNeeded()
                 }, completion: nil)
             }
-            // self.delegate?.sendMessageBar(recordAudio: .start)
+            self.delegate?.sendMessageBar(recordAudio: .start)
         case .ended:
             if inputField.actualText.isEmpty && !audioLocked {
-                endRecording(reason: .cancel)
+                audioBarState(.stopAndDelete)
                 self.delegate?.sendMessageBar(recordAudio: .stopAndSend)
             }
         case .changed:
@@ -267,15 +277,15 @@ class SendMessageBar: UIView {
                 // User swiped to "Trash".
                 UIImpactFeedbackGenerator(style: .light).impactOccurred()
                 sender.isEnabled = false
-                endRecording(reason: .cancel)
-                self.delegate?.sendMessageBar(recordAudio: .cancel)
+                audioBarState(.stopAndDelete)
+                self.delegate?.sendMessageBar(recordAudio: .stopAndDelete)
                 sender.isEnabled = true
             } else if dY < -56 {
                 // User swiped to "Lock".
                 UIImpactFeedbackGenerator(style: .light).impactOccurred()
                 audioLocked = true
                 sender.isEnabled = false
-                endRecording(reason: .lock)
+                audioBarState(.lock)
                 sender.isEnabled = true
                 self.layoutIfNeeded()
             } else {

@@ -100,7 +100,7 @@ class WaveTextAttachment: EntityTextAttachment {
 
     /// Move thumb to initial position and stop animation.
     public func reset() {
-        waveImage.reset()
+        waveImage.resetPlayback()
     }
 
     /// Move thumb to specified position and refresh the image.

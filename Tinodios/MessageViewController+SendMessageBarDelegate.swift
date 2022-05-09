@@ -2,7 +2,7 @@
 //  MessageViewController+SendMessageBarDelegate.swift
 //  Tinodios
 //
-//  Copyright © 2019 Tinode. All rights reserved.
+//  Copyright © 2019-2022 Tinode. All rights reserved.
 //
 
 import UIKit
@@ -53,15 +53,20 @@ extension MessageViewController: SendMessageBarDelegate {
     func sendMessageBar(recordAudio action: AudioRecordingAction) {
         switch action {
         case .start:
+            Cache.mediaRecorder.delegate = self
             Cache.mediaRecorder.start()
             print("recording started")
         case .stopAndSend:
             print("end recording audio and send, url=\(Cache.mediaRecorder.recordFileURL ?? URL(fileURLWithPath: "nil"))")
             Cache.mediaRecorder.stop()
             if let recordURL = Cache.mediaRecorder.recordFileURL {
-                sendAudioAttachment(url: recordURL, duration: Cache.mediaRecorder.duration!, preview: Cache.mediaRecorder.preview)
+                // sendAudioAttachment(url: recordURL, duration: Cache.mediaRecorder.duration!, preview: Cache.mediaRecorder.preview)
             }
-        case .cancel:
+        case .stopRecording:
+            Cache.mediaRecorder.stop()
+        case .pauseRecording:
+            Cache.mediaRecorder.pause()
+        case .stopAndDelete:
             Cache.mediaRecorder.stop()
             Cache.mediaRecorder.delete()
             print("cancelled recording")
@@ -136,5 +141,24 @@ extension MessageViewController: ImagePickerDelegate {
             pendingMessagePreview: pendingPreview)
 
         performSegue(withIdentifier: "ShowImagePreview", sender: content)
+    }
+}
+
+extension MessageViewController: MediaRecorderDelegate {
+    func didStartRecording() {
+        print("delegate: recording started")
+    }
+
+    func didFinishRecording(url: URL?, duration: TimeInterval) {
+        print("delegate: recording finished")
+    }
+
+    func didUpdateRecording(amplitude: Float, atTime: TimeInterval) {
+        let wave = (self.inputAccessoryView as! SendMessageBar).wavePreviewImageView
+        wave?.put(amplitude: amplitude, atTime: atTime)
+    }
+
+    func didFailRecording(_ error: Error) {
+        print("delegate: failed recording")
     }
 }

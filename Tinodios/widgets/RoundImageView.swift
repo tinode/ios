@@ -161,7 +161,7 @@ public class RoundImageView: UIImageView {
 
     private func setImageFrom(initials: String?) {
         guard let initials = initials else { return }
-        image = letterTileImage(initials: initials)
+        self.image = letterTileImage(initials: initials)
     }
 
     private func letterTileImage(initials: String) -> UIImage {
