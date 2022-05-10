@@ -5,9 +5,11 @@
 //  Copyright © 2019-2022 Tinode. All rights reserved.
 //
 
-import UIKit
+import AVFoundation
 import MobileCoreServices
+import MobileVLCKit
 import TinodeSDK
+import UIKit
 
 extension MessageViewController: SendMessageBarDelegate {
     // Default 256K server limit. Does not account for base64 compression and overhead.
@@ -50,7 +52,7 @@ extension MessageViewController: SendMessageBarDelegate {
         }
     }
 
-    func sendMessageBar(recordAudio action: AudioRecordingAction) {
+    func sendMessageBar(recordAudio action: AudioBarAction) {
         switch action {
         case .start:
             Cache.mediaRecorder.delegate = self
@@ -59,6 +61,8 @@ extension MessageViewController: SendMessageBarDelegate {
         case .stopAndSend:
             print("end recording audio and send, url=\(Cache.mediaRecorder.recordFileURL ?? URL(fileURLWithPath: "nil"))")
             Cache.mediaRecorder.stop()
+            currentAudioPlayer?.stop()
+            currentAudioPlayer = nil
             if let recordURL = Cache.mediaRecorder.recordFileURL {
                 // sendAudioAttachment(url: recordURL, duration: Cache.mediaRecorder.duration!, preview: Cache.mediaRecorder.preview)
             }
@@ -67,9 +71,22 @@ extension MessageViewController: SendMessageBarDelegate {
         case .pauseRecording:
             Cache.mediaRecorder.pause()
         case .stopAndDelete:
-            Cache.mediaRecorder.stop()
-            Cache.mediaRecorder.delete()
-            print("cancelled recording")
+            Cache.mediaRecorder.stop(discard: true)
+            currentAudioPlayer?.stop()
+            currentAudioPlayer = nil
+            (self.inputAccessoryView as! SendMessageBar).audioPlaybackAction(.playbackReset)
+        case .playbackStart:
+            if let recordURL = Cache.mediaRecorder.recordFileURL {
+                currentAudioPlayer = VLCMediaPlayer()
+                currentAudioPlayer!.delegate = self
+                currentAudioPlayer!.media = VLCMedia(url: recordURL)
+                currentAudioPlayer!.play()
+                (self.inputAccessoryView as! SendMessageBar).audioPlaybackAction(.playbackStart)
+            }
+        case .playbackPause:
+            currentAudioPlayer?.pause()
+            (self.inputAccessoryView as! SendMessageBar).audioPlaybackAction(.playbackPause)
+            break
         default:
             print("some other recording action \(action)")
         }
@@ -145,20 +162,51 @@ extension MessageViewController: ImagePickerDelegate {
 }
 
 extension MessageViewController: MediaRecorderDelegate {
-    func didStartRecording() {
+    func didStartRecording(recorder: MediaRecorder) {
         print("delegate: recording started")
     }
 
-    func didFinishRecording(url: URL?, duration: TimeInterval) {
+    func didFinishRecording(recorder: MediaRecorder, url: URL?, duration: TimeInterval) {
+        (self.inputAccessoryView as! SendMessageBar).audioPlaybackPreview(recorder.preview, duration: duration)
         print("delegate: recording finished")
     }
 
-    func didUpdateRecording(amplitude: Float, atTime: TimeInterval) {
+    func didUpdateRecording(recorder: MediaRecorder, amplitude: Float, atTime: TimeInterval) {
         let wave = (self.inputAccessoryView as! SendMessageBar).wavePreviewImageView
         wave?.put(amplitude: amplitude, atTime: atTime)
+        (self.inputAccessoryView as! SendMessageBar).audioDurationLabel.text = atTime.asDurationString
     }
 
-    func didFailRecording(_ error: Error) {
-        print("delegate: failed recording")
+    func didFailRecording(recorder: MediaRecorder, _ error: Error) {
+        Cache.log.error("Recording failed: %@", error.localizedDescription)
+        UiUtils.showToast(message: "Recording failed")
+        (self.inputAccessoryView as! SendMessageBar).showAudioBar(.hidden)
     }
 }
+
+extension MessageViewController: VLCMediaPlayerDelegate {
+    func mediaPlayerStateChanged(_ notification: Notification) {
+        guard let player = notification.object as? VLCMediaPlayer else { return }
+
+        print("VLCMediaPlayerDelegate \(player.state)")
+
+        switch player.state {
+        case .playing, .opening, .paused, .buffering, .esAdded:
+            break
+        case .error:
+            fallthrough
+        case .stopped:
+            fallthrough
+        case .ended:
+            (self.inputAccessoryView as! SendMessageBar).showAudioBar(.longPaused)
+            (self.inputAccessoryView as! SendMessageBar).audioPlaybackAction(.playbackReset)
+        default:
+            break
+        }
+    }
+
+    func mediaPlayerTimeChanged(_ notification: Notification) {
+        // guard let player = notification.object as? VLCMediaPlayer else { return }
+    }
+}
+

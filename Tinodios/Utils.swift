@@ -339,3 +339,9 @@ extension Date {
         return Int64((self.timeIntervalSince1970 * 1000.0).rounded())
     }
 }
+
+extension TimeInterval {
+    var asDurationString: String {
+        return String(format: "%02d:%02d", Int(self / 60), Int(self.truncatingRemainder(dividingBy: 60)))
+    }
+}

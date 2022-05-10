@@ -7,15 +7,16 @@
 
 import UIKit
 
-enum AudioRecordingAction {
+enum AudioBarAction {
     case start
     case stopAndSend
     case stopAndDelete
     case lock
     case stopRecording
     case pauseRecording
-    case playback
-    case pausePlayback
+    case playbackStart
+    case playbackPause
+    case playbackReset
 }
 
 protocol SendMessageBarDelegate: AnyObject {
@@ -23,10 +24,18 @@ protocol SendMessageBarDelegate: AnyObject {
     func sendMessageBar(attachment: Bool)
     func sendMessageBar(textChangedTo text: String)
     func sendMessageBar(enablePeersMessaging: Bool)
-    func sendMessageBar(recordAudio: AudioRecordingAction)
+    func sendMessageBar(recordAudio: AudioBarAction)
 }
 
 class SendMessageBar: UIView {
+    enum AudioBarState {
+        case longInitial // Initial locked state: recording audio.
+        case longPlayback // Locked state: playing back the recording
+        case longPaused // Locked state: playback paused
+        case short // Not locked state: recording.
+        case hidden
+    }
+
     private static let kSendButtonPointsNormal: CGFloat = 26
     private static let kSendButtonPointsPressed: CGFloat = 40
     private static let kSendButtonSizeNormal: CGFloat = 32
@@ -81,8 +90,8 @@ class SendMessageBar: UIView {
     @IBOutlet weak var audioViewHeight: NSLayoutConstraint!
     @IBOutlet weak var wavePreviewImageView: WaveImageView!
     @IBOutlet weak var wavePreviewLeading: NSLayoutConstraint! // 40 <-> 8
-    // MARK: Properties
 
+    // MARK: Properties
     private var audioLocked: Bool = false
 
     public var pendingPreviewText: NSAttributedString? {
@@ -122,6 +131,7 @@ class SendMessageBar: UIView {
     }
 
     @IBAction func deleteRecording(_ sender: Any) {
+        wavePreviewImageView.reset()
         showAudioBar(.hidden)
         audioLocked = false
         self.delegate?.sendMessageBar(recordAudio: .stopAndDelete)
@@ -133,100 +143,13 @@ class SendMessageBar: UIView {
     }
 
     @IBAction func playRecording(_ sender: Any) {
-        self.delegate?.sendMessageBar(recordAudio: .playback)
+        showAudioBar(.longPlayback)
+        self.delegate?.sendMessageBar(recordAudio: .playbackStart)
     }
 
-    @IBAction func pauseRecording(_ sender: Any) {
-        self.delegate?.sendMessageBar(recordAudio: .pauseRecording)
-    }
-
-    private enum AudioBarState {
-        case longInitial // Initial locked state: recording audio.
-        case longPlayback // Locked state: playing back the recording
-        case longPaused // Locked state: playback paused
-        case short // Not locked state: recording.
-        case hidden
-    }
-
-    // Un-locked audio recording, show duration label & wave.
-    private func showAudioBar(_ state: AudioBarState) {
-        if state == .hidden || state == .short {
-            deleteAudioButton.show(false)
-            playAudioButton.show(false)
-            pauseAudioButton.show(false)
-            stopAudioRecordingButton.show(false)
-        } else {
-            // Long bar
-            deleteAudioButton.show(true, dimension: 32)
-            switch state {
-            case .longInitial:
-                playAudioButton.show(false)
-                pauseAudioButton.show(false)
-                stopAudioRecordingButton.show(true, dimension: 32)
-            case .longPlayback:
-                playAudioButton.show(false)
-                pauseAudioButton.show(true, dimension: 32)
-                stopAudioRecordingButton.show(false)
-            case .longPaused:
-                playAudioButton.show(true, dimension: 32)
-                pauseAudioButton.show(false)
-                stopAudioRecordingButton.show(false)
-            default:
-                break
-            }
-        }
-
-        if state == .hidden {
-            // Bar hidden.
-            inputField.show(true, height: 40)
-            attachButton.isHidden = false
-            // audioDurationLabel.show(false)
-            audioDurationLabel.isHidden = true
-            wavePreviewImageView.isHidden = true
-            wavePreviewImageView.reset()
-            audioViewHeight.constant = CGFloat.leastNonzeroMagnitude
-            audioView.isHidden = true
-            sendButton.setImage(SendMessageBar.kSendButtonImageWave, for: .normal)
-        } else {
-            // Long or short bar visible.
-            inputField.resignFirstResponder() // Otherwise it does not hide
-            inputField.show(false)
-            attachButton.isHidden = true
-            audioDurationLabel.isHidden = false
-            audioDurationLabel.show(true, height: 40)
-            audioDurationLabel.sizeToFit()
-            audioView.isHidden = false
-            audioViewHeight.constant = 40
-            wavePreviewImageView.isHidden = false
-            if state == .short {
-                wavePreviewLeading.constant = 8
-                wavePreviewImageView.waveInsets = SendMessageBar.kWaveInsetsShort
-            } else {
-                wavePreviewLeading.constant = 40
-                wavePreviewImageView.waveInsets = SendMessageBar.kWaveInsetsLong
-            }
-        }
-
-        audioView.setNeedsLayout()
-    }
-
-    private func audioBarState(_ state: AudioRecordingAction) {
-        UIView.animate(withDuration: 0.15, delay: 0, options: UIView.AnimationOptions.curveEaseIn, animations: {
-            self.sendButtonHorizontal.constant = self.sendButtonConstrains.x
-            self.sendButtonVertical.constant = self.sendButtonConstrains.y
-            self.verticalSliderView.isHidden = true
-            self.horizontalSliderView.isHidden = true
-            if state == .lock {
-                self.sendButtonSize.constant = SendMessageBar.kSendButtonSizeNormal
-                self.sendButton.setImage(SendMessageBar.kSendButtonImageArrow, for: .normal)
-                self.showAudioBar(.longInitial)
-            } else {
-                self.sendButtonSize.constant = SendMessageBar.kSendButtonSizeNormal
-                self.sendButton.setImage(SendMessageBar.kSendButtonImageWave, for: .normal)
-                self.showAudioBar(.hidden)
-            }
-            self.layoutIfNeeded()
-        }, completion: nil)
+    @IBAction func pausePlayback(_ sender: Any) {
+        showAudioBar(.longPaused)
+        self.delegate?.sendMessageBar(recordAudio: .playbackPause)
     }
 
     // Handle audio recorder button swipes and presses.
@@ -403,6 +326,116 @@ class SendMessageBar: UIView {
             previewViewHeight.constant = .zero
             pendingPreviewText = nil
             previewView.isHidden = true
+        }
+    }
+
+    // MARK: - Audio playback and recording
+
+    // Un-locked audio recording, show duration label & wave.
+    func showAudioBar(_ state: AudioBarState) {
+        if state == .hidden || state == .short {
+            deleteAudioButton.show(false)
+            playAudioButton.show(false)
+            pauseAudioButton.show(false)
+            stopAudioRecordingButton.show(false)
+        } else {
+            // Long bar
+            deleteAudioButton.show(true, dimension: 32)
+            switch state {
+            case .longInitial:
+                playAudioButton.show(false)
+                pauseAudioButton.show(false)
+                stopAudioRecordingButton.show(true, dimension: 32)
+            case .longPlayback:
+                playAudioButton.show(false)
+                pauseAudioButton.show(true, dimension: 32)
+                stopAudioRecordingButton.show(false)
+            case .longPaused:
+                playAudioButton.show(true, dimension: 32)
+                pauseAudioButton.show(false)
+                stopAudioRecordingButton.show(false)
+            default:
+                break
+            }
+        }
+
+        if state == .hidden {
+            // Bar hidden.
+            inputField.show(true, height: 40)
+            attachButton.isHidden = false
+            // audioDurationLabel.show(false)
+            audioDurationLabel.isHidden = true
+            wavePreviewImageView.isHidden = true
+            wavePreviewImageView.reset()
+            audioViewHeight.constant = CGFloat.leastNonzeroMagnitude
+            audioView.isHidden = true
+            sendButton.setImage(SendMessageBar.kSendButtonImageWave, for: .normal)
+        } else {
+            // Long or short bar visible.
+            inputField.resignFirstResponder() // Otherwise it does not hide
+            inputField.show(false)
+            attachButton.isHidden = true
+            audioDurationLabel.isHidden = false
+            audioDurationLabel.show(true, height: 40)
+            audioDurationLabel.sizeToFit()
+            audioView.isHidden = false
+            audioViewHeight.constant = 40
+            wavePreviewImageView.isHidden = false
+            if state == .short {
+                wavePreviewLeading.constant = 8
+                wavePreviewImageView.waveInsets = SendMessageBar.kWaveInsetsShort
+            } else {
+                wavePreviewLeading.constant = 40
+                wavePreviewImageView.waveInsets = SendMessageBar.kWaveInsetsLong
+            }
+        }
+
+        audioView.setNeedsLayout()
+    }
+
+    func audioBarState(_ state: AudioBarAction) {
+        UIView.animate(withDuration: 0.15, delay: 0, options: UIView.AnimationOptions.curveEaseIn, animations: {
+            self.sendButtonHorizontal.constant = self.sendButtonConstrains.x
+            self.sendButtonVertical.constant = self.sendButtonConstrains.y
+            self.verticalSliderView.isHidden = true
+            self.horizontalSliderView.isHidden = true
+            if state == .lock {
+                self.sendButtonSize.constant = SendMessageBar.kSendButtonSizeNormal
+                self.sendButton.setImage(SendMessageBar.kSendButtonImageArrow, for: .normal)
+                self.showAudioBar(.longInitial)
+            } else {
+                self.sendButtonSize.constant = SendMessageBar.kSendButtonSizeNormal
+                self.sendButton.setImage(SendMessageBar.kSendButtonImageWave, for: .normal)
+                self.showAudioBar(.hidden)
+            }
+            self.layoutIfNeeded()
+        }, completion: nil)
+    }
+
+    func audioPlaybackPreview(_ data: Data, duration: TimeInterval) {
+        wavePreviewImageView?.playbackPreview(data, duration: duration)
+    }
+
+    func audioUpdateAmplitude(amplitude: Float, atTime: TimeInterval) {
+        wavePreviewImageView?.put(amplitude: amplitude, atTime: atTime)
+    }
+
+    func audioPlaybackAction(_ state: AudioBarAction) {
+        switch state {
+        case .playbackStart:
+            playAudioButton.show(false)
+            pauseAudioButton.show(true, dimension: 32)
+            wavePreviewImageView.play()
+        case .playbackReset:
+            wavePreviewImageView.reset()
+            playAudioButton.show(true, dimension: 32)
+            pauseAudioButton.show(false)
+        case .playbackPause:
+            wavePreviewImageView.pause(rewind: false)
+            playAudioButton.show(true, dimension: 32)
+            pauseAudioButton.show(false)
+        default:
+            break
         }
     }
 }

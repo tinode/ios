@@ -135,6 +135,8 @@ public class WaveImage {
 
     /// Start playback animation.
     public func play() {
+        print("play=\(duration), time is nil=\(self.animationTimer == nil)")
+
         if self.animationTimer != nil {
             // Animation is already running.
             return
@@ -344,7 +346,7 @@ public class WaveImage {
             context.setFillColor(self.thumbColor)
             let size = CGFloat(WaveImage.kThumbRadius) * 2
             let x = seekPositionToX()
-            UIBezierPath(ovalIn: CGRect(x: CGFloat(x) - size / 2, y: bounds.height * 0.5 - size / 2, width: size, height: size)).fill()
+            UIBezierPath(ovalIn: CGRect(x: CGFloat(x) - size / 2, y: bounds.height * 0.5 - size / 2 + bounds.minY, width: size, height: size)).fill()
         }
 
         context.restoreGState()

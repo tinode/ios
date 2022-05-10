@@ -112,6 +112,7 @@
                             <rect key="frame" x="40" y="10" width="46" height="20"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="20" id="GWc-yT-2lP"/>
+                                <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="46" id="lih-IK-N0t"/>
                             </constraints>
                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                             <color key="textColor" systemColor="secondaryLabelColor"/>
@@ -162,7 +163,7 @@
                                 <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="16" scale="small" weight="regular"/>
                             </state>
                             <connections>
-                                <action selector="pauseRecording:" destination="-1" eventType="touchUpInside" id="3sx-Bn-rzr"/>
+                                <action selector="pausePlayback:" destination="-1" eventType="touchUpInside" id="mKu-ag-G4u"/>
                             </connections>
                         </button>
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="4Zj-GA-JGZ" userLabel="Wave Preview" customClass="WaveImageView" customModule="Tinodios" customModuleProvider="target">

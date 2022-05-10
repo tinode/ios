@@ -8,16 +8,17 @@
 import AVFoundation
 
 protocol MediaRecorderDelegate: AnyObject {
-    func didStartRecording()
-    func didFinishRecording(url: URL?, duration: TimeInterval)
-    func didUpdateRecording(amplitude: Float, atTime: TimeInterval)
-    func didFailRecording(_ error: Error)
+    func didStartRecording(recorder: MediaRecorder)
+    func didFinishRecording(recorder: MediaRecorder, url: URL?, duration: TimeInterval)
+    func didUpdateRecording(recorder: MediaRecorder, amplitude: Float, atTime: TimeInterval)
+    func didFailRecording(recorder: MediaRecorder, _ error: Error)
 }
 
 enum MediaRecorderError: Error {
     case permissionDenyedError
     case unknownPermissionError
     case permissionRequested
+    case cancelledByUser
 }
 
 /// MediaRecorder currenly support audio recording only.
@@ -58,14 +59,14 @@ class MediaRecorder: NSObject {
 
         switch self.session.recordPermission {
         case .undetermined:
-            self.delegate?.didFailRecording(MediaRecorderError.permissionRequested)
+            self.delegate?.didFailRecording(recorder: self, MediaRecorderError.permissionRequested)
             self.session.requestRecordPermission({response in
                 DispatchQueue.main.async {
                     if response {
                         self.startRecording(forDuration: recordTimeLimit)
                     } else {
                         // Permission denyed.
-                        self.delegate?.didFailRecording(MediaRecorderError.permissionDenyedError)
+                        self.delegate?.didFailRecording(recorder: self, MediaRecorderError.permissionDenyedError)
                     }
                 }
             })
@@ -73,7 +74,7 @@ class MediaRecorder: NSObject {
         case .granted:
             self.startRecording(forDuration: recordTimeLimit)
         case .denied:
-            self.delegate?.didFailRecording(MediaRecorderError.unknownPermissionError)
+            self.delegate?.didFailRecording(recorder: self, MediaRecorderError.unknownPermissionError)
         @unknown default:
             // Ignored: do nothing.
             break
@@ -89,7 +90,7 @@ class MediaRecorder: NSObject {
             self.audioRecorder.isMeteringEnabled = true
             self.audioRecorder.prepareToRecord()
         } catch {
-            self.delegate?.didFailRecording(error)
+            self.delegate?.didFailRecording(recorder: self, error)
             print("Error setting up: %@", error.localizedDescription)
             return
         }
@@ -104,21 +105,26 @@ class MediaRecorder: NSObject {
                 } else {
                     self.audioRecorder.record()
                 }
-                self.delegate?.didStartRecording()
+                self.delegate?.didStartRecording(recorder: self)
             } catch {
-                self.delegate?.didFailRecording(error)
+                self.delegate?.didFailRecording(recorder: self, error)
                 print("Error recording: %@", error.localizedDescription)
             }
         }
     }
 
-    public func stop() {
+    public func stop(discard: Bool = false) {
         guard let recordURL = self.recordFileURL else { return }
 
         let duration = self.audioRecorder.currentTime
-        self.duration = Int(duration * 1000)
         self.audioRecorder.stop()
-        self.delegate?.didFinishRecording(url: recordURL, duration: duration)
+        if discard {
+            self.delete()
+            self.delegate?.didFailRecording(recorder: self, MediaRecorderError.cancelledByUser)
+        } else {
+            self.duration = Int(duration * 1000)
+            self.delegate?.didFinishRecording(recorder: self, url: recordURL, duration: duration)
+        }
         do {
             try self.session.setActive(false)
         } catch {
@@ -161,7 +167,7 @@ class MediaRecorder: NSObject {
             self.audioRecorder.updateMeters()
             let amplitude = pow(10, 0.1 * self.audioRecorder.averagePower(forChannel: 0))
             self.audioSampler.put(amplitude)
-            self.delegate?.didUpdateRecording(amplitude: amplitude, atTime: self.audioRecorder.currentTime)
+            self.delegate?.didUpdateRecording(recorder: self, amplitude: amplitude, atTime: self.audioRecorder.currentTime)
             self.duration = Int(self.audioRecorder.currentTime * 1000)
         } else {
             self.updateTimer.invalidate()
@@ -172,10 +178,13 @@ class MediaRecorder: NSObject {
 
 extension MediaRecorder: AVAudioRecorderDelegate {
     func audioRecorderDidFinishRecording(_ recorder: AVAudioRecorder, successfully flag: Bool) {
+        print("AVAudioRecorderDelegate.audioRecorderDidFinishRecording: \(flag)")
         updateTimer.invalidate()
     }
 
     func audioRecorderEncodeErrorDidOccur(_ recorder: AVAudioRecorder, error: Error?) {
+        print("AVAudioRecorderDelegate.audioRecorderEncodeErrorDidOccur: \(error?.localizedDescription ?? "nil")")
+        updateTimer.invalidate()
     }
 }
 
