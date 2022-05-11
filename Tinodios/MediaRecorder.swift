@@ -14,11 +14,26 @@ protocol MediaRecorderDelegate: AnyObject {
     func didFailRecording(recorder: MediaRecorder, _ error: Error)
 }
 
-enum MediaRecorderError: Error {
-    case permissionDenyedError
-    case unknownPermissionError
+enum MediaRecorderError: LocalizedError, CustomStringConvertible {
+    case permissionDenyed
+    case unknownPermission
     case permissionRequested
     case cancelledByUser
+
+    public var description: String {
+        get {
+            switch self {
+            case .permissionDenyed:
+                return "Permission denyed"
+            case .unknownPermission:
+                return "Unknown permission"
+            case .permissionRequested:
+                return "Permission requested"
+            case .cancelledByUser:
+                return "Cancelled by user"
+            }
+        }
+    }
 }
 
 /// MediaRecorder currenly support audio recording only.
@@ -54,6 +69,10 @@ class MediaRecorder: NSObject {
         return path.appendingPathComponent("\(name).m4a")
     }
 
+    public var isRecording: Bool {
+        return self.audioRecorder.isRecording
+    }
+
     public func start() {
         let recordTimeLimit: TimeInterval? = self.maxDuration != nil ? TimeInterval(self.maxDuration!) / 1000 : nil
 
@@ -66,7 +85,7 @@ class MediaRecorder: NSObject {
                         self.startRecording(forDuration: recordTimeLimit)
                     } else {
                         // Permission denyed.
-                        self.delegate?.didFailRecording(recorder: self, MediaRecorderError.permissionDenyedError)
+                        self.delegate?.didFailRecording(recorder: self, MediaRecorderError.permissionDenyed)
                     }
                 }
             })
@@ -74,7 +93,7 @@ class MediaRecorder: NSObject {
         case .granted:
             self.startRecording(forDuration: recordTimeLimit)
         case .denied:
-            self.delegate?.didFailRecording(recorder: self, MediaRecorderError.unknownPermissionError)
+            self.delegate?.didFailRecording(recorder: self, MediaRecorderError.unknownPermission)
         @unknown default:
             // Ignored: do nothing.
             break
@@ -91,7 +110,7 @@ class MediaRecorder: NSObject {
             self.audioRecorder.prepareToRecord()
         } catch {
             self.delegate?.didFailRecording(recorder: self, error)
-            print("Error setting up: %@", error.localizedDescription)
+            Cache.log.error("Failed to setup recorder: %@", error.localizedDescription)
             return
         }
 
@@ -108,7 +127,7 @@ class MediaRecorder: NSObject {
                 self.delegate?.didStartRecording(recorder: self)
             } catch {
                 self.delegate?.didFailRecording(recorder: self, error)
-                print("Error recording: %@", error.localizedDescription)
+                Cache.log.error("Failed to start recording: %@", error.localizedDescription)
             }
         }
     }
@@ -128,7 +147,7 @@ class MediaRecorder: NSObject {
         do {
             try self.session.setActive(false)
         } catch {
-            print("Failed to stop recording: %@", error.localizedDescription)
+            Cache.log.error("Failed to stop recording: %@", error.localizedDescription)
         }
     }
 
@@ -148,7 +167,7 @@ class MediaRecorder: NSObject {
                 self.duration = nil
                 self.audioSampler = AudioSampler()
             } catch {
-                print("Failed to delete recording: %@", error.localizedDescription)
+                Cache.log.error("Failed to delete recording: %@", error.localizedDescription)
             }
         } else {
             // The recording does not exist.
@@ -178,12 +197,11 @@ class MediaRecorder: NSObject {
 
 extension MediaRecorder: AVAudioRecorderDelegate {
     func audioRecorderDidFinishRecording(_ recorder: AVAudioRecorder, successfully flag: Bool) {
-        print("AVAudioRecorderDelegate.audioRecorderDidFinishRecording: \(flag)")
         updateTimer.invalidate()
     }
 
     func audioRecorderEncodeErrorDidOccur(_ recorder: AVAudioRecorder, error: Error?) {
-        print("AVAudioRecorderDelegate.audioRecorderEncodeErrorDidOccur: \(error?.localizedDescription ?? "nil")")
+        Cache.log.error("Error while recording: %@", error?.localizedDescription ?? "nil")
         updateTimer.invalidate()
     }
 }

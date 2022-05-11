@@ -2,14 +2,13 @@
 //  NotificationService.swift
 //  TinodiosNSExtension
 //
-//  Copyright © 2019 Tinode. All rights reserved.
+//  Copyright © 2019-2022 Tinode. All rights reserved.
 //
 
 import UserNotifications
 import TinodeSDK
 import TinodiosDB
 
-@available(iOS 10, *)
 class NotificationService: UNNotificationServiceExtension {
 
     var contentHandler: ((UNNotificationContent) -> Void)?
@@ -36,53 +35,63 @@ class NotificationService: UNNotificationServiceExtension {
         // - GRP
         //   Title: 'New chat'
         //   Body: <group name> || 'Unknown'
+        //
+        // Message read by the current user from another device (read):
+        //   Always invisible.
 
         if let bestAttemptContent = bestAttemptContent {
+            let payload = bestAttemptContent.userInfo
+            guard let topicName = payload["topic"] as? String, !topicName.isEmpty, let from = payload["xfrom"] as? String, !from.isEmpty else { return }
+
+            let action = payload["what"] as? String ?? "msg"
+
+            if action == "read" {
+                // Read notification.
+                if let seq = Int(payload["seq"] as? String ?? ""), seq > 0 {
+                    SharedUtils.updateRead(using: SharedUtils.createTinode(), for: topicName, seq: seq)
+                }
+                return
+            }
+
             defer { self.contentHandler!(bestAttemptContent) }
 
             let store = BaseDb.sharedInstance.sqlStore!
-
-            let userInfo = bestAttemptContent.userInfo
-            guard let topic = userInfo["topic"] as? String, !topic.isEmpty,
-                let xfrom = userInfo["xfrom"] as? String, !xfrom.isEmpty else { return }
-            let action = userInfo["what"] as? String ?? "msg"
-            var user = store.userGet(uid: xfrom) as? DefaultUser
-            if user == nil {
-                // If we don't have the user info, fetch it from the server.
-                let tinode = SharedUtils.createTinode()
-                self.log.info("Fetching desc from server for user %@.", xfrom)
-                if SharedUtils.fetchDesc(using: tinode, for: xfrom) == .newData {
-                    // Server replies asynchronously. Give the thread 1 second to receive and persist the data.
-                    Thread.sleep(forTimeInterval: 1)
-                    user = store.userGet(uid: xfrom) as? DefaultUser
-                } else {
-                    self.log.info("No new desc data fetched for %@.", xfrom)
-                }
-                tinode.disconnect()
-            }
-
-            let senderName = user?.pub?.fn ?? "Unknown"
-            switch Tinode.topicTypeByName(name: topic) {
+            let topicType = Tinode.topicTypeByName(name: topicName)
+            let senderName: String
+            switch topicType {
             case .p2p:
-                if action == "msg" {
-                    bestAttemptContent.title = senderName
-                } else if action == "sub" {
-                    bestAttemptContent.title = "New chat"
-                    bestAttemptContent.body = senderName
+                var user = store.userGet(uid: from) as? DefaultUser
+                if user == nil {
+                    // If we don't have the user info, fetch it from the server.
+                    let tinode = SharedUtils.createTinode()
+                    self.log.info("Fetching desc from server for user %@.", from)
+                    if SharedUtils.fetchDesc(using: tinode, for: from) == .newData {
+                        // The above call blocks until the servers replies, but it takes time to sync data to local store. Give the thread 1 second to persist the data.
+                        Thread.sleep(forTimeInterval: 1)
+                        user = store.userGet(uid: from) as? DefaultUser
+                    } else {
+                        self.log.info("No new desc data fetched for %@.", from)
+                    }
+                    tinode.disconnect()
                 }
+                senderName = user?.pub?.fn ?? NSLocalizedString("Unknown", comment: "Placeholder for missing user name")
                 break
             case .grp:
-                let topic = store.topicGet(from: nil, withName: topic) as? DefaultComTopic
-                if action == "msg" {
-                    bestAttemptContent.title = topic?.pub?.fn ?? "Unknown"
-                    bestAttemptContent.body = senderName + ": " + bestAttemptContent.body
-                } else if action == "sub" {
-                    bestAttemptContent.title = "New chat"
-                    bestAttemptContent.body = topic?.pub?.fn ?? "Unknown"
-                }
+                let topic = store.topicGet(from: nil, withName: topicName) as? DefaultComTopic
+                senderName = topic?.pub?.fn ?? NSLocalizedString("Unknown", comment: "Placeholder for missing topic name")
                 break
             default:
                 return
+            }
+
+            if action == "msg" {
+                bestAttemptContent.title = senderName
+                if topicType == .grp {
+                    bestAttemptContent.body = senderName + ": " + bestAttemptContent.body
+                }
+            } else if action == "sub" {
+                bestAttemptContent.title = NSLocalizedString("New chat", comment: "Push notification title")
+                bestAttemptContent.body = senderName
             }
         } else {
             self.contentHandler!(request.content)

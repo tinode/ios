@@ -2,7 +2,7 @@
 //  SharedUtils.swift
 //  TinodiosDB
 //
-//  Copyright © 2020 Tinode. All rights reserved.
+//  Copyright © 2020-2022 Tinode. All rights reserved.
 //
 
 import Foundation
@@ -233,6 +233,20 @@ public class SharedUtils {
             return .newData
         }
         return .failed
+    }
+
+
+    // Update cached seq id of the last read message.
+    public static func updateRead(using tinode: Tinode, for topicName: String, seq: Int) {
+        // Don't need to handle 'read' notifications for an unknown topic.
+        guard let topic = tinode.getTopic(topicName: topicName) as? DefaultComTopic else { return }
+
+        if topic.read ?? -1 < seq {
+            topic.read = seq
+            if let store = BaseDb.sharedInstance.sqlStore {
+                _ = store.setRead(topic: topic, read: seq)
+            }
+        }
     }
 }
 

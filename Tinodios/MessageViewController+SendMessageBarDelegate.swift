@@ -57,9 +57,7 @@ extension MessageViewController: SendMessageBarDelegate {
         case .start:
             Cache.mediaRecorder.delegate = self
             Cache.mediaRecorder.start()
-            print("recording started")
         case .stopAndSend:
-            print("end recording audio and send, url=\(Cache.mediaRecorder.recordFileURL ?? URL(fileURLWithPath: "nil"))")
             Cache.mediaRecorder.stop()
             currentAudioPlayer?.stop()
             currentAudioPlayer = nil
@@ -88,7 +86,7 @@ extension MessageViewController: SendMessageBarDelegate {
             (self.inputAccessoryView as! SendMessageBar).audioPlaybackAction(.playbackPause)
             break
         default:
-            print("some other recording action \(action)")
+            Cache.log.error("Unknown recording action")
         }
     }
 }
@@ -163,12 +161,11 @@ extension MessageViewController: ImagePickerDelegate {
 
 extension MessageViewController: MediaRecorderDelegate {
     func didStartRecording(recorder: MediaRecorder) {
-        print("delegate: recording started")
+        /* do nothing */
     }
 
     func didFinishRecording(recorder: MediaRecorder, url: URL?, duration: TimeInterval) {
         (self.inputAccessoryView as! SendMessageBar).audioPlaybackPreview(recorder.preview, duration: duration)
-        print("delegate: recording finished")
     }
 
     func didUpdateRecording(recorder: MediaRecorder, amplitude: Float, atTime: TimeInterval) {
@@ -178,8 +175,10 @@ extension MessageViewController: MediaRecorderDelegate {
     }
 
     func didFailRecording(recorder: MediaRecorder, _ error: Error) {
-        Cache.log.error("Recording failed: %@", error.localizedDescription)
-        UiUtils.showToast(message: "Recording failed")
+        if let err = error as? MediaRecorderError, err != .cancelledByUser {
+            Cache.log.error("Recording failed: %@", error.localizedDescription)
+            UiUtils.showToast(message: String(format: NSLocalizedString("Recording failed", comment: "Error message")))
+        }
         (self.inputAccessoryView as! SendMessageBar).showAudioBar(.hidden)
     }
 }
@@ -188,12 +187,12 @@ extension MessageViewController: VLCMediaPlayerDelegate {
     func mediaPlayerStateChanged(_ notification: Notification) {
         guard let player = notification.object as? VLCMediaPlayer else { return }
 
-        print("VLCMediaPlayerDelegate \(player.state)")
-
         switch player.state {
         case .playing, .opening, .paused, .buffering, .esAdded:
             break
         case .error:
+            Cache.log.error("Playback failed")
+            UiUtils.showToast(message: String(format: NSLocalizedString("Playback failed", comment: "Error message")))
             fallthrough
         case .stopped:
             fallthrough
@@ -206,7 +205,7 @@ extension MessageViewController: VLCMediaPlayerDelegate {
     }
 
     func mediaPlayerTimeChanged(_ notification: Notification) {
-        // guard let player = notification.object as? VLCMediaPlayer else { return }
+        /* do nothing */
     }
 }
 
