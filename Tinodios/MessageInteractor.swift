@@ -39,7 +39,7 @@ protocol MessageBusinessLogic: AnyObject {
     func prepareReply(to msg: Message?) -> PromisedReply<Drafty>?
     func dismissPendingMessage()
 
-    func createForwardedMessage(from original: Message?) -> PromisedReply<PendingMessage>?
+    func createForwardedMessage(from original: Message?) -> PendingMessage?
     func prepareToForward(message: Drafty, forwardedFrom: String, preview: Drafty)
     var pendingMessage: PendingMessage? { get }
 }
@@ -276,7 +276,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         self.pendingMessage = nil
     }
 
-    func createForwardedMessage(from original: Message?) -> PromisedReply<PendingMessage>? {
+    func createForwardedMessage(from original: Message?) -> PendingMessage? {
         guard let original = original, let content = original.content, let topicName = self.topicName else {
             return nil
         }
@@ -290,27 +290,13 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
             .appendLineBreak()
             .append(transformed)
         let fwdHeader = "\(topicName):\(original.seqId)"
-        // Preview. We may have images to download and downsize. Have to do it asynchronously.
-        let transformer = SendReplyFormatter(defaultAttributes: [:])
-        let preview = transformed.preview(previewLen: UiUtils.kQuotedReplyLength)
-        if let p = transformer.promise {
-            let result = PromisedReply<PendingMessage>()
-            p.then(onSuccess: { value in
-                let forwardedPreview = Drafty.quote(quoteHeader: sender, authorUid: from, quoteContent: preview)
-                try? result.resolve(result: .forwarded(message: forwardedContent, from: fwdHeader, preview: forwardedPreview))
-                return nil
-            }, onFailure: { err in
-                try? result.reject(error: err)
-                return nil
-            })
-            return result
-        } else {
-            let forwardedPreview = Drafty.quote(quoteHeader: sender, authorUid: from, quoteContent: preview)
-            return PromisedReply<PendingMessage>(value: .forwarded(message: forwardedContent, from: fwdHeader, preview: forwardedPreview))
-        }
+
+        // Preview of forwarded text.
+        let preview = Drafty.quote(quoteHeader: sender, authorUid: from, quoteContent: transformed.preview(previewLen: UiUtils.kQuotedReplyLength))
+        return .forwarded(message: forwardedContent, from: fwdHeader, preview: preview)
     }
 
-    // Saves the pending forwarded message and returns its preview.
+    // Saves the pending forwarded message.
     func prepareToForward(message: Drafty, forwardedFrom: String, preview: Drafty) {
         self.pendingMessage = .forwarded(message: message, from: forwardedFrom, preview: preview)
     }

@@ -188,7 +188,10 @@ extension MessageViewController: VLCMediaPlayerDelegate {
         guard let player = notification.object as? VLCMediaPlayer else { return }
 
         switch player.state {
-        case .playing, .opening, .paused, .buffering, .esAdded:
+        case .playing:
+            // It's never called due to a bug: https://code.videolan.org/videolan/VLCKit/-/issues/129
+            break
+        case .opening, .paused, .buffering, .esAdded:
             break
         case .error:
             Cache.log.error("Playback failed")

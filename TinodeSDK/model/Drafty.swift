@@ -1193,6 +1193,7 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
     }
 
     /// Creates a shortened and trimmed preview of the Drafty object:
+    ///   Convert full mention '➦ John Dow' to a single ➦ character.
     ///   Move attachments to the end of the document.
     ///   Trim the document to specified length.
     ///   Convert the first mention to a single character
@@ -1242,7 +1243,7 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
     public func forwardedContent() -> Drafty {
         var tree = Span()
         tree = SpanTreeProcessor.toTree(contentOf: self) ?? tree
-        // Strip leading mention.
+        // Strip leading mention to avoid nested mentions in multiple forwards.
         class Forward : DraftyTransformer {
             required init() {}
             func transform(node: Drafty.Span) -> Drafty.Span? {

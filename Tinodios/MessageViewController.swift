@@ -396,7 +396,7 @@ class MessageViewController: UIViewController {
 
         if case let .forwarded(_, _, fwdPreview) = self.interactor?.pendingMessage {
             self.isForwardingMessage = true
-            self.showInPreviewBar(content: fwdPreview)
+            self.showInPreviewBar(content: fwdPreview, forwarded: true)
         }
         self.interactor?.attachToTopic(interactively: true)
         self.interactor?.loadMessages(scrollToMostRecentMessage: false)

@@ -86,6 +86,7 @@
 		B091BA4C2820A98B00317CDC /* RecordedMediaPlayback.swift in Sources */ = {isa = PBXBuildFile; fileRef = B091BA4B2820A98B00317CDC /* RecordedMediaPlayback.swift */; };
 		B091BA542824916800317CDC /* WaveImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B091BA532824916800317CDC /* WaveImage.swift */; };
 		B091BA5628272A2400317CDC /* WaveImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B091BA5528272A2400317CDC /* WaveImageView.swift */; };
+		B091BA58282DA01200317CDC /* SendForwardedFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B091BA57282DA01200317CDC /* SendForwardedFormatter.swift */; };
 		B09C564A2469362A00D6615D /* SettingsPersonalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B09C56492469362A00D6615D /* SettingsPersonalViewController.swift */; };
 		B09C564C2469756B00D6615D /* SettingsNotificationsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B09C564B2469756B00D6615D /* SettingsNotificationsViewController.swift */; };
 		B09C564E246975F700D6615D /* SettingsHelpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B09C564D246975F700D6615D /* SettingsHelpViewController.swift */; };
@@ -241,6 +242,7 @@
 		B091BA4B2820A98B00317CDC /* RecordedMediaPlayback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordedMediaPlayback.swift; sourceTree = "<group>"; };
 		B091BA532824916800317CDC /* WaveImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaveImage.swift; sourceTree = "<group>"; };
 		B091BA5528272A2400317CDC /* WaveImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaveImageView.swift; sourceTree = "<group>"; };
+		B091BA57282DA01200317CDC /* SendForwardedFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendForwardedFormatter.swift; sourceTree = "<group>"; };
 		B093F50126C5BBF300FAA4E8 /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		B093F50426C5BD4200FAA4E8 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Main.strings; sourceTree = "<group>"; };
 		B093F50526C5BD8800FAA4E8 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -468,6 +470,7 @@
 				B03066442805FAD300497EF4 /* MultiImageTextAttachment.swift */,
 				B027E5AD278901CA00A34C17 /* PreviewFormatter.swift */,
 				B027E5B12789026200A34C17 /* SendReplyFormatter.swift */,
+				B091BA57282DA01200317CDC /* SendForwardedFormatter.swift */,
 				0AD6873C27233C0800A39486 /* QuotedAttachment.swift */,
 				B027E5AF2789020D00A34C17 /* QuoteFormatter.swift */,
 				B01D2C6C27910B1E009543F2 /* ThumbnailTransformer.swift */,
@@ -828,6 +831,7 @@
 				0A0016E921E736CD00088188 /* MessagePresenter.swift in Sources */,
 				B0F98C8322E381C300444121 /* MessageMenuItem.swift in Sources */,
 				B0A612B1228C85C300569DFE /* MessageViewLayout.swift in Sources */,
+				B091BA58282DA01200317CDC /* SendForwardedFormatter.swift in Sources */,
 				B0133AE523D1ACBD00C813CA /* SendImageBar.swift in Sources */,
 				B091BA4C2820A98B00317CDC /* RecordedMediaPlayback.swift in Sources */,
 				B01D2C712794E1E0009543F2 /* AbstractFormatter.swift in Sources */,

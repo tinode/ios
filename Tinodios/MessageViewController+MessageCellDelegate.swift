@@ -148,13 +148,13 @@ extension MessageViewController: MessageCellDelegate {
         UIPasteboard.general.string = "[\(senderName!)]: \(msg.content?.string ?? ""); \(RelativeDateFormatter.shared.shortDate(from: msg.ts))"
     }
 
-    func showInPreviewBar(content: Drafty?) {
+    func showInPreviewBar(content: Drafty?, forwarded: Bool) {
         guard let content = content else { return }
         let maxWidth = sendMessageBar.previewMaxWidth
         let maxHeight = collectionView.frame.height
         // Make sure it's properly formatted.
-        let replyPreview = SendReplyFormatter(defaultAttributes: [:]).toAttributed(content, fitIn: CGSize(width: maxWidth, height: maxHeight))
-        self.togglePreviewBar(with: replyPreview)
+        let preview = (forwarded ? SendForwardedFormatter(defaultAttributes: [:]) : SendReplyFormatter(defaultAttributes: [:])).toAttributed(content, fitIn: CGSize(width: maxWidth, height: maxHeight))
+        self.togglePreviewBar(with: preview)
     }
 
     @objc func showReplyPreview(sender: UIMenuController) {
@@ -162,7 +162,7 @@ extension MessageViewController: MessageCellDelegate {
         let msg = messages[msgIndex]
         if let reply = interactor?.prepareReply(to: msg) {
             reply.then(onSuccess: { value in
-                DispatchQueue.main.async { self.showInPreviewBar(content: value) }
+                DispatchQueue.main.async { self.showInPreviewBar(content: value, forwarded: false) }
                 return nil
             }, onFailure: { err in
                 DispatchQueue.main.async { UiUtils.showToast(message: "Failed to create reply: \(err)") }
@@ -173,29 +173,24 @@ extension MessageViewController: MessageCellDelegate {
 
     @objc func showForwardSelector(sender: UIMenuController) {
         guard let menuItem = sender.menuItems?.first as? MessageMenuItem, menuItem.seqId > 0, let msgIndex = messageSeqIdIndex[menuItem.seqId] else { return }
-        let msg = messages[msgIndex]
-        guard let p = interactor?.createForwardedMessage(from: msg) else {
+
+        guard let msg = interactor?.createForwardedMessage(from: messages[msgIndex]) else {
             return
         }
-        p.then(onSuccess: { value in
-            guard case let .forwarded(forwardedMsg, forwardedFrom, forwardedPreview) = value else {
-                return nil
-            }
-            DispatchQueue.main.async {
-                let navigator = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "ForwardToNavController") as! UINavigationController
-                navigator.modalPresentationStyle = .pageSheet
-                let forwardToVC = navigator.viewControllers.first as! ForwardToViewController
-                forwardToVC.delegate = self
-                forwardToVC.forwardedContent = forwardedMsg
-                forwardToVC.forwardedFrom = forwardedFrom
-                forwardToVC.forwardedPreview = forwardedPreview
-                self.present(navigator, animated: true, completion: nil)
-            }
-            return nil
-        }, onFailure: { err in
-            DispatchQueue.main.async { UiUtils.showToast(message: "Failed for form forwarded message: \(err)") }
-            return nil
-        })
+        guard case let .forwarded(forwardedMsg, forwardedFrom, forwardedPreview) = msg else {
+            return
+        }
+        DispatchQueue.main.async {
+            let navigator = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "ForwardToNavController") as! UINavigationController
+            navigator.modalPresentationStyle = .pageSheet
+            let forwardToVC = navigator.viewControllers.first as! ForwardToViewController
+            forwardToVC.delegate = self
+            forwardToVC.forwardedContent = forwardedMsg
+            forwardToVC.forwardedFrom = forwardedFrom
+            forwardToVC.forwardedPreview = forwardedPreview
+            self.present(navigator, animated: true, completion: nil)
+        }
+        return
     }
 
     @objc func deleteMessage(sender: UIMenuController) {

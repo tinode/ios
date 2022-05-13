@@ -15,7 +15,7 @@ class SendReplyFormatter: QuoteFormatter {
 
     // Keeps track of the chain of images which need to be asynchronously downloaded
     // and downsized.
-    var promise: PromisedReply<UIImage>?
+    // var promise: PromisedReply<UIImage>?
 
     override func handleQuote(_ nodes: [FormatNode]) -> FormatNode {
         let node = FormatNode(nodes)
