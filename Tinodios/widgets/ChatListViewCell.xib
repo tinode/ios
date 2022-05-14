@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="19529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="20037" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19519"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="20020"/>
         <capability name="Image references" minToolsVersion="12.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -52,33 +52,33 @@
                         <imageReference key="image" image="dot.radiowaves.left.and.right" catalog="system" symbolScale="large"/>
                     </imageView>
                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="BLB-H5-KE0" userLabel="Trusted">
-                        <rect key="frame" x="125" y="12" width="18" height="12"/>
+                        <rect key="frame" x="125" y="7.5" width="18" height="21"/>
                         <color key="tintColor" red="0.011764705882352941" green="0.66274509803921566" blue="0.95686274509803915" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="18" id="1m8-y9-E4U"/>
                             <constraint firstAttribute="height" constant="12" id="TVy-l1-kbC"/>
                         </constraints>
-                        <imageReference key="image" image="trusted" symbolScale="large" renderingMode="original"/>
+                        <imageReference key="image" image="checkmark.seal.fill" catalog="system" symbolScale="large"/>
                         <preferredSymbolConfiguration key="preferredSymbolConfiguration" scale="large" weight="regular"/>
                     </imageView>
                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="bD1-0L-fPQ" userLabel="Staff">
-                        <rect key="frame" x="143" y="12" width="18" height="12"/>
+                        <rect key="frame" x="143" y="9.5" width="18" height="17.5"/>
                         <color key="tintColor" red="0.40784313725490196" green="0.62352941176470589" blue="0.2196078431372549" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="12" id="ZB9-mP-lHW"/>
                             <constraint firstAttribute="width" constant="18" id="wo3-kV-F23"/>
                         </constraints>
-                        <imageReference key="image" image="staff" symbolScale="large" renderingMode="original"/>
+                        <imageReference key="image" image="checkmark.shield.fill" catalog="system" symbolScale="large"/>
                         <preferredSymbolConfiguration key="preferredSymbolConfiguration" scale="large" weight="regular"/>
                     </imageView>
                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="NFW-FC-rPZ" userLabel="Danger">
-                        <rect key="frame" x="161" y="12" width="18" height="12"/>
+                        <rect key="frame" x="161" y="9.5" width="18" height="17"/>
                         <color key="tintColor" red="1" green="0.75686274509803919" blue="0.027450980392156862" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="12" id="2vm-wR-3Bp"/>
                             <constraint firstAttribute="width" constant="18" id="Bc9-KS-scD"/>
                         </constraints>
-                        <imageReference key="image" image="danger" symbolScale="large" renderingMode="original"/>
+                        <imageReference key="image" image="exclamationmark.octagon.fill" catalog="system" symbolScale="large"/>
                         <preferredSymbolConfiguration key="preferredSymbolConfiguration" scale="large" weight="regular"/>
                     </imageView>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="9+" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" preferredMaxLayoutWidth="18" translatesAutoresizingMaskIntoConstraints="NO" id="FaT-ra-R9w" userLabel="Unread Count">
@@ -189,12 +189,12 @@
     </objects>
     <resources>
         <image name="bell.slash" catalog="system" width="124" height="128"/>
-        <image name="danger" width="13" height="13"/>
+        <image name="checkmark.seal.fill" catalog="system" width="128" height="128"/>
+        <image name="checkmark.shield.fill" catalog="system" width="128" height="118"/>
         <image name="done-30" width="30" height="30"/>
         <image name="dot.radiowaves.left.and.right" catalog="system" width="128" height="89"/>
+        <image name="exclamationmark.octagon.fill" catalog="system" width="128" height="112"/>
         <image name="nosign" catalog="system" width="128" height="121"/>
-        <image name="staff" width="11" height="13"/>
-        <image name="trusted" width="15" height="15"/>
         <systemColor name="labelColor">
             <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
