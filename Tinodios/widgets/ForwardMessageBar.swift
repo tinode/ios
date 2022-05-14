@@ -58,14 +58,6 @@ class ForwardMessageBar: UIView {
     }
 
     public func togglePendingPreviewBar(with message: NSAttributedString?) {
-        if let message = message {
-            previewView.attributedText = message
-        } else {
-            previewView.attributedText = nil
-        }
-    }
-
-    public func togglePreviewBar(with message: NSAttributedString?) {
         if let message = message, let delegate = self.delegate {
             let textBounds = delegate.pendingPreviewMessageSize(forMessage: message)
             previewViewHeight.constant = textBounds.height
@@ -76,5 +68,6 @@ class ForwardMessageBar: UIView {
             previewView.attributedText = nil
             previewView.isHidden = true
         }
+        layoutIfNeeded()
     }
 }

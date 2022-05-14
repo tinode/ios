@@ -21,14 +21,6 @@ class SendForwardedFormatter: QuoteFormatter {
         return super.apply(type: type, data: data, key: key, content: content, stack: stack)
     }
 
-    override func handleMention(content nodes: [FormatNode], using data: [String: JSONValue]?) -> FormatNode {
-        let node = FormatNode(nodes)
-        if let uid = data?["val"]?.asString() {
-            node.style(cstyle: [.foregroundColor: UiUtils.letterTileColor(for: uid, dark: true)])
-        }
-        return node
-    }
-    
     func handleQuoteInsideQuote(_ nodes: [FormatNode]) -> FormatNode {
         return FormatNode([PreviewFormatter.annotatedIcon(iconName: "text.quote"), FormatNode(" ")])
     }
