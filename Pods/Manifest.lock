@@ -100,22 +100,22 @@ PODS:
   - Kingfisher (5.15.8):
     - Kingfisher/Core (= 5.15.8)
   - Kingfisher/Core (5.15.8)
-  - MobileVLCKit (3.3.17)
+  - MobileVLCKit (3.4.1b9)
   - nanopb (2.30908.0):
     - nanopb/decode (= 2.30908.0)
     - nanopb/encode (= 2.30908.0)
   - nanopb/decode (2.30908.0)
   - nanopb/encode (2.30908.0)
-  - PhoneNumberKit (3.3.3):
-    - PhoneNumberKit/PhoneNumberKitCore (= 3.3.3)
-    - PhoneNumberKit/UIKit (= 3.3.3)
-  - PhoneNumberKit/PhoneNumberKitCore (3.3.3)
-  - PhoneNumberKit/UIKit (3.3.3):
+  - PhoneNumberKit (3.3.4):
+    - PhoneNumberKit/PhoneNumberKitCore (= 3.3.4)
+    - PhoneNumberKit/UIKit (= 3.3.4)
+  - PhoneNumberKit/PhoneNumberKitCore (3.3.4)
+  - PhoneNumberKit/UIKit (3.3.4):
     - PhoneNumberKit/PhoneNumberKitCore
   - PromisesObjC (2.0.0)
-  - SQLite.swift (0.12.2):
-    - SQLite.swift/standard (= 0.12.2)
-  - SQLite.swift/standard (0.12.2)
+  - SQLite.swift (0.13.3):
+    - SQLite.swift/standard (= 0.13.3)
+  - SQLite.swift/standard (0.13.3)
   - SwiftKeychainWrapper (3.4.0)
 
 DEPENDENCIES:
@@ -125,9 +125,9 @@ DEPENDENCIES:
   - FirebaseCrashlytics
   - FirebaseMessaging
   - Kingfisher (~> 5.0)
-  - MobileVLCKit (~> 3.3.0)
-  - PhoneNumberKit (~> 3.1)
-  - SQLite.swift (~> 0.12.2)
+  - MobileVLCKit (~> 3.4.1b9)
+  - PhoneNumberKit (~> 3.3)
+  - SQLite.swift (~> 0.13)
   - SwiftKeychainWrapper (~> 3.2)
 
 SPEC REPOS:
@@ -162,13 +162,13 @@ SPEC CHECKSUMS:
   GoogleDataTransport: 629c20a4d363167143f30ea78320d5a7eb8bd940
   GoogleUtilities: 684ee790a24f73ebb2d1d966e9711c203f2a4237
   Kingfisher: a3c03d702433fa6cfedabb2bddbe076fb8f2e902
-  MobileVLCKit: c5dd1b0ae933dc9c2348099840e753496dcdd908
+  MobileVLCKit: 63fd88297505b97027f23842ae9df3a7bf17b31e
   nanopb: a0ba3315591a9ae0a16a309ee504766e90db0c96
-  PhoneNumberKit: 4ce83273551c4d2ae10b7361162f4283dd02835f
+  PhoneNumberKit: 441e8b26ec88d598e3591de9061eff18f5dd12e8
   PromisesObjC: 68159ce6952d93e17b2dfe273b8c40907db5ba58
-  SQLite.swift: d2b4642190917051ce6bd1d49aab565fe794eea3
+  SQLite.swift: 903bfa3bc9ab06345fdfbb578e34f47cfcf417da
   SwiftKeychainWrapper: 6fc49fbf7d4a6b0772917acb0e53a1639f6078d6
 
-PODFILE CHECKSUM: d95bfede44bb3d728220deef7f05952986ddeb14
+PODFILE CHECKSUM: 11c6be0f696f6223ca7f2e195144266d02d1784d
 
 COCOAPODS: 1.11.2

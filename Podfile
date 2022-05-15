@@ -14,7 +14,7 @@ project 'TinodeSDK'
 
 
 def db_pods
-  pod 'SQLite.swift', '~> 0.12.2'
+  pod 'SQLite.swift', '~> 0.13'
   pod 'SwiftKeychainWrapper', '~> 3.2'
 end
 
@@ -34,10 +34,10 @@ target 'Tinodios' do
     pod 'FirebaseCore'
     pod 'FirebaseMessaging'
     pod 'FirebaseAnalytics'
-    pod 'PhoneNumberKit', '~> 3.1'
-    pod 'Kingfisher', '~> 5.0'
     pod 'FirebaseCrashlytics'
-    pod 'MobileVLCKit', '~>3.3.0'
+    pod 'Kingfisher', '~> 5.0'
+    pod 'MobileVLCKit', '~> 3.4.1b9'
+    pod 'PhoneNumberKit', '~> 3.3'
 end
 
 post_install do | installer |

@@ -67,8 +67,9 @@ extension MessageCell: VLCMediaPlayerDelegate {
             Cache.log.error("MessageCell - unable to play audio: no data")
             return
         }
-        if audioPlayer!.media.length.intValue <= 0 && duration > 0 {
-            audioPlayer!.media.length = VLCTime(int: Int32(duration))
+
+        if audioPlayer!.media!.length.intValue <= 0 && duration > 0 {
+            audioPlayer!.media!.length = VLCTime(int: Int32(duration))
         }
 
         self.mediaEntityKey = key

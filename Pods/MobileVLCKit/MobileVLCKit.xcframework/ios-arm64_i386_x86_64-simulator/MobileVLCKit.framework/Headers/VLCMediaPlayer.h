@@ -2,13 +2,14 @@
  * VLCMediaPlayer.h: VLCKit.framework VLCMediaPlayer header
  *****************************************************************************
  * Copyright (C) 2007-2009 Pierre d'Herbemont
- * Copyright (C) 2007-2015 VLC authors and VideoLAN
+ * Copyright (C) 2007-2022 VLC authors and VideoLAN
  * Copyright (C) 2009-2015 Felix Paul Kühne
  * $Id$
  *
  * Authors: Pierre d'Herbemont <pdherbemont # videolan.org>
  *          Felix Paul Kühne <fkuehne # videolan.org>
  *          Soomin Lee <TheHungryBu # gmail.com>
+ *          Maxime Chapelet <umxprime # videolabs.io>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -29,19 +30,17 @@
 #if TARGET_OS_IPHONE
 # import <CoreGraphics/CoreGraphics.h>
 # import <UIKit/UIKit.h>
-#endif
-#import "VLCMedia.h"
-#import "VLCTime.h"
-#import "VLCAudio.h"
+#endif // TARGET_OS_IPHONE
 
+NS_ASSUME_NONNULL_BEGIN
+
+@class VLCLibrary, VLCMedia, VLCTime, VLCAudio, VLCMediaPlayer, VLCAdjustFilter;
 #if !TARGET_OS_IPHONE
-@class VLCVideoView;
-@class VLCVideoLayer;
-#endif
-
-@class VLCLibrary;
-@class VLCMediaPlayer;
+@class VLCVideoView, VLCVideoLayer;
+#endif // !TARGET_OS_IPHONE
+#if !TARGET_OS_TV
 @class VLCRendererItem;
+#endif // !TARGET_OS_TV
 
 /* Notification Messages */
 extern NSString *const VLCMediaPlayerTimeChanged;
@@ -96,13 +95,13 @@ typedef NS_ENUM(NSInteger, VLCDeinterlace)
  * Returns the momentary loudness in LUFS / dBFS for the last 400ms
  * \return montary loudness or 0 if there is no loudness yet
  */
-@property (readonly) double loudnessValue;
+@property (readonly, atomic) double loudnessValue;
 
 /**
  * returns the absolute date of the measurement analog to mach_absolute_time()
  * It is most likely in the future (0 to 2seconds) depending on the audio output buffer size.
  */
-@property (readonly) int64_t date;
+@property (readonly, atomic) int64_t date;
 
 @end
 
@@ -191,7 +190,7 @@ extern NSString * VLCMediaPlayerStateToString(VLCMediaPlayerState state);
 /**
  * the delegate object implementing the optional protocol
  */
-@property (weak, nonatomic) id<VLCMediaPlayerDelegate> delegate;
+@property (weak, nonatomic, nullable) id<VLCMediaPlayerDelegate> delegate;
 
 #if !TARGET_OS_IPHONE
 /* Initializers */
@@ -252,7 +251,7 @@ extern NSString * VLCMediaPlayerStateToString(VLCMediaPlayerState state);
  * set/retrieve a video view for rendering
  * This can be any UIView or NSView or instances of VLCVideoView / VLCVideoLayer if running on macOS
  */
-@property (strong) id drawable; /* The videoView or videoLayer */
+@property (strong, nullable) id drawable; /* The videoView or videoLayer */
 
 /**
  * Set/Get current video aspect ratio.
@@ -262,7 +261,7 @@ extern NSString * VLCMediaPlayerStateToString(VLCMediaPlayerState state);
  * \return the video aspect ratio or NULL if unspecified
  * (the result must be released with free()).
  */
-@property (NS_NONATOMIC_IOSONLY) char *videoAspectRatio;
+@property (NS_NONATOMIC_IOSONLY, nullable) char *videoAspectRatio;
 
 /**
  * Set/Get current crop filter geometry.
@@ -270,7 +269,7 @@ extern NSString * VLCMediaPlayerStateToString(VLCMediaPlayerState state);
  * param: psz_geometry new crop filter geometry (NULL to unset)
  * \return the crop filter geometry or NULL if unset
  */
-@property (NS_NONATOMIC_IOSONLY) char *videoCropGeometry;
+@property (NS_NONATOMIC_IOSONLY, nullable) char *videoCropGeometry;
 
 /**
  * Set/Get the current video scaling factor.
@@ -300,7 +299,7 @@ extern NSString * VLCMediaPlayerStateToString(VLCMediaPlayerState state);
  *
  * \param name of deinterlace filter to use (availability depends on underlying VLC version), NULL to disable.
  */
-- (void)setDeinterlaceFilter: (NSString *)name;
+- (void)setDeinterlaceFilter: (nullable NSString *)name;
 
 /**
  * Enable or disable deinterlace and specify which filter to use
@@ -311,41 +310,46 @@ extern NSString * VLCMediaPlayerStateToString(VLCMediaPlayerState state);
 - (void)setDeinterlace:(VLCDeinterlace)deinterlace withFilter:(NSString *)name;
 
 /**
+ * Access to adjust filter's parameters and properties
+ */
+@property (nonatomic, readonly) VLCAdjustFilter *adjustFilter;
+
+/**
  * Enable or disable adjust video filter (contrast, brightness, hue, saturation, gamma)
  *
  * \return bool value
  */
-@property (nonatomic) BOOL adjustFilterEnabled;
+@property (nonatomic) BOOL adjustFilterEnabled __deprecated_msg("Use -[VLCMediaPlayer adjustFilter].enabled instead");
 /**
  * Set/Get the adjust filter's contrast value
  *
  * \return float value (range: 0-2, default: 1.0)
  */
-@property (nonatomic) float contrast;
+@property (nonatomic) float contrast __deprecated_msg("Use -[VLCMediaPlayer adjustFilter].contrast instead");
 /**
  * Set/Get the adjust filter's brightness value
  *
  * \return float value (range: 0-2, default: 1.0)
  */
-@property (nonatomic) float brightness;
+@property (nonatomic) float brightness __deprecated_msg("Use -[VLCMediaPlayer adjustFilter].brightness instead");
 /**
  * Set/Get the adjust filter's hue value
  *
  * \return float value (range: -180-180, default: 0.)
  */
-@property (nonatomic) float hue;
+@property (nonatomic) float hue __deprecated_msg("Use -[VLCMediaPlayer adjustFilter].hue instead");
 /**
  * Set/Get the adjust filter's saturation value
  *
  * \return float value (range: 0-3, default: 1.0)
  */
-@property (nonatomic) float saturation;
+@property (nonatomic) float saturation __deprecated_msg("Use -[VLCMediaPlayer adjustFilter].saturation instead");
 /**
  * Set/Get the adjust filter's gamma value
  *
  * \return float value (range: 0-10, default: 1.0)
  */
-@property (nonatomic) float gamma;
+@property (nonatomic) float gamma __deprecated_msg("Use -[VLCMediaPlayer adjustFilter].gamma instead");
 
 /**
  * Get the requested movie play rate.
@@ -653,7 +657,7 @@ extern NSString *const VLCTitleDescriptionIsMenu;
 /**
  * Get the last available loudness description for the current media (last 400ms)
  */
-@property (readonly) VLCMediaLoudness *momentaryLoudness;
+@property (readonly, nullable) VLCMediaLoudness *momentaryLoudness;
 
 #pragma mark -
 #pragma mark equalizer
@@ -717,7 +721,7 @@ extern NSString *const VLCTitleDescriptionIsMenu;
 /**
  * The currently media instance set to play
  */
-@property (NS_NONATOMIC_IOSONLY, strong) VLCMedia *media;
+@property (NS_NONATOMIC_IOSONLY, strong, nullable) VLCMedia *media;
 
 #pragma mark -
 #pragma mark playback operations
@@ -907,7 +911,7 @@ extern NSString *const VLCTitleDescriptionIsMenu;
  * \return a NSArray of NSString instances containing the names
  * \note This property is not available to macOS
  */
-@property (NS_NONATOMIC_IOSONLY, readonly, copy) NSArray *snapshots;
+@property (NS_NONATOMIC_IOSONLY, readonly, copy, nullable) NSArray *snapshots;
 
 #if TARGET_OS_IPHONE
 /**
@@ -916,7 +920,7 @@ extern NSString *const VLCTitleDescriptionIsMenu;
  * \note return value is nil if there is no snapshot
  * \note This property is not available to macOS
  */
-@property (NS_NONATOMIC_IOSONLY, readonly) UIImage *lastSnapshot;
+@property (NS_NONATOMIC_IOSONLY, readonly, nullable) UIImage *lastSnapshot;
 #else
 /**
  * Get last snapshot available.
@@ -924,7 +928,7 @@ extern NSString *const VLCTitleDescriptionIsMenu;
  * \note return value is nil if there is no snapshot
  * \note This property is not available to iOS and tvOS
  */
-@property (NS_NONATOMIC_IOSONLY, readonly) NSImage *lastSnapshot;
+@property (NS_NONATOMIC_IOSONLY, readonly, nullable) NSImage *lastSnapshot;
 #endif
 
 /**
@@ -942,7 +946,7 @@ extern NSString *const VLCTitleDescriptionIsMenu;
 
 #pragma mark -
 #pragma mark Renderer
-
+#if !TARGET_OS_TV
 /**
  * Sets a `VLCRendererItem` to the current media player
  * \param item `VLCRendererItem` discovered by `VLCRendererDiscoverer`
@@ -951,6 +955,7 @@ extern NSString *const VLCTitleDescriptionIsMenu;
  * \see VLCRendererDiscoverer
  * \see VLCRendererItem
  */
-- (BOOL)setRendererItem:(VLCRendererItem *)item;
-
+- (BOOL)setRendererItem:(nullable VLCRendererItem *)item;
+#endif // !TARGET_OS_TV
 @end
+NS_ASSUME_NONNULL_END

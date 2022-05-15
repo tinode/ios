@@ -9,17 +9,20 @@
 import Foundation
 
 final class RegexManager {
+
+    public init() {
+        let characterSet = NSMutableCharacterSet(charactersIn: "\u{00a0}")
+        characterSet.formUnion(with: CharacterSet.whitespacesAndNewlines)
+        self.spaceCharacterSet = characterSet as CharacterSet
+    }
+
     // MARK: Regular expression pool
 
     var regularExpresionPool = [String: NSRegularExpression]()
 
     private let regularExpressionPoolQueue = DispatchQueue(label: "com.phonenumberkit.regexpool", attributes: .concurrent)
 
-    var spaceCharacterSet: CharacterSet = {
-        let characterSet = NSMutableCharacterSet(charactersIn: "\u{00a0}")
-        characterSet.formUnion(with: CharacterSet.whitespacesAndNewlines)
-        return characterSet as CharacterSet
-    }()
+    var spaceCharacterSet: CharacterSet
 
     // MARK: Regular expression
 
@@ -128,27 +131,7 @@ final class RegexManager {
 
     // MARK: String and replace
 
-    func replaceStringByRegex(_ pattern: String, string: String) -> String {
-        do {
-            var replacementResult = string
-            let regex = try regexWithPattern(pattern)
-            let matches = regex.matches(in: string)
-            if matches.count == 1 {
-                let range = regex.rangeOfFirstMatch(in: string)
-                if range != nil {
-                    replacementResult = regex.stringByReplacingMatches(in: string, options: [], range: range, withTemplate: "")
-                }
-                return replacementResult
-            } else if matches.count > 1 {
-                replacementResult = regex.stringByReplacingMatches(in: string, withTemplate: "")
-            }
-            return replacementResult
-        } catch {
-            return string
-        }
-    }
-
-    func replaceStringByRegex(_ pattern: String, string: String, template: String) -> String {
+    func replaceStringByRegex(_ pattern: String, string: String, template: String = "") -> String {
         do {
             var replacementResult = string
             let regex = try regexWithPattern(pattern)
