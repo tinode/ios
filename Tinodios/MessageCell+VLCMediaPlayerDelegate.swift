@@ -17,15 +17,9 @@ extension MessageCell: VLCMediaPlayerDelegate {
         case .playing, .opening, .paused, .buffering, .esAdded:
             break
         case .error:
-            self.delegate?.didEndMediaPlayback(in: self, audioPlayer: player)
             Cache.log.error("MessageCell - media playback failed")
             fallthrough
-        case .stopped:
-            print("stopped")
-            // Must reopen: VLCMedia closes the InputStrem.
-            self.mediaStream = nil
-            self.audioPlayer?.media = nil
-        case .ended:
+        case .stopped, .ended:
             self.delegate?.didEndMediaPlayback(in: self, audioPlayer: player)
         default:
             break
@@ -37,10 +31,8 @@ extension MessageCell: VLCMediaPlayerDelegate {
     }
 
     func stopAudio() {
-        if let player = audioPlayer {
-            if player.isPlaying {
-                player.stop()
-            }
+        if audioPlayer?.isPlaying ?? false {
+            audioPlayer!.stop()
         }
     }
 
@@ -52,7 +44,7 @@ extension MessageCell: VLCMediaPlayerDelegate {
     }
 
     fileprivate func initMedia(url: URL?, data: Data?, duration: Int, key: Int) {
-        if (self.mediaEntityKey ?? -1) == key && self.mediaStream != nil {
+        if (self.mediaEntityKey ?? -1) == key {
             // Already properly initialized with the same data.
             return
         }
@@ -60,9 +52,7 @@ extension MessageCell: VLCMediaPlayerDelegate {
         if let url = url {
             audioPlayer!.media = VLCMedia(url: url)
         } else if let data = data {
-            // VLCMedia keep only weak reference to InputStream, must retain a strong reference.
-            self.mediaStream = InputStream(data: data)
-            audioPlayer!.media = VLCMedia(stream: self.mediaStream!)
+            audioPlayer!.media = VLCMedia(stream: InputStream(data: data))
         } else {
             Cache.log.error("MessageCell - unable to play audio: no data")
             return

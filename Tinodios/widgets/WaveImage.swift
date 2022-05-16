@@ -129,8 +129,11 @@ public class WaveImage {
             resampleBars()
             recalcBars()
         }
-        cachedImage = renderWaveImage()
-        delegate?.invalidate(in: self)
+
+        if let image = renderWaveImage() {
+            cachedImage = image
+            delegate?.invalidate(in: self)
+        }
     }
 
     /// Start playback animation.
@@ -292,15 +295,15 @@ public class WaveImage {
     }
 
     // Create button as image
-    private func renderWaveImage() -> UIImage {
+    private func renderWaveImage() -> UIImage? {
         if bars.isEmpty {
-            return UIImage()
+            return nil
         }
 
         UIGraphicsBeginImageContextWithOptions(CGSize(width: size.width, height: size.height), false, UIScreen.main.scale)
 
         defer { UIGraphicsEndImageContext() }
-        guard let context = UIGraphicsGetCurrentContext() else { return UIImage() }
+        guard let context = UIGraphicsGetCurrentContext() else { return nil }
 
         context.saveGState()
 

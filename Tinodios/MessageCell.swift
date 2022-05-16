@@ -40,8 +40,6 @@ class MessageCell: UICollectionViewCell {
 
     // Player for audio messages.
     var audioPlayer: VLCMediaPlayer?
-    // VLCMediaPlayer keeps only a weak reference to the stream. Must keep a hard reference.
-    var mediaStream: InputStream?
     // Which entity is configured in the player: entity key.
     var mediaEntityKey: Int?
 
@@ -71,6 +69,7 @@ class MessageCell: UICollectionViewCell {
 
     deinit {
         self.audioPlayer?.stop()
+        self.audioPlayer = nil
     }
 
     /// The image view with the avatar.
@@ -151,8 +150,6 @@ class MessageCell: UICollectionViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
 
-        self.audioPlayer?.stop()
-
         content.text = nil
         content.attributedText = nil
         newDateLabel.text = nil
@@ -162,9 +159,12 @@ class MessageCell: UICollectionViewCell {
         avatarView.image = nil
         progressView.isHidden = true
 
-        self.seqId = 0
-        self.isDeleted = false
-        self.mediaEntityKey = nil
+        isDeleted = false
+
+        audioPlayer?.stop()
+        audioPlayer = nil
+        seqId = 0
+        mediaEntityKey = nil
     }
 
     /// Handle tap gesture on contentView and its subviews.

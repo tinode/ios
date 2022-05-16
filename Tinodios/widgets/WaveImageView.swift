@@ -93,7 +93,6 @@ public class WaveImageView: UIImageView {
 
 extension WaveImageView: WaveImageDelegate {
     public func invalidate(in wave: WaveImage) {
-        print("invalidate")
         DispatchQueue.main.async {
             self.image = wave.image
         }

@@ -121,13 +121,16 @@ class SendMessageBar: UIView {
 
     @IBAction func send(_ sender: UIButton) {
         let msg = inputField.actualText.trimmingCharacters(in: .whitespacesAndNewlines)
-        if msg.isEmpty {
-            return
+
+        if audioLocked {
+            self.delegate?.sendMessageBar(recordAudio: .stopAndSend)
+            audioLocked = false
+            showAudioBar(.hidden)
+        } else if !msg.isEmpty {
+            delegate?.sendMessageBar(sendText: msg)
+            inputField.text = nil
+            textViewDidChange(inputField)
         }
-        audioLocked = false
-        delegate?.sendMessageBar(sendText: msg)
-        inputField.text = nil
-        textViewDidChange(inputField)
     }
 
     @IBAction func deleteRecording(_ sender: Any) {
