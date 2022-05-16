@@ -300,7 +300,7 @@ public class WaveImage {
         UIGraphicsBeginImageContextWithOptions(CGSize(width: size.width, height: size.height), false, UIScreen.main.scale)
 
         defer { UIGraphicsEndImageContext() }
-        let context = UIGraphicsGetCurrentContext()!
+        guard let context = UIGraphicsGetCurrentContext() else { return UIImage() }
 
         context.saveGState()
 

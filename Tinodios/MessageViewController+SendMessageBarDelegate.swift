@@ -62,7 +62,7 @@ extension MessageViewController: SendMessageBarDelegate {
             currentAudioPlayer?.stop()
             currentAudioPlayer = nil
             if let recordURL = Cache.mediaRecorder.recordFileURL {
-                // sendAudioAttachment(url: recordURL, duration: Cache.mediaRecorder.duration!, preview: Cache.mediaRecorder.preview)
+                sendAudioAttachment(url: recordURL, duration: Cache.mediaRecorder.duration!, preview: Cache.mediaRecorder.preview)
             }
         case .stopRecording:
             Cache.mediaRecorder.stop()
