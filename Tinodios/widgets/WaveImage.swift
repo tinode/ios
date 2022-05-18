@@ -138,8 +138,6 @@ public class WaveImage {
 
     /// Start playback animation.
     public func play() {
-        print("play=\(duration), time is nil=\(self.animationTimer == nil)")
-
         if self.animationTimer != nil {
             // Animation is already running.
             return

@@ -14,20 +14,17 @@ extension MessageCell: VLCMediaPlayerDelegate {
         guard let player = notification.object as? VLCMediaPlayer else { return }
 
         switch player.state {
-        case .playing, .opening, .paused, .buffering, .esAdded:
+        case .playing, .paused, .opening, .buffering, .esAdded:
             break
         case .error:
             Cache.log.error("MessageCell - media playback failed")
             fallthrough
         case .stopped, .ended:
             self.delegate?.didEndMediaPlayback(in: self, audioPlayer: player)
+            mediaEntityKey = nil
         default:
             break
         }
-    }
-
-    func mediaPlayerTimeChanged(_ notification: Notification) {
-        // guard let player = notification.object as? VLCMediaPlayer else { return }
     }
 
     func stopAudio() {
