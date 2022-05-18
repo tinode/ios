@@ -45,6 +45,8 @@ class SendMessageBar: UIView {
     private static let kSendButtonImageArrow = UIImage(systemName: "arrow.up.circle.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: SendMessageBar.kSendButtonPointsNormal))!
     private static let kWaveInsetsShort = UIEdgeInsets(top: 2, left: 6, bottom: 2, right: 88)
     private static let kWaveInsetsLong = UIEdgeInsets(top: 2, left: 6, bottom: 2, right: 52)
+    // Initial input text weight.
+    private static let kInitialInputFieldHeight: CGFloat = 40
 
     // MARK: Action delegate
 
@@ -219,7 +221,7 @@ class SendMessageBar: UIView {
                 self.sendButtonVertical.constant = sendButtonConstrains.y + dY
             }
         default:
-            print(sender.state.rawValue)
+            break
         }
     }
 
@@ -364,7 +366,7 @@ class SendMessageBar: UIView {
 
         if state == .hidden {
             // Bar hidden.
-            inputField.show(true, height: 40)
+            inputField.show(true, height: SendMessageBar.kInitialInputFieldHeight)
             attachButton.isHidden = false
             // audioDurationLabel.show(false)
             audioDurationLabel.isHidden = true
@@ -444,23 +446,20 @@ class SendMessageBar: UIView {
 }
 
 extension SendMessageBar: UITextViewDelegate {
-
     func textViewDidChange(_ textView: UITextView) {
         delegate?.sendMessageBar(textChangedTo: textView.text)
 
-        let size = CGSize(width: frame.width - Constants.inputFieldInsetLeading - Constants.inputFieldInsetTrailing, height: .greatestFiniteMagnitude)
-        let fittingSize = inputField.sizeThatFits(size)
-
-        if !(fittingSize.height > inputFieldMaxHeight) {
-            inputField.isScrollEnabled = false
-            inputFieldHeight.constant = fittingSize.height + 2 // Not sure why but it seems to be off by 2
-        } else {
-            textView.isScrollEnabled = true
-        }
-
         if inputField.actualText.isEmpty {
+            inputFieldHeight.constant = SendMessageBar.kInitialInputFieldHeight
+
             self.sendButton.setImage(SendMessageBar.kSendButtonImageWave, for: .normal)
         } else {
+            let size = CGSize(width: frame.width - Constants.inputFieldInsetLeading - Constants.inputFieldInsetTrailing, height: .greatestFiniteMagnitude)
+            let fittingSize = inputField.sizeThatFits(size)
+            if fittingSize.height <= inputFieldMaxHeight {
+                inputFieldHeight.constant = fittingSize.height + 2 // Not sure why but it seems to be off by 2
+            }
+
             self.sendButton.setImage(SendMessageBar.kSendButtonImageArrow, for: .normal)
         }
     }

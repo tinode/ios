@@ -136,7 +136,7 @@ extension SendImageBar: UITextViewDelegate {
         let size = CGSize(width: frame.width - Constants.inputFieldInsetLeading - Constants.inputFieldInsetTrailing, height: .greatestFiniteMagnitude)
         let fittingSize = inputField.sizeThatFits(size)
 
-        if !(fittingSize.height > inputFieldMaxHeight) {
+        if fittingSize.height <= inputFieldMaxHeight {
             inputField.isScrollEnabled = false
             inputFieldHeight.constant = fittingSize.height + 1 // Not sure why but it seems to be off by 1
         } else {

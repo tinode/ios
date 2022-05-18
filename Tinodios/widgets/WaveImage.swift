@@ -322,7 +322,7 @@ public class WaveImage {
             path.stroke()
         } else {
             // Draw past - future bars and thumb on top of them.
-            let dividedAt = Int(CGFloat(bars.count) * 0.5 * seekPosition) * 2
+            let dividedAt = Int(round(CGFloat(bars.count) * 0.5 * seekPosition)) * 2
 
             // Already played amplitude bars.
             context.setStrokeColor(self.pastBarColor)
@@ -345,9 +345,9 @@ public class WaveImage {
         if self.duration > 0 {
             // Draw thumb.
             context.setFillColor(self.thumbColor)
-            let size = CGFloat(WaveImage.kThumbRadius) * 2
+            let diameter = CGFloat(WaveImage.kThumbRadius) * 2
             let x = seekPositionToX()
-            UIBezierPath(ovalIn: CGRect(x: CGFloat(x) - size / 2, y: bounds.height * 0.5 - size / 2 + bounds.minY, width: size, height: size)).fill()
+            UIBezierPath(ovalIn: CGRect(x: CGFloat(x) - diameter / 2, y: bounds.height * 0.5 - diameter / 2 + bounds.minY, width: diameter, height: diameter)).fill()
         }
 
         context.restoreGState()
