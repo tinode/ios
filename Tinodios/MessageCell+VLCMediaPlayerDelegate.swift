@@ -88,9 +88,9 @@ extension MessageCell: VLCMediaPlayerDelegate {
         }
         audioPlayer!.position = seekTo
         if doPause {
+            // There is a bug in VLCPLayer: pause() is ignored if called too soon after play().
+            // https://code.videolan.org/videolan/VLCKit/-/issues/610
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
-                // There is a bug in VLCPLayer: pause() is ignored if called too soon after play().
-                // https://code.videolan.org/videolan/VLCKit/-/issues/610
                 self.audioPlayer!.pause()
             }
         }
