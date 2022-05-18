@@ -20,8 +20,10 @@ extension MessageCell: VLCMediaPlayerDelegate {
             Cache.log.error("MessageCell - media playback failed")
             fallthrough
         case .stopped, .ended:
-            self.delegate?.didEndMediaPlayback(in: self, audioPlayer: player)
-            mediaEntityKey = nil
+            if mediaEntityKey != nil {
+                self.delegate?.didEndMediaPlayback(in: self, audioPlayer: player)
+                mediaEntityKey = nil
+            }
         default:
             break
         }
@@ -45,7 +47,6 @@ extension MessageCell: VLCMediaPlayerDelegate {
             // Already properly initialized with the same data.
             return
         }
-
         if let url = url {
             audioPlayer!.media = VLCMedia(url: url)
         } else if let data = data {
@@ -87,7 +88,11 @@ extension MessageCell: VLCMediaPlayerDelegate {
         }
         audioPlayer!.position = seekTo
         if doPause {
-            audioPlayer!.pause()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
+                // There is a bug in VLCPLayer: pause() is ignored if called too soon after play().
+                // https://code.videolan.org/videolan/VLCKit/-/issues/610
+                self.audioPlayer!.pause()
+            }
         }
         self.delegate?.didSeekMedia(in: self, audioPlayer: self.audioPlayer!, pos: seekTo)
     }
