@@ -103,6 +103,12 @@ class DraftyTest: XCTestCase {
                     fmt: [Style(at: 7, len: 7, key: 0)],
                     ent: [Entity(tp: "HT", data: ["val": .string("юникод")])])
         XCTAssertEqual(d1, d2, "String 12 - hashtag Unicode")
+
+        // String 13: two lines with emoji in the first and style in the second.
+        d1 = Drafty(content: "first 😀 line\nsecond *line*")
+        d2 = Drafty(text: "first 😀 line second line",
+                    fmt: [Style(tp: "BR", at: 12, len: 1), Style(tp: "ST", at: 20, len: 4)], ent: nil)
+        XCTAssertEqual(d1, d2, "String 13 - two lines with emoji in the first and style in the second")
     }
 
     func testShorten() {

@@ -1122,12 +1122,13 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
             allowed = nil
             forTypes = nil
         }
-        init(allowedFields: [String], forTypes: [String]?) {
+        init(allowedFields: [String], forTypes: [String]) {
             self.allowed = allowedFields
             self.forTypes = forTypes
         }
+        // Example: (type: "IM", field: "val")
         private func isAllowed(type: String, field: String) -> Bool {
-            return (allowed == nil || allowed!.contains(field)) && (forTypes == nil || forTypes!.contains(type))
+            return (allowed != nil && allowed!.contains(field)) && (forTypes != nil && forTypes!.contains(type))
         }
         func transform(node: Drafty.Span) -> Drafty.Span? {
             node.data = copyEntData(type: node.type, data: node.data, maxLength: Drafty.kMaxPreviewDataSize)
