@@ -2,7 +2,7 @@
 //  TopicDb.swift
 //  ios
 //
-//  Copyright © 2019 Tinode. All rights reserved.
+//  Copyright © 2019-2022 Tinode. All rights reserved.
 //
 
 import Foundation
@@ -138,6 +138,7 @@ public class TopicDb {
 
         topic.updated = row[self.updated]
         topic.touched = st.lastUsed
+        topic.deleted = st.status == BaseDb.Status.deletedHard || st.status == BaseDb.Status.deletedSoft
         topic.read = row[self.read]
         topic.recv = row[self.recv]
         topic.seq = row[self.seq]
@@ -336,7 +337,7 @@ public class TopicDb {
                     if updateMaxLocalSeq { st.maxLocalSeq = seq }
                 }
             } catch {
-                BaseDb.log.error("TopicDb - msgReceived operation failed: topicId = %@, error = %@", recordId, error.localizedDescription)
+                BaseDb.log.error("TopicDb - msgReceived failed: topicId = %@, error = %@", recordId, error.localizedDescription)
                 return false
             }
         }
@@ -383,17 +384,31 @@ public class TopicDb {
                 }
             }
         } catch {
-            BaseDb.log.error("TopicDb - msgDelivered operation failed: topicId = %lld, error = %@", recordId, error.localizedDescription)
+            BaseDb.log.error("TopicDb - msgDelivered failed: topicId = %lld, error = %@", recordId, error.localizedDescription)
         }
         return success
     }
+
     @discardableResult
     func delete(recordId: Int64) -> Bool {
         let record = self.table.filter(self.id == recordId)
         do {
             return try self.db.run(record.delete()) > 0
         } catch {
-            BaseDb.log.error("TopicDb - delete operation failed: topicId = %lld, error = %@", recordId, error.localizedDescription)
+            BaseDb.log.error("TopicDb - delete failed: topicId = %lld, error = %@", recordId, error.localizedDescription)
+            return false
+        }
+    }
+
+    @discardableResult
+    func markDeleted(recordId: Int64) -> Bool {
+        let record = self.table.filter(self.id == recordId)
+        var setters: [Setter] = []
+        setters.append(self.status <- BaseDb.Status.deletedHard.rawValue)
+        do {
+            return try self.db.run(record.update(setters)) > 0
+        } catch {
+            BaseDb.log.error("TopicDb - mark deleted failed: topicId = %lld, error = %@", recordId, error.localizedDescription)
             return false
         }
     }
@@ -419,7 +434,7 @@ public class TopicDb {
             try self.db.run(subscriberDbSql, accountId)
             try self.db.run(topics.delete())
         } catch {
-            BaseDb.log.error("TopicDb - deleteAll(forAccount) operation failed: accountId = %lld, error = %@", accountId, error.localizedDescription)
+            BaseDb.log.error("TopicDb - deleteAll(forAccount) failed: accountId = %lld, error = %@", accountId, error.localizedDescription)
             return false
         }
         return true

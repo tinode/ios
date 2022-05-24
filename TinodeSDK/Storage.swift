@@ -84,7 +84,7 @@ public protocol Storage: AnyObject {
     func topicUpdate(topic: TopicProto) -> Bool
     // Delete topic.
     @discardableResult
-    func topicDelete(topic: TopicProto) -> Bool
+    func topicDelete(topic: TopicProto, hard: Bool) -> Bool
 
     // Get seq IDs of the stored messages as a Range.
     func getCachedMessagesRange(topic: TopicProto) -> MsgRange?

@@ -82,13 +82,18 @@ public class SqlStore: Storage {
         return self.dbh?.topicDb?.update(topic: topic) ?? false
     }
 
-    public func topicDelete(topic: TopicProto) -> Bool {
+    public func topicDelete(topic: TopicProto, hard: Bool) -> Bool {
         guard let st = topic.payload as? StoredTopic, let topicId = st.id else { return false }
         do {
-            try dbh?.db?.savepoint("SqlStore.topicDelete") {
-                self.dbh?.messageDb?.deleteAll(forTopic: topicId)
-                self.dbh?.subscriberDb?.deleteForTopic(topicId: topicId)
-                self.dbh?.topicDb?.delete(recordId: topicId)
+            if hard {
+                try dbh?.db?.savepoint("SqlStore.topicDelete") {
+                    self.dbh?.messageDb?.deleteAll(forTopic: topicId)
+                    self.dbh?.subscriberDb?.deleteForTopic(topicId: topicId)
+                    self.dbh?.topicDb?.delete(recordId: topicId)
+
+                }
+            } else {
+                self.dbh?.topicDb?.markDeleted(recordId: topicId)
             }
             return true
         } catch {

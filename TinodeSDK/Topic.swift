@@ -14,6 +14,7 @@ public protocol TopicProto: AnyObject {
     var name: String { get }
     var updated: Date? { get set }
     var touched: Date? { get set }
+    var deleted: Bool { get set }
     var subsUpdated: Date? { get }
     var topicType: TopicType { get }
     var maxDel: Int { get set }
@@ -55,7 +56,8 @@ public protocol TopicProto: AnyObject {
     func topicLeft(unsub: Bool?, code: Int?, reason: String?)
 
     func updateAccessMode(ac: AccessChange?) -> Bool
-    func persist(_ on: Bool)
+    func persist()
+    func expunge(hard: Bool)
     func setSetAndFetch(newSeq: Int?)
 
     func allMessagesReceived(count: Int?)
@@ -224,6 +226,8 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
             }
         }
     }
+
+    public var deleted: Bool = false
 
     public var read: Int? {
         get {
@@ -520,17 +524,17 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
         return MetaGetBuilder(parent: self)
     }
 
-    public func persist(_ on: Bool) {
-        if on {
-            if !isPersisted {
-                store?.topicAdd(topic: self)
-               if isP2PType {
-                   tinode?.updateUser(uid: self.name, desc: self.description)
-               }
-            }
-        } else {
-            store?.topicDelete(topic: self)
+    public func persist() {
+        if !isPersisted {
+            store?.topicAdd(topic: self)
+           if isP2PType {
+               tinode?.updateUser(uid: self.name, desc: self.description)
+           }
         }
+    }
+
+    public func expunge(hard: Bool) {
+        store?.topicDelete(topic: self, hard: hard)
     }
 
     @discardableResult
@@ -566,9 +570,8 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
             return PromisedReply(error: TopicError.alreadySubscribed)
         }
         let name = self.name
-        if !isPersisted {
-            persist(true)
-        }
+        persist()
+
         let tnd = tinode!
         guard tnd.isConnected else {
             return PromisedReply(error: TinodeError.notConnected("Cannot subscribe to topic. No server connection."))
@@ -610,7 +613,7 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
                     case TinodeError.serverResponseError(let code, _, _) = e {
                     if ServerMessage.kStatusBadRequest <= code && code < ServerMessage.kStatusInternalServerError {
                         self?.tinode?.stopTrackingTopic(topicName: name)
-                        self?.persist(false)
+                        self?.expunge(hard: true)
                     }
                 }
                 // To next handler.
@@ -843,12 +846,19 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
     /// Delete topic
     @discardableResult
     public func delete(hard: Bool) -> PromisedReply<ServerMessage> {
+        if deleted {
+            self.topicLeft(unsub: true, code: 200, reason: "OK")
+            self.tinode!.stopTrackingTopic(topicName: self.name)
+            self.expunge(hard: true)
+            return PromisedReply(value: nil)
+        }
+
         // Delete works even if the topic is not attached.
         return tinode!.delTopic(topicName: name, hard: hard).then(
             onSuccess: { msg in
                 self.topicLeft(unsub: true, code: msg?.ctrl?.code, reason: msg?.ctrl?.text)
                 self.tinode!.stopTrackingTopic(topicName: self.name)
-                self.persist(false)
+                self.expunge(hard: true)
                 return nil
             }
         )
@@ -1163,7 +1173,7 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
                         s.topicLeft(unsub: unsub, code: msg?.ctrl?.code, reason: msg?.ctrl?.text)
                         if unsub ?? false {
                             s.tinode?.stopTrackingTopic(topicName: s.name)
-                            s.persist(false)
+                            s.expunge(hard: true)
                         }
                         return nil
                     })

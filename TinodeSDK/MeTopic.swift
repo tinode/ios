@@ -241,9 +241,14 @@ open class MeTopic<DP: Codable & Mergeable>: Topic<DP, PrivateType, DP, PrivateT
             case .kRead: // user's other session marked some messages as read
                 assignRead(to: topic, read: pres.seq)
             case .kGone:
-                // If topic is unknown (==nil), then we don't care to unregister it.
-                topic.persist(false)
-                tinode!.stopTrackingTopic(topicName: pres.src!)
+                if topic.deleted {
+                    // Alredy deleted locally: clear from DB completely.
+                    topic.expunge(hard: true)
+                    tinode!.stopTrackingTopic(topicName: pres.src!)
+                } else {
+                    // Mark as deleted.
+                    topic.expunge(hard: false)
+                }
             case .kDel: // messages deleted
                 // Explicitly ignored: 'me' topic has no messages.
                 break
@@ -298,8 +303,12 @@ open class MeTopic<DP: Codable & Mergeable>: Topic<DP, PrivateType, DP, PrivateT
             for sub in metaSubs {
                 if let topic = tinode!.getTopic(topicName: sub.topic!) {
                     if sub.deleted != nil {
-                        topic.persist(false)
-                        tinode!.stopTrackingTopic(topicName: sub.topic!)
+                        if topic.deleted {
+                            topic.expunge(hard: true)
+                            tinode!.stopTrackingTopic(topicName: sub.topic!)
+                        } else {
+                            topic.expunge(hard: false)
+                        }
                     } else {
                         if let t = topic as? DefaultTopic {
                             t.update(sub: sub as! Subscription<TheCard, PrivateType>)
@@ -311,8 +320,9 @@ open class MeTopic<DP: Codable & Mergeable>: Topic<DP, PrivateType, DP, PrivateT
                         }
                     }
                 } else if sub.deleted == nil {
+                    // This is a new topic. Register it and write to DB.
                     let topic = tinode!.newTopic(sub: sub)
-                    topic.persist(true)
+                    topic.persist()
                 }
                 listener?.onMetaSub(sub: sub)
             }

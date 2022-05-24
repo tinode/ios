@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="19529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="20037" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19519"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="20020"/>
+        <capability name="Image references" minToolsVersion="12.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -43,6 +45,22 @@
                         <userDefinedRuntimeAttribute type="boolean" keyPath="layer.masksToBounds" value="YES"/>
                     </userDefinedRuntimeAttributes>
                 </view>
+                <imageView hidden="YES" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="r2E-Rh-cpL" userLabel="Deleted">
+                    <rect key="frame" x="22" y="21.5" width="18" height="18.5"/>
+                    <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    <color key="tintColor" systemColor="secondaryLabelColor"/>
+                    <constraints>
+                        <constraint firstAttribute="width" secondItem="r2E-Rh-cpL" secondAttribute="height" id="j05-rV-3hg"/>
+                        <constraint firstAttribute="width" constant="18" id="uOs-mN-4D5"/>
+                    </constraints>
+                    <imageReference key="image" image="xmark.circle.fill" catalog="system" symbolScale="medium" renderingMode="template"/>
+                    <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="17" scale="medium" weight="medium"/>
+                    <userDefinedRuntimeAttributes>
+                        <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                            <integer key="value" value="9"/>
+                        </userDefinedRuntimeAttribute>
+                    </userDefinedRuntimeAttributes>
+                </imageView>
             </subviews>
             <viewLayoutGuide key="safeArea" id="rc9-et-Ant"/>
             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -50,8 +68,10 @@
                 <accessibilityTraits key="traits" notEnabled="YES"/>
             </accessibility>
             <constraints>
+                <constraint firstAttribute="trailing" secondItem="r2E-Rh-cpL" secondAttribute="trailing" id="0wt-sW-91l"/>
                 <constraint firstItem="j32-bi-fOF" firstAttribute="height" secondItem="iN0-l3-epB" secondAttribute="height" id="4J8-79-1Oe"/>
                 <constraint firstItem="rc9-et-Ant" firstAttribute="bottom" secondItem="uzW-WL-QDg" secondAttribute="bottom" id="73d-an-Lo8"/>
+                <constraint firstItem="rc9-et-Ant" firstAttribute="bottom" secondItem="r2E-Rh-cpL" secondAttribute="bottom" id="899-vr-NlL"/>
                 <constraint firstItem="j32-bi-fOF" firstAttribute="width" secondItem="iN0-l3-epB" secondAttribute="width" id="8aJ-J2-jVm"/>
                 <constraint firstItem="j32-bi-fOF" firstAttribute="centerY" secondItem="rc9-et-Ant" secondAttribute="centerY" id="8yj-Ae-apK"/>
                 <constraint firstItem="rc9-et-Ant" firstAttribute="trailing" secondItem="uzW-WL-QDg" secondAttribute="trailing" id="d8E-jw-VzL"/>
@@ -61,4 +81,13 @@
             <point key="canvasLocation" x="21.739130434782609" y="423.88392857142856"/>
         </view>
     </objects>
+    <resources>
+        <image name="xmark.circle.fill" catalog="system" width="128" height="121"/>
+        <systemColor name="secondaryLabelColor">
+            <color red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
 </document>
