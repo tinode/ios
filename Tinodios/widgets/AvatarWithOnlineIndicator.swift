@@ -57,8 +57,9 @@ class AvatarWithOnlineIndicator: UIView {
         }
     }
 
-    public func set(pub: TheCard?, id: String?, online: Bool?) {
+    public func set(pub: TheCard?, id: String?, online: Bool?, deleted: Bool) {
         self.avatar.set(pub: pub, id: id)
+        self.deleted = deleted
         self.online = online
     }
 }

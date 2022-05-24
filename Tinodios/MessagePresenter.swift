@@ -10,7 +10,7 @@ import TinodiosDB
 
 protocol MessagePresentationLogic {
     func switchTopic(topic: String?)
-    func updateTitleBar(pub: TheCard?, online: Bool?)
+    func updateTitleBar(pub: TheCard?, online: Bool?, deleted: Bool)
     func setOnline(online: Bool?)
     func runTypingAnimation()
     func presentMessages(messages: [StoredMessage], _ scrollToMostRecentMessage: Bool)
@@ -32,9 +32,9 @@ class MessagePresenter: MessagePresentationLogic {
         }
     }
 
-    func updateTitleBar(pub: TheCard?, online: Bool?) {
+    func updateTitleBar(pub: TheCard?, online: Bool?, deleted: Bool) {
         DispatchQueue.main.async {
-            self.viewController?.updateTitleBar(pub: pub, online: online)
+            self.viewController?.updateTitleBar(pub: pub, online: online, deleted: deleted)
         }
     }
     func setOnline(online: Bool?) {

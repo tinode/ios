@@ -32,7 +32,8 @@ public class RoundImageView: UIImageView {
     // MARK: - Properties
     public var iconType: IconType = .none {
         didSet {
-            useDefaultIcon()
+            self.image = RoundImageView.defaultIcon(forType: iconType)
+            self.backgroundColor = .tertiaryLabel
         }
     }
 
@@ -140,8 +141,8 @@ public class RoundImageView: UIImageView {
                 self.initials = String(title[title.startIndex]).uppercased()
             } else {
                 // Placeholder image
-                useDefaultIcon()
-                self.backgroundColor = nil
+                self.image = RoundImageView.defaultIcon(forType: iconType)
+                self.backgroundColor = .tertiaryLabel
             }
         }
     }
@@ -216,25 +217,25 @@ public class RoundImageView: UIImageView {
     }
 
     private func prepareView() {
-        backgroundColor = .gray
         contentMode = .scaleAspectFill
         layer.masksToBounds = true
         clipsToBounds = true
         setCornerRadius()
-        useDefaultIcon()
+        self.image = RoundImageView.defaultIcon(forType: iconType)
+        backgroundColor = .tertiaryLabel
     }
 
-    private func useDefaultIcon() {
-        let icon: UIImage?
+    private static func defaultIcon(forType iconType: IconType) -> UIImage {
+        let icon: UIImage
         switch iconType {
         case .p2p:
-            icon = UIImage(systemName: "person", withConfiguration: UIImage.SymbolConfiguration(pointSize: 32, weight: .light, scale: .large))
+            icon = UIImage(systemName: "person.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: 32, weight: .medium, scale: .large))!
         case .grp:
-            icon = UIImage(systemName: "person.2", withConfiguration: UIImage.SymbolConfiguration(pointSize: 32, weight: .light, scale: .large))
+            icon = UIImage(systemName: "person.2.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: 32, weight: .medium, scale: .large))!
         default:
-            icon =  nil
+            icon =  UIImage(systemName: "questionmark", withConfiguration: UIImage.SymbolConfiguration(pointSize: 32, weight: .medium, scale: .large))!
         }
-        self.image = icon?.withTintColor(UIColor.systemBackground).withInset(8)
+        return icon.withTintColor(UIColor.systemBackground).withInset(6)!
     }
 
     private func setCornerRadius() {

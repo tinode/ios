@@ -79,14 +79,14 @@
 			children = (
 				0ACE9E612381356B006BE575 /* AccountDb.swift */,
 				0ACE9E602381356B006BE575 /* BaseDb.swift */,
+				0ACD8F7924AC5DAB00043871 /* ConnectionSettingsHelper.swift */,
 				0ACE9E5F2381356B006BE575 /* MessageDb.swift */,
+				0ACD8F7724AC579700043871 /* SharedUtils.swift */,
 				0ACE9E652381356B006BE575 /* SqlStore.swift */,
 				0ACE9E632381356B006BE575 /* StoredMessage.swift */,
 				0ACE9E622381356B006BE575 /* SubscriberDb.swift */,
 				0ACE9E642381356B006BE575 /* TopicDb.swift */,
 				0ACE9E5E2381356A006BE575 /* UserDb.swift */,
-				0ACD8F7924AC5DAB00043871 /* ConnectionSettingsHelper.swift */,
-				0ACD8F7724AC579700043871 /* SharedUtils.swift */,
 				0ACE9E532381342B006BE575 /* TinodiosDB.h */,
 				0ACE9E542381342B006BE575 /* Info.plist */,
 			);

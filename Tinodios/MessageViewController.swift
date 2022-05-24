@@ -11,7 +11,7 @@ import TinodiosDB
 
 protocol MessageDisplayLogic: AnyObject {
     func switchTopic(topic: String?)
-    func updateTitleBar(pub: TheCard?, online: Bool?)
+    func updateTitleBar(pub: TheCard?, online: Bool?, deleted: Bool)
     func setOnline(online: Bool?)
     func runTypingAnimation()
     func displayChatMessages(messages: [StoredMessage], _ scrollToMostRecentMessage: Bool)
@@ -489,6 +489,9 @@ class MessageViewController: UIViewController {
     }
 
     @objc func navBarAvatarTapped(tapGestureRecognizer: UITapGestureRecognizer) {
+        if topic?.deleted ?? false {
+            return
+        }
         performSegue(withIdentifier: "Messages2TopicInfo", sender: nil)
     }
 
@@ -534,11 +537,11 @@ extension MessageViewController: MessageDisplayLogic {
         topicName = topic
     }
 
-    func updateTitleBar(pub: TheCard?, online: Bool?) {
+    func updateTitleBar(pub: TheCard?, online: Bool?, deleted: Bool) {
         assert(Thread.isMainThread)
         self.navigationItem.title = pub?.fn ?? NSLocalizedString("Undefined", comment: "Undefined chat name")
 
-        navBarAvatarView.set(pub: pub, id: topicName, online: online)
+        navBarAvatarView.set(pub: pub, id: topicName, online: online, deleted: deleted)
         navBarAvatarView.bounds = CGRect(x: 0, y: 0, width: Constants.kNavBarAvatarSmallState, height: Constants.kNavBarAvatarSmallState)
 
         navBarAvatarView.translatesAutoresizingMaskIntoConstraints = false

@@ -134,9 +134,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         self.topic = tinode.getTopic(topicName: topicName) as? DefaultComTopic
         self.pagesToLoad = 1
 
-        if let pub = self.topic?.pub {
-            self.presenter?.updateTitleBar(pub: pub, online: (topic?.isChannel ?? false) ? nil : self.topic?.online)
-        }
+        self.presenter?.updateTitleBar(pub: self.topic?.pub, online: (topic?.isChannel ?? false) ? nil : self.topic?.online, deleted: topic?.deleted ?? true)
 
         if let (maxRecv, maxRead) = self.topic?.maxRecvReadValues {
             self.lastSeenRead = maxRead
@@ -714,8 +712,8 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
     override func onMetaDesc(desc: Description<TheCard, PrivateType>) {
         self.presenter?.applyTopicPermissions(withError: nil)
         if let pub = topic?.pub {
-            let online = (self.topic?.isChannel ?? false) ? nil : self.topic?.online
-            self.presenter?.updateTitleBar(pub: pub, online: online)
+            let online = topic!.isChannel ? nil : topic!.online
+            self.presenter?.updateTitleBar(pub: pub, online: online, deleted: topic!.deleted)
         }
     }
     override func onMetaSub(sub: Subscription<TheCard, PrivateType>) {
