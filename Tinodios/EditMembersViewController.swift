@@ -92,7 +92,7 @@ class EditMembersViewController: UIViewController, UITableViewDataSource {
         // Configure the cell...
         let contact = contacts[indexPath.row]
 
-        cell.avatar.set(pub: contact.pub, id: contact.uniqueId)
+        cell.avatar.set(pub: contact.pub, id: contact.uniqueId, deleted: false)
         cell.title.text = contact.pub?.fn
         cell.title.sizeToFit()
         cell.subtitle.text = contact.subtitle ?? contact.uniqueId
@@ -187,7 +187,7 @@ extension EditMembersViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SelectedMemberViewCell", for: indexPath) as! SelectedMemberViewCell
         let contact = contacts[selectedContacts[indexPath.item].item]
-        cell.avatarImageView.set(pub: contact.pub, id: contact.uniqueId)
+        cell.avatarImageView.set(pub: contact.pub, id: contact.uniqueId, deleted: false)
         return cell
     }
 }

@@ -89,7 +89,7 @@ class NewGroupViewController: UITableViewController {
         // Configure the cell...
         let contact = selectedContacts[indexPath.row - 1]
 
-        cell.avatar.set(pub: contact.pub, id: contact.uniqueId)
+        cell.avatar.set(pub: contact.pub, id: contact.uniqueId, deleted: false)
         cell.title.text = contact.pub?.fn
         cell.title.sizeToFit()
         cell.subtitle.text = contact.subtitle ?? contact.uniqueId

@@ -33,6 +33,11 @@ class AvatarWithOnlineIndicator: UIView {
     /// Three states: true (show green dot), false (gray dot), nil (no dot).
     public var online: Bool? {
         didSet {
+            if deleted {
+                self.onlineIndicator.isHidden = true
+                return
+            }
+
             guard let online = online else {
                 self.onlineIndicator.isHidden = true
                 return
@@ -58,8 +63,8 @@ class AvatarWithOnlineIndicator: UIView {
     }
 
     public func set(pub: TheCard?, id: String?, online: Bool?, deleted: Bool) {
-        self.avatar.set(pub: pub, id: id)
-        self.deleted = deleted
+        self.avatar.set(pub: pub, id: id, deleted: deleted)
         self.online = online
+        self.deleted = deleted
     }
 }

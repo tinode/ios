@@ -15,6 +15,7 @@ public class RoundImageView: UIImageView {
     internal enum Constants {
         static let kForegroundColorDark = UIColor(red: 0xDE/255, green: 0xDE/255, blue: 0xDE/255, alpha: 1.0)
         static let kForegroundColorLight = UIColor.white
+        static let kDeletedBackground = UIColor.tertiarySystemBackground
     }
 
     public enum IconType {
@@ -33,7 +34,7 @@ public class RoundImageView: UIImageView {
     public var iconType: IconType = .none {
         didSet {
             self.image = RoundImageView.defaultIcon(forType: iconType)
-            self.backgroundColor = .tertiaryLabel
+            self.backgroundColor = Constants.kDeletedBackground
         }
     }
 
@@ -98,7 +99,7 @@ public class RoundImageView: UIImageView {
         self.init(frame: .zero)
     }
 
-    public func set(pub: TheCard?, id: String?) {
+    public func set(pub: TheCard?, id: String?, deleted: Bool) {
         if let ref = pub?.photo?.ref, let url = URL(string: ref, relativeTo: Cache.tinode.baseURL(useWebsocketProtocol: false)) {
             let modifier = AnyModifier { request in
                 var request = request
@@ -110,7 +111,7 @@ public class RoundImageView: UIImageView {
                 if case .success(let value) = result {
                     self.initials = nil
                     self.backgroundColor = nil
-                    self.image = value.image
+                    self.image = deleted ? value.image.noir : value.image
                 }
                 // Ignoring the error: just keep the placeholder image.
             })
@@ -121,7 +122,7 @@ public class RoundImageView: UIImageView {
             self.backgroundColor = nil
             self.initials = nil
             // Avatar image provided.
-            self.image = icon
+            self.image = deleted ? icon.noir : icon
         } else {
             if let id = id, !id.isEmpty {
                 switch Tinode.topicTypeByName(name: id) {
@@ -134,15 +135,17 @@ public class RoundImageView: UIImageView {
             if let title = pub?.fn, !title.isEmpty {
                 // No avatar image but have avatar name, show initial.
                 self.letterTileFont = UIFont.preferredFont(forTextStyle: .title2)
-                let (fg, bg) = RoundImageView.selectBackground(id: id, dark: iconType == .p2p)
-                self.letterTileTextColor = fg
-                self.backgroundColor = bg
-
+                if deleted {
+                    self.backgroundColor = .tertiaryLabel
+                    self.letterTileTextColor = .systemBackground
+                } else {
+                    (self.letterTileTextColor, self.backgroundColor) = RoundImageView.selectBackground(id: id, dark: iconType == .p2p)
+                }
                 self.initials = String(title[title.startIndex]).uppercased()
             } else {
                 // Placeholder image
                 self.image = RoundImageView.defaultIcon(forType: iconType)
-                self.backgroundColor = .tertiaryLabel
+                self.backgroundColor = Constants.kDeletedBackground
             }
         }
     }
@@ -222,7 +225,7 @@ public class RoundImageView: UIImageView {
         clipsToBounds = true
         setCornerRadius()
         self.image = RoundImageView.defaultIcon(forType: iconType)
-        backgroundColor = .tertiaryLabel
+        backgroundColor = Constants.kDeletedBackground
     }
 
     private static func defaultIcon(forType iconType: IconType) -> UIImage {

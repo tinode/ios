@@ -346,6 +346,7 @@ public class Tinode {
         let encoder = JSONEncoder()
         encoder.dataEncodingStrategy = .base64
         encoder.dateEncodingStrategy = .customRFC3339
+        encoder.outputFormatting = .withoutEscapingSlashes
         return encoder
     }()
     public static let jsonDecoder: JSONDecoder = {

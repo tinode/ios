@@ -534,6 +534,7 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
     }
 
     public func expunge(hard: Bool) {
+        deleted = true
         store?.topicDelete(topic: self, hard: hard)
     }
 

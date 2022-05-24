@@ -84,10 +84,10 @@ class TopicInfoViewController: UITableViewController {
         topicPrivateTextView.text = (topic.comment ?? "").isEmpty ? NSLocalizedString("Private info: not set", comment: "Placeholder text in editor") : topic.comment
         topicPrivateTextView.sizeToFit()
 
-        topicIDLabel.text = topic?.name
+        topicIDLabel.text = topic.name
         topicIDLabel.sizeToFit()
 
-        avatarImage.set(pub: topic.pub, id: topic?.name)
+        avatarImage.set(pub: topic.pub, id: topic.name, deleted: topic.deleted)
         avatarImage.letterTileFont = self.avatarImage.letterTileFont.withSize(CGFloat(50))
         mutedSwitch.isOn = topic.isMuted
         archivedSwitch.isOn = topic.isArchived
@@ -281,7 +281,7 @@ extension TopicInfoViewController {
         let isMe = self.tinode.isMe(uid: uid)
         let pub = sub.pub
 
-        cell.avatar.set(pub: pub, id: uid)
+        cell.avatar.set(pub: pub, id: uid, deleted: false)
         cell.title.text = isMe ? NSLocalizedString("You", comment: "This is 'you'") : (pub?.fn ?? NSLocalizedString("Unknown", comment: "Placeholder for missing user name"))
         cell.title.sizeToFit()
         cell.subtitle.text = sub.acs?.givenString

@@ -91,7 +91,7 @@ class TopicGeneralViewController: UITableViewController {
         topicPrivateLabel.textColor = topic?.comment?.isEmpty ?? true ? .placeholderText : .secondaryLabel
         topicPrivateLabel.text = (topic.comment ?? "").isEmpty ? NSLocalizedString("Private info: not set", comment: "Placeholder text in editor") : topic.comment
 
-        avatarImage.set(pub: topic.pub, id: topic?.name)
+        avatarImage.set(pub: topic.pub, id: topic.name, deleted: topic.deleted)
         avatarImage.letterTileFont = self.avatarImage.letterTileFont.withSize(CGFloat(50))
     }
 

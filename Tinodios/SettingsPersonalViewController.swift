@@ -78,7 +78,7 @@ class SettingsPersonalViewController: UITableViewController {
         }
 
         // Avatar.
-        self.avatarImage.set(pub: me.pub, id: self.tinode.myUid)
+        self.avatarImage.set(pub: me.pub, id: self.tinode.myUid, deleted: false)
         self.avatarImage.letterTileFont = self.avatarImage.letterTileFont.withSize(CGFloat(50))
         self.manageTags.detailTextLabel?.text = me.tags?.joined(separator: ", ")
 

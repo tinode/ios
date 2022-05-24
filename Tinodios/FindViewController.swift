@@ -220,7 +220,7 @@ class FindViewController: UITableViewController, FindDisplayLogic {
 
             // Configure the cell...
             let contact = indexPath.section == FindViewController.kLocalContactsSection ? localContacts[indexPath.row] : remoteContacts[indexPath.row]
-            cell.avatar.set(pub: contact.pub, id: contact.uniqueId)
+            cell.avatar.set(pub: contact.pub, id: contact.uniqueId, deleted: false)
             cell.title.text = contact.pub?.fn
             cell.title.sizeToFit()
             cell.subtitle.text = contact.subtitle ?? contact.uniqueId

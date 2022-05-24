@@ -750,7 +750,8 @@ extension MessageViewController: UICollectionViewDataSource {
         cell.avatarView.frame = attributes.avatarFrame
         if attributes.avatarFrame != .zero {
             // The avatar image should be assigned after setting the size. Otherwise it may be drawn twice.
-            cell.avatarView.set(pub: topic?.getSubscription(for: message.from)?.pub, id: message.from)
+            let sub = topic?.getSubscription(for: message.from)
+            cell.avatarView.set(pub: sub?.pub, id: message.from, deleted: sub == nil)
         }
 
         // Sender name under the avatar.
