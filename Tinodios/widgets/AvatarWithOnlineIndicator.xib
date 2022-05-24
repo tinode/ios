@@ -14,7 +14,8 @@
             <connections>
                 <outlet property="avatar" destination="j32-bi-fOF" id="SyN-NK-f8H"/>
                 <outlet property="contentView" destination="iN0-l3-epB" id="I36-2h-YnZ"/>
-                <outlet property="online" destination="uzW-WL-QDg" id="n2T-gV-KET"/>
+                <outlet property="deletedIndicator" destination="r2E-Rh-cpL" id="PI2-0O-AgO"/>
+                <outlet property="onlineIndicator" destination="uzW-WL-QDg" id="n2T-gV-KET"/>
             </connections>
         </placeholder>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>

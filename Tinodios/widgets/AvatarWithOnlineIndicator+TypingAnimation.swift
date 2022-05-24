@@ -26,7 +26,7 @@ extension AvatarWithOnlineIndicator {
         // since UI thread synchronizes this write and possibly
         // other reads/write triggered by timer.
         self.tag = steps
-        guard self.online.subviews.isEmpty else {
+        guard self.onlineIndicator.subviews.isEmpty else {
             // If we are already presenting another typing animation,
             // setting tag to |steps| will increase its duration.
             return
@@ -36,7 +36,7 @@ extension AvatarWithOnlineIndicator {
         // Rounded corners.
         animation.layer.cornerRadius = CGFloat(AvatarWithOnlineIndicator.kTypingAnimationSize / 2)
         animation.layer.masksToBounds = true
-        self.online.addSubview(animation)
+        self.onlineIndicator.addSubview(animation)
         // Place it in the center of the online indicator.
         animation.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
@@ -55,11 +55,11 @@ extension AvatarWithOnlineIndicator {
             repeats: true)
     }
     @objc private func animationStep(timer: Timer) {
-        guard !self.online.subviews.isEmpty else {
+        guard !self.onlineIndicator.subviews.isEmpty else {
             timer.invalidate()
             return
         }
-        let animationView = self.online.subviews[0]
+        let animationView = self.onlineIndicator.subviews[0]
         animationView.backgroundColor =
             AvatarWithOnlineIndicator.kAnimationColorSequence[
                 self.tag % AvatarWithOnlineIndicator.kAnimationColorSequence.count]

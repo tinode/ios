@@ -10,12 +10,14 @@ import TinodeSDK
 class AvatarWithOnlineIndicator: UIView {
     @IBOutlet var contentView: UIView!
     @IBOutlet weak var avatar: RoundImageView!
-    @IBOutlet weak var online: UIView!
+    @IBOutlet weak var onlineIndicator: UIView!
+    @IBOutlet weak var deletedIndicator: UIImageView!
 
     override init(frame: CGRect) {
         super.init(frame: frame)
         loadNib()
     }
+
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         loadNib()
@@ -29,17 +31,34 @@ class AvatarWithOnlineIndicator: UIView {
     }
 
     /// Three states: true (show green dot), false (gray dot), nil (no dot).
-    public func setOnline(online: Bool?) {
-        guard let online = online else {
-            self.online.isHidden = true
-            return
+    public var online: Bool? {
+        didSet {
+            guard let online = online else {
+                self.onlineIndicator.isHidden = true
+                return
+            }
+            self.deletedIndicator.isHidden = true
+            self.onlineIndicator.isHidden = false
+            self.onlineIndicator.backgroundColor = online ?
+                UIColor.init(fromHexCode: 0xFF40C040) : UIColor.init(fromHexCode: 0xFFE0E0E0)
         }
-        self.online.isHidden = false
-        self.online.backgroundColor = online ?
-            UIColor.init(fromHexCode: 0xFF40C040) : UIColor.init(fromHexCode: 0xFFE0E0E0)
     }
+
+    /// Three states: true (show green dot), false (gray dot), nil (no dot).
+    public var deleted: Bool = false {
+        didSet {
+            if deleted {
+                self.deletedIndicator.isHidden = false
+                self.onlineIndicator.isHidden = true
+            } else {
+                self.deletedIndicator.isHidden = true
+                self.onlineIndicator.isHidden = false
+            }
+        }
+    }
+
     public func set(pub: TheCard?, id: String?, online: Bool?) {
         self.avatar.set(pub: pub, id: id)
-        self.setOnline(online: online)
+        self.online = online
     }
 }

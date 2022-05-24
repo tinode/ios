@@ -551,7 +551,7 @@ extension MessageViewController: MessageDisplayLogic {
 
     func setOnline(online: Bool?) {
         assert(Thread.isMainThread)
-        navBarAvatarView.setOnline(online: online)
+        navBarAvatarView.online = online
     }
 
     func runTypingAnimation() {
