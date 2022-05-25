@@ -2,7 +2,7 @@
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 http://docs.oasis-open.org/xliff/v1.2/os/xliff-core-1.2-strict.xsd">
   <file original="en.lproj/Localizable.strings" source-language="en" target-language="en" datatype="plaintext">
     <header>
-      <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="13.2.1" build-num="13C100"/>
+      <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="13.4" build-num="13F17a"/>
     </header>
     <body>
       <trans-unit id="  Content deleted" xml:space="preserve">
@@ -434,6 +434,11 @@
         <target>Picture</target>
         <note>Label shown next to an inline image</note>
       </trans-unit>
+      <trans-unit id="Playback failed" xml:space="preserve">
+        <source>Playback failed</source>
+        <target>Playback failed</target>
+        <note>Error message</note>
+      </trans-unit>
       <trans-unit id="Please wait..." xml:space="preserve">
         <source>Please wait...</source>
         <target>Please wait...</target>
@@ -448,6 +453,11 @@
         <source>Private info: not set</source>
         <target>Private info: not set</target>
         <note>Placeholder text in editor</note>
+      </trans-unit>
+      <trans-unit id="Recording failed" xml:space="preserve">
+        <source>Recording failed</source>
+        <target>Recording failed</target>
+        <note>Error message</note>
       </trans-unit>
       <trans-unit id="Registering..." xml:space="preserve">
         <source>Registering...</source>
@@ -575,6 +585,11 @@
         <target>Unknown type</target>
         <note>Displayed when the type of attachment cannot be determined</note>
       </trans-unit>
+      <trans-unit id="Unsupported" xml:space="preserve">
+        <source>Unsupported</source>
+        <target>Unsupported</target>
+        <note>Label shown next to an unsupported Drafty format element</note>
+      </trans-unit>
       <trans-unit id="Upload failed (%@). No server response." xml:space="preserve">
         <source>Upload failed (%@). No server response.</source>
         <target>Upload failed (%@). No server response.</target>
@@ -640,7 +655,7 @@
   </file>
   <file original="Pods/en.lproj/Localizable.strings" source-language="en" target-language="en" datatype="plaintext">
     <header>
-      <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="13.2.1" build-num="13C100"/>
+      <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="13.4" build-num="13F17a"/>
     </header>
     <body>
       <trans-unit id="An error occured whilst validating the phone number." xml:space="preserve">
@@ -702,7 +717,7 @@
   </file>
   <file original="Tinodios/Base.lproj/Main.storyboard" source-language="en" target-language="en" datatype="plaintext">
     <header>
-      <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="13.2.1" build-num="13C100"/>
+      <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="13.4" build-num="13F17a"/>
     </header>
     <body>
       <trans-unit id="0Fx-rq-hiS.title" xml:space="preserve">
@@ -1489,7 +1504,7 @@
   </file>
   <file original="Tinodios/en.lproj/InfoPlist.strings" source-language="en" target-language="en" datatype="plaintext">
     <header>
-      <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="13.2.1" build-num="13C100"/>
+      <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="13.4" build-num="13F17a"/>
     </header>
     <body>
       <trans-unit id="CFBundleDisplayName" xml:space="preserve">
@@ -1512,6 +1527,11 @@
         <target>Tinode sends only emails and phone numbers to the Tinode server to help you connect with other users</target>
         <note>Privacy - Contacts Usage Description</note>
       </trans-unit>
+      <trans-unit id="NSMicrophoneUsageDescription" xml:space="preserve">
+        <source>Tinode uses microphone to record audio messages you send to your contacts</source>
+        <target>Tinode uses microphone to record audio messages you send to your contacts</target>
+        <note>Privacy - Microphone Usage Description</note>
+      </trans-unit>
       <trans-unit id="NSPhotoLibraryAddUsageDescription" xml:space="preserve">
         <source>Images and pictures from Tinode can be saved in the photo library</source>
         <target>Images and pictures from Tinode can be saved in the photo library</target>
@@ -1526,7 +1546,7 @@
   </file>
   <file original="Tinodios/Settings.bundle/en.lproj/ConnectionSettings.strings" source-language="en" target-language="en" datatype="plaintext">
     <header>
-      <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="13.2.1" build-num="13C100"/>
+      <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="13.4" build-num="13F17a"/>
     </header>
     <body>
       <trans-unit id="Host name" xml:space="preserve">
@@ -1548,7 +1568,7 @@
   </file>
   <file original="Tinodios/Settings.bundle/en.lproj/Root.strings" source-language="en" target-language="en" datatype="plaintext">
     <header>
-      <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="13.2.1" build-num="13C100"/>
+      <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="13.4" build-num="13F17a"/>
     </header>
     <body>
       <trans-unit id="Connection settings" xml:space="preserve">
@@ -1560,7 +1580,7 @@
   </file>
   <file original="Tinodios/widgets/Base.lproj/MultilineAlertView.xib" source-language="en" target-language="en" datatype="plaintext">
     <header>
-      <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="13.2.1" build-num="13C100"/>
+      <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="13.4" build-num="13F17a"/>
     </header>
     <body>
       <trans-unit id="A57-2v-ao9.normalTitle" xml:space="preserve">
@@ -1582,7 +1602,7 @@
   </file>
   <file original="Tinodios/widgets/Base.lproj/TagsEditDialogView.xib" source-language="en" target-language="en" datatype="plaintext">
     <header>
-      <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="13.2.1" build-num="13C100"/>
+      <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="13.4" build-num="13F17a"/>
     </header>
     <body>
       <trans-unit id="PJ7-dH-ATp.normalTitle" xml:space="preserve">
@@ -1604,7 +1624,7 @@
   </file>
   <file original="TinodiosNSExtension/en.lproj/InfoPlist.strings" source-language="en" target-language="en" datatype="plaintext">
     <header>
-      <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="13.2.1" build-num="13C100"/>
+      <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="13.4" build-num="13F17a"/>
     </header>
     <body>
       <trans-unit id="CFBundleDisplayName" xml:space="preserve">
@@ -1616,6 +1636,24 @@
         <source>TinodiosNSExtension</source>
         <target>TinodiosNSExtension</target>
         <note>Bundle name</note>
+      </trans-unit>
+    </body>
+  </file>
+  <file original="TinodiosNSExtension/en.lproj/Localizable.strings" source-language="en" target-language="en" datatype="plaintext">
+    <header>
+      <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="13.4" build-num="13F17a"/>
+    </header>
+    <body>
+      <trans-unit id="New chat" xml:space="preserve">
+        <source>New chat</source>
+        <target>New chat</target>
+        <note>Push notification title</note>
+      </trans-unit>
+      <trans-unit id="Unknown" xml:space="preserve">
+        <source>Unknown</source>
+        <target>Unknown</target>
+        <note>Placeholder for missing topic name
+   Placeholder for missing user name</note>
       </trans-unit>
     </body>
   </file>
