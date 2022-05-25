@@ -4,6 +4,9 @@
 /* Privacy - Contacts Usage Description */
 "NSContactsUsageDescription" = "Tinode只向Tinode伺服器傳送電子郵件和電話號碼，以幫助您與其他使用者聯絡";
 
+/* Privacy - Microphone Usage Description */
+"NSMicrophoneUsageDescription" = "Tinode使用麥克風錄製您傳送給聯絡人的音訊訊息";
+
 /* Privacy - Photo Library Additions Usage Description */
 "NSPhotoLibraryAddUsageDescription" = "Tinode的影象和圖片可以儲存在照片庫中";
 

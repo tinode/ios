@@ -263,6 +263,9 @@
 /* Label shown next to an inline image */
 "Picture" = "Картинка";
 
+/* Error message */
+"Playback failed" = "Невозможно исполнить";
+
 /* Progress overlay */
 "Please wait..." = "Подождите...";
 
@@ -271,6 +274,9 @@
 
 /* Placeholder text in editor */
 "Private info: not set" = "Только для себя: отсутствует";
+
+/* Error message */
+"Recording failed" = "Ошибка записи";
 
 /* Progress overlay */
 "Registering..." = "Регистрация...";
@@ -352,6 +358,9 @@
 
 /* Displayed when the type of attachment cannot be determined */
 "Unknown type" = "Неизвестный тип";
+
+/* Label shown next to an unsupported Drafty format element */
+"Unsupported" = "Не поддерживается";
 
 /* Error message */
 "Upload failed (%@): empty response body." = "Ошибка загрузки (%@): пустой ответ сервера.";

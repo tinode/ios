@@ -263,6 +263,9 @@
 /* Label shown next to an inline image */
 "Picture" = "照片";
 
+/* Error message */
+"Playback failed" = "播放失败";
+
 /* Progress overlay */
 "Please wait..." = "请耐心等待...";
 
@@ -271,6 +274,9 @@
 
 /* Placeholder text in editor */
 "Private info: not set" = "私人信息：未设置";
+
+/* Error message */
+"Recording failed" = "录音失败";
 
 /* Progress overlay */
 "Registering..." = "建立帐户...";
@@ -352,6 +358,9 @@
 
 /* Displayed when the type of attachment cannot be determined */
 "Unknown type" = "未知类型";
+
+/* Label shown next to an unsupported Drafty format element */
+"Unsupported" = "无资助的";
 
 /* Error message */
 "Upload failed (%@): empty response body." = "上传失败（％@）：响应正文为空。";

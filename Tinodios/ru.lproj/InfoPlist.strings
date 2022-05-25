@@ -4,6 +4,9 @@
 /* Privacy - Contacts Usage Description */
 "NSContactsUsageDescription" = "Tinode сохраняет емейлы и номера телефонов на сервере для того, чтобы найти по ним ваших знакомых";
 
+/* Privacy - Microphone Usage Description */
+"NSMicrophoneUsageDescription" = "Tinode использует микрофон для записи аудио, которое вы отправляете в своих сообщениях";
+
 /* Privacy - Photo Library Additions Usage Description */
 "NSPhotoLibraryAddUsageDescription" = "Фото и картинки из Tinode могут быть сохранены в фото-библиотеке";
 

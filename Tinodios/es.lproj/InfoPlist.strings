@@ -4,6 +4,9 @@
 /* Privacy - Contacts Usage Description */
 "NSContactsUsageDescription" = "Tinode envía solo correos electrónicos y números de teléfono al servidor de Tinode para ayudarte a conectarte con otros usuarios";
 
+/* Privacy - Microphone Usage Description */
+"NSMicrophoneUsageDescription" = "Tinode utiliza el micrófono para grabar los mensajes de audio que envías a tus contactos";
+
 /* Privacy - Photo Library Additions Usage Description */
 "NSPhotoLibraryAddUsageDescription" = "Las imágenes e imágenes de Tinode se pueden guardar en la fototeca";
 

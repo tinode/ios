@@ -1,0 +1,7 @@
+/* Push notification title */
+"New chat" = "Новый чат";
+
+/* Placeholder for missing topic name
+   Placeholder for missing user name */
+"Unknown" = "Неизвестно";
+

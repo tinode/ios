@@ -263,6 +263,9 @@
 /* Label shown next to an inline image */
 "Picture" = "Fotografía";
 
+/* Error message */
+"Playback failed" = "Error en la reproducción";
+
 /* Progress overlay */
 "Please wait..." = "Por favor, espera...";
 
@@ -271,6 +274,9 @@
 
 /* Placeholder text in editor */
 "Private info: not set" = "Información privada: no establecida";
+
+/* Error message */
+"Recording failed" = "Error al grabar";
 
 /* Progress overlay */
 "Registering..." = "Registrando...";
@@ -352,6 +358,9 @@
 
 /* Displayed when the type of attachment cannot be determined */
 "Unknown type" = "Tipo desconocido";
+
+/* Label shown next to an unsupported Drafty format element */
+"Unsupported" = "Sin base";
 
 /* Error message */
 "Upload failed (%@): empty response body." = "Error al subir el archivo (%@): respuesta vacía.";
