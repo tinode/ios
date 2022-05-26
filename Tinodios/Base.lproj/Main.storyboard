@@ -616,7 +616,7 @@
                             <tableViewSection headerTitle="Contacts" id="bvE-OV-sy1">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" accessoryType="disclosureIndicator" indentationWidth="10" focusStyle="custom" textLabel="fLh-oI-CRP" imageView="6z9-5Y-HKA" style="IBUITableViewCellStyleDefault" id="WNR-81-Xt2">
-                                        <rect key="frame" x="0.0" y="294.33333206176752" width="414" height="43.666667938232422"/>
+                                        <rect key="frame" x="0.0" y="294.33333206176758" width="414" height="43.666667938232422"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="WNR-81-Xt2" id="Ovf-BC-JGG">
                                             <rect key="frame" x="0.0" y="0.0" width="385.33333333333331" height="43.666667938232422"/>
@@ -644,7 +644,7 @@
                             <tableViewSection headerTitle="Tags (Content Discovery)" id="jal-tR-OpF">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" accessoryType="disclosureIndicator" indentationWidth="10" focusStyle="custom" textLabel="eHa-mE-ZbY" detailTextLabel="K7L-Uc-b68" imageView="iGu-Eb-fCF" style="IBUITableViewCellStyleSubtitle" id="Nl1-fA-AeA">
-                                        <rect key="frame" x="0.0" y="370.66666603088373" width="414" height="55.666667938232422"/>
+                                        <rect key="frame" x="0.0" y="370.66666603088379" width="414" height="55.666667938232422"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Nl1-fA-AeA" id="SiW-3F-rOw">
                                             <rect key="frame" x="0.0" y="0.0" width="385.33333333333331" height="55.666667938232422"/>
@@ -1206,6 +1206,7 @@
                         <segue destination="ZxW-bT-ZdQ" kind="show" identifier="Messages2TopicInfo" id="IuA-m3-U07"/>
                         <segue destination="a2m-CR-0Zc" kind="show" identifier="ShowImagePreview" id="je5-0n-CJ3"/>
                         <segue destination="ZTN-Oj-COh" kind="show" identifier="ShowFilePreview" id="9mM-mX-cFC"/>
+                        <segue destination="Cib-aE-hH5" kind="show" identifier="Messages2Call" id="IVW-H4-90m"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="hJE-4j-6S3" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -1517,6 +1518,48 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="qqe-To-fWT" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="4724.6376811594209" y="-673.36956521739137"/>
+        </scene>
+        <!--CallViewController-->
+        <scene sceneID="TYg-2M-74J">
+            <objects>
+                <viewController storyboardIdentifier="CallViewController" title="Video Call" id="Cib-aE-hH5" userLabel="CallViewController" customClass="CallViewController" customModule="Tinodios" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="jBZ-LQ-eXz">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="fII-CY-LEk">
+                                <rect key="frame" x="0.0" y="96" width="414" height="640"/>
+                                <subviews>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="o1j-Ss-Jhj" userLabel="LocalView">
+                                        <rect key="frame" x="0.0" y="0.0" width="414" height="320"/>
+                                        <color key="backgroundColor" systemColor="opaqueSeparatorColor"/>
+                                        <accessibility key="accessibilityConfiguration" label="LocalView"/>
+                                    </view>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="iFL-dy-gre" userLabel="RemoteView">
+                                        <rect key="frame" x="0.0" y="320" width="414" height="320"/>
+                                        <color key="backgroundColor" systemColor="systemGray5Color"/>
+                                    </view>
+                                </subviews>
+                            </stackView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="84I-vF-4hU"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="84I-vF-4hU" firstAttribute="bottom" secondItem="fII-CY-LEk" secondAttribute="bottom" id="6t6-Tx-SZF"/>
+                            <constraint firstItem="84I-vF-4hU" firstAttribute="top" secondItem="fII-CY-LEk" secondAttribute="top" id="89W-mT-na1"/>
+                            <constraint firstItem="fII-CY-LEk" firstAttribute="leading" secondItem="84I-vF-4hU" secondAttribute="leading" id="Zzo-Sv-e5v"/>
+                            <constraint firstItem="fII-CY-LEk" firstAttribute="trailing" secondItem="84I-vF-4hU" secondAttribute="trailing" id="fCZ-3V-CPJ"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" id="Mt4-Ih-4fq"/>
+                    <connections>
+                        <outlet property="localView" destination="o1j-Ss-Jhj" id="F0G-dc-yMS"/>
+                        <outlet property="remoteView" destination="iFL-dy-gre" id="gwx-Nt-5Au"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="sq1-RZ-gKh" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="5551" y="-673"/>
         </scene>
         <!--TopicInfoViewController-->
         <scene sceneID="mxu-ZQ-Gyc">
@@ -2441,7 +2484,7 @@
                             <tableViewSection id="E2p-f7-Hof" userLabel="Manage tags">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="none" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" focusStyle="custom" textLabel="r8j-wT-BLF" detailTextLabel="Zdw-nR-1tB" imageView="Fh4-hd-jpY" rowHeight="54" style="IBUITableViewCellStyleSubtitle" id="43D-n4-gOk" userLabel="Manage Tags">
-                                        <rect key="frame" x="0.0" y="312.33333587646479" width="414" height="54"/>
+                                        <rect key="frame" x="0.0" y="312.33333587646484" width="414" height="54"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="43D-n4-gOk" id="7PK-OU-Xwy">
                                             <rect key="frame" x="0.0" y="0.0" width="385.33333333333331" height="54"/>
@@ -3130,7 +3173,7 @@
                             <tableViewSection headerTitle="Group Members" id="26s-2T-nI0">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="FeF-3T-sWp" imageView="i4w-uL-EcP" style="IBUITableViewCellStyleDefault" id="IF5-Bs-9cB" userLabel="Add Members">
-                                        <rect key="frame" x="0.0" y="462.66666603088373" width="414" height="50.000000000000057"/>
+                                        <rect key="frame" x="0.0" y="462.66666603088379" width="414" height="50"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="IF5-Bs-9cB" id="uqg-aO-L4d">
                                             <rect key="frame" x="0.0" y="0.0" width="385.33333333333331" height="50"/>
@@ -3400,6 +3443,9 @@
         <systemColor name="labelColor">
             <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
+        <systemColor name="opaqueSeparatorColor">
+            <color red="0.77647058823529413" green="0.77647058823529413" blue="0.78431372549019607" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
         <systemColor name="scrollViewTexturedBackgroundColor">
             <color red="0.43529411764705878" green="0.44313725490196082" blue="0.47450980392156861" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
@@ -3417,6 +3463,9 @@
         </systemColor>
         <systemColor name="systemBlueColor">
             <color red="0.0" green="0.47843137254901963" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+        <systemColor name="systemGray5Color">
+            <color red="0.89803921568627454" green="0.89803921568627454" blue="0.91764705882352937" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemGreenColor">
             <color red="0.20392156862745098" green="0.7803921568627451" blue="0.34901960784313724" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>

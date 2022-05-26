@@ -924,6 +924,11 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
     public func noteKeyPress() {
         note(what: .kKeyPress)
     }
+
+    public func videoCall(event: String, seq: Int, payload: JSONValue? = nil) {
+        self.tinode?.videoCall(topic: self.name, seq: seq, event: event, payload: payload)
+    }
+
     private func setSeq(seq: Int) {
         if description.getSeq < seq {
             description.seq = seq
@@ -1218,15 +1223,16 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
     private func publishInternal(content: Drafty, head: [String: JSONValue]?, msgId: Int64) -> PromisedReply<ServerMessage> {
         var headers = head
         var attachments: [String]?
-        if content.isPlain {
-            // Plain text content should not have "mime" header. Clear it.
-            headers?.removeValue(forKey: "mime")
-        } else {
+        if !content.isPlain {
             if headers == nil {
                 headers = [:]
             }
             headers!["mime"] = .string(Drafty.kMimeType)
             attachments = content.entReferences
+        } else if Tinode.kVideoCallMime != headers?["mime"]?.asString() {
+            // Plain text content should not have "mime" header
+            // (except video call messages). Clear it.
+            headers?.removeValue(forKey: "mime")
         }
 
         return tinode!.publish(topic: name, head: headers, content: content, attachments: attachments).then(

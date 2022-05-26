@@ -134,6 +134,9 @@ public class Tinode {
     public static let kNullValue = "\u{2421}"
     internal static let log = Log(subsystem: "co.tinode.tinodesdk")
 
+    // Mime type of the Video call messages.
+    public static let kVideoCallMime = "application/x-tinode-webrtc";
+
     let kProtocolVersion = "0"
     let kVersion = "0.18"
     let kLibVersion = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as! String
@@ -567,9 +570,17 @@ public class Tinode {
     public func noteRead(topic: String, seq: Int) {
         note(topic: topic, what: Tinode.kNoteRead, seq: seq)
     }
+
     public func noteKeyPress(topic: String) {
         note(topic: topic, what: Tinode.kNoteKp, seq: 0)
     }
+
+    public func videoCall(topic: String, seq: Int, event: String, payload: JSONValue?) {
+        let msg = ClientMessage<Int, Int>(
+            note: MsgClientNote(topic: topic, what: "call", seq: seq, event: event, payload: payload))
+        try? send(payload: msg)
+    }
+
     private func send<DP: Codable, DR: Codable>(payload msg: ClientMessage<DP, DR>) throws {
         guard let conn = connection else {
             throw TinodeError.notConnected("Attempted to send msg to a closed connection.")

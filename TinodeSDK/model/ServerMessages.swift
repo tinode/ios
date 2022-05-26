@@ -183,6 +183,10 @@ public class MsgServerInfo: Decodable {
     public var from: String?
     public var what: String?
     public var seq: Int?
+    // "event" and "payload" are video call event and its associated JSON payload.
+    // Set only when what="call".
+    public var event: String?
+    public var payload: JSONValue?
 }
 
 public class ServerMessage: Decodable {

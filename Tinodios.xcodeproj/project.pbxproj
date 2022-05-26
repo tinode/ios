@@ -52,6 +52,7 @@
 		0AE50D4622156A4B0021F7B7 /* FindInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AE50D4522156A4B0021F7B7 /* FindInteractor.swift */; };
 		0AE50D4822156A5B0021F7B7 /* FindPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AE50D4722156A5B0021F7B7 /* FindPresenter.swift */; };
 		0AE7339C22C33FEF0089C8D8 /* ChatListViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0AE7339B22C33FEF0089C8D8 /* ChatListViewCell.xib */; };
+		0AEE3A33283E57230037BEC4 /* CallViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AEE3A32283E57230037BEC4 /* CallViewController.swift */; };
 		0AEE8BEE226456080022EC3F /* UiUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AEE8BED226456080022EC3F /* UiUtils.swift */; };
 		6AB6957DBFD1FB12CA01DCE4 /* libPods-Tinodios.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E30BDE2C5D7E82671DD7DE4 /* libPods-Tinodios.a */; };
 		7DDADC5221D5C219009733B5 /* ValidatedCredential.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DDADC5121D5C219009733B5 /* ValidatedCredential.swift */; };
@@ -205,6 +206,7 @@
 		0AE50D4522156A4B0021F7B7 /* FindInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FindInteractor.swift; sourceTree = "<group>"; };
 		0AE50D4722156A5B0021F7B7 /* FindPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FindPresenter.swift; sourceTree = "<group>"; };
 		0AE7339B22C33FEF0089C8D8 /* ChatListViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ChatListViewCell.xib; sourceTree = "<group>"; };
+		0AEE3A32283E57230037BEC4 /* CallViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallViewController.swift; sourceTree = "<group>"; };
 		0AEE8BED226456080022EC3F /* UiUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UiUtils.swift; sourceTree = "<group>"; };
 		5900B7863CDFB018A86DD3AC /* Pods-Tinodios.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Tinodios.release.xcconfig"; path = "Pods/Target Support Files/Pods-Tinodios/Pods-Tinodios.release.xcconfig"; sourceTree = "<group>"; };
 		5E30BDE2C5D7E82671DD7DE4 /* libPods-Tinodios.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Tinodios.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -365,6 +367,7 @@
 				0AB5FDCD22C20D1900F44AFD /* ArchivedChatsTableViewController.swift */,
 				B09C5651246C0E6B00D6615D /* BlockedContactsTableViewController.swift */,
 				0A8A8BD921C380E80090BCBA /* Cache.swift */,
+				0AEE3A32283E57230037BEC4 /* CallViewController.swift */,
 				0AD5552921C625BB0027FD16 /* ChatListInteractor.swift */,
 				0ACB5F0D22097651008FE740 /* ChatListPresenter.swift */,
 				0ACB5F0F22097665008FE740 /* ChatListRouter.swift */,
@@ -768,6 +771,7 @@
 				0AE50D4422156A250021F7B7 /* FindViewController.swift in Sources */,
 				B0BE302B27B8A3B600B04631 /* TopicSecurityViewController.swift in Sources */,
 				B01C693F22F87B5C003C0AA7 /* SignupViewController.swift in Sources */,
+				0AEE3A33283E57230037BEC4 /* CallViewController.swift in Sources */,
 				B091BA4A282087D700317CDC /* MediaRecorder.swift in Sources */,
 				0AD5552A21C625BB0027FD16 /* ChatListInteractor.swift in Sources */,
 				0A8A8BDA21C380E80090BCBA /* Cache.swift in Sources */,

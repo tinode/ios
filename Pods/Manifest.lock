@@ -97,6 +97,7 @@ PODS:
     - GoogleUtilities/Logger
   - GoogleUtilities/UserDefaults (7.6.0):
     - GoogleUtilities/Logger
+  - GoogleWebRTC (1.1.31999)
   - Kingfisher (5.15.8):
     - Kingfisher/Core (= 5.15.8)
   - Kingfisher/Core (5.15.8)
@@ -124,6 +125,7 @@ DEPENDENCIES:
   - FirebaseCore
   - FirebaseCrashlytics
   - FirebaseMessaging
+  - GoogleWebRTC
   - Kingfisher (~> 5.0)
   - MobileVLCKit (~> 3.4.1b9)
   - PhoneNumberKit (~> 3.3)
@@ -142,6 +144,7 @@ SPEC REPOS:
     - GoogleAppMeasurement
     - GoogleDataTransport
     - GoogleUtilities
+    - GoogleWebRTC
     - Kingfisher
     - MobileVLCKit
     - nanopb
@@ -161,6 +164,7 @@ SPEC CHECKSUMS:
   GoogleAppMeasurement: a3311dbcf3ea651e5a070fe8559b57c174ada081
   GoogleDataTransport: 629c20a4d363167143f30ea78320d5a7eb8bd940
   GoogleUtilities: 684ee790a24f73ebb2d1d966e9711c203f2a4237
+  GoogleWebRTC: b39a78c4f5cc6b0323415b9233db03a2faa7b0f0
   Kingfisher: a3c03d702433fa6cfedabb2bddbe076fb8f2e902
   MobileVLCKit: 63fd88297505b97027f23842ae9df3a7bf17b31e
   nanopb: a0ba3315591a9ae0a16a309ee504766e90db0c96
@@ -169,6 +173,6 @@ SPEC CHECKSUMS:
   SQLite.swift: 903bfa3bc9ab06345fdfbb578e34f47cfcf417da
   SwiftKeychainWrapper: 6fc49fbf7d4a6b0772917acb0e53a1639f6078d6
 
-PODFILE CHECKSUM: 11c6be0f696f6223ca7f2e195144266d02d1784d
+PODFILE CHECKSUM: d0381fbdf040f6976c849033a575788f75c96558
 
-COCOAPODS: 1.11.2
+COCOAPODS: 1.11.3

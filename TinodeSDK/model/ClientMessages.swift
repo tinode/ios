@@ -410,15 +410,22 @@ public class MsgClientLeave: Encodable {
     }
 }
 
+/// Typing, read/received and video call notifications packet.
 public class MsgClientNote: Encodable {
     let topic: String?
     let what: String?
     let seq: Int?
+    // Event (set only when what="call")
+    let event: String?
+    // Arbitrary json payload (set only when what="call")
+    let payload: JSONValue?
 
-    init(topic: String, what: String, seq: Int) {
+    init(topic: String, what: String, seq: Int, event: String? = nil, payload: JSONValue? = nil) {
         self.topic = topic
         self.what = what
         self.seq = seq > 0 ? seq : nil
+        self.event = event
+        self.payload = payload
     }
 }
 
