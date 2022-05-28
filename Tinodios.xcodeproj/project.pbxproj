@@ -14,6 +14,8 @@
 		0A0380DD21B3CC8100A3FA0E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0A0380DB21B3CC8100A3FA0E /* Main.storyboard */; };
 		0A0380DF21B3CC8200A3FA0E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0A0380DE21B3CC8200A3FA0E /* Assets.xcassets */; };
 		0A0380E221B3CC8200A3FA0E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0A0380E021B3CC8200A3FA0E /* LaunchScreen.storyboard */; };
+		0A0D92D72840EFEF00B5B5B0 /* CallProviderDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A0D92D62840EFEF00B5B5B0 /* CallProviderDelegate.swift */; };
+		0A0D92D928410D4100B5B5B0 /* CallManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A0D92D828410D4100B5B5B0 /* CallManager.swift */; };
 		0A11912D22F03E3100A1BBA1 /* TagsEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A11912C22F03E3100A1BBA1 /* TagsEditView.swift */; };
 		0A2F81C6229677DD007E562C /* AddByIDViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2F81C5229677DD007E562C /* AddByIDViewController.swift */; };
 		0A35BA9E22836CCF00AA5E2F /* ContactsSynchronizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A35BA9D22836CCF00AA5E2F /* ContactsSynchronizer.swift */; };
@@ -168,6 +170,8 @@
 		0A0380DE21B3CC8200A3FA0E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		0A0380E121B3CC8200A3FA0E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		0A0380E321B3CC8200A3FA0E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		0A0D92D62840EFEF00B5B5B0 /* CallProviderDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallProviderDelegate.swift; sourceTree = "<group>"; };
+		0A0D92D828410D4100B5B5B0 /* CallManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallManager.swift; sourceTree = "<group>"; };
 		0A11912C22F03E3100A1BBA1 /* TagsEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagsEditView.swift; sourceTree = "<group>"; };
 		0A2F81C5229677DD007E562C /* AddByIDViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddByIDViewController.swift; sourceTree = "<group>"; };
 		0A35BA9D22836CCF00AA5E2F /* ContactsSynchronizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsSynchronizer.swift; sourceTree = "<group>"; };
@@ -367,6 +371,8 @@
 				0AB5FDCD22C20D1900F44AFD /* ArchivedChatsTableViewController.swift */,
 				B09C5651246C0E6B00D6615D /* BlockedContactsTableViewController.swift */,
 				0A8A8BD921C380E80090BCBA /* Cache.swift */,
+				0A0D92D828410D4100B5B5B0 /* CallManager.swift */,
+				0A0D92D62840EFEF00B5B5B0 /* CallProviderDelegate.swift */,
 				0AEE3A32283E57230037BEC4 /* CallViewController.swift */,
 				0AD5552921C625BB0027FD16 /* ChatListInteractor.swift */,
 				0ACB5F0D22097651008FE740 /* ChatListPresenter.swift */,
@@ -788,6 +794,7 @@
 				B091BA5628272A2400317CDC /* WaveImageView.swift in Sources */,
 				B027E5B22789026200A34C17 /* SendReplyFormatter.swift in Sources */,
 				0A35BA9E22836CCF00AA5E2F /* ContactsSynchronizer.swift in Sources */,
+				0A0D92D72840EFEF00B5B5B0 /* CallProviderDelegate.swift in Sources */,
 				B03066432805F2AA00497EF4 /* EntityTextAttachment.swift in Sources */,
 				B09C564A2469362A00D6615D /* SettingsPersonalViewController.swift in Sources */,
 				0A11912D22F03E3100A1BBA1 /* TagsEditView.swift in Sources */,
@@ -799,6 +806,7 @@
 				0A36776922B09C1900724873 /* EditMembersViewController.swift in Sources */,
 				B0125998229C982900688FCE /* ContactViewCell.swift in Sources */,
 				0ACB5F1022097665008FE740 /* ChatListRouter.swift in Sources */,
+				0A0D92D928410D4100B5B5B0 /* CallManager.swift in Sources */,
 				0A6F260A21BE51D800B9726E /* LoginViewController.swift in Sources */,
 				0A95F4D4229BD95900AEF7D3 /* AccountSettingsViewController.swift in Sources */,
 				B091BA442808ED6000317CDC /* MessageCell+VLCMediaPlayerDelegate.swift in Sources */,

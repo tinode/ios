@@ -275,7 +275,7 @@ class UiUtils {
         return rootVC.viewControllers.contains(where: { $0 is ChatListViewController })
     }
 
-    public static func routeToMessageVC(forTopic topicId: String) {
+    public static func routeToMessageVC(forTopic topicId: String, completion: ((MessageViewController) -> (Void))? = nil) {
         DispatchQueue.main.async {
             let storyboard = UIStoryboard(name: "Main", bundle: nil)
 
@@ -292,15 +292,16 @@ class UiUtils {
                 rootVC = storyboard.instantiateViewController(
                     withIdentifier: "ChatsNavigator") as! UINavigationController
             }
-            let messageViewController =
+            let messageVC =
                 storyboard.instantiateViewController(
                     withIdentifier: "MessageViewController") as! MessageViewController
-            messageViewController.topicName = topicId
-            rootVC.pushViewController(messageViewController, animated: false)
+            messageVC.topicName = topicId
+            rootVC.pushViewController(messageVC, animated: false)
             if let window = UIApplication.shared.keyWindow, shouldReplaceRootVC {
                 window.rootViewController = rootVC
             }
             UiUtils.setUpPushNotifications()
+            completion?(messageVC)
         }
     }
 

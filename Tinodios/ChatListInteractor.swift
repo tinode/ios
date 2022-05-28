@@ -78,8 +78,24 @@ class ChatListInteractor: ChatListBusinessLogic, ChatListDataStore {
             }
         }
         override func onInfoMessage(info: MsgServerInfo?) {
-            if let topic = info?.src {
-                interactor?.updateChat(topic)
+            switch info?.what {
+            case "call":
+                if let info = info, info.event == "invite",
+                   let callTopic = info.src, let originator = info.from, let seqId = info.seq {
+                    let backgroundTaskIdentifier = UIApplication.shared.beginBackgroundTask(expirationHandler: nil)
+                    DispatchQueue.main.async {
+                        Cache.callManager.displayIncomingCall(uuid: UUID(), topic: callTopic, from: originator, seqId: seqId) { err in
+                            if err != nil {
+                                print("could not take the call: \(err)")
+                            }
+                            UIApplication.shared.endBackgroundTask(backgroundTaskIdentifier)
+                        }
+                    }
+                }
+            default:
+                if let topic = info?.src {
+                    interactor?.updateChat(topic)
+                }
             }
         }
     }

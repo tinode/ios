@@ -20,6 +20,9 @@ class Cache {
     private var queue = DispatchQueue(label: "co.tinode.cache")
     internal static let log = TinodeSDK.Log(subsystem: "co.tinode.tinodios")
 
+    // Video call handling.
+    public static var callManager = CallManager()
+
     public static var tinode: Tinode {
         return Cache.shared.getTinode()
     }

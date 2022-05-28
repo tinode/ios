@@ -485,7 +485,10 @@ class MessageViewController: UIViewController {
             destinationVC.replyPreviewDelegate = self
         case "Messages2Call":
             let destinationVC = segue.destination as! CallViewController
-            if sender != nil {
+            if let call = sender as? CallManager.Call {
+                destinationVC.callDirection = .incoming
+                destinationVC.callSeqId = call.seq
+            } else {
                 destinationVC.callDirection = .outgoing
             }
             destinationVC.topic = self.topic
