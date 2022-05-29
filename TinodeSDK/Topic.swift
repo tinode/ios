@@ -1227,11 +1227,13 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
             if headers == nil {
                 headers = [:]
             }
-            headers!["mime"] = .string(Drafty.kMimeType)
+            if headers?["mime"]?.asString() != Tinode.kVideoCallMime {
+                // Set "x-drafty" mime header (except video call messages).
+                headers!["mime"] = .string(Drafty.kMimeType)
+            }
             attachments = content.entReferences
-        } else if Tinode.kVideoCallMime != headers?["mime"]?.asString() {
-            // Plain text content should not have "mime" header
-            // (except video call messages). Clear it.
+        } else {
+            // Plain text content should not have "mime" header. Clear it.
             headers?.removeValue(forKey: "mime")
         }
 

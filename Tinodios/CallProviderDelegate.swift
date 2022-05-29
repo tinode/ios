@@ -20,6 +20,7 @@ class CallProviderDelegate: NSObject, CXProviderDelegate {
         providerConfiguration.supportsVideo = true
         providerConfiguration.maximumCallsPerCallGroup = 1
         providerConfiguration.supportedHandleTypes = [.generic]
+        providerConfiguration.includesCallsInRecents = false
 
         return providerConfiguration
     }()

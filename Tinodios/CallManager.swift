@@ -7,6 +7,7 @@
 
 import Foundation
 import TinodeSDK
+import CallKit
 
 class CallManager {
     public struct Call {
@@ -21,15 +22,19 @@ class CallManager {
     }
 
     var callDelegate: CallProviderDelegate!
+    var callController: CXCallController!
 
     var callInProgress: Call?
 
     init() {
         callDelegate = CallProviderDelegate(callManager: self)
+        callController = CXCallController()
     }
 
     func displayIncomingCall(uuid: UUID, topic: String, from: String, seqId: Int, completion: ((Error?) -> Void)?) {
         guard self.callInProgress == nil else {
+            let tinode = Cache.tinode
+            tinode.videoCall(topic: topic, seq: seqId, event: "hang-up")
             completion?(CallError.busy("Busy. Another call in progress"))
             return
         }
@@ -57,6 +62,18 @@ extension CallManager: CallManagerImpl {
     }
 
     func end() {
+        guard let call = self.callInProgress else { return }
+        let endCallAction = CXEndCallAction(call: call.uuid)
+        let transaction = CXTransaction(action: endCallAction)
+        self.callController.request(transaction) { error in
+            if let error = error {
+                print("EndCallAction transaction request failed: \(error.localizedDescription).")
+                //self.callController.reportCall(with: call.uuid, endedAt: Date(), reason: .remoteEnded)
+                return
+            }
+
+            print("EndCallAction transaction request successful")
+        }
         self.callInProgress = nil
     }
 }

@@ -575,7 +575,7 @@ public class Tinode {
         note(topic: topic, what: Tinode.kNoteKp, seq: 0)
     }
 
-    public func videoCall(topic: String, seq: Int, event: String, payload: JSONValue?) {
+    public func videoCall(topic: String, seq: Int, event: String, payload: JSONValue? = nil) {
         let msg = ClientMessage<Int, Int>(
             note: MsgClientNote(topic: topic, what: "call", seq: seq, event: event, payload: payload))
         try? send(payload: msg)

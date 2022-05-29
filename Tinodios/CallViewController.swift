@@ -120,6 +120,7 @@ class WebRTCClient: NSObject {
 
     private var localAudioTrack: RTCAudioTrack?
 
+    public var shouldNegotiateImmediately: Bool = true
     weak var delegate: WebRTCClientDelegate?
 
     func setup() {
@@ -131,12 +132,22 @@ class WebRTCClient: NSObject {
         let constraints = RTCMediaConstraints(mandatoryConstraints: nil, optionalConstraints: nil)
         let config = generateRTCConfig()
 
-        localPeer = WebRTCClient.factory.peerConnection(with: config, constraints: constraints, delegate: self)
+        // FIXME: remove this ugly hack.
+        // RTCPeerConnectionDelegate triggers onNegotationNeeded event immediately after
+        // adding a media local stream which, in turn, sends out an offer to the peer regardless
+        // of whether it's an incoming or outgoing call.
+        // This hack lets us skip this original onNegotiationNeeded event.
+        let delegate: RTCPeerConnectionDelegate? = self.shouldNegotiateImmediately ? self : nil
+        localPeer = WebRTCClient.factory.peerConnection(with: config, constraints: constraints, delegate: delegate)
 
         let stream = WebRTCClient.factory.mediaStream(withStreamId: "ARDAMS")
         stream.addAudioTrack(self.localAudioTrack!)
         stream.addVideoTrack(self.localVideoTrack!)
         localPeer!.add(stream)
+
+        if !self.shouldNegotiateImmediately {
+            localPeer!.delegate = self
+        }
     }
 
     func offer(_ peerConnection: RTCPeerConnection) {
@@ -217,6 +228,14 @@ extension WebRTCClient {
             credential: "285ff060-5a58-11eb-b269-0242ac140004"))
         // TODO: planB for now. Need to migrate to unified in the future.
         config.sdpSemantics = .planB
+        // TCP candidates are only useful when connecting to a server that supports
+        // ICE-TCP.
+        config.tcpCandidatePolicy = .disabled
+        config.bundlePolicy = .maxBundle
+        config.rtcpMuxPolicy = .require
+        config.continualGatheringPolicy = .gatherContinually
+        // Use ECDSA encryption.
+        config.keyType = .ECDSA
         return config
     }
 
@@ -439,6 +458,7 @@ class CallViewController: UIViewController {
         self.listener = InfoListener(delegateEventsTo: self, connected: tinode.isConnected)
         tinode.addListener(self.listener)
 
+        self.webRTCClient.shouldNegotiateImmediately = self.callDirection == .outgoing
         self.handleCallInvite()
     }
 
@@ -495,6 +515,7 @@ class CallViewController: UIViewController {
     func handleCallClose() {
         if self.callSeqId > 0 {
             self.topic?.videoCall(event: "hang-up", seq: self.callSeqId)
+            Cache.callManager.end()
         }
         self.callSeqId = -1
         DispatchQueue.main.async {
@@ -507,7 +528,9 @@ class CallViewController: UIViewController {
         switch self.callDirection {
         case .outgoing:
             // Send out a call invitation to the peer.
-            self.topic?.publish(content: Drafty(plainText: "started"), withExtraHeaders: ["mime": .string(Tinode.kVideoCallMime)]).then(onSuccess: { msg in
+            self.topic?.publish(content: Drafty.videoCall(),
+                                withExtraHeaders:["mime": .string(Tinode.kVideoCallMime),
+                                                  "webrtc": .string("started")]).then(onSuccess: { msg in
                 guard let ctrl = msg?.ctrl else { return nil }
                 if ctrl.code < 300, let seq = ctrl.getIntParam(for: "seq"), seq > 0 {
                     // All good.
