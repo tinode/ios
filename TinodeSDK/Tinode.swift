@@ -559,14 +559,21 @@ public class Tinode {
             }
         }
     }
+
+    public func oobNotification(payload: [AnyHashable : Any], token: String) {
+
+    }
+
     private func note(topic: String, what: String, seq: Int) {
         let msg = ClientMessage<Int, Int>(
             note: MsgClientNote(topic: topic, what: what, seq: seq))
         try? send(payload: msg)
     }
+
     public func noteRecv(topic: String, seq: Int) {
         note(topic: topic, what: Tinode.kNoteRecv, seq: seq)
     }
+
     public func noteRead(topic: String, seq: Int) {
         note(topic: topic, what: Tinode.kNoteRead, seq: seq)
     }

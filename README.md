@@ -83,5 +83,5 @@ More translations are welcome. See [instructions](https://github.com/tinode/chat
 * Some icons are from [SF Symbols](https://developer.apple.com/design/human-interface-guidelines/sf-symbols/overview/) under [Apple license](https://developer.apple.com/support/terms/).
 
 ## Screenshots
-<img src="ios-chats.png" alt="App screenshot - chat list" width="207" /> <img src="ios-chat.png" alt="App screenshot - conversation" width="207" /> <img src="ios-acc-personal.png" alt="App screenshot - account settings" width="207" />
+<img src="ios-contacts.png" alt="App screenshot - chat list" width="207" /> <img src="ios-chat.png" alt="App screenshot - conversation" width="207" /> <img src="ios-acc-personal.png" alt="App screenshot - account settings" width="207" />
 <img src="ios-topic-info.png" alt="App screenshot - topic info" width="207" /> <img src="ios-find-people.png" alt="App screenshot - find people" width="207" /> <img src="ios-forward-to.png" alt="App screenshot - forward message" width="207" />
