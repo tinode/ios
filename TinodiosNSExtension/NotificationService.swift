@@ -18,7 +18,7 @@ class NotificationService: UNNotificationServiceExtension {
 
     override func didReceive(_ request: UNNotificationRequest, withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void) {
         self.contentHandler = contentHandler
-        bestAttemptContent = (request.content.mutableCopy() as? UNMutableNotificationContent)
+        self.bestAttemptContent = (request.content.mutableCopy() as? UNMutableNotificationContent)
 
         // New message notification (msg):
         // - P2P
@@ -28,13 +28,15 @@ class NotificationService: UNNotificationServiceExtension {
         //   Title: <topic name> || 'Unknown'
         //   Body: <sender name>: <message content> || 'New message'
         //
-        // New subscription notification (sub):
+        // Subscription notification (sub):
         // - P2P
         //   Title: 'New chat'
         //   Body: <sender name> || 'Unknown'
         // - GRP
         //   Title: 'New chat'
         //   Body: <group name> || 'Unknown'
+        // Deleted subscription:
+        //   Always invisible.
         //
         // Message read by the current user from another device (read):
         //   Always invisible.

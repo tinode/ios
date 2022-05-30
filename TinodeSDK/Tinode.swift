@@ -556,20 +556,29 @@ public class Tinode {
             }
         }
     }
+
+    public func oobNotification(payload: [AnyHashable : Any], token: String) {
+
+    }
+
     private func note(topic: String, what: String, seq: Int) {
         let msg = ClientMessage<Int, Int>(
             note: MsgClientNote(topic: topic, what: what, seq: seq))
         try? send(payload: msg)
     }
+
     public func noteRecv(topic: String, seq: Int) {
         note(topic: topic, what: Tinode.kNoteRecv, seq: seq)
     }
+
     public func noteRead(topic: String, seq: Int) {
         note(topic: topic, what: Tinode.kNoteRead, seq: seq)
     }
+
     public func noteKeyPress(topic: String) {
         note(topic: topic, what: Tinode.kNoteKp, seq: 0)
     }
+
     private func send<DP: Codable, DR: Codable>(payload msg: ClientMessage<DP, DR>) throws {
         guard let conn = connection else {
             throw TinodeError.notConnected("Attempted to send msg to a closed connection.")
