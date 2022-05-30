@@ -268,6 +268,14 @@ class UiUtils {
         }
     }
 
+    // Returns the currently presented/active MessageVC if it's open and .
+    private static func presentedMessageVC(forTopic topicName: String) -> MessageViewController? {
+        guard let rootVC = UIApplication.shared.keyWindow?.rootViewController as? UINavigationController else {
+            return nil
+        }
+        return rootVC.viewControllers.filter { ($0 as? MessageViewController)?.topic?.name == topicName }.first as? MessageViewController
+    }
+
     private static func isShowingChatListVC() -> Bool {
         guard let rootVC = UIApplication.shared.keyWindow?.rootViewController as? UINavigationController else {
             return false
@@ -277,6 +285,12 @@ class UiUtils {
 
     public static func routeToMessageVC(forTopic topicId: String, completion: ((MessageViewController) -> (Void))? = nil) {
         DispatchQueue.main.async {
+            // Check if the requested MessageVC is already open.
+            if let mvc = presentedMessageVC(forTopic: topicId) {
+                completion?(mvc)
+                return
+            }
+
             let storyboard = UIStoryboard(name: "Main", bundle: nil)
 
             var shouldReplaceRootVC = true

@@ -31,6 +31,7 @@ class CallManager {
         callController = CXCallController()
     }
 
+    // Report incoming call to the operating system (which displays incoming call UI).
     func displayIncomingCall(uuid: UUID, topic: String, from: String, seqId: Int, completion: ((Error?) -> Void)?) {
         guard self.callInProgress == nil else {
             let tinode = Cache.tinode
@@ -40,40 +41,42 @@ class CallManager {
         }
         self.callInProgress = Call(uuid: uuid, topic: topic, from: from, seq: seqId)
         let tinode = Cache.tinode
-        let user: DefaultUser? = tinode.getUser(with: from) //store.userGet(uid: from) as? DefaultUser
+        let user: DefaultUser? = tinode.getUser(with: from)
         let senderName = user?.pub?.fn ?? NSLocalizedString("Unknown", comment: "Placeholder for missing user name")
         callDelegate.reportIncomingCall(uuid: uuid, handle: senderName, completion: completion)
     }
 }
 
 extension CallManager: CallManagerImpl {
-    func canAccept(callWith uuid: UUID) -> Bool {
-        guard let call = self.callInProgress else {
-            return false
-        }
-        return call.uuid == uuid
-    }
-
-    func accept() {
-        guard let call = self.callInProgress else { return }
+    func acceptPendingCall() -> Bool {
+        guard let call = self.callInProgress else { return false }
         UiUtils.routeToMessageVC(forTopic: call.topic) { messageVC in
             messageVC.performSegue(withIdentifier: "Messages2Call", sender: call)
         }
+        return true
     }
 
-    func end() {
+    func completeCallInProgress(reportToSystem: Bool, reportToPeer: Bool) {
         guard let call = self.callInProgress else { return }
-        let endCallAction = CXEndCallAction(call: call.uuid)
-        let transaction = CXTransaction(action: endCallAction)
-        self.callController.request(transaction) { error in
-            if let error = error {
-                print("EndCallAction transaction request failed: \(error.localizedDescription).")
-                //self.callController.reportCall(with: call.uuid, endedAt: Date(), reason: .remoteEnded)
-                return
-            }
-
-            print("EndCallAction transaction request successful")
-        }
         self.callInProgress = nil
+
+        if reportToPeer {
+            // Tell the peer the call is over/declined.
+            Cache.tinode.videoCall(topic: call.topic, seq: call.seq, event: "hang-up")
+        }
+        if reportToSystem {
+            // Tell the OS that the call is over/declined.
+            let endCallAction = CXEndCallAction(call: call.uuid)
+            let transaction = CXTransaction(action: endCallAction)
+
+            self.callController.request(transaction) { error in
+                if let error = error {
+                    print("EndCallAction transaction request failed: \(error.localizedDescription).")
+                    return
+                }
+
+                print("EndCallAction transaction request successful")
+            }
+        }
     }
 }

@@ -98,6 +98,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     completionHandler(.failed)
                     return
                 }
+                // Is it an incoming call?
+                if userInfo["webrtc"] != nil, userInfo["replace"] == nil, let senderId = userInfo["xfrom"] as? String, !Cache.tinode.isMe(uid: senderId) {
+                    Cache.callManager.displayIncomingCall(uuid: UUID(), topic: topicName, from: senderId, seqId: seq) { error in
+                        if let error = error {
+                            print("Incoming call UI error: \(error)")
+                        }
+                    }
+                    completionHandler(.noData)
+                    return
+                }
                 // Fetch data in the background.
                 completionHandler(SharedUtils.fetchData(using: Cache.tinode, for: topicName, seq: seq))
             } else if what == "sub" {
@@ -146,6 +156,24 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         guard let topicName = userInfo["topic"] as? String, !topicName.isEmpty,
             what == nil || what == "msg",
             let seqStr = userInfo["seq"] as? String, let seq = Int(seqStr) else { return }
+        // Check if it's an incoming call.
+        if what == "msg" && userInfo["webrtc"] != nil {
+            print("video call msg", userInfo)
+            if userInfo["replace"] != nil {
+                completionHandler([])
+                return
+            }
+            if let senderId = userInfo["xfrom"] as? String, !Cache.tinode.isMe(uid: senderId) {
+                print("reporting incoming call")
+                Cache.callManager.displayIncomingCall(uuid: UUID(), topic: topicName, from: senderId, seqId: seq) { error in
+                    if let error = error {
+                        print("Incoming call UI error: \(error)")
+                    }
+                }
+            }
+            completionHandler([])
+            return
+        }
         if let messageVC = UiUtils.topViewController(rootViewController: UIApplication.shared.keyWindow?.rootViewController) as? MessageViewController, messageVC.topicName == topicName {
             // We are already in the correct topic. Do not present the notification.
             completionHandler([])

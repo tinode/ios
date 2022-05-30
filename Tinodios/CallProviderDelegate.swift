@@ -8,9 +8,8 @@
 import CallKit
 
 protocol CallManagerImpl: AnyObject {
-    func canAccept(callWith uuid: UUID) -> Bool
-    func accept()
-    func end()
+    func acceptPendingCall() -> Bool
+    func completeCallInProgress(reportToSystem: Bool, reportToPeer: Bool)
 }
 
 class CallProviderDelegate: NSObject, CXProviderDelegate {
@@ -44,28 +43,29 @@ class CallProviderDelegate: NSObject, CXProviderDelegate {
         print("reporting new call with \(uuid) -> \(update)")
         self.provider.reportNewIncomingCall(with: uuid, update: update) { error in
             if error != nil {
-                print("got error: \(error)")
+                print("got error: \(String(describing: error))")
             }
             completion?(error)
         }
     }
 
     func providerDidReset(_ provider: CXProvider) {
-        callManager?.end()
+        callManager?.completeCallInProgress(reportToSystem: true, reportToPeer: true)
     }
 
     func provider(_ provider: CXProvider, perform action: CXAnswerCallAction) {
-        guard callManager?.canAccept(callWith: action.callUUID) ?? false else {
-            print("cannot accept... failing")
+        // User tapped "Accept".
+        if let cm = callManager, cm.acceptPendingCall() {
+            action.fulfill()
+        } else {
             action.fail()
-            return
         }
-        callManager?.accept()
-        action.fulfill()
     }
 
     func provider(_ provider: CXProvider, perform action: CXEndCallAction) {
-        callManager?.end()
+        // User tapped "Decline/End call" in the incoming call view,
+        // or end call action was requested programmaticall.
+        callManager?.completeCallInProgress(reportToSystem: false, reportToPeer: true)
         action.fulfill()
     }
 }

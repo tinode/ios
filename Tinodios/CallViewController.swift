@@ -515,7 +515,7 @@ class CallViewController: UIViewController {
     func handleCallClose() {
         if self.callSeqId > 0 {
             self.topic?.videoCall(event: "hang-up", seq: self.callSeqId)
-            Cache.callManager.end()
+            Cache.callManager.completeCallInProgress(reportToSystem: true, reportToPeer: false)
         }
         self.callSeqId = -1
         DispatchQueue.main.async {
