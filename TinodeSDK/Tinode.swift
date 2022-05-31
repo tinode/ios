@@ -134,9 +134,6 @@ public class Tinode {
     public static let kNullValue = "\u{2421}"
     internal static let log = Log(subsystem: "co.tinode.tinodesdk")
 
-    // Mime type of the Video call messages.
-    public static let kVideoCallMime = "application/x-tinode-webrtc";
-
     let kProtocolVersion = "0"
     let kVersion = "0.18"
     let kLibVersion = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as! String

@@ -276,7 +276,15 @@ extension StoredMessage {
                 StoredMessage.fullFormatter = FullFormatter(defaultAttributes: [:])
                 StoredMessage.fullFormatter!.quoteFormatter = QuoteFormatter(defaultAttributes: [:])
             }
+            var isVideoCall = false
+            if let callState = self.head?["webrtc"]?.asString() {
+                isVideoCall = true
+                StoredMessage.fullFormatter!.setCallContext(isOutgoing: self.isMine, state: callState, duration: self.head?["webrtc-duration"]?.asInt() ?? 0)
+            }
             cachedContent = StoredMessage.fullFormatter!.toAttributed(content, fitIn: size, attributes: attributes)
+            if isVideoCall {
+                StoredMessage.fullFormatter!.clearCallContext()
+            }
         } else {
             cachedContent = StoredMessage.contentDeletedMessage(withAttributes: attributes)
         }
@@ -292,7 +300,15 @@ extension StoredMessage {
                 StoredMessage.previewFormatter = PreviewFormatter(defaultAttributes: [:])
             }
             content = content.preview(previewLen: UiUtils.kPreviewLength)
+            var isVideoCall = false
+            if let callState = self.head?["webrtc"]?.asString() {
+                isVideoCall = true
+                StoredMessage.previewFormatter!.setCallContext(isOutgoing: self.isMine, state: callState)
+            }
             cachedPreview = StoredMessage.previewFormatter!.toAttributed(content, fitIn: size, attributes: attributes)
+            if isVideoCall {
+                StoredMessage.previewFormatter!.clearCallContext()
+            }
         } else {
             cachedPreview = StoredMessage.contentDeletedMessage(withAttributes: attributes)
         }

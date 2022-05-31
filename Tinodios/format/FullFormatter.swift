@@ -18,9 +18,26 @@ class FullFormatter: AbstractFormatter {
     }
 
     var quoteFormatter: QuoteFormatter?
-    
+
+    // Call context.
+    var callIsOutgoing: Bool = false
+    var callState: String?
+    var callDuration: Int?
+
     init(defaultAttributes attrs: [NSAttributedString.Key: Any]) {
         super.init(defaultAttributes: attrs, defaultFont: Constants.kDefaultFont)
+    }
+
+    func setCallContext(isOutgoing: Bool, state: String, duration: Int) {
+        self.callIsOutgoing = isOutgoing
+        self.callState = state
+        self.callDuration = duration
+    }
+
+    func clearCallContext() {
+        self.callIsOutgoing = false
+        self.callState = nil
+        self.callDuration = nil
     }
 
     override func apply(type: String?, data: [String : JSONValue]?, key: Int?, content: [FormattedString], stack: [String]?) -> FormattedString {
@@ -177,6 +194,13 @@ class FullFormatter: AbstractFormatter {
         node.attachment(Attachment(content: .quote))
         let outer = FormatNode([node, FormatNode("\n")])
         return outer
+    }
+
+    override func handleVideoCall() -> FormatNode {
+        let attachment = Attachment(content: .call(self.callIsOutgoing, self.callState ?? "", self.callDuration ?? 0))
+        let node = FormatNode()
+        node.attachment(attachment)
+        return node
     }
 
     // Convert button payload to an URL.

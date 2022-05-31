@@ -529,8 +529,7 @@ class CallViewController: UIViewController {
         case .outgoing:
             // Send out a call invitation to the peer.
             self.topic?.publish(content: Drafty.videoCall(),
-                                withExtraHeaders:["mime": .string(Tinode.kVideoCallMime),
-                                                  "webrtc": .string("started")]).then(onSuccess: { msg in
+                                withExtraHeaders:["webrtc": .string("started")]).then(onSuccess: { msg in
                 guard let ctrl = msg?.ctrl else { return nil }
                 if ctrl.code < 300, let seq = ctrl.getIntParam(for: "seq"), seq > 0 {
                     // All good.

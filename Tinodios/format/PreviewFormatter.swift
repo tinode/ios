@@ -13,8 +13,22 @@ import UIKit
 class PreviewFormatter: AbstractFormatter {
     static let kDefaultFont = UIFont.preferredFont(forTextStyle: .subheadline)
 
+    // Call context.
+    var callIsOutgoing: Bool = false
+    var callState: String?
+
     init(defaultAttributes attrs: [NSAttributedString.Key : Any]) {
         super.init(defaultAttributes: attrs, defaultFont: PreviewFormatter.kDefaultFont)
+    }
+
+    func setCallContext(isOutgoing: Bool, state: String) {
+        self.callIsOutgoing = isOutgoing
+        self.callState = state
+    }
+
+    func clearCallContext() {
+        self.callIsOutgoing = false
+        self.callState = nil
     }
 
     override func handleLineBreak() -> FormatNode {
@@ -100,6 +114,13 @@ class PreviewFormatter: AbstractFormatter {
     override func handleQuote(_ nodes: [FormatNode]) -> FormatNode {
         // Quote within preview is blank.
         return FormatNode()
+    }
+
+    override func handleVideoCall() -> FormatNode {
+        let attachment = Attachment(content: .call(self.callIsOutgoing, self.callState ?? "", 0))
+        let node = FormatNode()
+        node.attachment(attachment)
+        return node
     }
 
     override func handleUnknown(content _: [FormatNode], using _: [String: JSONValue]?, draftyKey _: Int?) -> FormatNode {

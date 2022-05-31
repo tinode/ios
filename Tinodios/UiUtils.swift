@@ -106,6 +106,9 @@ class UiUtils {
     // Max length of message previews.
     static let kPreviewLength = 42
 
+    // Successful video call marker (↗, ↙) color.
+    static let kSuccessfulCallArrow = UIColor(fromHexCode: 0xFF006400)
+
     // Letter tile image colors (light).
     private static let kLetterTileLightColors: [UIColor] = [
         UIColor(fromHexCode: 0xFFEF9A9A),
@@ -1062,5 +1065,17 @@ extension UIView {
                 self.setNeedsLayout()
             }
         }
+    }
+}
+
+extension Message {
+    // Returns seq id (if any) this message is intended to replace.
+    func replacesSeq() -> Int? {
+        guard let replaceStr = self.head?["replace"]?.asString() else {
+            return nil
+        }
+        let parts = replaceStr.components(separatedBy: ":")   // split(separator: ":")
+        guard parts.count == 2 else { return nil }
+        return Int(parts[1])
     }
 }
