@@ -443,6 +443,10 @@ class CallViewController: UIViewController {
     }
 
     override func viewDidLoad() {
+        self.listener = InfoListener(delegateEventsTo: self, connected: Cache.tinode.isConnected)
+    }
+
+    private func setupCaptureSessionAndStartCall() {
         cameraManager.setupCamera()
         cameraManager.startCapture()
         setupViews()
@@ -451,15 +455,71 @@ class CallViewController: UIViewController {
 
         webRTCClient.delegate = self
         cameraManager.delegate = self
+        Cache.tinode.addListener(self.listener)
+
+        self.webRTCClient.shouldNegotiateImmediately = self.callDirection == .outgoing
+        if let topic = self.topic {
+            if !topic.attached {
+                topic.subscribe().then(
+                    onSuccess: { [weak self] msg in
+                        self?.handleCallInvite()
+                        return nil
+                    },
+                    onFailure: { [weak self] err in
+                        self?.handleCallClose()
+                        return nil
+                    })
+            } else {
+                self.handleCallInvite()
+            }
+        } else {
+            self.handleCallClose()
+        }
+    }
+
+    private func checkMicPermissions(completion: @escaping ((Bool) -> Void)) {
+        AVAudioSession.sharedInstance().requestRecordPermission { granted in
+            if granted {
+                completion(true)  // success
+            } else {
+                completion(false)  // failure
+            }
+        }
+    }
+
+    private func checkCameraPermissions(completion: @escaping ((Bool) -> Void)) {
+        switch AVCaptureDevice.authorizationStatus(for: .video) {
+        case .authorized:
+            completion(true)  // success
+        case .notDetermined:
+            AVCaptureDevice.requestAccess(for: .video) { granted in
+                if granted {
+                    completion(true)  // success
+                } else {
+                    completion(false)  // failure
+                }
+            }
+        case .denied, .restricted:
+            fallthrough
+        @unknown default:
+            completion(false)  // failure
+        }
     }
 
     override func viewDidAppear(_ animated: Bool) {
-        let tinode = Cache.tinode
-        self.listener = InfoListener(delegateEventsTo: self, connected: tinode.isConnected)
-        tinode.addListener(self.listener)
-
-        self.webRTCClient.shouldNegotiateImmediately = self.callDirection == .outgoing
-        self.handleCallInvite()
+        self.checkCameraPermissions { success in
+            if success {
+                self.checkMicPermissions { success in
+                    if success {
+                        DispatchQueue.main.async { self.setupCaptureSessionAndStartCall() }
+                    } else {
+                        DispatchQueue.main.async { self.handleCallClose() }
+                    }
+                }
+            } else {
+                DispatchQueue.main.async { self.handleCallClose() }
+            }
+        }
     }
 
     override func viewWillDisappear(_ animated: Bool) {
