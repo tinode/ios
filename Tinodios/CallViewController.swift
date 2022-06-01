@@ -128,6 +128,18 @@ class WebRTCClient: NSObject {
         configureAudioSession()
     }
 
+    func toggleAudio() -> Bool {
+        guard let track = self.localAudioTrack else { return false }
+        track.isEnabled = !track.isEnabled
+        return track.isEnabled
+    }
+
+    func toggleVideo() -> Bool {
+        guard let track = self.localVideoTrack else { return false }
+        track.isEnabled = !track.isEnabled
+        return track.isEnabled
+    }
+
     func createPeerConnection() {
         let constraints = RTCMediaConstraints(mandatoryConstraints: nil, optionalConstraints: nil)
         let config = generateRTCConfig()
@@ -174,7 +186,7 @@ class WebRTCClient: NSObject {
             })
         })
     }
-    
+
     func answer(_ peerConnection: RTCPeerConnection) {
         print("WebRTCClient: sending answer.")
         peerConnection.answer(
@@ -396,6 +408,13 @@ extension RTCIceCandidate {
 
 /// CallViewController
 class CallViewController: UIViewController {
+    private enum Constants {
+        static let kActionButtonSize = 50
+        static let kEndCallIcon = "phone.down"
+        static let kToggleCameraIcon = "video"
+        static let kToggleMicIcon = "mic"
+    }
+
     enum CallDirection {
         case none
         case outgoing
@@ -404,6 +423,25 @@ class CallViewController: UIViewController {
 
     @IBOutlet weak var remoteView: UIView!
     @IBOutlet weak var localView: UIView!
+
+    private static func actionButtonIcon(iconName: String) -> UIImage? {
+        return UIImage(systemName: iconName, withConfiguration: UIImage.SymbolConfiguration(pointSize: 16, weight: .light))
+    }
+
+    private static func makeActionButton(withBkgColor bkgColor: UIColor, iconName: String) -> UIButton {
+        let button = UIButton(frame: CGRect(x: 0, y: 0, width: Constants.kActionButtonSize, height: Constants.kActionButtonSize))
+        button.backgroundColor = bkgColor
+        let img = actionButtonIcon(iconName: iconName)
+        button.setImage(img, for: .normal)
+        button.tintColor = .white
+        button.layer.cornerRadius = CGFloat(Constants.kActionButtonSize / 2)
+        return button
+    }
+
+    // Action buttons displayed at the bottom (mute audio/video, end call).
+    private let endCallButton = makeActionButton(withBkgColor: UIColor.systemRed, iconName: Constants.kEndCallIcon)
+    private let toggleCameraButton = makeActionButton(withBkgColor: UIColor.systemGray, iconName: Constants.kToggleCameraIcon)
+    private let toggleMicButton = makeActionButton(withBkgColor: UIColor.systemGray, iconName: Constants.kToggleMicIcon)
 
     weak var topic: DefaultComTopic?
     let cameraManager = CameraManager()
@@ -443,7 +481,49 @@ class CallViewController: UIViewController {
     }
 
     override func viewDidLoad() {
+        self.view.addSubview(self.toggleCameraButton)
+        self.view.addSubview(self.toggleMicButton)
+        self.view.addSubview(self.endCallButton)
+        self.endCallButton.addTarget(self, action: #selector(didTapEndCall), for: .touchUpInside)
+        self.toggleCameraButton.addTarget(self, action: #selector(didTapToggleCamera), for: .touchUpInside)
+        self.toggleMicButton.addTarget(self, action: #selector(didTapToggleMic), for: .touchUpInside)
+
         self.listener = InfoListener(delegateEventsTo: self, connected: Cache.tinode.isConnected)
+    }
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        let totalWidth = self.view.frame.size.width / 2
+        let x1 = Int(totalWidth - 1.5 * CGFloat(Constants.kActionButtonSize) - 20)
+        let x2 = Int(totalWidth - 0.5 * CGFloat(Constants.kActionButtonSize))
+        let x3 = Int(totalWidth + 0.5 * CGFloat(Constants.kActionButtonSize) + 20)
+        let y = Int(self.view.frame.size.height) - 60
+
+        self.toggleCameraButton.frame.origin = CGPoint(x: x1, y: y)
+        self.toggleMicButton.frame.origin = CGPoint(x: x2, y: y)
+        self.endCallButton.frame.origin = CGPoint(x: x3, y: y)
+    }
+
+    @objc private func didTapEndCall() {
+        self.handleCallClose()
+    }
+
+    @objc private func didTapToggleCamera() {
+        var iconName = Constants.kToggleCameraIcon
+        if !self.webRTCClient.toggleVideo() {
+            iconName += ".slash"
+        }
+        let img = CallViewController.actionButtonIcon(iconName: iconName)
+        self.toggleCameraButton.setImage(img, for: .normal)
+    }
+
+    @objc private func didTapToggleMic() {
+        var iconName = Constants.kToggleMicIcon
+        if !self.webRTCClient.toggleAudio() {
+            iconName += ".slash"
+        }
+        let img = CallViewController.actionButtonIcon(iconName: iconName)
+        self.toggleMicButton.setImage(img, for: .normal)
     }
 
     private func setupCaptureSessionAndStartCall() {

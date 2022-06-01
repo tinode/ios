@@ -562,8 +562,13 @@ extension MessageViewController: MessageDisplayLogic {
                 navBarAvatarView.heightAnchor.constraint(equalToConstant: Constants.kNavBarAvatarSmallState),
                 navBarAvatarView.widthAnchor.constraint(equalTo: navBarAvatarView.heightAnchor)
             ])
-        let items = [UIBarButtonItem(customView: navBarAvatarView),
-                     UIBarButtonItem(barButtonSystemItem: .play, target: self, action: #selector(navBarCallTapped(sender:)))]
+        var items = [UIBarButtonItem(customView: navBarAvatarView)]
+        if let t = self.topic, t.isP2PType {
+            items.append(UIBarButtonItem(
+                image: UIImage(systemName: "phone",
+                               withConfiguration:UIImage.SymbolConfiguration(pointSize: 16, weight: .light)),
+                style: .plain, target: self, action: #selector(navBarCallTapped(sender:))))
+        }
         self.navigationItem.setRightBarButtonItems(items, animated: false)
     }
 
