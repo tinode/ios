@@ -90,6 +90,8 @@ protocol WebRTCClientDelegate: AnyObject {
     func sendAnswer(withDescription sdp: RTCSessionDescription)
     func sendIceCandidate(_ candidate: RTCIceCandidate)
     func closeCall()
+    func canSendOffer() -> Bool
+    func markConnectionSetupComplete()
 }
 
 /// TinodeVideoCallDelegate
@@ -120,7 +122,6 @@ class WebRTCClient: NSObject {
 
     private var localAudioTrack: RTCAudioTrack?
 
-    public var shouldNegotiateImmediately: Bool = true
     weak var delegate: WebRTCClientDelegate?
 
     func setup() {
@@ -144,22 +145,12 @@ class WebRTCClient: NSObject {
         let constraints = RTCMediaConstraints(mandatoryConstraints: nil, optionalConstraints: nil)
         let config = generateRTCConfig()
 
-        // FIXME: remove this ugly hack.
-        // RTCPeerConnectionDelegate triggers onNegotationNeeded event immediately after
-        // adding a media local stream which, in turn, sends out an offer to the peer regardless
-        // of whether it's an incoming or outgoing call.
-        // This hack lets us skip this original onNegotiationNeeded event.
-        let delegate: RTCPeerConnectionDelegate? = self.shouldNegotiateImmediately ? self : nil
-        localPeer = WebRTCClient.factory.peerConnection(with: config, constraints: constraints, delegate: delegate)
+        localPeer = WebRTCClient.factory.peerConnection(with: config, constraints: constraints, delegate: self)
 
         let stream = WebRTCClient.factory.mediaStream(withStreamId: "ARDAMS")
         stream.addAudioTrack(self.localAudioTrack!)
         stream.addVideoTrack(self.localVideoTrack!)
         localPeer!.add(stream)
-
-        if !self.shouldNegotiateImmediately {
-            localPeer!.delegate = self
-        }
     }
 
     func offer(_ peerConnection: RTCPeerConnection) {
@@ -206,7 +197,9 @@ class WebRTCClient: NSObject {
                         self?.delegate?.closeCall()
                         return
                     }
+                    print("actually sending answer \(sdp)")
                     self?.delegate?.sendAnswer(withDescription: sdp)
+                    self?.delegate?.markConnectionSetupComplete()
                 })
             })
     }
@@ -336,6 +329,9 @@ extension WebRTCClient: RTCPeerConnectionDelegate {
 
     func peerConnectionShouldNegotiate(_ peerConnection: RTCPeerConnection) {
         print("should negotiate")
+        guard self.delegate?.canSendOffer() ?? false else {
+            return
+        }
         self.offer(peerConnection)
     }
 
@@ -453,6 +449,8 @@ class CallViewController: UIViewController {
 
     var callDirection: CallDirection = .none
     var callSeqId: Int = -1
+    // If true, the client has received a remote SDP from the peer and has sent a local SDP to the peer.
+    var callInitialSetupComplete = false
 
     class InfoListener: UiTinodeEventListener {
         private weak var delegate: TinodeVideoCallDelegate?
@@ -537,12 +535,15 @@ class CallViewController: UIViewController {
         cameraManager.delegate = self
         Cache.tinode.addListener(self.listener)
 
-        self.webRTCClient.shouldNegotiateImmediately = self.callDirection == .outgoing
         if let topic = self.topic {
             if !topic.attached {
                 topic.subscribe().then(
                     onSuccess: { [weak self] msg in
-                        self?.handleCallInvite()
+                        if let ctrl = msg?.ctrl, ctrl.code < 300 {
+                            self?.handleCallInvite()
+                        } else {
+                            self?.handleCallClose()
+                        }
                         return nil
                     },
                     onFailure: { [weak self] err in
@@ -731,6 +732,14 @@ extension CallViewController: WebRTCClientDelegate {
         client.remoteVideoTrack = stream.videoTracks.first
         self.webRTCClient.setupRemoteRenderer(self.remoteRenderer!)
     }
+
+    func canSendOffer() -> Bool {
+        return self.callDirection != .incoming || self.callInitialSetupComplete
+    }
+
+    func markConnectionSetupComplete() {
+        self.callInitialSetupComplete = true
+    }
 }
 
 extension CallViewController: TinodeVideoCallDelegate {
@@ -759,6 +768,9 @@ extension CallViewController: TinodeVideoCallDelegate {
             if let e = error {
                 print("error setting remote description \(e)")
                 self.handleCallClose()
+            }
+            if self.callDirection == .outgoing {
+                self.markConnectionSetupComplete()
             }
         })
     }
