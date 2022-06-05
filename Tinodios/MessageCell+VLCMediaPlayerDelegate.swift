@@ -4,6 +4,7 @@
 //  Copyright © 2022 Tinode LLC. All rights reserved.
 //
 
+import AVFAudio
 import Foundation
 import MobileCoreServices
 import MobileVLCKit
@@ -39,6 +40,7 @@ extension MessageCell: VLCMediaPlayerDelegate {
         if audioPlayer == nil {
             audioPlayer = VLCMediaPlayer()
             audioPlayer!.delegate = self
+            speakerphone(on: true)
         }
     }
 
@@ -95,5 +97,24 @@ extension MessageCell: VLCMediaPlayerDelegate {
             }
         }
         self.delegate?.didSeekMedia(in: self, audioPlayer: self.audioPlayer!, pos: seekTo)
+    }
+
+    private func speakerphone(on: Bool) {
+        let session = AVAudioSession.sharedInstance()
+        if on {
+            do {
+                try session.setCategory(AVAudioSession.Category.playAndRecord)
+                try session.setActive(true)
+                try session.overrideOutputAudioPort(AVAudioSession.PortOverride.speaker)
+            } catch let error as NSError {
+                print("audioSession error: \(error.localizedDescription)")
+            }
+        } else {
+            do {
+                try session.setActive(false)
+            } catch let error as NSError {
+                print("audioSession error: \(error.localizedDescription)")
+            }
+        }
     }
 }
