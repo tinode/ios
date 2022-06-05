@@ -46,13 +46,13 @@ class CameraManager: NSObject {
             videoDataOutput.connection(with: .video)?.automaticallyAdjustsVideoMirroring = false
             videoDataOutput.connection(with: .video)?.isVideoMirrored = true
         } else {
-            print("Could not add video data output to the session")
+            Cache.log.error("CallVC - Could not add video data output to the session")
             captureSession.commitConfiguration()
         }
     }
 
     func startCapture() {
-        print("CameraManager: start capture")
+        Cache.log.info("CallVC - CameraManager: start capture")
 
         guard !isCapturing else { return }
         isCapturing = true
@@ -62,7 +62,7 @@ class CameraManager: NSObject {
         #endif
     }
     func stopCapture() {
-        print("CameraManager: end capture")
+        Cache.log.info("CallVC - CameraManager: end capture")
         guard isCapturing else { return }
         isCapturing = false
 
@@ -154,14 +154,14 @@ class WebRTCClient: NSObject {
     }
 
     func offer(_ peerConnection: RTCPeerConnection) {
-        print("WebRTCClient: sending offer.")
+        Cache.log.info("WebRTCClient - creating offer")
         peerConnection.offer(for: RTCMediaConstraints(mandatoryConstraints: mediaConstraints, optionalConstraints: nil), completionHandler: { [weak self](sdp, error) in
             guard let self = self else { return }
 
             guard let sdp = sdp else {
                 // Missing SDP.
                 if let error = error {
-                    print(error)
+                    Cache.log.error("WebRTCClient - failed to make offer SDP %@", error.localizedDescription)
                 }
                 self.delegate?.closeCall()
                 return
@@ -169,7 +169,7 @@ class WebRTCClient: NSObject {
 
             peerConnection.setLocalDescription(sdp, completionHandler: { (error) in
                 if let error = error {
-                    debugPrint(error)
+                    Cache.log.error("WebRTCClient - failed to set local SDP (offer) %@", error.localizedDescription)
                     self.delegate?.closeCall()
                     return
                 }
@@ -179,13 +179,13 @@ class WebRTCClient: NSObject {
     }
 
     func answer(_ peerConnection: RTCPeerConnection) {
-        print("WebRTCClient: sending answer.")
+        Cache.log.info("WebRTCClient - creating answer")
         peerConnection.answer(
             for: RTCMediaConstraints(mandatoryConstraints: self.mediaConstraints, optionalConstraints: nil),
             completionHandler: { [weak self](sdp, error) in
                 guard let self = self, let sdp = sdp else {
                     if let error = error {
-                        print("answer() failure: \(error)")
+                        Cache.log.error("WebRTCClient - failed to make answer SDP %@", error.localizedDescription)
                     }
                     self?.delegate?.closeCall()
                     return
@@ -193,11 +193,10 @@ class WebRTCClient: NSObject {
 
                 peerConnection.setLocalDescription(sdp, completionHandler: { [weak self](error) in
                     if let error = error {
-                        print("answer.setLocalDescription() failure: \(error)")
+                        Cache.log.error("WebRTCClient - failed to set local SDP (answer) %@", error.localizedDescription)
                         self?.delegate?.closeCall()
                         return
                     }
-                    print("actually sending answer \(sdp)")
                     self?.delegate?.sendAnswer(withDescription: sdp)
                     self?.delegate?.markConnectionSetupComplete()
                 })
@@ -206,8 +205,15 @@ class WebRTCClient: NSObject {
 
     func disconnect() {
         localPeer?.close()
-
         localPeer = nil
+
+        // Clean up audio.
+        self.audioSessionChange { audioSession in
+            try audioSession.setActive(false)
+        }
+        localAudioTrack = nil
+
+        // ... and video.
         localVideoSource = nil
         localVideoTrack = nil
         videoCapturer = nil
@@ -257,19 +263,24 @@ extension WebRTCClient {
         videoCapturer = RTCCameraVideoCapturer(delegate: videoSource)
     }
 
-    private func configureAudioSession() {
+    private func audioSessionChange(action: ((RTCAudioSession) throws -> Void)) {
         let audioSession = RTCAudioSession.sharedInstance()
-
         audioSession.lockForConfiguration()
         do {
+            try action(audioSession)
+        } catch {
+            Cache.log.error("WebRTCClient: error changing AVAudioSession: %@", error.localizedDescription)
+        }
+        audioSession.unlockForConfiguration()
+    }
+
+    private func configureAudioSession() {
+        self.audioSessionChange { audioSession in
             try audioSession.setCategory(AVAudioSession.Category.playAndRecord.rawValue)
             try audioSession.setMode(AVAudioSession.Mode.voiceChat.rawValue)
             try audioSession.overrideOutputAudioPort(.speaker)
             try audioSession.setActive(true)
-        } catch let error {
-            print("WebRTCClient: error setting AVAudioSession category: \(error)")
         }
-        audioSession.unlockForConfiguration()
     }
 }
 
@@ -299,7 +310,7 @@ extension WebRTCClient {
         peerConnection.setRemoteDescription(desc, completionHandler: { [weak self](error) in
             guard let self = self else { return }
             if let error = error {
-                print("handleRemoteDescription.setRemoteDescription failure: \(error)")
+                Cache.log.error("WebRTCClient.setRemoteDescription failure: %@", error.localizedDescription)
                 self.delegate?.closeCall()
                 return
             }
@@ -311,16 +322,14 @@ extension WebRTCClient {
 
 extension WebRTCClient: RTCPeerConnectionDelegate {
     func peerConnection(_ peerConnection: RTCPeerConnection, didChange stateChanged: RTCSignalingState) {
-        print("state changed \(stateChanged)")
         if stateChanged == .closed {
             self.delegate?.closeCall()
         }
     }
 
     func peerConnection(_ peerConnection: RTCPeerConnection, didAdd stream: RTCMediaStream) {
-        print("Received remote stream")
+        Cache.log.info("WebRTCClient: Received remote stream")
         self.delegate?.handleRemoteStream(self, receivedStream: stream)
-        print("added remote stream - done")
     }
 
     func peerConnection(_ peerConnection: RTCPeerConnection, didRemove stream: RTCMediaStream) {
@@ -328,10 +337,10 @@ extension WebRTCClient: RTCPeerConnectionDelegate {
     }
 
     func peerConnectionShouldNegotiate(_ peerConnection: RTCPeerConnection) {
-        print("should negotiate")
         guard self.delegate?.canSendOffer() ?? false else {
             return
         }
+        Cache.log.info("WebRTCClient: negotiating connection")
         self.offer(peerConnection)
     }
 
@@ -347,11 +356,11 @@ extension WebRTCClient: RTCPeerConnectionDelegate {
     }
 
     func peerConnection(_ peerConnection: RTCPeerConnection, didChange newState: RTCIceGatheringState) {
-        print("rtc gathering state \(newState)")
+        Cache.log.info("WebRTCClient: ice rtc gathering state - %d", newState.rawValue)
     }
 
     func peerConnection(_ peerConnection: RTCPeerConnection, didGenerate candidate: RTCIceCandidate) {
-        print("did generate ice candidate \(candidate)")
+        Cache.log.info("WebRTCClient: new local ice candidate %@", candidate)
         self.delegate?.sendIceCandidate(candidate)
     }
 
@@ -622,7 +631,7 @@ class CallViewController: UIViewController {
         case .oldDeviceUnavailable:
             try? AVAudioSession.sharedInstance().overrideOutputAudioPort(.speaker)
         default:
-            print("routeChange: other - \(reason)")
+            Cache.log.debug("CallVC - audio route change: other - %d", value)
         }
     }
 
@@ -685,7 +694,7 @@ class CallViewController: UIViewController {
             // The callee (we) has accepted the call. Notify the caller.
             self.topic?.videoCall(event: "accept", seq: self.callSeqId)
         case .none:
-            print("Invalid call direction in handleCallInvite()")
+            Cache.log.error("CallVC - Invalid call direction in handleCallInvite()")
         }
     }
 }
@@ -750,7 +759,7 @@ extension CallViewController: TinodeVideoCallDelegate {
     
     func handleOfferMsg(with payload: JSONValue?) {
         guard case let .dict(offer) = payload, let desc = RTCSessionDescription.deserialize(from: offer) else {
-            print("invalid offer payload")
+            Cache.log.error("CallVC.handleOfferMsg - invalid offer payload")
             self.handleCallClose()
             return
         }
@@ -760,13 +769,13 @@ extension CallViewController: TinodeVideoCallDelegate {
     
     func handleAnswerMsg(with payload: JSONValue?) {
         guard case let .dict(answer) = payload, let desc = RTCSessionDescription.deserialize(from: answer) else {
-            print("empty/invalid answer payload")
+            Cache.log.error("CallVC.handleAnswerMsg - invalid answer payload")
             self.handleCallClose()
             return
         }
         self.webRTCClient.localPeer?.setRemoteDescription(desc, completionHandler: { (error) in
             if let e = error {
-                print("error setting remote description \(e)")
+                Cache.log.error("CallVC - error setting remote description %@", e.localizedDescription)
                 self.handleCallClose()
             }
             if self.callDirection == .outgoing {
@@ -777,7 +786,7 @@ extension CallViewController: TinodeVideoCallDelegate {
     
     func handleIceCandidateMsg(with payload: JSONValue?) {
         guard case let .dict(iceDict) = payload, let candidate = RTCIceCandidate.deserialize(from: iceDict) else {
-            print("empty/invalid ICE candidate payload")
+            Cache.log.error("CallVC.handleIceCandidateMsg - invalid ICE candidate payload")
             self.handleCallClose()
             return
         }
