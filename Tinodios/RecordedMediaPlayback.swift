@@ -27,7 +27,7 @@ class RecordedMediaPlayback: NSObject {
             audioPlayer.numberOfLoops = 0
             audioPlayer.play()
         } catch {
-            print("Unable to start playback: %@", error.localizedDescription)
+            Cache.log.error("Unable to start playback: %@", error.localizedDescription)
         }
     }
 

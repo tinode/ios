@@ -107,13 +107,13 @@ extension MessageCell: VLCMediaPlayerDelegate {
                 try session.setActive(true)
                 try session.overrideOutputAudioPort(AVAudioSession.PortOverride.speaker)
             } catch let error as NSError {
-                print("audioSession error: \(error.localizedDescription)")
+                Cache.log.error("Failed to enable speakerphone: %@", error.localizedDescription)
             }
         } else {
             do {
                 try session.setActive(false)
             } catch let error as NSError {
-                print("audioSession error: \(error.localizedDescription)")
+                Cache.log.error("Failed to disable audio session: %@", error.localizedDescription)
             }
         }
     }
