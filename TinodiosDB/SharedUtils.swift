@@ -152,6 +152,8 @@ public class SharedUtils {
                     if tinode.authToken != token {
                         SharedUtils.saveAuthToken(for: userName, token: tinode.authToken, expires: tinode.authTokenExpires)
                     }
+                case 401:
+                    BaseDb.log.info("Connect&Login Sync - attempt to subscribe to 'me' before login.")
                 case 409:
                     BaseDb.log.info("Connect&Login Sync - already authenticated.")
                 case 500..<600:

@@ -36,17 +36,29 @@ class SendMessageBar: UIView {
         case hidden
     }
 
-    private static let kSendButtonPointsNormal: CGFloat = 26
-    private static let kSendButtonPointsPressed: CGFloat = 40
-    private static let kSendButtonSizeNormal: CGFloat = 32
-    private static let kSendButtonSizePressed: CGFloat = 48
-    private static let kSendButtonImageWave = UIImage(systemName: "waveform.circle.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: SendMessageBar.kSendButtonPointsNormal))!
-    private static let kSendButtonImageWavePressed = UIImage(systemName: "waveform.circle.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: SendMessageBar.kSendButtonPointsPressed))!
-    private static let kSendButtonImageArrow = UIImage(systemName: "arrow.up.circle.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: SendMessageBar.kSendButtonPointsNormal))!
-    private static let kWaveInsetsShort = UIEdgeInsets(top: 2, left: 6, bottom: 2, right: 88)
-    private static let kWaveInsetsLong = UIEdgeInsets(top: 2, left: 6, bottom: 2, right: 52)
-    // Initial input text weight.
-    private static let kInitialInputFieldHeight: CGFloat = 40
+    // MARK: - Constants
+
+    private enum Constants {
+        static let maxLines: CGFloat = 4
+        static let inputFieldInsetLeading: CGFloat = 4
+        static let inputFieldInsetTrailing: CGFloat = 40
+        static let peerMessagingDisabledHeight: CGFloat = 30
+        static let kPreviewCancelButtonMaxWidth: CGFloat = 36
+
+        static let kSendButtonPointsNormal: CGFloat = 26
+        static let kSendButtonPointsPressed: CGFloat = 40
+        static let kButtonSizeNormal: CGFloat = 32
+        static let kSendButtonSizePressed: CGFloat = 48
+
+        // Initial input text weight.
+        static let kInitialInputFieldHeight: CGFloat = 40
+
+        static let kSendButtonImageWave = UIImage(systemName: "waveform.circle.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: Constants.kSendButtonPointsNormal))!
+        static let kSendButtonImageWavePressed = UIImage(systemName: "waveform.circle.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: Constants.kSendButtonPointsPressed))!
+        static let kSendButtonImageArrow = UIImage(systemName: "arrow.up.circle.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: Constants.kSendButtonPointsNormal))!
+        static let kWaveInsetsShort = UIEdgeInsets(top: 2, left: 6, bottom: 2, right: 88)
+        static let kWaveInsetsLong = UIEdgeInsets(top: 2, left: 6, bottom: 2, right: 52)
+    }
 
     // MARK: Action delegate
 
@@ -174,8 +186,8 @@ class SendMessageBar: UIView {
             DispatchQueue.main.async {
                 UIView.animate(withDuration: 0.2, delay: 0, options: UIView.AnimationOptions.curveEaseIn, animations: {
                     self.showAudioBar(.short)
-                    self.sendButtonSize.constant = SendMessageBar.kSendButtonSizePressed
-                    self.sendButton.setImage(SendMessageBar.kSendButtonImageWavePressed, for: .normal)
+                    self.sendButtonSize.constant = Constants.kSendButtonSizePressed
+                    self.sendButton.setImage(Constants.kSendButtonImageWavePressed, for: .normal)
                     self.verticalSliderView.isHidden = false
                     self.horizontalSliderView.isHidden = false
                     self.layoutIfNeeded()
@@ -232,16 +244,6 @@ class SendMessageBar: UIView {
     @IBAction func cancelPreviewClicked(_ sender: Any) {
         self.togglePendingPreviewBar(with: nil)
         self.delegate?.dismissPendingMessagePreview()
-    }
-
-    // MARK: - Constants
-
-    private enum Constants {
-        static let maxLines: CGFloat = 4
-        static let inputFieldInsetLeading: CGFloat = 4
-        static let inputFieldInsetTrailing: CGFloat = 40
-        static let peerMessagingDisabledHeight: CGFloat = 30
-        static let kPreviewCancelButtonMaxWidth: CGFloat = 36
     }
 
     // MARK: - Private properties
@@ -345,18 +347,18 @@ class SendMessageBar: UIView {
             stopAudioRecordingButton.show(false)
         } else {
             // Long bar
-            deleteAudioButton.show(true, dimension: 32)
+            deleteAudioButton.show(true, dimension: Constants.kButtonSizeNormal)
             switch state {
             case .longInitial:
                 playAudioButton.show(false)
                 pauseAudioButton.show(false)
-                stopAudioRecordingButton.show(true, dimension: 32)
+                stopAudioRecordingButton.show(true, dimension: Constants.kButtonSizeNormal)
             case .longPlayback:
                 playAudioButton.show(false)
-                pauseAudioButton.show(true, dimension: 32)
+                pauseAudioButton.show(true, dimension: Constants.kButtonSizeNormal)
                 stopAudioRecordingButton.show(false)
             case .longPaused:
-                playAudioButton.show(true, dimension: 32)
+                playAudioButton.show(true, dimension: Constants.kButtonSizeNormal)
                 pauseAudioButton.show(false)
                 stopAudioRecordingButton.show(false)
             default:
@@ -366,7 +368,7 @@ class SendMessageBar: UIView {
 
         if state == .hidden {
             // Bar hidden.
-            inputField.show(true, height: SendMessageBar.kInitialInputFieldHeight)
+            inputField.show(true, height: Constants.kInitialInputFieldHeight)
             attachButton.isHidden = false
             // audioDurationLabel.show(false)
             audioDurationLabel.isHidden = true
@@ -374,7 +376,7 @@ class SendMessageBar: UIView {
             wavePreviewImageView.reset()
             audioViewHeight.constant = CGFloat.leastNonzeroMagnitude
             audioView.isHidden = true
-            sendButton.setImage(SendMessageBar.kSendButtonImageWave, for: .normal)
+            sendButton.setImage(Constants.kSendButtonImageWave, for: .normal)
         } else {
             // Long or short bar visible.
             inputField.resignFirstResponder() // Otherwise it does not hide
@@ -388,10 +390,10 @@ class SendMessageBar: UIView {
             wavePreviewImageView.isHidden = false
             if state == .short {
                 wavePreviewLeading.constant = 8
-                wavePreviewImageView.waveInsets = SendMessageBar.kWaveInsetsShort
+                wavePreviewImageView.waveInsets = Constants.kWaveInsetsShort
             } else {
                 wavePreviewLeading.constant = 40
-                wavePreviewImageView.waveInsets = SendMessageBar.kWaveInsetsLong
+                wavePreviewImageView.waveInsets = Constants.kWaveInsetsLong
             }
         }
 
@@ -405,12 +407,12 @@ class SendMessageBar: UIView {
             self.verticalSliderView.isHidden = true
             self.horizontalSliderView.isHidden = true
             if state == .lock {
-                self.sendButtonSize.constant = SendMessageBar.kSendButtonSizeNormal
+                self.sendButtonSize.constant = Constants.kButtonSizeNormal
                 self.sendButton.setImage(SendMessageBar.kSendButtonImageArrow, for: .normal)
                 self.showAudioBar(.longInitial)
             } else {
-                self.sendButtonSize.constant = SendMessageBar.kSendButtonSizeNormal
-                self.sendButton.setImage(SendMessageBar.kSendButtonImageWave, for: .normal)
+                self.sendButtonSize.constant = Constants.kButtonSizeNormal
+                self.sendButton.setImage(Constants.kSendButtonImageWave, for: .normal)
                 self.showAudioBar(.hidden)
             }
             self.layoutIfNeeded()
@@ -429,15 +431,15 @@ class SendMessageBar: UIView {
         switch state {
         case .playbackStart:
             playAudioButton.show(false)
-            pauseAudioButton.show(true, dimension: 32)
+            pauseAudioButton.show(true, dimension: Constants.kButtonSizeNormal)
             wavePreviewImageView.play()
         case .playbackReset:
             wavePreviewImageView.reset()
-            playAudioButton.show(true, dimension: 32)
+            playAudioButton.show(true, dimension: Constants.kButtonSizeNormal)
             pauseAudioButton.show(false)
         case .playbackPause:
             wavePreviewImageView.pause(rewind: false)
-            playAudioButton.show(true, dimension: 32)
+            playAudioButton.show(true, dimension: Constants.kButtonSizeNormal)
             pauseAudioButton.show(false)
         default:
             break
@@ -450,9 +452,9 @@ extension SendMessageBar: UITextViewDelegate {
         delegate?.sendMessageBar(textChangedTo: textView.text)
 
         if inputField.actualText.isEmpty {
-            inputFieldHeight.constant = SendMessageBar.kInitialInputFieldHeight
+            inputFieldHeight.constant = Constants.kInitialInputFieldHeight
 
-            self.sendButton.setImage(SendMessageBar.kSendButtonImageWave, for: .normal)
+            self.sendButton.setImage(Constants.kSendButtonImageWave, for: .normal)
         } else {
             let size = CGSize(width: frame.width - Constants.inputFieldInsetLeading - Constants.inputFieldInsetTrailing, height: .greatestFiniteMagnitude)
             let fittingSize = inputField.sizeThatFits(size)
@@ -460,7 +462,7 @@ extension SendMessageBar: UITextViewDelegate {
                 inputFieldHeight.constant = fittingSize.height + 2 // Not sure why but it seems to be off by 2
             }
 
-            self.sendButton.setImage(SendMessageBar.kSendButtonImageArrow, for: .normal)
+            self.sendButton.setImage(Constants.kSendButtonImageArrow, for: .normal)
         }
     }
 }

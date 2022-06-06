@@ -19,6 +19,7 @@ struct Attachment {
         case quote
         case call(Bool, String, Int)  // isOutgoing, callState, callDuration
         case empty
+        case unkn
 
         var description: String {
           get {
@@ -37,6 +38,8 @@ struct Attachment {
                 return "call"
             case .empty:
                 return "empty"
+            case .unkn:
+                return "unkn"
             }
           }
         }
@@ -204,9 +207,12 @@ class FormatNode: CustomStringConvertible {
             return "{att: '\(fname)'}"
         case .call:
             return "{video call}"
+        case .unkn:
+            return "{unkn}"
         }
     }
 
+    // File attachment, including attachment with no data.
     private func createFileAttachmentString(_ attachment: Attachment, withData bits: Data?, withRef ref: String?, defaultAttrs attributes: [NSAttributedString.Key: Any], maxSize size: CGSize) -> NSAttributedString {
         let attributed = NSMutableAttributedString()
         let baseFont = attributes[.font] as! UIFont
@@ -448,12 +454,13 @@ class FormatNode: CustomStringConvertible {
 
             if isButton {
                 attrs[.foregroundColor] = Constants.kLinkColor
-                entity = "button"
+                entity = NSLocalizedString("button", comment: "Text written on button face when all else fails.")
             } else {
                 if let fg = attributes[.foregroundColor] as? UIColor {
                     attrs[.foregroundColor] = fg.withAlphaComponent(Constants.kQuoteTextColorAdj)
                 }
-                entity = "quote"
+                // Quote: just display nothing.
+                entity = " "
             }
 
             if let text = text {
@@ -477,6 +484,30 @@ class FormatNode: CustomStringConvertible {
         // File attachment is harder: construct attributed string showing an attachment.
         case .data, .empty:
             return createFileAttachmentString(attachment, withData: attachment.bits, withRef: attachment.ref, defaultAttrs: attributes, maxSize: size)
+        case .unkn:
+            let attributed = NSMutableAttributedString(string: "\u{2009}")
+            attributed.beginEditing()
+
+            let icon = NSTextAttachment()
+            icon.image = UIImage(systemName: "puzzlepiece.extension")?.withRenderingMode(.alwaysTemplate)
+            let baseFont = attributes[.font] as! UIFont
+            icon.bounds = CGRect(origin: CGPoint(x: 0, y: -4), size: CGSize(width: baseFont.lineHeight, height: baseFont.lineHeight))
+
+            attributed.append(NSAttributedString(attachment: icon))
+            attributed.append(NSAttributedString(string: " "))
+
+            if let text = text {
+                attributed.append(FormatNode.textToAttributed(text, defaultAttrs: attributes, fontTraits: fontTraits))
+            } else if let children = children {
+                for child in children {
+                    attributed.append(try! child.toAttributed(withAttributes: attributes, fontTraits: fontTraits, fitIn: size))
+                }
+            } else {
+                attributed.append(NSAttributedString(string: NSLocalizedString("Unsupported", comment: "Unsupported (unknown) Drafty tag"), attributes: attributes))
+            }
+
+            attributed.endEditing()
+            return attributed
         }
     }
 

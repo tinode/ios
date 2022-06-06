@@ -1040,7 +1040,7 @@ extension UIView {
     ///    - dimension: width and height of the square view to make visible.
     ///    - width: width of the view to make visible
     ///    - height: height of the view to make visible.
-    func show(_ show: Bool, dimension: CGFloat? = nil, width: CGFloat? = nil, height: CGFloat? = nil, debug: Bool = false) {
+    func show(_ show: Bool, dimension: CGFloat? = nil, width: CGFloat? = nil, height: CGFloat? = nil) {
         for constraint in self.constraints {
             self.isHidden = !show
             if constraint.firstAttribute == .width {
@@ -1048,9 +1048,6 @@ extension UIView {
                     constraint.constant = .leastNonzeroMagnitude
                 } else if let width = width ?? dimension {
                     constraint.constant = width
-                    if debug {
-                        print("width = \(constraint.constant)")
-                    }
                 }
                 self.setNeedsLayout()
             } else if constraint.firstAttribute == .height {
@@ -1058,9 +1055,6 @@ extension UIView {
                     constraint.constant = .leastNonzeroMagnitude
                 } else if let height = height ?? dimension {
                     constraint.constant = height
-                    if debug {
-                        print("height = \(constraint.constant)")
-                    }
                 }
                 self.setNeedsLayout()
             }

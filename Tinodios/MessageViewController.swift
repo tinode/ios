@@ -426,7 +426,6 @@ class MessageViewController: UIViewController {
             guard case let ImagePreviewContent.ImageContent.uiimage(image) = content.imgContent else { return }
 
             guard let data = image.pixelData(forMimeType: content.contentType) else { return }
-            print("image size: \(data.count), max inband size: \(maxInbandSize)")
             if data.count > maxInbandSize {
                 self.interactor?.uploadImage(UploadDef(caption: content.caption, filename: content.fileName, mimeType: content.contentType, image: image, data: data, width: image.size.width * image.scale, height: image.size.height * image.scale))
             } else {
@@ -462,9 +461,7 @@ class MessageViewController: UIViewController {
         if data.count > maxInbandSize {
             self.interactor?.uploadAudio(UploadDef(mimeType: mime, data: data, duration: duration, preview: preview))
         } else {
-            print("Sending short audio of size \(data.count), duration=\(duration)")
             if let drafty = try? Drafty(plainText: " ").insertAudio(at: 0, mime: mime, bits: data, preview: preview, duration: duration, fname: nil, refurl: nil, size: data.count) {
-                print("Drafty: \(drafty)")
                 _ = interactor?.sendMessage(content: drafty)
             }
         }

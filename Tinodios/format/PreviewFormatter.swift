@@ -45,7 +45,7 @@ class PreviewFormatter: AbstractFormatter {
         return node
     }
 
-    static func annotatedIcon(iconName: String, annotation: String? = nil, comment: String? = nil) -> FormatNode {
+    static func annotatedIcon(iconName: String, localizedAnnotation: String? = nil) -> FormatNode {
         let icon = NSTextAttachment()
         icon.image = (UIImage(systemName: iconName) ?? UIImage(named: iconName))?.withRenderingMode(.alwaysTemplate)
         let baseFont = PreviewFormatter.kDefaultFont
@@ -53,9 +53,8 @@ class PreviewFormatter: AbstractFormatter {
 
         let iconNode = FormatNode()
         iconNode.preformattedAttachment(icon)
-        if let annotationStr = annotation, let commentStr = comment {
-            let annotationNode = FormatNode(" " + NSLocalizedString(annotationStr, comment: commentStr))
-            return FormatNode([iconNode, annotationNode])
+        if let annotationStr = localizedAnnotation {
+            return FormatNode([iconNode, FormatNode(" " + annotationStr)])
         }
         return iconNode
     }
@@ -67,11 +66,11 @@ class PreviewFormatter: AbstractFormatter {
         } else {
             annotation = "-:--"
         }
-        return PreviewFormatter.annotatedIcon(iconName: "mic", annotation: annotation, comment: "Audio recording.")
+        return PreviewFormatter.annotatedIcon(iconName: "mic", localizedAnnotation: annotation)
     }
 
     override func handleImage(using attr: [String: JSONValue]?, draftyKey _: Int?) -> FormatNode {
-        return PreviewFormatter.annotatedIcon(iconName: "image-50", annotation: NSLocalizedString("Picture", comment: "Label shown next to an inline image"), comment: "Image preview icon.")
+        return PreviewFormatter.annotatedIcon(iconName: "image-50", localizedAnnotation: NSLocalizedString("Picture", comment: "Label shown next to an inline image"))
     }
 
     override func handleAttachment(using attr: [String: JSONValue]?, draftyKey _: Int?) -> FormatNode {
@@ -84,11 +83,11 @@ class PreviewFormatter: AbstractFormatter {
             return FormatNode()
         }
 
-        return PreviewFormatter.annotatedIcon(iconName: "paperclip", annotation: NSLocalizedString("Attachment", comment: "Label shown next to an attachment"), comment: "Attachment preview icon.")
+        return PreviewFormatter.annotatedIcon(iconName: "paperclip", localizedAnnotation: NSLocalizedString("Attachment", comment: "Label shown next to an attachment"))
     }
 
     override func handleForm(_ nodes: [FormatNode]) -> FormatNode {
-        var result = [PreviewFormatter.annotatedIcon(iconName: "form-50", annotation: NSLocalizedString("Form", comment: "Label shown next to a form in preview"), comment: "Form preview icon."), FormatNode(": ")]
+        var result = [PreviewFormatter.annotatedIcon(iconName: "form-50", localizedAnnotation: NSLocalizedString("Form", comment: "Label shown next to a form in preview")), FormatNode(": ")]
         result.append(contentsOf: nodes)
         return FormatNode(result)
     }
@@ -124,6 +123,6 @@ class PreviewFormatter: AbstractFormatter {
     }
 
     override func handleUnknown(content _: [FormatNode], using _: [String: JSONValue]?, draftyKey _: Int?) -> FormatNode {
-        return PreviewFormatter.annotatedIcon(iconName: "puzzlepiece.extension", annotation: NSLocalizedString("Unsupported", comment: "Label shown next to an unsupported Drafty format element"), comment: "Unsupported.")
+        return PreviewFormatter.annotatedIcon(iconName: "puzzlepiece.extension", localizedAnnotation: NSLocalizedString("Unsupported", comment: "Label shown next to an unsupported Drafty format element"))
     }
 }

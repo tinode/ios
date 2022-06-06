@@ -1127,7 +1127,10 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
                 sub.online = (.kOn == what)
             }
         case .kDel:
-            routeMetaDel(clear: pres.clear!, delseq: pres.delseq!)
+            if let delseq = pres.delseq {
+                // TODO: fetch actual delseq. pres.delseq could be nil if message is forwarded from 'me' topic.
+                routeMetaDel(clear: pres.clear!, delseq: delseq)
+            }
         case .kTerm:
             topicLeft(unsub: false, code: ServerMessage.kStatusInternalServerError, reason: "term")
         case .kAcs:
