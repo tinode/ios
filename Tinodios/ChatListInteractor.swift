@@ -84,7 +84,7 @@ class ChatListInteractor: ChatListBusinessLogic, ChatListDataStore {
                    let callTopic = info.src, let originator = info.from, let seqId = info.seq {
                     let backgroundTaskIdentifier = UIApplication.shared.beginBackgroundTask(expirationHandler: nil)
                     DispatchQueue.main.async {
-                        Cache.callManager.displayIncomingCall(uuid: UUID(), topic: callTopic, from: originator, seqId: seqId) { err in
+                        Cache.callManager.displayIncomingCall(uuid: UUID(), onTopic: callTopic, originatingFrom: originator, withSeqId: seqId) { err in
                             if err != nil {
                                 print("could not take the call: \(String(describing: err))")
                             }

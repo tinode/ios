@@ -32,18 +32,26 @@ class CallManager {
     }
 
     // Report incoming call to the operating system (which displays incoming call UI).
-    func displayIncomingCall(uuid: UUID, topic: String, from: String, seqId: Int, completion: ((Error?) -> Void)?) {
+    func displayIncomingCall(uuid: UUID, onTopic topicName: String, originatingFrom fromUid: String, withSeqId seq: Int, completion: ((Error?) -> Void)?) {
         guard self.callInProgress == nil else {
             let tinode = Cache.tinode
-            tinode.videoCall(topic: topic, seq: seqId, event: "hang-up")
+            tinode.videoCall(topic: topicName, seq: seq, event: "hang-up")
             completion?(CallError.busy("Busy. Another call in progress"))
             return
         }
-        self.callInProgress = Call(uuid: uuid, topic: topic, from: from, seq: seqId)
+        self.callInProgress = Call(uuid: uuid, topic: topicName, from: fromUid, seq: seq)
         let tinode = Cache.tinode
-        let user: DefaultUser? = tinode.getUser(with: from)
+        let user: DefaultUser? = tinode.getUser(with: fromUid)
         let senderName = user?.pub?.fn ?? NSLocalizedString("Unknown", comment: "Placeholder for missing user name")
         callDelegate.reportIncomingCall(uuid: uuid, handle: senderName, completion: completion)
+    }
+
+    // Dismisses incoming call UI without displaying.
+    func dismissIncomingCall(onTopic topic: String, withSeqId seq: Int) {
+        guard let call = self.callInProgress, call.topic == topic, call.seq == seq else {
+            return
+        }
+        self.completeCallInProgress(reportToSystem: true, reportToPeer: false)
     }
 }
 
@@ -71,11 +79,9 @@ extension CallManager: CallManagerImpl {
 
             self.callController.request(transaction) { error in
                 if let error = error {
-                    print("EndCallAction transaction request failed: \(error.localizedDescription).")
+                    Cache.log.error("CallManager - EndCallAction transaction request failed: %@", error.localizedDescription)
                     return
                 }
-
-                print("EndCallAction transaction request successful")
             }
         }
     }
