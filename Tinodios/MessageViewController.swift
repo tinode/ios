@@ -316,7 +316,7 @@ class MessageViewController: UIViewController {
         self.collectionView = collectionView
 
         collectionView.addSubview(refreshControl)
-        refreshControl.addTarget(self, action: #selector(self.loadNextPage), for: .valueChanged)
+        refreshControl.addTarget(self, action: #selector(self.loadPreviousPage), for: .valueChanged)
 
         // Setup "Go to latest message" button.
         let buttonGoToLatest = UIButton(type: .custom)
@@ -349,7 +349,7 @@ class MessageViewController: UIViewController {
 
         if self.interactor?.setup(topicName: self.topicName, sendReadReceipts: self.sendReadReceipts) ?? false {
             self.interactor?.deleteFailedMessages()
-            self.interactor?.loadMessages(scrollToMostRecentMessage: true)
+            self.interactor?.loadMessagesFromCache(scrollToMostRecentMessage: true)
         }
     }
 
@@ -399,13 +399,13 @@ class MessageViewController: UIViewController {
             self.showInPreviewBar(content: fwdPreview, forwarded: true)
         }
         self.interactor?.attachToTopic(interactively: true)
-        self.interactor?.loadMessages(scrollToMostRecentMessage: false)
+        self.interactor?.loadMessagesFromCache(scrollToMostRecentMessage: false)
         self.interactor?.sendReadNotification(explicitSeq: nil, when: .now() + .seconds(1))
         self.applyTopicPermissions()
     }
 
-    @objc func loadNextPage() {
-        self.interactor?.loadNextPage()
+    @objc func loadPreviousPage() {
+        self.interactor?.loadPreviousPage()
     }
 
     @objc func goToLastMessage() {
