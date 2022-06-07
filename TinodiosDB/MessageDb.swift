@@ -57,7 +57,7 @@ public class MessageDb {
         self.content = Expression<String?>("content")
     }
     func destroyTable() {
-        try! self.db.run(self.table.dropIndex(topicId, ts, ifExists: true))
+        try! self.db.run(self.table.dropIndex(topicId, seq, ifExists: true))
         try! self.db.run(self.table.drop(ifExists: true))
     }
     func createTable() {
@@ -77,7 +77,7 @@ public class MessageDb {
             t.column(head)
             t.column(content)
         })
-        try! self.db.run(self.table.createIndex(topicId, ts, ifNotExists: true))
+        try! self.db.run(self.table.createIndex(topicId, seq, unique: true, ifNotExists: true))
     }
     func insert(topic: TopicProto?, msg: StoredMessage?) -> Int64 {
         guard let topic = topic, let msg = msg else {
@@ -305,23 +305,29 @@ public class MessageDb {
         }
         return sm
     }
-    public func query(topicId: Int64?, pageCount: Int, pageSize: Int, descending: Bool = true) -> [StoredMessage]? {
-        let queryTable = self.table
-            .filter(self.topicId == topicId)
-            .order(descending ? self.seq.desc : self.seq.asc)
-            .limit(pageCount * pageSize)
+
+    /// Load messages from `topicId` stating with seq `from` (exclusive) and returning no more than `limit`.
+    /// If `forward` is `true`, load newer messages, older otherwise.
+    func query(topicId: Int64?, from: Int, limit: Int, forward: Bool) -> [StoredMessage]? {
+        guard let topicId = topicId else { return nil }
+
+        var query = self.table
+        query = forward ? query.filter(self.topicId == topicId && self.seq > from) : query.filter(self.topicId == topicId && self.seq < from)
+        query = (forward ? query.order(self.seq.asc) : query.order(self.seq.desc)).limit(limit)
+
         do {
-            var messages = [StoredMessage]()
-            for row in try db.prepare(queryTable) {
+            var messages: [StoredMessage] = []
+            for row in try db.prepare(query) {
                 let sm = self.readOne(r: row)
                 messages.append(sm)
             }
             return messages
         } catch {
-            BaseDb.log.error("MessageDb - query operation failed: topicId = %lld, error = %@", topicId ?? -1, error.localizedDescription)
+            BaseDb.log.error("MessageDb - query operation failed: topicId = %lld, error = %@", topicId, error.localizedDescription)
             return nil
         }
     }
+
     func query(msgId: Int64?, previewLen: Int) -> StoredMessage? {
         guard let msgId = msgId else { return nil }
         let record = self.table.filter(self.id == msgId)
@@ -369,6 +375,7 @@ public class MessageDb {
         }
     }
 
+    /// Returns the newest message range (low + high seq ID values) not found in the cache.
     func fetchNextMissingRange(topicId: Int64) -> MsgRange? {
         let messages2 = self.table.alias("m2")
         let hiQuery = self.table

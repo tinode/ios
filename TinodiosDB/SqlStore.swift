@@ -102,11 +102,13 @@ public class SqlStore: Storage {
         }
     }
 
+    /// The min-max of message.seq found in the cache. There could be gaps between min and max.
     public func getCachedMessagesRange(topic: TopicProto) -> MsgRange? {
         guard let st = topic.payload as? StoredTopic else { return nil }
         return MsgRange(low: st.minLocalSeq ?? 0, hi: (st.maxLocalSeq ?? 0) + 1)
     }
 
+    /// Find the most recent range of messages not present in the cache.
     public func getNextMissingRange(topic: TopicProto) -> MsgRange? {
         guard let st = topic.payload as? StoredTopic, let topicId = st.id, topicId > 0 else { return nil }
         return dbh?.messageDb?.fetchNextMissingRange(topicId: topicId)
@@ -370,12 +372,17 @@ public class SqlStore: Storage {
     }
 
     public func getQueuedMessageDeletes(topic: TopicProto, hard: Bool) -> [MsgRange]? {
-        guard let st = topic.payload as? StoredTopic,
-            let id = st.id, id > 0 else { return nil }
+        guard let st = topic.payload as? StoredTopic, let id = st.id, id > 0 else { return nil }
         return BaseDb.sharedInstance.messageDb?.queryDeleted(topicId: id, hard: hard)
     }
 
     public func getLatestMessagePreviews() -> [Message]? {
         return BaseDb.sharedInstance.messageDb?.queryLatest()
+    }
+
+    /// Return the message page starting at the `from`.
+    public func getMessagePage(topic: TopicProto, from: Int, limit: Int, forward: Bool) -> [Message]? {
+        guard let st = topic.payload as? StoredTopic, let id = st.id, id > 0 else { return nil }
+        return BaseDb.sharedInstance.messageDb?.query(topicId: id, from: from, limit: limit, forward: forward)
     }
 }
