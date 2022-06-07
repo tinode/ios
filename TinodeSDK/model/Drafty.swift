@@ -676,6 +676,16 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
         return d
     }
 
+    /// Create a Drafty document consisting of a single video call.
+    ///
+    /// - Returns: new Drafty object representing a video call.
+    public static func videoCall() -> Drafty {
+        let d = Drafty(plainText: " ")
+        d.fmt = [Style(at: 0, len: 1, key: 0)]
+        d.ent = [Entity(tp: "VC", data: nil)]
+        return d
+    }
+
     /// Wrap contents of the document into the specified style.
     ///
     /// - Parameters:

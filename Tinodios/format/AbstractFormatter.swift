@@ -106,6 +106,10 @@ class AbstractFormatter: DraftyFormatter {
         return FormatNode()
     }
 
+    func handleVideoCall() -> FormatNode {
+        return FormatNode()
+    }
+
     public func wrapText(_ content: String) -> FormattedString {
         return FormatNode(content)
     }
@@ -154,6 +158,8 @@ class AbstractFormatter: DraftyFormatter {
                 return handleFormRow(children)
             case "QQ":
                 return handleQuote(children)
+            case "VC":
+                return handleVideoCall()
             default:
                 return handleUnknown(content: children, using: data, draftyKey: key)
             }

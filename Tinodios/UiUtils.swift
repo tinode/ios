@@ -106,6 +106,9 @@ class UiUtils {
     // Max length of message previews.
     static let kPreviewLength = 42
 
+    // Successful video call marker (↗, ↙) color.
+    static let kSuccessfulCallArrow = UIColor(fromHexCode: 0xFF006400)
+
     // Letter tile image colors (light).
     private static let kLetterTileLightColors: [UIColor] = [
         UIColor(fromHexCode: 0xFFEF9A9A),
@@ -268,6 +271,14 @@ class UiUtils {
         }
     }
 
+    // Returns the currently presented/active MessageVC if it's open and .
+    private static func presentedMessageVC(forTopic topicName: String) -> MessageViewController? {
+        guard let rootVC = UIApplication.shared.keyWindow?.rootViewController as? UINavigationController else {
+            return nil
+        }
+        return rootVC.viewControllers.filter { ($0 as? MessageViewController)?.topic?.name == topicName }.first as? MessageViewController
+    }
+
     private static func isShowingChatListVC() -> Bool {
         guard let rootVC = UIApplication.shared.keyWindow?.rootViewController as? UINavigationController else {
             return false
@@ -275,8 +286,14 @@ class UiUtils {
         return rootVC.viewControllers.contains(where: { $0 is ChatListViewController })
     }
 
-    public static func routeToMessageVC(forTopic topicId: String) {
+    public static func routeToMessageVC(forTopic topicId: String, completion: ((MessageViewController) -> (Void))? = nil) {
         DispatchQueue.main.async {
+            // Check if the requested MessageVC is already open.
+            if let mvc = presentedMessageVC(forTopic: topicId) {
+                completion?(mvc)
+                return
+            }
+
             let storyboard = UIStoryboard(name: "Main", bundle: nil)
 
             var shouldReplaceRootVC = true
@@ -292,15 +309,16 @@ class UiUtils {
                 rootVC = storyboard.instantiateViewController(
                     withIdentifier: "ChatsNavigator") as! UINavigationController
             }
-            let messageViewController =
+            let messageVC =
                 storyboard.instantiateViewController(
                     withIdentifier: "MessageViewController") as! MessageViewController
-            messageViewController.topicName = topicId
-            rootVC.pushViewController(messageViewController, animated: false)
+            messageVC.topicName = topicId
+            rootVC.pushViewController(messageVC, animated: false)
             if let window = UIApplication.shared.keyWindow, shouldReplaceRootVC {
                 window.rootViewController = rootVC
             }
             UiUtils.setUpPushNotifications()
+            completion?(messageVC)
         }
     }
 
@@ -1041,5 +1059,17 @@ extension UIView {
                 self.setNeedsLayout()
             }
         }
+    }
+}
+
+extension Message {
+    // Returns seq id (if any) this message is intended to replace.
+    func replacesSeq() -> Int? {
+        guard let replaceStr = self.head?["replace"]?.asString() else {
+            return nil
+        }
+        let parts = replaceStr.components(separatedBy: ":")   // split(separator: ":")
+        guard parts.count == 2 else { return nil }
+        return Int(parts[1])
     }
 }

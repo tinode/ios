@@ -35,6 +35,7 @@ target 'Tinodios' do
     pod 'FirebaseMessaging'
     pod 'FirebaseAnalytics'
     pod 'FirebaseCrashlytics'
+    pod 'GoogleWebRTC'
     pod 'Kingfisher', '~> 5.0'
     pod 'MobileVLCKit', '~> 3.4.1b9'
     pod 'PhoneNumberKit', '~> 3.3'

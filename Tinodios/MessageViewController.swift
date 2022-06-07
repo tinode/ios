@@ -480,6 +480,15 @@ class MessageViewController: UIViewController {
             let destinationVC = segue.destination as! FilePreviewController
             destinationVC.previewContent = (sender as! FilePreviewContent)
             destinationVC.replyPreviewDelegate = self
+        case "Messages2Call":
+            let destinationVC = segue.destination as! CallViewController
+            if let call = sender as? CallManager.Call {
+                destinationVC.callDirection = .incoming
+                destinationVC.callSeqId = call.seq
+            } else {
+                destinationVC.callDirection = .outgoing
+            }
+            destinationVC.topic = self.topic
         default:
             break
         }
@@ -498,6 +507,10 @@ class MessageViewController: UIViewController {
         } else {
             view.backgroundColor = .white
         }
+    }
+
+    @objc func navBarCallTapped(sender: UIMenuController) {
+        performSegue(withIdentifier: "Messages2Call", sender: sender)
     }
 }
 
@@ -546,7 +559,14 @@ extension MessageViewController: MessageDisplayLogic {
                 navBarAvatarView.heightAnchor.constraint(equalToConstant: Constants.kNavBarAvatarSmallState),
                 navBarAvatarView.widthAnchor.constraint(equalTo: navBarAvatarView.heightAnchor)
             ])
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: navBarAvatarView)
+        var items = [UIBarButtonItem(customView: navBarAvatarView)]
+        if let t = self.topic, t.isP2PType {
+            items.append(UIBarButtonItem(
+                image: UIImage(systemName: "phone",
+                               withConfiguration:UIImage.SymbolConfiguration(pointSize: 16, weight: .light)),
+                style: .plain, target: self, action: #selector(navBarCallTapped(sender:))))
+        }
+        self.navigationItem.setRightBarButtonItems(items, animated: false)
     }
 
     func setOnline(online: Bool?) {

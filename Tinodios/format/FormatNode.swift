@@ -11,12 +11,13 @@ import TinodeSDK
 
 // File or image attachment.
 struct Attachment {
-    enum AttachmentType {
+    enum AttachmentType: Equatable {
         case audio
         case data
         case image
         case button
         case quote
+        case call(Bool, String, Int)  // isOutgoing, callState, callDuration
         case empty
         case unkn
 
@@ -33,6 +34,8 @@ struct Attachment {
                 return "button"
             case .quote:
                 return "quote"
+            case .call:
+                return "call"
             case .empty:
                 return "empty"
             case .unkn:
@@ -202,6 +205,8 @@ class FormatNode: CustomStringConvertible {
                 fname = fname.prefix(14) + "…" + fname.suffix(14)
             }
             return "{att: '\(fname)'}"
+        case .call:
+            return "{video call}"
         case .unkn:
             return "{unkn}"
         }
@@ -370,6 +375,23 @@ class FormatNode: CustomStringConvertible {
         return attributed
     }
 
+    private func createVideoCallAttachmentString(isOutgoing: Bool, callState: String, callDuration: Int,
+                                                 defaultAttrs attributes: [NSAttributedString.Key: Any]) -> NSAttributedString {
+        let attributed = NSMutableAttributedString()
+        attributed.beginEditing()
+
+        let arrow = NSMutableAttributedString(string: isOutgoing ? "↗" : "↙", attributes: attributes)
+        arrow.addAttribute(.foregroundColor, value: callState == "disconnected" ? UIColor.red : UiUtils.kSuccessfulCallArrow, range: NSRange(location: 0, length: arrow.length))
+        attributed.append(arrow)
+
+        attributed.append(NSAttributedString(string: isOutgoing ? "Outgoing call" : "Incoming call", attributes: attributes))
+        if callDuration > 0 {
+            attributed.append(NSAttributedString(string: " (" + AbstractFormatter.millisToTime(millis: callDuration) + ")", attributes: attributes))
+        }
+        attributed.endEditing()
+        return attributed
+    }
+
     /// Create custom layout for attachments.
     private func attachmentToAttributed(_ attachment: Attachment, defaultAttrs attributes: [NSAttributedString.Key: Any], fontTraits: UIFontDescriptor.SymbolicTraits?, maxSize size: CGSize) -> NSAttributedString {
         switch attachment.content {
@@ -454,6 +476,10 @@ class FormatNode: CustomStringConvertible {
                 return NSAttributedString(attachment: ButtonAttachment(face: faceText, data: URL(string: attachment.ref!)))
             }
             return NSAttributedString(attachment: QuotedAttachment(quotedText: faceText, fitIn: size, fullWidth: attachment.fullWidth ?? false))
+
+        case .call(let isOutgoing, let callState, let callDuration):
+            return createVideoCallAttachmentString(isOutgoing: isOutgoing, callState: callState, callDuration: callDuration,
+                                                   defaultAttrs: attributes)
 
         // File attachment is harder: construct attributed string showing an attachment.
         case .data, .empty:

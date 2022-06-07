@@ -41,6 +41,11 @@ public class StoredMessage: MsgServerData, Message {
         return !(head?["forwarded"]?.asString()?.isEmpty ?? true)
     }
 
+    /// True if the acount owner is the author of the message.
+    public var isMine: Bool {
+        return BaseDb.sharedInstance.isMe(uid: self.from)
+    }
+
     /// Cached representation of message content as attributed string.
     public var cachedContent: NSAttributedString?
 
@@ -68,5 +73,17 @@ public class StoredMessage: MsgServerData, Message {
 
     required init(from decoder: Decoder) throws {
         fatalError("init(from:) has not been implemented")
+    }
+
+    // Makes a shallow copy of self.
+    public func copyOf() -> StoredMessage {
+        let cp = StoredMessage(from: self)
+        cp.msgId = self.msgId
+        cp.topicId = self.topicId
+        cp.userId = self.userId
+        cp.dbStatus = self.dbStatus
+        cp.cachedContent = self.cachedContent
+        cp.cachedPreview = self.cachedPreview
+        return cp
     }
 }

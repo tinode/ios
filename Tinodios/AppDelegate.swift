@@ -81,6 +81,28 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         application.applicationIconBadgeNumber = Cache.totalUnreadCount()
     }
 
+    // Processes video call push notifications.
+    private func handleVideoCall(onTopic topicName: String, withSeqId seq: Int, inState callState: String,
+                                 notificationPayload payload: [AnyHashable: Any], completion: (() -> Void)?) {
+        defer { completion?() }
+        switch callState {
+        case "started":
+            guard let senderId = payload["xfrom"] as? String, !Cache.tinode.isMe(uid: senderId) else {
+                return
+            }
+            Cache.callManager.displayIncomingCall(uuid: UUID(), onTopic: topicName, originatingFrom: senderId, withSeqId: seq) { error in
+                if let error = error {
+                    Cache.log.error("FCM push: incoming call UI error %@", error.localizedDescription)
+                }
+            }
+        case "accepted", "missed", "declined", "disconnected":
+            guard let origSeqStr = payload["replace"] as? String, let origSeq = Int(origSeqStr) else { return }
+            Cache.callManager.dismissIncomingCall(onTopic: topicName, withSeqId: origSeq)
+        default:
+            break
+        }
+    }
+
     // Notification received. Process it.
     // Application woken up in the background (e.g. for data fetch).
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any],
@@ -97,6 +119,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 guard let seqStr = userInfo["seq"] as? String, let seq = Int(seqStr) else {
                     completionHandler(.failed)
                     return
+                }
+                if let webrtc = userInfo["webrtc"] as? String {
+                    // Video call.
+                    self.handleVideoCall(onTopic: topicName, withSeqId: seq, inState: webrtc, notificationPayload: userInfo, completion: nil)
                 }
                 // Fetch data in the background.
                 completionHandler(SharedUtils.fetchData(using: Cache.tinode, for: topicName, seq: seq))
@@ -146,6 +172,13 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         guard let topicName = userInfo["topic"] as? String, !topicName.isEmpty,
             what == nil || what == "msg",
             let seqStr = userInfo["seq"] as? String, let seq = Int(seqStr) else { return }
+        // Check if it's an incoming call.
+        if let webrtc = userInfo["webrtc"] as? String, what == "msg" {
+            self.handleVideoCall(onTopic: topicName, withSeqId: seq, inState: webrtc, notificationPayload: userInfo) {
+                completionHandler([])
+            }
+            return
+        }
         if let messageVC = UiUtils.topViewController(rootViewController: UIApplication.shared.keyWindow?.rootViewController) as? MessageViewController, messageVC.topicName == topicName {
             // We are already in the correct topic. Do not present the notification.
             completionHandler([])
