@@ -41,7 +41,7 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
 
     // Entity data field names which will be processed.
     private static let kKnownDataFelds =
-            ["act", "duration", "height", "mime", "name", "preview", "ref", "size", "title", "url", "val", "width"]
+            ["act", "duration", "height", "incoming", "mime", "name", "preview", "ref", "size", "state", "title", "url", "val", "width"]
 
     // Regular expressions for parsing inline formats.
     private static let kInlineStyles = try! [
@@ -1240,7 +1240,7 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
         }
         tree = SpanTreeProcessor.treeTopDown(tree: tree, using: Preview()) ?? tree
         tree = SpanTreeProcessor.treeTopDown(tree: tree, using: ShorteningTransformer(length: previewLen, tail: "…")) ?? tree
-        tree = SpanTreeProcessor.treeTopDown(tree: tree, using: LightCopyTransformer()) ?? tree
+        tree = SpanTreeProcessor.treeTopDown(tree: tree, using: LightCopyTransformer(allowedFields: ["state", "incoming"], forTypes: ["VC"])) ?? tree
 
         var keymap = [Int: Int]()
         var result = Drafty()
@@ -1399,7 +1399,26 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
         return result?.string ?? ""
     }
 
-
+    public func updateVideoEnt(withParams params: [String: JSONValue]?, isIncoming: Bool) {
+        guard let fmt = self.fmt, !fmt.isEmpty, let params = params, fmt.first!.tp != "VC" else {
+            return
+        }
+        let st = fmt.first!
+        if st.tp != nil {
+            // Just a format, convert to format + entity.
+            st.tp = nil
+            st.key = 0
+            self.ent = [Entity(tp: "VC", data: [:])]
+        }
+        guard let ent = self.ent, !ent.isEmpty, ent.first!.tp == "VC" else { return }
+        let e = ent.first!
+        if e.data == nil {
+            e.data = [:]
+        }
+        e.data!["state"] = params["webrtc"]
+        e.data!["duration"] = params["webrtc-duration"]
+        e.data!["incoming"] = .bool(isIncoming)
+    }
 
     /// Format converts Drafty object into a collection of nodes with format definitions.
     /// Each node contains either a formatted element or a collection of formatted elements.

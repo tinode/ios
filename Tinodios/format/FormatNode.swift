@@ -381,7 +381,7 @@ class FormatNode: CustomStringConvertible {
         attributed.beginEditing()
 
         let arrow = NSMutableAttributedString(string: isOutgoing ? "↗" : "↙", attributes: attributes)
-        arrow.addAttribute(.foregroundColor, value: callState == "disconnected" ? UIColor.red : UiUtils.kSuccessfulCallArrow, range: NSRange(location: 0, length: arrow.length))
+        arrow.addAttribute(.foregroundColor, value: ["disconnected", "missed", "declined"].contains(callState) ? UIColor.red : UiUtils.kSuccessfulCallArrow, range: NSRange(location: 0, length: arrow.length))
         attributed.append(arrow)
 
         attributed.append(NSAttributedString(string: isOutgoing ? "Outgoing call" : "Incoming call", attributes: attributes))

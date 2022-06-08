@@ -106,7 +106,7 @@ class AbstractFormatter: DraftyFormatter {
         return FormatNode()
     }
 
-    func handleVideoCall() -> FormatNode {
+    func handleVideoCall(content: [FormatNode], using data: [String: JSONValue]?) -> FormatNode {
         return FormatNode()
     }
 
@@ -159,7 +159,7 @@ class AbstractFormatter: DraftyFormatter {
             case "QQ":
                 return handleQuote(children)
             case "VC":
-                return handleVideoCall()
+                return handleVideoCall(content: children, using: data)
             default:
                 return handleUnknown(content: children, using: data, draftyKey: key)
             }

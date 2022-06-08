@@ -1256,19 +1256,33 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
     ///   - withExtraHeaders: additional message headers, such as `reply` and `forwarded`; `mime: text/x-drafty` header is added automatically.
     /// - Returns: `PromisedReply` of the reply `ctrl` message
     public func publish(content: Drafty, withExtraHeaders extraHeaders: [String: JSONValue]? = nil) -> PromisedReply<ServerMessage> {
+        var head: [String: JSONValue]? = nil
+        if !content.isPlain || (!(extraHeaders?.isEmpty ?? true)) {
+            head = [:]
+            if let extra = extraHeaders {
+                head!.merge(extra) { (_, new) in new }
+            }
+            if !content.isPlain {
+                head!["mime"] = .string(Drafty.kMimeType)
+            }
+            if head!["webrtc"] != nil {
+                content.updateVideoEnt(withParams: head, isIncoming: false)
+            }
+        }
+
         var id: Int64 = -1
         if let s = store {
-            if let msg = s.msgSend(topic: self, data: content, head: extraHeaders) {
+            if let msg = s.msgSend(topic: self, data: content, head: head) {
                 self.latestMessage = msg
                 id = msg.msgId
             }
         }
         if attached {
-            return publishInternal(content: content, head: extraHeaders, msgId: id)
+            return publishInternal(content: content, head: head, msgId: id)
         } else {
             return subscribe()
                 .thenApply({ [weak self] _ in
-                    return self?.publishInternal(content: content, head: extraHeaders, msgId: id)
+                    return self?.publishInternal(content: content, head: head, msgId: id)
                 }).thenCatch({ [weak self] err in
                     self?.store?.msgSyncing(topic: self!, dbMessageId: id, sync: false)
                     throw err

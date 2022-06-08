@@ -25,6 +25,18 @@ public class ComTopic: Topic<TheCard, PrivateType, TheCard, PrivateType> {
         return super.subscribe()
     }
 
+    public override func routeData(data: MsgServerData) {
+        if let head = data.head, let content = data.content,
+           head["webrtc"]?.asString() != nil,
+           let mime = head["mime"]?.asString(), mime == Drafty.kMimeType {
+            // If it's a video call,
+            // rewrite VC body with info from the headers.
+            let outgoing = (!self.isChannel && data.from == nil) || (self.tinode?.isMe(uid: data.from) ?? false)
+            content.updateVideoEnt(withParams: head, isIncoming: !outgoing)
+        }
+        super.routeData(data: data)
+    }
+
     public override var isArchived: Bool {
         guard let archived = priv?["arch"] else { return false }
         switch archived {
