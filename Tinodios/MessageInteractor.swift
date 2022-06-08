@@ -374,16 +374,13 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
 
     /// Load the most recent `kMessagesPerPage` messages from cache.
     func loadMessagesFromCache(scrollToMostRecentMessage: Bool = true) {
+        guard let t = self.topic else { return }
         self.messageInteractorQueue.async {
-            self.topic?.loadMessagePage(startWithSeq: Int.max, pageSize: MessageInteractor.kMessagesPerPage, forward: false, onLoaded: {(messagePage, error) in
-                if let err = error {
-                    Cache.log.error("Failed to load message page: %@", err.localizedDescription)
-                } else {
-                    // Replace messages with the new page.
-                    self.messages = messagePage!.map { $0 as! StoredMessage }.reversed()
-                    self.presenter?.presentMessages(messages: self.messages, scrollToMostRecentMessage)
-                }
-            })
+            if let messagePage = BaseDb.sharedInstance.sqlStore?.getMessagePage(topic: t, from: Int.max, limit: MessageInteractor.kMessagesPerPage, forward: false) {
+                // Replace messages with the new page.
+                self.messages = messagePage.map { $0 as! StoredMessage }.reversed()
+                self.presenter?.presentMessages(messages: self.messages, scrollToMostRecentMessage)
+            }
         }
     }
 

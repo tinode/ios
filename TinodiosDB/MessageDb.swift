@@ -336,6 +336,7 @@ public class MessageDb {
         }
         return nil
     }
+
     func queryDeleted(topicId: Int64?, hard: Bool) -> [MsgRange]? {
         guard let topicId = topicId else { return nil }
         let status = hard ? BaseDb.Status.deletedHard : BaseDb.Status.deletedSoft
