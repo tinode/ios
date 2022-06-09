@@ -92,8 +92,9 @@ extension MessageCell: VLCMediaPlayerDelegate {
         if doPause {
             // There is a bug in VLCPLayer: pause() is ignored if called too soon after play().
             // https://code.videolan.org/videolan/VLCKit/-/issues/610
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) { [weak self] in
-                self?.audioPlayer?.pause()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
+                // Async: audioPlayer may have been freed already.
+                self.audioPlayer?.pause()
             }
         }
         self.delegate?.didSeekMedia(in: self, audioPlayer: self.audioPlayer!, pos: seekTo)
