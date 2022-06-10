@@ -11,7 +11,7 @@ import TinodeSDK
 
 public class BaseDb {
     // Current database schema version. Increment on schema changes.
-    public static let kSchemaVersion: Int32 = 109
+    public static let kSchemaVersion: Int32 = 110
 
     // Object statuses. Values are incremented by 10 to make it easier to add new statuses.
     public enum Status: Int, Comparable {
@@ -56,6 +56,8 @@ public class BaseDb {
     public var subscriberDb: SubscriberDb?
     public var userDb: UserDb?
     public var messageDb: MessageDb?
+    public var editHistoryDb: EditHistoryDb?
+
     var account: StoredAccount?
     var isCredValidationRequired: Bool {
         return !(self.account?.credMethods?.isEmpty ?? true)
@@ -91,6 +93,7 @@ public class BaseDb {
         self.topicDb = TopicDb(self.db!, baseDb: self)
         self.subscriberDb = SubscriberDb(self.db!, baseDb: self)
         self.messageDb = MessageDb(self.db!, baseDb: self)
+        self.editHistoryDb = EditHistoryDb(self.db!, baseDb: self)
 
         if self.db!.schemaVersion != BaseDb.kSchemaVersion {
             BaseDb.log.info("BaseDb - schema has changed from %d to %d",
@@ -106,12 +109,14 @@ public class BaseDb {
         self.topicDb!.createTable()
         self.subscriberDb!.createTable()
         self.messageDb!.createTable()
+        self.editHistoryDb!.createTable()
         // Enable foreign key enforcement.
         try! self.db!.run("PRAGMA foreign_keys = ON")
 
         self.account = self.accountDb!.getActiveAccount()
     }
     private func dropDb() {
+        self.editHistoryDb?.destroyTable()
         self.messageDb?.destroyTable()
         self.subscriberDb?.destroyTable()
         self.topicDb?.destroyTable()

@@ -368,27 +368,6 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         topic?.noteKeyPress()
     }
 
-    // Group replacement messages (a.k.a. versions) by the seq id they replace.
-    // Returns a map:
-    // - keys: replaced seq ids
-    // - values: list of versions ordered by their seq ids
-    private static func messageVersionsMap(from messages: [StoredMessage]) -> [Int: Array<StoredMessage>] {
-        var versions = messages.enumerated().reduce([Int: Array<StoredMessage>]()) { (dict, item) -> [Int: Array<StoredMessage>] in
-            var dict = dict
-            if let replacedSeq = item.element.replacesSeq() {
-                if dict[replacedSeq] == nil {
-                    dict[replacedSeq] = [StoredMessage]()
-                }
-                dict[replacedSeq]!.append(item.element)
-            }
-            return dict
-        }
-        for k in versions.keys {
-            versions[k]!.sort(by: {$0.seqId < $1.seqId})
-        }
-        return versions
-    }
-
     func loadMessages(scrollToMostRecentMessage: Bool = true) {
         self.messageInteractorQueue.async {
             if let messages = BaseDb.sharedInstance.messageDb?.query(
@@ -396,25 +375,8 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                     pageCount: self.pagesToLoad,
                     pageSize: MessageInteractor.kMessagesPerPage,
                     descending: true) {
-                // Message versions indexed by seq id.
-                let versions = MessageInteractor.messageVersionsMap(from: messages)
                 self.messages = messages.reversed()
-                let visibleMessages = self.messages.enumerated().reduce([StoredMessage]()) { (arr, item) -> [StoredMessage] in
-                    var arr = arr
-                    guard item.element.head?["replace"] == nil else {
-                        // If it's a replacement message, we are done.
-                        return arr
-                    }
-                    if let replacement = versions[item.element.seqId]?.last {
-                        let msgCopy = replacement.copyOf()
-                        msgCopy.seq = item.element.seq
-                        arr.append(msgCopy)
-                    } else {
-                        arr.append(item.element)
-                    }
-                    return arr
-                }
-                self.presenter?.presentMessages(messages: visibleMessages, scrollToMostRecentMessage)
+                self.presenter?.presentMessages(messages: self.messages, scrollToMostRecentMessage)
             }
         }
     }
