@@ -19,6 +19,7 @@
 		0ACE9E6C2381356B006BE575 /* AccountDb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACE9E612381356B006BE575 /* AccountDb.swift */; };
 		0ACE9E6D2381356B006BE575 /* SubscriberDb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACE9E622381356B006BE575 /* SubscriberDb.swift */; };
 		0ACE9E832381418A006BE575 /* TinodeSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0ACE9E822381418A006BE575 /* TinodeSDK.framework */; };
+		0AFB5A7628521C4A00949321 /* EditHistoryDb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AFB5A7528521C4A00949321 /* EditHistoryDb.swift */; };
 		6731E13B4112433782ABFBB2 /* libPods-TinodiosDB.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 788B7F97AC0AC2A82DBD8ED5 /* libPods-TinodiosDB.a */; };
 /* End PBXBuildFile section */
 
@@ -38,6 +39,7 @@
 		0ACE9E642381356B006BE575 /* TopicDb.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopicDb.swift; sourceTree = "<group>"; };
 		0ACE9E652381356B006BE575 /* SqlStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SqlStore.swift; sourceTree = "<group>"; };
 		0ACE9E822381418A006BE575 /* TinodeSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = TinodeSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		0AFB5A7528521C4A00949321 /* EditHistoryDb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditHistoryDb.swift; sourceTree = "<group>"; };
 		788B7F97AC0AC2A82DBD8ED5 /* libPods-TinodiosDB.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-TinodiosDB.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D5959013F0A2AD0F91DAD8A /* Pods-TinodiosDB.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TinodiosDB.release.xcconfig"; path = "Target Support Files/Pods-TinodiosDB/Pods-TinodiosDB.release.xcconfig"; sourceTree = "<group>"; };
 		AEE0CC9C2915B09EB3E7D8E1 /* Pods-TinodiosDB.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TinodiosDB.debug.xcconfig"; path = "Target Support Files/Pods-TinodiosDB/Pods-TinodiosDB.debug.xcconfig"; sourceTree = "<group>"; };
@@ -80,6 +82,7 @@
 				0ACE9E612381356B006BE575 /* AccountDb.swift */,
 				0ACE9E602381356B006BE575 /* BaseDb.swift */,
 				0ACD8F7924AC5DAB00043871 /* ConnectionSettingsHelper.swift */,
+				0AFB5A7528521C4A00949321 /* EditHistoryDb.swift */,
 				0ACE9E5F2381356B006BE575 /* MessageDb.swift */,
 				0ACD8F7724AC579700043871 /* SharedUtils.swift */,
 				0ACE9E652381356B006BE575 /* SqlStore.swift */,
@@ -222,6 +225,7 @@
 				0ACE9E6B2381356B006BE575 /* BaseDb.swift in Sources */,
 				0ACD8F7824AC579700043871 /* SharedUtils.swift in Sources */,
 				0ACE9E662381356B006BE575 /* StoredMessage.swift in Sources */,
+				0AFB5A7628521C4A00949321 /* EditHistoryDb.swift in Sources */,
 				0ACE9E6A2381356B006BE575 /* UserDb.swift in Sources */,
 				0ACE9E692381356B006BE575 /* MessageDb.swift in Sources */,
 				0ACE9E672381356B006BE575 /* TopicDb.swift in Sources */,

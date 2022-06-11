@@ -1061,15 +1061,3 @@ extension UIView {
         }
     }
 }
-
-extension Message {
-    // Returns seq id (if any) this message is intended to replace.
-    func replacesSeq() -> Int? {
-        guard let replaceStr = self.head?["replace"]?.asString() else {
-            return nil
-        }
-        let parts = replaceStr.components(separatedBy: ":")   // split(separator: ":")
-        guard parts.count == 2 else { return nil }
-        return Int(parts[1])
-    }
-}

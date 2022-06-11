@@ -19,25 +19,8 @@ class FullFormatter: AbstractFormatter {
 
     var quoteFormatter: QuoteFormatter?
 
-    // Call context.
-    var callIsOutgoing: Bool = false
-    var callState: String?
-    var callDuration: Int?
-
     init(defaultAttributes attrs: [NSAttributedString.Key: Any]) {
         super.init(defaultAttributes: attrs, defaultFont: Constants.kDefaultFont)
-    }
-
-    func setCallContext(isOutgoing: Bool, state: String, duration: Int) {
-        self.callIsOutgoing = isOutgoing
-        self.callState = state
-        self.callDuration = duration
-    }
-
-    func clearCallContext() {
-        self.callIsOutgoing = false
-        self.callState = nil
-        self.callDuration = nil
     }
 
     override func apply(type: String?, data: [String : JSONValue]?, key: Int?, content: [FormattedString], stack: [String]?) -> FormattedString {
@@ -200,8 +183,14 @@ class FullFormatter: AbstractFormatter {
         return outer
     }
 
-    override func handleVideoCall() -> FormatNode {
-        let attachment = Attachment(content: .call(self.callIsOutgoing, self.callState ?? "", self.callDuration ?? 0))
+    override func handleVideoCall(content children: [FormatNode], using data: [String: JSONValue]?) -> FormatNode {
+        guard let data = data else {
+            return handleUnknown(content: children, using: nil, draftyKey: nil)
+        }
+        let state = data["state"]?.asString() ?? ""
+        let duration = data["duration"]?.asInt() ?? 0
+        let incoming = data["incoming"]?.asBool() ?? false
+        let attachment = Attachment(content: .call(!incoming, state, duration))
         let node = FormatNode()
         node.attachment(attachment)
         return node
