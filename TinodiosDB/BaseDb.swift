@@ -92,12 +92,17 @@ public class BaseDb {
         self.subscriberDb = SubscriberDb(self.db!, baseDb: self)
         self.messageDb = MessageDb(self.db!, baseDb: self)
 
+        var account: StoredAccount? = nil
+        var deviceToken: String? = nil
         if self.db!.schemaVersion != BaseDb.kSchemaVersion {
-            BaseDb.log.info("BaseDb - schema has changed from %d to %d",
-                            (self.db?.schemaVersion ?? -1), BaseDb.kSchemaVersion)
-            // Delete database if schema has changed.
-            self.dropDb()
+            BaseDb.log.info("BaseDb - schema has changed from %d to %d", (self.db?.schemaVersion ?? -1), BaseDb.kSchemaVersion)
 
+            // Retain active account accross DB upgrades to keep user logged in.
+            account = self.accountDb!.getActiveAccount()
+            deviceToken = self.accountDb!.getDeviceToken()
+
+            // Schema has changed, delete database.
+            self.dropDb()
             self.db!.schemaVersion = BaseDb.kSchemaVersion
         }
 
@@ -109,8 +114,13 @@ public class BaseDb {
         // Enable foreign key enforcement.
         try! self.db!.run("PRAGMA foreign_keys = ON")
 
+        if let account = account {
+            _ = self.accountDb!.addOrActivateAccount(for: account.uid, withCredMethods: account.credMethods)
+            self.accountDb!.saveDeviceToken(token: deviceToken)
+        }
         self.account = self.accountDb!.getActiveAccount()
     }
+
     private func dropDb() {
         self.messageDb?.destroyTable()
         self.subscriberDb?.destroyTable()
