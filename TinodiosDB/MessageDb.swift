@@ -35,7 +35,10 @@ public class MessageDb {
     public let seq: Expression<Int?>
     public let high: Expression<Int?>
     public let delId: Expression<Int?>
-    public let replSeq: Expression<Int?>
+    // Seq id this message replaces (on the same topic).
+    public let replacesSeq: Expression<Int?>
+    // Seq id of the message that replaces this message (on the same topic).
+    public let replacedBySeq: Expression<Int?>
     public let head: Expression<String?>
     public let content: Expression<String?>
 
@@ -54,7 +57,8 @@ public class MessageDb {
         self.seq = Expression<Int?>("seq")
         self.high = Expression<Int?>("high")
         self.delId = Expression<Int?>("del_id")
-        self.replSeq = Expression<Int?>("repl_seq")
+        self.replacesSeq = Expression<Int?>("replaces_seq")
+        self.replacedBySeq = Expression<Int?>("replaced_by_seq")
         self.head = Expression<String?>("head")
         self.content = Expression<String?>("content")
     }
@@ -76,56 +80,37 @@ public class MessageDb {
             t.column(seq)
             t.column(high)
             t.column(delId)
-            t.column(replSeq)
+            t.column(replacesSeq)
+            t.column(replacedBySeq)
             t.column(head)
             t.column(content)
         })
         try! self.db.run(self.table.createIndex(topicId, seq.desc, unique: true, ifNotExists: true))
     }
 
-    private func getId(onTopicId topicId: Int64, withSeqId seq: Int) -> Int64 {
-        guard topicId > 0 && seq > 0 else {
-            return -1
-        }
-        if let row = try? db.pluck(self.table.select(self.id)
-            .filter(self.topicId == topicId && self.seq == seq)) {
-            return row[self.id]
-        }
-        return -1
+    private func replaceMessage(onTopic topicId: Int64, withSeqId seqId: Int, forReplacingSeqId replacingSeqId: Int) throws {
+        let record = self.table.filter(self.topicId == topicId &&
+                                       self.seq == seqId &&
+                                       (self.replacedBySeq == nil || self.replacedBySeq < replacingSeqId))
+        try self.db.run(record.update(self.replacedBySeq <- replacingSeqId))
     }
 
-    private func replaceMessage(onTopic topic: TopicProto, withOrigSeqId seqId: Int, withMsg msg: StoredMessage) throws {
-        guard let topicId = msg.topicId, topicId > 0, seqId > 0 else { return }
-        let replacedId = self.getId(onTopicId: topicId, withSeqId: seqId)
-        var replacedMsg: StoredMessage?
-        if replacedId <= 0 {
-            // No such message? Create it.
-            try insertRaw(topic: topic, msg: msg, withSeqId: seqId)
-        } else {
-            replacedMsg = query(msgId: replacedId)
+    private func maybeUpdateReplaced(withId msgId: Int64, onTopic topicId: Int64, withSeqId seqId: Int) throws {
+        let replQuery = self.table
+            .filter(self.table[self.topicId] == topicId &&
+                    self.table[self.replacesSeq] == seqId)
 
-            let record = self.table.filter(self.id == replacedId)
-            var setters = [Setter]()
-            setters.append(self.head <- Tinode.serializeObject(msg.head))
-            setters.append(self.content <- msg.content?.serialize())
-            try self.db.run(record.update(setters))
+        guard let replacedBySeq = try? db.scalar(replQuery.select(self.table[self.seq].max)) else {
+            // No replacements for this message. We are done.
+            return
         }
-        try self.baseDb.editHistoryDb!.upsert(onTopicId: topicId, replacedMsg: replacedMsg, withOrigSeq: seqId, forNewSeq: msg.seq, replacedAt: msg.ts)
-    }
 
-    private func updateReplaced(withId id: Int64, newMsg msg: StoredMessage) throws {
-        guard let topicId = msg.topicId else { return }
-        // Only timestamp should be updated in Messages table.
-        let record = self.table.filter(self.id == id)
-        try self.db.run(record.update(self.ts <- msg.ts))
-        msg.msgId = id
-
-        // Save the old message to history.
-        try self.baseDb.editHistoryDb!.upsert(onTopicId: topicId, replacedMsg: msg, withOrigSeq: msg.seq, forNewSeq: nil, replacedAt: msg.ts)
+        let record = self.table.filter(self.id == msgId)
+        try self.db.run(record.update(self.replacedBySeq <- replacedBySeq))
     }
 
     @discardableResult
-    private func insertRaw(topic: TopicProto, msg: StoredMessage, withSeqId seqId: Int?) throws -> Int64 {
+    private func insertRaw(topic: TopicProto, msg: StoredMessage) throws -> Int64 {
         do {
             guard let tdb = baseDb.topicDb else {
                 throw MessageDbError.dbError("no topicDb in messageDb insert")
@@ -155,9 +140,9 @@ public class MessageDb {
             setters.append(self.status <- status.rawValue)
             setters.append(self.sender <- msg.from)
             setters.append(self.ts <- msg.ts)
-            setters.append(self.seq <- seqId ?? msg.seq)
-            if seqId == nil, let replaced = msg.replacesSeq {
-                setters.append(self.replSeq <- replaced)
+            setters.append(self.seq <- msg.seq)
+            if let replaced = msg.replacesSeq {
+                setters.append(self.replacesSeq <- replaced)
             }
             if let h = msg.head {
                 setters.append(self.head <- Tinode.serializeObject(h))
@@ -165,18 +150,6 @@ public class MessageDb {
             setters.append(self.content <- msg.content?.serialize())
             msg.msgId = try db.run(self.table.insert(setters))
             return msg.msgId
-        } catch SQLite.Result.error(message: let errMsg, code: let errCode, statement: let errStmt)  {
-            //error
-            BaseDb.log.error("Sqlite error: %d, %@, %@", errCode, errMsg, (errStmt?.description ?? ""))
-            if let topicId = msg.topicId, let seq = seqId ?? msg.seq {
-                let replacedId = self.getId(onTopicId: topicId, withSeqId: seq)
-                try updateReplaced(withId: replacedId, newMsg: msg)
-                return replacedId
-            } else {
-                // Rethrow.
-                BaseDb.log.error("MessageDb - insertRaw duplicate (topicId, seq) pair: (%d, %d)", (msg.topicId ?? -1), (seqId ?? msg.seq ?? -1))
-                throw MessageDbError.dbError("Insertion failed - \(errCode), \(errMsg)")
-            }
         } catch {
             BaseDb.log.error("MessageDb - insertRaw failed")
             throw MessageDbError.dbError("Insertion failed - \(error)")
@@ -184,7 +157,6 @@ public class MessageDb {
     }
 
     func insert(topic: TopicProto?, msg: StoredMessage?) -> Int64 {
-        //return insertRaw(topic: topic, msg: msg)
         guard let topic = topic, let msg = msg else {
             return -1
         }
@@ -194,9 +166,14 @@ public class MessageDb {
         }
         do {
             try db.savepoint("MessageDb.insert") {
-                if try insertRaw(topic: topic, msg: msg, withSeqId: nil) > 0,  // use seq id from msg
-                   let replacedSeq = msg.replacesSeq, replacedSeq > 0 {
-                    try replaceMessage(onTopic: topic, withOrigSeqId: replacedSeq, withMsg: msg)
+                let insertedId = try insertRaw(topic: topic, msg: msg)
+                if let replacedSeq = msg.replacesSeq, replacedSeq > 0 {
+                    // Replacement message.
+                    try replaceMessage(onTopic: msg.topicId!, withSeqId: replacedSeq, forReplacingSeqId: msg.seq!)
+                } else {
+                    // This is the original message.
+                    // Check if it's been replaced.
+                    try maybeUpdateReplaced(withId: insertedId, onTopic: msg.topicId!, withSeqId: msg.seq!)
                 }
             }
             return msg.msgId
@@ -205,6 +182,7 @@ public class MessageDb {
             return -1
         }
     }
+
     func updateStatusAndContent(msgId: Int64, status: BaseDb.Status?, content: Drafty?) -> Bool {
         let record = self.table.filter(self.id == msgId)
         var setters = [Setter]()
@@ -365,29 +343,41 @@ public class MessageDb {
     }
     private func readOne(r: Row, previewLen: Int = -1) -> StoredMessage {
         let sm = StoredMessage()
-        sm.msgId = r[self.id]
-        sm.topicId = r[self.topicId]
-        sm.userId = r[self.userId]
-        sm.dbStatus = BaseDb.Status(rawValue: r[self.status] ?? 0) ?? .undefined
-        sm.from = r[self.sender]
-        sm.ts = r[self.ts]
-        sm.seq = r[self.seq]
-        sm.head = Tinode.deserializeObject(from: r[self.head])
-        sm.content = Drafty.deserialize(from: r[self.content])
+        sm.msgId = r[self.table[self.id]]
+        sm.topicId = r[self.table[self.topicId]]
+        sm.userId = r[self.table[self.userId]]
+        sm.dbStatus = BaseDb.Status(rawValue: r[self.table[self.status]] ?? 0) ?? .undefined
+        sm.from = r[self.table[self.sender]]
+        sm.ts = r[self.table[self.ts]]
+        sm.seq = r[self.table[self.seq]]
+        sm.head = Tinode.deserializeObject(from: r[self.table[self.head]])
+        sm.content = Drafty.deserialize(from: r[self.table[self.content]])
         if previewLen > 0, let content = sm.content {
             sm.content = content.preview(previewLen: previewLen)
         }
         return sm
     }
     public func query(topicId: Int64?, pageCount: Int, pageSize: Int, descending: Bool = true) -> [StoredMessage]? {
+        let messages2 = self.table.alias("m2")
         let queryTable = self.table
-            .filter(self.topicId == topicId && self.replSeq == nil)
+            .join(.leftOuter, messages2,
+                  on: self.table[self.topicId] == messages2[self.topicId] &&
+                        self.table[self.replacedBySeq] == messages2[self.seq])
+            .filter(self.table[self.topicId] == topicId && self.table[self.replacesSeq] == nil)
             .order(descending ? self.seq.desc : self.seq.asc)
             .limit(pageCount * pageSize)
+            .select(self.table[*],
+                    messages2[self.head],
+                    messages2[self.content])
+
         do {
             var messages = [StoredMessage]()
             for row in try db.prepare(queryTable) {
                 let sm = self.readOne(r: row)
+                if let replacementHead = row[messages2[self.head]], let replacementContent = row[messages2[self.content]] {
+                    sm.head = Tinode.deserializeObject(from: replacementHead)
+                    sm.content = Drafty.deserialize(from: replacementContent)
+                }
                 messages.append(sm)
             }
             return messages
@@ -398,7 +388,7 @@ public class MessageDb {
     }
     func query(msgId: Int64?, previewLen: Int = -1) -> StoredMessage? {
         guard let msgId = msgId else { return nil }
-        let record = self.table.filter(self.id == msgId)
+        let record = self.table.filter(self.id == msgId).select(self.table[*])
         if let row = try? db.pluck(record) {
             return self.readOne(r: row, previewLen: previewLen)
         }
@@ -429,6 +419,7 @@ public class MessageDb {
     func queryUnsent(topicId: Int64?) -> [Message]? {
         let queryTable = self.table
             .filter(self.topicId == topicId && self.status == BaseDb.Status.queued.rawValue)
+            .select(self.table[*])
             .order(self.ts)
         do {
             var messages = [StoredMessage]()
