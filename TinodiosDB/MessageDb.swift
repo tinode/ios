@@ -357,22 +357,28 @@ public class MessageDb {
         }
         return sm
     }
-    public func query(topicId: Int64?, pageCount: Int, pageSize: Int, descending: Bool = true) -> [StoredMessage]? {
+
+    /// Load messages from `topicId` stating with seq `from` (exclusive) and returning no more than `limit`.
+    /// If `forward` is `true`, load newer messages, older otherwise.
+    func query(topicId: Int64?, from: Int, limit: Int, forward: Bool) -> [StoredMessage]? {
+        guard let topicId = topicId else { return nil }
+
         let messages2 = self.table.alias("m2")
-        let queryTable = self.table
+        var query = self.table
             .join(.leftOuter, messages2,
                   on: self.table[self.topicId] == messages2[self.topicId] &&
                         self.table[self.replacedBySeq] == messages2[self.seq])
-            .filter(self.table[self.topicId] == topicId && self.table[self.replacesSeq] == nil)
-            .order(descending ? self.seq.desc : self.seq.asc)
-            .limit(pageCount * pageSize)
+        query = forward ?
+            query.filter(self.table[self.topicId] == topicId && self.table[self.seq] > from && self.table[self.replacesSeq] == nil) :
+            query.filter(self.table[self.topicId] == topicId && self.table[self.seq] < from && self.table[self.replacesSeq] == nil)
+        query = (forward ? query.order(self.seq.asc) : query.order(self.seq.desc)).limit(limit)
             .select(self.table[*],
                     messages2[self.head],
                     messages2[self.content])
 
         do {
-            var messages = [StoredMessage]()
-            for row in try db.prepare(queryTable) {
+            var messages: [StoredMessage] = []
+            for row in try db.prepare(query) {
                 let sm = self.readOne(r: row)
                 if let replacementHead = row[messages2[self.head]], let replacementContent = row[messages2[self.content]] {
                     sm.head = Tinode.deserializeObject(from: replacementHead)
@@ -382,11 +388,12 @@ public class MessageDb {
             }
             return messages
         } catch {
-            BaseDb.log.error("MessageDb - query operation failed: topicId = %lld, error = %@", topicId ?? -1, error.localizedDescription)
+            BaseDb.log.error("MessageDb - query operation failed: topicId = %lld, error = %@", topicId, error.localizedDescription)
             return nil
         }
     }
-    func query(msgId: Int64?, previewLen: Int = -1) -> StoredMessage? {
+
+    func query(msgId: Int64?, previewLen: Int) -> StoredMessage? {
         guard let msgId = msgId else { return nil }
         let record = self.table.filter(self.id == msgId).select(self.table[*])
         if let row = try? db.pluck(record) {
@@ -394,6 +401,7 @@ public class MessageDb {
         }
         return nil
     }
+
     func queryDeleted(topicId: Int64?, hard: Bool) -> [MsgRange]? {
         guard let topicId = topicId else { return nil }
         let status = hard ? BaseDb.Status.deletedHard : BaseDb.Status.deletedSoft
@@ -434,6 +442,7 @@ public class MessageDb {
         }
     }
 
+    /// Returns the newest message range (low + high seq ID values) not found in the cache.
     func fetchNextMissingRange(topicId: Int64) -> MsgRange? {
         let messages2 = self.table.alias("m2")
         let hiQuery = self.table

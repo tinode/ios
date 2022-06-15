@@ -43,7 +43,12 @@ class CallManager {
         let tinode = Cache.tinode
         let user: DefaultUser? = tinode.getUser(with: fromUid)
         let senderName = user?.pub?.fn ?? NSLocalizedString("Unknown", comment: "Placeholder for missing user name")
-        callDelegate.reportIncomingCall(uuid: uuid, handle: senderName, completion: completion)
+        callDelegate.reportIncomingCall(uuid: uuid, handle: senderName) { err in
+            if err == nil {
+                tinode.videoCall(topic: topicName, seq: seq, event: "ringing")
+            }
+            completion?(err)
+        }
     }
 
     // Dismisses incoming call UI without displaying.

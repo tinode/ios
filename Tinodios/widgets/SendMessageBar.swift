@@ -408,7 +408,7 @@ class SendMessageBar: UIView {
             self.horizontalSliderView.isHidden = true
             if state == .lock {
                 self.sendButtonSize.constant = Constants.kButtonSizeNormal
-                self.sendButton.setImage(SendMessageBar.Constants.kSendButtonImageArrow, for: .normal)
+                self.sendButton.setImage(Constants.kSendButtonImageArrow, for: .normal)
                 self.showAudioBar(.longInitial)
             } else {
                 self.sendButtonSize.constant = Constants.kButtonSizeNormal
