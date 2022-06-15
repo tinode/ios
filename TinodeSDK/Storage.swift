@@ -86,12 +86,6 @@ public protocol Storage: AnyObject {
     @discardableResult
     func topicDelete(topic: TopicProto, hard: Bool) -> Bool
 
-    // Get seq IDs of the stored messages as a Range.
-    func getCachedMessagesRange(topic: TopicProto) -> MsgRange?
-    // Get the maximum seq ID range of the messages missing in cache,
-    // inclusive-exclusive [low, hi).
-    // Returns null if all messages are present or no messages are found.
-    func getNextMissingRange(topic: TopicProto) -> MsgRange?
     // Local user reported messages as read.
     @discardableResult
     func setRead(topic: TopicProto, read: Int) -> Bool
@@ -235,6 +229,14 @@ public protocol Storage: AnyObject {
     @discardableResult
     func msgReadByRemote(sub: SubscriptionProto, read: Int?) -> Bool
 
+    // Get seq IDs of the stored messages as a Range.
+    func getCachedMessagesRange(topic: TopicProto) -> MsgRange?
+
+    // Get the maximum seq ID range of the messages missing in cache,
+    // inclusive-exclusive [low, hi).
+    // Returns null if all messages are present or no messages are found.
+    func getNextMissingRange(topic: TopicProto) -> MsgRange?
+
     // Retrieves a single message by database id.
     func getMessageById(dbMessageId: Int64) -> Message?
 
@@ -244,11 +246,20 @@ public protocol Storage: AnyObject {
     // Returns a list of unsent messages.
     func getQueuedMessages(topic: TopicProto) -> [Message]?
 
-    // Returns a list of pending delete message seq ids.
-    // topic: topic where the messages were deleted.
-    // hard: when true, fetch hard-deleted messages, soft-deleted otherwise.
+    /// Get the list of pending delete message seq ids.
+    /// - Parameters:
+    ///   - topic: topic where the messages were deleted.
+    ///   - hard: when `true`, fetch hard-deleted messages, soft-deleted otherwise.
     func getQueuedMessageDeletes(topic: TopicProto, hard: Bool) -> [MsgRange]?
 
-    // Returns the latest message in each topic.
+    /// Returns the latest message in each topic.
     func getLatestMessagePreviews() -> [Message]?
+
+    /// Read message page of the size `limit` starting with the messages seq ID `from` (exclusive).
+    /// - Parameters:
+    ///   - topic: topic which owns the messages.
+    ///   - from: the ancor message seq ID to start reading from (exclusive).
+    ///   - limit: maximum number of messages to read.
+    ///   - desc: `true` to read messages in descending order, `false` to read in ascending.
+    func getMessagePage(topic: TopicProto, from: Int, limit: Int, forward: Bool) -> [Message]?
 }
