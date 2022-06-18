@@ -167,7 +167,12 @@ public class SharedUtils {
             BaseDb.log.debug("Connect&Login Sync [network] - could not connect to Tinode: %@", err)
             success = true
         } catch {
-            BaseDb.log.error("Connect&Login Sync - failed to automatically login to Tinode: %@", error.localizedDescription)
+            if let err = error as? NSError, err.code == NSURLErrorCannotConnectToHost {
+                BaseDb.log.debug("Connect&Login Sync [network] - could not connect to Tinode: %@", err)
+                success = true
+            } else {
+                BaseDb.log.error("Connect&Login Sync - failed to automatically login to Tinode: %@", error.localizedDescription)
+            }
         }
         return success
     }

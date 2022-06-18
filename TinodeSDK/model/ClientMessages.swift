@@ -134,8 +134,11 @@ public class MsgClientLogin: Encodable {
 }
 
 public class MetaGetData: Encodable {
+    /// Load messages/ranges with IDs equal or greater than this (inclusive or closed).
     let since: Int?
+    /// Load messages/ranges with IDs lower than this (exclusive or open).
     let before: Int?
+    /// Limit the number of messages loaded.
     let limit: Int?
     init(since: Int?, before: Int?, limit: Int?) {
         self.since = since
