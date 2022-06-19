@@ -35,10 +35,9 @@ public class MessageDb {
     public let seq: Expression<Int?>
     public let high: Expression<Int?>
     public let delId: Expression<Int?>
-    // Seq id this message replaces (on the same topic).
-    public let replacesSeq: Expression<Int?>
-    // Seq id of the message that replaces this message (on the same topic).
-    public let replacedBySeq: Expression<Int?>
+    // Actual seq id this message represents (latest message version in edit history).
+    public let effectiveSeq: Expression<Int?>
+
     public let head: Expression<String?>
     public let content: Expression<String?>
 
@@ -57,8 +56,8 @@ public class MessageDb {
         self.seq = Expression<Int?>("seq")
         self.high = Expression<Int?>("high")
         self.delId = Expression<Int?>("del_id")
-        self.replacesSeq = Expression<Int?>("replaces_seq")
-        self.replacedBySeq = Expression<Int?>("replaced_by_seq")
+        self.effectiveSeq = Expression<Int?>("effective_seq")
+
         self.head = Expression<String?>("head")
         self.content = Expression<String?>("content")
     }
@@ -80,37 +79,15 @@ public class MessageDb {
             t.column(seq)
             t.column(high)
             t.column(delId)
-            t.column(replacesSeq)
-            t.column(replacedBySeq)
+            t.column(effectiveSeq)
             t.column(head)
             t.column(content)
         })
         try! self.db.run(self.table.createIndex(topicId, seq.desc, unique: true, ifNotExists: true))
     }
 
-    private func replaceMessage(onTopic topicId: Int64, withSeqId seqId: Int, forReplacingSeqId replacingSeqId: Int) throws {
-        let record = self.table.filter(self.topicId == topicId &&
-                                       self.seq == seqId &&
-                                       (self.replacedBySeq == nil || self.replacedBySeq < replacingSeqId))
-        try self.db.run(record.update(self.replacedBySeq <- replacingSeqId))
-    }
-
-    private func maybeUpdateReplaced(withId msgId: Int64, onTopic topicId: Int64, withSeqId seqId: Int) throws {
-        let replQuery = self.table
-            .filter(self.table[self.topicId] == topicId &&
-                    self.table[self.replacesSeq] == seqId)
-
-        guard let replacedBySeq = try? db.scalar(replQuery.select(self.table[self.seq].max)) else {
-            // No replacements for this message. We are done.
-            return
-        }
-
-        let record = self.table.filter(self.id == msgId)
-        try self.db.run(record.update(self.replacedBySeq <- replacedBySeq))
-    }
-
     @discardableResult
-    private func insertRaw(topic: TopicProto, msg: StoredMessage) throws -> Int64 {
+    private func insertRaw(topic: TopicProto, msg: StoredMessage, withEffectiveSeq effectiveSeqId: Int?) throws -> Int64 {
         do {
             guard let tdb = baseDb.topicDb else {
                 throw MessageDbError.dbError("no topicDb in messageDb insert")
@@ -141,8 +118,8 @@ public class MessageDb {
             setters.append(self.sender <- msg.from)
             setters.append(self.ts <- msg.ts)
             setters.append(self.seq <- msg.seq)
-            if let replaced = msg.replacesSeq {
-                setters.append(self.replacesSeq <- replaced)
+            if let eff = effectiveSeqId {
+                setters.append(self.effectiveSeq <- eff)
             }
             if let h = msg.head {
                 setters.append(self.head <- Tinode.serializeObject(h))
@@ -156,8 +133,21 @@ public class MessageDb {
         }
     }
 
+    private func getOriginalSeqFor(effectiveSeqId effSeq: Int, onTopic topicId: Int64) -> Int? {
+        if let row = try? db.pluck(self.table.select(self.seq).filter(self.topicId == topicId && self.effectiveSeq == effSeq)) {
+            return row[self.seq]
+        }
+        return nil
+    }
+
+    private func invalidateMessage(withSeq seqId: Int, onTopic topicId: Int64) throws {
+        let record = self.table.filter(self.topicId == topicId &&
+                                       self.seq == seqId)
+        try self.db.run(record.update(self.effectiveSeq <- nil))
+    }
+
     func insert(topic: TopicProto?, msg: StoredMessage?) -> Int64 {
-        guard let topic = topic, let msg = msg else {
+        guard let topic = topic, let msg = msg, let topicId = msg.topicId else {
             return -1
         }
         if msg.msgId > 0 {
@@ -166,15 +156,18 @@ public class MessageDb {
         }
         do {
             try db.savepoint("MessageDb.insert") {
-                let insertedId = try insertRaw(topic: topic, msg: msg)
-                if let replacedSeq = msg.replacesSeq, replacedSeq > 0 {
-                    // Replacement message.
-                    try replaceMessage(onTopic: msg.topicId!, withSeqId: replacedSeq, forReplacingSeqId: msg.seq!)
-                } else {
-                    // This is the original message.
-                    // Check if it's been replaced.
-                    try maybeUpdateReplaced(withId: insertedId, onTopic: msg.topicId!, withSeqId: msg.seq!)
+                var effSeq: Int? = msg.replacesSeq ?? msg.seqId
+                if let origSeq = self.getOriginalSeqFor(effectiveSeqId: effSeq!, onTopic: topicId) {
+                    if origSeq < msg.seqId {
+                        // Newer message version. Invalidate the old effective message record.
+                        try self.invalidateMessage(withSeq: origSeq, onTopic: topicId)
+                    } else {
+                        // The already existing message version is newer than this one.
+                        // Do not set effective seq.
+                        effSeq = nil
+                    }
                 }
+                try self.insertRaw(topic: topic, msg: msg, withEffectiveSeq: effSeq)
             }
             return msg.msgId
         } catch {
@@ -205,7 +198,8 @@ public class MessageDb {
     func delivered(msgId: Int64, ts: Date?, seq: Int?) -> Bool {
         let record = self.table.filter(self.id == msgId)
         do {
-            return try self.db.run(record.update(self.status <- BaseDb.Status.synced.rawValue, self.ts <- ts, self.seq <- seq)) > 0
+            return try self.db.run(record.update(self.status <- BaseDb.Status.synced.rawValue,
+                                             self.ts <- ts, self.seq <- seq, self.effectiveSeq <- seq)) > 0
         } catch {
             BaseDb.log.error("MessageDb - update delivery operation failed: msgId = %lld, error = %@", msgId, error.localizedDescription)
             return false
@@ -280,6 +274,9 @@ public class MessageDb {
                 // Selector of ranges which are fully within the new range.
                 let rangeDeleteSelector = self.table.filter(
                     self.topicId == topicId && startId <= self.seq && self.seq < endId && self.status >= BaseDb.Status.deletedHard.rawValue)
+                // Selector of effective message versions which are fully within the range.
+                let effectiveSeqSelector = self.table.filter(
+                    self.topicId == topicId && startId <= self.effectiveSeq && self.effectiveSeq < endId)
 
                 // Selector of partially overlapping deletion ranges. Find bounds of existing deletion ranges of the same type
                 // which partially overlap with the new deletion range.
@@ -299,6 +296,7 @@ public class MessageDb {
 
                 try self.db.run(messageSelector.delete())
                 try self.db.run(rangeDeleteSelector.delete())
+                try self.db.run(effectiveSeqSelector.update(self.effectiveSeq <- nil))
 
                 // Find the maximum continuous range which overlaps with the current range.
                 let fullRange = overlapSelector.select([self.seq.min, self.high.max])
@@ -343,15 +341,16 @@ public class MessageDb {
     }
     private func readOne(r: Row, previewLen: Int = -1) -> StoredMessage {
         let sm = StoredMessage()
-        sm.msgId = r[self.table[self.id]]
-        sm.topicId = r[self.table[self.topicId]]
-        sm.userId = r[self.table[self.userId]]
-        sm.dbStatus = BaseDb.Status(rawValue: r[self.table[self.status]] ?? 0) ?? .undefined
-        sm.from = r[self.table[self.sender]]
-        sm.ts = r[self.table[self.ts]]
-        sm.seq = r[self.table[self.seq]]
-        sm.head = Tinode.deserializeObject(from: r[self.table[self.head]])
-        sm.content = Drafty.deserialize(from: r[self.table[self.content]])
+        sm.msgId = r[self.id]
+        sm.topicId = r[self.topicId]
+        sm.userId = r[self.userId]
+        sm.dbStatus = BaseDb.Status(rawValue: r[self.status] ?? 0) ?? .undefined
+        sm.from = r[self.sender]
+        sm.ts = r[self.ts]
+        sm.seq = r[self.effectiveSeq] ?? r[self.seq]
+        //let replaced = (r[self.effectiveSeq] ?? 0) > 0
+        sm.head = Tinode.deserializeObject(from: r[self.head])
+        sm.content = Drafty.deserialize(from: r[self.content])
         if previewLen > 0, let content = sm.content {
             sm.content = content.preview(previewLen: previewLen)
         }
@@ -363,27 +362,16 @@ public class MessageDb {
     func query(topicId: Int64?, from: Int, limit: Int, forward: Bool) -> [StoredMessage]? {
         guard let topicId = topicId else { return nil }
 
-        let messages2 = self.table.alias("m2")
         var query = self.table
-            .join(.leftOuter, messages2,
-                  on: self.table[self.topicId] == messages2[self.topicId] &&
-                        self.table[self.replacedBySeq] == messages2[self.seq])
         query = forward ?
-            query.filter(self.table[self.topicId] == topicId && self.table[self.seq] > from && self.table[self.replacesSeq] == nil) :
-            query.filter(self.table[self.topicId] == topicId && self.table[self.seq] < from && self.table[self.replacesSeq] == nil)
+            query.filter(self.topicId == topicId && self.seq > from && self.effectiveSeq != nil) :
+            query.filter(self.topicId == topicId && self.seq < from && self.effectiveSeq != nil)
         query = (forward ? query.order(self.seq.asc) : query.order(self.seq.desc)).limit(limit)
-            .select(self.table[*],
-                    messages2[self.head],
-                    messages2[self.content])
 
         do {
             var messages: [StoredMessage] = []
             for row in try db.prepare(query) {
                 let sm = self.readOne(r: row)
-                if let replacementHead = row[messages2[self.head]], let replacementContent = row[messages2[self.content]] {
-                    sm.head = Tinode.deserializeObject(from: replacementHead)
-                    sm.content = Drafty.deserialize(from: replacementContent)
-                }
                 messages.append(sm)
             }
             return messages
@@ -477,17 +465,7 @@ public class MessageDb {
 
         let m2Id = Expression<Int64?>("id")
         let joinedTable = self.table.select(
-            self.table[self.id],
-            self.table[self.topicId],
-            self.table[self.userId],
-            self.table[self.status],
-            self.table[self.sender],
-            self.table[self.ts],
-            self.table[self.seq],
-            self.table[self.high],
-            self.table[self.delId],
-            self.table[self.head],
-            self.table[self.content],
+            self.table[*],
             topics[topicDb.topic])
         .join(.leftOuter, messages2,
               on: self.table[self.topicId] == messages2[self.topicId] && self.table[self.seq] < messages2[self.seq])
