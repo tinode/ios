@@ -107,4 +107,18 @@ public enum JSONValue: Codable, Equatable {
         }
         return nil
     }
+
+    public func asArray() -> [JSONValue]? {
+        if case let .array(v) = self {
+            return v
+        }
+        return nil
+    }
+
+    public func asDict() -> [String: JSONValue]? {
+        if case let .dict(v) = self {
+            return v
+        }
+        return nil
+    }
 }

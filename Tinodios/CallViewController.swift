@@ -141,9 +141,12 @@ class WebRTCClient: NSObject {
         return track.isEnabled
     }
 
-    func createPeerConnection() {
+    func createPeerConnection() -> Bool {
         let constraints = RTCMediaConstraints(mandatoryConstraints: nil, optionalConstraints: nil)
-        let config = generateRTCConfig()
+        guard let config = generateRTCConfig() else {
+            Cache.log.info("WebRTCClient - missing configuration. Quitting.")
+            return false
+        }
 
         localPeer = WebRTCClient.factory.peerConnection(with: config, constraints: constraints, delegate: self)
 
@@ -151,6 +154,7 @@ class WebRTCClient: NSObject {
         stream.addAudioTrack(self.localAudioTrack!)
         stream.addVideoTrack(self.localVideoTrack!)
         localPeer!.add(stream)
+        return true
     }
 
     func offer(_ peerConnection: RTCPeerConnection) {
@@ -224,19 +228,14 @@ class WebRTCClient: NSObject {
 // MARK: Preparation/setup.
 extension WebRTCClient {
     // TODO: ICE/WebRTC config should be obtained from the server.
-    private func generateRTCConfig() -> RTCConfiguration {
+    private func generateRTCConfig() -> RTCConfiguration? {
+        let tinode = Cache.tinode
+        guard let iceConfig = tinode.getServerParam(for: "iceServers")?.asArray() else {
+            Cache.log.error("WebRTCClient.generateRTCConfig: Missing/invalid iceServers server parameter")
+            return nil
+        }
+
         let config = RTCConfiguration()
-        config.iceServers = [RTCIceServer(urlStrings: ["stun:bn-turn1.xirsys.com"])]
-        config.iceServers.append(RTCIceServer(
-            urlStrings: [
-                "turn:bn-turn1.xirsys.com:80?transport=udp",
-                "turn:bn-turn1.xirsys.com:3478?transport=udp",
-                "turn:bn-turn1.xirsys.com:80?transport=tcp",
-                "turn:bn-turn1.xirsys.com:3478?transport=tcp",
-                "turns:bn-turn1.xirsys.com:443?transport=tcp",
-                "turns:bn-turn1.xirsys.com:5349?transport=tcp"],
-            username: "0kYXFmQL9xojOrUy4VFemlTnNPVFZpp7jfPjpB3AjxahuRe4QWrCs6Ll1vDc7TTjAAAAAGAG2whXZWJUdXRzUGx1cw==",
-            credential: "285ff060-5a58-11eb-b269-0242ac140004"))
         // TODO: planB for now. Need to migrate to unified in the future.
         config.sdpSemantics = .planB
         // TCP candidates are only useful when connecting to a server that supports
@@ -247,6 +246,27 @@ extension WebRTCClient {
         config.continualGatheringPolicy = .gatherContinually
         // Use ECDSA encryption.
         config.keyType = .ECDSA
+
+        for v in iceConfig {
+            guard let vals = v.asDict() else {
+                return nil
+            }
+            if let urls = vals["urls"]?.asArray() {
+                let iceStrings = urls.compactMap { $0.asString() }
+                //let ice = RTCIceServer(urlStrings: )
+                var ice: RTCIceServer
+                if let username = vals["username"]?.asString() {
+                    //ice.setUser  username = username
+                    let credential = vals["credential"]?.asString()
+                    ice = RTCIceServer(urlStrings: iceStrings, username: username, credential: credential)
+                } else {
+                    ice = RTCIceServer(urlStrings: iceStrings)
+                }
+                config.iceServers.append(ice)
+            } else {
+                Cache.log.info("Invalid ICE server config: no URLs")
+            }
+        }
         return config
     }
 
@@ -754,7 +774,10 @@ extension CallViewController: WebRTCClientDelegate {
 extension CallViewController: TinodeVideoCallDelegate {
     func handleAcceptedMsg() {
         // The callee has informed us (the caller) of the call acceptance.
-        self.webRTCClient.createPeerConnection()
+        guard self.webRTCClient.createPeerConnection() else {
+            self.handleCallClose()
+            return
+        }
     }
     
     func handleOfferMsg(with payload: JSONValue?) {
@@ -763,7 +786,10 @@ extension CallViewController: TinodeVideoCallDelegate {
             self.handleCallClose()
             return
         }
-        self.webRTCClient.createPeerConnection()
+        guard self.webRTCClient.createPeerConnection() else {
+            self.handleCallClose()
+            return
+        }
         self.webRTCClient.handleRemoteDescription(desc)
     }
     

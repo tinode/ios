@@ -292,7 +292,7 @@ public class Tinode {
     private var futures = ConcurrentFuturesMap()
     public var serverVersion: String?
     public var serverBuild: String?
-    private var serverLimits: [String: Int64]?
+    private var serverParams: [String: JSONValue]?
     private var connectionListener: TinodeConnectionListener?
     public var timeAdjustment: TimeInterval = 0
     public var isConnectionAuthenticated = false
@@ -462,7 +462,11 @@ public class Tinode {
     }
 
     public func getServerLimit(for key: String, withDefault defVal: Int64) -> Int64 {
-        return self.serverLimits?[key] ?? defVal
+        return self.serverParams?[key]?.asInt64() ?? defVal
+    }
+
+    public func getServerParam(for key: String) -> JSONValue? {
+        return self.serverParams?[key]
     }
 
     private func getNextMsgId() -> String {
@@ -621,11 +625,9 @@ public class Tinode {
                 if !(ctrl.params?.isEmpty ?? true) {
                     tn.serverVersion = ctrl.getStringParam(for: "ver")
                     tn.serverBuild = ctrl.getStringParam(for: "build")
-                    tn.serverLimits = [:]
+                    tn.serverParams = ctrl.params
                     for k in [Tinode.kMaxMessageSize, Tinode.kMaxSubscriberCount, Tinode.kMaxTagCount, Tinode.kMaxFileUploadSize] {
-                        if let v = ctrl.getInt64Param(for: k) {
-                            tn.serverLimits![k] = v
-                        } else {
+                        if ctrl.getInt64Param(for: k) == nil {
                             Tinode.log.error("Server limit missing for key %@", k)
                         }
                     }
@@ -945,7 +947,7 @@ public class Tinode {
         setDeviceToken(token: Tinode.kNullValue).thenFinally {
             self.disconnect()
             self.myUid = nil
-            self.serverLimits = nil
+            self.serverParams = nil
             self.store?.logout()
         }
     }
