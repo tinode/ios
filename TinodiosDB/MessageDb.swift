@@ -35,7 +35,9 @@ public class MessageDb {
     public let seq: Expression<Int?>
     public let high: Expression<Int?>
     public let delId: Expression<Int?>
-    // Actual seq id this message represents (latest message version in edit history).
+    // Seq this message replaces (from message head).
+    public let replSeq: Expression<Int?>
+    // Effective seq id this message represents (latest message version in edit history).
     public let effectiveSeq: Expression<Int?>
 
     public let head: Expression<String?>
@@ -56,6 +58,7 @@ public class MessageDb {
         self.seq = Expression<Int?>("seq")
         self.high = Expression<Int?>("high")
         self.delId = Expression<Int?>("del_id")
+        self.replSeq = Expression<Int?>("repl_seq")
         self.effectiveSeq = Expression<Int?>("effective_seq")
 
         self.head = Expression<String?>("head")
@@ -79,6 +82,7 @@ public class MessageDb {
             t.column(seq)
             t.column(high)
             t.column(delId)
+            t.column(replSeq)
             t.column(effectiveSeq)
             t.column(head)
             t.column(content)
@@ -91,9 +95,6 @@ public class MessageDb {
         do {
             guard let tdb = baseDb.topicDb else {
                 throw MessageDbError.dbError("no topicDb in messageDb insert")
-            }
-            if (msg.topicId ?? -1) <= 0 {
-                msg.topicId = tdb.getId(topic: msg.topic)
             }
             guard let udb = baseDb.userDb else {
                 throw MessageDbError.dbError("no userDb in messageDb insert")
@@ -118,6 +119,9 @@ public class MessageDb {
             setters.append(self.sender <- msg.from)
             setters.append(self.ts <- msg.ts)
             setters.append(self.seq <- msg.seq)
+            if let replaced = msg.replacesSeq {
+                setters.append(self.replSeq <- replaced)
+            }
             if let eff = effectiveSeqId {
                 setters.append(self.effectiveSeq <- eff)
             }
@@ -147,12 +151,20 @@ public class MessageDb {
     }
 
     func insert(topic: TopicProto?, msg: StoredMessage?) -> Int64 {
-        guard let topic = topic, let msg = msg, let topicId = msg.topicId else {
+        guard let topic = topic, let msg = msg else {
             return -1
         }
-        if msg.msgId > 0 {
+        guard msg.msgId <= 0 else {
             // Already saved.
             return msg.msgId
+        }
+        guard let topicId = msg.topicId ?? baseDb.topicDb?.getId(topic: msg.topic),
+              topicId > 0 else {
+            // Invalid topic.
+            return -1
+        }
+        if (msg.topicId ?? -1) <= 0 {
+            msg.topicId = topicId
         }
         do {
             try db.savepoint("MessageDb.insert") {
