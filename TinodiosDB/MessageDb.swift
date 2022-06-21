@@ -65,6 +65,7 @@ public class MessageDb {
         self.content = Expression<String?>("content")
     }
     func destroyTable() {
+        try! self.db.run(self.table.dropIndex(topicId, effectiveSeq.desc, ifExists: true))
         try! self.db.run(self.table.dropIndex(topicId, seq.desc, ifExists: true))
         try! self.db.run(self.table.drop(ifExists: true))
     }
@@ -88,6 +89,9 @@ public class MessageDb {
             t.column(content)
         })
         try! self.db.run(self.table.createIndex(topicId, seq.desc, unique: true, ifNotExists: true))
+        // Partial index over topicId + effectiveSeq.
+        let partIdx = self.table.createIndex(topicId, effectiveSeq.desc, unique: true, ifNotExists: true)
+        try! self.db.run([partIdx, "WHERE", (self.effectiveSeq != nil).asSQL()].joined(separator: " "))
     }
 
     @discardableResult
@@ -378,7 +382,7 @@ public class MessageDb {
         query = forward ?
             query.filter(self.topicId == topicId && self.seq > from && self.effectiveSeq != nil) :
             query.filter(self.topicId == topicId && self.seq < from && self.effectiveSeq != nil)
-        query = (forward ? query.order(self.seq.asc) : query.order(self.seq.desc)).limit(limit)
+        query = (forward ? query.order(self.effectiveSeq.asc) : query.order(self.effectiveSeq.desc)).limit(limit)
 
         do {
             var messages: [StoredMessage] = []
