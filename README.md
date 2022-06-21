@@ -8,7 +8,7 @@ Status: beta. Usable and mostly stable but bugs may happen.
 
 ## Installing and running
 
-**Important!** This repository contains large files which require a git extension [git-lfs](https://git-lfs.github.com/).
+**Important!** Due to Microsoft's policy of requiring developers of open source projects to [pay for for hosting large files on GitHub](https://docs.github.com/en/billing/managing-billing-for-git-large-file-storage/about-billing-for-git-large-file-storage#purchasing-additional-storage-and-bandwidth), this repository does not include prebuilt binaries for `MobileVLCKit` and `WebRTC-lib`. You need to install them manually.
 
 This is NOT a standalone app, this is just a frontend, a client. It requires a [backend](https://github.com/tinode/chat/). See [installation instructions](https://github.com/tinode/chat/blob/master/INSTALL.md).
 
@@ -24,6 +24,7 @@ This is NOT a standalone app, this is just a frontend, a client. It requires a [
 ### Completed
 
 * One-on-one conversations and group chats.
+* Video or audio calling.
 * Channels with unlimited number of read-only subscribers.
 * Unread message counters.
 * Push notifications and in-app presence notifications.
@@ -42,11 +43,11 @@ This is NOT a standalone app, this is just a frontend, a client. It requires a [
 ### Not Done Yet
 
 * Previews not generated for videos, links or docs.
-* No video messages. No video or audio calling.
-* Typing indicators.
+* No video messages.
+* No typing indicators.
 * No support for switching between multiple backends.
-* Mentions, hashtags.
-* End-to-End encryption.
+* No mentions, hashtags.
+* End-to-End encryption not implemented.
 
 ## Dependencies
 
@@ -56,6 +57,7 @@ This is NOT a standalone app, this is just a frontend, a client. It requires a [
 * [PhoneNumberKit](https://github.com/marmelroy/PhoneNumberKit) for normalizing phone numbers.
 * [SQLite.swift](https://github.com/stephencelis/SQLite.swift) for convenience of SQLite use.
 * [SwiftKeychainWrapper](https://github.com/jrendel/SwiftKeychainWrapper) for convenience of Keychain access.
+* [WebRTC](https://github.com/stasel/WebRTC) for video and audio calls.
 
 
 ## Push notifications
