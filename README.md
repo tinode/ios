@@ -8,7 +8,14 @@ Status: beta. Usable and mostly stable but bugs may happen.
 
 ## Installing and running
 
-**Important!** Due to Microsoft's policy of requiring developers of open source projects to [pay for for hosting large files on GitHub](https://docs.github.com/en/billing/managing-billing-for-git-large-file-storage/about-billing-for-git-large-file-storage#purchasing-additional-storage-and-bandwidth), this repository does not include prebuilt binaries for `MobileVLCKit` and `WebRTC-lib`. You need to install them manually.
+**Important!** Due to Microsoft's (GitHub owner) policy of requiring developers of open source projects to [pay for for hosting large files on GitHub](https://docs.github.com/en/billing/managing-billing-for-git-large-file-storage/about-billing-for-git-large-file-storage#purchasing-additional-storage-and-bandwidth), this repository cannot include prebuilt binaries for `MobileVLCKit` and `WebRTC-lib`. As a rusult of Microsoft's decision, we do not include Podfiles into repository. You need to install them manually:
+```shell
+pod install
+```
+or on Apple Silicon (M1):
+```shell
+arch -x86_64 pod install
+```
 
 This is NOT a standalone app, this is just a frontend, a client. It requires a [backend](https://github.com/tinode/chat/). See [installation instructions](https://github.com/tinode/chat/blob/master/INSTALL.md).
 
