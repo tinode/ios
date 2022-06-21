@@ -380,8 +380,8 @@ public class MessageDb {
 
         var query = self.table
         query = forward ?
-            query.filter(self.topicId == topicId && self.seq > from && self.effectiveSeq != nil) :
-            query.filter(self.topicId == topicId && self.seq < from && self.effectiveSeq != nil)
+            query.filter(self.topicId == topicId && self.effectiveSeq > from && self.effectiveSeq != nil) :
+            query.filter(self.topicId == topicId && self.effectiveSeq < from && self.effectiveSeq != nil)
         query = (forward ? query.order(self.effectiveSeq.asc) : query.order(self.effectiveSeq.desc)).limit(limit)
 
         do {
