@@ -56,7 +56,6 @@ public class BaseDb {
     public var subscriberDb: SubscriberDb?
     public var userDb: UserDb?
     public var messageDb: MessageDb?
-    public var editHistoryDb: EditHistoryDb?
 
     var account: StoredAccount?
     var isCredValidationRequired: Bool {
@@ -93,7 +92,6 @@ public class BaseDb {
         self.topicDb = TopicDb(self.db!, baseDb: self)
         self.subscriberDb = SubscriberDb(self.db!, baseDb: self)
         self.messageDb = MessageDb(self.db!, baseDb: self)
-        self.editHistoryDb = EditHistoryDb(self.db!, baseDb: self)
 
         var account: StoredAccount? = nil
         var deviceToken: String? = nil
@@ -114,7 +112,6 @@ public class BaseDb {
         self.topicDb!.createTable()
         self.subscriberDb!.createTable()
         self.messageDb!.createTable()
-        self.editHistoryDb!.createTable()
         // Enable foreign key enforcement.
         try! self.db!.run("PRAGMA foreign_keys = ON")
 
@@ -126,7 +123,6 @@ public class BaseDb {
     }
 
     private func dropDb() {
-        self.editHistoryDb?.destroyTable()
         self.messageDb?.destroyTable()
         self.subscriberDb?.destroyTable()
         self.topicDb?.destroyTable()
