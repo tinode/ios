@@ -1,6 +1,0 @@
-module Pods_TinodeSDKTests {
-  umbrella header "Pods-TinodeSDKTests-umbrella.h"
-
-  export *
-  module * { export * }
-}

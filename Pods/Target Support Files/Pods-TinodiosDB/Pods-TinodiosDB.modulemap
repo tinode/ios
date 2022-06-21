@@ -1,6 +1,0 @@
-module Pods_TinodiosDB {
-  umbrella header "Pods-TinodiosDB-umbrella.h"
-
-  export *
-  module * { export * }
-}

@@ -97,7 +97,6 @@ PODS:
     - GoogleUtilities/Logger
   - GoogleUtilities/UserDefaults (7.6.0):
     - GoogleUtilities/Logger
-  - GoogleWebRTC (1.1.31999)
   - Kingfisher (5.15.8):
     - Kingfisher/Core (= 5.15.8)
   - Kingfisher/Core (5.15.8)
@@ -118,6 +117,7 @@ PODS:
     - SQLite.swift/standard (= 0.13.3)
   - SQLite.swift/standard (0.13.3)
   - SwiftKeychainWrapper (3.4.0)
+  - WebRTC-lib (96.0.0)
 
 DEPENDENCIES:
   - Firebase
@@ -125,12 +125,12 @@ DEPENDENCIES:
   - FirebaseCore
   - FirebaseCrashlytics
   - FirebaseMessaging
-  - GoogleWebRTC
   - Kingfisher (~> 5.0)
   - MobileVLCKit (~> 3.4.1b9)
   - PhoneNumberKit (~> 3.3)
   - SQLite.swift (~> 0.13)
   - SwiftKeychainWrapper (~> 3.2)
+  - WebRTC-lib (~> 96.0.0)
 
 SPEC REPOS:
   trunk:
@@ -144,7 +144,6 @@ SPEC REPOS:
     - GoogleAppMeasurement
     - GoogleDataTransport
     - GoogleUtilities
-    - GoogleWebRTC
     - Kingfisher
     - MobileVLCKit
     - nanopb
@@ -152,6 +151,7 @@ SPEC REPOS:
     - PromisesObjC
     - SQLite.swift
     - SwiftKeychainWrapper
+    - WebRTC-lib
 
 SPEC CHECKSUMS:
   Firebase: 44213362f1dcc52555b935dc925ed35ac55f1b20
@@ -164,7 +164,6 @@ SPEC CHECKSUMS:
   GoogleAppMeasurement: a3311dbcf3ea651e5a070fe8559b57c174ada081
   GoogleDataTransport: 629c20a4d363167143f30ea78320d5a7eb8bd940
   GoogleUtilities: 684ee790a24f73ebb2d1d966e9711c203f2a4237
-  GoogleWebRTC: b39a78c4f5cc6b0323415b9233db03a2faa7b0f0
   Kingfisher: a3c03d702433fa6cfedabb2bddbe076fb8f2e902
   MobileVLCKit: 63fd88297505b97027f23842ae9df3a7bf17b31e
   nanopb: a0ba3315591a9ae0a16a309ee504766e90db0c96
@@ -172,7 +171,8 @@ SPEC CHECKSUMS:
   PromisesObjC: 68159ce6952d93e17b2dfe273b8c40907db5ba58
   SQLite.swift: 903bfa3bc9ab06345fdfbb578e34f47cfcf417da
   SwiftKeychainWrapper: 6fc49fbf7d4a6b0772917acb0e53a1639f6078d6
+  WebRTC-lib: 508fe02efa0c1a3a8867082a77d24c9be5d29aeb
 
-PODFILE CHECKSUM: d0381fbdf040f6976c849033a575788f75c96558
+PODFILE CHECKSUM: e9f601f4ca354f5670dce2ce6c24f5977405364d
 
-COCOAPODS: 1.11.3
+COCOAPODS: 1.11.2
