@@ -200,4 +200,21 @@ class AbstractFormatter: DraftyFormatter {
         result.append("\(Int(sec))")
         return result
     }
+
+    static func callStatus(incoming: Bool, event: String) -> String {
+        var comment: String
+        if incoming {
+            if event == "declined" {
+                comment = NSLocalizedString("declined", comment: "Label for declined call")
+            } else if event == "missed" {
+                comment = NSLocalizedString("missed", comment: "Label for missed call")
+            } else {
+                comment = NSLocalizedString("disconnected", comment: "Label for disconnected call")
+            }
+        } else {
+            comment = NSLocalizedString("cancelled", comment: "Label for cancelled call")
+        }
+
+        return comment
+    }
 }

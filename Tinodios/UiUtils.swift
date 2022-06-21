@@ -106,9 +106,6 @@ class UiUtils {
     // Max length of message previews.
     static let kPreviewLength = 42
 
-    // Successful video call marker (↗, ↙) color.
-    static let kSuccessfulCallArrow = UIColor(fromHexCode: 0xFF006400)
-
     // Letter tile image colors (light).
     private static let kLetterTileLightColors: [UIColor] = [
         UIColor(fromHexCode: 0xFFEF9A9A),

@@ -77,6 +77,8 @@ class FormatNode: CustomStringConvertible {
     internal enum Constants {
         /// Size of the document icon in attachments.
         static let kAttachmentIconSize = CGSize(width: 24, height: 32)
+        /// Size of the phone icon (video calls).
+        static let kCallIconSize: CGFloat = 28
         /// Size of the play/pause icon (square)
         static let kPlayIconSize: CGFloat = 28
         /// Size of the audio wave.
@@ -85,6 +87,10 @@ class FormatNode: CustomStringConvertible {
         static let kLinkColor = UIColor.link //(red: 0, green: 122/255, blue: 1, alpha: 1)
         static let kQuoteTextColorAdj = 0.7 // Adjustment to font alpha in quote to make it less prominent.
         static let kPlayButtonColorAdj = 0.6 // Adjustment to alpha for showing Play/Pause buttons.
+
+        // Successful video call marker (↗, ↙) color.
+        static let kSuccessfulCallArrowColor = UIColor(fromHexCode: 0xFF006400)
+        static let kFailedCallArrowColor = UIColor.red
     }
 
     // Thrown by the formatting function when the length budget gets exceeded.
@@ -377,17 +383,48 @@ class FormatNode: CustomStringConvertible {
 
     private func createVideoCallAttachmentString(isOutgoing: Bool, callState: String, callDuration: Int,
                                                  defaultAttrs attributes: [NSAttributedString.Key: Any]) -> NSAttributedString {
-        let attributed = NSMutableAttributedString()
+        let attributed = NSMutableAttributedString(string: "\u{2009}")
         attributed.beginEditing()
 
+        // Large phone icon.
+        let icon = NSTextAttachment()
+        icon.image = UIImage(systemName: "phone")?.withRenderingMode(.alwaysTemplate)
+        let baseFont = attributes[.font] as! UIFont
+        icon.bounds = CGRect(origin: CGPoint(x: 0, y: baseFont.capHeight - Constants.kCallIconSize), size: CGSize(width: Constants.kCallIconSize, height: Constants.kCallIconSize))
+
+        attributed.append(NSAttributedString(attachment: icon))
+        attributed.addAttributes(attributes, range: NSRange(location: 0, length: attributed.length))
+        attributed.append(NSAttributedString(string: " "))
+
+        attributed.append(NSAttributedString(string: isOutgoing ? NSLocalizedString("Outgoing call", comment: "Label for outgoing video/audio calls") : NSLocalizedString("Incoming call", comment: "Label for incoming video/audio calls"), attributes: attributes))
+
+        // Linebreak.
+        attributed.append(NSAttributedString(string: "\u{2009}\n", attributes: [NSAttributedString.Key.font: baseFont]))
+
+        // Second line: call status and duration.
         let arrow = NSMutableAttributedString(string: isOutgoing ? "↗" : "↙", attributes: attributes)
-        arrow.addAttribute(.foregroundColor, value: ["disconnected", "missed", "declined"].contains(callState) ? UIColor.red : UiUtils.kSuccessfulCallArrow, range: NSRange(location: 0, length: arrow.length))
+        arrow.beginEditing()
+
+        arrow.addAttribute(.foregroundColor, value: ["disconnected", "missed", "declined"].contains(callState) ? Constants.kFailedCallArrowColor : Constants.kSuccessfulCallArrowColor, range: NSRange(location: 0, length: arrow.length))
+
+        let paragraph = NSMutableParagraphStyle()
+        paragraph.firstLineHeadIndent = Constants.kCallIconSize + baseFont.capHeight * 0.25
+        paragraph.lineSpacing = 0
+        paragraph.lineHeightMultiple = 0.5
+        arrow.addAttributes([NSAttributedString.Key.paragraphStyle: paragraph], range: NSRange(location: 0, length: arrow.length))
+
+        arrow.append(NSAttributedString(string: " "))
+        if callDuration > 0 {
+            arrow.append(NSAttributedString(string: AbstractFormatter.millisToTime(millis: callDuration), attributes: attributes))
+        } else {
+            arrow.append(NSAttributedString(string: AbstractFormatter.callStatus(incoming: !isOutgoing, event: callState), attributes: attributes))
+        }
+
+        arrow.addAttribute(.font, value: baseFont.withSize(baseFont.pointSize * 0.9), range: NSRange(location: 0, length: arrow.length))
+
+        arrow.endEditing()
         attributed.append(arrow)
 
-        attributed.append(NSAttributedString(string: isOutgoing ? "Outgoing call" : "Incoming call", attributes: attributes))
-        if callDuration > 0 {
-            attributed.append(NSAttributedString(string: " (" + AbstractFormatter.millisToTime(millis: callDuration) + ")", attributes: attributes))
-        }
         attributed.endEditing()
         return attributed
     }
@@ -478,8 +515,7 @@ class FormatNode: CustomStringConvertible {
             return NSAttributedString(attachment: QuotedAttachment(quotedText: faceText, fitIn: size, fullWidth: attachment.fullWidth ?? false))
 
         case .call(let isOutgoing, let callState, let callDuration):
-            return createVideoCallAttachmentString(isOutgoing: isOutgoing, callState: callState, callDuration: callDuration,
-                                                   defaultAttrs: attributes)
+            return createVideoCallAttachmentString(isOutgoing: isOutgoing, callState: callState, callDuration: callDuration, defaultAttrs: attributes)
 
         // File attachment is harder: construct attributed string showing an attachment.
         case .data, .empty:
