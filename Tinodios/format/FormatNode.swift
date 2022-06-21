@@ -402,10 +402,16 @@ class FormatNode: CustomStringConvertible {
         attributed.append(NSAttributedString(string: "\u{2009}\n", attributes: [NSAttributedString.Key.font: baseFont]))
 
         // Second line: call status and duration.
-        let arrow = NSMutableAttributedString(string: isOutgoing ? "↗" : "↙", attributes: attributes)
+        let arrow = NSMutableAttributedString()
         arrow.beginEditing()
 
-        arrow.addAttribute(.foregroundColor, value: ["disconnected", "missed", "declined"].contains(callState) ? Constants.kFailedCallArrowColor : Constants.kSuccessfulCallArrowColor, range: NSRange(location: 0, length: arrow.length))
+        let success = !["disconnected", "missed", "declined"].contains(callState)
+        let arrowIcon = NSTextAttachment()
+        arrowIcon.image = (success ? UIImage(systemName: isOutgoing ? "arrow.up.right" : "arrow.down.left") :
+                            isOutgoing ? UIImage(systemName: "arrow.uturn.up") : UIImage(systemName: "arrow.uturn.up")?.withHorizontallyFlippedOrientation())?.withRenderingMode(.alwaysTemplate)
+        arrowIcon.bounds = CGRect(origin: CGPoint(x: 0, y: -2), size: CGSize(width: baseFont.lineHeight * 0.7, height: baseFont.lineHeight * 0.7))
+        arrow.append(NSAttributedString(attachment: arrowIcon))
+        arrow.addAttribute(.foregroundColor, value: success ? Constants.kSuccessfulCallArrowColor : Constants.kFailedCallArrowColor, range: NSRange(location: 0, length: arrow.length))
 
         let paragraph = NSMutableParagraphStyle()
         paragraph.firstLineHeadIndent = Constants.kCallIconSize + baseFont.capHeight * 0.25
