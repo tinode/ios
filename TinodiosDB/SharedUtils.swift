@@ -167,7 +167,8 @@ public class SharedUtils {
             BaseDb.log.debug("Connect&Login Sync [network] - could not connect to Tinode: %@", err)
             success = true
         } catch {
-            if let err = error as? NSError, err.code == NSURLErrorCannotConnectToHost {
+            let err = error as NSError
+            if err.code == NSURLErrorCannotConnectToHost {
                 BaseDb.log.debug("Connect&Login Sync [network] - could not connect to Tinode: %@", err)
                 success = true
             } else {

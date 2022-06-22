@@ -10,25 +10,38 @@ import TinodeSDK
 import CallKit
 
 class CallManager {
+    private static let kCallTimeout = 30
+
     public struct Call {
         var uuid: UUID
         var topic: String
         var from: String
         var seq: Int
     }
-    
+
     enum CallError: Error {
         case busy(String)
     }
 
     var callDelegate: CallProviderDelegate!
     var callController: CXCallController!
-
     var callInProgress: Call?
+    // Dismisses call UI after timeout.
+    var timer: Timer?
 
     init() {
         callDelegate = CallProviderDelegate(callManager: self)
         callController = CXCallController()
+    }
+
+    private func makeCallTimeoutTimer(withDeadline deadline: TimeInterval) -> Timer {
+        return Timer.scheduledTimer(withTimeInterval: deadline, repeats: false) { timer in
+            timer.invalidate()
+            self.timer = nil
+            if let call = self.callInProgress {
+                self.dismissIncomingCall(onTopic: call.topic, withSeqId: call.seq)
+            }
+        }
     }
 
     // Report incoming call to the operating system (which displays incoming call UI).
@@ -46,6 +59,8 @@ class CallManager {
         callDelegate.reportIncomingCall(uuid: uuid, handle: senderName) { err in
             if err == nil {
                 tinode.videoCall(topic: topicName, seq: seq, event: "ringing")
+                let timeout = (tinode.getServerParam(for: "callTimeout")?.asInt() ?? CallManager.kCallTimeout) + 5
+                self.timer = self.makeCallTimeoutTimer(withDeadline: TimeInterval(timeout))
             }
             completion?(err)
         }
@@ -63,6 +78,8 @@ class CallManager {
 extension CallManager: CallManagerImpl {
     func acceptPendingCall() -> Bool {
         guard let call = self.callInProgress else { return false }
+        self.timer?.invalidate()
+        self.timer = nil
         UiUtils.routeToMessageVC(forTopic: call.topic) { messageVC in
             messageVC.performSegue(withIdentifier: "Messages2Call", sender: call)
         }
@@ -72,6 +89,8 @@ extension CallManager: CallManagerImpl {
     func completeCallInProgress(reportToSystem: Bool, reportToPeer: Bool) {
         guard let call = self.callInProgress else { return }
         self.callInProgress = nil
+        self.timer?.invalidate()
+        self.timer = nil
 
         if reportToPeer {
             // Tell the peer the call is over/declined.
