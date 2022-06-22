@@ -64,7 +64,7 @@ class CallProviderDelegate: NSObject, CXProviderDelegate {
 
     func provider(_ provider: CXProvider, perform action: CXEndCallAction) {
         // User tapped "Decline/End call" in the incoming call view,
-        // or end call action was requested programmaticall.
+        // or end call action was requested programmatically.
         callManager?.completeCallInProgress(reportToSystem: false, reportToPeer: true)
         action.fulfill()
     }

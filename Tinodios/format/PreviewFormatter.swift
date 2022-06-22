@@ -118,8 +118,7 @@ class PreviewFormatter: AbstractFormatter {
         let incoming = data["incoming"]?.asBool() ?? false
         let duration = data["duration"]?.asInt() ?? 0
         let annotation = duration > 0 ? AbstractFormatter.millisToTime(millis: duration) : AbstractFormatter.callStatusText(incoming: incoming, event: state)
-        let icon = annotatedIcon(iconName: "phone", localizedAnnotation: annotation)
-        return FormatNode([icon])
+        return annotatedIcon(iconName: "phone", localizedAnnotation: annotation)
     }
 
     override func handleUnknown(content _: [FormatNode], using _: [String: JSONValue]?, draftyKey _: Int?) -> FormatNode {

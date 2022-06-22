@@ -623,10 +623,14 @@ class CallViewController: UIViewController {
                     if success {
                         DispatchQueue.main.async { self.setupCaptureSessionAndStartCall() }
                     } else {
+                        Cache.log.error("No permission to access microphone")
+                        UiUtils.showToast(message: NSLocalizedString("No permission to access microphone", comment: "Error message when call cannot be started due to missing microphone permission"))
                         DispatchQueue.main.async { self.handleCallClose() }
                     }
                 }
             } else {
+                Cache.log.error("No permission to access camera")
+                UiUtils.showToast(message: NSLocalizedString("No permission to access camera", comment: "Error message when call cannot be started due to missing camera permission"))
                 DispatchQueue.main.async { self.handleCallClose() }
             }
         }
@@ -787,6 +791,7 @@ extension CallViewController: TinodeVideoCallDelegate {
             return
         }
         guard self.webRTCClient.createPeerConnection() else {
+            Cache.log.error("CallVC.handleOfferMsg - createPeerConnection failed")
             self.handleCallClose()
             return
         }

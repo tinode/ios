@@ -51,7 +51,7 @@ class ChatListViewCell: UITableViewCell {
     public func fillFromTopic(topic: DefaultComTopic) {
         title.text = topic.pub?.fn ?? "Unknown or unnamed"
         title.sizeToFit()
-        if let msg = topic.latestMessage as? StoredMessage, msg.getSeq == topic.seq {
+        if let msg = topic.latestMessage as? StoredMessage {
             // If we have a latestMessage and its up to date.
             subtitle.attributedText = msg.attributedPreview(fitIn: subtitle.frame.size)
             if msg.from == Cache.tinode.myUid {
