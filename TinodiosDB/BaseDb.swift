@@ -47,7 +47,6 @@ public class BaseDb {
     // No direct access to the shared instance.
     private static var `default`: BaseDb?
     private static let accessQueue = DispatchQueue(label: BaseDb.kBundleId)
-    private let kDatabaseName = "basedb.sqlite3"
     var db: SQLite.Connection?
     private let pathToDatabase: String
     public var sqlStore: SqlStore?

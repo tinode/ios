@@ -2,7 +2,7 @@
 //  MessageDb.swift
 //  ios
 //
-//  Copyright © 2019 Tinode. All rights reserved.
+//  Copyright © 2019-2022 Tinode. All rights reserved.
 //
 
 import Foundation
@@ -96,49 +96,44 @@ public class MessageDb {
 
     @discardableResult
     private func insertRaw(topic: TopicProto, msg: StoredMessage, withEffectiveSeq effectiveSeqId: Int?) throws -> Int64 {
-        do {
-            guard let tdb = baseDb.topicDb else {
-                throw MessageDbError.dbError("no topicDb in messageDb insert")
-            }
-            guard let udb = baseDb.userDb else {
-                throw MessageDbError.dbError("no userDb in messageDb insert")
-            }
-            if (msg.userId ?? -1) <= 0 {
-                msg.userId = udb.getId(for: msg.from)
-            }
-            guard let topicId = msg.topicId, let userId = msg.userId, topicId >= 0, userId >= 0 else {
-                throw MessageDbError.dataError("Failed to insert row into MessageDb: topicId = \(String(describing: msg.topicId)), userId = \(String(describing: msg.userId))")
-            }
-            var status = BaseDb.Status.undefined
-            if let seq = msg.seq, seq > 0 {
-                status = .synced
-            } else {
-                msg.seq = tdb.getNextUnusedSeq(topic: topic)
-                status = (msg.dbStatus == nil || msg.dbStatus == BaseDb.Status.undefined) ? .queued : msg.dbStatus!
-            }
-            var setters = [Setter]()
-            setters.append(self.topicId <- topicId)
-            setters.append(self.userId <- userId)
-            setters.append(self.status <- status.rawValue)
-            setters.append(self.sender <- msg.from)
-            setters.append(self.ts <- msg.ts)
-            setters.append(self.seq <- msg.seq)
-            if let replaced = msg.replacesSeq {
-                setters.append(self.replSeq <- replaced)
-            }
-            if let eff = effectiveSeqId {
-                setters.append(self.effectiveSeq <- eff)
-            }
-            if let h = msg.head {
-                setters.append(self.head <- Tinode.serializeObject(h))
-            }
-            setters.append(self.content <- msg.content?.serialize())
-            msg.msgId = try db.run(self.table.insert(setters))
-            return msg.msgId
-        } catch {
-            BaseDb.log.error("MessageDb - insertRaw failed")
-            throw MessageDbError.dbError("Insertion failed - \(error)")
+        guard let tdb = baseDb.topicDb else {
+            throw MessageDbError.dbError("no topicDb in messageDb insert")
         }
+        guard let udb = baseDb.userDb else {
+            throw MessageDbError.dbError("no userDb in messageDb insert")
+        }
+        if (msg.userId ?? -1) <= 0 {
+            msg.userId = udb.getId(for: msg.from)
+        }
+        guard let topicId = msg.topicId, let userId = msg.userId, topicId >= 0, userId >= 0 else {
+            throw MessageDbError.dataError("Failed to insert row into MessageDb: topicId = \(String(describing: msg.topicId)), userId = \(String(describing: msg.userId))")
+        }
+        var status = BaseDb.Status.undefined
+        if let seq = msg.seq, seq > 0 {
+            status = .synced
+        } else {
+            msg.seq = tdb.getNextUnusedSeq(topic: topic)
+            status = (msg.dbStatus == nil || msg.dbStatus == BaseDb.Status.undefined) ? .queued : msg.dbStatus!
+        }
+        var setters = [Setter]()
+        setters.append(self.topicId <- topicId)
+        setters.append(self.userId <- userId)
+        setters.append(self.status <- status.rawValue)
+        setters.append(self.sender <- msg.from)
+        setters.append(self.ts <- msg.ts)
+        setters.append(self.seq <- msg.seq)
+        if let replaced = msg.replacesSeq {
+            setters.append(self.replSeq <- replaced)
+        }
+        if let effSeq = effectiveSeqId, effSeq > 0 {
+            setters.append(self.effectiveSeq <- effSeq)
+        }
+        if let h = msg.head {
+            setters.append(self.head <- Tinode.serializeObject(h))
+        }
+        setters.append(self.content <- msg.content?.serialize())
+        msg.msgId = try db.run(self.table.insert(setters))
+        return msg.msgId
     }
 
     private func getOriginalSeqFor(effectiveSeqId effSeq: Int, onTopic topicId: Int64) -> Int? {
@@ -149,8 +144,7 @@ public class MessageDb {
     }
 
     private func invalidateMessage(withSeq seqId: Int, onTopic topicId: Int64) throws {
-        let record = self.table.filter(self.topicId == topicId &&
-                                       self.seq == seqId)
+        let record = self.table.filter(self.topicId == topicId && self.seq == seqId)
         try self.db.run(record.update(self.effectiveSeq <- nil))
     }
 
@@ -481,11 +475,11 @@ public class MessageDb {
 
         let m2Id = Expression<Int64?>("id")
         let joinedTable = self.table.select(
-            self.table[*],
-            topics[topicDb.topic])
-        .join(.leftOuter, messages2,
-              on: self.table[self.topicId] == messages2[self.topicId] && self.table[self.seq] < messages2[self.seq])
-        .join(.leftOuter, topics, on: self.table[self.topicId] == topics[topicDb.id])
+                self.table[*],
+                topics[topicDb.topic])
+            .join(.leftOuter, messages2,
+                  on: self.table[self.topicId] == messages2[self.topicId] && self.table[self.effectiveSeq] < messages2[self.effectiveSeq])
+            .join(.leftOuter, topics, on: self.table[self.topicId] == topics[topicDb.id])
             .filter(self.table[self.delId] == nil && messages2[self.delId] == nil && messages2[m2Id] == nil)
         do {
             var messages = [StoredMessage]()
