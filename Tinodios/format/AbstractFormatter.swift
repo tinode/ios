@@ -201,7 +201,7 @@ class AbstractFormatter: DraftyFormatter {
         return result
     }
 
-    static func callStatus(incoming: Bool, event: String) -> String {
+    static func callStatusText(incoming: Bool, event: String) -> String {
         var comment: String
         if incoming {
             if event == "declined" {
@@ -216,5 +216,9 @@ class AbstractFormatter: DraftyFormatter {
         }
 
         return comment
+    }
+
+    static func callStatusIcon(incoming: Bool, success: Bool) -> UIImage? {
+        return (success ? UIImage(systemName: incoming ? "arrow.down.left" : "arrow.up.right") : incoming ? UIImage(systemName: "arrow.uturn.up")?.withHorizontallyFlippedOrientation() : UIImage(systemName: "arrow.uturn.up"))?.withRenderingMode(.alwaysTemplate)
     }
 }

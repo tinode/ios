@@ -66,7 +66,7 @@ class QuoteFormatter: PreviewFormatter {
         } else {
             annotation = NSLocalizedString("Attachment", comment: "Label shown next to an attachment")
         }
-        return PreviewFormatter.annotatedIcon(iconName: "paperclip", localizedAnnotation: annotation)
+        return annotatedIcon(iconName: "paperclip", localizedAnnotation: annotation)
     }
 
     override func handleMention(content nodes: [FormatNode], using data: [String: JSONValue]?) -> FormatNode {

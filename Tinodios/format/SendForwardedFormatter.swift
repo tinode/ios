@@ -22,7 +22,7 @@ class SendForwardedFormatter: QuoteFormatter {
     }
 
     func handleQuoteInsideQuote(_ nodes: [FormatNode]) -> FormatNode {
-        return FormatNode([PreviewFormatter.annotatedIcon(iconName: "text.quote"), FormatNode(" ")])
+        return FormatNode([annotatedIcon(iconName: "text.quote"), FormatNode(" ")])
     }
 
     override func handleQuote(_ nodes: [FormatNode]) -> FormatNode {

@@ -274,7 +274,7 @@ extension StoredMessage {
             guard let content = content else { return nil }
             if StoredMessage.fullFormatter == nil {
                 StoredMessage.fullFormatter = FullFormatter(defaultAttributes: [:])
-                StoredMessage.fullFormatter!.quoteFormatter = QuoteFormatter(defaultAttributes: [:])
+                StoredMessage.fullFormatter!.quoteFormatter = QuoteFormatter(defaultAttributes: attributes ?? [:])
             }
             cachedContent = StoredMessage.fullFormatter!.toAttributed(content, fitIn: size, attributes: attributes)
         } else {

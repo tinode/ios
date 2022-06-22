@@ -31,16 +31,24 @@ class PreviewFormatter: AbstractFormatter {
         return node
     }
 
-    static func annotatedIcon(iconName: String, localizedAnnotation: String? = nil) -> FormatNode {
+    func annotatedIcon(iconName: String, localizedAnnotation: String? = nil) -> FormatNode {
         let icon = NSTextAttachment()
         icon.image = (UIImage(systemName: iconName) ?? UIImage(named: iconName))?.withRenderingMode(.alwaysTemplate)
+        var aspectRatio: CGFloat = 1
+        if let size = icon.image?.size {
+            aspectRatio = size.width / size.height
+        }
         let baseFont = PreviewFormatter.kDefaultFont
-        icon.bounds = CGRect(origin: CGPoint(x: 0, y: -2), size: CGSize(width: baseFont.lineHeight * 0.8, height: baseFont.lineHeight * 0.8))
+        let height = baseFont.lineHeight * 0.8
+        icon.bounds = CGRect(origin: CGPoint(x: 0, y: -2), size: CGSize(width: height * aspectRatio, height: height))
 
-        let iconNode = FormatNode()
+        var iconNode = FormatNode()
         iconNode.preformattedAttachment(icon)
         if let annotationStr = localizedAnnotation {
-            return FormatNode([iconNode, FormatNode(" " + annotationStr)])
+            iconNode = FormatNode([iconNode, FormatNode(" " + annotationStr)])
+        }
+        if let fg = defaultAttrs[.foregroundColor] as? UIColor {
+            iconNode.style(cstyle: [.foregroundColor: fg])
         }
         return iconNode
     }
@@ -52,11 +60,11 @@ class PreviewFormatter: AbstractFormatter {
         } else {
             annotation = "-:--"
         }
-        return PreviewFormatter.annotatedIcon(iconName: "mic", localizedAnnotation: annotation)
+        return annotatedIcon(iconName: "mic", localizedAnnotation: annotation)
     }
 
     override func handleImage(using attr: [String: JSONValue]?, draftyKey _: Int?) -> FormatNode {
-        return PreviewFormatter.annotatedIcon(iconName: "image-50", localizedAnnotation: NSLocalizedString("Picture", comment: "Label shown next to an inline image"))
+        return annotatedIcon(iconName: "image-50", localizedAnnotation: NSLocalizedString("Picture", comment: "Label shown next to an inline image"))
     }
 
     override func handleAttachment(using attr: [String: JSONValue]?, draftyKey _: Int?) -> FormatNode {
@@ -69,11 +77,11 @@ class PreviewFormatter: AbstractFormatter {
             return FormatNode()
         }
 
-        return PreviewFormatter.annotatedIcon(iconName: "paperclip", localizedAnnotation: NSLocalizedString("Attachment", comment: "Label shown next to an attachment"))
+        return annotatedIcon(iconName: "paperclip", localizedAnnotation: NSLocalizedString("Attachment", comment: "Label shown next to an attachment"))
     }
 
     override func handleForm(_ nodes: [FormatNode]) -> FormatNode {
-        var result = [PreviewFormatter.annotatedIcon(iconName: "form-50", localizedAnnotation: NSLocalizedString("Form", comment: "Label shown next to a form in preview")), FormatNode(": ")]
+        var result = [annotatedIcon(iconName: "form-50", localizedAnnotation: NSLocalizedString("Form", comment: "Label shown next to a form in preview")), FormatNode(": ")]
         result.append(contentsOf: nodes)
         return FormatNode(result)
     }
@@ -105,15 +113,16 @@ class PreviewFormatter: AbstractFormatter {
         guard let data = data else {
             return handleUnknown(content: children, using: nil, draftyKey: nil)
         }
+
         let state = data["state"]?.asString() ?? ""
         let incoming = data["incoming"]?.asBool() ?? false
-        let attachment = Attachment(content: .call(!incoming, state, 0))
-        let node = FormatNode()
-        node.attachment(attachment)
-        return node
+        let duration = data["duration"]?.asInt() ?? 0
+        let annotation = duration > 0 ? AbstractFormatter.millisToTime(millis: duration) : AbstractFormatter.callStatusText(incoming: incoming, event: state)
+        let icon = annotatedIcon(iconName: "phone", localizedAnnotation: annotation)
+        return FormatNode([icon])
     }
 
     override func handleUnknown(content _: [FormatNode], using _: [String: JSONValue]?, draftyKey _: Int?) -> FormatNode {
-        return PreviewFormatter.annotatedIcon(iconName: "puzzlepiece.extension", localizedAnnotation: NSLocalizedString("Unsupported", comment: "Label shown next to an unsupported Drafty format element"))
+        return annotatedIcon(iconName: "puzzlepiece.extension", localizedAnnotation: NSLocalizedString("Unsupported", comment: "Label shown next to an unsupported Drafty format element"))
     }
 }
