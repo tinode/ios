@@ -659,6 +659,7 @@ extension MessageViewController: MessageDisplayLogic {
             }
             if !refresh.isEmpty {
                 collectionView.performBatchUpdates({ () -> Void in
+                    self.messages = newData
                     self.collectionView.reloadItems(at: refresh.map { IndexPath(item: $0, section: 0) })
                     self.collectionView.layoutIfNeeded()
                     if scrollToMostRecentMessage {

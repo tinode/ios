@@ -37,6 +37,19 @@ class CameraManager: NSObject {
             captureSession.addInput(videoInput)
         }
 
+        // Cap video resolution resolution (best effort).
+        // Otherwise, remote video stream may freeze
+        // https://stackoverflow.com/questions/55841076/webrtc-remote-video-freeze-after-few-seconds
+        if captureSession.canSetSessionPreset(.iFrame1280x720) {
+            captureSession.sessionPreset = .iFrame1280x720
+        } else if captureSession.canSetSessionPreset(.iFrame960x540) {
+            captureSession.sessionPreset = .iFrame960x540
+        } else if captureSession.canSetSessionPreset(.vga640x480) {
+            captureSession.sessionPreset = .vga640x480
+        } else {
+            Cache.log.error("CallVC - Could not scale down video resolution")
+        }
+
         // Add a video data output
         if captureSession.canAddOutput(videoDataOutput) {
             captureSession.addOutput(videoDataOutput)
@@ -810,7 +823,13 @@ extension CallViewController: TinodeVideoCallDelegate {
             self.handleCallClose()
             return
         }
-        self.webRTCClient.localPeer?.add(candidate)
+        self.webRTCClient.localPeer?.add(candidate) { err in
+            if let err = err {
+                Cache.log.error("CallVC.handleIceCandidateMsg - could not add ICE candidate: %@", err.localizedDescription)
+                self.handleCallClose()
+                return
+            }
+        }
     }
     
     func handleRemoteHangup() {
