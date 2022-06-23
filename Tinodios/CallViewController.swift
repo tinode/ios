@@ -448,8 +448,10 @@ extension RTCIceCandidate {
 /// CallViewController
 class CallViewController: UIViewController {
     private enum Constants {
-        static let kToggleCameraIcon = "video.fill"
-        static let kToggleMicIcon = "mic.fill"
+        static let kToggleCameraIcon = "vc"
+        static let kToggleMicIcon = "mic"
+        static let kDialingAnimationDuration: Double = 1.5
+        static let kDialingAnimationColor = UIColor(red: 33.0/255.0, green: 150.0/255.0, blue: 243.0/255.0, alpha: 1).cgColor
     }
 
     enum CallDirection {
@@ -471,8 +473,11 @@ class CallViewController: UIViewController {
     @IBOutlet weak var peerNameLabel: PaddedLabel!
     @IBOutlet weak var peerAvatarImageView: RoundImageView!
 
-    private static func actionButtonIcon(iconName: String) -> UIImage? {
-        return UIImage(systemName: iconName, withConfiguration: UIImage.SymbolConfiguration(pointSize: 16, weight: .light))
+    @IBOutlet weak var dialingAnimationContainer: UIView!
+
+    private static func actionButtonIcon(iconName: String, on: Bool) -> UIImage? {
+        let name = "\(iconName)\(on ? "" : ".slash").fill"
+        return UIImage(systemName: name, withConfiguration: UIImage.SymbolConfiguration(pointSize: 16, weight: .regular))
     }
 
     weak var topic: DefaultComTopic?
@@ -533,20 +538,14 @@ class CallViewController: UIViewController {
     }
 
     @IBAction func didToggleMic(_ sender: Any) {
-        var iconName = Constants.kToggleMicIcon
-        if !self.webRTCClient.toggleAudio() {
-            iconName += ".slash"
-        }
-        let img = CallViewController.actionButtonIcon(iconName: iconName)
+        //let img = CallViewController.actionButtonIcon(iconName: Constants.kToggleMicIcon, on: self.webRTCClient.toggleAudio())
+        let img = UIImage(systemName: self.webRTCClient.toggleAudio() ? "mic.fill" : "mic.slash.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: 16, weight: .regular))
         self.micToggleButton.setImage(img, for: .normal)
     }
 
     @IBAction func didToggleCamera(_ sender: Any) {
-        var iconName = Constants.kToggleCameraIcon
-        if !self.webRTCClient.toggleVideo() {
-            iconName += ".slash"
-        }
-        let img = CallViewController.actionButtonIcon(iconName: iconName)
+        // let img = CallViewController.actionButtonIcon(iconName: Constants.kToggleCameraIcon, on: self.webRTCClient.toggleVideo())
+        let img = UIImage(named: self.webRTCClient.toggleVideo() ? "vc.fill" : "vc.slash.fill", in: nil, with: UIImage.SymbolConfiguration(pointSize: 16, weight: .regular))
         self.videoToggleButton.setImage(img, for: .normal)
     }
 
@@ -690,6 +689,7 @@ class CallViewController: UIViewController {
 
     func handleCallClose() {
         playSoundEffect(nil)
+
         if self.callSeqId > 0 {
             self.topic?.videoCall(event: "hang-up", seq: self.callSeqId)
             Cache.callManager.completeCallInProgress(reportToSystem: true, reportToPeer: false)
@@ -749,6 +749,37 @@ class CallViewController: UIViewController {
             Cache.log.error("CallVC - Unable to play sound effect '%@': %@", effect, error.localizedDescription)
         }
     }
+
+    private func dialingAnimation(on: Bool) {
+        if on {
+            self.addDialingRipple(offset: 10, opacity: 0.4)
+            self.addDialingRipple(offset: 30, opacity: 0.2)
+            self.addDialingRipple(offset: 60, opacity: 0.1)
+        } else {
+            self.dialingAnimationContainer.layer.sublayers = nil
+        }
+    }
+
+    private func addDialingRipple(offset: CGFloat, opacity: Float) {
+        let diameter: CGFloat = dialingAnimationContainer.bounds.width
+
+        let layerRipple = CAShapeLayer()
+        layerRipple.frame = dialingAnimationContainer.bounds
+        layerRipple.path = UIBezierPath(ovalIn: CGRect(origin: .zero, size: dialingAnimationContainer.frame.size)).cgPath
+        layerRipple.fillColor = Constants.kDialingAnimationColor
+        layerRipple.opacity = opacity
+
+        dialingAnimationContainer.layer.addSublayer(layerRipple)
+
+        let animation = CABasicAnimation(keyPath: "transform.scale")
+        animation.duration = Constants.kDialingAnimationDuration
+        animation.timingFunction = CAMediaTimingFunction(name: .linear)
+        animation.repeatCount = .infinity
+        animation.fromValue = CGAffineTransform.identity
+        animation.toValue = (diameter + offset) / diameter
+
+        layerRipple.add(animation, forKey: nil)
+    }
 }
 
 extension CallViewController {
@@ -806,8 +837,10 @@ extension CallViewController: WebRTCClientDelegate {
 extension CallViewController: TinodeVideoCallDelegate {
     func handleAcceptedMsg() {
         self.playSoundEffect(nil)
+
         DispatchQueue.main.async {
-            // Hide peer name & avatar.
+            // Stop animation, hide peer name & avatar.
+            self.dialingAnimation(on: false)
             self.peerNameLabel.alpha = 0
             self.peerAvatarImageView.alpha = 0
         }
@@ -871,6 +904,9 @@ extension CallViewController: TinodeVideoCallDelegate {
     }
 
     func handleRinging() {
+        DispatchQueue.main.async {
+            self.dialingAnimation(on: true)
+        }
         self.playSoundEffect("call-out", loop: true)
     }
 }
