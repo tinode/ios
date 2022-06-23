@@ -390,8 +390,12 @@ class FormatNode: CustomStringConvertible {
         // Large phone icon.
         let icon = NSTextAttachment()
         icon.image = UIImage(systemName: "phone")?.withRenderingMode(.alwaysTemplate)
+        var aspectRatio: CGFloat = 1
+        if let size = icon.image?.size {
+            aspectRatio = size.width / size.height
+        }
         let baseFont = attributes[.font] as! UIFont
-        icon.bounds = CGRect(origin: CGPoint(x: 0, y: baseFont.capHeight - Constants.kCallIconSize), size: CGSize(width: Constants.kCallIconSize, height: Constants.kCallIconSize))
+        icon.bounds = CGRect(origin: CGPoint(x: 0, y: baseFont.capHeight - Constants.kCallIconSize), size: CGSize(width: Constants.kCallIconSize * aspectRatio, height: Constants.kCallIconSize))
 
         attributed.append(NSAttributedString(attachment: icon))
         attributed.addAttributes(attributes, range: NSRange(location: 0, length: attributed.length))
@@ -409,7 +413,11 @@ class FormatNode: CustomStringConvertible {
         let success = !["disconnected", "missed", "declined"].contains(callState)
         let arrowIcon = NSTextAttachment()
         arrowIcon.image = AbstractFormatter.callStatusIcon(incoming: !isOutgoing, success: success)
-        arrowIcon.bounds = CGRect(origin: CGPoint(x: 0, y: -2), size: CGSize(width: baseFont.lineHeight * 0.7, height: baseFont.lineHeight * 0.7))
+        aspectRatio = 1
+        if let size = arrowIcon.image?.size {
+            aspectRatio = size.width / size.height
+        }
+        arrowIcon.bounds = CGRect(origin: CGPoint(x: 0, y: -2), size: CGSize(width: baseFont.lineHeight * 0.7 * aspectRatio, height: baseFont.lineHeight * 0.7))
         arrow.append(NSAttributedString(attachment: arrowIcon))
         arrow.addAttribute(.foregroundColor, value: success ? Constants.kSuccessfulCallArrowColor : Constants.kFailedCallArrowColor, range: NSRange(location: 0, length: arrow.length))
 
