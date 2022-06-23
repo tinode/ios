@@ -115,6 +115,7 @@ protocol TinodeVideoCallDelegate: AnyObject {
     func handleAnswerMsg(with payload: JSONValue?)
     func handleIceCandidateMsg(with payload: JSONValue?)
     func handleRemoteHangup()
+    func handleRinging()
 }
 
 class WebRTCClient: NSObject {
@@ -487,6 +488,9 @@ class CallViewController: UIViewController {
     // If true, the client has received a remote SDP from the peer and has sent a local SDP to the peer.
     var callInitialSetupComplete = false
 
+    // For playing sound effects.
+    var audioPlayer: AVAudioPlayer?
+
     class InfoListener: UiTinodeEventListener {
         private weak var delegate: TinodeVideoCallDelegate?
         init(delegateEventsTo callDelegate: TinodeVideoCallDelegate, connected: Bool) {
@@ -507,6 +511,8 @@ class CallViewController: UIViewController {
                 self.delegate?.handleIceCandidateMsg(with: info.payload)
             case "hang-up":
                 self.delegate?.handleRemoteHangup()
+            case "ringing":
+                self.delegate?.handleRinging()
             default:
                 print(info)
             }
@@ -683,6 +689,7 @@ class CallViewController: UIViewController {
     }
 
     func handleCallClose() {
+        playSoundEffect(nil)
         if self.callSeqId > 0 {
             self.topic?.videoCall(event: "hang-up", seq: self.callSeqId)
             Cache.callManager.completeCallInProgress(reportToSystem: true, reportToPeer: false)
@@ -697,6 +704,7 @@ class CallViewController: UIViewController {
     func handleCallInvite() {
         switch self.callDirection {
         case .outgoing:
+            playSoundEffect("dialing")
             // Send out a call invitation to the peer.
             self.topic?.publish(content: Drafty.videoCall(),
                                 withExtraHeaders:["webrtc": .string("started")]).then(onSuccess: { msg in
@@ -715,6 +723,30 @@ class CallViewController: UIViewController {
             self.topic?.videoCall(event: "accept", seq: self.callSeqId)
         case .none:
             Cache.log.error("CallVC - Invalid call direction in handleCallInvite()")
+        }
+    }
+
+    private func playSoundEffect(_ effect: String?, loop: Bool = false) {
+        audioPlayer?.stop()
+
+        guard let effect = effect else {
+            return
+        }
+
+        let path = Bundle.main.path(forResource: "\(effect).m4a", ofType: nil)!
+        let url = URL(fileURLWithPath: path)
+
+        do {
+            audioPlayer = try AVAudioPlayer(contentsOf: url)
+            if loop {
+                // Play continously.
+                audioPlayer?.numberOfLoops = -1
+            } else {
+                audioPlayer?.numberOfLoops = 0
+            }
+            audioPlayer?.play()
+        } catch {
+            Cache.log.error("CallVC - Unable to play sound effect '%@': %@", effect, error.localizedDescription)
         }
     }
 }
@@ -773,6 +805,7 @@ extension CallViewController: WebRTCClientDelegate {
 
 extension CallViewController: TinodeVideoCallDelegate {
     func handleAcceptedMsg() {
+        self.playSoundEffect(nil)
         DispatchQueue.main.async {
             // Hide peer name & avatar.
             self.peerNameLabel.alpha = 0
@@ -833,6 +866,11 @@ extension CallViewController: TinodeVideoCallDelegate {
     }
     
     func handleRemoteHangup() {
+        self.playSoundEffect("call-end")
         self.handleCallClose()
+    }
+
+    func handleRinging() {
+        self.playSoundEffect("call-out", loop: true)
     }
 }
