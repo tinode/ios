@@ -81,6 +81,9 @@
 		B03066452805FAD300497EF4 /* MultiImageTextAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = B03066442805FAD300497EF4 /* MultiImageTextAttachment.swift */; };
 		B031BE552263075E004160AE /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = B031BE542263075E004160AE /* Settings.bundle */; };
 		B03B51342803AF26006C714B /* WaveTextAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = B03B51332803AF26006C714B /* WaveTextAttachment.swift */; };
+		B052ABCD2863F7E700A7D550 /* call-end.m4a in Resources */ = {isa = PBXBuildFile; fileRef = B052ABCC2863F7E700A7D550 /* call-end.m4a */; };
+		B052ABCF2863F81500A7D550 /* call-out.m4a in Resources */ = {isa = PBXBuildFile; fileRef = B052ABCE2863F81500A7D550 /* call-out.m4a */; };
+		B052ABD12863F82000A7D550 /* dialing.m4a in Resources */ = {isa = PBXBuildFile; fileRef = B052ABD02863F82000A7D550 /* dialing.m4a */; };
 		B05ACEB322FDAB5200276713 /* ResetPasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B05ACEB222FDAB5200276713 /* ResetPasswordViewController.swift */; };
 		B079062523EEA0C90019ED75 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B079062423EEA0C90019ED75 /* GoogleService-Info.plist */; };
 		B091BA442808ED6000317CDC /* MessageCell+VLCMediaPlayerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B091BA432808ED6000317CDC /* MessageCell+VLCMediaPlayerDelegate.swift */; };
@@ -244,6 +247,9 @@
 		B03066442805FAD300497EF4 /* MultiImageTextAttachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiImageTextAttachment.swift; sourceTree = "<group>"; };
 		B031BE542263075E004160AE /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		B03B51332803AF26006C714B /* WaveTextAttachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaveTextAttachment.swift; sourceTree = "<group>"; };
+		B052ABCC2863F7E700A7D550 /* call-end.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = "call-end.m4a"; sourceTree = "<group>"; };
+		B052ABCE2863F81500A7D550 /* call-out.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = "call-out.m4a"; sourceTree = "<group>"; };
+		B052ABD02863F82000A7D550 /* dialing.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = dialing.m4a; sourceTree = "<group>"; };
 		B05ACEB222FDAB5200276713 /* ResetPasswordViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResetPasswordViewController.swift; sourceTree = "<group>"; };
 		B079062423EEA0C90019ED75 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		B091BA432808ED6000317CDC /* MessageCell+VLCMediaPlayerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MessageCell+VLCMediaPlayerDelegate.swift"; sourceTree = "<group>"; };
@@ -337,6 +343,7 @@
 		0A0380CB21B3CC8100A3FA0E = {
 			isa = PBXGroup;
 			children = (
+				B052ABD22863F83500A7D550 /* audio */,
 				B0CF83E2244E074A00E79D22 /* Localizable.strings */,
 				B079062423EEA0C90019ED75 /* GoogleService-Info.plist */,
 				B01120B72357469300EFCB1F /* devel.xcconfig */,
@@ -494,6 +501,16 @@
 			path = format;
 			sourceTree = "<group>";
 		};
+		B052ABD22863F83500A7D550 /* audio */ = {
+			isa = PBXGroup;
+			children = (
+				B052ABCE2863F81500A7D550 /* call-out.m4a */,
+				B052ABCC2863F7E700A7D550 /* call-end.m4a */,
+				B052ABD02863F82000A7D550 /* dialing.m4a */,
+			);
+			name = audio;
+			sourceTree = "<group>";
+		};
 		B0C496B022787C020084FA0D /* widgets */ = {
 			isa = PBXGroup;
 			children = (
@@ -635,10 +652,13 @@
 				0A3AE3B7274CAD5800CB673E /* ForwardMessageBar.xib in Resources */,
 				B0133AE323D1AADF00C813CA /* SendImageBar.xib in Resources */,
 				B0DF032D2282EE8A000F9492 /* SendMessageBar.xib in Resources */,
+				B052ABCF2863F81500A7D550 /* call-out.m4a in Resources */,
 				B0BE302727B831D400B04631 /* MultilineAlertView.xib in Resources */,
 				0A0380E221B3CC8200A3FA0E /* LaunchScreen.storyboard in Resources */,
+				B052ABCD2863F7E700A7D550 /* call-end.m4a in Resources */,
 				B012599D229CEBE600688FCE /* SelectedMemberViewCell.xib in Resources */,
 				0A6AC322229FAA130025A4EC /* PermissionsEditView.xib in Resources */,
+				B052ABD12863F82000A7D550 /* dialing.m4a in Resources */,
 				0A0380DF21B3CC8200A3FA0E /* Assets.xcassets in Resources */,
 				0A0380DD21B3CC8100A3FA0E /* Main.storyboard in Resources */,
 				B026F243257C59CA003BA14B /* ProgressView.xib in Resources */,
