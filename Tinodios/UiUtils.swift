@@ -1028,6 +1028,16 @@ extension UIButton {
 
         self.layer.addSublayer(border)
     }
+
+    public func addBlurEffect() {
+        let blur = UIVisualEffectView(effect: UIBlurEffect(style: .light))
+        blur.frame = self.bounds
+        blur.isUserInteractionEnabled = false
+        self.insertSubview(blur, at: 0)
+        if let imageView = self.imageView {
+            self.bringSubviewToFront(imageView)
+        }
+    }
 }
 
 extension UIView {

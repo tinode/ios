@@ -86,7 +86,7 @@ class FormatNode: CustomStringConvertible {
         /// URL and Button text color
         static let kLinkColor = UIColor.link //(red: 0, green: 122/255, blue: 1, alpha: 1)
         static let kQuoteTextColorAdj = 0.7 // Adjustment to font alpha in quote to make it less prominent.
-        static let kPlayButtonColorAdj = 0.6 // Adjustment to alpha for showing Play/Pause buttons.
+        static let kSecondaryColorAlpha = 0.6 // Adjustment to alpha for showing Play/Pause buttons.
 
         // Successful video call marker (↗, ↙) color.
         static let kSuccessfulCallArrowColor = UIColor(fromHexCode: 0xFF006400)
@@ -242,6 +242,8 @@ class FormatNode: CustomStringConvertible {
             attributed.append(NSAttributedString(attachment: wrapper))
         }
 
+        let fg = attributes[.foregroundColor] as? UIColor
+
         // Append document's file name.
         let originalFileName = attachment.name ?? "tinode_file_attachment"
         var fname = originalFileName
@@ -252,7 +254,7 @@ class FormatNode: CustomStringConvertible {
             fname = fname.prefix(visibleLen) + "…" + fname.suffix(visibleLen)
         }
         attributed.append(NSAttributedString(string: " "))
-        attributed.append(NSAttributedString(string: fname, attributes: [NSAttributedString.Key.font: UIFont(name: "Courier", size: baseFont.pointSize)!]))
+        attributed.append(NSAttributedString(string: fname, attributes: [.font: UIFont(name: "Courier", size: baseFont.pointSize)!, .foregroundColor: fg ?? UIColor.black]))
 
         // PDF Document · 2.0MB
         // \u{2009} because iOS is buggy and bugs go unfixed for years.
@@ -271,8 +273,7 @@ class FormatNode: CustomStringConvertible {
         paragraph.firstLineHeadIndent = Constants.kAttachmentIconSize.width + baseFont.capHeight * 0.25
         paragraph.lineSpacing = 0
         paragraph.lineHeightMultiple = 0.25
-        second.addAttributes([NSAttributedString.Key.paragraphStyle: paragraph, NSAttributedString.Key.foregroundColor: UIColor.gray
-        ], range: NSRange(location: 0, length: second.length))
+        second.addAttributes([NSAttributedString.Key.paragraphStyle: paragraph, .foregroundColor: fg?.withAlphaComponent(Constants.kSecondaryColorAlpha) ?? UIColor.gray], range: NSRange(location: 0, length: second.length))
 
         second.endEditing()
         attributed.append(second)
@@ -286,7 +287,7 @@ class FormatNode: CustomStringConvertible {
 
             // Add 'download file' icon
             let icon = NSTextAttachment()
-            icon.image = UIImage(named: "download")?.withRenderingMode(.alwaysTemplate)
+            icon.image = UIImage(systemName: "square.and.arrow.down")?.withRenderingMode(.alwaysTemplate)
             icon.bounds = CGRect(origin: CGPoint(x: 0, y: -2), size: CGSize(width: baseFont.lineHeight * 0.8, height: baseFont.lineHeight * 0.8))
             second.append(NSAttributedString(attachment: icon))
 
@@ -325,7 +326,7 @@ class FormatNode: CustomStringConvertible {
 
         var attrs = attributes
         if let fg = attributes[.foregroundColor] as? UIColor {
-            attrs[.foregroundColor] = fg.withAlphaComponent(Constants.kPlayButtonColorAdj)
+            attrs[.foregroundColor] = fg.withAlphaComponent(Constants.kSecondaryColorAlpha)
         }
 
         // Play icon.

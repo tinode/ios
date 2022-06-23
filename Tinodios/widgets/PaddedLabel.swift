@@ -2,7 +2,7 @@
 //  PaddedLabel.swift
 //  Tinodios
 //
-//  Copyright © 2019 Tinode. All rights reserved.
+//  Copyright © 2019-2022 Tinode. All rights reserved.
 //
 
 import UIKit
@@ -27,11 +27,13 @@ public class PaddedLabel: UILabel {
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         updateInsets()
+        updateCornerRadius()
     }
 
     override init(frame: CGRect) {
         super.init(frame: frame)
         updateInsets()
+        updateCornerRadius()
     }
 
     private func updateInsets() {
@@ -39,16 +41,28 @@ public class PaddedLabel: UILabel {
     }
 
     private func updateCornerRadius() {
+        layer.masksToBounds = true
+        clipsToBounds = true
         layer.cornerRadius = cornerRadius
-        setNeedsDisplay()
     }
 
     public var textInsets: UIEdgeInsets = .zero {
         didSet { setNeedsDisplay() }
     }
 
+    override public var intrinsicContentSize: CGSize {
+        let size = super.intrinsicContentSize
+        return CGSize(width: size.width + leftInset + rightInset, height: size.height + topInset + bottomInset)
+    }
+
     override public func drawText(in rect: CGRect) {
-        let insetRect = rect.inset(by: textInsets)
-        super.drawText(in: insetRect)
+        super.drawText(in: rect.inset(by: textInsets))
+    }
+
+    override public var bounds: CGRect {
+        didSet {
+            // ensures this works within stack views if multi-line
+            preferredMaxLayoutWidth = bounds.width - (leftInset + rightInset)
+        }
     }
 }
