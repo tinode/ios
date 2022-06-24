@@ -443,6 +443,24 @@ class FormatNode: CustomStringConvertible {
         return attributed
     }
 
+    private func composeBody(defaultText: String, defaultAttrs attributes: [NSAttributedString.Key: Any], fontTraits: UIFontDescriptor.SymbolicTraits?, maxSize size: CGSize) -> NSAttributedString {
+        let body = NSMutableAttributedString()
+        body.beginEditing()
+
+        if let text = text {
+            body.append(FormatNode.textToAttributed(text, defaultAttrs: attributes, fontTraits: fontTraits))
+        } else if let children = children {
+            for child in children {
+                body.append(try! child.toAttributed(withAttributes: attributes, fontTraits: fontTraits, fitIn: size))
+            }
+        } else {
+            body.append(NSAttributedString(string: defaultText, attributes: attributes))
+        }
+
+        body.endEditing()
+        return body
+    }
+
     /// Create custom layout for attachments.
     private func attachmentToAttributed(_ attachment: Attachment, defaultAttrs attributes: [NSAttributedString.Key: Any], fontTraits: UIFontDescriptor.SymbolicTraits?, maxSize size: CGSize) -> NSAttributedString {
         switch attachment.content {
@@ -496,36 +514,16 @@ class FormatNode: CustomStringConvertible {
 
             return NSAttributedString(attachment: wrapper)
 
-        case .quote, .button:
-            let isButton = attachment.content == .button
-            let faceText = NSMutableAttributedString()
-            var entity: String
+        case .button:
             // Change color of text from default to link color.
             var attrs = attributes
+            attrs[.foregroundColor] = Constants.kLinkColor
+            let entity = NSLocalizedString("button", comment: "Text written on button face when all else fails.")
+            let faceText = composeBody(defaultText: entity, defaultAttrs: attrs, fontTraits: fontTraits, maxSize: size)
+            return NSAttributedString(attachment: ButtonAttachment(face: faceText, data: URL(string: attachment.ref!)))
 
-            if isButton {
-                attrs[.foregroundColor] = Constants.kLinkColor
-                entity = NSLocalizedString("button", comment: "Text written on button face when all else fails.")
-            } else {
-                if let fg = attributes[.foregroundColor] as? UIColor {
-                    attrs[.foregroundColor] = fg.withAlphaComponent(Constants.kQuoteTextColorAdj)
-                }
-                // Quote: just display nothing.
-                entity = " "
-            }
-
-            if let text = text {
-                faceText.append(FormatNode.textToAttributed(text, defaultAttrs: attrs, fontTraits: fontTraits))
-            } else if let children = children {
-                for child in children {
-                    faceText.append(try! child.toAttributed(withAttributes: attrs, fontTraits: fontTraits, fitIn: size))
-                }
-            } else {
-                faceText.append(NSAttributedString(string: entity, attributes: attrs))
-            }
-            if isButton {
-                return NSAttributedString(attachment: ButtonAttachment(face: faceText, data: URL(string: attachment.ref!)))
-            }
+        case .quote:
+            let faceText = composeBody(defaultText: " ", defaultAttrs: attributes, fontTraits: fontTraits, maxSize: size)
             return NSAttributedString(attachment: QuotedAttachment(quotedText: faceText, fitIn: size, fullWidth: attachment.fullWidth ?? false))
 
         case .call(let isOutgoing, let callState, let callDuration):
@@ -546,15 +544,7 @@ class FormatNode: CustomStringConvertible {
             attributed.append(NSAttributedString(attachment: icon))
             attributed.append(NSAttributedString(string: " "))
 
-            if let text = text {
-                attributed.append(FormatNode.textToAttributed(text, defaultAttrs: attributes, fontTraits: fontTraits))
-            } else if let children = children {
-                for child in children {
-                    attributed.append(try! child.toAttributed(withAttributes: attributes, fontTraits: fontTraits, fitIn: size))
-                }
-            } else {
-                attributed.append(NSAttributedString(string: NSLocalizedString("Unsupported", comment: "Unsupported (unknown) Drafty tag"), attributes: attributes))
-            }
+            attributed.append(composeBody(defaultText: NSLocalizedString("Unsupported", comment: "Unsupported (unknown) Drafty tag"), defaultAttrs: attributes, fontTraits: fontTraits, maxSize: size))
 
             attributed.endEditing()
             return attributed

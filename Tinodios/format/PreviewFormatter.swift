@@ -17,6 +17,10 @@ class PreviewFormatter: AbstractFormatter {
         super.init(defaultAttributes: attrs, defaultFont: PreviewFormatter.kDefaultFont)
     }
 
+    override init(defaultAttributes attrs: [NSAttributedString.Key : Any], defaultFont font: UIFont) {
+        super.init(defaultAttributes: attrs, defaultFont: font)
+    }
+
     override func handleLineBreak() -> FormatNode {
         return FormatNode(" ")
     }

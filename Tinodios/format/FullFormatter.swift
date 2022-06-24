@@ -21,6 +21,7 @@ class FullFormatter: AbstractFormatter {
 
     init(defaultAttributes attrs: [NSAttributedString.Key: Any]) {
         super.init(defaultAttributes: attrs, defaultFont: Constants.kDefaultFont)
+        self.quoteFormatter = QuoteFormatter(defaultAttributes: attrs, defaultFont: Constants.kDefaultFont)
     }
 
     override func apply(type: String?, data: [String : JSONValue]?, key: Int?, content: [FormattedString], stack: [String]?) -> FormattedString {

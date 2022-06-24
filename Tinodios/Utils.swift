@@ -264,19 +264,14 @@ extension UIFont {
 }
 
 extension StoredMessage {
-    private static var fullFormatter: FullFormatter?
-    private static var previewFormatter: PreviewFormatter?
+    static var previewFormatter: AbstractFormatter?
 
     /// Generate and cache NSAttributedString representation of Drafty content.
     func attributedContent(fitIn size: CGSize, withDefaultAttributes attributes: [NSAttributedString.Key: Any]? = nil) -> NSAttributedString? {
         guard cachedContent == nil else { return cachedContent }
         if !isDeleted {
             guard let content = content else { return nil }
-            if StoredMessage.fullFormatter == nil {
-                StoredMessage.fullFormatter = FullFormatter(defaultAttributes: [:])
-                StoredMessage.fullFormatter!.quoteFormatter = QuoteFormatter(defaultAttributes: [:])
-            }
-            cachedContent = StoredMessage.fullFormatter!.toAttributed(content, fitIn: size, attributes: attributes)
+            cachedContent = FullFormatter(defaultAttributes: attributes ?? [:]).toAttributed(content, fitIn: size)
         } else {
             cachedContent = StoredMessage.contentDeletedMessage(withAttributes: attributes)
         }
@@ -292,7 +287,7 @@ extension StoredMessage {
                 StoredMessage.previewFormatter = PreviewFormatter(defaultAttributes: [:])
             }
             content = content.preview(previewLen: UiUtils.kPreviewLength)
-            cachedPreview = StoredMessage.previewFormatter!.toAttributed(content, fitIn: size, attributes: attributes)
+            cachedPreview = StoredMessage.previewFormatter!.toAttributed(content, fitIn: size)
         } else {
             cachedPreview = StoredMessage.contentDeletedMessage(withAttributes: attributes)
         }

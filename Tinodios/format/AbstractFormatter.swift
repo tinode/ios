@@ -172,16 +172,13 @@ class AbstractFormatter: DraftyFormatter {
     /// - Parameters:
     ///    - content: Drafty object to convert
     ///    - fitIn: maximum size of attached images.
-    public func toAttributed(_ content: Drafty, fitIn maxSize: CGSize, attributes: [NSAttributedString.Key: Any]? = nil) -> NSAttributedString {
-        // Merge custom attributes with default using custom in case of a conflict.
-        let allAttribs = self.defaultAttrs.merging(attributes ?? [:]) { $1 }
-
+    public func toAttributed(_ content: Drafty, fitIn maxSize: CGSize) -> NSAttributedString {
         if content.isPlain {
-            return NSMutableAttributedString(string: content.string, attributes: allAttribs)
+            return NSMutableAttributedString(string: content.string, attributes: self.defaultAttrs)
         }
 
         let formatTree: FormatNode = content.format(formatWith: self, resultType: FormatNode.self) ?? FormatNode()
-        return (try? formatTree.toAttributed(withAttributes: allAttribs, fontTraits: nil, fitIn: maxSize)) ?? NSAttributedString()
+        return (try? formatTree.toAttributed(withAttributes: self.defaultAttrs, fontTraits: nil, fitIn: maxSize)) ?? NSAttributedString()
     }
 
     // Convert milliseconds to '00:00' format.

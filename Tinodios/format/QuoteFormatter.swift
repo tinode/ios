@@ -10,6 +10,26 @@ import UIKit
 
 // Formatting of text inside a blockquote.
 class QuoteFormatter: PreviewFormatter {
+    private enum Constants {
+        static let kSecondaryColorAlpha: CGFloat = 0.8
+    }
+
+    override init(defaultAttributes attrs: [NSAttributedString.Key: Any]) {
+        var attributes = attrs
+        if let fg = attrs[.foregroundColor] as? UIColor {
+            attributes[.foregroundColor] = fg.withAlphaComponent(Constants.kSecondaryColorAlpha)
+        }
+        super.init(defaultAttributes: attributes)
+    }
+
+    override init(defaultAttributes attrs: [NSAttributedString.Key: Any], defaultFont font: UIFont) {
+        var attributes = attrs
+        if let fg = attrs[.foregroundColor] as? UIColor {
+            attributes[.foregroundColor] = fg.withAlphaComponent(Constants.kSecondaryColorAlpha)
+        }
+        super.init(defaultAttributes: attributes, defaultFont: font)
+    }
+
     override func handleLineBreak() -> FormatNode {
         return FormatNode("\n")
     }
