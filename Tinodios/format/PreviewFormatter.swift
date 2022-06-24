@@ -37,7 +37,7 @@ class PreviewFormatter: AbstractFormatter {
 
     func annotatedIcon(iconName: String, localizedAnnotation: String? = nil) -> FormatNode {
         let icon = NSTextAttachment()
-        icon.image = (UIImage(systemName: iconName) ?? UIImage(named: iconName))?.withRenderingMode(.alwaysTemplate)
+        icon.image = (UIImage(systemName: iconName, withConfiguration: UIImage.SymbolConfiguration(weight: .semibold)) ?? UIImage(named: iconName))?.withRenderingMode(.alwaysTemplate)
         var aspectRatio: CGFloat = 1
         if let size = icon.image?.size {
             aspectRatio = size.width / size.height
@@ -68,7 +68,7 @@ class PreviewFormatter: AbstractFormatter {
     }
 
     override func handleImage(using attr: [String: JSONValue]?, draftyKey _: Int?) -> FormatNode {
-        return annotatedIcon(iconName: "image-50", localizedAnnotation: NSLocalizedString("Picture", comment: "Label shown next to an inline image"))
+        return annotatedIcon(iconName: "photo", localizedAnnotation: NSLocalizedString("Picture", comment: "Label shown next to an inline image"))
     }
 
     override func handleAttachment(using attr: [String: JSONValue]?, draftyKey _: Int?) -> FormatNode {
@@ -85,7 +85,7 @@ class PreviewFormatter: AbstractFormatter {
     }
 
     override func handleForm(_ nodes: [FormatNode]) -> FormatNode {
-        var result = [annotatedIcon(iconName: "form-50", localizedAnnotation: NSLocalizedString("Form", comment: "Label shown next to a form in preview")), FormatNode(": ")]
+        var result = [annotatedIcon(iconName: "rectangle.3.group", localizedAnnotation: NSLocalizedString("Form", comment: "Label shown next to a form in preview")), FormatNode(": ")]
         result.append(contentsOf: nodes)
         return FormatNode(result)
     }
