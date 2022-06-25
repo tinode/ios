@@ -1587,6 +1587,7 @@
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="XcR-2C-7J9" userLabel="Mute">
                                         <rect key="frame" x="0.0" y="0.0" width="56" height="56"/>
+                                        <color key="backgroundColor" systemColor="systemGray2Color"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="56" id="YsE-Z9-peS"/>
                                             <constraint firstAttribute="height" constant="56" id="h74-CB-6WE"/>
@@ -1609,6 +1610,7 @@
                                     </button>
                                     <button opaque="NO" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gUh-4V-ume" userLabel="Video Off">
                                         <rect key="frame" x="112" y="0.0" width="56" height="56"/>
+                                        <color key="backgroundColor" systemColor="systemGray2Color"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="56" id="9sA-LL-QGp"/>
                                             <constraint firstAttribute="height" constant="56" id="V8M-Of-gYf"/>
@@ -1659,7 +1661,7 @@
                             </stackView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="84I-vF-4hU"/>
-                        <color key="backgroundColor" systemColor="systemGray2Color"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="Oea-7Y-Tvd" firstAttribute="top" secondItem="dLA-fr-G0I" secondAttribute="bottom" constant="8" id="1AB-Ab-rgy"/>
                             <constraint firstItem="iFL-dy-gre" firstAttribute="trailing" secondItem="84I-vF-4hU" secondAttribute="trailing" id="45Q-fk-Ygh"/>

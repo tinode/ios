@@ -1030,7 +1030,7 @@ extension UIButton {
     }
 
     public func addBlurEffect() {
-        let blur = UIVisualEffectView(effect: UIBlurEffect(style: .light))
+        let blur = UIVisualEffectView(effect: UIBlurEffect(style: .prominent))
         blur.frame = self.bounds
         blur.isUserInteractionEnabled = false
         self.insertSubview(blur, at: 0)

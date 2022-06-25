@@ -245,9 +245,9 @@ public class SharedUtils {
 
 
     // Update cached seq id of the last read message.
-    public static func updateRead(using tinode: Tinode, for topicName: String, seq: Int) {
+    public static func updateRead(using tinode: Tinode, for topicName: String, seq: Int) -> UIBackgroundFetchResult {
         // Don't need to handle 'read' notifications for an unknown topic.
-        guard let topic = tinode.getTopic(topicName: topicName) as? DefaultComTopic else { return }
+        guard let topic = tinode.getTopic(topicName: topicName) as? DefaultComTopic else { return .failed }
 
         if topic.read ?? -1 < seq {
             topic.read = seq
@@ -255,6 +255,7 @@ public class SharedUtils {
                 _ = store.setRead(topic: topic, read: seq)
             }
         }
+        return .noData
     }
 }
 
