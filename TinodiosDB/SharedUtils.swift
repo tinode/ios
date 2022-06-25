@@ -203,7 +203,7 @@ public class SharedUtils {
     // Synchronously connects to topic |topicName| and fetches its messages
     // if the last received message was prior to |seq|.
     @discardableResult
-    public static func fetchData(using tinode: Tinode, for topicName: String, seq: Int) -> UIBackgroundFetchResult {
+    public static func fetchData(using tinode: Tinode, for topicName: String, seq: Int, keepConnection: Bool) -> UIBackgroundFetchResult {
         guard tinode.isConnectionAuthenticated || SharedUtils.connectAndLoginSync(using: tinode, inBackground: true) else {
             return .failed
         }
@@ -231,11 +231,13 @@ public class SharedUtils {
             return .noData
         }
         if let msg = try? topic.subscribe(set: nil, get: builder.withLaterData(limit: 10).withDel().build()).getResult(), (msg.ctrl?.code ?? 500) < 300 {
-            // Data messages are sent asynchronously right after ctrl message.
-            // Give them 1 second to arrive - so we reply back with {note recv}.
-            DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1)) {
-                if topic.attached {
-                    topic.leave()
+            if !keepConnection {
+                // Data messages are sent asynchronously right after ctrl message.
+                // Give them 1 second to arrive - so we reply back with {note recv}.
+                DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1)) {
+                    if topic.attached {
+                        topic.leave()
+                    }
                 }
             }
             return .newData

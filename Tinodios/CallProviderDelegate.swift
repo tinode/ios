@@ -40,10 +40,9 @@ class CallProviderDelegate: NSObject, CXProviderDelegate {
         update.remoteHandle = CXHandle(type: .generic, value: handle)
         update.hasVideo = true
 
-        print("reporting new call with \(uuid) -> \(update)")
         self.provider.reportNewIncomingCall(with: uuid, update: update) { error in
-            if error != nil {
-                print("got error: \(String(describing: error))")
+            if let error = error {
+                Cache.log.error("Report incoming call error: %@", error.localizedDescription)
             }
             completion?(error)
         }

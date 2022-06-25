@@ -47,12 +47,17 @@ class CallManager {
     // Report incoming call to the operating system (which displays incoming call UI).
     func displayIncomingCall(uuid: UUID, onTopic topicName: String, originatingFrom fromUid: String, withSeqId seq: Int, completion: ((Error?) -> Void)?) {
         guard self.callInProgress == nil else {
+            if seq == self.callInProgress!.seq && self.callInProgress!.topic == topicName {
+                // FIXME: this should not really happen. Find the source of duplicates and fix it.
+                return
+            }
+            Cache.log.info("Hanging up: another call in progress")
             let tinode = Cache.tinode
             tinode.videoCall(topic: topicName, seq: seq, event: "hang-up")
             completion?(CallError.busy("Busy. Another call in progress"))
-            Cache.log.debug("Hanging up: another call in progress")
             return
         }
+
         self.callInProgress = Call(uuid: uuid, topic: topicName, from: fromUid, seq: seq)
         let tinode = Cache.tinode
         let user: DefaultUser? = tinode.getUser(with: fromUid)
