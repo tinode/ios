@@ -50,6 +50,7 @@ class CallManager {
             let tinode = Cache.tinode
             tinode.videoCall(topic: topicName, seq: seq, event: "hang-up")
             completion?(CallError.busy("Busy. Another call in progress"))
+            Cache.log.debug("Hanging up: another call in progress")
             return
         }
         self.callInProgress = Call(uuid: uuid, topic: topicName, from: fromUid, seq: seq)

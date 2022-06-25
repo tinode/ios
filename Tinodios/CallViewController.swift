@@ -665,8 +665,8 @@ class CallViewController: UIViewController {
             // Using metal (arm64 only)
             let localRenderer = RTCMTLVideoView(frame: self.localView.frame)
             let remoteRenderer = RTCMTLVideoView(frame: self.remoteView.frame)
-            localRenderer.videoContentMode = .scaleAspectFill
-            remoteRenderer.videoContentMode = .scaleAspectFill
+            localRenderer.videoContentMode = .scaleAspectFit
+            remoteRenderer.videoContentMode = .scaleAspectFit
         #else
             // Using OpenGLES for the rest
             let localRenderer = RTCEAGLVideoView(frame: self.localView.frame)

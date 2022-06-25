@@ -38,8 +38,6 @@ class NotificationService: UNNotificationServiceExtension {
         // Deleted subscription:
         //   Always invisible.
         //
-        // Message read by the current user from another device (read):
-        //   Always invisible.
 
         if let bestAttemptContent = bestAttemptContent {
             let payload = bestAttemptContent.userInfo
@@ -47,11 +45,8 @@ class NotificationService: UNNotificationServiceExtension {
 
             let action = payload["what"] as? String ?? "msg"
 
-            if action == "read" {
-                // Read notification.
-                if let seq = Int(payload["seq"] as? String ?? ""), seq > 0 {
-                    SharedUtils.updateRead(using: SharedUtils.createTinode(), for: topicName, seq: seq)
-                }
+            guard ["msg", "sub"].contains(action) else {
+                // Not handling it here.
                 return
             }
 

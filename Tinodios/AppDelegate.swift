@@ -116,7 +116,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             let what = userInfo["what"] as? String
             if what == nil || what == "msg" {
                 // New message.
-                guard let seqStr = userInfo["seq"] as? String, let seq = Int(seqStr) else {
+                guard let seq = Int(userInfo["seq"] as? String ?? ""), seq > 0 else {
                     completionHandler(.failed)
                     return
                 }
@@ -129,6 +129,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             } else if what == "sub" {
                 // New subscription.
                 completionHandler(SharedUtils.fetchDesc(using: Cache.tinode, for: topicName))
+            } else if what == "read" {
+                // Read notification.
+                if let seq = Int(userInfo["seq"] as? String ?? ""), seq > 0 {
+                    completionHandler(SharedUtils.updateRead(using: Cache.tinode, for: topicName, seq: seq))
+                }
             } else {
                 Cache.log.error("Invalid 'what' value ['%@'] in push notification for topic '%@'", what!, topicName)
                 completionHandler(.failed)
@@ -160,7 +165,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 }
 
-@available(iOS 10.0, *)
 extension AppDelegate: UNUserNotificationCenterDelegate {
     // Notification received. Process it.
     // Called when the app is in the foreground.
