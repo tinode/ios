@@ -1121,7 +1121,7 @@
 				CODE_SIGN_ENTITLEMENTS = Tinodios/Tinodios.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 53QN4ZCPDQ;
 				INFOPLIST_FILE = Tinodios/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1146,7 +1146,7 @@
 				CODE_SIGN_ENTITLEMENTS = Tinodios/Tinodios.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 53QN4ZCPDQ;
 				INFOPLIST_FILE = Tinodios/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1172,7 +1172,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = "Assigned by build script: `git rev-list HEAD --count`";
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 53QN4ZCPDQ;
 				INFOPLIST_FILE = TinodiosNSExtension/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1198,7 +1198,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = "Assigned by build script: `git rev-list HEAD --count`";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 53QN4ZCPDQ;
 				INFOPLIST_FILE = TinodiosNSExtension/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
