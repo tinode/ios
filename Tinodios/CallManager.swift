@@ -44,6 +44,17 @@ class CallManager {
         }
     }
 
+    // Registers an outgoing call that's just been started.
+    func registerOutgoingCallStarted(onTopic topicName: String, withSeqId seq: Int) -> Bool {
+        guard self.callInProgress == nil else {
+            // Another call is in progress. Quit.
+            return false
+        }
+        let tinode = Cache.tinode
+        self.callInProgress = Call(uuid: UUID(), topic: topicName, from: tinode.myUid!, seq: seq)
+        return true
+    }
+
     // Report incoming call to the operating system (which displays incoming call UI).
     func displayIncomingCall(uuid: UUID, onTopic topicName: String, originatingFrom fromUid: String, withSeqId seq: Int, completion: ((Error?) -> Void)?) {
         guard self.callInProgress == nil else {

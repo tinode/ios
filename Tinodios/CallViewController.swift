@@ -110,6 +110,7 @@ protocol WebRTCClientDelegate: AnyObject {
 /// TinodeVideoCallDelegate
 /// Methods for handling remote messages received from the peer.
 protocol TinodeVideoCallDelegate: AnyObject {
+    func eventMatchesCallInProgress(info: MsgServerInfo) -> Bool
     func handleAcceptedMsg()
     func handleOfferMsg(with payload: JSONValue?)
     func handleAnswerMsg(with payload: JSONValue?)
@@ -504,7 +505,7 @@ class CallViewController: UIViewController {
         }
 
         override func onInfoMessage(info: MsgServerInfo?) {
-            guard let info = info, info.what == "call" else { return }
+            guard let info = info, self.delegate?.eventMatchesCallInProgress(info: info) ?? false else { return }
             switch info.event {
             case "accept":
                 self.delegate?.handleAcceptedMsg()
@@ -710,8 +711,11 @@ class CallViewController: UIViewController {
                                 withExtraHeaders:["webrtc": .string("started")]).then(onSuccess: { msg in
                 guard let ctrl = msg?.ctrl else { return nil }
                 if ctrl.code < 300, let seq = ctrl.getIntParam(for: "seq"), seq > 0 {
-                    // All good.
+                    // All good. Register the call.
                     self.callSeqId = seq
+                    if !Cache.callManager.registerOutgoingCallStarted(onTopic: self.topic!.name, withSeqId: seq) {
+                        self.handleCallClose()
+                    }
                     return nil
                 }
                 self.handleCallClose()
@@ -835,6 +839,11 @@ extension CallViewController: WebRTCClientDelegate {
 }
 
 extension CallViewController: TinodeVideoCallDelegate {
+    func eventMatchesCallInProgress(info: MsgServerInfo) -> Bool {
+        // Make sure it's a "call" info message on the topic & seq of the present call.
+        return info.what == "call" && info.topic == self.topic?.name && info.seq == self.callSeqId
+    }
+
     func handleAcceptedMsg() {
         self.playSoundEffect(nil)
 
