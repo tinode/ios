@@ -204,6 +204,15 @@ public class BaseDb {
         do {
             return try db.run(record.update(column <- value)) > 0
         } catch {
+            if let result = error as? Result {
+                // Skip logging "success" errors: they just mean the row was not found and some such.
+                switch result {
+                case let .error(_, code, _):
+                    if code == SQLITE_OK || code == SQLITE_DONE || code == SQLITE_ROW {
+                        return false
+                    }
+                }
+            }
             BaseDb.log.error("BaseDb - updateCounter failed %@", error.localizedDescription)
             return false
         }

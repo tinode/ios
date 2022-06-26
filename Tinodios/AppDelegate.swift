@@ -120,12 +120,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     completionHandler(.failed)
                     return
                 }
+                var keepConnection = false
                 if let webrtc = userInfo["webrtc"] as? String {
                     // Video call.
                     self.handleVideoCall(onTopic: topicName, withSeqId: seq, inState: webrtc, notificationPayload: userInfo, completion: nil)
+                    keepConnection = true
                 }
                 // Fetch data in the background.
-                completionHandler(SharedUtils.fetchData(using: Cache.tinode, for: topicName, seq: seq))
+                completionHandler(SharedUtils.fetchData(using: Cache.tinode, for: topicName, seq: seq, keepConnection: keepConnection))
             } else if what == "sub" {
                 // New subscription.
                 completionHandler(SharedUtils.fetchDesc(using: Cache.tinode, for: topicName))
@@ -174,8 +176,8 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         // Only handling "msg" notifications. New subscriptions ("sub" notifications) in the foreground
         // will be handled automatically by Tinode SDK.
         guard let topicName = userInfo["topic"] as? String, !topicName.isEmpty,
-            what == nil || what == "msg",
-            let seqStr = userInfo["seq"] as? String, let seq = Int(seqStr) else { return }
+            what == nil || what == "msg", let seq = Int(userInfo["seq"] as? String ?? "") else { return }
+
         // Check if it's an incoming call.
         if let webrtc = userInfo["webrtc"] as? String, what == "msg" {
             self.handleVideoCall(onTopic: topicName, withSeqId: seq, inState: webrtc, notificationPayload: userInfo) {
@@ -188,7 +190,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
             completionHandler([])
         } else {
             DispatchQueue.global(qos: .background).async {
-                SharedUtils.fetchData(using: Cache.tinode, for: topicName, seq: seq)
+                SharedUtils.fetchData(using: Cache.tinode, for: topicName, seq: seq, keepConnection: false)
             }
             // If the push notification is silent, do not present the alert.
             let isSilent = userInfo["silent"] as? String == "true"

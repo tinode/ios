@@ -368,7 +368,7 @@ extension WebRTCClient: RTCPeerConnectionDelegate {
     }
 
     func peerConnection(_ peerConnection: RTCPeerConnection, didRemove stream: RTCMediaStream) {
-        print("removing media stream")
+        // print("removing media stream")
     }
 
     func peerConnectionShouldNegotiate(_ peerConnection: RTCPeerConnection) {
@@ -400,11 +400,11 @@ extension WebRTCClient: RTCPeerConnectionDelegate {
     }
 
     func peerConnection(_ peerConnection: RTCPeerConnection, didRemove candidates: [RTCIceCandidate]) {
-        print("did remove ice cands")
+        // print("did remove ice cands")
     }
 
     func peerConnection(_ peerConnection: RTCPeerConnection, didOpen dataChannel: RTCDataChannel) {
-        print("did open data channel")
+        // print("did open data channel")
     }
 }
 
@@ -725,6 +725,11 @@ class CallViewController: UIViewController {
         case .incoming:
             // The callee (we) has accepted the call. Notify the caller.
             self.topic?.videoCall(event: "accept", seq: self.callSeqId)
+            DispatchQueue.main.async {
+                // Hide peer name & avatar.
+                self.peerNameLabel.alpha = 0
+                self.peerAvatarImageView.alpha = 0
+            }
         case .none:
             Cache.log.error("CallVC - Invalid call direction in handleCallInvite()")
         }
