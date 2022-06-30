@@ -30,14 +30,6 @@ class UiTinodeEventListener: TinodeEventListener {
         }
         connected = false
     }
-    func onLogin(code: Int, text: String) {}
-    func onMessage(msg: ServerMessage?) {}
-    func onRawMessage(msg: String) {}
-    func onCtrlMessage(ctrl: MsgServerCtrl?) {}
-    func onDataMessage(data: MsgServerData?) {}
-    func onInfoMessage(info: MsgServerInfo?) {}
-    func onMetaMessage(meta: MsgServerMeta?) {}
-    func onPresMessage(pres: MsgServerPres?) {}
 }
 
 // Calculates attributed string size (bounding rectangle) with with specified width.

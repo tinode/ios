@@ -262,4 +262,10 @@ public protocol Storage: AnyObject {
     ///   - limit: maximum number of messages to read.
     ///   - desc: `true` to read messages in descending order, `false` to read in ascending.
     func getMessagePage(topic: TopicProto, from: Int, limit: Int, forward: Bool) -> [Message]?
+
+    /// Retrieve a single message by topic and seq ID.
+    /// - Parameters:
+    ///   - topic: topic which owns the messages.
+    ///   - seqId: effective seq ID of the message.
+    func getMessage(fromTopic topic: TopicProto, byEffectiveSeqId seqId: Int) -> Message?
 }

@@ -20,6 +20,43 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var nwReachability: Any!
     var pushNotificationsConfigured = false
     var appIsStarting: Bool = false
+    // Video call event listener.
+    var callListener = CallEventListener()
+
+    // Video call event listener.
+    class CallEventListener: TinodeEventListener {
+        func onInfoMessage(info: MsgServerInfo?) {
+            guard let info = info, info.what == "call" else { return }
+            if info.event == MsgServerData.WebRTC.kAccepted.rawValue {
+                guard let seq = info.seq, let topic = info.topic else { return }
+                Cache.callManager.dismissIncomingCall(onTopic: topic, withSeqId: seq)
+            }
+        }
+        func onDataMessage(data: MsgServerData?) {
+            let tinode = Cache.tinode
+            // The message is from a peer.
+            guard let data = data, !tinode.isMe(uid: data.from), let seqId = data.seq, let originator = data.from,
+                  // It is a video call message.
+                  MsgServerData.parseWebRTC(from: data.head?["webrtc"]?.asString()) == .kStarted,
+                  let topicName = data.topic, let topic = tinode.getTopic(topicName: topicName) else { return }
+
+            // Check if we have a later version of the message (which means the call
+            // has been not yet been either accepted or finished).
+            guard let msg = topic.getMessage(byEffectiveSeq: seqId) as? StoredMessage,
+                  MsgServerData.parseWebRTC(from: msg.head?["webrtc"]?.asString()) == .kStarted else { return }
+
+            // It is a legit call.
+            let backgroundTaskIdentifier = UIApplication.shared.beginBackgroundTask(expirationHandler: nil)
+            DispatchQueue.main.async {
+                Cache.callManager.displayIncomingCall(uuid: UUID(), onTopic: topic.name, originatingFrom: originator, withSeqId: seqId) { err in
+                    if let err = err {
+                        Cache.log.error("Unable to take the call: %@", err.localizedDescription)
+                    }
+                    UIApplication.shared.endBackgroundTask(backgroundTaskIdentifier)
+                }
+            }
+        }
+    }
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         SharedUtils.registerUserDefaults()
@@ -39,6 +76,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 UiUtils.logoutAndRouteToLoginVC()
             }
         }
+        Cache.tinode.addListener(self.callListener)
         DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + .seconds(10)) {
             let reachability = NWPathMonitor()
             reachability.start(queue: DispatchQueue.global(qos: .background))
@@ -122,8 +160,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 }
                 var keepConnection = false
                 if let webrtc = userInfo["webrtc"] as? String {
-                    // Video call.
-                    self.handleVideoCall(onTopic: topicName, withSeqId: seq, inState: webrtc, notificationPayload: userInfo, completion: nil)
+                    // Video call. Fetch related messages.
                     keepConnection = true
                 }
                 // Fetch data in the background.
@@ -178,13 +215,6 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         guard let topicName = userInfo["topic"] as? String, !topicName.isEmpty,
             what == nil || what == "msg", let seq = Int(userInfo["seq"] as? String ?? "") else { return }
 
-        // Check if it's an incoming call.
-        if let webrtc = userInfo["webrtc"] as? String, what == "msg" {
-            self.handleVideoCall(onTopic: topicName, withSeqId: seq, inState: webrtc, notificationPayload: userInfo) {
-                completionHandler([])
-            }
-            return
-        }
         if let messageVC = UiUtils.topViewController(rootViewController: UIApplication.shared.keyWindow?.rootViewController) as? MessageViewController, messageVC.topicName == topicName {
             // We are already in the correct topic. Do not present the notification.
             completionHandler([])

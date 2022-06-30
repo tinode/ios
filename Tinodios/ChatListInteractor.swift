@@ -63,8 +63,7 @@ class ChatListInteractor: ChatListBusinessLogic, ChatListDataStore {
             super.init(connected: connected)
             self.interactor = interactor
         }
-        override func onLogin(code: Int, text: String) {
-            super.onLogin(code: code, text: text)
+        func onLogin(code: Int, text: String) {
             self.interactor?.attachToMeTopic()
         }
         override func onDisconnect(byServer: Bool, code: URLSessionWebSocketTask.CloseCode, reason: String) {
@@ -72,30 +71,14 @@ class ChatListInteractor: ChatListBusinessLogic, ChatListDataStore {
             // Update presence indicators (all should be off).
             self.interactor?.loadAndPresentTopics()
         }
-        override func onDataMessage(data: MsgServerData?) {
+        func onDataMessage(data: MsgServerData?) {
             if let topic = data?.topic {
                 interactor?.updateChat(topic)
             }
         }
-        override func onInfoMessage(info: MsgServerInfo?) {
-            switch info?.what {
-            case "call":
-                if let info = info, info.event == "invite",
-                   let callTopic = info.src, let originator = info.from, let seqId = info.seq {
-                    let backgroundTaskIdentifier = UIApplication.shared.beginBackgroundTask(expirationHandler: nil)
-                    DispatchQueue.main.async {
-                        Cache.callManager.displayIncomingCall(uuid: UUID(), onTopic: callTopic, originatingFrom: originator, withSeqId: seqId) { err in
-                            if let err = err {
-                                Cache.log.error("Unable to take the call: %@", err.localizedDescription)
-                            }
-                            UIApplication.shared.endBackgroundTask(backgroundTaskIdentifier)
-                        }
-                    }
-                }
-            default:
-                if let topic = info?.src {
-                    interactor?.updateChat(topic)
-                }
+        func onInfoMessage(info: MsgServerInfo?) {
+            if info?.what != "call", let topic = info?.src {
+                interactor?.updateChat(topic)
             }
         }
     }

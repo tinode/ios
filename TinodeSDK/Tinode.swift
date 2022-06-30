@@ -108,6 +108,19 @@ public protocol TinodeEventListener: AnyObject {
     func onPresMessage(pres: MsgServerPres?)
 }
 
+public extension TinodeEventListener {
+    func onConnect(code: Int, reason: String, params: [String: JSONValue]?) {}
+    func onDisconnect(byServer: Bool, code: URLSessionWebSocketTask.CloseCode, reason: String) {}
+    func onLogin(code: Int, text: String) {}
+    func onMessage(msg: ServerMessage?) {}
+    func onRawMessage(msg: String) {}
+    func onCtrlMessage(ctrl: MsgServerCtrl?) {}
+    func onDataMessage(data: MsgServerData?) {}
+    func onInfoMessage(info: MsgServerInfo?) {}
+    func onMetaMessage(meta: MsgServerMeta?) {}
+    func onPresMessage(pres: MsgServerPres?) {}
+}
+
 public class Tinode {
     public static let kTopicNew = "new"
     public static let kUserNew = "new"

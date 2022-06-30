@@ -385,4 +385,9 @@ public class SqlStore: Storage {
         guard let st = topic.payload as? StoredTopic, let id = st.id, id > 0 else { return nil }
         return BaseDb.sharedInstance.messageDb?.query(topicId: id, from: from, limit: limit, forward: forward)
     }
+
+    public func getMessage(fromTopic topic: TopicProto, byEffectiveSeqId seqId: Int) -> Message? {
+        guard let st = topic.payload as? StoredTopic, let id = st.id, id > 0 else { return nil }
+        return BaseDb.sharedInstance.messageDb?.getMessage(fromTopic: id, byEffectiveSeq: seqId)
+    }
 }

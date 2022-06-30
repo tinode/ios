@@ -59,6 +59,7 @@ public protocol TopicProto: AnyObject {
     func persist()
     func expunge(hard: Bool)
     func setSetAndFetch(newSeq: Int?)
+    func getMessage(byEffectiveSeq seqId: Int) -> Message?
 
     func allMessagesReceived(count: Int?)
     func allSubsReceived()
@@ -1379,5 +1380,9 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
                 return nil
             })
         }
+    }
+
+    public func getMessage(byEffectiveSeq seqId: Int) -> Message? {
+        return store?.getMessage(fromTopic: self, byEffectiveSeqId: seqId)
     }
 }

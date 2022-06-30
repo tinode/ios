@@ -497,14 +497,13 @@ class CallViewController: UIViewController {
     // For playing sound effects.
     var audioPlayer: AVAudioPlayer?
 
-    class InfoListener: UiTinodeEventListener {
+    class InfoListener: TinodeEventListener {
         private weak var delegate: TinodeVideoCallDelegate?
-        init(delegateEventsTo callDelegate: TinodeVideoCallDelegate, connected: Bool) {
-            super.init(connected: connected)
+        init(delegateEventsTo callDelegate: TinodeVideoCallDelegate) {
             self.delegate = callDelegate
         }
 
-        override func onInfoMessage(info: MsgServerInfo?) {
+        func onInfoMessage(info: MsgServerInfo?) {
             guard let info = info, self.delegate?.eventMatchesCallInProgress(info: info) ?? false else { return }
             switch info.event {
             case "accept":
@@ -528,8 +527,7 @@ class CallViewController: UIViewController {
     override func viewDidLoad() {
         self.videoToggleButton.addBlurEffect()
         self.micToggleButton.addBlurEffect()
-
-        self.listener = InfoListener(delegateEventsTo: self, connected: Cache.tinode.isConnected)
+        self.listener = InfoListener(delegateEventsTo: self)
 
         if let topic = topic {
             peerNameLabel.text = topic.pub?.fn
@@ -708,7 +706,7 @@ class CallViewController: UIViewController {
             playSoundEffect("dialing")
             // Send out a call invitation to the peer.
             self.topic?.publish(content: Drafty.videoCall(),
-                                withExtraHeaders:["webrtc": .string("started")]).then(onSuccess: { msg in
+                                withExtraHeaders:["webrtc": .string(MsgServerData.WebRTC.kStarted.rawValue)]).then(onSuccess: { msg in
                 guard let ctrl = msg?.ctrl else { return nil }
                 if ctrl.code < 300, let seq = ctrl.getIntParam(for: "seq"), seq > 0 {
                     // All good. Register the call.

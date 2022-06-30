@@ -494,4 +494,12 @@ public class MessageDb {
             return nil
         }
     }
+
+    func getMessage(fromTopic topicId: Int64, byEffectiveSeq seqId: Int) -> StoredMessage? {
+        let record = self.table.filter(self.topicId == topicId && self.effectiveSeq == seqId)
+        if let row = try? db.pluck(record) {
+            return self.readOne(r: row, previewLen: -1)
+        }
+        return nil
+    }
 }

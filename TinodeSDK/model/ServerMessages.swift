@@ -106,6 +106,21 @@ public class MsgServerMeta: Decodable {
 }
 
 open class MsgServerData: Decodable {
+    public enum WebRTC: String {
+        case kAccepted = "accepted"
+        case kDeclined = "declined"
+        case kDisconnected = "disconnected"
+        case kFinished = "finished"
+        case kMissed = "missed"
+        case kStarted = "started"
+        case kUnknown
+    }
+
+    public static func parseWebRTC(from str: String?) -> WebRTC {
+        guard let str = str else { return .kUnknown }
+        return WebRTC(rawValue: str) ?? .kUnknown
+    }
+
     public var id: String?
     public var topic: String?
     public var head: [String: JSONValue]?
