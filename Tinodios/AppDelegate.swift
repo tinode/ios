@@ -159,7 +159,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     return
                 }
                 var keepConnection = false
-                if let webrtc = userInfo["webrtc"] as? String {
+                if userInfo["webrtc"] != nil {
                     // Video call. Fetch related messages.
                     keepConnection = true
                 }
@@ -222,9 +222,9 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
             DispatchQueue.global(qos: .background).async {
                 SharedUtils.fetchData(using: Cache.tinode, for: topicName, seq: seq, keepConnection: false)
             }
-            // If the push notification is silent, do not present the alert.
-            let isSilent = userInfo["silent"] as? String == "true"
-            completionHandler(!isSilent ? [.alert, .badge, .sound] : [])
+            // If the push notification is either silent or a video call related, do not present the alert.
+            let suppressNotification = userInfo["silent"] as? String == "true" || userInfo["webrtc"] != nil
+            completionHandler(!suppressNotification ? [.alert, .badge, .sound] : [])
         }
     }
 
