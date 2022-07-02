@@ -8,6 +8,8 @@ Status: beta. Usable and mostly stable but bugs may happen.
 
 ## Installing and running
 
+Tinodios is NOT a standalone app. It's a frontend, a client. It requires a [backend](https://github.com/tinode/chat/). See [installation instructions](https://github.com/tinode/chat/blob/master/INSTALL.md).
+
 **Important!** Due to Microsoft's (GitHub owner) policy of requiring developers of open source projects to [pay for for hosting large files on GitHub](https://docs.github.com/en/billing/managing-billing-for-git-large-file-storage/about-billing-for-git-large-file-storage#purchasing-additional-storage-and-bandwidth), this repository cannot include prebuilt binaries for `MobileVLCKit` and `WebRTC-lib`. As a consequence, we do not include Pod files into repository. You need to install them manually:
 ```
 pod install
@@ -16,8 +18,6 @@ or on Apple Silicon (M1):
 ```
 arch -x86_64 pod install
 ```
-
-Tinodios is NOT a standalone app. It's a frontend, a client. It requires a [backend](https://github.com/tinode/chat/). See [installation instructions](https://github.com/tinode/chat/blob/master/INSTALL.md).
 
 ## Getting support
 
