@@ -137,6 +137,9 @@ class WebRTCClient: NSObject {
 
     private var localAudioTrack: RTCAudioTrack?
 
+    private var remoteIceCandidatesCacheQueue = DispatchQueue(label: "co.tinode.webrtc.ice-candidates-queue")
+    private var remoteIceCandidatesCache: [RTCIceCandidate] = []
+
     weak var delegate: WebRTCClientDelegate?
 
     func setup() {
@@ -154,6 +157,31 @@ class WebRTCClient: NSObject {
         guard let track = self.localVideoTrack else { return false }
         track.isEnabled = !track.isEnabled
         return track.isEnabled
+    }
+
+    func addIceCandidateToCache(_ candidate: RTCIceCandidate) {
+        self.remoteIceCandidatesCacheQueue.sync {
+            self.remoteIceCandidatesCache.append(candidate)
+        }
+    }
+
+    func drainIceCandidatesCache() {
+        Cache.log.info("Draining iceCandidateCache: %d items", self.remoteIceCandidatesCache.count)
+        var success = true
+        self.remoteIceCandidatesCacheQueue.sync {
+            self.remoteIceCandidatesCache.forEach { candidate in
+                self.localPeer?.add(candidate) { err in
+                    if let err = err {
+                        Cache.log.error("WebRTCClient.drainIceCandidatesCache - could not add ICE candidate: %@", err.localizedDescription)
+                        success = false
+                    }
+                }
+            }
+            self.remoteIceCandidatesCache.removeAll()
+        }
+        if !success {
+            self.delegate?.closeCall()
+        }
     }
 
     func createPeerConnection() -> Bool {
@@ -838,6 +866,7 @@ extension CallViewController: WebRTCClientDelegate {
 
     func markConnectionSetupComplete() {
         self.callInitialSetupComplete = true
+        self.webRTCClient.drainIceCandidatesCache()
     }
 }
 
@@ -889,9 +918,7 @@ extension CallViewController: TinodeVideoCallDelegate {
                 Cache.log.error("CallVC - error setting remote description %@", e.localizedDescription)
                 self.handleCallClose()
             }
-            if self.callDirection == .outgoing {
-                self.markConnectionSetupComplete()
-            }
+            self.markConnectionSetupComplete()
         })
     }
     
@@ -901,12 +928,16 @@ extension CallViewController: TinodeVideoCallDelegate {
             self.handleCallClose()
             return
         }
-        self.webRTCClient.localPeer?.add(candidate) { err in
-            if let err = err {
-                Cache.log.error("CallVC.handleIceCandidateMsg - could not add ICE candidate: %@", err.localizedDescription)
-                self.handleCallClose()
-                return
+        if self.callInitialSetupComplete {
+            self.webRTCClient.localPeer?.add(candidate) { err in
+                if let err = err {
+                    Cache.log.error("CallVC.handleIceCandidateMsg - could not add ICE candidate: %@", err.localizedDescription)
+                    self.handleCallClose()
+                    return
+                }
             }
+        } else {
+            self.webRTCClient.addIceCandidateToCache(candidate)
         }
     }
     
