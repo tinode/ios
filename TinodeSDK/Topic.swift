@@ -1364,7 +1364,12 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
         }
         for msg in pendingMsgs {
             let msgId = msg.msgId
-            _ = self.store?.msgSyncing(topic: self, dbMessageId: msgId, sync: true)
+            if msg.head?["webrtc"]?.asString() != nil {
+                // Drop unsent video call messages.
+                self.store?.msgDiscard(topic: self, dbMessageId: msgId)
+                continue
+            }
+            self.store?.msgSyncing(topic: self, dbMessageId: msgId, sync: true)
             result = self.publishInternal(content: msg.content!, head: msg.head, msgId: msgId)
         }
         return result

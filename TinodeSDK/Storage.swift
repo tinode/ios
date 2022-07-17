@@ -161,6 +161,7 @@ public protocol Storage: AnyObject {
     ///   - dbMessageId: database ID of the message.
     ///   - data: updated content of the message. If null only status is updated.
     /// - Returns `true` on success, `false` otherwise.
+    @discardableResult
     func msgReady(topic: TopicProto, dbMessageId: Int64, data: Drafty) -> Bool
 
     /// Mark message as being sent to the server.
@@ -195,6 +196,7 @@ public protocol Storage: AnyObject {
     ///     - dbMessageId: database ID of the message.
     /// - Returns:
     ///     `true` on success, `false` otherwise
+    @discardableResult
     func msgDiscard(topic: TopicProto, dbMessageId: Int64) -> Bool
 
     /// Mark message as delivered to the server and assign a real seq ID.
@@ -204,6 +206,7 @@ public protocol Storage: AnyObject {
     ///   - timestamp: server timestamp.
     ///   - seq: server-issued message seqId.
     /// - Returns `true` on success, `false` otherwise.
+    @discardableResult
     func msgDelivered(topic: TopicProto, dbMessageId: Int64, timestamp: Date, seq: Int) -> Bool
 
     // Mark messages for deletion by range.
