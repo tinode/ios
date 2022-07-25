@@ -186,7 +186,7 @@ class TopicSecurityViewController: UITableViewController {
         topic.delete(hard: true).then(
             onSuccess: { _ in
                 DispatchQueue.main.async {
-                    self.performSegue(withIdentifier: "TopicInfo2Chats", sender: nil)
+                    self.performSegue(withIdentifier: "TopicSecurity2Chats", sender: nil)
                 }
                 return nil
             },
@@ -197,7 +197,7 @@ class TopicSecurityViewController: UITableViewController {
         topic.updateMode(uid: nil, update: "-JP").then(
             onSuccess: { _ in
                 DispatchQueue.main.async {
-                    self.performSegue(withIdentifier: "TopicInfo2Chats", sender: nil)
+                    self.performSegue(withIdentifier: "TopicSecurity2Chats", sender: nil)
                 }
                 return nil
             },
