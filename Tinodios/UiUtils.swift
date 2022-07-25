@@ -250,9 +250,7 @@ class UiUtils {
     public static func routeToChatListVC() {
         DispatchQueue.main.async {
             let storyboard = UIStoryboard(name: "Main", bundle: nil)
-            let initialViewController =
-                storyboard.instantiateViewController(
-                    withIdentifier: "ChatsNavigator") as! UINavigationController
+            let initialViewController = storyboard.instantiateViewController(withIdentifier: "ChatsNavigator") as! UINavigationController
             if let window = UIApplication.shared.keyWindow {
                 window.rootViewController = initialViewController
             }

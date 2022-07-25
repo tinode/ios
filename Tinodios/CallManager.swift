@@ -78,6 +78,8 @@ class CallManager {
                 tinode.videoCall(topic: topicName, seq: seq, event: "ringing")
                 let timeout = (tinode.getServerParam(for: "callTimeout")?.asInt() ?? CallManager.kCallTimeout) + 5
                 self.timer = self.makeCallTimeoutTimer(withDeadline: TimeInterval(timeout))
+            } else {
+                Cache.log.error("Incoming call error: %@", err!.localizedDescription)
             }
             completion?(err)
         }

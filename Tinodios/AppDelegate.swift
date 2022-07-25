@@ -6,6 +6,7 @@
 //
 
 import Firebase
+import PushKit
 import Network
 import UIKit
 import TinodeSDK
@@ -22,6 +23,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var appIsStarting: Bool = false
     // Video call event listener.
     var callListener = CallEventListener()
+
+    var voipRegistry: PKPushRegistry!
 
     // Video call event listener.
     class CallEventListener: TinodeEventListener {
@@ -70,6 +73,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 UiUtils.routeToChatListVC()
             }
         }
+
+        registerForVoip()
+
         // Try to connect and login in the background.
         DispatchQueue.global(qos: .userInitiated).async {
             if !SharedUtils.connectAndLoginSync(using: Cache.tinode, inBackground: false) {
@@ -119,28 +125,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         application.applicationIconBadgeNumber = Cache.totalUnreadCount()
     }
 
-    // Processes video call push notifications.
-    private func handleVideoCall(onTopic topicName: String, withSeqId seq: Int, inState callState: String,
-                                 notificationPayload payload: [AnyHashable: Any], completion: (() -> Void)?) {
-        defer { completion?() }
-        switch callState {
-        case "started":
-            guard let senderId = payload["xfrom"] as? String, !Cache.tinode.isMe(uid: senderId) else {
-                return
-            }
-            Cache.callManager.displayIncomingCall(uuid: UUID(), onTopic: topicName, originatingFrom: senderId, withSeqId: seq) { error in
-                if let error = error {
-                    Cache.log.error("FCM push: incoming call UI error %@", error.localizedDescription)
-                }
-            }
-        case "accepted", "missed", "declined", "disconnected":
-            guard let origSeqStr = payload["replace"] as? String, let origSeq = Int(origSeqStr) else { return }
-            Cache.callManager.dismissIncomingCall(onTopic: topicName, withSeqId: origSeq)
-        default:
-            break
-        }
-    }
-
     // Notification received. Process it.
     // Application woken up in the background (e.g. for data fetch).
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any],
@@ -187,9 +171,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     // Tapped on a web link. See if it's an app link.
-    func application(_ application: UIApplication,
-                     continue userActivity: NSUserActivity,
-                     restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
+    func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
         guard userActivity.activityType == NSUserActivityTypeBrowsingWeb,
             let url = userActivity.webpageURL,
             let components = URLComponents(url: url, resolvingAgainstBaseURL: true) else {
@@ -201,6 +183,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             return true
         }
         return false
+    }
+
+    func registerForVoip() {
+        self.voipRegistry = PKPushRegistry(queue: nil)
+        self.voipRegistry.delegate = self
+        self.voipRegistry.desiredPushTypes = [.voIP]
     }
 }
 
@@ -253,5 +241,52 @@ extension AppDelegate: MessagingDelegate {
         // Update token. Send to the app server.
         guard let token = fcmToken else { return }
         Cache.tinode.setDeviceToken(token: token)
+    }
+}
+
+extension AppDelegate: PKPushRegistryDelegate {
+    func pushRegistry(_ registry: PKPushRegistry, didUpdate credentials: PKPushCredentials, for type: PKPushType) {
+        print("PK token received %s", credentials.debugDescription)
+    }
+
+    func pushRegistry(_ registry: PKPushRegistry, didInvalidatePushTokenFor type: PKPushType) {
+        print("PK must invalidate token")
+    }
+
+    // VoIP push notification recived.
+    func pushRegistry(_ registry: PKPushRegistry, didReceiveIncomingPushWith payload: PKPushPayload, for type: PKPushType, completion: @escaping () -> Void) {
+        print("PK push %s", payload.debugDescription)
+
+        if type != .voIP {
+            return
+        }
+
+        // Cannot defer completion() because it's called from a closure.
+
+        guard let topicName = payload.dictionaryPayload["topic"] as? String else {
+            completion()
+            return
+        }
+
+        let callState = payload.dictionaryPayload["webrtc"] as? String
+        switch callState {
+        case "started":
+            guard let callerUID = payload.dictionaryPayload["xfrom"] as? String, !Cache.tinode.isMe(uid: callerUID), let seq = Int(payload.dictionaryPayload["seq"] as? String ?? ""), seq > 0 else {
+                completion()
+                return
+            }
+            // Report the call to CallKit, and let it display the call UI.
+            Cache.callManager.displayIncomingCall(uuid: UUID(), onTopic: topicName, originatingFrom: callerUID, withSeqId: seq, completion: { err in
+                // Tell PushKit that the notification is handled.
+                completion()
+            })
+        case "accepted", "missed", "declined", "disconnected":
+            guard let origSeq = Int(payload.dictionaryPayload["replace"] as? String ?? ""), origSeq > 0 else { return }
+            Cache.callManager.dismissIncomingCall(onTopic: topicName, withSeqId: origSeq)
+            fallthrough
+        default:
+            completion()
+            break
+        }
     }
 }
