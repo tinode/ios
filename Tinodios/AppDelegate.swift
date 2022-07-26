@@ -258,6 +258,7 @@ extension AppDelegate: PKPushRegistryDelegate {
         print("PK push %s", payload.debugDescription)
 
         if type != .voIP {
+            completion()
             return
         }
 
@@ -281,6 +282,7 @@ extension AppDelegate: PKPushRegistryDelegate {
                 completion()
             })
         case "accepted", "missed", "declined", "disconnected":
+            // This should not happen: the server sends just the "started" push as voip.
             guard let origSeq = Int(data["replace"] as? String ?? ""), origSeq > 0 else { return }
             Cache.callManager.dismissIncomingCall(onTopic: topicName, withSeqId: origSeq)
             fallthrough
