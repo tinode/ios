@@ -263,15 +263,15 @@ extension AppDelegate: PKPushRegistryDelegate {
 
         // Cannot defer completion() because it's called from a closure.
 
-        guard let topicName = payload.dictionaryPayload["topic"] as? String else {
+        guard let data = payload.dictionaryPayload["data"] as? [String: Any], let topicName = data["topic"] as? String, let callState = data["webrtc"] as? String else {
+            Cache.log.error("Missing payload data")
             completion()
             return
         }
 
-        let callState = payload.dictionaryPayload["webrtc"] as? String
         switch callState {
         case "started":
-            guard let callerUID = payload.dictionaryPayload["xfrom"] as? String, !Cache.tinode.isMe(uid: callerUID), let seq = Int(payload.dictionaryPayload["seq"] as? String ?? ""), seq > 0 else {
+            guard let callerUID = data["xfrom"] as? String, !Cache.tinode.isMe(uid: callerUID), let seq = Int(data["seq"] as? String ?? ""), seq > 0 else {
                 completion()
                 return
             }
@@ -281,7 +281,7 @@ extension AppDelegate: PKPushRegistryDelegate {
                 completion()
             })
         case "accepted", "missed", "declined", "disconnected":
-            guard let origSeq = Int(payload.dictionaryPayload["replace"] as? String ?? ""), origSeq > 0 else { return }
+            guard let origSeq = Int(data["replace"] as? String ?? ""), origSeq > 0 else { return }
             Cache.callManager.dismissIncomingCall(onTopic: topicName, withSeqId: origSeq)
             fallthrough
         default:
