@@ -97,9 +97,13 @@ class CallManager {
 extension CallManager: CallManagerImpl {
     func acceptPendingCall() -> Bool {
         guard let call = self.callInProgress else { return false }
+
+        Cache.log.info("Accepting call: topic=%@, seq=%d", call.topic, call.seq)
         self.timer?.invalidate()
         self.timer = nil
         UiUtils.routeToMessageVC(forTopic: call.topic) { messageVC in
+            guard let messageVC = messageVC else { return }
+            Cache.log.info("Seguing from MessageVC to CallVC, topic=%@ -> %@", call.topic, messageVC)
             messageVC.performSegue(withIdentifier: "Messages2Call", sender: call)
         }
         return true
@@ -107,6 +111,7 @@ extension CallManager: CallManagerImpl {
 
     func completeCallInProgress(reportToSystem: Bool, reportToPeer: Bool) {
         guard let call = self.callInProgress else { return }
+        Cache.log.info("Completing call: topic=%@, seq=%d", call.topic, call.seq)
         self.callInProgress = nil
         self.timer?.invalidate()
         self.timer = nil

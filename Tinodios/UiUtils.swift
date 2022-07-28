@@ -273,8 +273,21 @@ class UiUtils {
         return rootVC.viewControllers.contains(where: { $0 is ChatListViewController })
     }
 
-    public static func routeToMessageVC(forTopic topicId: String, completion: ((MessageViewController) -> (Void))? = nil) {
+    // Returns true if the app is showing the CallVC for the specified topic.
+    public static func isShowingCallVC(forTopic topic: String) -> Bool {
+        guard let rootVC = UIApplication.shared.keyWindow?.rootViewController as? UINavigationController else {
+            return false
+        }
+        return rootVC.viewControllers.contains(where: { ($0 as? CallViewController)?.topic?.name == topic })
+    }
+
+    public static func routeToMessageVC(forTopic topicId: String, completion: ((MessageViewController?) -> (Void))? = nil) {
         DispatchQueue.main.async {
+            Cache.log.info("Routing to MessageVC for topic=%@", topicId)
+            guard let keyWindow = UIApplication.shared.keyWindow else {
+                completion?(nil)
+                return
+            }
             // Check if the requested MessageVC is already open.
             if let mvc = presentedMessageVC(forTopic: topicId) {
                 completion?(mvc)
@@ -286,7 +299,7 @@ class UiUtils {
             var shouldReplaceRootVC = true
             var rootVC: UINavigationController
             if isShowingChatListVC() {
-                rootVC = UIApplication.shared.keyWindow!.rootViewController as! UINavigationController
+                rootVC = keyWindow.rootViewController as! UINavigationController
                 // The app is in the foreground.
                 while !(rootVC.topViewController is ChatListViewController) {
                     rootVC.popViewController(animated: false)
@@ -301,8 +314,8 @@ class UiUtils {
                     withIdentifier: "MessageViewController") as! MessageViewController
             messageVC.topicName = topicId
             rootVC.pushViewController(messageVC, animated: false)
-            if let window = UIApplication.shared.keyWindow, shouldReplaceRootVC {
-                window.rootViewController = rootVC
+            if shouldReplaceRootVC {
+                keyWindow.rootViewController = rootVC
             }
             UiUtils.setUpPushNotifications()
             completion?(messageVC)

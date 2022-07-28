@@ -62,6 +62,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        Cache.log.info("App launched with options: %@", launchOptions ?? [:])
         SharedUtils.registerUserDefaults()
         let baseDb = BaseDb.sharedInstance
         if baseDb.isReady {
@@ -118,6 +119,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func applicationDidBecomeActive(_ application: UIApplication) {
+        if let call = Cache.callManager.callInProgress, !UiUtils.isShowingCallVC(forTopic: call.topic) {
+            // App just entered the foreground and there's a call in progress. Go to the CallVC.
+            // Typically happens when the app wasn't running and screen was locked at the moment
+            // the call was answered.
+            Cache.log.info("Navigating to CallVC for topic=%@, seq=%d", call.topic, call.seq)
+            UiUtils.routeToMessageVC(forTopic: call.topic) { messageVC in
+                guard let messageVC = messageVC else {
+                    Cache.log.error("Unable to navigate to MessageVC for topic=%@.", call.topic)
+                    return
+                }
+                messageVC.performSegue(withIdentifier: "Messages2Call", sender: call)
+            }
+        }
         self.appIsStarting = false
     }
 
@@ -257,7 +271,7 @@ extension AppDelegate: PKPushRegistryDelegate {
     func pushRegistry(_ registry: PKPushRegistry, didReceiveIncomingPushWith payload: PKPushPayload, for type: PKPushType, completion: @escaping () -> Void) {
         print("PK push %s", payload.debugDescription)
 
-        if type != .voIP {
+        guard type == .voIP else {
             completion()
             return
         }
