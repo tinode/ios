@@ -144,7 +144,6 @@ class WebRTCClient: NSObject {
 
     func setup() {
         createMediaSenders()
-        configureAudioSession()
     }
 
     func toggleAudio() -> Bool {
@@ -255,9 +254,6 @@ class WebRTCClient: NSObject {
         localPeer = nil
 
         // Clean up audio.
-        self.audioSessionChange { audioSession in
-            try audioSession.setActive(false)
-        }
         localAudioTrack = nil
 
         // ... and video.
@@ -324,26 +320,6 @@ extension WebRTCClient {
         let videoTrack = WebRTCClient.factory.videoTrack(with: videoSource, trackId: "ARDAMSv0")
         localVideoTrack = videoTrack
         videoCapturer = RTCCameraVideoCapturer(delegate: videoSource)
-    }
-
-    private func audioSessionChange(action: ((RTCAudioSession) throws -> Void)) {
-        let audioSession = RTCAudioSession.sharedInstance()
-        audioSession.lockForConfiguration()
-        do {
-            try action(audioSession)
-        } catch {
-            Cache.log.error("WebRTCClient: error changing AVAudioSession: %@", error.localizedDescription)
-        }
-        audioSession.unlockForConfiguration()
-    }
-
-    private func configureAudioSession() {
-        self.audioSessionChange { audioSession in
-            try audioSession.setCategory(AVAudioSession.Category.playAndRecord.rawValue)
-            try audioSession.setMode(AVAudioSession.Mode.voiceChat.rawValue)
-            try audioSession.overrideOutputAudioPort(.speaker)
-            try audioSession.setActive(true)
-        }
     }
 }
 
@@ -565,13 +541,11 @@ class CallViewController: UIViewController {
     }
 
     @IBAction func didToggleMic(_ sender: Any) {
-        //let img = CallViewController.actionButtonIcon(iconName: Constants.kToggleMicIcon, on: self.webRTCClient.toggleAudio())
         let img = UIImage(systemName: self.webRTCClient.toggleAudio() ? "mic.fill" : "mic.slash.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: 16, weight: .regular))
         self.micToggleButton.setImage(img, for: .normal)
     }
 
     @IBAction func didToggleCamera(_ sender: Any) {
-        // let img = CallViewController.actionButtonIcon(iconName: Constants.kToggleCameraIcon, on: self.webRTCClient.toggleVideo())
         let img = UIImage(named: self.webRTCClient.toggleVideo() ? "vc.fill" : "vc.slash.fill", in: nil, with: UIImage.SymbolConfiguration(pointSize: 16, weight: .regular))
         self.videoToggleButton.setImage(img, for: .normal)
     }
@@ -717,9 +691,9 @@ class CallViewController: UIViewController {
     func handleCallClose() {
         playSoundEffect(nil)
 
+        Cache.callManager.completeCallInProgress(reportToSystem: true, reportToPeer: false)
         if self.callSeqId > 0 {
             self.topic?.videoCall(event: "hang-up", seq: self.callSeqId)
-            Cache.callManager.completeCallInProgress(reportToSystem: true, reportToPeer: false)
         }
         self.callSeqId = -1
         DispatchQueue.main.async {
@@ -731,6 +705,10 @@ class CallViewController: UIViewController {
     func handleCallInvite() {
         switch self.callDirection {
         case .outgoing:
+            guard Cache.callManager.registerOutgoingCall(onTopic: self.topic!.name) else {
+                self.handleCallClose()
+                return
+            }
             playSoundEffect("dialing")
             // Send out a call invitation to the peer.
             self.topic?.publish(content: Drafty.videoCall(),
@@ -739,9 +717,7 @@ class CallViewController: UIViewController {
                 if ctrl.code < 300, let seq = ctrl.getIntParam(for: "seq"), seq > 0 {
                     // All good. Register the call.
                     self.callSeqId = seq
-                    if !Cache.callManager.registerOutgoingCallStarted(onTopic: self.topic!.name, withSeqId: seq) {
-                        self.handleCallClose()
-                    }
+                    Cache.callManager.updateOutgoingCall(withNewSeqId: seq)
                     return nil
                 }
                 self.handleCallClose()
