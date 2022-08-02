@@ -285,7 +285,7 @@ extension AppDelegate: PKPushRegistryDelegate {
         }
 
         switch callState {
-        case "started":
+        case MsgServerData.WebRTC.kStarted.rawValue:
             guard let callerUID = data["xfrom"] as? String, !Cache.tinode.isMe(uid: callerUID), let seq = Int(data["seq"] as? String ?? ""), seq > 0 else {
                 completion()
                 return
@@ -295,7 +295,8 @@ extension AppDelegate: PKPushRegistryDelegate {
                 // Tell PushKit that the notification is handled.
                 completion()
             })
-        case "accepted", "missed", "declined", "disconnected":
+        case MsgServerData.WebRTC.kAccepted.rawValue, MsgServerData.WebRTC.kMissed.rawValue,
+            MsgServerData.WebRTC.kDeclined.rawValue, MsgServerData.WebRTC.kDisconnected.rawValue:
             // This should not happen: the server sends just the "started" push as voip.
             guard let origSeq = Int(data["replace"] as? String ?? ""), origSeq > 0 else { return }
             Cache.callManager.dismissIncomingCall(onTopic: topicName, withSeqId: origSeq)
