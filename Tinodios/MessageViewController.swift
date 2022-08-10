@@ -560,7 +560,8 @@ extension MessageViewController: MessageDisplayLogic {
                 navBarAvatarView.widthAnchor.constraint(equalTo: navBarAvatarView.heightAnchor)
             ])
         var items = [UIBarButtonItem(customView: navBarAvatarView)]
-        if let t = self.topic, t.isP2PType {
+        let webrtc = Cache.tinode.getServerParam(for: "iceServers") != nil
+        if let t = self.topic, t.isP2PType, webrtc {
             items.append(UIBarButtonItem(
                 image: UIImage(systemName: "phone",
                                withConfiguration:UIImage.SymbolConfiguration(pointSize: 16, weight: .light)),
