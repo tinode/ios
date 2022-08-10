@@ -200,18 +200,16 @@ class AbstractFormatter: DraftyFormatter {
 
     static func callStatusText(incoming: Bool, event: String) -> String {
         var comment: String
-        if incoming {
-            if event == "declined" {
-                comment = NSLocalizedString("declined", comment: "Label for declined call")
-            } else if event == "missed" {
-                comment = NSLocalizedString("missed", comment: "Label for missed call")
-            } else {
-                comment = NSLocalizedString("disconnected", comment: "Label for disconnected call")
-            }
-        } else {
-            comment = NSLocalizedString("cancelled", comment: "Label for cancelled call")
+        switch event {
+        case MsgServerData.WebRTC.kDeclined.rawValue:
+            comment = NSLocalizedString(MsgServerData.WebRTC.kDeclined.rawValue, comment: "Label for declined call")
+        case MsgServerData.WebRTC.kMissed.rawValue:
+            comment = incoming ?
+                NSLocalizedString(MsgServerData.WebRTC.kMissed.rawValue, comment: "Label for missed call") :
+                NSLocalizedString("cancelled", comment: "Label for cancelled call")
+        default:
+            comment = NSLocalizedString(MsgServerData.WebRTC.kDisconnected.rawValue, comment: "Label for disconnected call")
         }
-
         return comment
     }
 

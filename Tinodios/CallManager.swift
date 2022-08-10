@@ -8,6 +8,7 @@
 import Foundation
 import TinodeSDK
 import CallKit
+import WebRTC
 
 class CallManager {
     private static let kCallTimeout = 30
@@ -44,15 +45,49 @@ class CallManager {
         }
     }
 
+    // Utility function to configure RTCAudioSession.
+    private func audioSessionChange(action: ((RTCAudioSession) throws -> Void)) {
+        let audioSession = RTCAudioSession.sharedInstance()
+        audioSession.lockForConfiguration()
+        do {
+            try action(audioSession)
+        } catch {
+            Cache.log.error("WebRTCClient: error changing AVAudioSession: %@", error.localizedDescription)
+        }
+        audioSession.unlockForConfiguration()
+    }
+
+    private func activateAudioSession() {
+        self.audioSessionChange { audioSession in
+            try audioSession.setCategory(AVAudioSession.Category.playAndRecord.rawValue)
+            try audioSession.setMode(AVAudioSession.Mode.voiceChat.rawValue)
+            try audioSession.overrideOutputAudioPort(.speaker)
+            try audioSession.setActive(true)
+        }
+    }
+
+    private func deactivateAudioSession() {
+        // Clean up audio.
+        self.audioSessionChange { audioSession in
+            try audioSession.setActive(false)
+        }
+    }
+
     // Registers an outgoing call that's just been started.
-    func registerOutgoingCallStarted(onTopic topicName: String, withSeqId seq: Int) -> Bool {
+    func registerOutgoingCall(onTopic topicName: String) -> Bool {
         guard self.callInProgress == nil else {
             // Another call is in progress. Quit.
             return false
         }
         let tinode = Cache.tinode
-        self.callInProgress = Call(uuid: UUID(), topic: topicName, from: tinode.myUid!, seq: seq)
+        self.callInProgress = Call(uuid: UUID(), topic: topicName, from: tinode.myUid!, seq: -1)
+        self.activateAudioSession()
         return true
+    }
+
+    // Sets seq id on the current call.
+    func updateOutgoingCall(withNewSeqId seq: Int) {
+        self.callInProgress?.seq = seq
     }
 
     // Report incoming call to the operating system (which displays incoming call UI).
@@ -69,6 +104,7 @@ class CallManager {
             return
         }
 
+        self.activateAudioSession()
         self.callInProgress = Call(uuid: uuid, topic: topicName, from: fromUid, seq: seq)
         let tinode = Cache.tinode
         let user: DefaultUser? = tinode.getUser(with: fromUid)
@@ -97,9 +133,13 @@ class CallManager {
 extension CallManager: CallManagerImpl {
     func acceptPendingCall() -> Bool {
         guard let call = self.callInProgress else { return false }
+
+        Cache.log.info("Accepting call: topic=%@, seq=%d", call.topic, call.seq)
         self.timer?.invalidate()
         self.timer = nil
         UiUtils.routeToMessageVC(forTopic: call.topic) { messageVC in
+            guard let messageVC = messageVC else { return }
+            Cache.log.info("Seguing from MessageVC to CallVC, topic=%@ -> %@", call.topic, messageVC)
             messageVC.performSegue(withIdentifier: "Messages2Call", sender: call)
         }
         return true
@@ -107,9 +147,11 @@ extension CallManager: CallManagerImpl {
 
     func completeCallInProgress(reportToSystem: Bool, reportToPeer: Bool) {
         guard let call = self.callInProgress else { return }
+        Cache.log.info("Completing call: topic=%@, seq=%d", call.topic, call.seq)
         self.callInProgress = nil
         self.timer?.invalidate()
         self.timer = nil
+        self.deactivateAudioSession()
 
         if reportToPeer {
             // Tell the peer the call is over/declined.

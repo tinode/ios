@@ -586,7 +586,7 @@ extension MessageViewController: MessageDisplayLogic {
 
     func displayChatMessages(messages: [StoredMessage], _ scrollToMostRecentMessage: Bool) {
         assert(Thread.isMainThread)
-
+        guard collectionView != nil else { return }
         let oldData = self.messages
         let newData: [StoredMessage] = messages
 
@@ -672,6 +672,7 @@ extension MessageViewController: MessageDisplayLogic {
 
     func reloadMessages(fromSeqId loId: Int, toSeqId hiId: Int) {
         assert(Thread.isMainThread)
+        guard self.collectionView != nil else { return }
         let hiIdUpper = hiId + 1
         let rowIds = (loId..<hiIdUpper).map { self.messageSeqIdIndex[$0] }.filter { $0 != nil }
         self.collectionView.reloadItems(at: rowIds.map { IndexPath(item: $0!, section: 0) })
