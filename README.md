@@ -27,7 +27,7 @@ arch -x86_64 pod install
 * If you use the app and discover bugs or missing features, let us know by filing bug reports and feature requests. Vote for existing feature requests you find most valuable.
 * If you speak a language other than English, translate the apps into your language. You may also review and improve existing translations.
 * If you are a UI/UX expert, help us polish the app UI.
-* Use it: install it for your colleagues or friends at work or at home. Please [contact us](https://tinode.co/contact) if you want to participate in Test Flight.
+* Use it: install it for your colleagues or friends at work or at home. Please [contact us](https://tinode.co/contact) if you want to participate in [TestFlight](https://developer.apple.com/testflight/).
 
 ## Getting support
 
