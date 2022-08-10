@@ -19,6 +19,16 @@ or on Apple Silicon (M1):
 arch -x86_64 pod install
 ```
 
+## Helping out
+
+* If you appreciate our work, please help spread the word! Sharing on Reddit, HN, and other communities helps more than you think.
+* Consider buying paid support: https://tinode.co/support.html
+* If you are a software developer, send us your pull requests with bug fixes and new features.
+* If you use the app and discover bugs or missing features, let us know by filing bug reports and feature requests. Vote for existing feature requests you find most valuable.
+* If you speak a language other than English, translate the apps into your language. You may also review and improve existing translations.
+* If you are a UI/UX expert, help us polish the app UI.
+* Use it: install it for your colleagues or friends at work or at home. Please [contact us](https://tinode.co/contact) if you want to participate in Test Flight.
+
 ## Getting support
 
 * Read [server-side](https://github.com/tinode/chat/blob/master/docs/API.md) API documentation.
