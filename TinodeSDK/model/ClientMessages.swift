@@ -7,15 +7,15 @@
 
 import Foundation
 
-public class MsgClientHi: Encodable {
-    let id: String?
-    let ver: String?
+public class MsgClientHi: Codable {
+    public let id: String?
+    public let ver: String?
     // User Agent.
-    let ua: String?
+    public let ua: String?
     // Push notification token.
-    let dev: String?
-    let lang: String?
-    let bkg: Bool?
+    public let dev: String?
+    public let lang: String?
+    public let bkg: Bool?
 
     init(id: String?, ver: String?, ua: String?, dev: String?, lang: String?, background: Bool) {
         self.id = id
@@ -73,7 +73,7 @@ public class Credential: Codable, Comparable, CustomStringConvertible {
     }
 }
 
-public class MsgClientAcc<Pu: Encodable, Pr: Encodable>: Encodable {
+public class MsgClientAcc<Pu: Codable, Pr: Codable>: Codable {
     var id: String?
     var user: String?
     var scheme: String?
@@ -112,11 +112,11 @@ public class MsgClientAcc<Pu: Encodable, Pr: Encodable>: Encodable {
     }
 }
 
-public class MsgClientLogin: Encodable {
-    let id: String?
-    let scheme: String?
-    let secret: String?
-    var cred: [Credential]?
+public class MsgClientLogin: Codable {
+    public let id: String?
+    public let scheme: String?
+    public let secret: String?
+    public var cred: [Credential]?
 
     init(id: String?, scheme: String?, secret: String?, credentials: [Credential]?) {
         self.id = id
@@ -133,7 +133,7 @@ public class MsgClientLogin: Encodable {
     }
 }
 
-public class MetaGetData: Encodable {
+public class MetaGetData: Codable {
     /// Load messages/ranges with IDs equal or greater than this (inclusive or closed).
     let since: Int?
     /// Load messages/ranges with IDs lower than this (exclusive or open).
@@ -146,14 +146,14 @@ public class MetaGetData: Encodable {
         self.limit = limit
     }
 }
-public class MetaGetDesc: Encodable {
+public class MetaGetDesc: Codable {
     // ims = If modified since...
     let ims: Date?
     public init(ims: Date? = nil) {
         self.ims = ims
     }
 }
-public class MetaGetSub: Encodable {
+public class MetaGetSub: Codable {
     let user: String?
     let ims: Date?
     let limit: Int?
@@ -163,7 +163,7 @@ public class MetaGetSub: Encodable {
         self.limit = limit
     }
 }
-public class MsgGetMeta: CustomStringConvertible, Encodable {
+public class MsgGetMeta: CustomStringConvertible, Codable {
     private static let kDescSet = 0x01
     private static let kSubSet = 0x02
     private static let kDataSet = 0x04
@@ -296,7 +296,7 @@ public class MsgGetMeta: CustomStringConvertible, Encodable {
     }
 }
 
-public class MetaSetDesc<P: Encodable, R: Encodable>: Encodable {
+public class MetaSetDesc<P: Codable, R: Codable>: Codable {
     var defacs: Defacs?
     var pub: P?
     var priv: R?
@@ -321,7 +321,7 @@ public class MetaSetDesc<P: Encodable, R: Encodable>: Encodable {
     }
 }
 
-public class MetaSetSub: Encodable {
+public class MetaSetSub: Codable {
     let user: String?
     let mode: String?
     public init() {
@@ -337,7 +337,7 @@ public class MetaSetSub: Encodable {
         self.mode = mode
     }
 }
-public class MsgSetMeta<Pu: Encodable, Pr: Encodable>: Encodable {
+public class MsgSetMeta<Pu: Codable, Pr: Codable>: Codable {
     let desc: MetaSetDesc<Pu, Pr>?
     let sub: MetaSetSub?
     let tags: [String]?
@@ -351,7 +351,7 @@ public class MsgSetMeta<Pu: Encodable, Pr: Encodable>: Encodable {
     }
 }
 
-public class MsgClientSub<Pu: Encodable, Pr: Encodable>: Encodable {
+public class MsgClientSub<Pu: Codable, Pr: Codable>: Codable {
     var id: String?
     var topic: String?
     var set: MsgSetMeta<Pu, Pr>?
@@ -364,7 +364,7 @@ public class MsgClientSub<Pu: Encodable, Pr: Encodable>: Encodable {
     }
 }
 
-public class MsgClientGet: Encodable {
+public class MsgClientGet: Codable {
     let id: String?
     let topic: String?
     let what: String?
@@ -382,7 +382,7 @@ public class MsgClientGet: Encodable {
     }
 }
 
-public class MsgClientSet<Pu: Encodable, Pr: Encodable>: Encodable {
+public class MsgClientSet<Pu: Codable, Pr: Codable>: Codable {
     let id: String?
     let topic: String?
     let desc: MetaSetDesc<Pu, Pr>?
@@ -402,7 +402,7 @@ public class MsgClientSet<Pu: Encodable, Pr: Encodable>: Encodable {
     }
 }
 
-public class MsgClientLeave: Encodable {
+public class MsgClientLeave: Codable {
     let id: String?
     let topic: String?
     let unsub: Bool?
@@ -414,7 +414,7 @@ public class MsgClientLeave: Encodable {
 }
 
 /// Typing, read/received and video call notifications packet.
-public class MsgClientNote: Encodable {
+public class MsgClientNote: Codable {
     let topic: String?
     let what: String?
     let seq: Int?
@@ -432,7 +432,7 @@ public class MsgClientNote: Encodable {
     }
 }
 
-public class MsgClientPub: Encodable {
+public class MsgClientPub: Codable {
     let id: String?
     let topic: String?
     let noecho: Bool?
@@ -448,7 +448,7 @@ public class MsgClientPub: Encodable {
     }
 }
 
-public class MsgClientDel: Encodable {
+public class MsgClientDel: Codable {
     static let kStrTopic = "topic"
     static let kStrMsg = "msg"
     static let kStrSub = "sub"
@@ -520,7 +520,7 @@ public class MsgClientDel: Encodable {
 
 }
 
-public class MsgClientExtra: Encodable {
+public class MsgClientExtra: Codable {
     let attachments: [String]?
 
     init(attachments: [String]?) {
@@ -528,17 +528,17 @@ public class MsgClientExtra: Encodable {
     }
 }
 
-public class ClientMessage<Pu: Encodable, Pr: Encodable>: Encodable {
-    var hi: MsgClientHi?
-    var acc: MsgClientAcc<Pu, Pr>?
-    var login: MsgClientLogin?
-    var sub: MsgClientSub<Pu, Pr>?
-    var get: MsgClientGet?
-    var set: MsgClientSet<Pu, Pr>?
-    var leave: MsgClientLeave?
-    var note: MsgClientNote?
-    var pub: MsgClientPub?
-    var del: MsgClientDel?
+public class ClientMessage<Pu: Codable, Pr: Codable>: Codable {
+    public var hi: MsgClientHi?
+    public var acc: MsgClientAcc<Pu, Pr>?
+    public var login: MsgClientLogin?
+    public var sub: MsgClientSub<Pu, Pr>?
+    public var get: MsgClientGet?
+    public var set: MsgClientSet<Pu, Pr>?
+    public var leave: MsgClientLeave?
+    public var note: MsgClientNote?
+    public var pub: MsgClientPub?
+    public var del: MsgClientDel?
 
     // Optional field for sending attachment references.
     var extra: MsgClientExtra?

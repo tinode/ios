@@ -192,6 +192,7 @@
 		0A36776822B09C1900724873 /* EditMembersViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditMembersViewController.swift; sourceTree = "<group>"; };
 		0A3AE3B4274CAD2500CB673E /* ForwardMessageBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForwardMessageBar.swift; sourceTree = "<group>"; };
 		0A3AE3B6274CAD5800CB673E /* ForwardMessageBar.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ForwardMessageBar.xib; sourceTree = "<group>"; };
+		0A3EECCC28DA0EEF00313C35 /* TinodiosUITests.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; path = TinodiosUITests.entitlements; sourceTree = "<group>"; };
 		0A431C022244A26200A837F7 /* TinodeSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = TinodeSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		0A4B11FD2373DC1400199310 /* TagsEditDialogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagsEditDialogView.swift; sourceTree = "<group>"; };
 		0A4E1D2F22829C46006C0912 /* ContactsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsManager.swift; sourceTree = "<group>"; };
@@ -490,6 +491,7 @@
 		0AE21E4C28D21849008F486C /* TinodiosUITests */ = {
 			isa = PBXGroup;
 			children = (
+				0A3EECCC28DA0EEF00313C35 /* TinodiosUITests.entitlements */,
 				0AE21E4D28D21849008F486C /* TinodiosUITests.swift */,
 				0AE21E4F28D21849008F486C /* TinodiosUITestsLaunchTests.swift */,
 			);
@@ -1361,6 +1363,7 @@
 			baseConfigurationReference = B33FA5FDB8E984980BADDAB2 /* Pods-TinodiosUITests.debug.xcconfig */;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_ENTITLEMENTS = TinodiosUITests/TinodiosUITests.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
@@ -1381,6 +1384,7 @@
 			baseConfigurationReference = 4F6E20F7F9A02F33DBC019E7 /* Pods-TinodiosUITests.release.xcconfig */;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_ENTITLEMENTS = TinodiosUITests/TinodiosUITests.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;

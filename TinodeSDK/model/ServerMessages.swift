@@ -7,13 +7,22 @@
 
 import Foundation
 
-public class MsgServerCtrl: Decodable {
+public class MsgServerCtrl: Codable {
     public let id: String?
     public let topic: String?
     public let code: Int
     public let text: String
     public let ts: Date
     public let params: [String: JSONValue]?
+
+    public init(id: String?, topic: String?, code: Int, text: String, ts: Date, params: [String: JSONValue]?) {
+        self.id = id
+        self.topic = topic
+        self.code = code
+        self.text = text
+        self.ts = ts
+        self.params = params
+    }
 
     public func getBoolParam(for key: String) -> Bool? {
         if case let .bool(v)? = params?[key] {
@@ -66,12 +75,12 @@ public class MsgServerCtrl: Decodable {
     }
 }
 
-public class DelValues: Decodable {
+public class DelValues: Codable {
     let clear: Int
     let delseq: [MsgRange]
 }
 
-public class MsgServerMeta: Decodable {
+public class MsgServerMeta: Codable {
     public let id: String?
     public let topic: String?
     public let ts: Date?
@@ -103,9 +112,13 @@ public class MsgServerMeta: Decodable {
             sub = try? container.decode(Array<DefaultSubscription>.self, forKey: .sub)
         }
     }
+
+    public func encode(to encoder: Encoder) throws {
+        // Dummy. Used in testing only.
+    }
 }
 
-open class MsgServerData: Decodable {
+open class MsgServerData: Codable {
     public enum WebRTC: String {
         case kAccepted = "accepted"
         case kDeclined = "declined"
@@ -133,7 +146,7 @@ open class MsgServerData: Decodable {
     public init() {}
 }
 
-public class AccessChange: Decodable {
+public class AccessChange: Codable {
     let want: String?
     let given: String?
 
@@ -142,7 +155,7 @@ public class AccessChange: Decodable {
     }
 }
 
-public class MsgServerPres: Decodable {
+public class MsgServerPres: Codable {
     enum What {
         case kOn, kOff, kUpd, kGone, kTerm, kAcs, kMsg, kUa, kRecv, kRead, kDel, kTags, kUnknown
     }
@@ -192,7 +205,7 @@ public class MsgServerPres: Decodable {
     }
 }
 
-public class MsgServerInfo: Decodable {
+public class MsgServerInfo: Codable {
     public var topic: String?
     public var src: String?
     public var from: String?
@@ -204,7 +217,7 @@ public class MsgServerInfo: Decodable {
     public var payload: JSONValue?
 }
 
-public class ServerMessage: Decodable {
+public class ServerMessage: Codable {
     // RFC 7231 HTTP status messages
     // https://tools.ietf.org/html/rfc7231#section-6
     public static let kStatusOk                  = 200 // 6.3.1
