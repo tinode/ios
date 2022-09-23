@@ -8,11 +8,18 @@
 import XCTest
 
 import Network
-import TinodeSDK
+@testable import TinodeSDK
 
 class FakeTinodeServer {
     var listener: NWListener
     var connectedClients: [NWConnection] = []
+
+    // Request types.
+    enum RequestType {
+        case none, hi, acc, login, sub, get, set, pub, leave, note, del
+    }
+    // Request handlers.
+    var requestHandlers: [RequestType : ((ClientMessage<Int, Int>) -> [ServerMessage])] = [:]
 
     init(port: UInt16) {
         let parameters = NWParameters(tls: nil)
@@ -83,21 +90,23 @@ class FakeTinodeServer {
         listener.start(queue: serverQueue)
     }
 
+    func stopServer() {
+        listener.cancel()
+    }
+
     func handleClientMessage(data: Data, context: NWConnection.ContentContext, stringVal: String, connection: NWConnection) throws {
         let message = try Tinode.jsonDecoder.decode(ClientMessage<Int, Int>.self, from: data)
 
         print("--> received: \(String(decoding: data, as: UTF8.self))")
-        if let hi = message.hi {
-            let response = ServerMessage()
-            response.ctrl = MsgServerCtrl(id: hi.id, topic: nil, code: 200, text: "", ts: Date(), params: nil)
-            sendResponse(response: response, into: connection)
-        } else if let login = message.login {
-            let response = ServerMessage()
-            response.ctrl = MsgServerCtrl(id: login.id, topic: nil, code: 200, text: "ok", ts: Date(),
-                                          params: ["authlvl": .string("auth"), "token": .string("fake"),
-                                                   "user": .string("usrFake")])
-            sendResponse(response: response, into: connection)
+        var reqType: RequestType = .none
+        if message.hi != nil {
+            reqType = .hi
+        } else if message.login != nil {
+            reqType = .login
+        } else if message.sub != nil {
+            reqType = .sub
         }
+        self.requestHandlers[reqType]?(message).forEach { self.sendResponse(response: $0, into: connection) }
     }
 
     func sendResponse(response: ServerMessage, into connection: NWConnection) {
@@ -135,10 +144,46 @@ final class TinodiosUITests: XCTestCase {
 
     override func tearDownWithError() throws {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
+        tinodeServer.requestHandlers.removeAll()
+        tinodeServer.stopServer()
     }
 
     func testExample() throws {
-        // UI tests must launch the application that they test.
+        tinodeServer.requestHandlers[.hi] = { req in
+            let hi = req.hi!
+            let response = ServerMessage()
+            response.ctrl = MsgServerCtrl(id: hi.id, topic: nil, code: 200, text: "", ts: Date(), params: nil)
+            return [response]
+        }
+        tinodeServer.requestHandlers[.login] = { req in
+            let login = req.login!
+            let response = ServerMessage()
+            response.ctrl = MsgServerCtrl(id: login.id, topic: nil, code: 200, text: "ok", ts: Date(),
+                                          params: ["authlvl": .string("auth"), "token": .string("fake"),
+                                                   "user": .string("usrFake")])
+            return [response]
+        }
+        tinodeServer.requestHandlers[.sub] = { req in
+            let sub = req.sub!
+            if sub.topic == "me", let get = sub.get, get.what.split(separator: " ").sorted().elementsEqual(["cred", "desc", "sub", "tags"]) {
+                let responseCtrl = ServerMessage()
+                responseCtrl.ctrl = MsgServerCtrl(id: sub.id, topic: sub.topic, code: 200, text: "ok", ts: Date(), params: nil)
+                return [responseCtrl]
+            }
+            return []
+        }
+
+        // Allow notifications.
+        let monitor = addUIInterruptionMonitor(withDescription: "Local Notifications") { (alert) -> Bool in
+            let notifPermission = "Would Like to Send You Notifications"
+            if alert.label.contains(notifPermission) {
+                alert.buttons["Allow"].tap()
+                return true
+            }
+            return false
+        }
+        defer { removeUIInterruptionMonitor(monitor) }
+
         let app = XCUIApplication()
         app.launch()
 
@@ -157,6 +202,8 @@ final class TinodiosUITests: XCTestCase {
         XCTAssertTrue(signInButton.exists)
         signInButton.tap()
 
+        // "Allow Notifications?" dialog. Make sure modal dialog handler gets triggered.
+        app.tap()
         print("sleepin 15 sec")
         sleep(15)
         print("done")

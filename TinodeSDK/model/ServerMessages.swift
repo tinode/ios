@@ -15,15 +15,6 @@ public class MsgServerCtrl: Codable {
     public let ts: Date
     public let params: [String: JSONValue]?
 
-    public init(id: String?, topic: String?, code: Int, text: String, ts: Date, params: [String: JSONValue]?) {
-        self.id = id
-        self.topic = topic
-        self.code = code
-        self.text = text
-        self.ts = ts
-        self.params = params
-    }
-
     public func getBoolParam(for key: String) -> Bool? {
         if case let .bool(v)? = params?[key] {
             return v
@@ -73,6 +64,16 @@ public class MsgServerCtrl: Codable {
         }
         return nil
     }
+
+    // Testing only.
+    internal init(id: String?, topic: String?, code: Int, text: String, ts: Date, params: [String: JSONValue]?) {
+        self.id = id
+        self.topic = topic
+        self.code = code
+        self.text = text
+        self.ts = ts
+        self.params = params
+    }
 }
 
 public class DelValues: Codable {
@@ -93,6 +94,7 @@ public class MsgServerMeta: Codable {
     private enum CodingKeys: String, CodingKey {
         case id, topic, ts, desc, sub, del, tags, cred
     }
+
     required public init (from decoder: Decoder) throws {
         let container =  try decoder.container(keyedBy: CodingKeys.self)
         id = try? container.decode(String.self, forKey: .id)
@@ -115,6 +117,19 @@ public class MsgServerMeta: Codable {
 
     public func encode(to encoder: Encoder) throws {
         // Dummy. Used in testing only.
+    }
+
+    // Testing only.
+    internal init(id: String?, topic: String?, ts: Date, desc: DescriptionProto?,
+                sub: [SubscriptionProto]?, del: DelValues?, tags: [String]?, cred: [Credential]?) {
+        self.id = id
+        self.topic = topic
+        self.ts = ts
+        self.desc = desc
+        self.sub = sub
+        self.del = del
+        self.tags = tags
+        self.cred = cred
     }
 }
 
