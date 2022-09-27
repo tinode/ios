@@ -105,8 +105,24 @@ class FakeTinodeServer {
             reqType = .login
         } else if message.sub != nil {
             reqType = .sub
+        } else if message.get != nil {
+            reqType = .get
+        } else if message.set != nil {
+            reqType = .set
+        } else if message.pub != nil {
+            reqType = .pub
+        } else if message.leave != nil {
+            reqType = .leave
+        } else if message.note != nil {
+            reqType = .note
+        } else if message.del != nil {
+            reqType = .del
         }
         self.requestHandlers[reqType]?(message).forEach { self.sendResponse(response: $0, into: connection) }
+    }
+
+    func addHandler(forRequestType type: RequestType, handler: @escaping ((ClientMessage<Int, Int>) -> [ServerMessage])) {
+        self.requestHandlers[type] = handler
     }
 
     func sendResponse(response: ServerMessage, into connection: NWConnection) {
@@ -149,29 +165,51 @@ final class TinodiosUITests: XCTestCase {
     }
 
     func testExample() throws {
-        tinodeServer.requestHandlers[.hi] = { req in
+        tinodeServer.addHandler(forRequestType: .hi, handler: { req in
             let hi = req.hi!
             let response = ServerMessage()
             response.ctrl = MsgServerCtrl(id: hi.id, topic: nil, code: 200, text: "", ts: Date(), params: nil)
             return [response]
-        }
-        tinodeServer.requestHandlers[.login] = { req in
+        })
+        tinodeServer.addHandler(forRequestType: .login, handler: { req in
             let login = req.login!
             let response = ServerMessage()
             response.ctrl = MsgServerCtrl(id: login.id, topic: nil, code: 200, text: "ok", ts: Date(),
                                           params: ["authlvl": .string("auth"), "token": .string("fake"),
                                                    "user": .string("usrFake")])
             return [response]
-        }
-        tinodeServer.requestHandlers[.sub] = { req in
-            let sub = req.sub!
-            if sub.topic == "me", let get = sub.get, get.what.split(separator: " ").sorted().elementsEqual(["cred", "desc", "sub", "tags"]) {
+        })
+        tinodeServer.addHandler(forRequestType: .sub, handler: { req in
+            let sreq = req.sub!
+            if sreq.topic == "me", let get = sreq.get, get.what.split(separator: " ").sorted().elementsEqual(["cred", "desc", "sub", "tags"]) {
+                let now = Date()
                 let responseCtrl = ServerMessage()
-                responseCtrl.ctrl = MsgServerCtrl(id: sub.id, topic: sub.topic, code: 200, text: "ok", ts: Date(), params: nil)
-                return [responseCtrl]
+                responseCtrl.ctrl = MsgServerCtrl(id: sreq.id, topic: sreq.topic, code: 200, text: "ok", ts: now, params: nil)
+
+                let metaDesc = ServerMessage()
+                let desc = Description<TheCard, PrivateType>()
+                desc.created = now.addingTimeInterval(-86400)
+                desc.updated = desc.created
+                desc.touched = desc.created
+                desc.defacs = Defacs(auth: "JRWPA", anon: "N")
+                desc.pub = TheCard(fn: "Alice")
+                desc.priv = ["comment": .string("no comment")]
+                metaDesc.meta = MsgServerMeta(id: sreq.id, topic: "me", ts: now, desc: desc, sub: nil, del: nil, tags: nil, cred: nil)
+
+                let metaSub = ServerMessage()
+                let sub = DefaultSubscription()
+                sub.topic = "usrBob"
+                sub.updated = now.addingTimeInterval(-86400)
+                sub.read = 2
+                sub.recv = 2
+                sub.pub = TheCard(fn: "Bob")
+                sub.priv = ["comment": .string("bla")]
+                sub.acs = Acs(given: "JRWPS", want: "JRWPS", mode: "JRWPS")
+                metaSub.meta = MsgServerMeta(id: sreq.id, topic: "me", ts: now, desc: nil, sub: [sub], del: nil, tags: nil, cred: nil)
+                return [responseCtrl, metaDesc, metaSub]
             }
             return []
-        }
+        })
 
         // Allow notifications.
         let monitor = addUIInterruptionMonitor(withDescription: "Local Notifications") { (alert) -> Bool in
@@ -204,9 +242,14 @@ final class TinodiosUITests: XCTestCase {
 
         // "Allow Notifications?" dialog. Make sure modal dialog handler gets triggered.
         app.tap()
-        print("sleepin 15 sec")
-        sleep(15)
-        print("done")
+
+        let table = app.tables.element
+        XCTAssertTrue(table.exists)
+
+        let cell = table.cells.element(boundBy: 0)
+        XCTAssertTrue(cell.waitForExistence(timeout: 5))
+
+        XCTAssertTrue(cell.staticTexts["Bob"].waitForExistence(timeout: 5))
     }
 
     func testLaunchPerformance() throws {

@@ -74,7 +74,7 @@ extension SubscriptionProto {
     }
 }
 
-public class Subscription<SP: Codable, SR: Codable>: SubscriptionProto {
+public class Subscription<SP: Codable, SR: Codable>: Codable, SubscriptionProto {
     public var user: String?
     public var updated: Date?
     public var deleted: Date?

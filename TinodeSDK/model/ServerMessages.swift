@@ -116,7 +116,24 @@ public class MsgServerMeta: Codable {
     }
 
     public func encode(to encoder: Encoder) throws {
-        // Dummy. Used in testing only.
+        // Used in testing only.
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        if let id = id { try container.encode(id, forKey: .id) }
+        if let topic = topic { try container.encode(topic, forKey: .topic) }
+        if let ts = ts { try container.encode(ts, forKey: .ts) }
+        if let del = del { try container.encode(del, forKey: .del) }
+        if let tags = tags { try container.encode(tags, forKey: .tags) }
+        if let cred = cred { try container.encode(cred, forKey: .cred) }
+        if topic == Tinode.kTopicMe {
+            if let desc = desc as? DefaultDescription { try container.encode(desc, forKey: .desc) }
+            if let sub = sub as? Array<DefaultSubscription> { try container.encode(sub, forKey: .sub) }
+        } else if topic == Tinode.kTopicFnd {
+            if let desc = desc as? FndDescription { try container.encode(desc, forKey: .desc) }
+            if let sub = sub as? Array<FndSubscription> { try container.encode(sub, forKey: .sub) }
+        } else {
+            if let desc = desc as? DefaultDescription { try container.encode(desc, forKey: .desc) }
+            if let sub = sub as? Array<DefaultSubscription> { try container.encode(sub, forKey: .sub) }
+        }
     }
 
     // Testing only.
