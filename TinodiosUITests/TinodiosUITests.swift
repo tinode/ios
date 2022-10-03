@@ -164,21 +164,70 @@ final class TinodiosUITests: XCTestCase {
         tinodeServer.stopServer()
     }
 
-    func testExample() throws {
+    // Tinode message handlers.
+    private func hiHandler() {
         tinodeServer.addHandler(forRequestType: .hi, handler: { req in
             let hi = req.hi!
             let response = ServerMessage()
             response.ctrl = MsgServerCtrl(id: hi.id, topic: nil, code: 200, text: "", ts: Date(), params: nil)
             return [response]
         })
+    }
+
+    private func loginHandler(success: Bool) {
         tinodeServer.addHandler(forRequestType: .login, handler: { req in
             let login = req.login!
             let response = ServerMessage()
-            response.ctrl = MsgServerCtrl(id: login.id, topic: nil, code: 200, text: "ok", ts: Date(),
+            response.ctrl = success ?
+                MsgServerCtrl(id: login.id, topic: nil, code: 200, text: "ok", ts: Date(),
                                           params: ["authlvl": .string("auth"), "token": .string("fake"),
-                                                   "user": .string("usrFake")])
+                                                   "user": .string("usrFake")]) :
+                MsgServerCtrl(id: login.id, topic: nil, code: 401, text: "authentication failed", ts: Date(), params: nil)
             return [response]
         })
+    }
+
+    private func allowLocalNotifications() -> NSObjectProtocol {
+        return addUIInterruptionMonitor(withDescription: "Local Notifications") { (alert) -> Bool in
+            let notifPermission = "Would Like to Send You Notifications"
+            if alert.label.contains(notifPermission) {
+                alert.buttons["Allow"].tap()
+                return true
+            }
+            return false
+        }
+    }
+
+    func testLoginFailure() throws {
+        hiHandler()
+        loginHandler(success: false)
+
+        let app = XCUIApplication()
+        app.launch()
+
+        // Log in as "alice".
+        let elementsQuery = app.scrollViews.otherElements
+        let loginText = elementsQuery.textFields["usernameText"]
+        XCTAssertTrue(loginText.exists)
+        loginText.tap()
+        loginText.typeText("alice")
+
+        let passwordText = elementsQuery.secureTextFields["passwordText"]
+        XCTAssertTrue(passwordText.exists)
+        passwordText.tap()
+        passwordText.typeText("alice123")
+
+        let signInButton = elementsQuery.staticTexts["Sign In"]
+        XCTAssertTrue(signInButton.exists)
+        signInButton.tap()
+
+        // Check if user name field is still available, i.e. login has failed.
+        XCTAssertTrue(loginText.exists)
+    }
+
+    func testLoginBasic() throws {
+        hiHandler()
+        loginHandler(success: true)
         tinodeServer.addHandler(forRequestType: .sub, handler: { req in
             let sreq = req.sub!
             if sreq.topic == "me", let get = sreq.get, get.what.split(separator: " ").sorted().elementsEqual(["cred", "desc", "sub", "tags"]) {
@@ -212,20 +261,13 @@ final class TinodiosUITests: XCTestCase {
         })
 
         // Allow notifications.
-        let monitor = addUIInterruptionMonitor(withDescription: "Local Notifications") { (alert) -> Bool in
-            let notifPermission = "Would Like to Send You Notifications"
-            if alert.label.contains(notifPermission) {
-                alert.buttons["Allow"].tap()
-                return true
-            }
-            return false
-        }
+        let monitor = allowLocalNotifications()
         defer { removeUIInterruptionMonitor(monitor) }
 
         let app = XCUIApplication()
         app.launch()
 
-        let elementsQuery = XCUIApplication().scrollViews.otherElements
+        let elementsQuery = app.scrollViews.otherElements
         let loginText = elementsQuery.textFields["usernameText"]
         XCTAssertTrue(loginText.exists)
         loginText.tap()
@@ -240,14 +282,21 @@ final class TinodiosUITests: XCTestCase {
         XCTAssertTrue(signInButton.exists)
         signInButton.tap()
 
+        // Check if user name field is not still available, i.e. login succeeded.
+        XCTAssertFalse(loginText.exists)
+
         // "Allow Notifications?" dialog. Make sure modal dialog handler gets triggered.
         app.tap()
 
         let table = app.tables.element
         XCTAssertTrue(table.exists)
 
+
         let cell = table.cells.element(boundBy: 0)
-        XCTAssertTrue(cell.waitForExistence(timeout: 5))
+        // Wait for UI to update asynchronously.
+        let exists = NSPredicate(format: "exists == 1")
+        expectation(for: exists, evaluatedWith: cell)
+        waitForExpectations(timeout: 5, handler: nil)
 
         XCTAssertTrue(cell.staticTexts["Bob"].waitForExistence(timeout: 5))
     }
