@@ -145,7 +145,26 @@ class FakeTinodeServer {
 }
 
 final class TinodiosUITests: XCTestCase {
+    let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
     var tinodeServer: FakeTinodeServer!
+
+    // Delete installed Tinode app.
+    private func deleteTinode() {
+        XCUIApplication().terminate()
+        let icon = springboard.icons["Tinode"]
+        if icon.exists {
+            let iconFrame = icon.frame
+            let springboardFrame = springboard.frame
+            icon.press(forDuration: 5)
+
+            // Tap the little "-" button at approximately where it is. The "-" is not exposed directly
+            springboard.coordinate(withNormalizedOffset: CGVector(dx: (iconFrame.minX + 3) / springboardFrame.maxX, dy: (iconFrame.minY + 3) / springboardFrame.maxY)).tap()
+
+            springboard.alerts.buttons["Delete App"].tap()
+            // Confirm the choice once again.
+            springboard.alerts.buttons["Delete"].tap()
+        }
+    }
 
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
@@ -159,7 +178,7 @@ final class TinodiosUITests: XCTestCase {
     }
 
     override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
+        deleteTinode()
         tinodeServer.requestHandlers.removeAll()
         tinodeServer.stopServer()
     }
@@ -185,6 +204,41 @@ final class TinodiosUITests: XCTestCase {
                 MsgServerCtrl(id: login.id, topic: nil, code: 401, text: "authentication failed", ts: Date(), params: nil)
             return [response]
         })
+    }
+
+    private func subHandler() {
+        tinodeServer.addHandler(forRequestType: .sub, handler: { req in
+            let sreq = req.sub!
+            if sreq.topic == "me", let get = sreq.get, get.what.split(separator: " ").sorted().elementsEqual(["cred", "desc", "sub", "tags"]) {
+                let now = Date()
+                let responseCtrl = ServerMessage()
+                responseCtrl.ctrl = MsgServerCtrl(id: sreq.id, topic: sreq.topic, code: 200, text: "ok", ts: now, params: nil)
+
+                let metaDesc = ServerMessage()
+                let desc = Description<TheCard, PrivateType>()
+                desc.created = now.addingTimeInterval(-86400)
+                desc.updated = desc.created
+                desc.touched = desc.created
+                desc.defacs = Defacs(auth: "JRWPA", anon: "N")
+                desc.pub = TheCard(fn: "Alice")
+                desc.priv = ["comment": .string("no comment")]
+                metaDesc.meta = MsgServerMeta(id: sreq.id, topic: "me", ts: now, desc: desc, sub: nil, del: nil, tags: nil, cred: nil)
+
+                let metaSub = ServerMessage()
+                let sub = DefaultSubscription()
+                sub.topic = "usrBob"
+                sub.updated = now.addingTimeInterval(-86400)
+                sub.read = 2
+                sub.recv = 2
+                sub.pub = TheCard(fn: "Bob")
+                sub.priv = ["comment": .string("bla")]
+                sub.acs = Acs(given: "JRWPS", want: "JRWPS", mode: "JRWPS")
+                metaSub.meta = MsgServerMeta(id: sreq.id, topic: "me", ts: now, desc: nil, sub: [sub], del: nil, tags: nil, cred: nil)
+                return [responseCtrl, metaDesc, metaSub]
+            }
+            return []
+        })
+
     }
 
     private func allowLocalNotifications() -> NSObjectProtocol {
@@ -228,37 +282,7 @@ final class TinodiosUITests: XCTestCase {
     func testLoginBasic() throws {
         hiHandler()
         loginHandler(success: true)
-        tinodeServer.addHandler(forRequestType: .sub, handler: { req in
-            let sreq = req.sub!
-            if sreq.topic == "me", let get = sreq.get, get.what.split(separator: " ").sorted().elementsEqual(["cred", "desc", "sub", "tags"]) {
-                let now = Date()
-                let responseCtrl = ServerMessage()
-                responseCtrl.ctrl = MsgServerCtrl(id: sreq.id, topic: sreq.topic, code: 200, text: "ok", ts: now, params: nil)
-
-                let metaDesc = ServerMessage()
-                let desc = Description<TheCard, PrivateType>()
-                desc.created = now.addingTimeInterval(-86400)
-                desc.updated = desc.created
-                desc.touched = desc.created
-                desc.defacs = Defacs(auth: "JRWPA", anon: "N")
-                desc.pub = TheCard(fn: "Alice")
-                desc.priv = ["comment": .string("no comment")]
-                metaDesc.meta = MsgServerMeta(id: sreq.id, topic: "me", ts: now, desc: desc, sub: nil, del: nil, tags: nil, cred: nil)
-
-                let metaSub = ServerMessage()
-                let sub = DefaultSubscription()
-                sub.topic = "usrBob"
-                sub.updated = now.addingTimeInterval(-86400)
-                sub.read = 2
-                sub.recv = 2
-                sub.pub = TheCard(fn: "Bob")
-                sub.priv = ["comment": .string("bla")]
-                sub.acs = Acs(given: "JRWPS", want: "JRWPS", mode: "JRWPS")
-                metaSub.meta = MsgServerMeta(id: sreq.id, topic: "me", ts: now, desc: nil, sub: [sub], del: nil, tags: nil, cred: nil)
-                return [responseCtrl, metaDesc, metaSub]
-            }
-            return []
-        })
+        subHandler()
 
         // Allow notifications.
         let monitor = allowLocalNotifications()
@@ -290,7 +314,6 @@ final class TinodiosUITests: XCTestCase {
 
         let table = app.tables.element
         XCTAssertTrue(table.exists)
-
 
         let cell = table.cells.element(boundBy: 0)
         // Wait for UI to update asynchronously.
