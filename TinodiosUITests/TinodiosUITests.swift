@@ -147,10 +147,11 @@ class FakeTinodeServer {
 final class TinodiosUITests: XCTestCase {
     let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
     var tinodeServer: FakeTinodeServer!
+    var app: XCUIApplication!
 
     // Delete installed Tinode app.
     private func deleteTinode() {
-        XCUIApplication().terminate()
+        app.terminate()
         let icon = springboard.icons["Tinode"]
         if icon.exists {
             let iconFrame = icon.frame
@@ -167,14 +168,12 @@ final class TinodiosUITests: XCTestCase {
     }
 
     override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-
-        // In UI tests it is usually best to stop immediately when a failure occurs.
-        continueAfterFailure = false
-
-        // In UI tests it’s important to set the initial state - such as interface orientation - required for your tests before they run. The setUp method is a good place to do this.
+        app = XCUIApplication()
+        app.launch()
         tinodeServer = FakeTinodeServer(port: 6060)
         tinodeServer.startServer()
+
+        continueAfterFailure = false
     }
 
     override func tearDownWithError() throws {
@@ -200,7 +199,7 @@ final class TinodiosUITests: XCTestCase {
             response.ctrl = success ?
                 MsgServerCtrl(id: login.id, topic: nil, code: 200, text: "ok", ts: Date(),
                                           params: ["authlvl": .string("auth"), "token": .string("fake"),
-                                                   "user": .string("usrFake")]) :
+                                                   "user": .string("usrAlice")]) :
                 MsgServerCtrl(id: login.id, topic: nil, code: 401, text: "authentication failed", ts: Date(), params: nil)
             return [response]
         })
@@ -209,36 +208,74 @@ final class TinodiosUITests: XCTestCase {
     private func subHandler() {
         tinodeServer.addHandler(forRequestType: .sub, handler: { req in
             let sreq = req.sub!
-            if sreq.topic == "me", let get = sreq.get, get.what.split(separator: " ").sorted().elementsEqual(["cred", "desc", "sub", "tags"]) {
-                let now = Date()
-                let responseCtrl = ServerMessage()
-                responseCtrl.ctrl = MsgServerCtrl(id: sreq.id, topic: sreq.topic, code: 200, text: "ok", ts: now, params: nil)
+            if sreq.topic == "me" {
+                if let get = sreq.get, get.what.split(separator: " ").sorted().elementsEqual(["cred", "desc", "sub", "tags"]) {
+                    let now = Date()
+                    let responseCtrl = ServerMessage()
+                    responseCtrl.ctrl = MsgServerCtrl(id: sreq.id, topic: sreq.topic, code: 200, text: "ok", ts: now, params: nil)
 
-                let metaDesc = ServerMessage()
-                let desc = Description<TheCard, PrivateType>()
-                desc.created = now.addingTimeInterval(-86400)
-                desc.updated = desc.created
-                desc.touched = desc.created
-                desc.defacs = Defacs(auth: "JRWPA", anon: "N")
-                desc.pub = TheCard(fn: "Alice")
-                desc.priv = ["comment": .string("no comment")]
-                metaDesc.meta = MsgServerMeta(id: sreq.id, topic: "me", ts: now, desc: desc, sub: nil, del: nil, tags: nil, cred: nil)
+                    let metaDesc = ServerMessage()
+                    let desc = Description<TheCard, PrivateType>()
+                    desc.created = now.addingTimeInterval(-86400)
+                    desc.updated = desc.created
+                    desc.touched = desc.created
+                    desc.defacs = Defacs(auth: "JRWPA", anon: "N")
+                    desc.pub = TheCard(fn: "Alice")
+                    desc.priv = ["comment": .string("no comment")]
+                    metaDesc.meta = MsgServerMeta(id: sreq.id, topic: "me", ts: now, desc: desc, sub: nil, del: nil, tags: nil, cred: nil)
 
-                let metaSub = ServerMessage()
-                let sub = DefaultSubscription()
-                sub.topic = "usrBob"
-                sub.updated = now.addingTimeInterval(-86400)
-                sub.read = 2
-                sub.recv = 2
-                sub.pub = TheCard(fn: "Bob")
-                sub.priv = ["comment": .string("bla")]
-                sub.acs = Acs(given: "JRWPS", want: "JRWPS", mode: "JRWPS")
-                metaSub.meta = MsgServerMeta(id: sreq.id, topic: "me", ts: now, desc: nil, sub: [sub], del: nil, tags: nil, cred: nil)
-                return [responseCtrl, metaDesc, metaSub]
+                    let metaSub = ServerMessage()
+                    let sub = DefaultSubscription()
+                    sub.topic = "usrBob"
+                    sub.updated = now.addingTimeInterval(-86400)
+                    sub.read = 2
+                    sub.recv = 2
+                    sub.pub = TheCard(fn: "Bob")
+                    sub.priv = ["comment": .string("bla")]
+                    sub.acs = Acs(given: "JRWPS", want: "JRWPS", mode: "JRWPS")
+                    metaSub.meta = MsgServerMeta(id: sreq.id, topic: "me", ts: now, desc: nil, sub: [sub], del: nil, tags: nil, cred: nil)
+                    return [responseCtrl, metaDesc, metaSub]
+                }
+            } else if sreq.topic == "usrBob" {
+                if let get = sreq.get, get.what.split(separator: " ").sorted().elementsEqual(["data", "del", "desc", "sub"]) {
+                    let now = Date()
+                    let responseCtrl = ServerMessage()
+                    responseCtrl.ctrl = MsgServerCtrl(id: sreq.id, topic: sreq.topic, code: 200, text: "ok", ts: now, params: nil)
+
+                    let metaDesc = ServerMessage()
+                    let desc = Description<TheCard, PrivateType>()
+                    desc.acs = Acs(given: "JRWPA", want: "JRWPA", mode: "JRWPA")
+                    desc.seen = LastSeen(when: now.addingTimeInterval(-100), ua: "my UA")
+                    metaDesc.meta = MsgServerMeta(id: sreq.id, topic: sreq.topic, ts: now, desc: desc, sub: nil, del: nil, tags: nil, cred: nil)
+
+                    let metaSub = ServerMessage()
+                    let sub1 = DefaultSubscription()
+                    sub1.topic = "usrBob"
+                    sub1.updated = now.addingTimeInterval(-100)
+                    sub1.read = 2
+                    sub1.recv = 2
+                    sub1.acs = Acs(given: "JRWPS", want: "JRWPS", mode: "JRWPS")
+
+                    let sub2 = DefaultSubscription()
+                    sub2.topic = "usrAlice"
+                    sub2.updated = now.addingTimeInterval(-100)
+                    sub2.read = 2
+                    sub2.recv = 2
+                    sub2.acs = Acs(given: "JRWPS", want: "JRWPS", mode: "JRWPS")
+
+                    metaSub.meta = MsgServerMeta(id: sreq.id, topic: sreq.topic, ts: now, desc: nil, sub: [sub1, sub2], del: nil, tags: nil, cred: nil)
+
+                    let data1 = ServerMessage()
+                    data1.data = MsgServerData(id: sreq.id, topic: sreq.topic, from: sreq.topic, ts: now.addingTimeInterval(-2000), head: nil, seq: 1, content: Drafty(plainText: "hello message"))
+
+                    let data2 = ServerMessage()
+                    data2.data = MsgServerData(id: sreq.id, topic: sreq.topic, from: "usrAlice", ts: now.addingTimeInterval(-1000), head: nil, seq: 2, content: Drafty(plainText: "wassup?"))
+
+                    return [responseCtrl, metaDesc, metaSub, data1, data2]
+                }
             }
             return []
         })
-
     }
 
     private func allowLocalNotifications() -> NSObjectProtocol {
@@ -252,13 +289,7 @@ final class TinodiosUITests: XCTestCase {
         }
     }
 
-    func testLoginFailure() throws {
-        hiHandler()
-        loginHandler(success: false)
-
-        let app = XCUIApplication()
-        app.launch()
-
+    private func logIntoTinode(shouldSucceed: Bool) {
         // Log in as "alice".
         let elementsQuery = app.scrollViews.otherElements
         let loginText = elementsQuery.textFields["usernameText"]
@@ -275,8 +306,15 @@ final class TinodiosUITests: XCTestCase {
         XCTAssertTrue(signInButton.exists)
         signInButton.tap()
 
-        // Check if user name field is still available, i.e. login has failed.
-        XCTAssertTrue(loginText.exists)
+        // Check if user name field is still available. If so login has failed.
+        XCTAssertNotEqual(loginText.exists, shouldSucceed)
+    }
+
+    func testLoginFailure() throws {
+        hiHandler()
+        loginHandler(success: false)
+
+        logIntoTinode(shouldSucceed: false)
     }
 
     func testLoginBasic() throws {
@@ -288,26 +326,7 @@ final class TinodiosUITests: XCTestCase {
         let monitor = allowLocalNotifications()
         defer { removeUIInterruptionMonitor(monitor) }
 
-        let app = XCUIApplication()
-        app.launch()
-
-        let elementsQuery = app.scrollViews.otherElements
-        let loginText = elementsQuery.textFields["usernameText"]
-        XCTAssertTrue(loginText.exists)
-        loginText.tap()
-        loginText.typeText("alice")
-
-        let passwordText = elementsQuery.secureTextFields["passwordText"]
-        XCTAssertTrue(passwordText.exists)
-        passwordText.tap()
-        passwordText.typeText("alice123")
-
-        let signInButton = elementsQuery.staticTexts["Sign In"]
-        XCTAssertTrue(signInButton.exists)
-        signInButton.tap()
-
-        // Check if user name field is not still available, i.e. login succeeded.
-        XCTAssertFalse(loginText.exists)
+        logIntoTinode(shouldSucceed: true)
 
         // "Allow Notifications?" dialog. Make sure modal dialog handler gets triggered.
         app.tap()
@@ -322,6 +341,59 @@ final class TinodiosUITests: XCTestCase {
         waitForExpectations(timeout: 5, handler: nil)
 
         XCTAssertTrue(cell.staticTexts["Bob"].waitForExistence(timeout: 5))
+    }
+
+    func testPublishBasic() {
+        hiHandler()
+        loginHandler(success: true)
+        subHandler()
+        tinodeServer.addHandler(forRequestType: .pub, handler: { req in
+            let preq = req.pub!
+            let now = Date()
+            let responseCtrl = ServerMessage()
+            responseCtrl.ctrl = MsgServerCtrl(id: preq.id, topic: preq.topic, code: 200, text: "accepted", ts: now,
+                                              params: ["seq": .int(3)])
+            return [responseCtrl]
+        })
+
+        // Allow notifications.
+        let monitor = allowLocalNotifications()
+        defer { removeUIInterruptionMonitor(monitor) }
+
+        logIntoTinode(shouldSucceed: true)
+
+        // "Allow Notifications?" dialog. Make sure modal dialog handler gets triggered.
+        app.tap()
+
+        let table = app.tables.element
+        XCTAssertTrue(table.exists)
+
+        let cell = table.cells.element(boundBy: 0)
+        // Wait for UI to update asynchronously.
+        let exists = NSPredicate(format: "exists == 1")
+        expectation(for: exists, evaluatedWith: cell)
+        waitForExpectations(timeout: 5, handler: nil)
+
+        XCTAssertTrue(cell.staticTexts["Bob"].waitForExistence(timeout: 5))
+
+        cell.tap()
+        let collectionViewsQuery = app.collectionViews
+        sleep(1)
+
+        // 2 messages.
+        XCTAssertEqual(collectionViewsQuery.cells.count, 2)
+
+        // Send another one.
+        let inputField = app.children(matching: .window).element(boundBy: 1).children(matching: .other).element.children(matching: .other).element(boundBy: 1)
+        inputField.tap()
+        inputField.typeText("new msg")
+
+        let arrowUpCircleButton = app.buttons["Arrow Up Circle"]
+        arrowUpCircleButton.tap()
+
+        sleep(1)
+        // We should now have 3 messages.
+        XCTAssertEqual(collectionViewsQuery.cells.count, 3)
     }
 
     func testLaunchPerformance() throws {

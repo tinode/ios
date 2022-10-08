@@ -176,6 +176,18 @@ open class MsgServerData: Codable {
     // todo: make it drafty
     public var content: Drafty?
     public init() {}
+
+    // Testing only.
+    internal init(id: String?, topic: String?, from: String?, ts: Date?,
+                  head: [String: JSONValue]?, seq: Int?, content: Drafty?) {
+        self.id = id
+        self.topic = topic
+        self.from = from
+        self.ts = ts
+        self.head = head
+        self.seq = seq
+        self.content = content
+    }
 }
 
 public class AccessChange: Codable {
