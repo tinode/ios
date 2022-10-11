@@ -95,6 +95,8 @@ class ChatListViewController: UITableViewController, ChatListDisplayLogic {
     func appBecameActive() {
         self.interactor?.setup()
         self.interactor?.attachToMeTopic()
+        // Reload topics after the app became active.
+        self.interactor?.loadAndPresentTopics()
     }
     @objc
     func appGoingInactive() {
