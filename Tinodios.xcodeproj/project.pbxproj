@@ -50,12 +50,15 @@
 		0AD5552A21C625BB0027FD16 /* ChatListInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AD5552921C625BB0027FD16 /* ChatListInteractor.swift */; };
 		0AD6873D27233C0800A39486 /* QuotedAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AD6873C27233C0800A39486 /* QuotedAttachment.swift */; };
 		0ADDBC8B2249F617000BD00D /* ChatListViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ADDBC8A2249F617000BD00D /* ChatListViewCell.swift */; };
+		0AE21E4E28D21849008F486C /* TinodiosUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AE21E4D28D21849008F486C /* TinodiosUITests.swift */; };
+		0AE21E5028D21849008F486C /* TinodiosUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AE21E4F28D21849008F486C /* TinodiosUITestsLaunchTests.swift */; };
 		0AE50D4422156A250021F7B7 /* FindViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AE50D4322156A250021F7B7 /* FindViewController.swift */; };
 		0AE50D4622156A4B0021F7B7 /* FindInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AE50D4522156A4B0021F7B7 /* FindInteractor.swift */; };
 		0AE50D4822156A5B0021F7B7 /* FindPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AE50D4722156A5B0021F7B7 /* FindPresenter.swift */; };
 		0AE7339C22C33FEF0089C8D8 /* ChatListViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0AE7339B22C33FEF0089C8D8 /* ChatListViewCell.xib */; };
 		0AEE3A33283E57230037BEC4 /* CallViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AEE3A32283E57230037BEC4 /* CallViewController.swift */; };
 		0AEE8BEE226456080022EC3F /* UiUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AEE8BED226456080022EC3F /* UiUtils.swift */; };
+		0FE526C4E14CE1F2D7FABB30 /* libPods-TinodiosUITests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8941EC0EF6DEEA661A222467 /* libPods-TinodiosUITests.a */; };
 		6AB6957DBFD1FB12CA01DCE4 /* libPods-Tinodios.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E30BDE2C5D7E82671DD7DE4 /* libPods-Tinodios.a */; };
 		7DDADC5221D5C219009733B5 /* ValidatedCredential.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DDADC5121D5C219009733B5 /* ValidatedCredential.swift */; };
 		7DDADC5421D5C2E6009733B5 /* CredentialsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DDADC5321D5C2E6009733B5 /* CredentialsViewController.swift */; };
@@ -135,6 +138,13 @@
 			remoteGlobalIDString = 0ACE9E7123813A1D006BE575;
 			remoteInfo = TinodiosNSExtension;
 		};
+		0AE21E5128D21849008F486C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0A0380CC21B3CC8100A3FA0E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0A0380D321B3CC8100A3FA0E;
+			remoteInfo = Tinodios;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -182,6 +192,7 @@
 		0A36776822B09C1900724873 /* EditMembersViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditMembersViewController.swift; sourceTree = "<group>"; };
 		0A3AE3B4274CAD2500CB673E /* ForwardMessageBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForwardMessageBar.swift; sourceTree = "<group>"; };
 		0A3AE3B6274CAD5800CB673E /* ForwardMessageBar.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ForwardMessageBar.xib; sourceTree = "<group>"; };
+		0A3EECCC28DA0EEF00313C35 /* TinodiosUITests.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; path = TinodiosUITests.entitlements; sourceTree = "<group>"; };
 		0A431C022244A26200A837F7 /* TinodeSDK.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = TinodeSDK.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		0A4B11FD2373DC1400199310 /* TagsEditDialogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagsEditDialogView.swift; sourceTree = "<group>"; };
 		0A4E1D2F22829C46006C0912 /* ContactsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsManager.swift; sourceTree = "<group>"; };
@@ -209,17 +220,22 @@
 		0AD5552921C625BB0027FD16 /* ChatListInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatListInteractor.swift; sourceTree = "<group>"; };
 		0AD6873C27233C0800A39486 /* QuotedAttachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuotedAttachment.swift; sourceTree = "<group>"; };
 		0ADDBC8A2249F617000BD00D /* ChatListViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatListViewCell.swift; sourceTree = "<group>"; };
+		0AE21E4B28D21849008F486C /* TinodiosUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TinodiosUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		0AE21E4D28D21849008F486C /* TinodiosUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TinodiosUITests.swift; sourceTree = "<group>"; };
+		0AE21E4F28D21849008F486C /* TinodiosUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TinodiosUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		0AE50D4322156A250021F7B7 /* FindViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FindViewController.swift; sourceTree = "<group>"; };
 		0AE50D4522156A4B0021F7B7 /* FindInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FindInteractor.swift; sourceTree = "<group>"; };
 		0AE50D4722156A5B0021F7B7 /* FindPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FindPresenter.swift; sourceTree = "<group>"; };
 		0AE7339B22C33FEF0089C8D8 /* ChatListViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ChatListViewCell.xib; sourceTree = "<group>"; };
 		0AEE3A32283E57230037BEC4 /* CallViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallViewController.swift; sourceTree = "<group>"; };
 		0AEE8BED226456080022EC3F /* UiUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UiUtils.swift; sourceTree = "<group>"; };
+		4F6E20F7F9A02F33DBC019E7 /* Pods-TinodiosUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TinodiosUITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-TinodiosUITests/Pods-TinodiosUITests.release.xcconfig"; sourceTree = "<group>"; };
 		5900B7863CDFB018A86DD3AC /* Pods-Tinodios.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Tinodios.release.xcconfig"; path = "Pods/Target Support Files/Pods-Tinodios/Pods-Tinodios.release.xcconfig"; sourceTree = "<group>"; };
 		5E30BDE2C5D7E82671DD7DE4 /* libPods-Tinodios.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Tinodios.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		75BC852198885F22E865D563 /* Pods-Tinodios.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Tinodios.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Tinodios/Pods-Tinodios.debug.xcconfig"; sourceTree = "<group>"; };
 		7DDADC5121D5C219009733B5 /* ValidatedCredential.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ValidatedCredential.swift; sourceTree = "<group>"; };
 		7DDADC5321D5C2E6009733B5 /* CredentialsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CredentialsViewController.swift; sourceTree = "<group>"; };
+		8941EC0EF6DEEA661A222467 /* libPods-TinodiosUITests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-TinodiosUITests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B008593B22741B89002C5168 /* FullFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullFormatter.swift; sourceTree = "<group>"; };
 		B01120B72357469300EFCB1F /* devel.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = devel.xcconfig; sourceTree = "<group>"; };
 		B01120B8235746BF00EFCB1F /* prod.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = prod.xcconfig; sourceTree = "<group>"; };
@@ -314,6 +330,7 @@
 		B0DF032E2282FF46000F9492 /* SendMessageBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendMessageBar.swift; sourceTree = "<group>"; };
 		B0DF03302283FFD8000F9492 /* PlaceholderTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceholderTextView.swift; sourceTree = "<group>"; };
 		B0F98C8222E381C300444121 /* MessageMenuItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageMenuItem.swift; sourceTree = "<group>"; };
+		B33FA5FDB8E984980BADDAB2 /* Pods-TinodiosUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TinodiosUITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-TinodiosUITests/Pods-TinodiosUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		B36DC000235D850000724348 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/LaunchScreen.strings"; sourceTree = "<group>"; };
 		FA37AD23238B0D6F00301261 /* KeyboardInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardInfo.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -337,6 +354,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		0AE21E4828D21849008F486C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0FE526C4E14CE1F2D7FABB30 /* libPods-TinodiosUITests.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -351,6 +376,7 @@
 				0A431C022244A26200A837F7 /* TinodeSDK.framework */,
 				0A0380D621B3CC8100A3FA0E /* Tinodios */,
 				0ACE9E7323813A1D006BE575 /* TinodiosNSExtension */,
+				0AE21E4C28D21849008F486C /* TinodiosUITests */,
 				0A0380D521B3CC8100A3FA0E /* Products */,
 				579A1EAE0D0B7D996BF48345 /* Pods */,
 				4805E89223B1ECF4F9F439D5 /* Frameworks */,
@@ -362,6 +388,7 @@
 			children = (
 				0A0380D421B3CC8100A3FA0E /* Tinodios.app */,
 				0ACE9E7223813A1D006BE575 /* TinodiosNSExtension.appex */,
+				0AE21E4B28D21849008F486C /* TinodiosUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -461,12 +488,23 @@
 			path = TinodiosNSExtension;
 			sourceTree = "<group>";
 		};
+		0AE21E4C28D21849008F486C /* TinodiosUITests */ = {
+			isa = PBXGroup;
+			children = (
+				0A3EECCC28DA0EEF00313C35 /* TinodiosUITests.entitlements */,
+				0AE21E4D28D21849008F486C /* TinodiosUITests.swift */,
+				0AE21E4F28D21849008F486C /* TinodiosUITestsLaunchTests.swift */,
+			);
+			path = TinodiosUITests;
+			sourceTree = "<group>";
+		};
 		4805E89223B1ECF4F9F439D5 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
 				B091BA472809048000317CDC /* AVFoundation.framework */,
 				0ACE9E7E23814157006BE575 /* TinodiosDB.framework */,
 				5E30BDE2C5D7E82671DD7DE4 /* libPods-Tinodios.a */,
+				8941EC0EF6DEEA661A222467 /* libPods-TinodiosUITests.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -476,6 +514,8 @@
 			children = (
 				75BC852198885F22E865D563 /* Pods-Tinodios.debug.xcconfig */,
 				5900B7863CDFB018A86DD3AC /* Pods-Tinodios.release.xcconfig */,
+				B33FA5FDB8E984980BADDAB2 /* Pods-TinodiosUITests.debug.xcconfig */,
+				4F6E20F7F9A02F33DBC019E7 /* Pods-TinodiosUITests.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -597,13 +637,34 @@
 			productReference = 0ACE9E7223813A1D006BE575 /* TinodiosNSExtension.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
+		0AE21E4A28D21849008F486C /* TinodiosUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0AE21E5528D21849008F486C /* Build configuration list for PBXNativeTarget "TinodiosUITests" */;
+			buildPhases = (
+				A775F41E632ADA951685301C /* [CP] Check Pods Manifest.lock */,
+				0AE21E4728D21849008F486C /* Sources */,
+				0AE21E4828D21849008F486C /* Frameworks */,
+				0AE21E4928D21849008F486C /* Resources */,
+				A71215C9F652A1468BB98E79 /* [CP] Embed Pods Frameworks */,
+				37009181C8B2B0198CE4CBBA /* [CP] Copy Pods Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				0AE21E5228D21849008F486C /* PBXTargetDependency */,
+			);
+			name = TinodiosUITests;
+			productName = TinodiosUITests;
+			productReference = 0AE21E4B28D21849008F486C /* TinodiosUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
 		0A0380CC21B3CC8100A3FA0E /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 1110;
+				LastSwiftUpdateCheck = 1400;
 				LastUpgradeCheck = 1210;
 				ORGANIZATIONNAME = "Tinode LLC";
 				TargetAttributes = {
@@ -612,6 +673,10 @@
 					};
 					0ACE9E7123813A1D006BE575 = {
 						CreatedOnToolsVersion = 11.1;
+					};
+					0AE21E4A28D21849008F486C = {
+						CreatedOnToolsVersion = 14.0;
+						TestTargetID = 0A0380D321B3CC8100A3FA0E;
 					};
 				};
 			};
@@ -634,6 +699,7 @@
 			targets = (
 				0A0380D321B3CC8100A3FA0E /* Tinodios */,
 				0ACE9E7123813A1D006BE575 /* TinodiosNSExtension */,
+				0AE21E4A28D21849008F486C /* TinodiosUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -675,9 +741,33 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		0AE21E4928D21849008F486C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		37009181C8B2B0198CE4CBBA /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-TinodiosUITests/Pods-TinodiosUITests-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-TinodiosUITests/Pods-TinodiosUITests-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-TinodiosUITests/Pods-TinodiosUITests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		46966AD24309BE3586965D61 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -711,6 +801,45 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Tinodios/Pods-Tinodios-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		A71215C9F652A1468BB98E79 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-TinodiosUITests/Pods-TinodiosUITests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-TinodiosUITests/Pods-TinodiosUITests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-TinodiosUITests/Pods-TinodiosUITests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		A775F41E632ADA951685301C /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-TinodiosUITests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
 		B094C9AA2315841E00C98B64 /* Assign build version from git */ = {
@@ -890,6 +1019,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		0AE21E4728D21849008F486C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0AE21E5028D21849008F486C /* TinodiosUITestsLaunchTests.swift in Sources */,
+				0AE21E4E28D21849008F486C /* TinodiosUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -897,6 +1035,11 @@
 			isa = PBXTargetDependency;
 			target = 0ACE9E7123813A1D006BE575 /* TinodiosNSExtension */;
 			targetProxy = 0ACE9E7723813A1D006BE575 /* PBXContainerItemProxy */;
+		};
+		0AE21E5228D21849008F486C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0A0380D321B3CC8100A3FA0E /* Tinodios */;
+			targetProxy = 0AE21E5128D21849008F486C /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -1215,6 +1358,47 @@
 			};
 			name = Release;
 		};
+		0AE21E5328D21849008F486C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = B33FA5FDB8E984980BADDAB2 /* Pods-TinodiosUITests.debug.xcconfig */;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_ENTITLEMENTS = TinodiosUITests/TinodiosUITests.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = co.tinode.ios.TinodiosUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Tinodios;
+			};
+			name = Debug;
+		};
+		0AE21E5428D21849008F486C /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4F6E20F7F9A02F33DBC019E7 /* Pods-TinodiosUITests.release.xcconfig */;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_ENTITLEMENTS = TinodiosUITests/TinodiosUITests.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = co.tinode.ios.TinodiosUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Tinodios;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1241,6 +1425,15 @@
 			buildConfigurations = (
 				0ACE9E7B23813A1D006BE575 /* Debug */,
 				0ACE9E7C23813A1D006BE575 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		0AE21E5528D21849008F486C /* Build configuration list for PBXNativeTarget "TinodiosUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0AE21E5328D21849008F486C /* Debug */,
+				0AE21E5428D21849008F486C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

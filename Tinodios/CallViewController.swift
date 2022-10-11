@@ -37,7 +37,7 @@ class CameraManager: NSObject {
             captureSession.addInput(videoInput)
         }
 
-        // Cap video resolution resolution (best effort).
+        // Cap video camera resolution (best effort).
         // Otherwise, remote video stream may freeze
         // https://stackoverflow.com/questions/55841076/webrtc-remote-video-freeze-after-few-seconds
         if captureSession.canSetSessionPreset(.iFrame1280x720) {
@@ -129,11 +129,11 @@ class WebRTCClient: NSObject {
     private let mediaConstraints = [kRTCMediaConstraintsOfferToReceiveAudio: kRTCMediaConstraintsValueTrue,
                                    kRTCMediaConstraintsOfferToReceiveVideo: kRTCMediaConstraintsValueTrue]
 
-    public var localPeer: RTCPeerConnection?
+    private var localPeer: RTCPeerConnection?
     private var localVideoSource: RTCVideoSource?
     private var localVideoTrack: RTCVideoTrack?
     private var videoCapturer: RTCVideoCapturer?
-    public var remoteVideoTrack: RTCVideoTrack?
+    private var remoteVideoTrack: RTCVideoTrack?
 
     private var localAudioTrack: RTCAudioTrack?
 
@@ -158,12 +158,24 @@ class WebRTCClient: NSObject {
         return track.isEnabled
     }
 
-    func addIceCandidateToCache(_ candidate: RTCIceCandidate) {
-        self.remoteIceCandidatesCacheQueue.sync {
-            self.remoteIceCandidatesCache.append(candidate)
+    // Adds remote ICE candidate to either the peer connection when it exists
+    // or the cache when the hasn't been created yet.
+    func handleRemoteIceCandidate(_ candidate: RTCIceCandidate, saveInCache: Bool) {
+        if !saveInCache {
+            self.localPeer?.add(candidate) { err in
+                if let err = err {
+                    Cache.log.error("WebRTCClient: could not add ICE candidate: %@", err.localizedDescription)
+                    self.delegate?.closeCall()
+                }
+            }
+        } else {
+            self.remoteIceCandidatesCacheQueue.sync {
+                self.remoteIceCandidatesCache.append(candidate)
+            }
         }
     }
 
+    // Adds all locally cached remote ICE candidates to the peer connection.
     func drainIceCandidatesCache() {
         Cache.log.info("Draining iceCandidateCache: %d items", self.remoteIceCandidatesCache.count)
         var success = true
@@ -292,10 +304,8 @@ extension WebRTCClient {
             }
             if let urls = vals["urls"]?.asArray() {
                 let iceStrings = urls.compactMap { $0.asString() }
-                //let ice = RTCIceServer(urlStrings: )
                 var ice: RTCIceServer
                 if let username = vals["username"]?.asString() {
-                    //ice.setUser  username = username
                     let credential = vals["credential"]?.asString()
                     ice = RTCIceServer(urlStrings: iceStrings, username: username, credential: credential)
                 } else {
@@ -330,9 +340,10 @@ extension WebRTCClient {
         localVideoTrack.add(renderer)
     }
 
-    func setupRemoteRenderer(_ renderer: RTCVideoRenderer) {
-        guard let remoteVideoTrack = remoteVideoTrack else { return }
-        remoteVideoTrack.add(renderer)
+    func setupRemoteRenderer(_ renderer: RTCVideoRenderer, withTrack track: RTCVideoTrack?) {
+        guard let track = track else { return }
+        self.remoteVideoTrack = track
+        track.add(renderer)
     }
 
     func didCaptureLocalFrame(_ videoFrame: RTCVideoFrame) {
@@ -344,17 +355,29 @@ extension WebRTCClient {
 
 // MARK: Message Handling
 extension WebRTCClient {
-    func handleRemoteDescription(_ desc: RTCSessionDescription) {
+    // Processes remote offer SDP.
+    func handleRemoteOfferDescription(_ desc: RTCSessionDescription) {
         guard let peerConnection = localPeer else { return }
         peerConnection.setRemoteDescription(desc, completionHandler: { [weak self](error) in
             guard let self = self else { return }
             if let error = error {
-                Cache.log.error("WebRTCClient.setRemoteDescription failure: %@", error.localizedDescription)
+                Cache.log.error("WebRTCClient.handleRemoteOfferDescription failure: %@", error.localizedDescription)
                 self.delegate?.closeCall()
                 return
             }
-
             self.answer(peerConnection)
+        })
+    }
+
+    // Processes remote answer SDP.
+    func handleRemoteAnswerDescription(_ desc: RTCSessionDescription) {
+        self.localPeer?.setRemoteDescription(desc, completionHandler: { (error) in
+            if let e = error {
+                Cache.log.error("WebRTCClient.handleRemoteAnswerDescription failure: %@", e.localizedDescription)
+                self.delegate?.closeCall()
+                return
+            }
+            self.delegate?.markConnectionSetupComplete()
         })
     }
 }
@@ -367,12 +390,12 @@ extension WebRTCClient: RTCPeerConnectionDelegate {
     }
 
     func peerConnection(_ peerConnection: RTCPeerConnection, didAdd stream: RTCMediaStream) {
-        Cache.log.info("WebRTCClient: Received remote stream")
+        Cache.log.info("WebRTCClient: Received remote stream %@", stream)
         self.delegate?.handleRemoteStream(self, receivedStream: stream)
     }
 
     func peerConnection(_ peerConnection: RTCPeerConnection, didRemove stream: RTCMediaStream) {
-        // print("removing media stream")
+        Cache.log.info("WebRTCClient: Removed media stream %@", stream)
     }
 
     func peerConnectionShouldNegotiate(_ peerConnection: RTCPeerConnection) {
@@ -404,11 +427,11 @@ extension WebRTCClient: RTCPeerConnectionDelegate {
     }
 
     func peerConnection(_ peerConnection: RTCPeerConnection, didRemove candidates: [RTCIceCandidate]) {
-        // print("did remove ice cands")
+        Cache.log.info("WebRTCClient: removed ice candidates %@", candidates)
     }
 
     func peerConnection(_ peerConnection: RTCPeerConnection, didOpen dataChannel: RTCDataChannel) {
-        // print("did open data channel")
+        Cache.log.info("WebRTCClient: opened data channel %@", dataChannel)
     }
 }
 
@@ -511,17 +534,17 @@ class CallViewController: UIViewController {
             guard let info = info, self.delegate?.eventMatchesCallInProgress(info: info) ?? false else { return }
             switch info.event {
             case "accept":
-                self.delegate?.handleAcceptedMsg()
+                DispatchQueue.main.async { self.delegate?.handleAcceptedMsg() }
             case "offer":
-                self.delegate?.handleOfferMsg(with: info.payload)
+                DispatchQueue.main.async { self.delegate?.handleOfferMsg(with: info.payload) }
             case "answer":
-                self.delegate?.handleAnswerMsg(with: info.payload)
+                DispatchQueue.main.async { self.delegate?.handleAnswerMsg(with: info.payload) }
             case "ice-candidate":
-                self.delegate?.handleIceCandidateMsg(with: info.payload)
+                DispatchQueue.main.async { self.delegate?.handleIceCandidateMsg(with: info.payload) }
             case "hang-up":
-                self.delegate?.handleRemoteHangup()
+                DispatchQueue.main.async { self.delegate?.handleRemoteHangup() }
             case "ringing":
-                self.delegate?.handleRinging()
+                DispatchQueue.main.async { self.delegate?.handleRinging() }
             default:
                 print(info)
             }
@@ -818,22 +841,22 @@ extension CallViewController: WebRTCClientDelegate {
     func sendOffer(withDescription sdp: RTCSessionDescription) {
         self.topic?.videoCall(event: "offer", seq: self.callSeqId, payload: sdp.serialize())
     }
-    
+
     func sendAnswer(withDescription sdp: RTCSessionDescription) {
         self.topic?.videoCall(event: "answer", seq: self.callSeqId, payload: sdp.serialize())
     }
-    
+
     func sendIceCandidate(_ candidate: RTCIceCandidate) {
         self.topic?.videoCall(event: "ice-candidate", seq: self.callSeqId, payload: candidate.serialize())
     }
-    
+
     func closeCall() {
         self.handleCallClose()
     }
 
     func handleRemoteStream(_ client: WebRTCClient, receivedStream stream: RTCMediaStream) {
-        client.remoteVideoTrack = stream.videoTracks.first
-        self.webRTCClient.setupRemoteRenderer(self.remoteRenderer!)
+        //client.assignRemoteVideoTrack(track: stream.videoTracks.first)
+        client.setupRemoteRenderer(self.remoteRenderer!, withTrack: stream.videoTracks.first)
     }
 
     func canSendOffer() -> Bool {
@@ -853,14 +876,13 @@ extension CallViewController: TinodeVideoCallDelegate {
     }
 
     func handleAcceptedMsg() {
+        assert(Thread.isMainThread)
         self.playSoundEffect(nil)
 
-        DispatchQueue.main.async {
-            // Stop animation, hide peer name & avatar.
-            self.dialingAnimation(on: false)
-            self.peerNameLabel.alpha = 0
-            self.peerAvatarImageView.alpha = 0
-        }
+        // Stop animation, hide peer name & avatar.
+        self.dialingAnimation(on: false)
+        self.peerNameLabel.alpha = 0
+        self.peerAvatarImageView.alpha = 0
         // The callee has informed us (the caller) of the call acceptance.
         guard self.webRTCClient.createPeerConnection() else {
             Cache.log.error("CallVC.handleAcceptedMsg - createPeerConnection failed")
@@ -868,8 +890,9 @@ extension CallViewController: TinodeVideoCallDelegate {
             return
         }
     }
-    
+
     func handleOfferMsg(with payload: JSONValue?) {
+        assert(Thread.isMainThread)
         guard case let .dict(offer) = payload, let desc = RTCSessionDescription.deserialize(from: offer) else {
             Cache.log.error("CallVC.handleOfferMsg - invalid offer payload")
             self.handleCallClose()
@@ -880,52 +903,38 @@ extension CallViewController: TinodeVideoCallDelegate {
             self.handleCallClose()
             return
         }
-        self.webRTCClient.handleRemoteDescription(desc)
+        self.webRTCClient.handleRemoteOfferDescription(desc)
     }
-    
+
     func handleAnswerMsg(with payload: JSONValue?) {
+        assert(Thread.isMainThread)
         guard case let .dict(answer) = payload, let desc = RTCSessionDescription.deserialize(from: answer) else {
             Cache.log.error("CallVC.handleAnswerMsg - invalid answer payload")
             self.handleCallClose()
             return
         }
-        self.webRTCClient.localPeer?.setRemoteDescription(desc, completionHandler: { (error) in
-            if let e = error {
-                Cache.log.error("CallVC - error setting remote description %@", e.localizedDescription)
-                self.handleCallClose()
-            }
-            self.markConnectionSetupComplete()
-        })
+        self.webRTCClient.handleRemoteAnswerDescription(desc)
     }
-    
+
     func handleIceCandidateMsg(with payload: JSONValue?) {
+        assert(Thread.isMainThread)
         guard case let .dict(iceDict) = payload, let candidate = RTCIceCandidate.deserialize(from: iceDict) else {
             Cache.log.error("CallVC.handleIceCandidateMsg - invalid ICE candidate payload")
             self.handleCallClose()
             return
         }
-        if self.callInitialSetupComplete {
-            self.webRTCClient.localPeer?.add(candidate) { err in
-                if let err = err {
-                    Cache.log.error("CallVC.handleIceCandidateMsg - could not add ICE candidate: %@", err.localizedDescription)
-                    self.handleCallClose()
-                    return
-                }
-            }
-        } else {
-            self.webRTCClient.addIceCandidateToCache(candidate)
-        }
+        self.webRTCClient.handleRemoteIceCandidate(candidate, saveInCache: !self.callInitialSetupComplete)
     }
-    
+
     func handleRemoteHangup() {
+        assert(Thread.isMainThread)
         self.playSoundEffect("call-end")
         self.handleCallClose()
     }
 
     func handleRinging() {
-        DispatchQueue.main.async {
-            self.dialingAnimation(on: true)
-        }
+        assert(Thread.isMainThread)
+        self.dialingAnimation(on: true)
         self.playSoundEffect("call-out", loop: true)
     }
 }

@@ -115,6 +115,19 @@ public class Acs: Codable, CustomStringConvertible, Equatable {
             self.mode = AcsHelper(str: modeStr)
         }
     }
+    public func encode(to encoder: Encoder) throws {
+        // Used in testing only.
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        let givenStr = givenString
+        if !givenStr.isEmpty { try container.encode(givenStr, forKey: .given) }
+
+        let wantStr = wantString
+        if !wantStr.isEmpty { try container.encode(wantStr, forKey: .want) }
+
+        let modeStr = modeString
+        if !modeStr.isEmpty { try container.encode(modeStr, forKey: .mode) }
+    }
+
     public func isJoiner(for side: Acs.Side) -> Bool {
         switch side {
         case .mode: return mode?.isJoiner ?? false

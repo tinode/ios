@@ -27,18 +27,29 @@ target 'TinodiosDB' do
     db_pods
 end
 
+def app_pods
+  pod 'Firebase'
+  pod 'FirebaseCore'
+  pod 'FirebaseMessaging'
+  pod 'FirebaseAnalytics'
+  pod 'FirebaseCrashlytics'
+  pod 'Kingfisher', '~> 5.0'
+  pod 'MobileVLCKit', '~> 3.4.1b9'
+  pod 'PhoneNumberKit', '~> 3.3'
+  pod 'WebRTC-lib', '~> 96.0.0'
+end
+
+# UI tests.
+target 'TinodiosUITests' do
+    project 'Tinodios'
+    db_pods
+    app_pods
+end
+
 target 'Tinodios' do
     project 'Tinodios'
     db_pods
-    pod 'Firebase'
-    pod 'FirebaseCore'
-    pod 'FirebaseMessaging'
-    pod 'FirebaseAnalytics'
-    pod 'FirebaseCrashlytics'
-    pod 'Kingfisher', '~> 5.0'
-    pod 'MobileVLCKit', '~> 3.4.1b9'
-    pod 'PhoneNumberKit', '~> 3.3'
-    pod 'WebRTC-lib', '~> 96.0.0'
+    app_pods
 end
 
 post_install do | installer |
