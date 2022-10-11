@@ -48,6 +48,7 @@ class FakeTinodeServer {
         listener.newConnectionHandler = { newConnection in
             print("New connection connecting")
 
+            self.connectedClients.append(newConnection)
             func receive() {
                 newConnection.receiveMessage { (data, context, isComplete, error) in
                     if let data = data, let context = context {
@@ -225,15 +226,24 @@ final class TinodiosUITests: XCTestCase {
                     metaDesc.meta = MsgServerMeta(id: sreq.id, topic: "me", ts: now, desc: desc, sub: nil, del: nil, tags: nil, cred: nil)
 
                     let metaSub = ServerMessage()
-                    let sub = DefaultSubscription()
-                    sub.topic = "usrBob"
-                    sub.updated = now.addingTimeInterval(-86400)
-                    sub.read = 2
-                    sub.recv = 2
-                    sub.pub = TheCard(fn: "Bob")
-                    sub.priv = ["comment": .string("bla")]
-                    sub.acs = Acs(given: "JRWPS", want: "JRWPS", mode: "JRWPS")
-                    metaSub.meta = MsgServerMeta(id: sreq.id, topic: "me", ts: now, desc: nil, sub: [sub], del: nil, tags: nil, cred: nil)
+                    let subBob = DefaultSubscription()
+                    subBob.topic = "usrBob"
+                    subBob.updated = now.addingTimeInterval(-86400)
+                    subBob.read = 2
+                    subBob.recv = 2
+                    subBob.pub = TheCard(fn: "Bob")
+                    subBob.priv = ["comment": .string("bla")]
+                    subBob.acs = Acs(given: "JRWPS", want: "JRWPS", mode: "JRWPS")
+
+                    let subGrp = DefaultSubscription()
+                    subGrp.topic = "grpGroup"
+                    subGrp.updated = now.addingTimeInterval(-100000)
+                    subGrp.read = 0
+                    subGrp.recv = 0
+                    subGrp.pub = TheCard(fn: "Test group")
+                    subGrp.priv = ["comment": .string("Group description")]
+                    subGrp.acs = Acs(given: "JRWPS", want: "JRWPS", mode: "JRWPS")
+                    metaSub.meta = MsgServerMeta(id: sreq.id, topic: "me", ts: now, desc: nil, sub: [subBob, subGrp], del: nil, tags: nil, cred: nil)
                     return [responseCtrl, metaDesc, metaSub]
                 }
             } else if sreq.topic == "usrBob" {
@@ -273,8 +283,44 @@ final class TinodiosUITests: XCTestCase {
 
                     return [responseCtrl, metaDesc, metaSub, data1, data2]
                 }
+            } else if sreq.topic == "grpGroup" {
+                let now = Date()
+                let responseCtrl = ServerMessage()
+                responseCtrl.ctrl = MsgServerCtrl(id: sreq.id, topic: sreq.topic, code: 200, text: "ok", ts: now, params: nil)
+
+                let metaDesc = ServerMessage()
+                let desc = Description<TheCard, PrivateType>()
+                desc.defacs = Defacs(auth: "JRWPS", anon: "JR")
+                desc.acs = Acs(given: "JRWPA", want: "JRWPA", mode: "JRWPA")
+                metaDesc.meta = MsgServerMeta(id: sreq.id, topic: sreq.topic, ts: now, desc: desc, sub: nil, del: nil, tags: nil, cred: nil)
+
+                let metaSub = ServerMessage()
+                let sub1 = DefaultSubscription()
+                sub1.topic = "usrBob"
+                sub1.updated = now.addingTimeInterval(-100000)
+                sub1.acs = Acs(given: "JRWPS", want: "JRWPS", mode: "JRWPS")
+
+                let sub2 = DefaultSubscription()
+                sub2.topic = "usrAlice"
+                sub2.updated = now.addingTimeInterval(-100000)
+                sub2.acs = Acs(given: "JRWPASDO", want: "JRWPASDO", mode: "JRWPASDO")
+
+                metaSub.meta = MsgServerMeta(id: sreq.id, topic: sreq.topic, ts: now, desc: nil, sub: [sub1, sub2], del: nil, tags: nil, cred: nil)
+
+                return [responseCtrl, metaDesc, metaSub]
             }
             return []
+        })
+    }
+
+    private func pubHandler(responseSeq: Int) {
+        tinodeServer.addHandler(forRequestType: .pub, handler: { req in
+            let preq = req.pub!
+            let now = Date()
+            let responseCtrl = ServerMessage()
+            responseCtrl.ctrl = MsgServerCtrl(id: preq.id, topic: preq.topic, code: 200, text: "accepted", ts: now,
+                                              params: ["seq": .int(responseSeq)])
+            return [responseCtrl]
         })
     }
 
@@ -334,27 +380,26 @@ final class TinodiosUITests: XCTestCase {
         let table = app.tables.element
         XCTAssertTrue(table.exists)
 
-        let cell = table.cells.element(boundBy: 0)
-        // Wait for UI to update asynchronously.
-        let exists = NSPredicate(format: "exists == 1")
-        expectation(for: exists, evaluatedWith: cell)
-        waitForExpectations(timeout: 5, handler: nil)
-
-        XCTAssertTrue(cell.staticTexts["Bob"].waitForExistence(timeout: 5))
+        table.cells.waitForCount(2)
+        XCTAssertTrue(table.staticTexts["Bob"].exists)
+        XCTAssertTrue(table.staticTexts["Test group"].exists)
     }
 
-    func testPublishBasic() {
+    private func sendMessage(withContent content: String) {
+        // Send another one.
+        let inputField = app.children(matching: .window).element(boundBy: 1).children(matching: .other).element.children(matching: .other).element(boundBy: 1)
+        inputField.tap()
+        inputField.typeText(content)
+
+        let arrowUpCircleButton = app.buttons["Arrow Up Circle"]
+        arrowUpCircleButton.tap()
+    }
+
+    func testPublishP2P() {
         hiHandler()
         loginHandler(success: true)
         subHandler()
-        tinodeServer.addHandler(forRequestType: .pub, handler: { req in
-            let preq = req.pub!
-            let now = Date()
-            let responseCtrl = ServerMessage()
-            responseCtrl.ctrl = MsgServerCtrl(id: preq.id, topic: preq.topic, code: 200, text: "accepted", ts: now,
-                                              params: ["seq": .int(3)])
-            return [responseCtrl]
-        })
+        pubHandler(responseSeq: 3)
 
         // Allow notifications.
         let monitor = allowLocalNotifications()
@@ -368,32 +413,64 @@ final class TinodiosUITests: XCTestCase {
         let table = app.tables.element
         XCTAssertTrue(table.exists)
 
-        let cell = table.cells.element(boundBy: 0)
-        // Wait for UI to update asynchronously.
-        let exists = NSPredicate(format: "exists == 1")
-        expectation(for: exists, evaluatedWith: cell)
-        waitForExpectations(timeout: 5, handler: nil)
-
-        XCTAssertTrue(cell.staticTexts["Bob"].waitForExistence(timeout: 5))
-
+        table.cells.waitForCount(2)
+        let cell = table.cells.staticTexts["Bob"]
         cell.tap()
-        let collectionViewsQuery = app.collectionViews
-        sleep(1)
+        let messageView = app.collectionViews.element
 
         // 2 messages.
-        XCTAssertEqual(collectionViewsQuery.cells.count, 2)
+        messageView.cells.waitForCount(2)
+        XCTAssertTrue(messageView.containsMessage(text: "hello message"))
+        XCTAssertTrue(messageView.containsMessage(text: "wassup?"))
 
         // Send another one.
-        let inputField = app.children(matching: .window).element(boundBy: 1).children(matching: .other).element.children(matching: .other).element(boundBy: 1)
-        inputField.tap()
-        inputField.typeText("new msg")
+        sendMessage(withContent: "new msg")
 
-        let arrowUpCircleButton = app.buttons["Arrow Up Circle"]
-        arrowUpCircleButton.tap()
-
-        sleep(1)
         // We should now have 3 messages.
-        XCTAssertEqual(collectionViewsQuery.cells.count, 3)
+        messageView.cells.waitForCount(3)
+        XCTAssertTrue(messageView.containsMessage(text: "new msg"))
+    }
+
+    func testPublishGroup() {
+        hiHandler()
+        loginHandler(success: true)
+        subHandler()
+        pubHandler(responseSeq: 1)
+
+        // Allow notifications.
+        let monitor = allowLocalNotifications()
+        defer { removeUIInterruptionMonitor(monitor) }
+
+        logIntoTinode(shouldSucceed: true)
+
+        // "Allow Notifications?" dialog. Make sure modal dialog handler gets triggered.
+        app.tap()
+
+        let table = app.tables.element
+        XCTAssertTrue(table.exists)
+
+        table.cells.waitForCount(2)
+        let cell = table.cells.staticTexts["Test group"]
+        cell.tap()
+        let messageView = app.collectionViews.element
+
+        // 0 messages.
+        messageView.cells.waitForCount(0)
+
+        // Send a message.
+        sendMessage(withContent: "msg from alice")
+
+        // We should now have 1 message.
+        messageView.cells.waitForCount(1)
+        XCTAssertTrue(messageView.containsMessage(text: "msg from alice"))
+
+        // Simulate a message from Bob.
+        let msgFromBob = ServerMessage()
+        msgFromBob.data = MsgServerData(id: nil, topic: "grpGroup", from: "usrBob", ts: Date(), head: nil, seq: 2, content: Drafty(plainText: "msg from bob"))
+        tinodeServer.sendResponse(response: msgFromBob, into: tinodeServer.connectedClients.first!)
+
+        messageView.cells.waitForCount(2)
+        XCTAssertTrue(messageView.containsMessage(text: "msg from bob"))
     }
 
     func testLaunchPerformance() throws {
@@ -403,5 +480,22 @@ final class TinodiosUITests: XCTestCase {
                 XCUIApplication().launch()
             }
         }
+    }
+}
+
+extension XCUIElementQuery {
+    func waitForCount(_ count: Int) {
+        let predicate = NSPredicate(format: "count == %d", count)
+        let expectation = XCTNSPredicateExpectation(predicate: predicate,
+                                                    object: self)
+        let result = XCTWaiter().wait(for: [expectation], timeout: 2)
+        XCTAssertEqual(result, XCTWaiter.Result.completed)
+    }
+}
+
+extension XCUIElement {
+    func containsMessage(text: String) -> Bool {
+        let predicate = NSPredicate(format: "label CONTAINS[c] %@", text)
+        return self.descendants(matching: .textView).containing(predicate).element.exists
     }
 }
