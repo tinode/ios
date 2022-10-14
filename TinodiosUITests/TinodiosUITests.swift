@@ -171,6 +171,7 @@ final class TinodiosUITests: XCTestCase {
     override func setUpWithError() throws {
         app = XCUIApplication()
         app.launch()
+        // Tinode will connect to localhost:6060 by default.
         tinodeServer = FakeTinodeServer(port: 6060)
         tinodeServer.startServer()
 
@@ -207,109 +208,89 @@ final class TinodiosUITests: XCTestCase {
     }
 
     private func subHandler() {
+        func metaDescMsg(forId id: String?, onTopic topic: String?, currentTime now: Date,
+                         defacs: Defacs?, acs: Acs?, lastSeen: Date?, pub: TheCard?, priv: PrivateType?) -> ServerMessage {
+            let result = ServerMessage()
+            let desc = Description<TheCard, PrivateType>()
+            if topic == "me" {
+                desc.created = now.addingTimeInterval(-86400)
+                desc.updated = desc.created
+                desc.touched = desc.created
+            }
+            desc.defacs = defacs
+            desc.acs = acs
+            desc.pub = pub
+            desc.priv = priv
+            if let lastSeen = lastSeen {
+                desc.seen = LastSeen(when: lastSeen, ua: "dummy")
+            }
+            result.meta = MsgServerMeta(id: id, topic: topic, ts: now, desc: desc, sub: nil, del: nil, tags: nil, cred: nil)
+
+            return result
+        }
+        func subMsg(topic: String, updatedTs: Date?, read: Int, recv: Int, acs: Acs?, pub: TheCard?, priv: PrivateType?) -> DefaultSubscription {
+            let sub = DefaultSubscription()
+            sub.topic = topic
+            sub.updated = updatedTs
+            sub.read = read
+            sub.recv = recv
+            sub.pub = pub
+            sub.priv = priv
+            sub.acs = acs
+            return sub
+        }
         tinodeServer.addHandler(forRequestType: .sub, handler: { req in
             let sreq = req.sub!
-            if sreq.topic == "me" {
-                if let get = sreq.get, get.what.split(separator: " ").sorted().elementsEqual(["cred", "desc", "sub", "tags"]) {
-                    let now = Date()
-                    let responseCtrl = ServerMessage()
-                    responseCtrl.ctrl = MsgServerCtrl(id: sreq.id, topic: sreq.topic, code: 200, text: "ok", ts: now, params: nil)
-
-                    let metaDesc = ServerMessage()
-                    let desc = Description<TheCard, PrivateType>()
-                    desc.created = now.addingTimeInterval(-86400)
-                    desc.updated = desc.created
-                    desc.touched = desc.created
-                    desc.defacs = Defacs(auth: "JRWPA", anon: "N")
-                    desc.pub = TheCard(fn: "Alice")
-                    desc.priv = ["comment": .string("no comment")]
-                    metaDesc.meta = MsgServerMeta(id: sreq.id, topic: "me", ts: now, desc: desc, sub: nil, del: nil, tags: nil, cred: nil)
-
-                    let metaSub = ServerMessage()
-                    let subBob = DefaultSubscription()
-                    subBob.topic = "usrBob"
-                    subBob.updated = now.addingTimeInterval(-86400)
-                    subBob.read = 2
-                    subBob.recv = 2
-                    subBob.pub = TheCard(fn: "Bob")
-                    subBob.priv = ["comment": .string("bla")]
-                    subBob.acs = Acs(given: "JRWPS", want: "JRWPS", mode: "JRWPS")
-
-                    let subGrp = DefaultSubscription()
-                    subGrp.topic = "grpGroup"
-                    subGrp.updated = now.addingTimeInterval(-100000)
-                    subGrp.read = 0
-                    subGrp.recv = 0
-                    subGrp.pub = TheCard(fn: "Test group")
-                    subGrp.priv = ["comment": .string("Group description")]
-                    subGrp.acs = Acs(given: "JRWPS", want: "JRWPS", mode: "JRWPS")
-                    metaSub.meta = MsgServerMeta(id: sreq.id, topic: "me", ts: now, desc: nil, sub: [subBob, subGrp], del: nil, tags: nil, cred: nil)
-                    return [responseCtrl, metaDesc, metaSub]
-                }
-            } else if sreq.topic == "usrBob" {
-                if let get = sreq.get, get.what.split(separator: " ").sorted().elementsEqual(["data", "del", "desc", "sub"]) {
-                    let now = Date()
-                    let responseCtrl = ServerMessage()
-                    responseCtrl.ctrl = MsgServerCtrl(id: sreq.id, topic: sreq.topic, code: 200, text: "ok", ts: now, params: nil)
-
-                    let metaDesc = ServerMessage()
-                    let desc = Description<TheCard, PrivateType>()
-                    desc.acs = Acs(given: "JRWPA", want: "JRWPA", mode: "JRWPA")
-                    desc.seen = LastSeen(when: now.addingTimeInterval(-100), ua: "my UA")
-                    metaDesc.meta = MsgServerMeta(id: sreq.id, topic: sreq.topic, ts: now, desc: desc, sub: nil, del: nil, tags: nil, cred: nil)
-
-                    let metaSub = ServerMessage()
-                    let sub1 = DefaultSubscription()
-                    sub1.topic = "usrBob"
-                    sub1.updated = now.addingTimeInterval(-100)
-                    sub1.read = 2
-                    sub1.recv = 2
-                    sub1.acs = Acs(given: "JRWPS", want: "JRWPS", mode: "JRWPS")
-
-                    let sub2 = DefaultSubscription()
-                    sub2.topic = "usrAlice"
-                    sub2.updated = now.addingTimeInterval(-100)
-                    sub2.read = 2
-                    sub2.recv = 2
-                    sub2.acs = Acs(given: "JRWPS", want: "JRWPS", mode: "JRWPS")
-
-                    metaSub.meta = MsgServerMeta(id: sreq.id, topic: sreq.topic, ts: now, desc: nil, sub: [sub1, sub2], del: nil, tags: nil, cred: nil)
-
-                    let data1 = ServerMessage()
-                    data1.data = MsgServerData(id: sreq.id, topic: sreq.topic, from: sreq.topic, ts: now.addingTimeInterval(-2000), head: nil, seq: 1, content: Drafty(plainText: "hello message"))
-
-                    let data2 = ServerMessage()
-                    data2.data = MsgServerData(id: sreq.id, topic: sreq.topic, from: "usrAlice", ts: now.addingTimeInterval(-1000), head: nil, seq: 2, content: Drafty(plainText: "wassup?"))
-
-                    return [responseCtrl, metaDesc, metaSub, data1, data2]
-                }
-            } else if sreq.topic == "grpGroup" {
+            guard let topic = sreq.topic else { return [] }
+            switch topic {
+            case "me":
                 let now = Date()
                 let responseCtrl = ServerMessage()
                 responseCtrl.ctrl = MsgServerCtrl(id: sreq.id, topic: sreq.topic, code: 200, text: "ok", ts: now, params: nil)
 
-                let metaDesc = ServerMessage()
-                let desc = Description<TheCard, PrivateType>()
-                desc.defacs = Defacs(auth: "JRWPS", anon: "JR")
-                desc.acs = Acs(given: "JRWPA", want: "JRWPA", mode: "JRWPA")
-                metaDesc.meta = MsgServerMeta(id: sreq.id, topic: sreq.topic, ts: now, desc: desc, sub: nil, del: nil, tags: nil, cred: nil)
+                let metaDesc = metaDescMsg(forId: sreq.id, onTopic: "me", currentTime: now, defacs: Defacs(auth: "JRWPA", anon: "N"), acs: nil, lastSeen: nil, pub: TheCard(fn: "Alice"), priv: ["comment": .string("no comment")])
 
                 let metaSub = ServerMessage()
-                let sub1 = DefaultSubscription()
-                sub1.topic = "usrBob"
-                sub1.updated = now.addingTimeInterval(-100000)
-                sub1.acs = Acs(given: "JRWPS", want: "JRWPS", mode: "JRWPS")
+                let subBob = subMsg(topic: "usrBob", updatedTs: now.addingTimeInterval(-86400), read: 2, recv: 2, acs: Acs(given: "JRWPS", want: "JRWPS", mode: "JRWPS"), pub: TheCard(fn: "Bob"), priv: ["comment": .string("bla")])
 
-                let sub2 = DefaultSubscription()
-                sub2.topic = "usrAlice"
-                sub2.updated = now.addingTimeInterval(-100000)
-                sub2.acs = Acs(given: "JRWPASDO", want: "JRWPASDO", mode: "JRWPASDO")
+                let subGrp = subMsg(topic: "grpGroup", updatedTs: now.addingTimeInterval(-100000), read: 0, recv: 0, acs: Acs(given: "JRWPS", want: "JRWPS", mode: "JRWPS"), pub: TheCard(fn: "Test group"), priv: ["comment": .string("Group description")])
+                metaSub.meta = MsgServerMeta(id: sreq.id, topic: "me", ts: now, desc: nil, sub: [subBob, subGrp], del: nil, tags: nil, cred: nil)
+                return [responseCtrl, metaDesc, metaSub]
+            case "usrBob":
+                let now = Date()
+                let responseCtrl = ServerMessage()
+                responseCtrl.ctrl = MsgServerCtrl(id: sreq.id, topic: sreq.topic, code: 200, text: "ok", ts: now, params: nil)
 
+                let metaDesc = metaDescMsg(forId: sreq.id, onTopic: sreq.topic, currentTime: now, defacs: nil, acs: Acs(given: "JRWPA", want: "JRWPA", mode: "JRWPA"), lastSeen: now.addingTimeInterval(-10), pub: nil, priv: nil)
+
+                let metaSub = ServerMessage()
+                let sub1 = subMsg(topic: "usrBob", updatedTs: now.addingTimeInterval(-100), read: 2, recv: 2, acs: Acs(given: "JRWPS", want: "JRWPS", mode: "JRWPS"), pub: nil, priv: nil)
+                let sub2 = subMsg(topic: "usrAlice", updatedTs: now.addingTimeInterval(-100), read: 2, recv: 2, acs: Acs(given: "JRWPS", want: "JRWPS", mode: "JRWPS"), pub: nil, priv: nil)
+                metaSub.meta = MsgServerMeta(id: sreq.id, topic: sreq.topic, ts: now, desc: nil, sub: [sub1, sub2], del: nil, tags: nil, cred: nil)
+
+                let data1 = ServerMessage()
+                data1.data = MsgServerData(id: sreq.id, topic: sreq.topic, from: sreq.topic, ts: now.addingTimeInterval(-2000), head: nil, seq: 1, content: Drafty(plainText: "hello message"))
+
+                let data2 = ServerMessage()
+                data2.data = MsgServerData(id: sreq.id, topic: sreq.topic, from: "usrAlice", ts: now.addingTimeInterval(-1000), head: nil, seq: 2, content: Drafty(plainText: "wassup?"))
+
+                return [responseCtrl, metaDesc, metaSub, data1, data2]
+            case "grpGroup":
+                let now = Date()
+                let responseCtrl = ServerMessage()
+                responseCtrl.ctrl = MsgServerCtrl(id: sreq.id, topic: sreq.topic, code: 200, text: "ok", ts: now, params: nil)
+
+                let metaDesc = metaDescMsg(forId: sreq.id, onTopic: sreq.topic, currentTime: now, defacs: Defacs(auth: "JRWPS", anon: "JR"), acs: Acs(given: "JRWPA", want: "JRWPA", mode: "JRWPA"), lastSeen: nil, pub: nil, priv: nil)
+
+                let metaSub = ServerMessage()
+                let sub1 = subMsg(topic: "usrBob", updatedTs: now.addingTimeInterval(-100000), read: 0, recv: 0, acs: Acs(given: "JRWPS", want: "JRWPS", mode: "JRWPS"), pub: nil, priv: nil)
+                let sub2 = subMsg(topic: "usrAlice", updatedTs: now.addingTimeInterval(-100000), read: 0, recv: 0, acs: Acs(given: "JRWPASDO", want: "JRWPASDO", mode: "JRWPASDO"), pub: nil, priv: nil)
                 metaSub.meta = MsgServerMeta(id: sreq.id, topic: sreq.topic, ts: now, desc: nil, sub: [sub1, sub2], del: nil, tags: nil, cred: nil)
 
                 return [responseCtrl, metaDesc, metaSub]
+            default:
+                return []
             }
-            return []
         })
     }
 
