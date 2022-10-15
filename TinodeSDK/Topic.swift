@@ -92,6 +92,7 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
         case alreadySubscribed
         case notSynchronized
         case subscriptionFailure(String)
+        case messageDraftFailure(String)
     }
 
     enum NoteType {
@@ -1277,6 +1278,9 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
                 self.latestMessage = msg
                 id = msg.msgId
             }
+        }
+        if id < 0 {
+            return PromisedReply(error: TopicError.messageDraftFailure("Topic[\(self.name)]: could not save message draft"))
         }
         if attached {
             return publishInternal(content: content, head: head, msgId: id)
