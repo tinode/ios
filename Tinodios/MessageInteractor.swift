@@ -108,7 +108,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
     // Maximum seq id of the currently scheduled read notifications.
     // -1 stands for no notifications in flight.
     //  0 means a notification without an explicit seq id has been requested.
-    private var maxReadNoteSeqIdInFligth = -1
+    private var maxReadNoteSeqIdInFlight = -1
 
     // User provided setting for sending read notifications.
     private var sendReadReceipts = false
@@ -351,20 +351,20 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         // However, we send the max seq id in the batch.
         var doScheduleNotification = false
         messageInteractorQueue.sync {
-            if self.maxReadNoteSeqIdInFligth < 0 {
+            if self.maxReadNoteSeqIdInFlight < 0 {
                 // Currently, no notifications are scheduled.
                 doScheduleNotification = true
             }
             let es = explicitSeq ?? 0
-            if es > self.maxReadNoteSeqIdInFligth {
-                self.maxReadNoteSeqIdInFligth = es
+            if es > self.maxReadNoteSeqIdInFlight {
+                self.maxReadNoteSeqIdInFlight = es
             }
         }
         guard doScheduleNotification else { return }
         messageInteractorQueue.asyncAfter(deadline: deadline) { [weak self] in
-            guard let explicitSeq = self?.maxReadNoteSeqIdInFligth else { return }
+            guard let explicitSeq = self?.maxReadNoteSeqIdInFlight else { return }
             self?.topic?.noteRead(explicitSeq: explicitSeq > 0 ? explicitSeq : nil)
-            self?.maxReadNoteSeqIdInFligth = -1
+            self?.maxReadNoteSeqIdInFlight = -1
         }
     }
     func sendTypingNotification() {
