@@ -25,7 +25,7 @@ arch -x86_64 pod install
 * Consider buying paid support: https://tinode.co/support.html
 * If you are a software developer, send us your pull requests with bug fixes and new features.
 * If you use the app and discover bugs or missing features, let us know by filing bug reports and feature requests. Vote for existing feature requests you find most valuable.
-* If you speak a language other than English, translate the apps into your language. You may also review and improve existing translations.
+* If you speak a language other than English, [translate](https://github.com/tinode/chat/blob/devel/docs/translations.md#ios) the apps into your language. You may also review and improve existing translations.
 * If you are a UI/UX expert, help us polish the app UI.
 * Use it: install it for your colleagues or friends at work or at home. Please [contact us](https://tinode.co/contact) if you want to participate in [TestFlight](https://developer.apple.com/testflight/).
 
@@ -102,5 +102,4 @@ More translations are welcome. See [instructions](https://github.com/tinode/chat
 * Some icons are from [SF Symbols](https://developer.apple.com/design/human-interface-guidelines/sf-symbols/overview/) under [Apple license](https://developer.apple.com/support/terms/).
 
 ## Screenshots
-<img src="ios-contacts.png" alt="App screenshot - chat list" width="207" /> <img src="ios-chat.png" alt="App screenshot - conversation" width="207" /> <img src="ios-acc-personal.png" alt="App screenshot - account settings" width="207" />
-<img src="ios-topic-info.png" alt="App screenshot - topic info" width="207" /> <img src="ios-find-people.png" alt="App screenshot - find people" width="207" /> <img src="ios-forward-to.png" alt="App screenshot - forward message" width="207" />
+<img src="ios-contacts.png" alt="App screenshot - chat list" width="207" /> <img src="ios-chat.png" alt="App screenshot - conversation" width="207" /> <img src="ios-acc-personal.png" alt="App screenshot - account settings" width="207" /> <img src="ios-find-people.png" alt="App screenshot - find people" width="207" /> <img src="ios-forward-to.png" alt="App screenshot - forward message" width="207" /> <img src="ios-video-call.png" alt="App screenshot - video call" width="207" />
