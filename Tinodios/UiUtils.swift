@@ -159,6 +159,7 @@ class UiUtils {
                 if let error = error {
                     Cache.log.debug("Error fetching FCM registration token: %@", error.localizedDescription)
                 } else if let token = token {
+                    Cache.log.info("setUpPushNotifications - device token: %@.", token)
                     Cache.tinode.setDeviceToken(token: token)
                 }
             }

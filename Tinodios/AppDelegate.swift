@@ -254,22 +254,23 @@ extension AppDelegate: MessagingDelegate {
     func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
         // Update token. Send to the app server.
         guard let token = fcmToken else { return }
+        Cache.log.info("Setting FCM token: %@", token)
         Cache.tinode.setDeviceToken(token: token)
     }
 }
 
 extension AppDelegate: PKPushRegistryDelegate {
     func pushRegistry(_ registry: PKPushRegistry, didUpdate credentials: PKPushCredentials, for type: PKPushType) {
-        print("PK token received %s", credentials.debugDescription)
+        Cache.log.info("PK token received %@", credentials.debugDescription)
     }
 
     func pushRegistry(_ registry: PKPushRegistry, didInvalidatePushTokenFor type: PKPushType) {
-        print("PK must invalidate token")
+        Cache.log.info("PK must invalidate token")
     }
 
     // VoIP push notification recived.
     func pushRegistry(_ registry: PKPushRegistry, didReceiveIncomingPushWith payload: PKPushPayload, for type: PKPushType, completion: @escaping () -> Void) {
-        print("PK push %s", payload.debugDescription)
+        Cache.log.info("PK push %s", payload.debugDescription)
 
         guard type == .voIP else {
             completion()
