@@ -30,6 +30,13 @@ class CallManager {
     // Dismisses call UI after timeout.
     var timer: Timer?
 
+    // Returns true if the user originated the call.
+    var currentCallIsOutgoing: Bool {
+        guard let call = self.callInProgress else { return false }
+        let tinode = Cache.tinode
+        return tinode.isMe(uid: call.from)
+    }
+
     init() {
         callDelegate = CallProviderDelegate(callManager: self)
         callController = CXCallController()

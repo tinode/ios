@@ -158,12 +158,6 @@ open class MsgServerData: Codable {
         case kFinished = "finished"
         case kMissed = "missed"
         case kStarted = "started"
-        case kUnknown
-    }
-
-    public static func parseWebRTC(from str: String?) -> WebRTC {
-        guard let str = str else { return .kUnknown }
-        return WebRTC(rawValue: str) ?? .kUnknown
     }
 
     public var id: String?
@@ -176,6 +170,23 @@ open class MsgServerData: Codable {
     // todo: make it drafty
     public var content: Drafty?
     public init() {}
+
+    /// Returns seq id (if any) this message is intended to replace.
+    public var replacesSeq: Int? {
+        // Returns seq id (if any) this message is intended to replace.
+        guard let replaceStr = self.head?["replace"]?.asString() else {
+            return nil
+        }
+        let parts = replaceStr.components(separatedBy: ":")   // split(separator: ":")
+        guard parts.count == 2 else { return nil }
+        return Int(parts[1])
+    }
+
+    /// Returns the video call state this message represents (nil for non-call messages).
+    public var webrtcCallState: WebRTC? {
+        guard let str = self.head?["webrtc"]?.asString() else { return nil }
+        return WebRTC(rawValue: str)
+    }
 
     // Testing only.
     internal init(id: String?, topic: String?, from: String?, ts: Date?,

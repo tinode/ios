@@ -26,37 +26,54 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var voipRegistry: PKPushRegistry!
 
-    // Video call event listener.
+    // Video call event listener (responsible for displaying and dismissing Call UI).
     class CallEventListener: TinodeEventListener {
         func onInfoMessage(info: MsgServerInfo?) {
-            guard let info = info, info.what == "call" else { return }
-            if info.event == MsgServerData.WebRTC.kAccepted.rawValue {
-                guard let seq = info.seq, let topic = info.topic else { return }
+            guard let info = info, info.what == "call", let seq = info.seq, let topic = info.src else { return }
+            switch info.event {
+            case  "accept":
+                // We have just accepted this call in another client.
+                if !Cache.callManager.currentCallIsOutgoing {
+                    Cache.callManager.dismissIncomingCall(onTopic: topic, withSeqId: seq)
+                }
+            case "hang-up":
                 Cache.callManager.dismissIncomingCall(onTopic: topic, withSeqId: seq)
+            default:
+                break
             }
         }
         func onDataMessage(data: MsgServerData?) {
             let tinode = Cache.tinode
             // The message is from a peer.
-            guard let data = data, !tinode.isMe(uid: data.from), let seqId = data.seq, let originator = data.from,
-                  // It is a video call message.
-                  MsgServerData.parseWebRTC(from: data.head?["webrtc"]?.asString()) == .kStarted,
-                  let topicName = data.topic, let topic = tinode.getTopic(topicName: topicName) else { return }
+            guard let data = data, !tinode.isMe(uid: data.from), let seqId = data.replacesSeq ?? data.seq, let originator = data.from,
+                // It is a video call message.
+                let callState = data.webrtcCallState,
+                let topicName = data.topic, let topic = tinode.getTopic(topicName: topicName) else { return }
 
-            // Check if we have a later version of the message (which means the call
-            // has been not yet been either accepted or finished).
+            // Check if we have a later version of the message (which means this call state is outdated).
             guard let msg = topic.getMessage(byEffectiveSeq: seqId) as? StoredMessage,
-                  MsgServerData.parseWebRTC(from: msg.head?["webrtc"]?.asString()) == .kStarted else { return }
+                  msg.webrtcCallState == callState else { return }
 
-            // It is a legit call.
-            let backgroundTaskIdentifier = UIApplication.shared.beginBackgroundTask(expirationHandler: nil)
-            DispatchQueue.main.async {
-                Cache.callManager.displayIncomingCall(uuid: UUID(), onTopic: topic.name, originatingFrom: originator, withSeqId: seqId) { err in
-                    if let err = err {
-                        Cache.log.error("Unable to take the call: %@", err.localizedDescription)
+            Cache.log.info("Call (topic: %@, seq: %d): processing event %@", topicName, seqId, String(reflecting: callState))
+            switch callState {
+            case .kStarted:
+                // It is a legit incoming call. Start it.
+                let backgroundTaskIdentifier = UIApplication.shared.beginBackgroundTask(expirationHandler: nil)
+                DispatchQueue.main.async {
+                    Cache.callManager.displayIncomingCall(uuid: UUID(), onTopic: topic.name, originatingFrom: originator, withSeqId: seqId) { err in
+                        if let err = err {
+                            Cache.log.error("Unable to take the call: %@", err.localizedDescription)
+                        }
+                        UIApplication.shared.endBackgroundTask(backgroundTaskIdentifier)
                     }
-                    UIApplication.shared.endBackgroundTask(backgroundTaskIdentifier)
                 }
+            case .kAccepted, .kDeclined, .kMissed, .kDisconnected:
+                if !Cache.callManager.currentCallIsOutgoing {
+                    Cache.log.info("Dismissing incoming call: topic=%@, seq=%d", topic.name, seqId)
+                    Cache.callManager.dismissIncomingCall(onTopic: topic.name, withSeqId: seqId)
+                }
+            default:
+                break
             }
         }
     }

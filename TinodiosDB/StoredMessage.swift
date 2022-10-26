@@ -46,17 +46,6 @@ public class StoredMessage: MsgServerData, Message {
         return BaseDb.sharedInstance.isMe(uid: self.from)
     }
 
-    /// Returns seq id (if any) this message is intended to replace.
-    public var replacesSeq: Int? {
-        // Returns seq id (if any) this message is intended to replace.
-        guard let replaceStr = self.head?["replace"]?.asString() else {
-            return nil
-        }
-        let parts = replaceStr.components(separatedBy: ":")   // split(separator: ":")
-        guard parts.count == 2 else { return nil }
-        return Int(parts[1])
-    }
-
     /// Cached representation of message content as attributed string.
     public var cachedContent: NSAttributedString?
 
