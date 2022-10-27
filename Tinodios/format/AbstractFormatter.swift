@@ -207,6 +207,10 @@ class AbstractFormatter: DraftyFormatter {
             comment = incoming ?
                 NSLocalizedString(MsgServerData.WebRTC.kMissed.rawValue, comment: "Label for missed call") :
                 NSLocalizedString("cancelled", comment: "Label for cancelled call")
+        case MsgServerData.WebRTC.kStarted.rawValue:
+            comment = NSLocalizedString("connecting", comment: "Label for initiated call")
+        case MsgServerData.WebRTC.kAccepted.rawValue:
+            comment = NSLocalizedString("in progress", comment: "Label for call in progress")
         default:
             comment = NSLocalizedString(MsgServerData.WebRTC.kDisconnected.rawValue, comment: "Label for disconnected call")
         }
