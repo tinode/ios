@@ -35,14 +35,14 @@
 "Are you sure you want to log out?" = "您确定要注销吗？";
 
 /* Label shown next to an attachment */
-"Attachment" = "依恋";
+"Attachment" = "附件";
 
 /* Error message: attachment too large */
 "Attachment exceeds maximum size" = "附件超过最大尺寸";
 
 /* Alert action
    Invite reaction button */
-"Block" = "防止";
+"Block" = "屏蔽";
 
 /* Alert action */
 "Block contact?" = "屏蔽联系人？";
@@ -170,13 +170,13 @@
 "Form" = "表格";
 
 /* Menu item */
-"Forward" = "重定向";
+"Forward" = "转发";
 
 /* User name prompt */
 "Full name, e.g. John Doe" = "全名，例如张伟";
 
 /* Invite reaction button */
-"Ignore" = "忽视";
+"Ignore" = "忽略";
 
 /* Error message */
 "Invalid group ID: %d (%@)" = "无效的群组ID：%1$d (%2$@)";
@@ -188,7 +188,7 @@
 "Invite" = "邀请";
 
 /* Alert action */
-"Leave" = "放弃";
+"Leave" = "离开";
 
 /* Alert title */
 "Leave the conversation?" = "离开对话吗？";
@@ -197,7 +197,7 @@
 "Leave the group?" = "离开小组？";
 
 /* Section title */
-"Local Contacts" = "当地联络人";
+"Local Contacts" = "本地联络人";
 
 /* Login progress text */
 "Logging in..." = "登录中...";
@@ -209,7 +209,7 @@
 "Make owner" = "设为拥有者";
 
 /* View title */
-"Manage members" = "管理会员";
+"Manage members" = "管理成员";
 
 /* Toast notification */
 "Message not sent." = "消息未发送。";
@@ -249,7 +249,7 @@
 "online now" = "现在在线";
 
 /* Toast notification */
-"Only Owner can delete group" = "只有所有者可以删除组";
+"Only Owner can delete group" = "只有所有者可以删除群组";
 
 /* Toast notification */
 "Owner cannot leave the group" = "所有者不能离开群组";
@@ -306,7 +306,7 @@
 "Request failed: %@" = "请求失败：%@";
 
 /* Progress overlay */
-"Requesting..." = "正在要求...";
+"Requesting..." = "请求中...";
 
 /* Placeholder prompt */
 "Search by tags" = "按标签搜索";
@@ -360,7 +360,7 @@
 "Unknown type" = "未知类型";
 
 /* Label shown next to an unsupported Drafty format element */
-"Unsupported" = "无资助的";
+"Unsupported" = "不支持";
 
 /* Error message */
 "Upload failed (%@): empty response body." = "上传失败（％@）：响应正文为空。";
@@ -381,7 +381,7 @@
 "You are invited to start a new chat. What would you like?" = "邀请您开始新的聊天。你想干什么？";
 
 /* Toast notification */
-"You are offline." = "您离线。";
+"You are offline." = "您已离线。";
 
 /* Placeholder when no chats found */
 "You have no chats\n\n¯\\_(ツ)_/¯" = "您没有聊天记录\n\n¯\\_(ツ)_/¯";
