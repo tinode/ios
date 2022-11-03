@@ -45,7 +45,7 @@
 		0ACB5F0E22097651008FE740 /* ChatListPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACB5F0D22097651008FE740 /* ChatListPresenter.swift */; };
 		0ACB5F1022097665008FE740 /* ChatListRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACB5F0F22097665008FE740 /* ChatListRouter.swift */; };
 		0ACE9E7523813A1D006BE575 /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0ACE9E7423813A1D006BE575 /* NotificationService.swift */; };
-		0ACE9E7923813A1D006BE575 /* TinodiosNSExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 0ACE9E7223813A1D006BE575 /* TinodiosNSExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		0ACE9E7923813A1D006BE575 /* TinodiosNSExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 0ACE9E7223813A1D006BE575 /* TinodiosNSExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		0ACE9E7F23814157006BE575 /* TinodiosDB.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0ACE9E7E23814157006BE575 /* TinodiosDB.framework */; };
 		0AD5552A21C625BB0027FD16 /* ChatListInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AD5552921C625BB0027FD16 /* ChatListInteractor.swift */; };
 		0AD6873D27233C0800A39486 /* QuotedAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AD6873C27233C0800A39486 /* QuotedAttachment.swift */; };
@@ -160,15 +160,15 @@
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		0ACE9E7A23813A1D006BE575 /* Embed App Extensions */ = {
+		0ACE9E7A23813A1D006BE575 /* Embed Foundation Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				0ACE9E7923813A1D006BE575 /* TinodiosNSExtension.appex in Embed App Extensions */,
+				0ACE9E7923813A1D006BE575 /* TinodiosNSExtension.appex in Embed Foundation Extensions */,
 			);
-			name = "Embed App Extensions";
+			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -605,7 +605,7 @@
 				0A431C052244A26200A837F7 /* Embed Frameworks */,
 				B094C9AA2315841E00C98B64 /* Assign build version from git */,
 				B0BC2B5423589CE100BEEB4B /* Assign DefaultValue in app preferences */,
-				0ACE9E7A23813A1D006BE575 /* Embed App Extensions */,
+				0ACE9E7A23813A1D006BE575 /* Embed Foundation Extensions */,
 				9F57E04FA7B9924948AFF5D2 /* [CP] Copy Pods Resources */,
 				E39DF56D400E4A17F40FBB09 /* [CP] Embed Pods Frameworks */,
 			);
@@ -665,7 +665,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1400;
-				LastUpgradeCheck = 1210;
+				LastUpgradeCheck = 1410;
 				ORGANIZATIONNAME = "Tinode LLC";
 				TargetAttributes = {
 					0A0380D321B3CC8100A3FA0E = {

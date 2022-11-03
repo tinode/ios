@@ -151,7 +151,7 @@
 		0ACE9E472381342B006BE575 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1210;
+				LastUpgradeCheck = 1410;
 				ORGANIZATIONNAME = "Tinode LLC";
 				TargetAttributes = {
 					0ACE9E4F2381342B006BE575 = {
@@ -391,7 +391,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 8D5959013F0A2AD0F91DAD8A /* Pods-TinodiosDB.release.xcconfig */;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_IDENTITY = "";
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
