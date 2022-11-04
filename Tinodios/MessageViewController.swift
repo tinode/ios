@@ -356,7 +356,10 @@ class MessageViewController: UIViewController {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
 
-        collectionView.contentInset.bottom = 8
+        // Make sure we leave enough space for the input field & keyboard.
+        if collectionView.contentInset.bottom < 8 {
+            collectionView.contentInset.bottom = 8
+        }
 
         // Setup UICollectionView constraints: fill the screen
         collectionView.translatesAutoresizingMaskIntoConstraints = false
