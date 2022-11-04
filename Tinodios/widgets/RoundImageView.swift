@@ -100,30 +100,15 @@ public class RoundImageView: UIImageView {
     }
 
     public func set(pub: TheCard?, id: String?, deleted: Bool) {
-        if let ref = pub?.photo?.ref, let url = URL(string: ref, relativeTo: Cache.tinode.baseURL(useWebsocketProtocol: false)) {
-            let modifier = AnyModifier { request in
-                var request = request
-                LargeFileHelper.addCommonHeaders(to: &request, using: Cache.tinode)
-                return request
-            }
-
-            KingfisherManager.shared.retrieveImage(with: url.downloadURL, options: [.requestModifier(modifier)], completionHandler: { result in
-                if case .success(let value) = result {
-                    self.initials = nil
-                    self.backgroundColor = nil
-                    self.image = deleted ? value.image.noir : value.image
-                }
-                // Ignoring the error: just keep the placeholder image.
-            })
-        }
-
         if let icon = pub?.photo?.image {
+            // Use thumbnail, if preset.
             // Clean up.
             self.backgroundColor = nil
             self.initials = nil
             // Avatar image provided.
             self.image = deleted ? icon.noir : icon
         } else {
+            // Missing thumbnail.
             if let id = id, !id.isEmpty {
                 switch Tinode.topicTypeByName(name: id) {
                 case .p2p: iconType = .p2p
@@ -143,10 +128,28 @@ public class RoundImageView: UIImageView {
                 }
                 self.initials = String(title[title.startIndex]).uppercased()
             } else {
-                // Placeholder image
+                // Blank name, show placeholder image.
                 self.image = RoundImageView.defaultIcon(forType: iconType)
                 self.backgroundColor = Constants.kDeletedBackground
             }
+        }
+
+        // Download the full image, if available, and use it instead of thumbnail or letters.
+        if let ref = pub?.photo?.ref, let url = URL(string: ref, relativeTo: Cache.tinode.baseURL(useWebsocketProtocol: false)) {
+            let modifier = AnyModifier { request in
+                var request = request
+                LargeFileHelper.addCommonHeaders(to: &request, using: Cache.tinode)
+                return request
+            }
+
+            KingfisherManager.shared.retrieveImage(with: url.downloadURL, options: [.requestModifier(modifier)], completionHandler: { result in
+                if case .success(let value) = result {
+                    self.initials = nil
+                    self.backgroundColor = nil
+                    self.image = deleted ? value.image.noir : value.image
+                }
+                // Ignoring the error: just keep the placeholder image.
+            })
         }
     }
 
