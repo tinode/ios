@@ -559,7 +559,7 @@ class CallViewController: UIViewController {
         if let topic = topic {
             peerNameLabel.text = topic.pub?.fn
             peerNameLabel.sizeToFit()
-            peerAvatarImageView.set(pub: topic.pub, id: topic.name, deleted: false)
+            peerAvatarImageView.set(pub: topic.pub, id: topic.name, deleted: false, isAvatar: true)
         }
     }
 

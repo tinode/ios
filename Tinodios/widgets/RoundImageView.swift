@@ -99,7 +99,8 @@ public class RoundImageView: UIImageView {
         self.init(frame: .zero)
     }
 
-    public func set(pub: TheCard?, id: String?, deleted: Bool) {
+    public func set(pub: TheCard?, id: String?, deleted: Bool, isAvatar: Bool = false) {
+        var avatarImg = false
         if let ref = pub?.photo?.ref, let url = URL(string: ref, relativeTo: Cache.tinode.baseURL(useWebsocketProtocol: false)) {
             let modifier = AnyModifier { request in
                 var request = request
@@ -115,6 +116,11 @@ public class RoundImageView: UIImageView {
                 }
                 // Ignoring the error: just keep the placeholder image.
             })
+            
+            // custom define avatar
+            if isAvatar {
+                avatarImg = true
+            }
         }
 
         if let icon = pub?.photo?.image {
@@ -122,7 +128,9 @@ public class RoundImageView: UIImageView {
             self.backgroundColor = nil
             self.initials = nil
             // Avatar image provided.
-            self.image = deleted ? icon.noir : icon
+            if !avatarImg {
+                self.image = deleted ? icon.noir : icon
+            }
         } else {
             if let id = id, !id.isEmpty {
                 switch Tinode.topicTypeByName(name: id) {

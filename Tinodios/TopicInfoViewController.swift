@@ -87,7 +87,7 @@ class TopicInfoViewController: UITableViewController {
         topicIDLabel.text = topic.name
         topicIDLabel.sizeToFit()
 
-        avatarImage.set(pub: topic.pub, id: topic.name, deleted: topic.deleted)
+        avatarImage.set(pub: topic.pub, id: topic.name, deleted: topic.deleted, isAvatar: true)
         avatarImage.letterTileFont = self.avatarImage.letterTileFont.withSize(CGFloat(50))
         mutedSwitch.isOn = topic.isMuted
         archivedSwitch.isOn = topic.isArchived
