@@ -234,7 +234,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
         guard let topicName = userInfo["topic"] as? String, !topicName.isEmpty,
             what == nil || what == "msg", let seq = Int(userInfo["seq"] as? String ?? "") else { return }
 
-        if let messageVC = UiUtils.topViewController(rootViewController: UIApplication.shared.keyWindow?.rootViewController) as? MessageViewController, messageVC.topicName == topicName {
+        if let messageVC = UiUtils.topViewController(rootViewController: (UIApplication.shared.delegate as! AppDelegate).window?.rootViewController) as? MessageViewController, messageVC.topicName == topicName {
             // We are already in the correct topic. Do not present the notification.
             completionHandler([])
         } else {
@@ -250,6 +250,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     // User tapped on notification.
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
         let userInfo = response.notification.request.content.userInfo
+        Cache.log.info("User tapped on notification %@", userInfo)
         defer { completionHandler() }
         guard let topicName = userInfo["topic"] as? String, !topicName.isEmpty else { return }
         let tinode = Cache.tinode

@@ -231,7 +231,7 @@ class UiUtils {
             let storyboard = UIStoryboard(name: "Main", bundle: nil)
             let destinationVC = storyboard.instantiateViewController(withIdentifier: "StartNavigator") as! UINavigationController
 
-            if let window = UIApplication.shared.keyWindow {
+            if let window = (UIApplication.shared.delegate as! AppDelegate).window {
                 window.rootViewController = destinationVC
             }
         }
@@ -252,7 +252,7 @@ class UiUtils {
         DispatchQueue.main.async {
             let storyboard = UIStoryboard(name: "Main", bundle: nil)
             let initialViewController = storyboard.instantiateViewController(withIdentifier: "ChatsNavigator") as! UINavigationController
-            if let window = UIApplication.shared.keyWindow {
+            if let window = (UIApplication.shared.delegate as! AppDelegate).window {
                 window.rootViewController = initialViewController
             }
             UiUtils.setUpPushNotifications()
@@ -261,14 +261,14 @@ class UiUtils {
 
     // Returns the currently presented/active MessageVC if it's open and .
     private static func presentedMessageVC(forTopic topicName: String) -> MessageViewController? {
-        guard let rootVC = UIApplication.shared.keyWindow?.rootViewController as? UINavigationController else {
+        guard let rootVC = (UIApplication.shared.delegate as! AppDelegate).window?.rootViewController as? UINavigationController else {
             return nil
         }
         return rootVC.viewControllers.filter { ($0 as? MessageViewController)?.topic?.name == topicName }.first as? MessageViewController
     }
 
     private static func isShowingChatListVC() -> Bool {
-        guard let rootVC = UIApplication.shared.keyWindow?.rootViewController as? UINavigationController else {
+        guard let rootVC = (UIApplication.shared.delegate as! AppDelegate).window?.rootViewController as? UINavigationController else {
             return false
         }
         return rootVC.viewControllers.contains(where: { $0 is ChatListViewController })
@@ -276,7 +276,7 @@ class UiUtils {
 
     // Returns true if the app is showing the CallVC for the specified topic.
     public static func isShowingCallVC(forTopic topic: String) -> Bool {
-        guard let rootVC = UIApplication.shared.keyWindow?.rootViewController as? UINavigationController else {
+        guard let rootVC = (UIApplication.shared.delegate as! AppDelegate).window?.rootViewController as? UINavigationController else {
             return false
         }
         return rootVC.viewControllers.contains(where: { ($0 as? CallViewController)?.topic?.name == topic })
@@ -285,7 +285,8 @@ class UiUtils {
     public static func routeToMessageVC(forTopic topicId: String, completion: ((MessageViewController?) -> (Void))? = nil) {
         DispatchQueue.main.async {
             Cache.log.info("Routing to MessageVC for topic=%@", topicId)
-            guard let keyWindow = UIApplication.shared.keyWindow else {
+            guard let keyWindow = (UIApplication.shared.delegate as! AppDelegate).window else {
+                Cache.log.info("Cannot route to MessageVC [topic: %@]: no app window", topicId)
                 completion?(nil)
                 return
             }
@@ -606,7 +607,7 @@ class UiUtils {
             let filesToShare = [fileUrl]
             let activityViewController = UIActivityViewController(activityItems: filesToShare, applicationActivities: nil)
             let topVC = UiUtils.topViewController(
-                rootViewController: UIApplication.shared.keyWindow?.rootViewController)
+                rootViewController: (UIApplication.shared.delegate as! AppDelegate).window?.rootViewController)
             topVC?.present(activityViewController, animated: true, completion: nil)
         }
     }

@@ -489,7 +489,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         guard let topicName = topicName else { return nil }
         var result: MessageInteractor?
         DispatchQueue.main.sync {
-            guard let window = UIApplication.shared.keyWindow, let navVC = window.rootViewController as? UINavigationController else {
+            guard let window = (UIApplication.shared.delegate as! AppDelegate).window, let navVC = window.rootViewController as? UINavigationController else {
                 return
             }
             for controller in navVC.viewControllers {
