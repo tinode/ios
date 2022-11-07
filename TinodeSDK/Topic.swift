@@ -593,8 +593,10 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
                 if !isAttached {
                     self?.attached = true
                     if let ctrl = msg?.ctrl {
-                        if !(ctrl.params?.isEmpty ?? true), ctrl.getStringParam(for: "what") != "del" {
-                            self?.description.acs = Acs(from: ctrl.getStringDict(for: "acs"))
+                        if !(ctrl.params?.isEmpty ?? true) {
+                            if let acsStr = ctrl.getStringDict(for: "acs") {
+                                self?.description.acs = Acs(from: acsStr)
+                            }
                             if self?.isNew ?? false {
                                 self?.updated = ctrl.ts
                                 self?.setName(name: ctrl.topic!)
