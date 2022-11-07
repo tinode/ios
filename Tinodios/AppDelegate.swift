@@ -83,9 +83,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         SharedUtils.registerUserDefaults()
         let baseDb = BaseDb.sharedInstance
         if baseDb.isReady {
-            // When the app launch after user tap on notification (originally was not running / not in background).
+            // When the app launch after user tap on notification (originally was not running / not in background), except incoming calls which are handled separately.
             if let opts = launchOptions, let userInfo = opts[.remoteNotification] as? [String: Any],
-                let topicName = userInfo["topic"] as? String, !topicName.isEmpty {
+                userInfo["webrtc"] == nil, let topicName = userInfo["topic"] as? String, !topicName.isEmpty {
                 UiUtils.routeToMessageVC(forTopic: topicName)
             } else {
                 UiUtils.routeToChatListVC()
