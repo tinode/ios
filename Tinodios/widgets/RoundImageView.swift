@@ -101,7 +101,7 @@ public class RoundImageView: UIImageView {
 
     public func set(pub: TheCard?, id: String?, deleted: Bool) {
         if let icon = pub?.photo?.image {
-            // Use thumbnail, if preset.
+            // Use thumbnail, if present.
             // Clean up.
             self.backgroundColor = nil
             self.initials = nil
