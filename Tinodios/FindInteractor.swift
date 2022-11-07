@@ -81,7 +81,7 @@ class FindInteractor: FindBusinessLogic {
         } else {
             self.remoteContacts?.removeAll()
         }
-        self.presenter?.presentRemoteContacts(contacts: self.remoteContacts!)
+        self.presenter?.presentRemoteContacts(contacts: self.remoteContacts ?? [])
     }
 
     func fetchLocalContacts() -> [ContactHolder] {
