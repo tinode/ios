@@ -58,6 +58,7 @@ class Cache {
             queue.sync {
                 if tinodeInstance == nil {
                     tinodeInstance = SharedUtils.createTinode()
+                    tinodeInstance?.addListener((UIApplication.shared.delegate as! AppDelegate).callListener)
                     // Tell contacts synchronizer to attempt to synchronize contacts.
                     ContactsSynchronizer.default.appBecameActive()
                 }

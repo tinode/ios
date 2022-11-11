@@ -203,6 +203,10 @@ class WebRTCClient: NSObject {
         }
 
         localPeer = WebRTCClient.factory.peerConnection(with: config, constraints: constraints, delegate: self)
+        guard localPeer != nil else {
+            Cache.log.error("WebRtCClient - failed to create peer connection. Quitting.")
+            return false
+        }
 
         let stream = WebRTCClient.factory.mediaStream(withStreamId: "ARDAMS")
         stream.addAudioTrack(self.localAudioTrack!)
