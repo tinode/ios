@@ -257,6 +257,7 @@ class MessageViewController: UIViewController {
     func appBecameActive() {
         self.interactor?.setup(topicName: topicName, sendReadReceipts: self.sendReadReceipts)
         self.interactor?.attachToTopic(interactively: true)
+        self.interactor?.loadMessagesFromCache(scrollToMostRecentMessage: false)
     }
     @objc
     func appGoingInactive() {

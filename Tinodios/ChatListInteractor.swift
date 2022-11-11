@@ -63,7 +63,8 @@ class ChatListInteractor: ChatListBusinessLogic, ChatListDataStore {
             super.init(connected: connected)
             self.interactor = interactor
         }
-        func onLogin(code: Int, text: String) {
+        override func onLogin(code: Int, text: String) {
+            super.onLogin(code: code, text: text)
             self.interactor?.attachToMeTopic()
         }
         override func onDisconnect(byServer: Bool, code: URLSessionWebSocketTask.CloseCode, reason: String) {
@@ -71,12 +72,14 @@ class ChatListInteractor: ChatListBusinessLogic, ChatListDataStore {
             // Update presence indicators (all should be off).
             self.interactor?.loadAndPresentTopics()
         }
-        func onDataMessage(data: MsgServerData?) {
+        override func onDataMessage(data: MsgServerData?) {
+            super.onDataMessage(data: data)
             if let topic = data?.topic {
                 interactor?.updateChat(topic)
             }
         }
-        func onInfoMessage(info: MsgServerInfo?) {
+        override func onInfoMessage(info: MsgServerInfo?) {
+            super.onInfoMessage(info: info)
             if info?.what != "call", let topic = info?.src {
                 interactor?.updateChat(topic)
             }

@@ -18,6 +18,18 @@ class UiTinodeEventListener: TinodeEventListener {
     init(connected: Bool) {
         self.connected = connected
     }
+
+    // Empty handlers. Otherwise, methods of subclasses of UiTinodeEventListener
+    // won't be called.
+    func onLogin(code: Int, text: String) {}
+    func onMessage(msg: ServerMessage?) {}
+    func onRawMessage(msg: String) {}
+    func onCtrlMessage(ctrl: MsgServerCtrl?) {}
+    func onDataMessage(data: MsgServerData?) {}
+    func onInfoMessage(info: MsgServerInfo?) {}
+    func onMetaMessage(meta: MsgServerMeta?) {}
+    func onPresMessage(pres: MsgServerPres?) {}
+
     func onConnect(code: Int, reason: String, params: [String: JSONValue]?) {
         connected = true
     }

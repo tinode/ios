@@ -81,7 +81,9 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
             super.init(connected: connected)
             self.interactor = interactor
         }
-        func onLogin(code: Int, text: String) {
+
+        override func onLogin(code: Int, text: String) {
+            super.onLogin(code: code, text: text)
             _ = UiUtils.attachToMeTopic(meListener: nil)
             _ = interactor?.attachToTopic(interactively: false)
         }
