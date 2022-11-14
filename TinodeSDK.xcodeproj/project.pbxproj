@@ -590,6 +590,7 @@
 			baseConfigurationReference = FD6888AEFAE0E94A350A75E8 /* Pods-TinodeSDKTests.release.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = TinodeSDKTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (

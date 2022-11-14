@@ -46,9 +46,10 @@ class SendMessageBar: UIView {
         static let kPreviewCancelButtonMaxWidth: CGFloat = 36
 
         static let kSendButtonPointsNormal: CGFloat = 26
-        static let kSendButtonPointsPressed: CGFloat = 40
+        static let kSendButtonPointsPressed: CGFloat = 44
         static let kButtonSizeNormal: CGFloat = 32
-        static let kSendButtonSizePressed: CGFloat = 48
+        // Size of the activated audio recording button.
+        static let kSendButtonSizePressed: CGFloat = 54
 
         // Initial input text weight.
         static let kInitialInputFieldHeight: CGFloat = 40
@@ -183,22 +184,22 @@ class SendMessageBar: UIView {
             let loc = sender.location(in: self)
             self.sendButtonConstrains = CGPoint(x: self.sendButtonHorizontal.constant, y: self.sendButtonVertical.constant)
             self.sendButtonLocation = CGPoint(x: loc.x, y: loc.y)
-            DispatchQueue.main.async {
-                UIView.animate(withDuration: 0.2, delay: 0, options: UIView.AnimationOptions.curveEaseIn, animations: {
-                    self.showAudioBar(.short)
-                    self.sendButtonSize.constant = Constants.kSendButtonSizePressed
-                    self.sendButton.setImage(Constants.kSendButtonImageWavePressed, for: .normal)
-                    self.verticalSliderView.isHidden = false
-                    self.horizontalSliderView.isHidden = false
-                    self.layoutIfNeeded()
-                }, completion: nil)
-            }
+            UIView.animate(withDuration: 0.2, delay: 0, options: UIView.AnimationOptions.curveEaseIn, animations: {
+                self.showAudioBar(.short)
+                self.sendButtonSize.constant = Constants.kSendButtonSizePressed
+                self.sendButton.setImage(Constants.kSendButtonImageWavePressed, for: .normal)
+                self.verticalSliderView.isHidden = false
+                self.horizontalSliderView.isHidden = false
+                self.layoutIfNeeded()
+            }, completion: nil)
             self.delegate?.sendMessageBar(recordAudio: .start)
         case .ended:
             if inputField.actualText.isEmpty && !audioLocked {
                 audioBarState(.stopAndDelete)
                 self.delegate?.sendMessageBar(recordAudio: .stopAndSend)
             }
+        case .cancelled:
+            break
         case .changed:
             // Constrain movements to either strictly horizontal or strictly vertical.
             let loc = sender.location(in: self)
@@ -213,14 +214,15 @@ class SendMessageBar: UIView {
                 // Vertical move.
                 dX = 0
             }
-            if dX < -56 {
+            if dX < -60 {
                 // User swiped to "Trash".
                 UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                audioLocked = false
                 sender.isEnabled = false
                 audioBarState(.stopAndDelete)
                 self.delegate?.sendMessageBar(recordAudio: .stopAndDelete)
                 sender.isEnabled = true
-            } else if dY < -56 {
+            } else if dY < -60 {
                 // User swiped to "Lock".
                 UIImpactFeedbackGenerator(style: .light).impactOccurred()
                 audioLocked = true
@@ -406,12 +408,11 @@ class SendMessageBar: UIView {
             self.sendButtonVertical.constant = self.sendButtonConstrains.y
             self.verticalSliderView.isHidden = true
             self.horizontalSliderView.isHidden = true
+            self.sendButtonSize.constant = Constants.kButtonSizeNormal
             if state == .lock {
-                self.sendButtonSize.constant = Constants.kButtonSizeNormal
                 self.sendButton.setImage(Constants.kSendButtonImageArrow, for: .normal)
                 self.showAudioBar(.longInitial)
             } else {
-                self.sendButtonSize.constant = Constants.kButtonSizeNormal
                 self.sendButton.setImage(Constants.kSendButtonImageWave, for: .normal)
                 self.showAudioBar(.hidden)
             }

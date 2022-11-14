@@ -108,8 +108,8 @@ class MessageViewController: UIViewController {
         // Max time difference between successive messages to count them as one batch.
         static let kUpdateBatchTimeDeltaThresholdMs: Int64 = 300
 
-        // Minimum and manimum duration of an audio recording.
-        static let kMinDuration = 2000
+        // Minimum and manimum duration of an audio recording in ms.
+        static let kMinDuration = 3_000
         static let kMaxDuration = 600_000
     }
 
