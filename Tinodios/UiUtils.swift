@@ -389,9 +389,18 @@ class UiUtils {
     public static func showToast(message: String, duration: TimeInterval = 3.0, level: ToastLevel = .error) {
         // Grab the last window (instead the key window) so we can show
         // the toast over they keyboard when it's presented.
-        guard let parent = UIApplication.shared.windows.last else {
+        guard let topWindow = UIApplication.shared.windows.last else {
             Cache.log.error("UiUtils.showToast - parent window not set")
             return
+        }
+        var parent: UIView = topWindow
+        if #available(iOS 16, *) {
+            // UIRemoteKeyboardWindow is no longer available in iOS 16 so keyboard (if presented) may
+            // cover the toast.
+            // Show toast over the input accessory view if visible.
+            if let inputView = UiUtils.topViewController(rootViewController: (UIApplication.shared.delegate as! AppDelegate).window?.rootViewController)?.inputAccessoryView {
+                parent = inputView
+            }
         }
 
         let iconSize: CGFloat = 32
@@ -600,17 +609,17 @@ class UiUtils {
     }
 
     public static func topViewController(rootViewController: UIViewController?) -> UIViewController? {
-        guard let rootViewController = rootViewController else { return nil }
-        guard let presented = rootViewController.presentedViewController else {
-            return rootViewController
+        guard let controller = rootViewController else { return nil }
+        if let presented = controller.presentedViewController {
+            return topViewController(rootViewController: presented)
         }
-        switch presented {
+        switch controller {
         case let navigationController as UINavigationController:
             return topViewController(rootViewController: navigationController.viewControllers.last)
         case let tabBarController as UITabBarController:
             return topViewController(rootViewController: tabBarController.selectedViewController)
         default:
-            return topViewController(rootViewController: presented)
+            return controller
         }
     }
 

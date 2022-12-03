@@ -330,14 +330,13 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
             onFailure: { err in
                 Cache.log.error("sendMessage error: %@", err.localizedDescription)
                 if let e = err as? TinodeError {
-                    switch e {
-                    case .notConnected(_):
+                    if case .notConnected(_) = e {
                         DispatchQueue.main.async { UiUtils.showToast(message: NSLocalizedString("You are offline.", comment: "Toast notification")) }
                         Cache.tinode.reconnectNow(interactively: false, reset: false)
-                    default:
-                        DispatchQueue.main.async { UiUtils.showToast(message: NSLocalizedString("Message not sent.", comment: "Toast notification")) }
+                        return nil
                     }
                 }
+                DispatchQueue.main.async { UiUtils.showToast(message: NSLocalizedString("Message not sent.", comment: "Toast notification")) }
                 return nil
             }
         ).thenFinally {

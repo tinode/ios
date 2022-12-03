@@ -100,7 +100,7 @@ PODS:
   - Kingfisher (5.15.8):
     - Kingfisher/Core (= 5.15.8)
   - Kingfisher/Core (5.15.8)
-  - MobileVLCKit (3.4.1b9)
+  - MobileVLCKit (3.4.1b13)
   - nanopb (2.30908.0):
     - nanopb/decode (= 2.30908.0)
     - nanopb/encode (= 2.30908.0)
@@ -165,7 +165,7 @@ SPEC CHECKSUMS:
   GoogleDataTransport: 629c20a4d363167143f30ea78320d5a7eb8bd940
   GoogleUtilities: 684ee790a24f73ebb2d1d966e9711c203f2a4237
   Kingfisher: a3c03d702433fa6cfedabb2bddbe076fb8f2e902
-  MobileVLCKit: 63fd88297505b97027f23842ae9df3a7bf17b31e
+  MobileVLCKit: 685736e6bb92ed2107b0f083f094b61709413122
   nanopb: a0ba3315591a9ae0a16a309ee504766e90db0c96
   PhoneNumberKit: 441e8b26ec88d598e3591de9061eff18f5dd12e8
   PromisesObjC: 68159ce6952d93e17b2dfe273b8c40907db5ba58
