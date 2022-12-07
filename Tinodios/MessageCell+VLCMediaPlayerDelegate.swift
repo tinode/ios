@@ -44,17 +44,17 @@ extension MessageCell: VLCMediaPlayerDelegate {
         }
     }
 
-    fileprivate func initMedia(url: URL?, data: Data?, duration: Int, key: Int) {
+    fileprivate func initMedia(ref: String?, data: Data?, duration: Int, key: Int) {
         if (self.mediaEntityKey ?? -1) == key {
             // Already properly initialized with the same data.
             return
         }
-        if let url = url {
-            audioPlayer!.media = VLCMedia(url: url)
+        if let ref = ref, let url = Cache.tinode.toAbsoluteURL(origUrl: ref) {
+            audioPlayer!.media = VLCMedia(url: Cache.tinode.addAuthQueryParams(url))
         } else if let data = data {
             audioPlayer!.media = VLCMedia(stream: InputStream(data: data))
         } else {
-            Cache.log.error("MessageCell - unable to play audio: no data")
+            Cache.log.info("MessageCell - unable to play audio: no data")
             return
         }
 
@@ -65,7 +65,7 @@ extension MessageCell: VLCMediaPlayerDelegate {
         self.mediaEntityKey = key
     }
 
-    func toggleAudioPlay(url: URL?, data: Data?, duration: Int, key: Int) {
+    func toggleAudioPlay(url: String?, data: Data?, duration: Int, key: Int) {
         initAudioPlayer()
 
         if audioPlayer!.isPlaying {
@@ -74,15 +74,15 @@ extension MessageCell: VLCMediaPlayerDelegate {
             return
         }
 
-        initMedia(url: url, data: data, duration: duration, key: key)
+        initMedia(ref: url, data: data, duration: duration, key: key)
         audioPlayer!.play()
         self.delegate?.didActivateMedia(in: self, audioPlayer: self.audioPlayer!)
     }
 
-    func audioSeekTo(_ seekTo: Float, url: URL?, data: Data?, duration: Int, key: Int) {
+    func audioSeekTo(_ seekTo: Float, url: String?, data: Data?, duration: Int, key: Int) {
         initAudioPlayer()
 
-        initMedia(url: url, data: data, duration: duration, key: key)
+        initMedia(ref: url, data: data, duration: duration, key: key)
         var doPause = false
         if !audioPlayer!.isPlaying {
             audioPlayer!.play()

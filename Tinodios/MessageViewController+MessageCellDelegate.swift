@@ -289,7 +289,7 @@ extension MessageViewController: MessageCellDelegate {
         let duration = entity.data?["duration"]?.asInt() ?? 0
         let bits = entity.data?["val"]?.asData()
         let ref = entity.data?["ref"]?.asString()
-        cell.toggleAudioPlay(url: ref == nil ? nil : URL.init(string: ref!), data: bits, duration: duration, key: key!)
+        cell.toggleAudioPlay(url: ref, data: bits, duration: duration, key: key!)
     }
 
     private func handleAudioSeek(in cell: MessageCell, using url: URL) {
@@ -300,7 +300,7 @@ extension MessageViewController: MessageCellDelegate {
         let bits = entity.data?["val"]?.asData()
         let ref = entity.data?["ref"]?.asString()
         guard let seekTo = Float(url.extractQueryParam(named: "pos") ?? "0") else { return }
-        cell.audioSeekTo(seekTo, url: ref == nil ? nil : URL.init(string: ref!), data: bits, duration: duration, key: key!)
+        cell.audioSeekTo(seekTo, url: ref, data: bits, duration: duration, key: key!)
     }
 
     private func showImagePreview(in cell: MessageCell, draftyEntityKey: Int?) {
