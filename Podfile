@@ -34,7 +34,7 @@ def app_pods
   pod 'FirebaseAnalytics'
   pod 'FirebaseCrashlytics'
   pod 'Kingfisher', '~> 5.0'
-  pod 'MobileVLCKit', '~> 3.4.1b9'
+  pod 'MobileVLCKit', '~> 3.5.0'
   pod 'PhoneNumberKit', '~> 3.3'
   pod 'WebRTC-lib', '~> 96.0.0'
 end
