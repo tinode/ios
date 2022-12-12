@@ -482,6 +482,44 @@ public class Tinode {
         return self.serverParams?[key]
     }
 
+    public func toAbsoluteURL(origUrl: String) -> URL? {
+        return URL(string: origUrl, relativeTo: baseURL(useWebsocketProtocol: false)) ?? URL(string: origUrl)
+    }
+
+    public func isTrustedURL(_ url: URL) -> Bool {
+        let base = baseURL(useWebsocketProtocol: false)!
+        return url.scheme == base.scheme && url.host == base.host && url.port == base.port
+    }
+
+    public func addAuthQueryParams(_ url: URL) -> URL {
+        if isTrustedURL(url) {
+            let items = [
+                URLQueryItem(name: "apikey", value: apiKey),
+                URLQueryItem(name: "auth", value: "token"),
+                // Convert standard encoded token to URL encoding to be safely included into an URL.
+                URLQueryItem(name: "secret", value: authToken?
+                    .replacingOccurrences(of: "+", with: "-")
+                    .replacingOccurrences(of: "/", with: "_")),
+            ]
+            var components = URLComponents(string: url.absoluteString)
+            var query = components?.queryItems ?? []
+            query.append(contentsOf: items)
+            components?.queryItems = query
+            return components?.url ?? url
+        }
+        return url
+    }
+
+    public func getRequestHeaders() -> [String:String] {
+        var headers: [String:String] = [:]
+        headers["X-Tinode-APIKey"] = apiKey
+        if authToken != nil {
+            headers["X-Tinode-Auth"] = "Token " + authToken!
+        }
+        headers["User-Agent"] = userAgent
+        return headers
+    }
+
     private func getNextMsgId() -> String {
         nextMsgId += 1
         return String(nextMsgId)

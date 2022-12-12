@@ -68,19 +68,24 @@ public class LargeFileHelper: NSObject {
         self.urlSession = URLSession(configuration: config, delegate: self, delegateQueue: nil)
         self.tinode = tinode
     }
+
     convenience init(with tinode: Tinode) {
         let config = URLSessionConfiguration.background(withIdentifier: Bundle.main.bundleIdentifier!)
         self.init(with: tinode, config: config)
     }
 
     public static func addCommonHeaders(to request: inout URLRequest, using tinode: Tinode) {
-        request.addValue(tinode.apiKey, forHTTPHeaderField: "X-Tinode-APIKey")
-        if tinode.isConnectionAuthenticated {
-            request.addValue("Token \(tinode.authToken!)", forHTTPHeaderField: "X-Tinode-Auth")
-        }
+        let headers = tinode.getRequestHeaders()
+        headers.forEach({ (key: String, value: String) in
+            request.addValue(value, forHTTPHeaderField: key)
+        })
     }
 
-    public static func uploadKeyFor(topicId: String, msgId: Int64) -> String {
+    public static func addAuthQueryParams(to url: URL, using tinode: Tinode) -> URL {
+        return tinode.addAuthQueryParams(url)
+    }
+
+    public static func taskIDFor(topicId: String, msgId: Int64) -> String {
         if msgId != 0 {
             return "\(topicId)-\(msgId)"
         }
@@ -113,7 +118,7 @@ public class LargeFileHelper: NSObject {
         let localURL = tempDir.appendingPathComponent("throwaway-\(localFileName)")
         try? newData.write(to: localURL)
 
-        let uploadKey = LargeFileHelper.uploadKeyFor(topicId: topicId, msgId: msgId)
+        let uploadKey = LargeFileHelper.taskIDFor(topicId: topicId, msgId: msgId)
         upload.task = urlSession.uploadTask(with: request, fromFile: localURL)
         upload.task!.taskDescription = uploadKey
         upload.isUploading = true
@@ -131,7 +136,7 @@ public class LargeFileHelper: NSObject {
     }
 
     public func cancelUpload(topicId: String, msgId: Int64 = 0) -> Bool {
-        let uploadKey = LargeFileHelper.uploadKeyFor(topicId: topicId, msgId: msgId)
+        let uploadKey = LargeFileHelper.taskIDFor(topicId: topicId, msgId: msgId)
         var upload = activeUploads[uploadKey]
         guard upload != nil else { return false }
         activeUploads.removeValue(forKey: uploadKey)
