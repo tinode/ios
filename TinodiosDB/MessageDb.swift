@@ -39,6 +39,9 @@ public class MessageDb {
     public let replSeq: Expression<Int?>
     // Effective seq id this message represents (latest message version in edit history).
     public let effectiveSeq: Expression<Int?>
+    // Timestamp of the original message this message has replaced
+    // (could be the same as ts, if it does not replace anything).
+    public let effectiveTs: Expression<Date?>
 
     public let head: Expression<String?>
     public let content: Expression<String?>
@@ -60,6 +63,7 @@ public class MessageDb {
         self.delId = Expression<Int?>("del_id")
         self.replSeq = Expression<Int?>("repl_seq")
         self.effectiveSeq = Expression<Int?>("effective_seq")
+        self.effectiveTs = Expression<Date?>("effective_ts")
 
         self.head = Expression<String?>("head")
         self.content = Expression<String?>("content")
@@ -85,6 +89,7 @@ public class MessageDb {
             t.column(delId)
             t.column(replSeq)
             t.column(effectiveSeq)
+            t.column(effectiveTs)
             t.column(head)
             t.column(content)
         })
@@ -95,7 +100,8 @@ public class MessageDb {
     }
 
     @discardableResult
-    private func insertRaw(topic: TopicProto, msg: StoredMessage, withEffectiveSeq effectiveSeqId: Int?) throws -> Int64 {
+    private func insertRaw(topic: TopicProto, msg: StoredMessage, withEffectiveSeq effectiveSeqId: Int?,
+                           withEffectiveTs effectiveTs: Date?) throws -> Int64 {
         guard let tdb = baseDb.topicDb else {
             throw MessageDbError.dbError("no topicDb in messageDb insert")
         }
@@ -128,6 +134,9 @@ public class MessageDb {
         if let effSeq = effectiveSeqId, effSeq > 0 {
             setters.append(self.effectiveSeq <- effSeq)
         }
+        if let effTs = effectiveTs {
+            setters.append(self.effectiveTs <- effTs)
+        }
         if let h = msg.head {
             setters.append(self.head <- Tinode.serializeObject(h))
         }
@@ -136,16 +145,23 @@ public class MessageDb {
         return msg.msgId
     }
 
-    private func getOriginalSeqFor(effectiveSeqId effSeq: Int, onTopic topicId: Int64) -> Int? {
-        if let row = try? db.pluck(self.table.select(self.seq).filter(self.topicId == topicId && self.effectiveSeq == effSeq)) {
-            return row[self.seq]
-        }
-        return nil
+    private func getActiveVersion(withEffectiveSeqId effSeq: Int, onTopic topicId: Int64) -> Row? {
+        return try? db.pluck(self.table.select(self.seq).filter(self.topicId == topicId && self.effectiveSeq == effSeq))
     }
 
-    private func invalidateMessage(withSeq seqId: Int, onTopic topicId: Int64) throws {
-        let record = self.table.filter(self.topicId == topicId && self.seq == seqId)
+    private func deactivateMessageVersion(withEffectiveSeq seqId: Int, onTopic topicId: Int64) throws {
+        let record = self.table.filter(self.topicId == topicId && self.effectiveSeq == seqId)
         try self.db.run(record.update(self.effectiveSeq <- nil))
+    }
+
+    private func activateMessageVersion(withEffectiveSeq seqId: Int, withEffectiveTs ts: Date?, onTopic topicId: Int64) throws -> Bool {
+        guard let rec = try db.pluck(self.table.select(self.id).filter(self.topicId == topicId && self.replSeq == seqId)
+            .order(self.seq.desc)) else {
+            return false
+        }
+        let recId = rec[self.id]
+        let record = self.table.filter(self.id == recId)
+        return try self.db.run(record.update(self.effectiveSeq <- seqId, self.effectiveTs <- ts)) > 0
     }
 
     func insert(topic: TopicProto?, msg: StoredMessage?) -> Int64 {
@@ -166,22 +182,40 @@ public class MessageDb {
         }
         do {
             try db.savepoint("MessageDb.insert") {
-                var effSeq: Int? = msg.replacesSeq ?? msg.seqId
-                if let origSeq = self.getOriginalSeqFor(effectiveSeqId: effSeq!, onTopic: topicId) {
-                    if origSeq < msg.seqId {
-                        // Newer message version. Invalidate the old effective message record.
-                        try self.invalidateMessage(withSeq: origSeq, onTopic: topicId)
-                    } else {
-                        // The already existing message version is newer than this one.
-                        // Do not set effective seq.
-                        effSeq = nil
+                var effSeq: Int?
+                var effTs: Date?
+                if let replaceSeq = msg.replacesSeq {
+                    // This message replaces another message.
+                    if let orig = self.getActiveVersion(withEffectiveSeqId: replaceSeq, onTopic: topicId),
+                       orig[self.seq] == nil || orig[self.seq]! < msg.seqId {
+                        // msg is a newer version.
+                        try self.deactivateMessageVersion(withEffectiveSeq: replaceSeq, onTopic: topicId)
+                        effSeq = replaceSeq
+                        effTs = orig[self.ts]
+                    }
+                    // Else:
+                    // Either there's no active version (hence, no original)
+                    // or msg is an older version. Do not set effective seq.
+                } else {
+                    // This is not a replacement message. Three cases:
+                    // 1. This is a never edited message.
+                    // 2. Edited message but edits are not in the database.
+                    // 3. Edited and edits are in the database already.
+                    effSeq = msg.seq
+                    effTs = msg.ts
+                    if let seqId = effSeq {
+                        // Check if there are newer versions of this message and activate the latest one.
+                        if try self.activateMessageVersion(withEffectiveSeq: seqId, withEffectiveTs: effTs, onTopic: topicId) {
+                            // If activated, then this message has been replaced by a newer one.
+                            effSeq = nil
+                        }
                     }
                 }
-                try self.insertRaw(topic: topic, msg: msg, withEffectiveSeq: effSeq)
+                try self.insertRaw(topic: topic, msg: msg, withEffectiveSeq: effSeq, withEffectiveTs: effTs)
             }
             return msg.msgId
         } catch {
-            BaseDb.log.error("MessageDb - insert operation failed: %@", error.localizedDescription)
+            BaseDb.log.error("MessageDb - insert operation failed: %@", error.localizedDescription.debugDescription)
             return -1
         }
     }
@@ -205,13 +239,16 @@ public class MessageDb {
         return false
     }
 
-    func delivered(msgId: Int64, ts: Date?, seq: Int?) -> Bool {
+    func delivered(msgId: Int64, ts: Date, seq: Int) -> Bool {
         let record = self.table.filter(self.id == msgId)
         do {
-            return try self.db.run(record.update(self.status <- BaseDb.Status.synced.rawValue,
-                                             self.ts <- ts, self.seq <- seq, self.effectiveSeq <- seq)) > 0
+            return try self.db.run(record.update(
+                self.status <- BaseDb.Status.synced.rawValue,
+                self.ts <- ts, self.seq <- seq,
+                self.effectiveSeq <- self.replSeq ?? seq,
+                self.effectiveTs <- self.effectiveTs ?? ts)) > 0
         } catch {
-            BaseDb.log.error("MessageDb - update delivery operation failed: msgId = %lld, error = %@", msgId, error.localizedDescription)
+            BaseDb.log.error("MessageDb - update delivery operation failed: msgId = %lld, error = %@", msgId, error.localizedDescription.debugDescription)
             return false
         }
     }

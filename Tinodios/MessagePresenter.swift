@@ -21,6 +21,7 @@ protocol MessagePresentationLogic {
     func endRefresh()
     func dismiss()
     func dismissPendingMessagePreviewBar()
+    func clearInputField()
 }
 
 class MessagePresenter: MessagePresentationLogic {
@@ -85,6 +86,11 @@ class MessagePresenter: MessagePresentationLogic {
     func dismissPendingMessagePreviewBar() {
         DispatchQueue.main.async {
             self.viewController?.togglePreviewBar(with: nil)
+        }
+    }
+    func clearInputField() {
+        DispatchQueue.main.async {
+            (self.viewController as? MessageViewController)?.sendMessageBar.inputField.text = nil
         }
     }
 }

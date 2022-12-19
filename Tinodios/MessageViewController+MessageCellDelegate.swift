@@ -114,6 +114,7 @@ extension MessageViewController: MessageCellDelegate {
         if !cell.isDeleted, let msgIndex = messageSeqIdIndex[cell.seqId], messages[msgIndex].isSynced {
             menuItems.append(MessageMenuItem(title: NSLocalizedString("Reply", comment: "Menu item"), action: #selector(showReplyPreview(sender:)), seqId: cell.seqId))
             menuItems.append(MessageMenuItem(title: NSLocalizedString("Forward", comment: "Menu item"), action: #selector(showForwardSelector(sender:)), seqId: cell.seqId))
+            menuItems.append(MessageMenuItem(title: NSLocalizedString("Edit", comment: "Menu item"), action: #selector(showEditPreview(sender:)), seqId: cell.seqId))
         }
 
         UIMenuController.shared.menuItems = menuItems
@@ -158,14 +159,35 @@ extension MessageViewController: MessageCellDelegate {
     }
 
     @objc func showReplyPreview(sender: UIMenuController) {
+        showQuotedPreview(sender: sender, isReply: true) {
+            guard let value = $0, case let .replyTo(quote, _) = value else { return }
+            self.showInPreviewBar(content: quote, forwarded: false)
+        }
+    }
+
+    @objc func showEditPreview(sender: UIMenuController) {
+        showQuotedPreview(sender: sender, isReply: false) {
+            guard let value = $0, case let .edit(quote, original, _) = value else { return }
+            self.showInPreviewBar(content: quote, forwarded: false)
+            self.sendMessageBar.inputField.becomeFirstResponder()
+            self.sendMessageBar.inputField.text = original
+        }
+    }
+
+    private func showQuotedPreview(sender: UIMenuController, isReply: Bool, completion: @escaping (PendingMessage?) -> Void) {
         guard let menuItem = sender.menuItems?.first as? MessageMenuItem, menuItem.seqId > 0, let msgIndex = messageSeqIdIndex[menuItem.seqId] else { return }
         let msg = messages[msgIndex]
-        if let reply = interactor?.prepareReply(to: msg) {
+        if let reply = interactor?.prepareQuoted(to: msg, isReply: isReply) {
             reply.then(onSuccess: { value in
-                DispatchQueue.main.async { self.showInPreviewBar(content: value, forwarded: false) }
+                DispatchQueue.main.async {
+                    completion(value)
+                }
                 return nil
             }, onFailure: { err in
-                DispatchQueue.main.async { UiUtils.showToast(message: "Failed to create reply: \(err)") }
+                DispatchQueue.main.async {
+                    completion(nil)
+                    UiUtils.showToast(message: "Failed to create message preview: \(err)")
+                }
                 return nil
             })
         }
