@@ -32,6 +32,9 @@ public protocol Message {
     // Textual topic name.
     var topic: String? { get }
 
+    // Seq id (if any) this message is intended to replace.
+    var replacesSeq: Int? { get }
+
     var isDraft: Bool { get }
     var isReady: Bool { get }
     var isDeleted: Bool { get }
@@ -200,6 +203,15 @@ public protocol Storage: AnyObject {
     @discardableResult
     func msgDiscard(topic: TopicProto, dbMessageId: Int64) -> Bool
 
+    /// Deletes a message by topic & seq.
+    /// - Parameters:
+    ///     - topic: topic which owns the message
+    ///     - seqId: message sequence id
+    /// - Returns:
+    ///     `true` on success, `false` otherwise
+    @discardableResult
+    func msgDiscard(topic: TopicProto, seqId: Int) -> Bool
+
     /// Mark message as delivered to the server and assign a real seq ID.
     /// - Parameters:
     ///   - topic: topic which sent the message.
@@ -215,6 +227,7 @@ public protocol Storage: AnyObject {
     func msgMarkToDelete(topic: TopicProto, from idLo: Int, to idHi: Int, markAsHard: Bool) -> Bool
 
     // Mark messages for deletion by seq ID list.
+    @discardableResult
     func msgMarkToDelete(topic: TopicProto, ranges: [MsgRange]?, markAsHard: Bool) -> Bool
 
     // Delete messages.
@@ -272,4 +285,13 @@ public protocol Storage: AnyObject {
     ///   - topic: topic which owns the messages.
     ///   - seqId: effective seq ID of the message.
     func getMessage(fromTopic topic: TopicProto, byEffectiveSeqId seqId: Int) -> Message?
+
+    /// Get seq IDs of up to limit versions of the edited message with the given ID.
+    /// - Parameters:
+    ///   - topic topic which sent the message.
+    ///   - seq ID of the edited message to get versions of.
+    ///   - limit the count of latest versions to get or all if limit is zero.
+    /// - Returns:
+    ///   Array of seq ID of edits ordered from newest to oldest.
+    func getAllMsgVersions(fromTopic topic: TopicProto, forSeq seqId: Int, limit: Int?) -> [Int]?
 }

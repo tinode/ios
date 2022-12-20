@@ -51,7 +51,7 @@ protocol MessageDataStore {
     var topic: DefaultComTopic? { get set }
     func loadMessagesFromCache(scrollToMostRecentMessage: Bool)
     func loadPreviousPage()
-    func deleteMessage(seqId: Int)
+    func deleteMessage(_ message: Message)
     func deleteFailedMessages()
 }
 
@@ -273,7 +273,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                 let finalMsg = Drafty.quote(quoteHeader: sender, authorUid: msg.from ?? "", quoteContent: reply)
                 self.pendingMessage = .replyTo(message: finalMsg, seqId: seqId)
             } else {
-                let original = content.toMarkdown()
+                let original = content.toMarkdown(withPlainLinks: true)
                 self.pendingMessage = .edit(message: content.wrapInto(style: "QQ"), markdown: original, seqId: seqId)
             }
             try? whenDone.resolve(result: self.pendingMessage!)
@@ -429,8 +429,26 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         }
     }
 
-    func deleteMessage(seqId: Int) {
-        topic?.delMessage(id: seqId, hard: false).then(
+    func deleteMessage(_ message: Message) {
+        guard let topic = topic, let store = topic.store else {
+            return
+        }
+        var seqIds: [Int] = []
+        if let replSeq = message.replacesSeq, let versionSeqIds = topic.store?.getAllMsgVersions(fromTopic: topic, forSeq: replSeq, limit: nil) {
+            for seq in versionSeqIds {
+                if TopicDb.isUnsentSeq(seq: seq) {
+                    store.msgDiscard(topic: topic, seqId: seq)
+                } else {
+                    seqIds.append(seq)
+                }
+            }
+        }
+        if message.isSynced {
+            seqIds.append(message.seqId)
+        } else {
+            store.msgDiscard(topic: topic, dbMessageId: message.msgId)
+        }
+        topic.delMessages(ids: seqIds, hard: false).then(
             onSuccess: { [weak self] _ in
                 self?.loadMessagesFromCache()
                 return nil

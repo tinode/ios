@@ -191,7 +191,7 @@ public class MessageDb {
                         // msg is a newer version.
                         try self.deactivateMessageVersion(withEffectiveSeq: replaceSeq, onTopic: topicId)
                         effSeq = replaceSeq
-                        effTs = orig[self.ts]
+                        effTs = orig[self.effectiveTs]
                     }
                     // Else:
                     // Either there's no active version (hence, no original)
@@ -328,8 +328,8 @@ public class MessageDb {
                 // Selector of partially overlapping deletion ranges. Find bounds of existing deletion ranges of the same type
                 // which partially overlap with the new deletion range.
                 let statusToConsume =
-                    delId > 0 ? BaseDb.Status.deletedSynced :
-                    hard ? BaseDb.Status.deletedHard : BaseDb.Status.deletedSoft
+                delId > 0 ? BaseDb.Status.deletedSynced :
+                hard ? BaseDb.Status.deletedHard : BaseDb.Status.deletedSoft
                 var rangeConsumeSelector = self.table.filter(
                     self.topicId == topicId && self.status == statusToConsume.rawValue
                 )
@@ -383,6 +383,15 @@ public class MessageDb {
             return try self.db.run(record.delete()) > 0
         } catch {
             BaseDb.log.error("MessageDb - delete operation failed: msgId = %lld, error = %@", msgId, error.localizedDescription)
+            return false
+        }
+    }
+    func delete(inTopic topicId: Int64, seqId: Int) -> Bool {
+        let record = self.table.filter(self.topicId == topicId && self.seq == seqId)
+        do {
+            return try self.db.run(record.delete()) > 0
+        } catch {
+            BaseDb.log.error("MessageDb - delete operation failed: topicId = %lld, seq = %d, error = %@", topicId, seqId, error.localizedDescription)
             return false
         }
     }
@@ -537,5 +546,28 @@ public class MessageDb {
             return self.readOne(r: row, previewLen: -1)
         }
         return nil
+    }
+
+    // Find all version of an edited message (if any). The versions are sorted from newest to oldest.
+    // Does not return the original message id (seq).
+    func getAllVersions(fromTopic topicId: Int64, forSeq seqId: Int, limit: Int?) -> [Int]? {
+        var query = self.table.select(self.seq).filter(self.topicId == topicId && self.replSeq == seqId)
+            .order(self.seq.desc)
+        if let limit = limit {
+            query = query.limit(limit)
+        }
+
+        do {
+            var seqIds: [Int] = []
+            for row in try db.prepare(query) {
+                if let seq = row[self.seq] {
+                    seqIds.append(seq)
+                }
+            }
+            return seqIds
+        } catch {
+            BaseDb.log.error("MessageDb - getAllVersions operation failed: topicId = %lld, error = %@", topicId, error.localizedDescription)
+            return nil
+        }
     }
 }

@@ -39,6 +39,52 @@ public class MsgRange: Codable {
         let rl = MsgRange.cmp(self.low, other.low)
         return rl == 0 ? MsgRange.cmp(other.hi, self.hi) : rl
     }
+
+    // Attempts to extend current range with id.
+    private func extend(withId id: Int) -> Bool {
+        if low == id {
+            return true
+        }
+        if let h = hi {
+            if h == id {
+                hi = h + 1
+                return true
+            }
+            return false
+        }
+        // hi == nil
+        if id == low + 1 {
+            hi = id + 1
+            return true
+        }
+        return false
+    }
+
+    // Removes hi if it's meaningless.
+    private func normalize() {
+        if let h = hi, h <= low + 1 {
+            hi = nil
+        }
+    }
+
+    public static func listToRanges(_ list: [Int]) -> [MsgRange]? {
+        guard !list.isEmpty else { return nil }
+        let slist = list.sorted()
+        var result: [MsgRange] = []
+        var curr = MsgRange(id: slist.first!)
+        for i in 1..<slist.count {
+            let id = slist[i]
+            if !curr.extend(withId: id) {
+                curr.normalize()
+                result.append(curr)
+                // Start new range.
+                curr = MsgRange(id: id)
+            }
+        }
+        result.append(curr)
+        return result
+    }
+
     /**
      * Collapse multiple possibly overlapping ranges into as few ranges non-overlapping
      * ranges as possible: [1..6],[2..4],[5..7] -> [1..7].

@@ -280,6 +280,11 @@ public class SqlStore: Storage {
         return self.dbh?.messageDb?.delete(msgId: dbMessageId) ?? false
     }
 
+    public func msgDiscard(topic: TopicProto, seqId: Int) -> Bool {
+        guard let st = topic.payload as? StoredTopic, let topicId = st.id else { return false }
+        return self.dbh?.messageDb?.delete(inTopic: topicId, seqId: seqId) ?? false
+    }
+
     public func msgDelivered(topic: TopicProto, dbMessageId: Int64, timestamp: Date, seq: Int) -> Bool {
         do {
             try dbh?.db?.savepoint("SqlStore.msgDelivered") {
@@ -389,5 +394,10 @@ public class SqlStore: Storage {
     public func getMessage(fromTopic topic: TopicProto, byEffectiveSeqId seqId: Int) -> Message? {
         guard let st = topic.payload as? StoredTopic, let id = st.id, id > 0 else { return nil }
         return BaseDb.sharedInstance.messageDb?.getMessage(fromTopic: id, byEffectiveSeq: seqId)
+    }
+
+    public func getAllMsgVersions(fromTopic topic: TopicProto, forSeq seqId: Int, limit: Int?) -> [Int]? {
+        guard let st = topic.payload as? StoredTopic, let id = st.id, id > 0 else { return nil }
+        return BaseDb.sharedInstance.messageDb?.getAllVersions(fromTopic: id, forSeq: seqId, limit: limit)
     }
 }

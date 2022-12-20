@@ -114,7 +114,20 @@ extension MessageViewController: MessageCellDelegate {
         if !cell.isDeleted, let msgIndex = messageSeqIdIndex[cell.seqId], messages[msgIndex].isSynced {
             menuItems.append(MessageMenuItem(title: NSLocalizedString("Reply", comment: "Menu item"), action: #selector(showReplyPreview(sender:)), seqId: cell.seqId))
             menuItems.append(MessageMenuItem(title: NSLocalizedString("Forward", comment: "Menu item"), action: #selector(showForwardSelector(sender:)), seqId: cell.seqId))
-            menuItems.append(MessageMenuItem(title: NSLocalizedString("Edit", comment: "Menu item"), action: #selector(showEditPreview(sender:)), seqId: cell.seqId))
+            let msg = messages[msgIndex]
+            if isFromCurrentSender(message: msg), let content = msg.content {
+                // Only allow editing messages which don't contain certain entity types.
+                var canEdit = true
+                let prohibitedTypes: Set = ["AU", "EX", "FM", "IM", "VC", "VD"]
+                for e in content.entities ?? [] {
+                    if prohibitedTypes.contains(e.tp ?? "") {
+                        canEdit = false
+                    }
+                }
+                if canEdit {
+                    menuItems.append(MessageMenuItem(title: NSLocalizedString("Edit", comment: "Menu item"), action: #selector(showEditPreview(sender:)), seqId: cell.seqId))
+                }
+            }
         }
 
         UIMenuController.shared.menuItems = menuItems
@@ -149,28 +162,28 @@ extension MessageViewController: MessageCellDelegate {
         UIPasteboard.general.string = "[\(senderName!)]: \(msg.content?.string ?? ""); \(RelativeDateFormatter.shared.shortDate(from: msg.ts))"
     }
 
-    func showInPreviewBar(content: Drafty?, forwarded: Bool) {
+    func showInPreviewBar(content: Drafty?, forwarded: Bool, onAction action: PendingPreviewAction = .none) {
         guard let content = content else { return }
         let maxWidth = sendMessageBar.previewMaxWidth
         let maxHeight = collectionView.frame.height
         // Make sure it's properly formatted.
         let preview = (forwarded ? SendForwardedFormatter(defaultAttributes: [:]) : SendReplyFormatter(defaultAttributes: [:])).toAttributed(content, fitIn: CGSize(width: maxWidth, height: maxHeight))
-        self.togglePreviewBar(with: preview)
+        self.togglePreviewBar(with: preview, onAction: action)
     }
 
     @objc func showReplyPreview(sender: UIMenuController) {
         showQuotedPreview(sender: sender, isReply: true) {
             guard let value = $0, case let .replyTo(quote, _) = value else { return }
-            self.showInPreviewBar(content: quote, forwarded: false)
+            self.showInPreviewBar(content: quote, forwarded: false, onAction: .reply)
         }
     }
 
     @objc func showEditPreview(sender: UIMenuController) {
         showQuotedPreview(sender: sender, isReply: false) {
             guard let value = $0, case let .edit(quote, original, _) = value else { return }
-            self.showInPreviewBar(content: quote, forwarded: false)
             self.sendMessageBar.inputField.becomeFirstResponder()
             self.sendMessageBar.inputField.text = original
+            self.showInPreviewBar(content: quote, forwarded: false, onAction: .edit)
         }
     }
 
@@ -216,8 +229,9 @@ extension MessageViewController: MessageCellDelegate {
     }
 
     @objc func deleteMessage(sender: UIMenuController) {
-        guard let menuItem = sender.menuItems?.first as? MessageMenuItem, menuItem.seqId > 0 else { return }
-        interactor?.deleteMessage(seqId: menuItem.seqId)
+        guard let menuItem = sender.menuItems?.first as? MessageMenuItem, menuItem.seqId > 0, let index = messageSeqIdIndex[menuItem.seqId] else { return }
+        let msg = messages[index]
+        interactor?.deleteMessage(msg)
     }
 
     private func handleButtonPost(in cell: MessageCell, using url: URL) {

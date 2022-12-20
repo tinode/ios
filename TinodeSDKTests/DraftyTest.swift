@@ -598,7 +598,7 @@ class DraftyTest: XCTestCase {
                 Entity(tp: "MN", data: ["val": .string("usr123abcDE")])
             ]
         )
-        var actual = src.toMarkdown()
+        var actual = src.toMarkdown(withPlainLinks: false)
         var expected = "*@Alice Johnson\nThis is a reply to reply*This is a Reply -> Forward -> Reply.";
         XCTAssertEqual(expected, actual, "Format 1 has failed")
 
@@ -616,7 +616,7 @@ class DraftyTest: XCTestCase {
                 Entity(tp: "LN", data: ["url": .string("http://www.tinode.co")])
             ]
         )
-        actual = src.toMarkdown()
+        actual = src.toMarkdown(withPlainLinks: false)
         expected = "an url: [https://www.example.com/abc#fragment](https://www.example.com/abc#fragment) and another _[www.tinode.co](http://www.tinode.co)_"
         XCTAssertEqual(expected, actual, "Format 2 has failed")
     }

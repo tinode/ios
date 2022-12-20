@@ -127,6 +127,11 @@ public class TopicDb {
         })
         try! db.run(self.table.createIndex(accountId, topic, unique: true, ifNotExists: true))
     }
+
+    public static func isUnsentSeq(seq: Int) -> Bool {
+        return seq >= TopicDb.kUnsentIdStart
+    }
+
     func deserializeTopic(topic: TopicProto, row: Row) {
         let st = StoredTopic()
         st.id = row[self.id]

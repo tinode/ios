@@ -22,7 +22,7 @@ protocol MessageDisplayLogic: AnyObject {
     func endRefresh()
     func dismissVC()
     // Display or dismiss preview (e.g. reply preview) in the send message bar.
-    func togglePreviewBar(with preview: NSAttributedString?)
+    func togglePreviewBar(with preview: NSAttributedString?, onAction action: PendingPreviewAction)
 }
 
 class MessageViewController: UIViewController {
@@ -735,14 +735,14 @@ extension MessageViewController: MessageDisplayLogic {
         self.dismiss(animated: true)
     }
 
-    func togglePreviewBar(with preview: NSAttributedString?) {
+    func togglePreviewBar(with preview: NSAttributedString?, onAction action: PendingPreviewAction = .none) {
         if preview == nil {
             isForwardingMessage = false
         }
         if isForwardingMessage {
             self.forwardMessageBar.togglePendingPreviewBar(with: preview)
         } else {
-            self.sendMessageBar.togglePendingPreviewBar(with: preview)
+            self.sendMessageBar.togglePendingPreviewBar(withMessage: preview, onAction: action)
         }
         self.reloadInputViews()
     }
@@ -1204,8 +1204,8 @@ extension MessageViewController: PendingMessagePreviewDelegate {
         // Make sure MessageVC is the first responder so we can successfully reload
         // the input accessory view.
         self.becomeFirstResponder()
-        self.togglePreviewBar(with: nil)
         self.interactor?.dismissPendingMessage()
+        self.togglePreviewBar(with: nil)
     }
 }
 
