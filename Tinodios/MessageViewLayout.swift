@@ -111,6 +111,9 @@ class MessageViewLayoutAttributes: UICollectionViewLayoutAttributes {
     // Timestamp.
     var timestampFrame: CGRect = .zero
 
+    // Edited marker.
+    var editedMarkerFrame: CGRect = .zero
+
     // Optional new date label above message bubble
     var newDateFrame: CGRect = .zero
 
@@ -129,6 +132,7 @@ class MessageViewLayoutAttributes: UICollectionViewLayoutAttributes {
         copy.contentFrame = contentFrame
         copy.deliveryMarkerFrame = deliveryMarkerFrame
         copy.timestampFrame = timestampFrame
+        copy.editedMarkerFrame = editedMarkerFrame
         copy.newDateFrame = newDateFrame
         copy.cellSpacing = cellSpacing
         copy.progressViewFrame = progressViewFrame
@@ -144,6 +148,7 @@ class MessageViewLayoutAttributes: UICollectionViewLayoutAttributes {
             other.contentFrame == contentFrame &&
             other.deliveryMarkerFrame == deliveryMarkerFrame &&
             other.timestampFrame == timestampFrame &&
+            other.editedMarkerFrame == editedMarkerFrame &&
             other.newDateFrame == newDateFrame &&
             other.cellSpacing == cellSpacing &&
             other.progressViewFrame == progressViewFrame

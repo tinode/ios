@@ -47,6 +47,10 @@ class MessageViewController: UIViewController {
         static let kTimestampPadding: CGFloat = 0
         // Approximate width of the timestamp
         static let kTimestampWidth: CGFloat = 50
+        // Approximate width of edited marker
+        static let kEditedMarkerWidth: CGFloat = 70
+        // Horizontal space between timestamp and edited marker
+        static let kEditedMarkerPadding: CGFloat = 3
         // Progress bar paddings.
         static let kProgressBarLeftPadding: CGFloat = 10
         static let kProgressBarRightPadding: CGFloat = 25
@@ -791,6 +795,9 @@ extension MessageViewController: UICollectionViewDataSource {
         cell.timestampLabel.sizeToFit()
         cell.timestampLabel.frame = attributes.timestampFrame
 
+        cell.editedMarker.sizeToFit()
+        cell.editedMarker.frame = attributes.editedMarkerFrame
+
         cell.newDateLabel.frame = attributes.newDateFrame
 
         // Draw the bubble
@@ -844,16 +851,23 @@ extension MessageViewController: UICollectionViewDataSource {
             cell.deliveryMarker.image = image
             cell.deliveryMarker.tintColor = tint
         }
+        let markerTextColor = isFromCurrentSender(message: message) ? UIColor.gray : UIColor.lightText
         if let ts = message.ts {
             cell.timestampLabel.text = RelativeDateFormatter.shared.timeOnly(from: ts)
-            cell.timestampLabel.textColor = isFromCurrentSender(message: message) ? UIColor.gray : UIColor.lightText
+            cell.timestampLabel.textColor = markerTextColor
         }
+        cell.editedMarker.text = editedMarkerText(forMessage: message)
+        cell.editedMarker.textColor = markerTextColor
         cell.newDateLabel.attributedText = newDateLabel(for: message, at: indexPath)
         cell.senderNameLabel.attributedText = senderFullName(for: message, at: indexPath)
 
         if shouldShowProgressBar(for: message) {
             cell.showProgressBar()
         }
+    }
+
+    func editedMarkerText(forMessage msg: Message) -> String? {
+        return msg.isEdited ? NSLocalizedString("edited", comment: "`Edited` message marker") : nil
     }
 
     func newDateLabel(for message: Message, at indexPath: IndexPath) -> NSAttributedString? {
@@ -985,6 +999,8 @@ extension MessageViewController: MessageViewLayoutDelegate {
         let isDeleted = message.isDeleted
         // This message has an avatar.
         let isAvatarVisible = !isDeleted && shouldShowAvatar(for: message, at: indexPath)
+        // This message has been edited.
+        let isEdited = message.isEdited
 
         // Insets for the message bubble relative to collectionView: bubble should not touch the sides of the screen.
         let containerPadding = isOutgoing ? Constants.kOutgoingContainerPadding : Constants.kIncomingContainerPadding
@@ -1037,6 +1053,13 @@ extension MessageViewController: MessageViewLayoutDelegate {
         }
 
         attr.timestampFrame = !message.isDeleted ? CGRect(x: rightEdge.x - Constants.kTimestampWidth - Constants.kTimestampPadding, y: rightEdge.y, width: Constants.kTimestampWidth, height: Constants.kDeliveryMarkerSize) : .zero
+
+        if isEdited {
+            let x = attr.timestampFrame.origin != .zero ? attr.timestampFrame.origin.x - Constants.kEditedMarkerWidth - Constants.kEditedMarkerPadding : rightEdge.x
+            attr.editedMarkerFrame = CGRect(x: x, y: rightEdge.y, width: Constants.kEditedMarkerWidth, height: Constants.kDeliveryMarkerSize)
+        } else {
+            attr.editedMarkerFrame = .zero
+        }
 
         // New date label
         if newDateLabelHeight > 0 {

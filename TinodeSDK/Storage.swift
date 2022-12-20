@@ -39,6 +39,7 @@ public protocol Message {
     var isSynced: Bool { get }
     var isPending: Bool { get }
     var isForwarded: Bool { get }
+    var isEdited: Bool { get }
 }
 
 extension Message {

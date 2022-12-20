@@ -146,7 +146,7 @@ public class MessageDb {
     }
 
     private func getActiveVersion(withEffectiveSeqId effSeq: Int, onTopic topicId: Int64) -> Row? {
-        return try? db.pluck(self.table.select(self.seq).filter(self.topicId == topicId && self.effectiveSeq == effSeq))
+        return try? db.pluck(self.table.filter(self.topicId == topicId && self.effectiveSeq == effSeq))
     }
 
     private func deactivateMessageVersion(withEffectiveSeq seqId: Int, onTopic topicId: Int64) throws {
@@ -187,7 +187,7 @@ public class MessageDb {
                 if let replaceSeq = msg.replacesSeq {
                     // This message replaces another message.
                     if let orig = self.getActiveVersion(withEffectiveSeqId: replaceSeq, onTopic: topicId),
-                       orig[self.seq] == nil || orig[self.seq]! < msg.seqId {
+                       msg.seqId == 0 || (orig[self.seq] ?? 0) < msg.seqId {
                         // msg is a newer version.
                         try self.deactivateMessageVersion(withEffectiveSeq: replaceSeq, onTopic: topicId)
                         effSeq = replaceSeq
@@ -393,9 +393,8 @@ public class MessageDb {
         sm.userId = r[self.userId]
         sm.dbStatus = BaseDb.Status(rawValue: r[self.status] ?? 0) ?? .undefined
         sm.from = r[self.sender]
-        sm.ts = r[self.ts]
+        sm.ts = r[self.effectiveTs] ?? r[self.ts]
         sm.seq = r[self.effectiveSeq] ?? r[self.seq]
-        //let replaced = (r[self.effectiveSeq] ?? 0) > 0
         sm.head = Tinode.deserializeObject(from: r[self.head])
         sm.content = Drafty.deserialize(from: r[self.content])
         if previewLen > 0, let content = sm.content {
