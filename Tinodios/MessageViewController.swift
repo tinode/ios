@@ -143,8 +143,10 @@ class MessageViewController: UIViewController {
 
     /// Pointer to the view holding messages.
     weak var collectionView: MessageView!
+    private var collectionViewBottomAnchor: NSLayoutConstraint!
     /// Pointer to the view holding messages.
     weak var goToLatestButton: UIButton!
+    private var goToLatestButtonBottomAnchor: NSLayoutConstraint!
 
     var interactor: (MessageBusinessLogic & MessageDataStore)?
     private let refreshControl = UIRefreshControl()
@@ -323,6 +325,17 @@ class MessageViewController: UIViewController {
         collectionView.addSubview(refreshControl)
         refreshControl.addTarget(self, action: #selector(self.loadPreviousPage), for: .valueChanged)
 
+        // Setup UICollectionView constraints: fill the screen
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
+        print("adj = ", inputAccessoryView?.frame.height ?? 0)
+        self.collectionViewBottomAnchor = collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -(inputAccessoryView?.frame.height ?? 0))
+        NSLayoutConstraint.activate([
+            collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            self.collectionViewBottomAnchor,
+            collectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+            collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor)
+        ])
+
         // Setup "Go to latest message" button.
         let buttonGoToLatest = UIButton(type: .custom)
         buttonGoToLatest.backgroundColor = .secondarySystemBackground
@@ -337,6 +350,15 @@ class MessageViewController: UIViewController {
         view.addSubview(buttonGoToLatest)
         self.goToLatestButton = buttonGoToLatest
         buttonGoToLatest.isHidden = true
+
+        // Button on the bottom-right.
+        self.goToLatestButton.translatesAutoresizingMaskIntoConstraints = false
+        self.goToLatestButtonBottomAnchor = self.goToLatestButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -(inputAccessoryView?.frame.height ?? 0) - 16)
+        NSLayoutConstraint.activate([
+            self.goToLatestButton.widthAnchor.constraint(equalToConstant: 32.0),
+            self.goToLatestButton.heightAnchor.constraint(equalToConstant: 32.0),
+            self.goToLatestButtonBottomAnchor,
+            self.goToLatestButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -8)])
     }
 
     override func viewDidLoad() {
@@ -366,22 +388,8 @@ class MessageViewController: UIViewController {
             collectionView.contentInset.bottom = 8
         }
 
-        // Setup UICollectionView constraints: fill the screen
-        collectionView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            collectionView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -(inputAccessoryView?.frame.height ?? 0)),
-            collectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
-            collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor)
-        ])
-
-        // Button on the bottom-right.
-        self.goToLatestButton.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            self.goToLatestButton.widthAnchor.constraint(equalToConstant: 32.0),
-            self.goToLatestButton.heightAnchor.constraint(equalToConstant: 32.0),
-            self.goToLatestButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -(inputAccessoryView?.frame.height ?? 0) - 16),
-            self.goToLatestButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -8)])
+        self.collectionViewBottomAnchor.constant = -(inputAccessoryView?.frame.height ?? 0)
+        self.goToLatestButtonBottomAnchor.constant = -(inputAccessoryView?.frame.height ?? 0) - 16
 
         // Otherwise setting contentInset after viewDidAppear will be animated.
         if isInitialLayout {
