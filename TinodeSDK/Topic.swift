@@ -151,7 +151,7 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
             }
             return withData(since: nil, before: nil, limit: limit)
         }
-        public func withLaterData(limit: Int?) -> MetaGetBuilder {
+        public func withLaterData(limit: Int? = nil) -> MetaGetBuilder {
             if let r = topic.cachedMessageRange {
                 return withData(since: r.hi != 0 ? r.hi : nil, before: nil, limit: limit)
             }
@@ -1413,7 +1413,7 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
         let limit = newSeq - description.getSeq
         self.setSeq(seq: newSeq)
         if !self.attached {
-            self.subscribe(set: nil, get: self.metaGetBuilder().withLaterData(limit: limit).build()).thenApply({ _ in
+            self.subscribe(set: nil, get: self.metaGetBuilder().withLaterData().build()).thenApply({ _ in
                 self.leave()
                 return nil
             })
