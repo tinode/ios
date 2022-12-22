@@ -14,6 +14,8 @@ public enum PendingMessage {
     case replyTo(message: Drafty, seqId: Int)
     // The user is forwarding a messsage.
     case forwarded(message: Drafty, from: String, preview: Drafty)
+    // The user is editing a message.
+    case edit(message: Drafty, markdown: String, seqId: Int)
 }
 
 protocol MessageBusinessLogic: AnyObject {
@@ -36,7 +38,7 @@ protocol MessageBusinessLogic: AnyObject {
     func uploadFile(_ def: UploadDef)
     func uploadImage(_ def: UploadDef)
 
-    func prepareReply(to msg: Message?) -> PromisedReply<Drafty>?
+    func prepareQuoted(to msg: Message?, isReply: Bool) -> PromisedReply<PendingMessage>?
     func dismissPendingMessage()
 
     func createForwardedMessage(from original: Message?) -> PendingMessage?
@@ -49,7 +51,7 @@ protocol MessageDataStore {
     var topic: DefaultComTopic? { get set }
     func loadMessagesFromCache(scrollToMostRecentMessage: Bool)
     func loadPreviousPage()
-    func deleteMessage(seqId: Int)
+    func deleteMessage(_ message: Message)
     func deleteFailedMessages()
 }
 
@@ -254,7 +256,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
     }
 
     // Convert message into a quote ready for sending as a reply.
-    func prepareReply(to msg: Message?) -> PromisedReply<Drafty>? {
+    func prepareQuoted(to msg: Message?, isReply: Bool) -> PromisedReply<PendingMessage>? {
         guard let msg = msg, let content = msg.content else {
             self.dismissPendingMessage()
             return nil
@@ -265,17 +267,25 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         var reply = content.replyContent(length: SendReplyFormatter.kQuotedReplyLength, maxAttachments: 1)
         let createThumbnails = ThumbnailTransformer()
         reply = reply.transform(createThumbnails)
-        let whenDone = PromisedReply<Drafty>()
+        let whenDone = PromisedReply<PendingMessage>()
         createThumbnails.completionPromise.thenApply {_ in
-            let finalMsg = Drafty.quote(quoteHeader: sender, authorUid: msg.from ?? "", quoteContent: reply)
-            self.pendingMessage = .replyTo(message: finalMsg, seqId: seqId)
-            try? whenDone.resolve(result: finalMsg)
+            if isReply {
+                let finalMsg = Drafty.quote(quoteHeader: sender, authorUid: msg.from ?? "", quoteContent: reply)
+                self.pendingMessage = .replyTo(message: finalMsg, seqId: seqId)
+            } else {
+                let original = content.toMarkdown(withPlainLinks: true)
+                self.pendingMessage = .edit(message: content.wrapInto(style: "QQ"), markdown: original, seqId: seqId)
+            }
+            try? whenDone.resolve(result: self.pendingMessage!)
             return nil
         }
         return whenDone
     }
 
     func dismissPendingMessage() {
+        if case .edit(_, _, _) = self.pendingMessage {
+            self.presenter?.clearInputField()
+        }
         self.pendingMessage = nil
     }
 
@@ -320,6 +330,8 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
             case .forwarded(let forwardedMsg, let origin, _):
                 message = forwardedMsg
                 head = ["forwarded": .string(origin)]
+            case .edit(_, _, let replaceSeq):
+                head = ["replace": .string(":" + String(replaceSeq))]
             }
         }
         topic.publish(content: message, withExtraHeaders: head).then(
@@ -417,8 +429,26 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         }
     }
 
-    func deleteMessage(seqId: Int) {
-        topic?.delMessage(id: seqId, hard: false).then(
+    func deleteMessage(_ message: Message) {
+        guard let topic = topic, let store = topic.store else {
+            return
+        }
+        var seqIds: [Int] = []
+        if let replSeq = message.replacesSeq, let versionSeqIds = topic.store?.getAllMsgVersions(fromTopic: topic, forSeq: replSeq, limit: nil) {
+            for seq in versionSeqIds {
+                if TopicDb.isUnsentSeq(seq: seq) {
+                    store.msgDiscard(topic: topic, seqId: seq)
+                } else {
+                    seqIds.append(seq)
+                }
+            }
+        }
+        if message.isSynced {
+            seqIds.append(message.seqId)
+        } else {
+            store.msgDiscard(topic: topic, dbMessageId: message.msgId)
+        }
+        topic.delMessages(ids: seqIds, hard: false).then(
             onSuccess: { [weak self] _ in
                 self?.loadMessagesFromCache()
                 return nil

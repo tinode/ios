@@ -19,6 +19,12 @@ enum AudioBarAction {
     case playbackReset
 }
 
+public enum PendingPreviewAction {
+    case none
+    case reply
+    case edit
+}
+
 protocol SendMessageBarDelegate: AnyObject {
     func sendMessageBar(sendText: String)
     func sendMessageBar(attachment: Bool)
@@ -57,6 +63,7 @@ class SendMessageBar: UIView {
         static let kSendButtonImageWave = UIImage(systemName: "waveform.circle.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: Constants.kSendButtonPointsNormal))!
         static let kSendButtonImageWavePressed = UIImage(systemName: "waveform.circle.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: Constants.kSendButtonPointsPressed))!
         static let kSendButtonImageArrow = UIImage(systemName: "arrow.up.circle.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: Constants.kSendButtonPointsNormal))!
+        static let kSendButtonImageEditCheck = UIImage(systemName: "checkmark.circle.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: Constants.kSendButtonPointsNormal))
         static let kWaveInsetsShort = UIEdgeInsets(top: 2, left: 6, bottom: 2, right: 88)
         static let kWaveInsetsLong = UIEdgeInsets(top: 2, left: 6, bottom: 2, right: 52)
     }
@@ -109,9 +116,19 @@ class SendMessageBar: UIView {
     // MARK: Properties
     private var audioLocked: Bool = false
 
+    private var pendingPreviewAction: PendingPreviewAction = .none
     public var pendingPreviewText: NSAttributedString? {
         get { return previewView.attributedText.length != .zero ? previewView.attributedText : nil }
         set { previewView.attributedText = newValue }
+    }
+
+    private var sendButtonTextImage: UIImage? {
+        switch pendingPreviewAction {
+        case .edit:
+            return Constants.kSendButtonImageEditCheck
+        default:
+            return Constants.kSendButtonImageArrow
+        }
     }
 
     var previewMaxWidth: CGFloat {
@@ -244,7 +261,6 @@ class SendMessageBar: UIView {
     }
 
     @IBAction func cancelPreviewClicked(_ sender: Any) {
-        self.togglePendingPreviewBar(with: nil)
         self.delegate?.dismissPendingMessagePreview()
     }
 
@@ -307,7 +323,7 @@ class SendMessageBar: UIView {
         sendButton.isEnabled = true
         toggleNotAvailableOverlay(visible: false)
         togglePeerMessagingDisabled(visible: false)
-        togglePendingPreviewBar(with: nil)
+        togglePendingPreviewBar(withMessage: nil)
 
         showAudioBar(.hidden)
     }
@@ -325,17 +341,20 @@ class SendMessageBar: UIView {
         peerMessagingDisabledHeight.constant = visible ? Constants.peerMessagingDisabledHeight : 0
     }
 
-    public func togglePendingPreviewBar(with message: NSAttributedString?) {
+    public func togglePendingPreviewBar(withMessage message: NSAttributedString?, onAction action: PendingPreviewAction = .none) {
         if let message = message, let delegate = self.delegate {
             let textbounds = delegate.pendingPreviewMessageSize(forMessage: message)
             previewViewHeight.constant = textbounds.height
             pendingPreviewText = message
             previewView.isHidden = false
+            pendingPreviewAction = action
         } else {
             previewViewHeight.constant = .zero
             pendingPreviewText = nil
             previewView.isHidden = true
+            pendingPreviewAction = .none
         }
+        textViewDidChange(inputField)
     }
 
     // MARK: - Audio playback and recording
@@ -410,7 +429,7 @@ class SendMessageBar: UIView {
             self.horizontalSliderView.isHidden = true
             self.sendButtonSize.constant = Constants.kButtonSizeNormal
             if state == .lock {
-                self.sendButton.setImage(Constants.kSendButtonImageArrow, for: .normal)
+                self.sendButton.setImage(self.sendButtonTextImage, for: .normal)
                 self.showAudioBar(.longInitial)
             } else {
                 self.sendButton.setImage(Constants.kSendButtonImageWave, for: .normal)
@@ -463,7 +482,7 @@ extension SendMessageBar: UITextViewDelegate {
                 inputFieldHeight.constant = fittingSize.height + 2 // Not sure why but it seems to be off by 2
             }
 
-            self.sendButton.setImage(Constants.kSendButtonImageArrow, for: .normal)
+            self.sendButton.setImage(self.sendButtonTextImage, for: .normal)
         }
     }
 }

@@ -1342,8 +1342,11 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
         return result
     }
 
-    /// Mostly for testing: convert Drafty to a markdown string.
-    public func toMarkdown() -> String {
+    /// Convert Drafty to a markdown string.
+    /// - Parameters:
+    ///     - plainLinks: links should be written as plain text, without any formatting.
+    /// - Returns: markdown string.
+    public func toMarkdown(withPlainLinks plainLinks: Bool) -> String {
         var tree = Span()
         tree = SpanTreeProcessor.toTree(contentOf: self) ?? tree
 
@@ -1355,6 +1358,10 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
         }
 
         class Formatter : DraftyFormatter {
+            private var plainLinks: Bool
+            init(usePlainLinks plainLinks: Bool) {
+                self.plainLinks = plainLinks
+            }
             func apply(type: String?, data: [String : JSONValue]?, key: Int?, content: [FormattedString], stack: [String]?) -> FormattedString {
                 var res = ""
                 for ws in content {
@@ -1381,8 +1388,10 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
                 case "CO":
                     res = "`" + res + "`"
                 case "LN":
-                    let url = data?["url"]?.asString() ?? "nil"
-                    res = "[" + res + "](" + url + ")"
+                    if !plainLinks {
+                        let url = data?["url"]?.asString() ?? "nil"
+                        res = "[" + res + "](" + url + ")"
+                    }
                 default:
                     break
                 }
@@ -1395,7 +1404,7 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
             }
         }
         var stack: [String]? = []
-        let result = SpanTreeProcessor.treeBottomUp(src: tree, formatter: Formatter(), stack: &stack, resultType: WrappedString.self)
+        let result = SpanTreeProcessor.treeBottomUp(src: tree, formatter: Formatter(usePlainLinks: plainLinks), stack: &stack, resultType: WrappedString.self)
         return result?.string ?? ""
     }
 
@@ -1637,10 +1646,10 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
 
 /// Representation of inline styles or entity references.
 public class Style: Codable, CustomStringConvertible, Equatable {
-    var at: Int
-    var len: Int
-    var tp: String?
-    var key: Int?
+    public var at: Int
+    public var len: Int
+    public var tp: String?
+    public var key: Int?
 
     private enum CodingKeys: String, CodingKey {
         case at = "at"

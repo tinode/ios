@@ -93,6 +93,7 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
         case notSynchronized
         case subscriptionFailure(String)
         case messageDraftFailure(String)
+        case deleteFailure(String)
     }
 
     enum NoteType {
@@ -150,7 +151,7 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
             }
             return withData(since: nil, before: nil, limit: limit)
         }
-        public func withLaterData(limit: Int?) -> MetaGetBuilder {
+        public func withLaterData(limit: Int? = nil) -> MetaGetBuilder {
             if let r = topic.cachedMessageRange {
                 return withData(since: r.hi != 0 ? r.hi : nil, before: nil, limit: limit)
             }
@@ -1332,12 +1333,42 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
         return PromisedReply<ServerMessage>(error: TinodeError.notConnected("Tinode not connected."))
     }
 
+    private func delMessages(inRanges ranges: [MsgRange], hard: Bool) -> PromisedReply<ServerMessage> {
+        store?.msgMarkToDelete(topic: self, ranges: ranges, markAsHard: hard)
+        if attached {
+            return tinode!.delMessage(topicName: self.name, ranges: ranges, hard: hard).then(
+                onSuccess: { [weak self] msg in
+                    if let s = self, let delId = msg?.ctrl?.getIntParam(for: "del"), delId > 0 {
+                        if (s.clear ?? 0) < delId {
+                            s.clear = delId
+                        }
+                        if s.maxDel < delId {
+                            s.maxDel = delId
+                        }
+                        s.store?.msgDelete(topic: s, delete: delId, deleteAllIn: ranges)
+                    }
+                    return nil
+                })
+        }
+        if tinode?.isConnected ?? false {
+            return PromisedReply<ServerMessage>(error: TinodeError.notSubscribed("Not subscribed to topic."))
+        }
+        return PromisedReply<ServerMessage>(error: TinodeError.notConnected("Tinode not connected."))
+    }
+
     public func delMessages(hard: Bool) -> PromisedReply<ServerMessage> {
         return delMessages(from: 0, to: (self.seq ?? 0) + 1, hard: hard)
     }
 
     public func delMessage(id: Int, hard: Bool)  -> PromisedReply<ServerMessage> {
         return delMessages(from: id, to: id + 1, hard: hard)
+    }
+
+    public func delMessages(ids: [Int], hard: Bool) -> PromisedReply<ServerMessage> {
+        guard let l = MsgRange.listToRanges(ids) else {
+            return PromisedReply<ServerMessage>(error: TopicError.deleteFailure("No messages to delete"))
+        }
+        return delMessages(inRanges: l, hard: hard)
     }
 
     public func syncOne(msgId: Int64) -> PromisedReply<ServerMessage> {

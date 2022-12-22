@@ -126,6 +126,15 @@ class MessageCell: UICollectionViewCell {
         return label
     }()
 
+    /// Edited marker.
+    var editedMarker: PaddedLabel = {
+        let label = PaddedLabel()
+        label.font = UIFont.preferredFont(forTextStyle: .caption2).withTraits(traits: .traitItalic)
+        label.textAlignment = .right
+        label.adjustsFontSizeToFitWidth = true
+        return label
+    }()
+
     var progressView = ProgressView()
 
     /// The `MessageCellDelegate` for the cell.
@@ -138,6 +147,7 @@ class MessageCell: UICollectionViewCell {
         containerView.addSubview(content)
         containerView.addSubview(timestampLabel)
         containerView.addSubview(deliveryMarker)
+        containerView.addSubview(editedMarker)
         contentView.addSubview(avatarView)
     }
 
@@ -155,6 +165,7 @@ class MessageCell: UICollectionViewCell {
         newDateLabel.text = nil
         senderNameLabel.text = nil
         timestampLabel.text = nil
+        editedMarker.text = nil
         deliveryMarker.image = nil
         avatarView.image = nil
         progressView.isHidden = true

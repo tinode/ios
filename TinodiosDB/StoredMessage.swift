@@ -41,6 +41,11 @@ public class StoredMessage: MsgServerData, Message {
         return !(head?["forwarded"]?.asString()?.isEmpty ?? true)
     }
 
+    /// True if message has been edited.
+    public var isEdited: Bool {
+        return head?["replace"] != nil && head?["webrtc"] == nil
+    }
+
     /// True if the acount owner is the author of the message.
     public var isMine: Bool {
         return BaseDb.sharedInstance.isMe(uid: self.from)
