@@ -84,6 +84,7 @@ class MessageViewController: UIViewController {
         // Additional vertical spacing between messages from different users in P2P topics.
         static let kAdditionalP2PVerticalCellSpacing: CGFloat = 4
         static let kMinimumCellWidth: CGFloat = 94
+        static let kMinimumEditedCellWidth: CGFloat = 150
         // This is the space between the other side of the message and the edge of screen.
         // I.e. for incoming messages the space between the message and the *right* edge, for
         // outgoing between the message and the left edge.
@@ -1153,7 +1154,8 @@ extension MessageViewController: MessageViewLayoutDelegate {
         var size = calcContentSize(for: message, maxWidth: maxWidth)
 
         size.width += insets.left + insets.right
-        size.width = max(size.width, Constants.kMinimumCellWidth)
+        size.width = max(size.width,
+                         message.isEdited ? Constants.kMinimumEditedCellWidth : Constants.kMinimumCellWidth)
         size.height += insets.top + insets.bottom
         if progressVisible {
             size.height += Constants.kProgressViewHeight

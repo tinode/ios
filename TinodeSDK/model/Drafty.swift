@@ -1646,10 +1646,10 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
 
 /// Representation of inline styles or entity references.
 public class Style: Codable, CustomStringConvertible, Equatable {
-    var at: Int
-    var len: Int
-    var tp: String?
-    var key: Int?
+    public var at: Int
+    public var len: Int
+    public var tp: String?
+    public var key: Int?
 
     private enum CodingKeys: String, CodingKey {
         case at = "at"

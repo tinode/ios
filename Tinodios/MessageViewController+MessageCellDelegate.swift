@@ -122,6 +122,16 @@ extension MessageViewController: MessageCellDelegate {
                 for e in content.entities ?? [] {
                     if prohibitedTypes.contains(e.tp ?? "") {
                         canEdit = false
+                        break
+                    }
+                }
+                if canEdit {
+                    let prohibitedStyles: Set = ["QQ"]
+                    for f in content.fmt ?? [] {
+                        if prohibitedStyles.contains(f.tp ?? "") {
+                            canEdit = false
+                            break
+                        }
                     }
                 }
                 if canEdit {

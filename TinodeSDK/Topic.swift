@@ -1339,8 +1339,12 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
             return tinode!.delMessage(topicName: self.name, ranges: ranges, hard: hard).then(
                 onSuccess: { [weak self] msg in
                     if let s = self, let delId = msg?.ctrl?.getIntParam(for: "del"), delId > 0 {
-                        s.clear = delId
-                        s.maxDel = delId
+                        if (s.clear ?? 0) < delId {
+                            s.clear = delId
+                        }
+                        if s.maxDel < delId {
+                            s.maxDel = delId
+                        }
                         s.store?.msgDelete(topic: s, delete: delId, deleteAllIn: ranges)
                     }
                     return nil
@@ -1413,7 +1417,7 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
         let limit = newSeq - description.getSeq
         self.setSeq(seq: newSeq)
         if !self.attached {
-            self.subscribe(set: nil, get: self.metaGetBuilder().withLaterData().build()).thenApply({ _ in
+            self.subscribe(set: nil, get: self.metaGetBuilder().withLaterData(limit: limit).build()).thenApply({ _ in
                 self.leave()
                 return nil
             })
