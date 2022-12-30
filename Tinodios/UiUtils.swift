@@ -91,6 +91,8 @@ class UiUtils {
     static let kImagePreviewDimensions: CGFloat = 64
     // Default dimensions of a bitmap when the sender provided none.
     static let kDefaultBitmapSize: CGFloat = 256
+    // Maximum linear dimensions of video poster.
+    static let kMaxPosterSize: CGFloat = 640
     // Maximum length of topic title or user name.
     static let kMaxTitleLength = 60
     // Maximum length of topic description.
@@ -105,6 +107,8 @@ class UiUtils {
     static let kQuotedReplyLength = 30
     // Size of image thumbnails in the quoted part in a reply.
     static let kReplyThumbnailSize = 36
+    // Width of video thumbnail in quoted replies and reply/forward previews.
+    static let kReplyVideoThumbnailWidth = 48
     // Max file name (e.g. image file names) length to display in previews and quotes.
     static let kPreviewMaxFileNameLength = 16
     // Max length of message previews.

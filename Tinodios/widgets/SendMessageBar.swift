@@ -141,7 +141,7 @@ class SendMessageBar: UIView {
         inputField.resignFirstResponder()
 
         let alert = UIAlertController(title: "Attachment", message: nil, preferredStyle: .actionSheet)
-        alert.addAction(UIAlertAction(title: "Image", style: .default, handler: { _ in
+        alert.addAction(UIAlertAction(title: "Image / Video", style: .default, handler: { _ in
             self.delegate?.sendMessageBar(attachment: false)
         }))
         alert.addAction(UIAlertAction(title: "File", style: .default, handler: { _ in

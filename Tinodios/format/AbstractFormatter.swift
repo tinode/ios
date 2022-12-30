@@ -110,6 +110,10 @@ class AbstractFormatter: DraftyFormatter {
         return FormatNode()
     }
 
+    func handleVideo(using: [String : JSONValue]?, draftyKey: Int?) -> FormatNode {
+        return FormatNode()
+    }
+
     public func wrapText(_ content: String) -> FormattedString {
         return FormatNode(content)
     }
@@ -160,6 +164,8 @@ class AbstractFormatter: DraftyFormatter {
                 return handleQuote(children)
             case "VC":
                 return handleVideoCall(content: children, using: data)
+            case "VD":
+                return handleVideo(using: data, draftyKey: key)
             default:
                 return handleUnknown(content: children, using: data, draftyKey: key)
             }

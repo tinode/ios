@@ -41,7 +41,7 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
 
     // Entity data field names which will be processed.
     private static let kKnownDataFelds =
-            ["act", "duration", "height", "incoming", "mime", "name", "preview", "ref", "size", "state", "title", "url", "val", "width"]
+        ["act", "duration", "height", "incoming", "mime", "name", "premime", "preview", "preref", "ref", "size", "state", "title", "url", "val", "width"]
 
     // Regular expressions for parsing inline formats.
     private static let kInlineStyles = try! [
@@ -523,6 +523,68 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
             data["size"] = JSONValue.int(size)
         }
         ent!.append(Entity(tp: "AU", data: data))
+
+        return self
+    }
+
+    /// Insert video message.
+    ///
+    /// - Parameters:
+    ///     - at: location to insert audio at
+    ///     - mime: Content-type, such as 'video/mp4'.
+    ///     - bits: Content as an array of bytes
+    ///     - preview: an array of amplitudes to use as preview.
+    ///     - duration:record duration in milliseconds.
+    ///     - fname: name of the file to suggest to the receiver.
+    ///     - refurl: reference to full/extended video.
+    ///     - size: file size hint (in bytes) as reported by the client.
+    ///     - previewRef: reference to preview image.
+    /// - Returns: 'self' Drafty object.
+    public func insertVideo(at: Int,
+                            mime: String, bits: Data?, refurl: URL?,
+                            duration: Int, width: Int, height: Int, fname: String?, size: Int,
+                            preMime: String?, preview: Data?, previewRef: URL?) throws -> Drafty {
+        guard bits != nil || refurl != nil else {
+            throw DraftyError.illegalArgument("Either image bits or reference URL must not be null.")
+        }
+
+        guard txt.count > at && at >= 0 else {
+            throw DraftyError.invalidIndex("Invalid insertion position")
+        }
+
+        prepareForEntity(at: at, len: 1)
+
+        var data: [String: JSONValue] = [:]
+        if !mime.isEmpty {
+            data["mime"] = .string(mime)
+        }
+        if let bits = bits {
+            data["val"] = .bytes(bits)
+        }
+        if let refurl = refurl {
+            data["ref"] = .string(refurl.absoluteString)
+        }
+        data["duration"] = .int(duration)
+        if let fname = fname, !fname.isEmpty {
+            data["name"] = .string(fname)
+        }
+        data["height"] = .int(height)
+        data["width"] = .int(width)
+        if size > 0 {
+            data["size"] = .int(size)
+        }
+
+        if let preMime = preMime, !preMime.isEmpty {
+            data["premime"] = .string(preMime)
+        }
+        if let preview = preview {
+            data["preview"] = .bytes(preview)
+        }
+        if let previewRef = previewRef {
+            data["preref"] = .string(previewRef.absoluteString)
+        }
+
+        ent!.append(Entity(tp: "VD", data: data))
 
         return self
     }
@@ -1320,7 +1382,7 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
         tree = SpanTreeProcessor.attachmentsToEnd(tree: tree, maxAttachments: maxAttachments) ?? tree
         // Shorten the doc.
         tree = SpanTreeProcessor.treeTopDown(tree: tree, using: ShorteningTransformer(length: length, tail: "…")) ?? tree
-        tree = SpanTreeProcessor.treeTopDown(tree: tree, using: LightCopyTransformer(allowedFields: ["val"], forTypes: ["IM"])) ?? tree
+        tree = SpanTreeProcessor.treeTopDown(tree: tree, using: LightCopyTransformer(allowedFields: ["val", "preview", "preref"], forTypes: ["IM", "VD"])) ?? tree
 
         // Convert back to Drafty.
         var keymap = [Int: Int]()

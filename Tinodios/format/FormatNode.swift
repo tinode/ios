@@ -15,6 +15,7 @@ struct Attachment {
         case audio
         case data
         case image
+        case video
         case button
         case quote
         case call(Bool, String, Int)  // isOutgoing, callState, callDuration
@@ -30,6 +31,8 @@ struct Attachment {
                 return "data"
             case .image:
                 return "image"
+            case .video:
+                return "video"
             case .button:
                 return "button"
             case .quote:
@@ -62,10 +65,14 @@ struct Attachment {
     var height: Int?
     // Image offset from the origin.
     var offset: CGPoint?
-    // Audio duration
+    // Audio/video duration
     var duration: Int?
-    // Audio preview.
+    // Preview mime type.
+    var previewMime: String?
+    // Audio/video preview.
     var preview: Data?
+    // Reference to preview
+    var previewRef: String?
     // Draw background over the entire available width, not just under the text (quoted text).
     var fullWidth: Bool?
     // Index of the entity in the original Drafty object.
@@ -91,6 +98,15 @@ class FormatNode: CustomStringConvertible {
         // Successful video call marker (↗, ↙) color.
         static let kSuccessfulCallArrowColor = UIColor(fromHexCode: 0xFF006400)
         static let kFailedCallArrowColor = UIColor.red
+
+        /// Video Play button point size.
+        static let kVideoPlayButtonPointSize: CGFloat = 70
+        /// Video Play button opacity.
+        static let kVideoPlayButtonAlpha = 0.6
+        /// Video duration text box max width.
+        static let kVideoDurationMaxWidth: CGFloat = 70
+        /// Video duration text box height.
+        static let kVideoDurationHeight: CGFloat = 25
     }
 
     // Thrown by the formatting function when the length budget gets exceeded.
@@ -189,6 +205,8 @@ class FormatNode: CustomStringConvertible {
             return "{audio ref=\(attachment.ref ?? "nil") bits.count=\(attachment.bits?.count ?? -1) \(attachment.name ?? "unnamed") \(attachment.duration ?? 0)ms \(attachment.size ?? 0)B}"
         case .image:
             return "{img ref=\(attachment.ref ?? "nil") bits.count=\(attachment.bits?.count ?? -1) \(attachment.name ?? "unnamed") \(attachment.width ?? 0)x\(attachment.height ?? 0) \(attachment.size ?? 0)B}"
+        case .video:
+            return "{video ref=\(attachment.ref ?? "nil") bits.count=\(attachment.bits?.count ?? -1) \(attachment.name ?? "unnamed") \(attachment.duration ?? 0)ms \(attachment.size ?? 0)B}"
         case .quote:
             fallthrough
         case .button:
@@ -382,6 +400,133 @@ class FormatNode: CustomStringConvertible {
         return attributed
     }
 
+    private func createImageAttachmentString(_ attachment: Attachment, maxSize size: CGSize) -> NSAttributedString {
+        // Image handling is easy.
+
+        let url: URL?
+        if let ref = attachment.ref {
+            url = Utils.tinodeResourceUrl(from: ref)
+        } else {
+            url = nil
+        }
+        // tinode:// and mid: schemes are not real external URLs.
+        let wrapper = (url == nil || url!.scheme == "mid" || url!.scheme == "tinode") ? EntityTextAttachment() : AsyncImageTextAttachment(url: url!, afterDownloaded: attachment.afterRefDownloaded)
+        wrapper.type = "image"
+        wrapper.draftyEntityKey = attachment.draftyEntityKey
+
+        var image: UIImage?
+        if let bits = attachment.bits, let preview = UIImage(data: bits) {
+            // FIXME: maybe cache result of converting Data to image (using topic+message_id as key).
+            // KingfisherManager.shared.cache.store(T##image: KFCrossPlatformImage##KFCrossPlatformImage, forKey: T##String)
+            image = preview
+        } else if let iconNamed = attachment.icon {
+            image = UIImage(named: iconNamed)
+        }
+
+        var originalSize: CGSize
+        if let width = attachment.width, let height = attachment.height, width > 0 && height > 0 {
+            // Sender provider valid width and height of the image.
+            originalSize = CGSize(width: width, height: height)
+        } else if let image = image {
+            originalSize = image.size
+        } else {
+            originalSize = CGSize(width: UiUtils.kDefaultBitmapSize, height: UiUtils.kDefaultBitmapSize)
+        }
+
+        let scaledSize = UiUtils.sizeUnder(original: originalSize, fitUnder: size, scale: 1, clip: false).dst
+        if image == nil {
+            let iconName = attachment.ref != nil ? "image-wait" : "broken-image"
+            // No need to scale the stock image.
+            wrapper.image = UiUtils.placeholderImage(named: iconName, withBackground: nil, width: scaledSize.width, height: scaledSize.height)
+        } else {
+            wrapper.image = image
+        }
+        wrapper.bounds = CGRect(origin: attachment.offset ?? .zero, size: scaledSize)
+
+        (wrapper as? AsyncImageTextAttachment)?.startDownload(onError: UiUtils.placeholderImage(named: "broken-image", withBackground: image, width: scaledSize.width, height: scaledSize.height))
+
+        return NSAttributedString(attachment: wrapper)
+    }
+
+    private func createVideoAttachmentString(_ attachment: Attachment, maxSize size: CGSize) -> NSAttributedString {
+        let url: URL?
+        if let ref = attachment.previewRef {
+            url = Utils.tinodeResourceUrl(from: ref)
+        } else {
+            url = nil
+        }
+
+        // Adds Play button and duration overlay on top of img.
+        let overlay = { (img: UIImage) -> UIImage? in
+            let rect = CGRect(x: 0, y: 0, width: img.size.width, height: img.size.height)
+            let renderer = UIGraphicsImageRenderer(size: img.size)
+            let overlay = UIImage(systemName: "play.circle.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: Constants.kVideoPlayButtonPointSize, weight: .bold, scale: .large))!
+
+            return renderer.image { ctx in
+                let playSize = overlay.size
+                img.draw(in: rect, blendMode: .normal, alpha: 1)
+                overlay.draw(in: CGRect(x: (rect.width - playSize.width) / 2, y: (rect.height - playSize.height) / 2, width: playSize.width, height: playSize.height), blendMode: .luminosity, alpha: Constants.kVideoPlayButtonAlpha)
+
+                if let duration = attachment.duration {
+                    let paragraphStyle = NSMutableParagraphStyle()
+                    paragraphStyle.alignment = .center
+
+                    let attrs = [NSAttributedString.Key.font: UIFont.preferredFont(forTextStyle: .headline),
+                                 NSAttributedString.Key.paragraphStyle: paragraphStyle,
+                                 NSAttributedString.Key.foregroundColor: UIColor.white]
+
+                    let durationRect = CGRect(x: rect.width - Constants.kVideoDurationMaxWidth, y: rect.height - Constants.kVideoDurationHeight, width: Constants.kVideoDurationMaxWidth, height: Constants.kVideoDurationHeight)
+                    NSAttributedString(string: AbstractFormatter.millisToTime(millis: duration), attributes: attrs).draw(in: durationRect)
+                }
+            }
+        }
+
+        // tinode:// and mid: schemes are not real external URLs.
+        let wrapper = (url == nil || url!.scheme == "mid" || url!.scheme == "tinode") ? EntityTextAttachment() : AsyncImageTextAttachment(url: url!, afterDownloaded: { (img: UIImage) -> UIImage? in
+            var im: UIImage?
+            if let done = attachment.afterRefDownloaded {
+                im = done(img)
+            } else {
+                im = img
+            }
+            if let postImg = im {
+                return overlay(postImg)
+            }
+            return im
+        })
+        wrapper.type = "video"
+        wrapper.draftyEntityKey = attachment.draftyEntityKey
+
+        var preview: UIImage?
+        if let previewBits = attachment.preview, let previewImage = UIImage(data: previewBits) {
+            preview = previewImage
+        }
+
+        var originalSize: CGSize
+        if let width = attachment.width, let height = attachment.height, width > 0 && height > 0 {
+            // Sender provider valid width and height of the image.
+            originalSize = CGSize(width: width, height: height)
+        } else if let preview = preview {
+            originalSize = preview.size
+        } else {
+            originalSize = CGSize(width: UiUtils.kDefaultBitmapSize, height: UiUtils.kDefaultBitmapSize)
+        }
+
+        let scaledSize = UiUtils.sizeUnder(original: originalSize, fitUnder: size, scale: 1, clip: false).dst
+        if preview == nil {
+            let iconName = attachment.previewRef != nil ? "image-wait" : "broken-image"
+            // No need to scale the stock image.
+            wrapper.image = UiUtils.placeholderImage(named: iconName, withBackground: nil, width: scaledSize.width, height: scaledSize.height)
+        } else {
+            wrapper.image = overlay(preview!)
+        }
+        wrapper.bounds = CGRect(origin: attachment.offset ?? .zero, size: scaledSize)
+
+        (wrapper as? AsyncImageTextAttachment)?.startDownload(onError: UiUtils.placeholderImage(named: "broken-image", withBackground: preview, width: scaledSize.width, height: scaledSize.height))
+
+        return NSAttributedString(attachment: wrapper)
+    }
+
     private func createVideoCallAttachmentString(isOutgoing: Bool, callState: String, callDuration: Int,
                                                  defaultAttrs attributes: [NSAttributedString.Key: Any]) -> NSAttributedString {
         let attributed = NSMutableAttributedString(string: "\u{2009}")
@@ -468,52 +613,9 @@ class FormatNode: CustomStringConvertible {
         case .audio:
             return createAudioAttachmentString(attachment, withData: attachment.bits, withRef: attachment.ref, defaultAttrs: attributes, maxSize: size)
         case .image:
-            // Image handling is easy.
-
-            let url: URL?
-            if let ref = attachment.ref {
-                url = Utils.tinodeResourceUrl(from: ref)
-            } else {
-                url = nil
-            }
-            // tinode:// and mid: schemes are not real external URLs.
-            let wrapper = (url == nil || url!.scheme == "mid" || url!.scheme == "tinode") ? EntityTextAttachment() : AsyncImageTextAttachment(url: url!, afterDownloaded: attachment.afterRefDownloaded)
-            wrapper.type = "image"
-            wrapper.draftyEntityKey = attachment.draftyEntityKey
-
-            var image: UIImage?
-            if let bits = attachment.bits, let preview = UIImage(data: bits) {
-                // FIXME: maybe cache result of converting Data to image (using topic+message_id as key).
-                // KingfisherManager.shared.cache.store(T##image: KFCrossPlatformImage##KFCrossPlatformImage, forKey: T##String)
-                image = preview
-            } else if let iconNamed = attachment.icon {
-                image = UIImage(named: iconNamed)
-            }
-
-            var originalSize: CGSize
-            if let width = attachment.width, let height = attachment.height, width > 0 && height > 0 {
-                // Sender provider valid width and height of the image.
-                originalSize = CGSize(width: width, height: height)
-            } else if let image = image {
-                originalSize = image.size
-            } else {
-                originalSize = CGSize(width: UiUtils.kDefaultBitmapSize, height: UiUtils.kDefaultBitmapSize)
-            }
-
-            let scaledSize = UiUtils.sizeUnder(original: originalSize, fitUnder: size, scale: 1, clip: false).dst
-            if image == nil {
-                let iconName = attachment.ref != nil ? "image-wait" : "broken-image"
-                // No need to scale the stock image.
-                wrapper.image = UiUtils.placeholderImage(named: iconName, withBackground: nil, width: scaledSize.width, height: scaledSize.height)
-            } else {
-                wrapper.image = image
-            }
-            wrapper.bounds = CGRect(origin: attachment.offset ?? .zero, size: scaledSize)
-
-            (wrapper as? AsyncImageTextAttachment)?.startDownload(onError: UiUtils.placeholderImage(named: "broken-image", withBackground: image, width: scaledSize.width, height: scaledSize.height))
-
-            return NSAttributedString(attachment: wrapper)
-
+            return createImageAttachmentString(attachment, maxSize: size)
+        case .video:
+            return createVideoAttachmentString(attachment, maxSize: size)
         case .button:
             // Change color of text from default to link color.
             var attrs = attributes

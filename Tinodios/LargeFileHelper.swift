@@ -85,14 +85,14 @@ public class LargeFileHelper: NSObject {
         return tinode.addAuthQueryParams(url)
     }
 
-    public static func taskIDFor(topicId: String, msgId: Int64) -> String {
+    public static func taskID(forTopic topicId: String, msgId: Int64, filename: String) -> String {
         if msgId != 0 {
-            return "\(topicId)-\(msgId)"
+            return "\(topicId)-\(msgId)-\(filename)"
         }
         return "\(topicId)-avatar"
     }
 
-    public func startMsgAttachmentUpload(filename: String, mimetype: String, data payload: Data, topicId: String, msgId: Int64, progressCallback: @escaping (Float) -> Void, completionCallback: @escaping (ServerMessage?, Error?) -> Void) {
+    public func startMsgAttachmentUpload(filename: String, mimetype: String, data payload: Data, topicId: String, msgId: Int64, progressCallback: ((Float) -> Void)?, completionCallback: @escaping (ServerMessage?, Error?) -> Void) {
         guard var url = tinode.baseURL(useWebsocketProtocol: false) else { return }
         url.appendPathComponent("file/u/")
         let upload = Upload(url: url)
@@ -118,7 +118,7 @@ public class LargeFileHelper: NSObject {
         let localURL = tempDir.appendingPathComponent("throwaway-\(localFileName)")
         try? newData.write(to: localURL)
 
-        let uploadKey = LargeFileHelper.taskIDFor(topicId: topicId, msgId: msgId)
+        let uploadKey = LargeFileHelper.taskID(forTopic: topicId, msgId: msgId, filename: filename)
         upload.task = urlSession.uploadTask(with: request, fromFile: localURL)
         upload.task!.taskDescription = uploadKey
         upload.isUploading = true
@@ -136,13 +136,19 @@ public class LargeFileHelper: NSObject {
     }
 
     public func cancelUpload(topicId: String, msgId: Int64 = 0) -> Bool {
-        let uploadKey = LargeFileHelper.taskIDFor(topicId: topicId, msgId: msgId)
-        var upload = activeUploads[uploadKey]
-        guard upload != nil else { return false }
-        activeUploads.removeValue(forKey: uploadKey)
-        upload!.task?.cancel()
-        upload = nil
-        return true
+        let uploadKeyPrefix = LargeFileHelper.taskID(forTopic: topicId, msgId: msgId, filename: "")
+        var keys = [String]()
+        for uploadKey in activeUploads.keys {
+            if uploadKey.starts(with: uploadKeyPrefix) {
+                keys.append(uploadKey)
+            }
+        }
+        for k in keys {
+            if let upload = activeUploads.removeValue(forKey: k) {
+                upload.task?.cancel()
+            }
+        }
+        return !keys.isEmpty
     }
 
     public func getActiveUpload(for taskId: String) -> Upload? {

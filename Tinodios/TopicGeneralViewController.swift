@@ -198,7 +198,8 @@ extension TopicGeneralViewController {
 }
 
 extension TopicGeneralViewController: ImagePickerDelegate {
-    func didSelect(image: UIImage?, mimeType: String?, fileName: String?) {
+    func didSelect(media: ImagePickerMediaType?) {
+        guard case .image(let image, _, _) = media else { return }
         UiUtils.updateAvatar(forTopic: self.topic, image: image)
             .thenApply(self.promiseSuccessHandler)
     }

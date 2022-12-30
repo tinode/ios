@@ -88,6 +88,28 @@ class FullFormatter: AbstractFormatter {
         return node
     }
 
+    override func handleVideo(using data: [String: JSONValue]?, draftyKey: Int?) -> FormatNode {
+        var attachment = Attachment(content: .video)
+        let node = FormatNode()
+        if let attr = data {
+            attachment.bits = attr["val"]?.asData()
+            attachment.mime = attr["mime"]?.asString()
+            attachment.name = attr["name"]?.asString()
+            attachment.ref = attr["ref"]?.asString()
+            attachment.size = attr["size"]?.asInt()
+            attachment.width = attr["width"]?.asInt()
+            attachment.height = attr["height"]?.asInt()
+            attachment.duration = attr["duration"]?.asInt()
+            attachment.previewMime = attr["premime"]?.asString()
+            attachment.preview = attr["preview"]?.asData()
+            attachment.previewRef = attr["preref"]?.asString()
+        }
+
+        attachment.draftyEntityKey = draftyKey
+        node.attachment(attachment)
+        return node
+    }
+
     override func handleAttachment(using data: [String: JSONValue]?, draftyKey: Int?) -> FormatNode {
         let node = FormatNode()
         if let attr = data {

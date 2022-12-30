@@ -71,6 +71,16 @@ class PreviewFormatter: AbstractFormatter {
         return annotatedIcon(iconName: "photo", localizedAnnotation: NSLocalizedString("Picture", comment: "Label shown next to an inline image"))
     }
 
+    override func handleVideo(using attr: [String : JSONValue]?, draftyKey: Int?) -> FormatNode {
+        var annotation: String
+        if let attr = attr, let duration = attr["duration"]?.asInt() {
+            annotation = PreviewFormatter.millisToTime(millis: duration, fixedMin: true)
+        } else {
+            annotation = "-:--"
+        }
+        return annotatedIcon(iconName: "play.circle", localizedAnnotation: annotation)
+    }
+
     override func handleAttachment(using attr: [String: JSONValue]?, draftyKey _: Int?) -> FormatNode {
         guard let attr = attr else {
             return FormatNode()

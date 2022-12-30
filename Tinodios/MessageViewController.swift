@@ -202,6 +202,12 @@ class MessageViewController: UIViewController {
     // Currently playing or paused media player.
     internal var currentAudioPlayer: VLCMediaPlayer?
 
+    // Max inband attachment/entity size.
+    private var maxInbandSize: Int64 {
+        // Attachment size less base64 expansion and overhead.
+        return Cache.tinode.getServerLimit(for: Tinode.kMaxMessageSize, withDefault: MessageViewController.kMaxInbandAttachmentSize) * 3 / 4 - 1024
+    }
+
     // MARK: initializers
 
     init() {
@@ -245,7 +251,7 @@ class MessageViewController: UIViewController {
 
     private func setup() {
         myUID = Cache.tinode.myUid
-        self.imagePicker = ImagePicker(presentationController: self, delegate: self, editable: false)
+        self.imagePicker = ImagePicker(presentationController: self, delegate: self, editable: false, allowVideo: true)
 
         let interactor = MessageInteractor()
         let presenter = MessagePresenter()
@@ -430,7 +436,7 @@ class MessageViewController: UIViewController {
 
     @objc func sendAttachment(notification: NSNotification) {
         // Attachment size less base64 expansion and overhead.
-        let maxInbandSize = Cache.tinode.getServerLimit(for: Tinode.kMaxMessageSize, withDefault: MessageViewController.kMaxInbandAttachmentSize) * 3 / 4 - 1024
+        let maxInbandSize = self.maxInbandSize
         switch notification.object {
         case let content as FilePreviewContent:
             if content.data.count > maxInbandSize {
@@ -451,8 +457,49 @@ class MessageViewController: UIViewController {
                 }
                 _ = interactor?.sendMessage(content: drafty)
             }
+        case let content as VideoPreviewContent:
+            sendVideoAttachment(withContent: content)
         default:
             break
+        }
+    }
+
+    private func sendVideoAttachment(withContent content: VideoPreviewContent) {
+        guard case let VideoPreviewContent.VideoSource.local(url, poster) = content.videoSrc else { return }
+        let previewMime = "image/png"
+        let preview = poster?.pixelData(forMimeType: previewMime)
+        let maxInbandSize = self.maxInbandSize
+
+        let data: Data
+        do {
+            data = try Data(contentsOf: url)
+        } catch {
+            Cache.log.error("MessageVC - failed to read audio record: %@", error.localizedDescription)
+            return
+        }
+
+        let previewSize = preview?.count ?? 0
+        if data.count < previewSize {
+            // Image poster is greater than video itself. This is not currently supported.
+            Cache.log.error("MessageVC - preview size (%lld bytes) is greater than video (%lld bytes)", previewSize, data.count)
+            return
+        }
+
+        let mime = content.contentType ?? Utils.mimeForUrl(url: url)
+        if data.count + previewSize > maxInbandSize {
+            self.interactor?.uploadVideo(UploadDef(caption: content.caption, filename: content.fileName,
+                                                   mimeType: mime, data: data,
+                                                   width: content.width != nil ? CGFloat(content.width!) : nil,
+                                                   height: content.height != nil ? CGFloat(content.height!) : nil,
+                                                   duration: content.duration, preview: preview, previewMime: previewMime,
+                                                   previewOutOfBand: previewSize > maxInbandSize / 4))
+        } else {
+            if let drafty = try? Drafty(plainText: " ").insertVideo(at: 0, mime: mime, bits: data, refurl: nil, duration: content.duration, width: content.width!, height: content.height!, fname: content.fileName, size: data.count, preMime: previewMime, preview: preview, previewRef: nil) {
+                if let caption = content.caption {
+                    _ = drafty.appendLineBreak().append(Drafty(plainText: caption))
+                }
+                _ = interactor?.sendMessage(content: drafty)
+            }
         }
     }
 
@@ -461,9 +508,8 @@ class MessageViewController: UIViewController {
         if duration < Constants.kMinDuration {
             return
         }
-
         // Attachment size less base64 expansion and overhead.
-        let maxInbandSize = Cache.tinode.getServerLimit(for: Tinode.kMaxMessageSize, withDefault: MessageViewController.kMaxInbandAttachmentSize) * 3 / 4 - 1024
+        let maxInbandSize = self.maxInbandSize
 
         let data: Data
         do {
@@ -495,6 +541,10 @@ class MessageViewController: UIViewController {
         case "ShowFilePreview":
             let destinationVC = segue.destination as! FilePreviewController
             destinationVC.previewContent = (sender as! FilePreviewContent)
+            destinationVC.replyPreviewDelegate = self
+        case "ShowVideoPreview":
+            let destinationVC = segue.destination as! VideoPreviewController
+            destinationVC.previewContent = (sender as! VideoPreviewContent)
             destinationVC.replyPreviewDelegate = self
         case "Messages2Call":
             let destinationVC = segue.destination as! CallViewController
