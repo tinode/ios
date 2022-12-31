@@ -3573,6 +3573,19 @@
                                             <action selector="playPauseClicked:" destination="gfT-SI-43h" eventType="touchUpInside" id="WUz-SD-4TP"/>
                                         </connections>
                                     </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dbI-Af-LGw" userLabel="Mute Button">
+                                        <rect key="frame" x="370" y="623.66666666666663" width="44" height="44"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="44" id="3XG-Jg-cqX"/>
+                                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="44" id="u2Z-0T-VhF"/>
+                                        </constraints>
+                                        <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                        <state key="normal" image="speaker.fill" catalog="system"/>
+                                        <connections>
+                                            <action selector="muteButtonClicked:" destination="gfT-SI-43h" eventType="touchUpInside" id="JD6-CH-C5l"/>
+                                        </connections>
+                                    </button>
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
@@ -3581,12 +3594,14 @@
                                     <constraint firstItem="YKO-G2-ljq" firstAttribute="centerY" secondItem="U3w-v0-LZx" secondAttribute="centerY" id="EPu-Rf-gVF"/>
                                     <constraint firstItem="HIz-fY-dpa" firstAttribute="leading" secondItem="aza-Xk-MXu" secondAttribute="trailing" id="LXc-xn-IID"/>
                                     <constraint firstItem="24Z-sQ-pLA" firstAttribute="centerX" secondItem="U3w-v0-LZx" secondAttribute="centerX" id="Mj5-CK-Lh9"/>
-                                    <constraint firstAttribute="trailing" secondItem="DtN-H7-Ovv" secondAttribute="trailing" id="TtI-25-3vB"/>
+                                    <constraint firstItem="dbI-Af-LGw" firstAttribute="centerY" secondItem="DtN-H7-Ovv" secondAttribute="centerY" id="VIn-aW-J0X"/>
                                     <constraint firstItem="YKO-G2-ljq" firstAttribute="centerX" secondItem="U3w-v0-LZx" secondAttribute="centerX" id="XnZ-aU-VHB"/>
                                     <constraint firstItem="aza-Xk-MXu" firstAttribute="leading" secondItem="U3w-v0-LZx" secondAttribute="leading" id="dV9-QJ-w51"/>
                                     <constraint firstAttribute="bottom" secondItem="DtN-H7-Ovv" secondAttribute="bottom" constant="20" id="h1k-Ib-ghp"/>
+                                    <constraint firstItem="DtN-H7-Ovv" firstAttribute="trailing" secondItem="dbI-Af-LGw" secondAttribute="leading" id="mXT-uz-HKw"/>
                                     <constraint firstAttribute="bottom" secondItem="aza-Xk-MXu" secondAttribute="bottom" constant="20" id="sw4-NS-Ngp"/>
                                     <constraint firstItem="HIz-fY-dpa" firstAttribute="trailing" secondItem="DtN-H7-Ovv" secondAttribute="leading" id="ui0-Wf-GIr"/>
+                                    <constraint firstAttribute="trailing" secondItem="dbI-Af-LGw" secondAttribute="trailing" id="vgX-xd-luN"/>
                                 </constraints>
                             </view>
                             <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="5jI-wO-t6g" userLabel="Video Details">
@@ -3663,7 +3678,11 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="Video Preview" id="Hah-A8-0yd">
-                        <barButtonItem key="rightBarButtonItem" systemItem="action" id="vUM-ge-cBl"/>
+                        <barButtonItem key="rightBarButtonItem" systemItem="action" id="vUM-ge-cBl">
+                            <connections>
+                                <action selector="saveVideoButtonClicked:" destination="gfT-SI-43h" id="40M-C8-ITL"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                     <connections>
                         <outlet property="contentTypeLabel" destination="5CT-4e-SGR" id="jhw-Mw-mtJ"/>
@@ -3739,6 +3758,7 @@
         <image name="plus.circle" catalog="system" width="128" height="123"/>
         <image name="questionmark.circle" catalog="system" width="128" height="123"/>
         <image name="rectangle.portrait.and.arrow.right" catalog="system" width="128" height="109"/>
+        <image name="speaker.fill" catalog="system" width="128" height="125"/>
         <image name="tag.fill" catalog="system" width="128" height="118"/>
         <image name="text.badge.checkmark" catalog="system" width="128" height="107"/>
         <image name="vc.fill" width="162" height="130"/>

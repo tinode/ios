@@ -87,6 +87,7 @@ class VideoPreviewController: UIViewController {
         }
 
         func mediaThumbnailerDidTimeOut(_ mediaThumbnailer: VLCMediaThumbnailer) {
+            Cache.log.error("Thumbnail creation failed: timed out")
             state = .done(nil)
             completion?(nil)
         }
@@ -102,13 +103,14 @@ class VideoPreviewController: UIViewController {
 
         var url: URL?
         var stream: Stream?
+        var mediaOption: String?
         switch content.videoSrc {
         case .local(let videoUrl, _):
             url = videoUrl
             sendVideoBar.delegate = self
 
             sendVideoBar.replyPreviewDelegate = replyPreviewDelegate
-            // Hide [Save image] button.
+            // Hide [Save video] button.
             navigationItem.rightBarButtonItem = nil
             // Hide image details panel.
             //imageDetailsPanel.bounds = CGRect()
@@ -121,6 +123,7 @@ class VideoPreviewController: UIViewController {
             } else {
                 return
             }
+            mediaOption = ":start-paused"
         }
         sendVideoBar.togglePreviewBar(with: content.pendingMessagePreview)
         self.duration = content.duration
@@ -144,14 +147,19 @@ class VideoPreviewController: UIViewController {
         updatePlayPauseButton(isPlaying: false)
 
         player.drawable = videoView
+        var media: VLCMedia
         if let url = url {
-            player.media = VLCMedia(url: url)
+            media = VLCMedia(url: url)
         } else if let stream = stream as? InputStream {
-            player.media = VLCMedia(stream: stream)
+            media = VLCMedia(stream: stream)
         } else {
             DispatchQueue.main.async { UiUtils.showToast(message: "Invalid input") }
             return
         }
+        if let opt = mediaOption {
+            media.addOption(opt)
+        }
+        player.media = media
         player.delegate = self
         player.play()
 
@@ -229,6 +237,35 @@ class VideoPreviewController: UIViewController {
         let value = (sender as! UISlider).value
         player.position = value
     }
+
+    @IBAction func saveVideoButtonClicked(_ sender: Any) {
+        guard let content = previewContent, case let .remote(bits, ref) = content.videoSrc else { return }
+
+        let picturesUrl: URL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+        let destinationURL = picturesUrl.appendingPathComponent(content.fileName ?? Utils.uniqueFilename(forMime: content.contentType))
+
+        if let ref = ref, let url = URL(string: ref, relativeTo: Cache.tinode.baseURL(useWebsocketProtocol: false)) {
+            Cache.getLargeFileHelper().startDownload(from: url)
+        } else if let bits = bits {
+            do {
+                try FileManager.default.createDirectory(at: picturesUrl, withIntermediateDirectories: true, attributes: nil)
+                try bits.write(to: destinationURL)
+                UiUtils.presentFileSharingVC(for: destinationURL)
+            } catch {
+                Cache.log.info("Failed to save video as %@: %@", destinationURL.absoluteString, error.localizedDescription)
+            }
+        }
+    }
+
+    @IBAction func muteButtonClicked(_ sender: Any) {
+        if let btn = sender as? UIButton, let audio = player.audio {
+            let isMuted = audio.isMuted
+            audio.isMuted = !isMuted
+
+            let im = UIImage(systemName: !isMuted ? "speaker.slash.fill" : "speaker.fill")
+            btn.setImage(im, for: .normal)
+        }
+    }
 }
 
 extension VideoPreviewController: VLCMediaPlayerDelegate {
@@ -243,6 +280,8 @@ extension VideoPreviewController: VLCMediaPlayerDelegate {
                 if duration == 0 {
                     duration = Int(truncating: player.media!.length.value ?? 0)
                 }
+                // Set initial time.
+                setTime(VLCTime(number: 0))
             }
             updatePlayPauseButton(isPlaying: true)
             print("playing")
@@ -273,14 +312,17 @@ extension VideoPreviewController: VLCMediaPlayerDelegate {
         }
     }
 
-    func mediaPlayerTimeChanged(_ aNotification: Notification) {
-        guard let player = aNotification.object as? VLCMediaPlayer else { return }
-        guard let ts = player.time.value else { return }
-
+    private func setTime(_ time: VLCTime) {
+        guard let ts = time.value else { return }
         if self.duration > 0 {
             videoSlider.value = Float(truncating: ts) / Float(self.duration)
         }
-        currentTimeLabel.text = player.time.stringValue
+        currentTimeLabel.text = time.stringValue
+    }
+
+    func mediaPlayerTimeChanged(_ aNotification: Notification) {
+        guard let player = aNotification.object as? VLCMediaPlayer else { return }
+        setTime(player.time)
     }
 }
 
@@ -291,6 +333,7 @@ extension VideoPreviewController: SendImageBarDelegate {
               let media = player.media,
               let mimeType = originalContent.contentType else { return }
 
+        let size = player.videoSize
         thumbnailer.getThumbmail { thumbnail in
             var preview: UIImage?
             if let th = thumbnail {
@@ -302,8 +345,8 @@ extension VideoPreviewController: SendImageBarDelegate {
                 fileName: originalContent.fileName,
                 contentType: mimeType,
                 size: 0,
-                width: thumbnail?.width,
-                height: thumbnail?.height,
+                width: Int(size.width),
+                height: Int(size.height),
                 caption: caption,
                 pendingMessagePreview: nil
             )

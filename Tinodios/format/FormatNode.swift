@@ -460,7 +460,7 @@ class FormatNode: CustomStringConvertible {
         let overlay = { (img: UIImage) -> UIImage? in
             let rect = CGRect(x: 0, y: 0, width: img.size.width, height: img.size.height)
             let renderer = UIGraphicsImageRenderer(size: img.size)
-            let overlay = UIImage(systemName: "play.circle.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: Constants.kVideoPlayButtonPointSize, weight: .bold, scale: .large))!
+            let overlay = UIImage(systemName: "play.circle", withConfiguration: UIImage.SymbolConfiguration(pointSize: Constants.kVideoPlayButtonPointSize, weight: .bold, scale: .large))!.withTintColor(.white, renderingMode: .alwaysOriginal)
 
             return renderer.image { ctx in
                 let playSize = overlay.size
@@ -473,9 +473,10 @@ class FormatNode: CustomStringConvertible {
 
                     let attrs = [NSAttributedString.Key.font: UIFont.preferredFont(forTextStyle: .headline),
                                  NSAttributedString.Key.paragraphStyle: paragraphStyle,
-                                 NSAttributedString.Key.foregroundColor: UIColor.white]
+                                 NSAttributedString.Key.foregroundColor: UIColor.white,
+                                 NSAttributedString.Key.backgroundColor: UIColor.lightGray.withAlphaComponent(0.7)]
 
-                    let durationRect = CGRect(x: rect.width - Constants.kVideoDurationMaxWidth, y: rect.height - Constants.kVideoDurationHeight, width: Constants.kVideoDurationMaxWidth, height: Constants.kVideoDurationHeight)
+                    let durationRect = CGRect(x: 0, y: rect.height - Constants.kVideoDurationHeight, width: Constants.kVideoDurationMaxWidth, height: Constants.kVideoDurationHeight)
                     NSAttributedString(string: AbstractFormatter.millisToTime(millis: duration), attributes: attrs).draw(in: durationRect)
                 }
             }
