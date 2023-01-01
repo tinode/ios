@@ -323,9 +323,9 @@ extension StoredMessage {
     }
 
     // Returns true if message contains an inline image.
-    var isImage: Bool {
+    var isVisualMedia: Bool {
         guard let entity = self.content?.entities?[0] else { return false }
-        return entity.tp == "IM"
+        return ["IM", "VD"].contains(entity.tp)
     }
 }
 

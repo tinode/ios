@@ -1239,7 +1239,7 @@ extension MessageViewController: MessageViewLayoutDelegate {
 
         // FIXME: storedMessage may contain an image surrounded by text. In such cases,
         // size calculations may be wrong. Handle it.
-        return storedMessage.isImage ?
+        return storedMessage.isVisualMedia ?
             attributedText.boundingRect(with: CGSize(width: maxWidth, height: .greatestFiniteMagnitude),
                                         options: [.usesLineFragmentOrigin, .usesFontLeading],
                                         context: nil).integral.size :

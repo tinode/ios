@@ -75,6 +75,10 @@ class VideoPreviewController: UIViewController {
             thumbnailer.fetchThumbnail()
         }
 
+        func dismiss() {
+            state = .done(nil)
+        }
+
         func getThumbmail(completionHandler: @escaping (CGImage?) -> Void) {
             switch state {
             case .none:
@@ -274,8 +278,12 @@ extension VideoPreviewController: VLCMediaPlayerDelegate {
         switch player.state {
         case .playing:
             if case .none = thumbnailer.state {
-                // Video's just started playing.
-                thumbnailer.startFetching(fromMedia: player.media!)
+                if case .local(_, _) = previewContent!.videoSrc {
+                    // Video's just started playing.
+                    thumbnailer.startFetching(fromMedia: player.media!)
+                } else {
+                    thumbnailer.dismiss()
+                }
                 // Maybe update duration.
                 if duration == 0 {
                     duration = Int(truncating: player.media!.length.value ?? 0)
