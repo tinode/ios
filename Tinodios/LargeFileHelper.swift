@@ -7,6 +7,11 @@
 import TinodeSDK
 
 public class Upload {
+    enum UploadError: Error {
+        case invalidState(String)
+        case cancelledByUser
+    }
+
     fileprivate var url: URL
     fileprivate var topicId: String = ""
     fileprivate var msgId: Int64 = 0
@@ -33,7 +38,7 @@ public class Upload {
 
     deinit {
         if let cb = finalCb {
-            cb(nil, TinodeError.invalidState("Topic \(topicId), msg id \(msgId), filename \(filename): Could not finish upload. Cancelling."))
+            cb(nil, UploadError.invalidState("Topic \(topicId), msg id \(msgId), filename \(filename): Could not finish upload. Cancelling."))
         }
     }
 
@@ -148,6 +153,7 @@ public class LargeFileHelper: NSObject {
         for k in keys {
             if let upload = activeUploads.removeValue(forKey: k) {
                 upload.task?.cancel()
+                upload.finished(msg: nil, err: Upload.UploadError.cancelledByUser)
             }
         }
         return !keys.isEmpty
@@ -207,15 +213,15 @@ extension LargeFileHelper: URLSessionTaskDelegate {
             return
         }
         guard let response = task.response as? HTTPURLResponse else {
-            uploadError = TinodeError.invalidState(String(format: NSLocalizedString("Upload failed (%@). No server response.", comment: "Error message"), upload.id))
+            uploadError = Upload.UploadError.invalidState(String(format: NSLocalizedString("Upload failed (%@). No server response.", comment: "Error message"), upload.id))
             return
         }
         guard response.statusCode == 200 else {
-            uploadError = TinodeError.invalidState(String(format: NSLocalizedString("Upload failed (%@): response code %d.", comment: "Error message"), upload.id, response.statusCode))
+            uploadError = Upload.UploadError.invalidState(String(format: NSLocalizedString("Upload failed (%@): response code %d.", comment: "Error message"), upload.id, response.statusCode))
             return
         }
         guard upload.hasResponse else {
-            uploadError = TinodeError.invalidState(String(format: NSLocalizedString("Upload failed (%@): empty response body.", comment: "Error message"), upload.id))
+            uploadError = Upload.UploadError.invalidState(String(format: NSLocalizedString("Upload failed (%@): empty response body.", comment: "Error message"), upload.id))
             return
         }
         do {

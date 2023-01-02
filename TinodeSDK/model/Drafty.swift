@@ -441,10 +441,13 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
         var result: [String] = []
         for anEnt in ent {
             if let ref = anEnt.data?["ref"] {
-                switch ref {
-                case .string(let str):
+                if case .string(let str) = ref {
                     result.append(str)
-                default: break
+                }
+            }
+            if let preref = anEnt.data?["preref"] {
+                if case .string(let str) = preref {
+                    result.append(str)
                 }
             }
         }
@@ -1303,7 +1306,7 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
         tree = SpanTreeProcessor.treeTopDown(tree: tree, using: Preview()) ?? tree
         tree = SpanTreeProcessor.treeTopDown(tree: tree, using: ShorteningTransformer(length: previewLen, tail: "…")) ?? tree
         tree = SpanTreeProcessor.treeTopDown(tree: tree, using: LightCopyTransformer(
-            allowedFields: ["state", "incoming", "preview", "preref"], forTypes: ["VC", "VD"])) ?? tree
+            allowedFields: ["state", "incoming", "preview", "preref", "val", "ref"], forTypes: ["IM", "VC", "VD"])) ?? tree
 
         var keymap = [Int: Int]()
         var result = Drafty()

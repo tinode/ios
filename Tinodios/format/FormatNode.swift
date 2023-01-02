@@ -481,7 +481,7 @@ class FormatNode: CustomStringConvertible {
         let overlay = { (img: UIImage) -> UIImage? in
             // Input img is the original image which may be scaled upon rendering.
             // Compute the scaling factor and draw properly scaled the play icon and duration label.
-            let scaling = img.sizeUnder(size, clip: false).scale
+            let scaling = UiUtils.sizeUnder(original: img.size, fitUnder: size, scale: 1, clip: false).scale
             let shouldScale = 0 < scaling && scaling < 1
 
             let rect = CGRect(x: 0, y: 0, width: img.size.width, height: img.size.height)
@@ -552,15 +552,19 @@ class FormatNode: CustomStringConvertible {
 
         let scaledSize = UiUtils.sizeUnder(original: originalSize, fitUnder: size, scale: 1, clip: false).dst
         if preview == nil {
-            let iconName = attachment.previewRef != nil ? "image-wait" : "broken-image"
-            // No need to scale the stock image.
-            wrapper.image = UiUtils.placeholderImage(named: iconName, withBackground: nil, width: scaledSize.width, height: scaledSize.height)
+            if attachment.previewRef != nil {
+                // No need to scale the stock image.
+                wrapper.image = UiUtils.placeholderImage(named: "image-wait", withBackground: nil, width: scaledSize.width, height: scaledSize.height)
+            } else {
+                // No preview poster? Display controls over the gray background image.
+                wrapper.image = overlay(UIColor.gray.image(scaledSize))
+            }
         } else {
             wrapper.image = overlay(preview!)
         }
         wrapper.bounds = CGRect(origin: attachment.offset ?? .zero, size: scaledSize)
 
-        (wrapper as? AsyncImageTextAttachment)?.startDownload(onError: UiUtils.placeholderImage(named: "broken-image", withBackground: preview, width: scaledSize.width, height: scaledSize.height))
+        (wrapper as? AsyncImageTextAttachment)?.startDownload(onError: overlay(UIColor.gray.image(scaledSize))!)
 
         return NSAttributedString(attachment: wrapper)
     }

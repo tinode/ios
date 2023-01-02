@@ -268,7 +268,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         let seqId = msg.seqId
         let sender = senderName(for: msg)
         // Strip unneeded content and shorten.
-        var reply = content.replyContent(length: SendReplyFormatter.kQuotedReplyLength, maxAttachments: 1)
+        var reply = content.replyContent(length: UiUtils.kQuotedReplyLength, maxAttachments: 1)
         let createThumbnails = ThumbnailTransformer()
         reply = reply.transform(createThumbnails)
         let whenDone = PromisedReply<PendingMessage>()
@@ -669,8 +669,14 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                     interactor?.loadMessagesFromCache()
                 }
                 guard error == nil else {
-                    DispatchQueue.main.async {
-                        UiUtils.showToast(message: error!.localizedDescription)
+                    switch error! {
+                    case Upload.UploadError.cancelledByUser:
+                        // Upload was cancelled by user. Do nothing.
+                        break
+                    default:
+                        DispatchQueue.main.async {
+                            UiUtils.showToast(message: error!.localizedDescription)
+                        }
                     }
                     return
                 }

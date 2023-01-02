@@ -272,11 +272,13 @@ extension VideoPreviewController: VLCMediaPlayerDelegate {
         guard let player = aNotification.object as? VLCMediaPlayer else { return }
         switch player.state {
         case .playing:
+            // Auto-play for remote videos only.
             var shouldPause = false
             if case .none = thumbnailer.state {
                 if case .local(_, _) = previewContent!.videoSrc {
                     // Video's just started playing.
                     thumbnailer.startFetching(fromMedia: player.media!)
+                    shouldPause = true
                 } else {
                     thumbnailer.dismiss()
                 }
@@ -286,7 +288,6 @@ extension VideoPreviewController: VLCMediaPlayerDelegate {
                 }
                 // Set initial time.
                 setTime(VLCTime(number: 0))
-                shouldPause = true
             }
             print("playing")
             spinner.stopAnimating()

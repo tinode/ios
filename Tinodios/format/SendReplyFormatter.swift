@@ -11,8 +11,6 @@ import UIKit
 
 // TODO: remove?
 class SendReplyFormatter: QuoteFormatter {
-    static let kQuotedReplyLength = 64
-
     override func handleQuote(_ nodes: [FormatNode]) -> FormatNode {
         let node = FormatNode(nodes)
         node.attachment(Attachment(content: .quote, fullWidth: true))
