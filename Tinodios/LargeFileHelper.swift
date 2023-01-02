@@ -10,6 +10,7 @@ public class Upload {
     fileprivate var url: URL
     fileprivate var topicId: String = ""
     fileprivate var msgId: Int64 = 0
+    fileprivate var filename: String = ""
     fileprivate var isUploading = false
     fileprivate var progress: Float = 0
     fileprivate var responseData: Data = Data()
@@ -19,7 +20,7 @@ public class Upload {
     fileprivate var task: URLSessionUploadTask?
 
     public var id: String {
-        return "\(topicId)-\(msgId)"
+        return "\(topicId)-\(msgId)-\(filename)"
     }
 
     public var hasResponse: Bool {
@@ -32,7 +33,7 @@ public class Upload {
 
     deinit {
         if let cb = finalCb {
-            cb(nil, TinodeError.invalidState("Topic \(topicId), msg id \(msgId): Could not finish upload. Cancelling."))
+            cb(nil, TinodeError.invalidState("Topic \(topicId), msg id \(msgId), filename \(filename): Could not finish upload. Cancelling."))
         }
     }
 
@@ -124,6 +125,7 @@ public class LargeFileHelper: NSObject {
         upload.isUploading = true
         upload.topicId = topicId
         upload.msgId = msgId
+        upload.filename = filename
         upload.progressCb = progressCallback
         upload.finalCb = completionCallback
         activeUploads[uploadKey] = upload

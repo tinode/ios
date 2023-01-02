@@ -40,14 +40,18 @@ class QuoteFormatter: PreviewFormatter {
         var attachment = Attachment(content: .image)
         let img = FormatNode()
         var filename = ""
+        var actualSize: CGSize = CGSize(width: UiUtils.kReplyThumbnailSize, height: UiUtils.kReplyThumbnailSize)
         if let attr = data {
+            if let w = attr["width"]?.asInt(), let h = attr["height"]?.asInt() {
+                actualSize = UiUtils.sizeUnder(original: CGSize(width: w, height: h), fitUnder: CGSize(width: thumbnailWidth, height: thumbnailHeight), scale: 1, clip: false).dst
+            }
             if let bits = attr[bitsField]?.asData() {
                 attachment.bits = bits
             } else if let ref = attr[refField]?.asString() {
                 attachment.ref = ref
                 attachment.afterRefDownloaded = {
                     return $0.resize(
-                        width: CGFloat(thumbnailWidth), height: CGFloat(thumbnailHeight), clip: true)
+                        width: CGFloat(thumbnailWidth), height: CGFloat(thumbnailHeight), clip: !isVideo)
                 }
             }
             attachment.mime = "image/jpeg"
@@ -63,10 +67,10 @@ class QuoteFormatter: PreviewFormatter {
         }
 
         // Vertical alignment of the image to the middle of the text.
-        attachment.offset = CGPoint(x: 0, y: min(QuoteFormatter.kDefaultFont.capHeight - CGFloat(thumbnailHeight), 0) * 0.5)
+        attachment.offset = CGPoint(x: 0, y: min(QuoteFormatter.kDefaultFont.capHeight - actualSize.height, 0) * 0.5)
 
-        attachment.width = thumbnailWidth
-        attachment.height = thumbnailHeight
+        attachment.width = Int(actualSize.width)
+        attachment.height = Int(actualSize.height)
         attachment.draftyEntityKey = key
 
         img.attachment(attachment)

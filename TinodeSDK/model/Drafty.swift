@@ -1302,7 +1302,8 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
         }
         tree = SpanTreeProcessor.treeTopDown(tree: tree, using: Preview()) ?? tree
         tree = SpanTreeProcessor.treeTopDown(tree: tree, using: ShorteningTransformer(length: previewLen, tail: "…")) ?? tree
-        tree = SpanTreeProcessor.treeTopDown(tree: tree, using: LightCopyTransformer(allowedFields: ["state", "incoming"], forTypes: ["VC"])) ?? tree
+        tree = SpanTreeProcessor.treeTopDown(tree: tree, using: LightCopyTransformer(
+            allowedFields: ["state", "incoming", "preview", "preref"], forTypes: ["VC", "VD"])) ?? tree
 
         var keymap = [Int: Int]()
         var result = Drafty()

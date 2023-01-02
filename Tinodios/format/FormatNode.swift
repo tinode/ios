@@ -100,13 +100,15 @@ class FormatNode: CustomStringConvertible {
         static let kFailedCallArrowColor = UIColor.red
 
         /// Video Play button point size.
-        static let kVideoPlayButtonPointSize: CGFloat = 70
+        static let kVideoPlayButtonPointSize: CGFloat = 60
         /// Video Play button opacity.
-        static let kVideoPlayButtonAlpha = 0.6
+        static let kVideoPlayButtonAlpha: CGFloat = 1
+        /// Video overlay background opacity.
+        static let kVideoOverlayAlpha: CGFloat = 0.7
         /// Video duration text box max width.
-        static let kVideoDurationMaxWidth: CGFloat = 70
+        static let kVideoDurationMaxWidth: CGFloat = 50
         /// Video duration text box height.
-        static let kVideoDurationHeight: CGFloat = 25
+        static let kVideoDurationHeight: CGFloat = 20
     }
 
     // Thrown by the formatting function when the length budget gets exceeded.
@@ -116,6 +118,25 @@ class FormatNode: CustomStringConvertible {
     }
 
     typealias CharacterStyle = [NSAttributedString.Key: Any]
+
+    private lazy var playIcon: UIImage = {
+        let play = UIImage(systemName: "play.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: Constants.kVideoPlayButtonPointSize / 2, weight: .bold, scale: .large))!.withTintColor(.white, renderingMode: .alwaysOriginal)
+        let renderer = UIGraphicsImageRenderer(size: CGSize(width: Constants.kVideoPlayButtonPointSize, height: Constants.kVideoPlayButtonPointSize))
+        let img = renderer.image { ctx in
+            let bkgColor = UIColor.darkGray.withAlphaComponent(Constants.kVideoOverlayAlpha).cgColor
+            ctx.cgContext.setFillColor(bkgColor)
+            ctx.cgContext.setStrokeColor(bkgColor)
+            ctx.cgContext.setLineWidth(1)
+
+            let rect = CGRect(x: 0, y: 0, width: Constants.kVideoPlayButtonPointSize, height: Constants.kVideoPlayButtonPointSize)
+            ctx.cgContext.addEllipse(in: rect)
+            ctx.cgContext.drawPath(using: .fillStroke)
+
+            let playSize = play.size
+            play.draw(in: CGRect(x: (rect.width - playSize.width) / 2, y: (rect.height - playSize.height) / 2, width: playSize.width, height: playSize.height), blendMode: .luminosity, alpha: CGFloat(Constants.kVideoPlayButtonAlpha))
+        }
+        return img
+    }()
 
     // A set of font traits to apply at the leaf level
     var cFont: UIFontDescriptor.SymbolicTraits?
@@ -458,26 +479,42 @@ class FormatNode: CustomStringConvertible {
 
         // Adds Play button and duration overlay on top of img.
         let overlay = { (img: UIImage) -> UIImage? in
+            // Input img is the original image which may be scaled upon rendering.
+            // Compute the scaling factor and draw properly scaled the play icon and duration label.
+            let scaling = img.sizeUnder(size, clip: false).scale
+            let shouldScale = 0 < scaling && scaling < 1
+
             let rect = CGRect(x: 0, y: 0, width: img.size.width, height: img.size.height)
             let renderer = UIGraphicsImageRenderer(size: img.size)
-            let overlay = UIImage(systemName: "play.circle", withConfiguration: UIImage.SymbolConfiguration(pointSize: Constants.kVideoPlayButtonPointSize, weight: .bold, scale: .large))!.withTintColor(.white, renderingMode: .alwaysOriginal)
+            let playBtnIcon = self.playIcon
 
             return renderer.image { ctx in
-                let playSize = overlay.size
+                var playSize = playBtnIcon.size
                 img.draw(in: rect, blendMode: .normal, alpha: 1)
-                overlay.draw(in: CGRect(x: (rect.width - playSize.width) / 2, y: (rect.height - playSize.height) / 2, width: playSize.width, height: playSize.height), blendMode: .luminosity, alpha: Constants.kVideoPlayButtonAlpha)
+                if shouldScale {
+                    playSize.width /= scaling
+                    playSize.height /= scaling
+                }
+                playBtnIcon.draw(in: CGRect(x: (rect.width - playSize.width) / 2, y: (rect.height - playSize.height) / 2, width: playSize.width, height: playSize.height), blendMode: .luminosity, alpha: Constants.kVideoPlayButtonAlpha)
 
                 if let duration = attachment.duration {
                     let paragraphStyle = NSMutableParagraphStyle()
                     paragraphStyle.alignment = .center
 
-                    let attrs = [NSAttributedString.Key.font: UIFont.preferredFont(forTextStyle: .headline),
+                    var font = UIFont.preferredFont(forTextStyle: .caption1)
+                    if shouldScale {
+                        let fontSize = CGFloat(truncating: font.pointSize / scaling as NSNumber)
+                        font = UIFont(descriptor: font.fontDescriptor, size: fontSize)
+                    }
+                    let attrs = [NSAttributedString.Key.font: font,
                                  NSAttributedString.Key.paragraphStyle: paragraphStyle,
                                  NSAttributedString.Key.foregroundColor: UIColor.white,
-                                 NSAttributedString.Key.backgroundColor: UIColor.lightGray.withAlphaComponent(0.7)]
+                                 NSAttributedString.Key.backgroundColor: UIColor.darkGray.withAlphaComponent(Constants.kVideoOverlayAlpha)]
 
-                    let durationRect = CGRect(x: 0, y: rect.height - Constants.kVideoDurationHeight, width: Constants.kVideoDurationMaxWidth, height: Constants.kVideoDurationHeight)
-                    NSAttributedString(string: AbstractFormatter.millisToTime(millis: duration), attributes: attrs).draw(in: durationRect)
+                    let durationWidth = shouldScale ? Constants.kVideoDurationMaxWidth / scaling : Constants.kVideoDurationMaxWidth
+                    let durationHeight = shouldScale ? Constants.kVideoDurationHeight / scaling : Constants.kVideoDurationHeight
+                    let durationRect = CGRect(x: 0, y: rect.height - durationHeight, width: durationWidth, height: durationHeight)
+                    NSAttributedString(string: AbstractFormatter.millisToTime(millis: duration, fixedMin: true), attributes: attrs).draw(in: durationRect)
                 }
             }
         }

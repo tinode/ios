@@ -656,7 +656,6 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                     attachmentResult.error = err
                     dg.leave()
                 })
-            self.loadMessagesFromCache()
 
             dg.notify(queue: .main) { [weak self] in
                 let serverMessage = attachmentResult.result
@@ -707,6 +706,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                     success = true
                 }
             }
+            self.loadMessagesFromCache()
         }
     }
 

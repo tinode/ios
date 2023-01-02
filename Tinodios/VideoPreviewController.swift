@@ -107,7 +107,6 @@ class VideoPreviewController: UIViewController {
 
         var url: URL?
         var stream: Stream?
-        var mediaOption: String?
         switch content.videoSrc {
         case .local(let videoUrl, _):
             url = videoUrl
@@ -127,7 +126,6 @@ class VideoPreviewController: UIViewController {
             } else {
                 return
             }
-            mediaOption = ":start-paused"
         }
         sendVideoBar.togglePreviewBar(with: content.pendingMessagePreview)
         self.duration = content.duration
@@ -159,9 +157,6 @@ class VideoPreviewController: UIViewController {
         } else {
             DispatchQueue.main.async { UiUtils.showToast(message: "Invalid input") }
             return
-        }
-        if let opt = mediaOption {
-            media.addOption(opt)
         }
         player.media = media
         player.delegate = self
@@ -277,6 +272,7 @@ extension VideoPreviewController: VLCMediaPlayerDelegate {
         guard let player = aNotification.object as? VLCMediaPlayer else { return }
         switch player.state {
         case .playing:
+            var shouldPause = false
             if case .none = thumbnailer.state {
                 if case .local(_, _) = previewContent!.videoSrc {
                     // Video's just started playing.
@@ -290,14 +286,18 @@ extension VideoPreviewController: VLCMediaPlayerDelegate {
                 }
                 // Set initial time.
                 setTime(VLCTime(number: 0))
+                shouldPause = true
             }
-            updatePlayPauseButton(isPlaying: true)
             print("playing")
             spinner.stopAnimating()
             spinner.isHidden = true
             controlsView.backgroundColor = .clear
             controlsView.alpha = 1
             playPauseButton.isHidden = false
+            if shouldPause {
+                playPauseClicked(playPauseButton!)
+            }
+            updatePlayPauseButton(isPlaying: !shouldPause)
         case .opening:
             print("opening")
             controlsView.backgroundColor = .white
