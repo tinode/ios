@@ -240,13 +240,19 @@ class VideoPreviewController: UIViewController {
     @IBAction func saveVideoButtonClicked(_ sender: Any) {
         guard let content = previewContent, case let .remote(bits, ref) = content.videoSrc else { return }
 
+        let downloadBtn = sender as! UIBarButtonItem
         let picturesUrl: URL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
         let destinationURL = picturesUrl.appendingPathComponent(content.fileName ?? Utils.uniqueFilename(forMime: content.contentType))
 
         if let ref = ref, let url = URL(string: ref, relativeTo: Cache.tinode.baseURL(useWebsocketProtocol: false)) {
-            Cache.getLargeFileHelper().startDownload(from: url)
+            downloadBtn.isEnabled = false
+            Cache.getLargeFileHelper().startDownload(from: url) { _ in
+                downloadBtn.isEnabled = true
+            }
         } else if let bits = bits {
+            defer { downloadBtn.isEnabled = true }
             do {
+                downloadBtn.isEnabled = false
                 try FileManager.default.createDirectory(at: picturesUrl, withIntermediateDirectories: true, attributes: nil)
                 try bits.write(to: destinationURL)
                 UiUtils.presentFileSharingVC(for: destinationURL)

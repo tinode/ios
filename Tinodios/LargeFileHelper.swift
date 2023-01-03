@@ -67,6 +67,7 @@ public class LargeFileHelper: NSObject {
 
     private var urlSession: URLSession!
     private var activeUploads: [String: Upload] = [:]
+    private var downloadCallbacks: [Int: ((Error?) -> Void)] = [:]
     private var tinode: Tinode!
 
     init(with tinode: Tinode, config: URLSessionConfiguration) {
@@ -167,11 +168,14 @@ public class LargeFileHelper: NSObject {
         self.activeUploads.removeValue(forKey: taskId)
     }
 
-    public func startDownload(from url: URL) {
+    public func startDownload(from url: URL, completion: ((Error?) -> Void)? = nil) {
         var request = URLRequest(url: url)
         LargeFileHelper.addCommonHeaders(to: &request, using: self.tinode)
 
         let task = urlSession.downloadTask(with: request)
+        if let completion = completion {
+            downloadCallbacks[task.taskIdentifier] = completion
+        }
         task.resume()
     }
 }
@@ -243,6 +247,11 @@ extension LargeFileHelper: URLSessionTaskDelegate {
 // Downloads.
 extension LargeFileHelper: URLSessionDownloadDelegate {
     public func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
+        defer {
+            if let cb = downloadCallbacks.removeValue(forKey: downloadTask.taskIdentifier) {
+                cb(downloadTask.error)
+            }
+        }
         guard downloadTask.error == nil else {
             Cache.log.error("LargeFileHelper - download failed: %@", downloadTask.error!.localizedDescription)
             return

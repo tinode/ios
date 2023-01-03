@@ -672,7 +672,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                     switch error! {
                     case Upload.UploadError.cancelledByUser:
                         // Upload was cancelled by user. Do nothing.
-                        break
+                        Cache.log.info("Upload cancelled by user: file '%@'", filename)
                     default:
                         DispatchQueue.main.async {
                             UiUtils.showToast(message: error!.localizedDescription)
