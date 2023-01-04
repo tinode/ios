@@ -37,6 +37,9 @@ extension MessageViewController: MessageCellDelegate {
             case "/audio/toggle-play":
                 handleToggleAudioPlay(in: cell, draftyEntityKey: Int(url.extractQueryParam(named: "key") ?? ""))
                 break
+            case "/video":
+                showVideoPreview(in: cell, draftyEntityKey: Int(url.extractQueryParam(named: "key") ?? ""))
+                break
             default:
                 Cache.log.error("MessageVC - unknown tinode:// action: %@", url.description)
             }
@@ -369,6 +372,31 @@ extension MessageViewController: MessageCellDelegate {
             height: entity.data?["height"]?.asInt(),
             pendingMessagePreview: nil)
         performSegue(withIdentifier: "ShowImagePreview", sender: content)
+    }
+
+    private func showVideoPreview(in cell: MessageCell, draftyEntityKey: Int?) {
+        // TODO: maybe pass nil to show "broken image" preview instead of returning.
+        guard let index = messageSeqIdIndex[cell.seqId], let draftyKey = draftyEntityKey else { return }
+        let msg = messages[index]
+        guard let entity = msg.content?.entities?[draftyKey] else { return }
+        let bits = entity.data?["val"]?.asData()
+        let ref = entity.data?["ref"]?.asString()
+        // Need to have either bits or ref.
+        guard bits != nil || ref != nil else { return }
+
+        let content = VideoPreviewContent(
+            videoSrc: .remote(bits, ref),
+            duration: entity.data?["duration"]?.asInt() ?? 0,
+            fileName: entity.data?["name"]?.asString(),
+            contentType: entity.data?["mime"]?.asString(),
+            size: entity.data?["size"]?.asInt64() ?? 0,
+            width: entity.data?["width"]?.asInt(),
+            height: entity.data?["height"]?.asInt(),
+            caption: nil,
+            pendingMessagePreview: nil
+        )
+
+        performSegue(withIdentifier: "ShowVideoPreview", sender: content)
     }
 
     func handleQuoteClick(in cell: MessageCell) {

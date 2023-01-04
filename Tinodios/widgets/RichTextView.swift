@@ -80,6 +80,8 @@ class RichTextView: UITextView {
         var urlComps = URLComponents(string: "tinode://")!
         if att.type == "image" {
             urlComps.path = "/image/preview"
+        } else if att.type == "video" {
+            urlComps.path = "/video"
         } else if att.type?.starts(with: "audio") ?? false {
             urlComps.path = "/\(att.type!)"
             // Click position in glyphRect coordinates

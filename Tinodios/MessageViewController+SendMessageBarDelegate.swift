@@ -138,24 +138,42 @@ extension MessageViewController: UIDocumentPickerDelegate {
 }
 
 extension MessageViewController: ImagePickerDelegate {
-    func didSelect(image: UIImage?, mimeType mime: String?, fileName fname: String?) {
-        guard let image = image else { return }
+    func didSelect(media: ImagePickerMediaType?) {
+        guard let media = media else { return }
+        switch media {
+        case .image(let image, let mime, let fname):
+            guard let image = image else { return }
 
-        let width = Int(image.size.width * image.scale)
-        let height = Int(image.size.height * image.scale)
+            let width = Int(image.size.width * image.scale)
+            let height = Int(image.size.height * image.scale)
 
-        let pendingPreview = (self.inputAccessoryView as! SendMessageBar).pendingPreviewText
-        let content = ImagePreviewContent(
-            imgContent: ImagePreviewContent.ImageContent.uiimage(image),
-            caption: nil,
-            fileName: fname,
-            contentType: mime,
-            size: 0,
-            width: width,
-            height: height,
-            pendingMessagePreview: pendingPreview)
+            let pendingPreview = (self.inputAccessoryView as! SendMessageBar).pendingPreviewText
+            let content = ImagePreviewContent(
+                imgContent: ImagePreviewContent.ImageContent.uiimage(image),
+                caption: nil,
+                fileName: fname,
+                contentType: mime,
+                size: 0,
+                width: width,
+                height: height,
+                pendingMessagePreview: pendingPreview)
 
-        performSegue(withIdentifier: "ShowImagePreview", sender: content)
+            performSegue(withIdentifier: "ShowImagePreview", sender: content)
+        case .video(let videoUrl, let mime, let fname):
+            guard let videoUrl = videoUrl else { return }
+            let pendingPreview = (self.inputAccessoryView as! SendMessageBar).pendingPreviewText
+            let content = VideoPreviewContent(
+                videoSrc: .local(videoUrl, nil),
+                duration: 0,
+                fileName: fname,
+                contentType: mime,
+                size: 0,
+                width: nil,
+                height: nil, caption: nil,
+                pendingMessagePreview: pendingPreview)
+
+            performSegue(withIdentifier: "ShowVideoPreview", sender: content)
+        }
     }
 }
 

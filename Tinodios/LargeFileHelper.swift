@@ -7,9 +7,15 @@
 import TinodeSDK
 
 public class Upload {
+    enum UploadError: Error {
+        case invalidState(String)
+        case cancelledByUser
+    }
+
     fileprivate var url: URL
     fileprivate var topicId: String = ""
     fileprivate var msgId: Int64 = 0
+    fileprivate var filename: String = ""
     fileprivate var isUploading = false
     fileprivate var progress: Float = 0
     fileprivate var responseData: Data = Data()
@@ -19,7 +25,7 @@ public class Upload {
     fileprivate var task: URLSessionUploadTask?
 
     public var id: String {
-        return "\(topicId)-\(msgId)"
+        return "\(topicId)-\(msgId)-\(filename)"
     }
 
     public var hasResponse: Bool {
@@ -32,7 +38,7 @@ public class Upload {
 
     deinit {
         if let cb = finalCb {
-            cb(nil, TinodeError.invalidState("Topic \(topicId), msg id \(msgId): Could not finish upload. Cancelling."))
+            cb(nil, UploadError.invalidState("Topic \(topicId), msg id \(msgId), filename \(filename): Could not finish upload. Cancelling."))
         }
     }
 
@@ -61,6 +67,7 @@ public class LargeFileHelper: NSObject {
 
     private var urlSession: URLSession!
     private var activeUploads: [String: Upload] = [:]
+    private var downloadCallbacks: [Int: ((Error?) -> Void)] = [:]
     private var tinode: Tinode!
 
     init(with tinode: Tinode, config: URLSessionConfiguration) {
@@ -85,14 +92,14 @@ public class LargeFileHelper: NSObject {
         return tinode.addAuthQueryParams(url)
     }
 
-    public static func taskIDFor(topicId: String, msgId: Int64) -> String {
+    public static func taskID(forTopic topicId: String, msgId: Int64, filename: String) -> String {
         if msgId != 0 {
-            return "\(topicId)-\(msgId)"
+            return "\(topicId)-\(msgId)-\(filename)"
         }
         return "\(topicId)-avatar"
     }
 
-    public func startMsgAttachmentUpload(filename: String, mimetype: String, data payload: Data, topicId: String, msgId: Int64, progressCallback: @escaping (Float) -> Void, completionCallback: @escaping (ServerMessage?, Error?) -> Void) {
+    public func startMsgAttachmentUpload(filename: String, mimetype: String, data payload: Data, topicId: String, msgId: Int64, progressCallback: ((Float) -> Void)?, completionCallback: @escaping (ServerMessage?, Error?) -> Void) {
         guard var url = tinode.baseURL(useWebsocketProtocol: false) else { return }
         url.appendPathComponent("file/u/")
         let upload = Upload(url: url)
@@ -118,12 +125,13 @@ public class LargeFileHelper: NSObject {
         let localURL = tempDir.appendingPathComponent("throwaway-\(localFileName)")
         try? newData.write(to: localURL)
 
-        let uploadKey = LargeFileHelper.taskIDFor(topicId: topicId, msgId: msgId)
+        let uploadKey = LargeFileHelper.taskID(forTopic: topicId, msgId: msgId, filename: filename)
         upload.task = urlSession.uploadTask(with: request, fromFile: localURL)
         upload.task!.taskDescription = uploadKey
         upload.isUploading = true
         upload.topicId = topicId
         upload.msgId = msgId
+        upload.filename = filename
         upload.progressCb = progressCallback
         upload.finalCb = completionCallback
         activeUploads[uploadKey] = upload
@@ -136,13 +144,20 @@ public class LargeFileHelper: NSObject {
     }
 
     public func cancelUpload(topicId: String, msgId: Int64 = 0) -> Bool {
-        let uploadKey = LargeFileHelper.taskIDFor(topicId: topicId, msgId: msgId)
-        var upload = activeUploads[uploadKey]
-        guard upload != nil else { return false }
-        activeUploads.removeValue(forKey: uploadKey)
-        upload!.task?.cancel()
-        upload = nil
-        return true
+        let uploadKeyPrefix = LargeFileHelper.taskID(forTopic: topicId, msgId: msgId, filename: "")
+        var keys = [String]()
+        for uploadKey in activeUploads.keys {
+            if uploadKey.starts(with: uploadKeyPrefix) {
+                keys.append(uploadKey)
+            }
+        }
+        for k in keys {
+            if let upload = activeUploads.removeValue(forKey: k) {
+                upload.task?.cancel()
+                upload.finished(msg: nil, err: Upload.UploadError.cancelledByUser)
+            }
+        }
+        return !keys.isEmpty
     }
 
     public func getActiveUpload(for taskId: String) -> Upload? {
@@ -153,11 +168,14 @@ public class LargeFileHelper: NSObject {
         self.activeUploads.removeValue(forKey: taskId)
     }
 
-    public func startDownload(from url: URL) {
+    public func startDownload(from url: URL, completion: ((Error?) -> Void)? = nil) {
         var request = URLRequest(url: url)
         LargeFileHelper.addCommonHeaders(to: &request, using: self.tinode)
 
         let task = urlSession.downloadTask(with: request)
+        if let completion = completion {
+            downloadCallbacks[task.taskIdentifier] = completion
+        }
         task.resume()
     }
 }
@@ -199,15 +217,15 @@ extension LargeFileHelper: URLSessionTaskDelegate {
             return
         }
         guard let response = task.response as? HTTPURLResponse else {
-            uploadError = TinodeError.invalidState(String(format: NSLocalizedString("Upload failed (%@). No server response.", comment: "Error message"), upload.id))
+            uploadError = Upload.UploadError.invalidState(String(format: NSLocalizedString("Upload failed (%@). No server response.", comment: "Error message"), upload.id))
             return
         }
         guard response.statusCode == 200 else {
-            uploadError = TinodeError.invalidState(String(format: NSLocalizedString("Upload failed (%@): response code %d.", comment: "Error message"), upload.id, response.statusCode))
+            uploadError = Upload.UploadError.invalidState(String(format: NSLocalizedString("Upload failed (%@): response code %d.", comment: "Error message"), upload.id, response.statusCode))
             return
         }
         guard upload.hasResponse else {
-            uploadError = TinodeError.invalidState(String(format: NSLocalizedString("Upload failed (%@): empty response body.", comment: "Error message"), upload.id))
+            uploadError = Upload.UploadError.invalidState(String(format: NSLocalizedString("Upload failed (%@): empty response body.", comment: "Error message"), upload.id))
             return
         }
         do {
@@ -229,6 +247,11 @@ extension LargeFileHelper: URLSessionTaskDelegate {
 // Downloads.
 extension LargeFileHelper: URLSessionDownloadDelegate {
     public func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
+        defer {
+            if let cb = downloadCallbacks.removeValue(forKey: downloadTask.taskIdentifier) {
+                cb(downloadTask.error)
+            }
+        }
         guard downloadTask.error == nil else {
             Cache.log.error("LargeFileHelper - download failed: %@", downloadTask.error!.localizedDescription)
             return

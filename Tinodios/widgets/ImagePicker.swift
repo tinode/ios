@@ -8,8 +8,13 @@
 import MobileCoreServices
 import UIKit
 
+public enum ImagePickerMediaType {
+    case image(UIImage?, String?, String?)
+    case video(URL?, String?, String?)
+}
+
 public protocol ImagePickerDelegate: AnyObject {
-    func didSelect(image: UIImage?, mimeType: String?, fileName: String?)
+    func didSelect(media: ImagePickerMediaType?)
 }
 
 open class ImagePicker: NSObject {
@@ -18,7 +23,8 @@ open class ImagePicker: NSObject {
     private weak var presentationController: UIViewController?
     private weak var delegate: ImagePickerDelegate?
 
-    public init(presentationController: UIViewController, delegate: ImagePickerDelegate, editable: Bool) {
+    public init(presentationController: UIViewController, delegate: ImagePickerDelegate, editable: Bool,
+                allowVideo: Bool = false) {
         self.pickerController = UIImagePickerController()
 
         super.init()
@@ -29,6 +35,9 @@ open class ImagePicker: NSObject {
         self.pickerController.delegate = self
         self.pickerController.allowsEditing = editable
         self.pickerController.mediaTypes = [kUTTypeImage as String]
+        if allowVideo {
+            self.pickerController.mediaTypes.append(kUTTypeMovie as String)
+        }
     }
 
     private func action(for type: UIImagePickerController.SourceType, title: String) -> UIAlertAction? {
@@ -72,28 +81,32 @@ open class ImagePicker: NSObject {
         self.presentationController?.present(alertController, animated: false)
     }
 
-    private func pickerController(_ controller: UIImagePickerController, didSelect image: UIImage?, mimeType mime: String?, fileName fname: String?) {
+    private func pickerController(_ controller: UIImagePickerController, didSelect media: ImagePickerMediaType?) {
         controller.dismiss(animated: true, completion: nil)
-
-        self.delegate?.didSelect(image: image, mimeType: mime, fileName: fname)
-    }
-}
-
-extension ImagePicker: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
-
-    public func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
-        self.pickerController(picker, didSelect: nil, mimeType: nil, fileName: nil)
-        picker.dismiss(animated: true, completion: nil)
+        self.delegate?.didSelect(media: media)
     }
 
-    public func imagePickerController(_ picker: UIImagePickerController,
-                                      didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
-        guard !picker.isBeingDismissed else {
-            // Prevent ImagePicker from showing the image multiple times.
-            return
+    private static func extractFileNameAndMimeType(fromURL url: NSURL?) -> (NSString?, String?) {
+        guard let url = url else { return (nil, nil) }
+        // Get mime type and file name
+        let urlResourceValues = try? url.resourceValues(forKeys: [.typeIdentifierKey, .nameKey])
+        let uti = urlResourceValues?[.typeIdentifierKey] as? NSString
+        let fname = urlResourceValues?[.nameKey] as? NSString
+        var mimeType: String?
+        if let uti = uti {
+            // Convert UTI string like 'public.jpeg' to MIME type like 'image/jpeg'
+            let unmanaged = UTTypeCopyPreferredTagWithClass(uti as CFString, kUTTagClassMIMEType)
+            mimeType = unmanaged?.takeRetainedValue() as String?
+        } else {
+            mimeType = nil
         }
+        return (fname, mimeType)
+    }
+
+    private func didPickImage(_ picker: UIImagePickerController,
+                              didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
         guard let image = (info[self.pickerController.allowsEditing ? .editedImage : .originalImage] as? UIImage)?.fixedOrientation() else {
-            return self.pickerController(picker, didSelect: nil, mimeType: nil, fileName: nil)
+            return self.pickerController(picker, didSelect: nil)
         }
 
         var mimeType: String? = nil
@@ -108,19 +121,55 @@ extension ImagePicker: UIImagePickerControllerDelegate, UINavigationControllerDe
         } else {
             let imageUrl = info[.imageURL] as? NSURL
 
-            // Get mime type and file name
-            let urlResourceValues = try? imageUrl?.resourceValues(forKeys: [.typeIdentifierKey, .nameKey])
-            let uti = urlResourceValues?[.typeIdentifierKey] as? NSString
-            fname = urlResourceValues?[.nameKey] as? NSString
-            if let uti = uti {
-                // Convert UTI string like 'public.jpeg' to MIME type like 'image/jpeg'
-                let unmanaged = UTTypeCopyPreferredTagWithClass(uti as CFString, kUTTagClassMIMEType)
-                mimeType = unmanaged?.takeRetainedValue() as String?
-            } else {
-                mimeType = nil
-            }
+            let result = ImagePicker.extractFileNameAndMimeType(fromURL: imageUrl)
+            fname = result.0
+            mimeType = result.1
         }
 
-        self.pickerController(picker, didSelect: image, mimeType: mimeType, fileName: fname as String?)
+        self.pickerController(picker, didSelect: .image(image, mimeType, fname as String?))
+    }
+
+    private func didPickVideo(_ picker: UIImagePickerController,
+                              didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
+        // Currently UIImagePickerController compresses and converts the original video into quicktime
+        // which makes the original video file name, size, format and dimensions unavailable.
+        // Sometimes it may break some of these params, e.g. dimensions.
+        // To be able to access the original video file, we need to use PHPickerViewController.
+        // TODO: switch to PHPickerViewController.
+        let videoUrl = info[.mediaURL] as? NSURL
+        let result = ImagePicker.extractFileNameAndMimeType(fromURL: videoUrl)
+        let fname = result.0
+        let mimeType = result.1
+
+        self.pickerController(picker, didSelect: .video(videoUrl as URL?, mimeType, fname as String?))
+    }
+}
+
+extension ImagePicker: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+
+    public func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        self.pickerController(picker, didSelect: nil/*, mimeType: nil, fileName: nil*/)
+        picker.dismiss(animated: true, completion: nil)
+    }
+
+    public func imagePickerController(_ picker: UIImagePickerController,
+                                      didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
+        guard !picker.isBeingDismissed else {
+            // Prevent ImagePicker from showing the image multiple times.
+            return
+        }
+        guard let mediaType = info[.mediaType] as? String else {
+            return self.pickerController(picker, didSelect: nil)
+        }
+        switch mediaType as CFString {
+        case kUTTypeImage:
+            didPickImage(picker, didFinishPickingMediaWithInfo: info)
+            break
+        case kUTTypeMovie:
+            didPickVideo(picker, didFinishPickingMediaWithInfo: info)
+            break
+        default:
+            return self.pickerController(picker, didSelect: nil/*, mimeType: nil, fileName: nil*/)
+        }
     }
 }

@@ -214,7 +214,8 @@ class SettingsPersonalViewController: UITableViewController {
 }
 
 extension SettingsPersonalViewController: ImagePickerDelegate {
-    func didSelect(image: UIImage?, mimeType: String?, fileName: String?) {
+    func didSelect(media: ImagePickerMediaType?) {
+        guard case .image(let image, _, _) = media else { return }
         UiUtils.updateAvatar(forTopic: self.me, image: image)
             .thenApply { _ in
                 DispatchQueue.main.async {

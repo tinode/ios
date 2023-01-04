@@ -246,8 +246,9 @@ extension NewGroupViewController: EditMembersDelegate {
 }
 
 extension NewGroupViewController: ImagePickerDelegate {
-    func didSelect(image: UIImage?, mimeType: String?, fileName: String?) {
-        guard let image = image?.resize(width: CGFloat(UiUtils.kMaxAvatarSize), height: CGFloat(UiUtils.kMaxAvatarSize), clip: true) else { return }
+    func didSelect(media: ImagePickerMediaType?) {
+        guard case .image(let image, _, _) = media,
+            let image = image?.resize(width: CGFloat(UiUtils.kMaxAvatarSize), height: CGFloat(UiUtils.kMaxAvatarSize), clip: true) else { return }
 
         self.avatarView.image = image
         avatarReceived = true

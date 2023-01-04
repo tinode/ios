@@ -37,6 +37,7 @@ protocol MessageBusinessLogic: AnyObject {
     func uploadAudio(_ def: UploadDef)
     func uploadFile(_ def: UploadDef)
     func uploadImage(_ def: UploadDef)
+    func uploadVideo(_ def: UploadDef)
 
     func prepareQuoted(to msg: Message?, isReply: Bool) -> PromisedReply<PendingMessage>?
     func dismissPendingMessage()
@@ -66,6 +67,8 @@ struct UploadDef {
     var height: CGFloat?
     var duration: Int?
     var preview: Data?
+    var previewMime: String?
+    var previewOutOfBand: Bool = false
 }
 
 class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, MessageDataStore {
@@ -75,6 +78,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         case audio // Audio record
         case file // File attachment
         case image // Image attachment
+        case video // Video attachment
     }
 
     class MessageEventListener: UiTinodeEventListener {
@@ -264,7 +268,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         let seqId = msg.seqId
         let sender = senderName(for: msg)
         // Strip unneeded content and shorten.
-        var reply = content.replyContent(length: SendReplyFormatter.kQuotedReplyLength, maxAttachments: 1)
+        var reply = content.replyContent(length: UiUtils.kQuotedReplyLength, maxAttachments: 1)
         let createThumbnails = ThumbnailTransformer()
         reply = reply.transform(createThumbnails)
         let whenDone = PromisedReply<PendingMessage>()
@@ -545,6 +549,10 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         uploadMessageAttachment(type: .audio, def)
     }
 
+    func uploadVideo(_ def: UploadDef) {
+        uploadMessageAttachment(type: .video, def)
+    }
+
     private func uploadMessageAttachment(type: AttachmentType, _ def: UploadDef) {
         guard let mimeType = def.mimeType, let topic = topic else { return }
 
@@ -572,7 +580,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         }
         let ref = URL(string: urlStr)!
         var draft: Drafty?
-        let previewData: Data?
+        var previewData: Data?
         var head: [String: JSONValue]?
         switch type {
         case .audio:
@@ -595,6 +603,9 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                 previewData = def.data
             }
             draft = MessageInteractor.draftyImage(caption: def.caption, filename: filename, refurl: ref, mimeType: mimeType, data: data, width: Int(def.width!), height: Int(def.height!), size: def.data.count)
+        case .video:
+            draft = MessageInteractor.draftyVideo(caption: def.caption, mime: mimeType, refurl: ref, duration: def.duration!, width: Int(def.width!), height: Int(def.height!), fname: filename, size: def.data.count, preMime: def.previewMime, preview: def.preview, previewUrl: nil)
+            previewData = def.preview
         }
 
         if let d = draft, case let .replyTo(replyTo, replyToSeq) = self.pendingMessage {
@@ -615,51 +626,92 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         }
         if let msg = topic.store?.msgDraft(topic: topic, data: content, head: head) {
             let helper = Cache.getLargeFileHelper()
+            struct UploadResult {
+                var result: ServerMessage?
+                var error: Error?
+            }
+            let dg = DispatchGroup()
+
+            var previewResult = UploadResult()
+            if def.previewOutOfBand, let pdata = previewData {
+                dg.enter()
+                helper.startMsgAttachmentUpload(
+                    filename: "preview:" + filename, mimetype: def.previewMime!, data: pdata,
+                    topicId: self.topicName!, msgId: msg.msgId, progressCallback: nil,
+                    completionCallback: { (srvMsg, err) in
+                        previewResult.result = srvMsg
+                        previewResult.error = err
+                        dg.leave()
+                    })
+                previewData = nil
+            }
+            dg.enter()
+            var attachmentResult = UploadResult()
             helper.startMsgAttachmentUpload(filename: filename, mimetype: mimeType, data: def.data, topicId: self.topicName!, msgId: msg.msgId, progressCallback: { [weak self] progress in
                     let interactor = self ?? MessageInteractor.existingInteractor(for: topic.name)
                     interactor?.presenter?.updateProgress(forMsgId: msg.msgId, progress: progress)
                 },
-                completionCallback: { [weak self] (serverMessage, error) in
-                    let interactor = self ?? MessageInteractor.existingInteractor(for: topic.name)
-                    var success = false
-                    defer {
-                        if !success {
-                            _ = topic.store?.msgDiscard(topic: topic, dbMessageId: msg.msgId)
-                        }
-                        interactor?.loadMessagesFromCache()
+                completionCallback: { (srvMsg, err) in
+                    attachmentResult.result = srvMsg
+                    attachmentResult.error = err
+                    dg.leave()
+                })
+
+            dg.notify(queue: .main) { [weak self] in
+                let serverMessage = attachmentResult.result
+                let error = attachmentResult.error
+                let interactor = self ?? MessageInteractor.existingInteractor(for: topic.name)
+                var success = false
+                defer {
+                    if !success {
+                        _ = topic.store?.msgDiscard(topic: topic, dbMessageId: msg.msgId)
                     }
-                    guard error == nil else {
+                    interactor?.loadMessagesFromCache()
+                }
+                guard error == nil else {
+                    switch error! {
+                    case Upload.UploadError.cancelledByUser:
+                        // Upload was cancelled by user. Do nothing.
+                        Cache.log.info("Upload cancelled by user: file '%@'", filename)
+                    default:
                         DispatchQueue.main.async {
                             UiUtils.showToast(message: error!.localizedDescription)
                         }
-                        return
                     }
-                    guard let ctrl = serverMessage?.ctrl, ctrl.code == 200, let srvUrl = URL(string: ctrl.getStringParam(for: "url") ?? "") else {
-                        return
-                    }
+                    return
+                }
+                guard let ctrl = serverMessage?.ctrl, ctrl.code == 200, let srvUrl = URL(string: ctrl.getStringParam(for: "url") ?? "") else {
+                    return
+                }
 
-                    var draft: Drafty?
-                    switch type {
-                    case .audio:
-                        draft = MessageInteractor.draftyAudio(refurl: ref, mimeType: mimeType, data: nil, duration: def.duration!, preview: def.preview!, size: def.data.count)
-                    case .file:
-                        draft = try? Drafty().attachFile(mime: mimeType, fname: filename, refurl: srvUrl, size: def.data.count)
-                    case .image:
-                        draft = MessageInteractor.draftyImage(caption: def.caption, filename: filename, refurl: srvUrl, mimeType: mimeType, data: previewData!, width: Int(def.width!), height: Int(def.height!), size: def.data.count)
+                var draft: Drafty?
+                switch type {
+                case .audio:
+                    draft = MessageInteractor.draftyAudio(refurl: ref, mimeType: mimeType, data: nil, duration: def.duration!, preview: def.preview!, size: def.data.count)
+                case .file:
+                    draft = try? Drafty().attachFile(mime: mimeType, fname: filename, refurl: srvUrl, size: def.data.count)
+                case .image:
+                    draft = MessageInteractor.draftyImage(caption: def.caption, filename: filename, refurl: srvUrl, mimeType: mimeType, data: previewData!, width: Int(def.width!), height: Int(def.height!), size: def.data.count)
+                case .video:
+                    var previewUrl: URL?
+                    if let ctrl = previewResult.result?.ctrl, ctrl.code == 200 {
+                        previewUrl = URL(string: ctrl.getStringParam(for: "url") ?? "")
                     }
-                    if let r = replyToCopy, let d = draft {
-                        draft = r.append(d)
-                    }
+                    draft = MessageInteractor.draftyVideo(caption: def.caption, mime: mimeType, refurl: srvUrl, duration: def.duration!, width: Int(def.width!), height: Int(def.height!), fname: filename, size: def.data.count, preMime: def.previewMime, preview: previewData, previewUrl: previewUrl)
+                }
+                if let r = replyToCopy, let d = draft {
+                    draft = r.append(d)
+                }
 
-                    if let content = draft {
-                        _ = topic.store?.msgReady(topic: topic, dbMessageId: msg.msgId, data: content)
-                        topic.syncOne(msgId: msg.msgId)
-                            .thenFinally({
-                                interactor?.loadMessagesFromCache()
-                            })
-                        success = true
-                    }
-                })
+                if let content = draft {
+                    _ = topic.store?.msgReady(topic: topic, dbMessageId: msg.msgId, data: content)
+                    topic.syncOne(msgId: msg.msgId)
+                        .thenFinally({
+                            interactor?.loadMessagesFromCache()
+                        })
+                    success = true
+                }
+            }
             self.loadMessagesFromCache()
         }
     }
@@ -695,6 +747,22 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
             ref = nil
         }
         return try? Drafty(plainText: " ").insertAudio(at: 0, mime: mimeType, bits: data, preview: preview, duration: duration, fname: nil, refurl: ref, size: size)
+    }
+
+    private static func draftyVideo(caption: String?, mime: String, refurl: URL?,
+                                    duration: Int, width: Int, height: Int, fname: String?, size: Int,
+                                    preMime: String?, preview: Data?, previewUrl: URL?) -> Drafty? {
+        let ref: URL?
+        if let refurl = refurl, let base = Cache.tinode.baseURL(useWebsocketProtocol: false) {
+            ref = URL(string: refurl.relativize(from: base))
+        } else {
+            ref = nil
+        }
+        let content = try? Drafty(plainText: " ").insertVideo(at: 0, mime: mime, bits: nil, refurl: ref, duration: duration, width: width, height: height, fname: fname, size: size, preMime: "image/png", preview: preview, previewRef: previewUrl)
+        if let caption = caption, !caption.isEmpty {
+            _ = content?.appendLineBreak().append(Drafty(plainText: caption))
+        }
+        return content
     }
 
     override func onData(data: MsgServerData?) {

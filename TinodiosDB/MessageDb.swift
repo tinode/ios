@@ -114,12 +114,16 @@ public class MessageDb {
         guard let topicId = msg.topicId, let userId = msg.userId, topicId >= 0, userId >= 0 else {
             throw MessageDbError.dataError("Failed to insert row into MessageDb: topicId = \(String(describing: msg.topicId)), userId = \(String(describing: msg.userId))")
         }
+        var effSeqId = effectiveSeqId
         var status = BaseDb.Status.undefined
         if let seq = msg.seq, seq > 0 {
             status = .synced
         } else {
             msg.seq = tdb.getNextUnusedSeq(topic: topic)
             status = (msg.dbStatus == nil || msg.dbStatus == BaseDb.Status.undefined) ? .queued : msg.dbStatus!
+            if effSeqId ?? 0 <= 0 {
+                effSeqId = msg.seq
+            }
         }
         var setters = [Setter]()
         setters.append(self.topicId <- topicId)
@@ -131,7 +135,7 @@ public class MessageDb {
         if let replaced = msg.replacesSeq {
             setters.append(self.replSeq <- replaced)
         }
-        if let effSeq = effectiveSeqId, effSeq > 0 {
+        if let effSeq = effSeqId, effSeq > 0 {
             setters.append(self.effectiveSeq <- effSeq)
         }
         if let effTs = effectiveTs {
