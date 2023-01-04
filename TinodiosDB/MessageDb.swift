@@ -158,8 +158,9 @@ public class MessageDb {
         try self.db.run(record.update(self.effectiveSeq <- nil))
     }
 
-    private func activateMessageVersion(withEffectiveSeq seqId: Int, withEffectiveTs ts: Date?, onTopic topicId: Int64) throws -> Bool {
-        guard let rec = try db.pluck(self.table.select(self.id).filter(self.topicId == topicId && self.replSeq == seqId)
+    private func activateMessageVersion(withEffectiveSeq seqId: Int, withEffectiveTs ts: Date?, onTopic topicId: Int64, originalAuthor: String?) throws -> Bool {
+        // Find the latest replacement message for this seqId (originating from the original message author) and activate it.
+        guard let rec = try db.pluck(self.table.select(self.id).filter(self.topicId == topicId && self.replSeq == seqId && self.sender == originalAuthor)
             .order(self.seq.desc)) else {
             return false
         }
@@ -209,7 +210,7 @@ public class MessageDb {
                     effTs = msg.ts
                     if let seqId = effSeq {
                         // Check if there are newer versions of this message and activate the latest one.
-                        if try self.activateMessageVersion(withEffectiveSeq: seqId, withEffectiveTs: effTs, onTopic: topicId) {
+                        if try self.activateMessageVersion(withEffectiveSeq: seqId, withEffectiveTs: effTs, onTopic: topicId, originalAuthor: msg.from) {
                             // If activated, then this message has been replaced by a newer one.
                             effSeq = nil
                         }
