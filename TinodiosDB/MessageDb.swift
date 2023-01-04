@@ -191,7 +191,7 @@ public class MessageDb {
                 if let replaceSeq = msg.replacesSeq {
                     // This message replaces another message.
                     if let orig = self.getActiveVersion(withEffectiveSeqId: replaceSeq, onTopic: topicId),
-                       msg.seqId == 0 || (orig[self.seq] ?? 0) < msg.seqId {
+                       msg.from == orig[self.sender] && (msg.seqId == 0 || (orig[self.seq] ?? 0) < msg.seqId) {
                         // msg is a newer version.
                         try self.deactivateMessageVersion(withEffectiveSeq: replaceSeq, onTopic: topicId)
                         effSeq = replaceSeq
