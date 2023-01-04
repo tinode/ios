@@ -109,6 +109,8 @@ class FormatNode: CustomStringConvertible {
         static let kVideoDurationMaxWidth: CGFloat = 50
         /// Video duration text box height.
         static let kVideoDurationHeight: CGFloat = 20
+        /// Video duration text box insets.
+        static let kVideoDurationInsets = UIEdgeInsets(top: -1, left: -5, bottom: -1, right: -5)
     }
 
     // Thrown by the formatting function when the length budget gets exceeded.
@@ -508,13 +510,35 @@ class FormatNode: CustomStringConvertible {
                     }
                     let attrs = [NSAttributedString.Key.font: font,
                                  NSAttributedString.Key.paragraphStyle: paragraphStyle,
-                                 NSAttributedString.Key.foregroundColor: UIColor.white,
-                                 NSAttributedString.Key.backgroundColor: UIColor.darkGray.withAlphaComponent(Constants.kVideoOverlayAlpha)]
+                                 NSAttributedString.Key.foregroundColor: UIColor.white]
 
                     let durationWidth = shouldScale ? Constants.kVideoDurationMaxWidth / scaling : Constants.kVideoDurationMaxWidth
                     let durationHeight = shouldScale ? Constants.kVideoDurationHeight / scaling : Constants.kVideoDurationHeight
                     let durationRect = CGRect(x: 0, y: rect.height - durationHeight, width: durationWidth, height: durationHeight)
-                    NSAttributedString(string: AbstractFormatter.millisToTime(millis: duration, fixedMin: true), attributes: attrs).draw(in: durationRect)
+
+                    // Draw duration string with the gray background.
+                    // Have to use layoutManager since NSAttributedString.draw(in: CGRect) does not support background padding & rounded corners.
+                    let durationStr = AbstractFormatter.millisToTime(millis: duration, fixedMin: true)
+                    let textStorage = NSTextStorage(string: durationStr, attributes: attrs)
+                    let textContainer = NSTextContainer(size: durationRect.size)
+                    let layoutManager = NSLayoutManager()
+                    layoutManager.addTextContainer(textContainer)
+                    textStorage.addLayoutManager(layoutManager)
+
+                    let characterRange = NSRange(location: 0, length: durationStr.count)
+                    let glyphRange = layoutManager.glyphRange(forCharacterRange: characterRange, actualCharacterRange: nil)
+                    let boundingRect = layoutManager.boundingRect(forGlyphRange: glyphRange, in: textContainer)
+
+                    let glyphRange2 = NSRange(0 ..< layoutManager.numberOfGlyphs)
+                    let origin = durationRect.origin
+
+                    let bg = boundingRect.offsetBy(dx: origin.x, dy: origin.y).inset(by: Constants.kVideoDurationInsets)
+
+                    UIColor.darkGray.withAlphaComponent(Constants.kVideoOverlayAlpha).set()
+                    let path = UIBezierPath(roundedRect: bg, cornerRadius: bg.height * 0.2)
+                    path.fill()
+
+                    layoutManager.drawGlyphs(forGlyphRange: glyphRange2, at: origin)
                 }
             }
         }
