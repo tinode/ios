@@ -112,24 +112,24 @@ import UIKit
     override public init(frame: CGRect, textContainer: NSTextContainer?) {
         super.init(frame: frame, textContainer: textContainer)
         addTextChangeObserver()
-        textEmptyHandler()
+        textEmptyHandler(Notification(name: UITextView.textDidEndEditingNotification, object: self))
     }
 
     required public init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         addTextChangeObserver()
         setColors()
-        textEmptyHandler()
+        textEmptyHandler(Notification(name: UITextView.textDidEndEditingNotification, object: self))
     }
 
     // MARK: private methods
 
     private func addTextChangeObserver() {
-        NotificationCenter.default.addObserver(self, selector: #selector(textBeginEditing), name: UITextView.textDidBeginEditingNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(checkForEmptyText), name: UITextView.textDidEndEditingNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(textBeginEditing), name: UITextView.textDidBeginEditingNotification, object: self)
+        NotificationCenter.default.addObserver(self, selector: #selector(checkForEmptyText), name: UITextView.textDidEndEditingNotification, object: self)
     }
 
-    private func textEmptyHandler() {
+    private func textEmptyHandler(_ notification: Notification) {
         if text.isEmpty {
             isShowingPlaceholder = true
             textColor = placeholderColor ?? Constants.defaultPlaceholderColorLight
@@ -137,7 +137,7 @@ import UIKit
         }
     }
 
-    @objc private func textBeginEditing() {
+    @objc private func textBeginEditing(_ notification: Notification) {
         if isShowingPlaceholder {
             text = nil
             textColor = mainTextColor
@@ -155,7 +155,7 @@ import UIKit
     }
 
     deinit {
-        NotificationCenter.default.removeObserver(self, name: UITextView.textDidBeginEditingNotification, object: nil)
-        NotificationCenter.default.removeObserver(self, name: UITextView.textDidEndEditingNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UITextView.textDidBeginEditingNotification, object: self)
+        NotificationCenter.default.removeObserver(self, name: UITextView.textDidEndEditingNotification, object: self)
     }
 }
