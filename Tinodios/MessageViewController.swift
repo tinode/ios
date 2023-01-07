@@ -1265,6 +1265,7 @@ extension MessageViewController: PendingMessagePreviewDelegate {
         self.becomeFirstResponder()
         self.interactor?.dismissPendingMessage()
         self.togglePreviewBar(with: nil)
+        self.view.setNeedsLayout()
     }
 }
 

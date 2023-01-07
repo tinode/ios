@@ -278,7 +278,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                 self.pendingMessage = .replyTo(message: finalMsg, seqId: seqId)
             } else {
                 let original = content.toMarkdown(withPlainLinks: true)
-                self.pendingMessage = .edit(message: content.wrapInto(style: "QQ"), markdown: original, seqId: seqId)
+                self.pendingMessage = .edit(message: reply.wrapInto(style: "QQ"), markdown: original, seqId: seqId)
             }
             try? whenDone.resolve(result: self.pendingMessage!)
             return nil
