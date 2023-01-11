@@ -346,9 +346,9 @@ class MessageViewController: UIViewController {
         let buttonGoToLatest = UIButton(type: .custom)
         buttonGoToLatest.backgroundColor = .secondarySystemBackground
         buttonGoToLatest.imageView?.tintColor = .secondaryLabel
-        buttonGoToLatest.setImage(UIImage(systemName: "chevron.down", withConfiguration: UIImage.SymbolConfiguration(pointSize: 18)), for: .normal)
+        buttonGoToLatest.setImage(UIImage(systemName: "chevron.down", withConfiguration: UIImage.SymbolConfiguration(pointSize: 14, weight: .bold)), for: .normal)
         buttonGoToLatest.sizeToFit()
-        buttonGoToLatest.layer.cornerRadius = 16
+        buttonGoToLatest.layer.cornerRadius = 22
         buttonGoToLatest.layer.shadowOpacity = 0.25
         buttonGoToLatest.layer.shadowOffset = CGSize()
         buttonGoToLatest.addTarget(self, action: #selector(self.goToLastMessage), for: .touchUpInside)
@@ -361,8 +361,8 @@ class MessageViewController: UIViewController {
         self.goToLatestButton.translatesAutoresizingMaskIntoConstraints = false
         self.goToLatestButtonBottomAnchor = self.goToLatestButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -(inputAccessoryView?.frame.height ?? 0) - 16)
         NSLayoutConstraint.activate([
-            self.goToLatestButton.widthAnchor.constraint(equalToConstant: 32.0),
-            self.goToLatestButton.heightAnchor.constraint(equalToConstant: 32.0),
+            self.goToLatestButton.widthAnchor.constraint(equalToConstant: 44.0),
+            self.goToLatestButton.heightAnchor.constraint(equalToConstant: 44.0),
             self.goToLatestButtonBottomAnchor,
             self.goToLatestButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -8)])
     }
