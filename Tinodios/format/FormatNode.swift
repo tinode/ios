@@ -99,6 +99,9 @@ class FormatNode: CustomStringConvertible {
         static let kSuccessfulCallArrowColor = UIColor(fromHexCode: 0xFF006400)
         static let kFailedCallArrowColor = UIColor.red
 
+        // The base color of the circular background.
+        static let kPlayControlBackgroundColor = UIColor(fromHexCode: 0xB0333333)
+
         /// Video Play button point size.
         static let kVideoPlayButtonPointSize: CGFloat = 60
         /// Video Play button opacity.
@@ -122,10 +125,10 @@ class FormatNode: CustomStringConvertible {
     typealias CharacterStyle = [NSAttributedString.Key: Any]
 
     private lazy var playIcon: UIImage = {
-        let play = UIImage(systemName: "play.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: Constants.kVideoPlayButtonPointSize / 2, weight: .bold, scale: .large))!.withTintColor(.white, renderingMode: .alwaysOriginal)
+        let play = UIImage(systemName: "play.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: Constants.kVideoPlayButtonPointSize / 2.6, weight: .bold, scale: .large))!.withTintColor(.white, renderingMode: .alwaysOriginal)
         let renderer = UIGraphicsImageRenderer(size: CGSize(width: Constants.kVideoPlayButtonPointSize, height: Constants.kVideoPlayButtonPointSize))
         let img = renderer.image { ctx in
-            let bkgColor = UIColor.darkGray.withAlphaComponent(Constants.kVideoOverlayAlpha).cgColor
+            let bkgColor = Constants.kPlayControlBackgroundColor.cgColor
             ctx.cgContext.setFillColor(bkgColor)
             ctx.cgContext.setStrokeColor(bkgColor)
             ctx.cgContext.setLineWidth(1)
