@@ -71,7 +71,9 @@ class CameraManager: NSObject {
         isCapturing = true
 
         #if arch(arm64)
-        captureSession.startRunning()
+        DispatchQueue.global(qos: .background).async {
+            self.captureSession.startRunning()
+        }
         #endif
     }
     func stopCapture() {
@@ -80,7 +82,9 @@ class CameraManager: NSObject {
         isCapturing = false
 
         #if arch(arm64)
-        captureSession.stopRunning()
+        DispatchQueue.global(qos: .background).async {
+            self.captureSession.stopRunning()
+        }
         #endif
     }
 }
@@ -575,6 +579,8 @@ class CallViewController: UIViewController {
     @IBAction func didToggleCamera(_ sender: Any) {
         let img = UIImage(named: self.webRTCClient.toggleVideo() ? "vc.fill" : "vc.slash.fill", in: nil, with: UIImage.SymbolConfiguration(pointSize: 16, weight: .regular))
         self.videoToggleButton.setImage(img, for: .normal)
+        // Apple is not making it easy.
+        self.videoToggleButton.imageEdgeInsets = self.webRTCClient.toggleVideo() ? UIEdgeInsets(top: 14, left: 15, bottom: 20, right: 15) : UIEdgeInsets(top: 14, left: 14, bottom: 19, right: 15)
     }
 
     @IBAction func didTapHangUp(_ sender: Any) {

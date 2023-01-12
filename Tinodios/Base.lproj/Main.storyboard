@@ -123,7 +123,7 @@
                             <tableViewSection headerTitle="Contacts" id="bvE-OV-sy1">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" accessoryType="disclosureIndicator" indentationWidth="10" focusStyle="custom" textLabel="fLh-oI-CRP" imageView="6z9-5Y-HKA" style="IBUITableViewCellStyleDefault" id="WNR-81-Xt2">
-                                        <rect key="frame" x="0.0" y="300.66666603088373" width="414" height="43.666667938232422"/>
+                                        <rect key="frame" x="0.0" y="300.66666603088379" width="414" height="43.666667938232422"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="WNR-81-Xt2" id="Ovf-BC-JGG">
                                             <rect key="frame" x="0.0" y="0.0" width="383.66666666666669" height="43.666667938232422"/>
@@ -151,7 +151,7 @@
                             <tableViewSection headerTitle="Tags (Content Discovery)" id="jal-tR-OpF">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" accessoryType="disclosureIndicator" indentationWidth="10" focusStyle="custom" textLabel="eHa-mE-ZbY" detailTextLabel="K7L-Uc-b68" imageView="iGu-Eb-fCF" style="IBUITableViewCellStyleSubtitle" id="Nl1-fA-AeA">
-                                        <rect key="frame" x="0.0" y="383.33333396911615" width="414" height="55.666667938232422"/>
+                                        <rect key="frame" x="0.0" y="383.33333396911621" width="414" height="55.666667938232422"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Nl1-fA-AeA" id="SiW-3F-rOw">
                                             <rect key="frame" x="0.0" y="0.0" width="383.66666666666669" height="55.666667938232422"/>
@@ -1617,8 +1617,7 @@
                                             <constraint firstAttribute="height" constant="56" id="V8M-Of-gYf"/>
                                         </constraints>
                                         <color key="tintColor" systemColor="systemBackgroundColor"/>
-                                        <inset key="contentEdgeInsets" minX="13" minY="16" maxX="11" maxY="16"/>
-                                        <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                        <inset key="imageEdgeInsets" minX="15" minY="14" maxX="15" maxY="20"/>
                                         <state key="normal" image="vc.fill">
                                             <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="17" scale="default" weight="regular"/>
                                         </state>
@@ -2621,7 +2620,7 @@
                             <tableViewSection id="E2p-f7-Hof" userLabel="Manage tags">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="none" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" focusStyle="custom" textLabel="r8j-wT-BLF" detailTextLabel="Zdw-nR-1tB" imageView="Fh4-hd-jpY" rowHeight="54" style="IBUITableViewCellStyleSubtitle" id="43D-n4-gOk" userLabel="Manage Tags">
-                                        <rect key="frame" x="0.0" y="312.33333587646479" width="414" height="54"/>
+                                        <rect key="frame" x="0.0" y="312.33333587646484" width="414" height="54"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="43D-n4-gOk" id="7PK-OU-Xwy">
                                             <rect key="frame" x="0.0" y="0.0" width="383.66666666666669" height="54"/>
@@ -2755,7 +2754,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <view key="tableFooterView" contentMode="scaleToFill" id="xIw-r0-6Pv" userLabel="Footer to hide separators for empty rows">
-                            <rect key="frame" x="0.0" y="-20" width="414" height="0.0"/>
+                            <rect key="frame" x="0.0" y="0.0" width="414" height="0.0"/>
                             <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
                             <accessibility key="accessibilityConfiguration" label="Footer">
                                 <accessibilityTraits key="traits" notEnabled="YES"/>
@@ -3310,7 +3309,7 @@
                             <tableViewSection headerTitle="Group Members" id="26s-2T-nI0">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="FeF-3T-sWp" imageView="i4w-uL-EcP" style="IBUITableViewCellStyleDefault" id="IF5-Bs-9cB" userLabel="Add Members">
-                                        <rect key="frame" x="0.0" y="468.99999999999994" width="414" height="50.000000000000057"/>
+                                        <rect key="frame" x="0.0" y="469" width="414" height="50"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="IF5-Bs-9cB" id="uqg-aO-L4d">
                                             <rect key="frame" x="0.0" y="0.0" width="383.66666666666669" height="50"/>
@@ -3726,7 +3725,6 @@
         </designable>
     </designables>
     <inferredMetricsTieBreakers>
-        <segue reference="IuA-m3-U07"/>
         <segue reference="Qbx-cO-rju"/>
         <segue reference="Fnn-wi-PrS"/>
         <segue reference="e5j-df-mav"/>
@@ -3762,7 +3760,7 @@
         <image name="speaker.fill" catalog="system" width="128" height="125"/>
         <image name="tag.fill" catalog="system" width="128" height="118"/>
         <image name="text.badge.checkmark" catalog="system" width="128" height="107"/>
-        <image name="vc.fill" width="162" height="130"/>
+        <image name="vc.fill" width="154" height="132"/>
         <image name="xmark.bin" catalog="system" width="128" height="92"/>
         <image name="xmark.bin.fill" catalog="system" width="128" height="92"/>
         <image name="xmark.bubble" width="11" height="11"/>
