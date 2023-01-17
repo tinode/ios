@@ -64,7 +64,7 @@ class CameraManager: NSObject {
         }
     }
 
-    func startCapture() {
+    func startCapture(completion: (() -> Void)? = nil) {
         Cache.log.info("CallVC - CameraManager: start capture")
 
         guard !isCapturing else { return }
@@ -73,10 +73,13 @@ class CameraManager: NSObject {
         #if arch(arm64)
         DispatchQueue.global(qos: .background).async {
             self.captureSession.startRunning()
+            completion?()
         }
+        #else
+        completion?()
         #endif
     }
-    func stopCapture() {
+    func stopCapture(completion: (() -> Void)? = nil) {
         Cache.log.info("CallVC - CameraManager: end capture")
         guard isCapturing else { return }
         isCapturing = false
@@ -84,7 +87,10 @@ class CameraManager: NSObject {
         #if arch(arm64)
         DispatchQueue.global(qos: .background).async {
             self.captureSession.stopRunning()
+            completion?()
         }
+        #else
+        completion?()
         #endif
     }
 }
@@ -109,6 +115,11 @@ protocol WebRTCClientDelegate: AnyObject {
     func closeCall()
     func canSendOffer() -> Bool
     func markConnectionSetupComplete()
+    func enableMediaControls()
+    // Toggle remote video.
+    func toggleRemoteVideo(remoteLive: Bool)
+    // Returns true is the call is originated as audio only.
+    var isAudioOnlyCall: Bool { get }
 }
 
 /// TinodeVideoCallDelegate
@@ -130,10 +141,15 @@ class WebRTCClient: NSObject {
         let videoDecoderFactory = RTCDefaultVideoDecoderFactory()
         return RTCPeerConnectionFactory(encoderFactory: videoEncoderFactory, decoderFactory: videoDecoderFactory)
     }()
-    private let mediaConstraints = [kRTCMediaConstraintsOfferToReceiveAudio: kRTCMediaConstraintsValueTrue,
-                                   kRTCMediaConstraintsOfferToReceiveVideo: kRTCMediaConstraintsValueTrue]
+    private static let kVideoCallMediaConstraints = [kRTCMediaConstraintsOfferToReceiveAudio: kRTCMediaConstraintsValueTrue,
+                                    kRTCMediaConstraintsOfferToReceiveVideo: kRTCMediaConstraintsValueTrue]
+    private static let kAudioOnlyMediaConstraints = [kRTCMediaConstraintsOfferToReceiveAudio: kRTCMediaConstraintsValueTrue]
+    // Video muted/unmuted events.
+    public static let kVideoEventMuted = "video:muted"
+    public static let kVideoEventUnmuted = "video:unmuted"
 
     private var localPeer: RTCPeerConnection?
+    private var localDataChannel: RTCDataChannel?
     private var localVideoSource: RTCVideoSource?
     private var localVideoTrack: RTCVideoTrack?
     private var videoCapturer: RTCVideoCapturer?
@@ -212,6 +228,12 @@ class WebRTCClient: NSObject {
             return false
         }
 
+        let chanConfig = RTCDataChannelConfiguration()
+        chanConfig.isOrdered = true
+        chanConfig.isNegotiated = true
+        self.localDataChannel = localPeer!.dataChannel(forLabel: "events", configuration: chanConfig)
+        self.localDataChannel?.delegate = self
+
         let stream = WebRTCClient.factory.mediaStream(withStreamId: "ARDAMS")
         stream.addAudioTrack(self.localAudioTrack!)
         stream.addVideoTrack(self.localVideoTrack!)
@@ -221,7 +243,8 @@ class WebRTCClient: NSObject {
 
     func offer(_ peerConnection: RTCPeerConnection) {
         Cache.log.info("WebRTCClient - creating offer")
-        peerConnection.offer(for: RTCMediaConstraints(mandatoryConstraints: mediaConstraints, optionalConstraints: nil), completionHandler: { [weak self](sdp, error) in
+        let constraints = self.delegate?.isAudioOnlyCall ?? false ? WebRTCClient.kAudioOnlyMediaConstraints : WebRTCClient.kVideoCallMediaConstraints
+        peerConnection.offer(for: RTCMediaConstraints(mandatoryConstraints: constraints, optionalConstraints: nil), completionHandler: { [weak self](sdp, error) in
             guard let self = self else { return }
 
             guard let sdp = sdp else {
@@ -246,8 +269,9 @@ class WebRTCClient: NSObject {
 
     func answer(_ peerConnection: RTCPeerConnection) {
         Cache.log.info("WebRTCClient - creating answer")
+        let constraints = self.delegate?.isAudioOnlyCall ?? false ? WebRTCClient.kAudioOnlyMediaConstraints : WebRTCClient.kVideoCallMediaConstraints
         peerConnection.answer(
-            for: RTCMediaConstraints(mandatoryConstraints: self.mediaConstraints, optionalConstraints: nil),
+            for: RTCMediaConstraints(mandatoryConstraints: constraints, optionalConstraints: nil),
             completionHandler: { [weak self](sdp, error) in
                 guard let self = self, let sdp = sdp else {
                     if let error = error {
@@ -269,6 +293,10 @@ class WebRTCClient: NSObject {
             })
     }
 
+    func sendOverDataChannel(event: String) {
+        self.localDataChannel?.sendData(RTCDataBuffer(data: Data(event.utf8), isBinary: false))
+    }
+
     func disconnect() {
         localPeer?.close()
         localPeer = nil
@@ -281,6 +309,32 @@ class WebRTCClient: NSObject {
         localVideoTrack = nil
         videoCapturer = nil
         remoteVideoTrack = nil
+    }
+}
+
+extension WebRTCClient: RTCDataChannelDelegate {
+    func dataChannelDidChangeState(_ dataChannel: RTCDataChannel) {
+        print("channel state \(dataChannel.readyState)")
+        switch dataChannel.readyState {
+        case .open:
+            if !(self.delegate?.isAudioOnlyCall ?? true) {
+                sendOverDataChannel(event: WebRTCClient.kVideoEventUnmuted)
+            }
+        default:
+            break
+        }
+    }
+
+    func dataChannel(_ dataChannel: RTCDataChannel, didReceiveMessageWith buffer: RTCDataBuffer) {
+        let event = String(decoding: buffer.data, as: UTF8.self)
+        switch event {
+        case WebRTCClient.kVideoEventMuted:
+            self.delegate?.toggleRemoteVideo(remoteLive: false)
+        case WebRTCClient.kVideoEventUnmuted:
+            self.delegate?.toggleRemoteVideo(remoteLive: true)
+        default:
+            break
+        }
     }
 }
 
@@ -392,8 +446,13 @@ extension WebRTCClient {
 
 extension WebRTCClient: RTCPeerConnectionDelegate {
     func peerConnection(_ peerConnection: RTCPeerConnection, didChange stateChanged: RTCSignalingState) {
-        if stateChanged == .closed {
+        switch stateChanged {
+        case .closed:
             self.delegate?.closeCall()
+        case .stable:
+            self.delegate?.enableMediaControls()
+        default:
+            break
         }
     }
 
@@ -407,7 +466,7 @@ extension WebRTCClient: RTCPeerConnectionDelegate {
     }
 
     func peerConnectionShouldNegotiate(_ peerConnection: RTCPeerConnection) {
-        guard self.delegate?.canSendOffer() ?? false else {
+        guard (self.delegate?.canSendOffer() ?? false) && !peerConnection.senders.isEmpty else {
             return
         }
         Cache.log.info("WebRTCClient: negotiating connection")
@@ -440,6 +499,8 @@ extension WebRTCClient: RTCPeerConnectionDelegate {
 
     func peerConnection(_ peerConnection: RTCPeerConnection, didOpen dataChannel: RTCDataChannel) {
         Cache.log.info("WebRTCClient: opened data channel %@", dataChannel)
+        self.localDataChannel = dataChannel
+        self.localDataChannel!.delegate = self
     }
 }
 
@@ -502,6 +563,7 @@ class CallViewController: UIViewController {
     @IBOutlet weak var localViewHeightConstraint: NSLayoutConstraint!
     @IBOutlet weak var localViewWidthConstraint: NSLayoutConstraint!
 
+    @IBOutlet weak var speakerToggleButton: UIButton!
     @IBOutlet weak var micToggleButton: UIButton!
     @IBOutlet weak var videoToggleButton: UIButton!
     @IBOutlet weak var hangUpButton: UIButton!
@@ -526,9 +588,11 @@ class CallViewController: UIViewController {
 
     var callDirection: CallDirection = .none
     var callSeqId: Int = -1
+    var isAudioOnlyCall: Bool = false
     // If true, the client has received a remote SDP from the peer and has sent a local SDP to the peer.
     var callInitialSetupComplete = false
-
+    // Audio output destination (.none = default).
+    var audioOutput: AVAudioSession.PortOverride = .none
     // For playing sound effects.
     var audioPlayer: AVAudioPlayer?
 
@@ -562,6 +626,15 @@ class CallViewController: UIViewController {
     override func viewDidLoad() {
         self.videoToggleButton.addBlurEffect()
         self.micToggleButton.addBlurEffect()
+        self.speakerToggleButton.addBlurEffect()
+
+        if self.isAudioOnlyCall {
+            self.audioOutput = .none
+            self.videoToggleButton.setImage(UIImage(named: "vc.slash.fill", in: nil, with: UIImage.SymbolConfiguration(pointSize: 16, weight: .regular)), for: .normal)
+            self.speakerToggleButton.setImage(UIImage(systemName: "speaker.wave.1.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: 16, weight: .regular)), for: .normal)
+        } else {
+            self.audioOutput = .speaker
+        }
         self.listener = InfoListener(delegateEventsTo: self)
 
         if let topic = topic {
@@ -571,16 +644,60 @@ class CallViewController: UIViewController {
         }
     }
 
+    @IBAction func didToggleSpeaker(_ sender: Any) {
+        let session: AVAudioSession = AVAudioSession.sharedInstance()
+
+        var newIconName: String
+        switch self.audioOutput {
+        case .none:
+            newIconName = "speaker.wave.3.fill"
+            self.audioOutput = .speaker
+        case .speaker:
+            newIconName = "speaker.wave.1.fill"
+            self.audioOutput = .none
+        default:
+            Cache.log.error("unknown AVAudioSession.PortOverride value: %d", self.audioOutput.rawValue)
+            return
+        }
+        let newimg = UIImage(systemName: newIconName, withConfiguration: UIImage.SymbolConfiguration(pointSize: 16, weight: .regular))
+        do {
+            try session.overrideOutputAudioPort(self.audioOutput)
+            speakerToggleButton.setImage(newimg, for: .normal)
+        } catch {
+            Cache.log.error("Couldn't override output audio port: %@", error.localizedDescription)
+        }
+    }
+
     @IBAction func didToggleMic(_ sender: Any) {
         let img = UIImage(systemName: self.webRTCClient.toggleAudio() ? "mic.fill" : "mic.slash.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: 16, weight: .regular))
         self.micToggleButton.setImage(img, for: .normal)
     }
 
     @IBAction func didToggleCamera(_ sender: Any) {
-        let img = UIImage(named: self.webRTCClient.toggleVideo() ? "vc.fill" : "vc.slash.fill", in: nil, with: UIImage.SymbolConfiguration(pointSize: 16, weight: .regular))
-        self.videoToggleButton.setImage(img, for: .normal)
-        // Apple is not making it easy.
-        self.videoToggleButton.imageEdgeInsets = self.webRTCClient.toggleVideo() ? UIEdgeInsets(top: 14, left: 15, bottom: 20, right: 15) : UIEdgeInsets(top: 14, left: 14, bottom: 19, right: 15)
+        let newimg = UIImage(named: cameraManager.isCapturing ? "vc.slash.fill" : "vc.fill", in: nil, with: UIImage.SymbolConfiguration(pointSize: 16, weight: .regular))
+
+        videoToggleButton.isEnabled = false
+        if cameraManager.isCapturing {
+            cameraManager.stopCapture {
+                DispatchQueue.main.async {
+                    self.localView.isHidden = true
+                    self.webRTCClient.sendOverDataChannel(event: WebRTCClient.kVideoEventMuted)
+                    self.videoToggleButton.isEnabled = true
+                    self.videoToggleButton.setImage(newimg, for: .normal)
+                    self.videoToggleButton.imageEdgeInsets = UIEdgeInsets(top: 14, left: 14, bottom: 19, right: 15)
+                }
+            }
+        } else {
+            cameraManager.startCapture {
+                DispatchQueue.main.async {
+                    self.localView.isHidden = false
+                    self.webRTCClient.sendOverDataChannel(event: WebRTCClient.kVideoEventUnmuted)
+                    self.videoToggleButton.isEnabled = true
+                    self.videoToggleButton.setImage(newimg, for: .normal)
+                    self.videoToggleButton.imageEdgeInsets = UIEdgeInsets(top: 14, left: 15, bottom: 20, right: 15)
+                }
+            }
+        }
     }
 
     @IBAction func didTapHangUp(_ sender: Any) {
@@ -589,7 +706,9 @@ class CallViewController: UIViewController {
 
     private func setupCaptureSessionAndStartCall() {
         cameraManager.setupCamera()
-        cameraManager.startCapture()
+        if (!self.isAudioOnlyCall) {
+            cameraManager.startCapture()
+        }
         setupViews()
 
         NotificationCenter.default.addObserver(forName: AVAudioSession.routeChangeNotification, object: nil, queue: nil, using: handleRouteChange)
@@ -650,21 +769,40 @@ class CallViewController: UIViewController {
         }
     }
 
+    private enum PermissionsCheckResult {
+        case ok
+        case micDenied
+        case cameraDenied
+    }
+
+    private func permissionsCheck(completion: @escaping (PermissionsCheckResult) -> Void) {
+        self.checkMicPermissions { success in
+            guard success else {
+                completion(.micDenied)
+                return
+            }
+            if self.isAudioOnlyCall {
+                completion(.ok)
+                return
+            }
+            self.checkCameraPermissions { success in
+                completion(success ? .ok : .cameraDenied)
+            }
+        }
+    }
+
     override func viewDidAppear(_ animated: Bool) {
-        self.checkCameraPermissions { success in
-            if success {
-                self.checkMicPermissions { success in
-                    if success {
-                        DispatchQueue.main.async { self.setupCaptureSessionAndStartCall() }
-                    } else {
-                        Cache.log.error("No permission to access microphone")
-                        DispatchQueue.main.async {
-                            UiUtils.showToast(message: NSLocalizedString("No permission to access microphone", comment: "Error message when call cannot be started due to missing microphone permission"))
-                            self.handleCallClose()
-                        }
-                    }
+        self.permissionsCheck { result in
+            switch result {
+            case .ok:
+                DispatchQueue.main.async { self.setupCaptureSessionAndStartCall() }
+            case .micDenied:
+                Cache.log.error("No permission to access microphone")
+                DispatchQueue.main.async {
+                    UiUtils.showToast(message: NSLocalizedString("No permission to access microphone", comment: "Error message when call cannot be started due to missing microphone permission"))
+                    self.handleCallClose()
                 }
-            } else {
+            case .cameraDenied:
                 Cache.log.error("No permission to access camera")
                 DispatchQueue.main.async {
                     UiUtils.showToast(message: NSLocalizedString("No permission to access camera", comment: "Error message when call cannot be started due to missing camera permission"))
@@ -690,9 +828,9 @@ class CallViewController: UIViewController {
 
         switch reason {
         case .categoryChange:
-            try? AVAudioSession.sharedInstance().overrideOutputAudioPort(.speaker)
+            try? AVAudioSession.sharedInstance().overrideOutputAudioPort(self.audioOutput)
         case .oldDeviceUnavailable:
-            try? AVAudioSession.sharedInstance().overrideOutputAudioPort(.speaker)
+            try? AVAudioSession.sharedInstance().overrideOutputAudioPort(self.audioOutput)
         default:
             Cache.log.debug("CallVC - audio route change: other - %d", value)
         }
@@ -718,6 +856,10 @@ class CallViewController: UIViewController {
         self.embedView(remoteRenderer, into: remoteView)
 
         self.remoteRenderer = remoteRenderer
+        if self.isAudioOnlyCall {
+            remoteView.isHidden = true
+            localView.isHidden = true
+        }
     }
 
     func stopMedia() {
@@ -742,14 +884,15 @@ class CallViewController: UIViewController {
     func handleCallInvite() {
         switch self.callDirection {
         case .outgoing:
-            guard Cache.callManager.registerOutgoingCall(onTopic: self.topic!.name) else {
+            guard Cache.callManager.registerOutgoingCall(onTopic: self.topic!.name, isAudioOnly: self.isAudioOnlyCall) else {
                 self.handleCallClose()
                 return
             }
             playSoundEffect("dialing")
             // Send out a call invitation to the peer.
             self.topic?.publish(content: Drafty.videoCall(),
-                                withExtraHeaders:["webrtc": .string(MsgServerData.WebRTC.kStarted.rawValue)]).then(onSuccess: { msg in
+                                withExtraHeaders:["webrtc": .string(MsgServerData.WebRTC.kStarted.rawValue),
+                                                  "aonly": .bool(self.isAudioOnlyCall)]).then(onSuccess: { msg in
                 guard let ctrl = msg?.ctrl else { return nil }
                 if ctrl.code < 300, let seq = ctrl.getIntParam(for: "seq"), seq > 0 {
                     // All good. Register the call.
@@ -764,10 +907,12 @@ class CallViewController: UIViewController {
         case .incoming:
             // The callee (we) has accepted the call. Notify the caller.
             self.topic?.videoCall(event: "accept", seq: self.callSeqId)
-            DispatchQueue.main.async {
-                // Hide peer name & avatar.
-                self.peerNameLabel.alpha = 0
-                self.peerAvatarImageView.alpha = 0
+            if !self.isAudioOnlyCall {
+                DispatchQueue.main.async {
+                    // Hide peer name & avatar.
+                    self.peerNameLabel.alpha = 0
+                    self.peerAvatarImageView.alpha = 0
+                }
             }
         case .none:
             Cache.log.error("CallVC - Invalid call direction in handleCallInvite()")
@@ -869,7 +1014,6 @@ extension CallViewController: WebRTCClientDelegate {
     }
 
     func handleRemoteStream(_ client: WebRTCClient, receivedStream stream: RTCMediaStream) {
-        //client.assignRemoteVideoTrack(track: stream.videoTracks.first)
         client.setupRemoteRenderer(self.remoteRenderer!, withTrack: stream.videoTracks.first)
     }
 
@@ -877,9 +1021,25 @@ extension CallViewController: WebRTCClientDelegate {
         return self.callDirection != .incoming || self.callInitialSetupComplete
     }
 
+    func enableMediaControls() {
+        DispatchQueue.main.async {
+            self.micToggleButton.isEnabled = true
+            self.videoToggleButton.isEnabled = true
+            self.speakerToggleButton.isEnabled = true
+        }
+    }
+
     func markConnectionSetupComplete() {
         self.callInitialSetupComplete = true
         self.webRTCClient.drainIceCandidatesCache()
+    }
+
+    func toggleRemoteVideo(remoteLive: Bool) {
+        DispatchQueue.main.async {
+            self.remoteView.isHidden = !remoteLive
+            self.peerNameLabel.alpha = !remoteLive ? 1 : 0
+            self.peerAvatarImageView.alpha = !remoteLive ? 1 : 0
+        }
     }
 }
 
@@ -895,8 +1055,10 @@ extension CallViewController: TinodeVideoCallDelegate {
 
         // Stop animation, hide peer name & avatar.
         self.dialingAnimation(on: false)
-        self.peerNameLabel.alpha = 0
-        self.peerAvatarImageView.alpha = 0
+        if !self.isAudioOnlyCall {
+            self.peerNameLabel.alpha = 0
+            self.peerAvatarImageView.alpha = 0
+        }
         // The callee has informed us (the caller) of the call acceptance.
         guard self.webRTCClient.createPeerConnection() else {
             Cache.log.error("CallVC.handleAcceptedMsg - createPeerConnection failed")

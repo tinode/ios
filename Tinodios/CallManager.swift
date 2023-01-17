@@ -18,6 +18,7 @@ class CallManager {
         var topic: String
         var from: String
         var seq: Int
+        var audioOnly: Bool
     }
 
     enum CallError: Error {
@@ -64,11 +65,11 @@ class CallManager {
         audioSession.unlockForConfiguration()
     }
 
-    private func activateAudioSession() {
+    private func activateAudioSession(withSpeaker speaker: Bool) {
         self.audioSessionChange { audioSession in
             try audioSession.setCategory(AVAudioSession.Category.playAndRecord.rawValue)
             try audioSession.setMode(AVAudioSession.Mode.voiceChat.rawValue)
-            try audioSession.overrideOutputAudioPort(.speaker)
+            try audioSession.overrideOutputAudioPort(speaker ? .speaker : .none)
             try audioSession.setActive(true)
         }
     }
@@ -81,14 +82,14 @@ class CallManager {
     }
 
     // Registers an outgoing call that's just been started.
-    func registerOutgoingCall(onTopic topicName: String) -> Bool {
+    func registerOutgoingCall(onTopic topicName: String, isAudioOnly: Bool) -> Bool {
         guard self.callInProgress == nil else {
             // Another call is in progress. Quit.
             return false
         }
         let tinode = Cache.tinode
-        self.callInProgress = Call(uuid: UUID(), topic: topicName, from: tinode.myUid!, seq: -1)
-        self.activateAudioSession()
+        self.callInProgress = Call(uuid: UUID(), topic: topicName, from: tinode.myUid!, seq: -1, audioOnly: isAudioOnly)
+        self.activateAudioSession(withSpeaker: !isAudioOnly)
         return true
     }
 
@@ -98,7 +99,7 @@ class CallManager {
     }
 
     // Report incoming call to the operating system (which displays incoming call UI).
-    func displayIncomingCall(uuid: UUID, onTopic topicName: String, originatingFrom fromUid: String, withSeqId seq: Int, completion: ((Error?) -> Void)?) {
+    func displayIncomingCall(uuid: UUID, onTopic topicName: String, originatingFrom fromUid: String, withSeqId seq: Int, audioOnly: Bool, completion: ((Error?) -> Void)?) {
         guard self.callInProgress == nil else {
             if seq == self.callInProgress!.seq && self.callInProgress!.topic == topicName {
                 // FIXME: this should not really happen. Find the source of duplicates and fix it.
@@ -111,8 +112,8 @@ class CallManager {
             return
         }
 
-        self.activateAudioSession()
-        self.callInProgress = Call(uuid: uuid, topic: topicName, from: fromUid, seq: seq)
+        self.activateAudioSession(withSpeaker: !audioOnly)
+        self.callInProgress = Call(uuid: uuid, topic: topicName, from: fromUid, seq: seq, audioOnly: audioOnly)
         let tinode = Cache.tinode
         let user: DefaultUser? = tinode.getUser(with: fromUid)
         let senderName = user?.pub?.fn ?? NSLocalizedString("Unknown", comment: "Placeholder for missing user name")

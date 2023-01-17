@@ -188,6 +188,11 @@ open class MsgServerData: Codable {
         return WebRTC(rawValue: str)
     }
 
+    /// Returns true if the message is marked "audio-only" (makes sense only if it's a call).
+    public var isAudioOnlyCall: Bool {
+        return self.head?["aonly"]?.asBool() ?? false
+    }
+
     // Testing only.
     internal init(id: String?, topic: String?, from: String?, ts: Date?,
                   head: [String: JSONValue]?, seq: Int?, content: Drafty?) {

@@ -142,6 +142,22 @@ class MessageViewController: UIViewController {
         return avatarIcon
     }()
 
+    /// Audio call button in NavBar
+    private lazy var navBarAudioCallBtn: UIBarButtonItem = {
+        return UIBarButtonItem(
+            image: UIImage(systemName: "phone",
+                           withConfiguration:UIImage.SymbolConfiguration(pointSize: 16, weight: .light)),
+            style: .plain, target: self, action: #selector(navBarCallTapped(sender:)))
+    }()
+
+    /// Video call button in NavBar
+    private lazy var navBarVideoCallBtn: UIBarButtonItem = {
+        UIBarButtonItem(
+            image: UIImage(systemName: "video",
+                           withConfiguration:UIImage.SymbolConfiguration(pointSize: 16, weight: .light)),
+            style: .plain, target: self, action: #selector(navBarCallTapped(sender:)))
+    }()
+
     /// Pointer to the view holding messages.
     weak var collectionView: MessageView!
     private var collectionViewBottomAnchor: NSLayoutConstraint!
@@ -551,8 +567,10 @@ class MessageViewController: UIViewController {
             if let call = sender as? CallManager.Call {
                 destinationVC.callDirection = .incoming
                 destinationVC.callSeqId = call.seq
+                destinationVC.isAudioOnlyCall = call.audioOnly
             } else {
                 destinationVC.callDirection = .outgoing
+                destinationVC.isAudioOnlyCall = (sender as? UIBarButtonItem) == self.navBarAudioCallBtn
             }
             destinationVC.topic = self.topic
         default:
@@ -628,10 +646,8 @@ extension MessageViewController: MessageDisplayLogic {
         var items = [UIBarButtonItem(customView: navBarAvatarView)]
         let webrtc = Cache.tinode.getServerParam(for: "iceServers") != nil
         if let t = self.topic, t.isP2PType, webrtc {
-            items.append(UIBarButtonItem(
-                image: UIImage(systemName: "phone",
-                               withConfiguration:UIImage.SymbolConfiguration(pointSize: 16, weight: .light)),
-                style: .plain, target: self, action: #selector(navBarCallTapped(sender:))))
+            items.append(self.navBarAudioCallBtn)
+            items.append(self.navBarVideoCallBtn)
         }
         self.navigationItem.setRightBarButtonItems(items, animated: false)
     }
