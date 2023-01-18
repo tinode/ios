@@ -660,11 +660,10 @@ class CallViewController: UIViewController {
         }
         let newimg = UIImage(systemName: newIconName, withConfiguration: UIImage.SymbolConfiguration(pointSize: 16, weight: .regular))
 
-        self.overrideAudioOutput(newOutput: newOutput) { success in
-            if success {
-                self.speakerToggleButton.setImage(newimg, for: .normal)
-                self.audioOutput = newOutput
-            }
+        CallManager.audioSessionChange { session in
+            try session.overrideOutputAudioPort(self.audioOutput)
+            self.speakerToggleButton.setImage(newimg, for: .normal)
+            self.audioOutput = newOutput
         }
     }
 
@@ -821,19 +820,6 @@ class CallViewController: UIViewController {
         self.stopMedia()
     }
 
-    private func overrideAudioOutput(newOutput: AVAudioSession.PortOverride, completion: ((Bool) -> Void)? = nil) {
-        let audioSession = RTCAudioSession.sharedInstance()
-        audioSession.lockForConfiguration()
-        do {
-            try audioSession.overrideOutputAudioPort(newOutput)
-            completion?(true)
-        } catch {
-            Cache.log.error("WebRTCClient: error changing AVAudioSession: %@", error.localizedDescription)
-            completion?(false)
-        }
-        audioSession.unlockForConfiguration()
-    }
-
     @objc func handleRouteChange(notification: Notification) {
         guard let info = notification.userInfo,
             let value = info[AVAudioSessionRouteChangeReasonKey] as? UInt,
@@ -841,9 +827,13 @@ class CallViewController: UIViewController {
 
         switch reason {
         case .categoryChange:
-            self.overrideAudioOutput(newOutput: self.audioOutput)
+            CallManager.audioSessionChange { session in
+                try session.overrideOutputAudioPort(self.audioOutput)
+            }
         case .oldDeviceUnavailable:
-            self.overrideAudioOutput(newOutput: self.audioOutput)
+            CallManager.audioSessionChange { session in
+                try session.overrideOutputAudioPort(self.audioOutput)
+            }
         default:
             Cache.log.debug("CallVC - audio route change: other - %d", value)
         }

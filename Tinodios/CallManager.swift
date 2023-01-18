@@ -54,7 +54,7 @@ class CallManager {
     }
 
     // Utility function to configure RTCAudioSession.
-    private func audioSessionChange(action: ((RTCAudioSession) throws -> Void)) {
+    public static func audioSessionChange(action: ((RTCAudioSession) throws -> Void)) {
         let audioSession = RTCAudioSession.sharedInstance()
         audioSession.lockForConfiguration()
         do {
@@ -65,7 +65,7 @@ class CallManager {
         audioSession.unlockForConfiguration()
     }
 
-    private func activateAudioSession(withSpeaker speaker: Bool) {
+    public static func activateAudioSession(withSpeaker speaker: Bool) {
         self.audioSessionChange { audioSession in
             try audioSession.setCategory(AVAudioSession.Category.playAndRecord.rawValue)
             try audioSession.setMode(AVAudioSession.Mode.voiceChat.rawValue)
@@ -74,7 +74,7 @@ class CallManager {
         }
     }
 
-    private func deactivateAudioSession() {
+    public static func deactivateAudioSession() {
         // Clean up audio.
         self.audioSessionChange { audioSession in
             try audioSession.setActive(false)
@@ -89,7 +89,7 @@ class CallManager {
         }
         let tinode = Cache.tinode
         self.callInProgress = Call(uuid: UUID(), topic: topicName, from: tinode.myUid!, seq: -1, audioOnly: isAudioOnly)
-        self.activateAudioSession(withSpeaker: !isAudioOnly)
+        CallManager.activateAudioSession(withSpeaker: !isAudioOnly)
         return true
     }
 
@@ -112,7 +112,7 @@ class CallManager {
             return
         }
 
-        self.activateAudioSession(withSpeaker: !audioOnly)
+        CallManager.activateAudioSession(withSpeaker: !audioOnly)
         self.callInProgress = Call(uuid: uuid, topic: topicName, from: fromUid, seq: seq, audioOnly: audioOnly)
         let tinode = Cache.tinode
         let user: DefaultUser? = tinode.getUser(with: fromUid)
@@ -159,7 +159,7 @@ extension CallManager: CallManagerImpl {
         self.callInProgress = nil
         self.timer?.invalidate()
         self.timer = nil
-        self.deactivateAudioSession()
+        CallManager.deactivateAudioSession()
 
         if reportToPeer {
             // Tell the peer the call is over/declined.
