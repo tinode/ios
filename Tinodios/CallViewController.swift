@@ -645,26 +645,26 @@ class CallViewController: UIViewController {
     }
 
     @IBAction func didToggleSpeaker(_ sender: Any) {
-        let session: AVAudioSession = AVAudioSession.sharedInstance()
-
         var newIconName: String
+        var newOutput: AVAudioSession.PortOverride
         switch self.audioOutput {
         case .none:
             newIconName = "speaker.wave.3.fill"
-            self.audioOutput = .speaker
+            newOutput = .speaker
         case .speaker:
             newIconName = "speaker.wave.1.fill"
-            self.audioOutput = .none
+            newOutput = .none
         default:
             Cache.log.error("unknown AVAudioSession.PortOverride value: %d", self.audioOutput.rawValue)
             return
         }
         let newimg = UIImage(systemName: newIconName, withConfiguration: UIImage.SymbolConfiguration(pointSize: 16, weight: .regular))
-        do {
-            try session.overrideOutputAudioPort(self.audioOutput)
-            speakerToggleButton.setImage(newimg, for: .normal)
-        } catch {
-            Cache.log.error("Couldn't override output audio port: %@", error.localizedDescription)
+
+        self.overrideAudioOutput(newOutput: newOutput) { success in
+            if success {
+                self.speakerToggleButton.setImage(newimg, for: .normal)
+                self.audioOutput = newOutput
+            }
         }
     }
 
@@ -821,6 +821,19 @@ class CallViewController: UIViewController {
         self.stopMedia()
     }
 
+    private func overrideAudioOutput(newOutput: AVAudioSession.PortOverride, completion: ((Bool) -> Void)? = nil) {
+        let audioSession = RTCAudioSession.sharedInstance()
+        audioSession.lockForConfiguration()
+        do {
+            try audioSession.overrideOutputAudioPort(newOutput)
+            completion?(true)
+        } catch {
+            Cache.log.error("WebRTCClient: error changing AVAudioSession: %@", error.localizedDescription)
+            completion?(false)
+        }
+        audioSession.unlockForConfiguration()
+    }
+
     @objc func handleRouteChange(notification: Notification) {
         guard let info = notification.userInfo,
             let value = info[AVAudioSessionRouteChangeReasonKey] as? UInt,
@@ -828,9 +841,9 @@ class CallViewController: UIViewController {
 
         switch reason {
         case .categoryChange:
-            try? AVAudioSession.sharedInstance().overrideOutputAudioPort(self.audioOutput)
+            self.overrideAudioOutput(newOutput: self.audioOutput)
         case .oldDeviceUnavailable:
-            try? AVAudioSession.sharedInstance().overrideOutputAudioPort(self.audioOutput)
+            self.overrideAudioOutput(newOutput: self.audioOutput)
         default:
             Cache.log.debug("CallVC - audio route change: other - %d", value)
         }
