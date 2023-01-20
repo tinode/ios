@@ -90,6 +90,7 @@ class CallManager {
         let tinode = Cache.tinode
         self.callInProgress = Call(uuid: UUID(), topic: topicName, from: tinode.myUid!, seq: -1, audioOnly: isAudioOnly)
         CallManager.activateAudioSession(withSpeaker: !isAudioOnly)
+        Cache.log.info("Starting outgoing call (uuid: %@) on topic: %@", self.callInProgress!.uuid.uuidString, topicName)
         return true
     }
 
@@ -112,18 +113,20 @@ class CallManager {
             return
         }
 
-        CallManager.activateAudioSession(withSpeaker: !audioOnly)
         self.callInProgress = Call(uuid: uuid, topic: topicName, from: fromUid, seq: seq, audioOnly: audioOnly)
         let tinode = Cache.tinode
         let user: DefaultUser? = tinode.getUser(with: fromUid)
         let senderName = user?.pub?.fn ?? NSLocalizedString("Unknown", comment: "Placeholder for missing user name")
-        callDelegate.reportIncomingCall(uuid: uuid, handle: senderName) { err in
+        callDelegate.reportIncomingCall(uuid: uuid, handle: senderName, audioOnly: audioOnly) { err in
             if err == nil {
+                Cache.log.info("Reporting incoming call (uuid: %@) on topic: %@, seq: %d", self.callInProgress!.uuid.uuidString, topicName, seq)
+                CallManager.activateAudioSession(withSpeaker: !audioOnly)
                 tinode.videoCall(topic: topicName, seq: seq, event: "ringing")
                 let timeout = (tinode.getServerParam(for: "callTimeout")?.asInt() ?? CallManager.kCallTimeout) + 5
                 self.timer = self.makeCallTimeoutTimer(withDeadline: TimeInterval(timeout))
             } else {
-                Cache.log.error("Incoming call error: %@", err!.localizedDescription)
+                Cache.log.error("Incoming call (topic: %@, seq: %d) error: %@", topicName, seq, err!.localizedDescription)
+                self.callInProgress = nil
             }
             completion?(err)
         }
@@ -170,6 +173,7 @@ extension CallManager: CallManagerImpl {
             let endCallAction = CXEndCallAction(call: call.uuid)
             let transaction = CXTransaction(action: endCallAction)
 
+            Cache.log.info("Ending call (uuid: %@) on topic: %@, seq: %d", call.uuid.uuidString, call.topic, call.seq)
             self.callController.request(transaction) { error in
                 if let error = error {
                     Cache.log.error("CallManager - EndCallAction transaction request failed: %@", error.localizedDescription)

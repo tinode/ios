@@ -593,6 +593,8 @@ class CallViewController: UIViewController {
     var callInitialSetupComplete = false
     // Audio output destination (.none = default).
     var audioOutput: AVAudioSession.PortOverride = .none
+    // Audio route change notification observer.
+    var routeChangeObserver: NSObjectProtocol?
     // For playing sound effects.
     var audioPlayer: AVAudioPlayer?
 
@@ -659,9 +661,9 @@ class CallViewController: UIViewController {
             return
         }
         let newimg = UIImage(systemName: newIconName, withConfiguration: UIImage.SymbolConfiguration(pointSize: 16, weight: .regular))
-
+        Cache.log.info("User requested overridde audio output port to %d", newOutput.rawValue)
         CallManager.audioSessionChange { session in
-            try session.overrideOutputAudioPort(self.audioOutput)
+            try session.overrideOutputAudioPort(newOutput)
             self.speakerToggleButton.setImage(newimg, for: .normal)
             self.audioOutput = newOutput
         }
@@ -710,7 +712,7 @@ class CallViewController: UIViewController {
         }
         setupViews()
 
-        NotificationCenter.default.addObserver(forName: AVAudioSession.routeChangeNotification, object: nil, queue: nil, using: handleRouteChange)
+        routeChangeObserver = NotificationCenter.default.addObserver(forName: AVAudioSession.routeChangeNotification, object: nil, queue: nil, using: handleRouteChange)
 
         webRTCClient.delegate = self
         cameraManager.delegate = self
@@ -827,15 +829,17 @@ class CallViewController: UIViewController {
 
         switch reason {
         case .categoryChange:
+            Cache.log.info("Audio route change: .categoryChange, restoring audio output to %d", self.audioOutput.rawValue)
             CallManager.audioSessionChange { session in
                 try session.overrideOutputAudioPort(self.audioOutput)
             }
         case .oldDeviceUnavailable:
+            Cache.log.info("Audio route change: .oldDeviceUnavailable, restoring audio output to %d", self.audioOutput.rawValue)
             CallManager.audioSessionChange { session in
                 try session.overrideOutputAudioPort(self.audioOutput)
             }
         default:
-            Cache.log.debug("CallVC - audio route change: other - %d", value)
+            Cache.log.debug("CallVC - audio route change: other - %@, reason: %d", value.description, reason.rawValue)
         }
     }
 
@@ -868,6 +872,9 @@ class CallViewController: UIViewController {
     func stopMedia() {
         self.webRTCClient.disconnect()
         cameraManager.stopCapture()
+        if let observer = self.routeChangeObserver {
+            NotificationCenter.default.removeObserver(observer)
+        }
     }
 
     func handleCallClose() {
