@@ -116,6 +116,10 @@ class MessageViewController: UIViewController {
         // Minimum and manimum duration of an audio recording in ms.
         static let kMinDuration = 3_000
         static let kMaxDuration = 600_000
+
+        // Call type identifiers.
+        static let kAudioOnlyCall = 1
+        static let kVideoCall = 2
     }
 
     /// The `sendMessageBar` is used as the `inputAccessoryView` in the view controller.
@@ -140,6 +144,14 @@ class MessageViewController: UIViewController {
         avatarIcon.isUserInteractionEnabled = true
         avatarIcon.addGestureRecognizer(tapGestureRecognizer)
         return avatarIcon
+    }()
+
+    /// Call button in NavBar
+    private lazy var navBarCallBtn: UIBarButtonItem = {
+        return UIBarButtonItem(
+            image: UIImage(systemName: "phone",
+                           withConfiguration:UIImage.SymbolConfiguration(pointSize: 16, weight: .light)),
+            style: .plain, target: self, action: #selector(navBarCallTapped(sender:)))
     }()
 
     /// Pointer to the view holding messages.
@@ -551,8 +563,10 @@ class MessageViewController: UIViewController {
             if let call = sender as? CallManager.Call {
                 destinationVC.callDirection = .incoming
                 destinationVC.callSeqId = call.seq
+                destinationVC.isAudioOnlyCall = call.audioOnly
             } else {
                 destinationVC.callDirection = .outgoing
+                destinationVC.isAudioOnlyCall = (sender as? Int) == Constants.kAudioOnlyCall
             }
             destinationVC.topic = self.topic
         default:
@@ -576,7 +590,19 @@ class MessageViewController: UIViewController {
     }
 
     @objc func navBarCallTapped(sender: UIMenuController) {
-        performSegue(withIdentifier: "Messages2Call", sender: sender)
+        let alert = UIAlertController(title: "Call", message: nil, preferredStyle: .actionSheet)
+        alert.modalPresentationStyle = .popover
+        alert.addAction(UIAlertAction(title: "Audio-only", style: .default, handler: { audioCall in
+            self.performSegue(withIdentifier: "Messages2Call", sender: Constants.kAudioOnlyCall)
+        }))
+        alert.addAction(UIAlertAction(title: "Video", style: .default, handler: { videoCall in
+            self.performSegue(withIdentifier: "Messages2Call", sender: Constants.kVideoCall)
+        }))
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        if let presentation = alert.popoverPresentationController {
+            presentation.barButtonItem = navBarCallBtn
+        }
+        self.present(alert, animated: true, completion: nil)
     }
 }
 
@@ -628,10 +654,7 @@ extension MessageViewController: MessageDisplayLogic {
         var items = [UIBarButtonItem(customView: navBarAvatarView)]
         let webrtc = Cache.tinode.getServerParam(for: "iceServers") != nil
         if let t = self.topic, t.isP2PType, webrtc {
-            items.append(UIBarButtonItem(
-                image: UIImage(systemName: "phone",
-                               withConfiguration:UIImage.SymbolConfiguration(pointSize: 16, weight: .light)),
-                style: .plain, target: self, action: #selector(navBarCallTapped(sender:))))
+            items.append(self.navBarCallBtn)
         }
         self.navigationItem.setRightBarButtonItems(items, animated: false)
     }

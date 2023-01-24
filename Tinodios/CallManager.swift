@@ -18,6 +18,7 @@ class CallManager {
         var topic: String
         var from: String
         var seq: Int
+        var audioOnly: Bool
     }
 
     enum CallError: Error {
@@ -53,7 +54,7 @@ class CallManager {
     }
 
     // Utility function to configure RTCAudioSession.
-    private func audioSessionChange(action: ((RTCAudioSession) throws -> Void)) {
+    public static func audioSessionChange(action: ((RTCAudioSession) throws -> Void)) {
         let audioSession = RTCAudioSession.sharedInstance()
         audioSession.lockForConfiguration()
         do {
@@ -64,16 +65,16 @@ class CallManager {
         audioSession.unlockForConfiguration()
     }
 
-    private func activateAudioSession() {
+    public static func activateAudioSession(withSpeaker speaker: Bool) {
         self.audioSessionChange { audioSession in
             try audioSession.setCategory(AVAudioSession.Category.playAndRecord.rawValue)
             try audioSession.setMode(AVAudioSession.Mode.voiceChat.rawValue)
-            try audioSession.overrideOutputAudioPort(.speaker)
+            try audioSession.overrideOutputAudioPort(speaker ? .speaker : .none)
             try audioSession.setActive(true)
         }
     }
 
-    private func deactivateAudioSession() {
+    public static func deactivateAudioSession() {
         // Clean up audio.
         self.audioSessionChange { audioSession in
             try audioSession.setActive(false)
@@ -81,14 +82,15 @@ class CallManager {
     }
 
     // Registers an outgoing call that's just been started.
-    func registerOutgoingCall(onTopic topicName: String) -> Bool {
+    func registerOutgoingCall(onTopic topicName: String, isAudioOnly: Bool) -> Bool {
         guard self.callInProgress == nil else {
             // Another call is in progress. Quit.
             return false
         }
         let tinode = Cache.tinode
-        self.callInProgress = Call(uuid: UUID(), topic: topicName, from: tinode.myUid!, seq: -1)
-        self.activateAudioSession()
+        self.callInProgress = Call(uuid: UUID(), topic: topicName, from: tinode.myUid!, seq: -1, audioOnly: isAudioOnly)
+        CallManager.activateAudioSession(withSpeaker: !isAudioOnly)
+        Cache.log.info("Starting outgoing call (uuid: %@) on topic: %@", self.callInProgress!.uuid.uuidString, topicName)
         return true
     }
 
@@ -98,7 +100,7 @@ class CallManager {
     }
 
     // Report incoming call to the operating system (which displays incoming call UI).
-    func displayIncomingCall(uuid: UUID, onTopic topicName: String, originatingFrom fromUid: String, withSeqId seq: Int, completion: ((Error?) -> Void)?) {
+    func displayIncomingCall(uuid: UUID, onTopic topicName: String, originatingFrom fromUid: String, withSeqId seq: Int, audioOnly: Bool, completion: ((Error?) -> Void)?) {
         guard self.callInProgress == nil else {
             if seq == self.callInProgress!.seq && self.callInProgress!.topic == topicName {
                 // FIXME: this should not really happen. Find the source of duplicates and fix it.
@@ -111,18 +113,20 @@ class CallManager {
             return
         }
 
-        self.activateAudioSession()
-        self.callInProgress = Call(uuid: uuid, topic: topicName, from: fromUid, seq: seq)
+        self.callInProgress = Call(uuid: uuid, topic: topicName, from: fromUid, seq: seq, audioOnly: audioOnly)
         let tinode = Cache.tinode
         let user: DefaultUser? = tinode.getUser(with: fromUid)
         let senderName = user?.pub?.fn ?? NSLocalizedString("Unknown", comment: "Placeholder for missing user name")
-        callDelegate.reportIncomingCall(uuid: uuid, handle: senderName) { err in
+        callDelegate.reportIncomingCall(uuid: uuid, handle: senderName, audioOnly: audioOnly) { err in
             if err == nil {
+                Cache.log.info("Reporting incoming call (uuid: %@) on topic: %@, seq: %d", self.callInProgress!.uuid.uuidString, topicName, seq)
+                CallManager.activateAudioSession(withSpeaker: !audioOnly)
                 tinode.videoCall(topic: topicName, seq: seq, event: "ringing")
                 let timeout = (tinode.getServerParam(for: "callTimeout")?.asInt() ?? CallManager.kCallTimeout) + 5
                 self.timer = self.makeCallTimeoutTimer(withDeadline: TimeInterval(timeout))
             } else {
-                Cache.log.error("Incoming call error: %@", err!.localizedDescription)
+                Cache.log.error("Incoming call (topic: %@, seq: %d) error: %@", topicName, seq, err!.localizedDescription)
+                self.callInProgress = nil
             }
             completion?(err)
         }
@@ -158,7 +162,7 @@ extension CallManager: CallManagerImpl {
         self.callInProgress = nil
         self.timer?.invalidate()
         self.timer = nil
-        self.deactivateAudioSession()
+        CallManager.deactivateAudioSession()
 
         if reportToPeer {
             // Tell the peer the call is over/declined.
@@ -169,6 +173,7 @@ extension CallManager: CallManagerImpl {
             let endCallAction = CXEndCallAction(call: call.uuid)
             let transaction = CXTransaction(action: endCallAction)
 
+            Cache.log.info("Ending call (uuid: %@) on topic: %@, seq: %d", call.uuid.uuidString, call.topic, call.seq)
             self.callController.request(transaction) { error in
                 if let error = error {
                     Cache.log.error("CallManager - EndCallAction transaction request failed: %@", error.localizedDescription)

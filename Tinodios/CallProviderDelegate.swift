@@ -35,10 +35,10 @@ class CallProviderDelegate: NSObject, CXProviderDelegate {
         self.provider.setDelegate(self, queue: nil)
     }
 
-    func reportIncomingCall(uuid: UUID, handle: String, completion: ((Error?) -> Void)?) {
+    func reportIncomingCall(uuid: UUID, handle: String, audioOnly: Bool, completion: ((Error?) -> Void)?) {
       	let update = CXCallUpdate()
         update.remoteHandle = CXHandle(type: .generic, value: handle)
-        update.hasVideo = true
+        update.hasVideo = !audioOnly
 
         self.provider.reportNewIncomingCall(with: uuid, update: update) { error in
             if let error = error {

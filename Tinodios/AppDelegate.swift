@@ -54,13 +54,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             guard let msg = topic.getMessage(byEffectiveSeq: seqId) as? StoredMessage,
                   msg.webrtcCallState == callState else { return }
 
+            let isAudioOnly = data.isAudioOnlyCall
             Cache.log.info("Call (topic: %@, seq: %d): processing event %@", topicName, seqId, String(reflecting: callState))
             switch callState {
             case .kStarted:
                 // It is a legit incoming call. Start it.
                 let backgroundTaskIdentifier = UIApplication.shared.beginBackgroundTask(expirationHandler: nil)
                 DispatchQueue.main.async {
-                    Cache.callManager.displayIncomingCall(uuid: UUID(), onTopic: topic.name, originatingFrom: originator, withSeqId: seqId) { err in
+                    Cache.callManager.displayIncomingCall(uuid: UUID(), onTopic: topic.name, originatingFrom: originator, withSeqId: seqId, audioOnly: isAudioOnly) { err in
                         if let err = err {
                             Cache.log.error("Unable to take the call: %@", err.localizedDescription)
                         }
@@ -309,8 +310,9 @@ extension AppDelegate: PKPushRegistryDelegate {
                 completion()
                 return
             }
+            let audioOnly = (data["aonly"] as? Bool) ?? false
             // Report the call to CallKit, and let it display the call UI.
-            Cache.callManager.displayIncomingCall(uuid: UUID(), onTopic: topicName, originatingFrom: callerUID, withSeqId: seq, completion: { err in
+            Cache.callManager.displayIncomingCall(uuid: UUID(), onTopic: topicName, originatingFrom: callerUID, withSeqId: seq, audioOnly: audioOnly, completion: { err in
                 // Tell PushKit that the notification is handled.
                 completion()
             })
