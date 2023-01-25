@@ -40,12 +40,21 @@
 /* Error message: attachment too large */
 "Attachment exceeds maximum size" = "El accesorio supera el tamaño máximo";
 
+/* Menu item: audio-only call */
+"Audio-only" = "Solo audio";
+
 /* Alert action
    Invite reaction button */
 "Block" = "Bloquear";
 
 /* Alert action */
 "Block contact?" = "¿Bloquear contacto?";
+
+/* Text written on button face when all else fails. */
+"button" = "pulsador";
+
+/* Menu title for selecting type of call */
+"Call" = "Llamada";
 
 /* Toast notification */
 "Can't change permissions for this user." = "No se puede cambiar los permisos para este usuario.";
@@ -55,6 +64,9 @@
 
 /* Alert action */
 "Cancel" = "Cancelar";
+
+/* Label for cancelled call */
+"cancelled" = "cancelado";
 
 /* Error message */
 "Cannot send email: functionality not accessible." = "No se puede enviar correo electrónico: funcionalidad no accesible.";
@@ -86,6 +98,9 @@
 /* Toast info message */
 "Confirmed successfully" = "Confirmado con éxito";
 
+/* Label for initiated call */
+"connecting" = "conectando";
+
 /* Toast notification */
 "Connection to server lost." = "Se perdió la conexión al servidor.";
 
@@ -112,6 +127,9 @@
 /* Section title */
 "Directory" = "Directorio";
 
+/* Menu item */
+"Edit" = "Editar";
+
 /* Alert title */
 "Edit account name" = "Editar nombre de la cuenta";
 
@@ -123,6 +141,9 @@
 
 /* Alert title */
 "Edit Title" = "Editar título";
+
+/* `Edited` message marker */
+"edited" = "editado";
 
 /* Alert action */
 "Email" = "Correo electrónico";
@@ -177,6 +198,12 @@
 
 /* Invite reaction button */
 "Ignore" = "Ignorar";
+
+/* Label for call in progress */
+"in progress" = "en progreso";
+
+/* Label for incoming video/audio calls */
+"Incoming call" = "Llamada entrante";
 
 /* Error message */
 "Invalid group ID: %d (%@)" = "ID del grupo no es válido %1$d (%2$@)";
@@ -242,6 +269,12 @@
 /* Placeholder in empty chat */
 "No messages in the conversation" = "No hay mensajes en la conversación";
 
+/* Error message when call cannot be started due to missing camera permission */
+"No permission to access camera" = "No hay permiso para acceder a la cámara";
+
+/* Error message when call cannot be started due to missing microphone permission */
+"No permission to access microphone" = "No hay permiso para acceder al micrófono";
+
 /* Alert action */
 "OK" = "OK";
 
@@ -250,6 +283,9 @@
 
 /* Toast notification */
 "Only Owner can delete group" = "Sólo el propietario puede eliminar el grupo";
+
+/* Label for outgoing video/audio calls */
+"Outgoing call" = "Llamada saliente";
 
 /* Toast notification */
 "Owner cannot leave the group" = "El propietario del grupo no puede darse de baja";
@@ -359,7 +395,8 @@
 /* Displayed when the type of attachment cannot be determined */
 "Unknown type" = "Tipo desconocido";
 
-/* Label shown next to an unsupported Drafty format element */
+/* Label shown next to an unsupported Drafty format element
+   Unsupported (unknown) Drafty tag */
 "Unsupported" = "Sin base";
 
 /* Error message */
@@ -373,6 +410,10 @@
 
 /* Error message */
 "Verification failure: %d %@" = "Error de verificación: %1$d %2$@";
+
+/* Label shown next to an inline video
+   Menu item: video call */
+"Video" = "Vídeo";
 
 /* This is 'you' */
 "You" = "Tú";

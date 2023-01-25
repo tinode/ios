@@ -40,12 +40,21 @@
 /* Error message: attachment too large */
 "Attachment exceeds maximum size" = "Аттачмент слишком большой";
 
+/* Menu item: audio-only call */
+"Audio-only" = "Только звук";
+
 /* Alert action
    Invite reaction button */
 "Block" = "Заблокировать";
 
 /* Alert action */
 "Block contact?" = "Заблокировать контакт?";
+
+/* Text written on button face when all else fails. */
+"button" = "кнопка";
+
+/* Menu title for selecting type of call */
+"Call" = "Звонок";
 
 /* Toast notification */
 "Can't change permissions for this user." = "Не получилось изменить права доступа.";
@@ -55,6 +64,9 @@
 
 /* Alert action */
 "Cancel" = "Отменить";
+
+/* Label for cancelled call */
+"cancelled" = "отменен";
 
 /* Error message */
 "Cannot send email: functionality not accessible." = "Невозможно отправить емейл: функция недоступна.";
@@ -86,6 +98,9 @@
 /* Toast info message */
 "Confirmed successfully" = "Успешно подтверждено";
 
+/* Label for initiated call */
+"connecting" = "соединяется";
+
 /* Toast notification */
 "Connection to server lost." = "Свясь с сервером потеряна.";
 
@@ -112,6 +127,9 @@
 /* Section title */
 "Directory" = "Директория";
 
+/* Menu item */
+"Edit" = "Изменить";
+
 /* Alert title */
 "Edit account name" = "Редактировать аккаунт";
 
@@ -123,6 +141,9 @@
 
 /* Alert title */
 "Edit Title" = "Название";
+
+/* `Edited` message marker */
+"edited" = "изменено";
 
 /* Alert action */
 "Email" = "Емейл";
@@ -177,6 +198,12 @@
 
 /* Invite reaction button */
 "Ignore" = "Игнорировать";
+
+/* Label for call in progress */
+"in progress" = "в процессе";
+
+/* Label for incoming video/audio calls */
+"Incoming call" = "Входящий звонок";
 
 /* Error message */
 "Invalid group ID: %d (%@)" = "Ошибка адреса: %1$d (%2$@)";
@@ -242,6 +269,12 @@
 /* Placeholder in empty chat */
 "No messages in the conversation" = "Сообщения отсутствуют";
 
+/* Error message when call cannot be started due to missing camera permission */
+"No permission to access camera" = "Нет доступа к камере";
+
+/* Error message when call cannot be started due to missing microphone permission */
+"No permission to access microphone" = "Нет доступа к микрофону";
+
 /* Alert action */
 "OK" = "OK";
 
@@ -250,6 +283,9 @@
 
 /* Toast notification */
 "Only Owner can delete group" = "Только владелец может удалить группу";
+
+/* Label for outgoing video/audio calls */
+"Outgoing call" = "Исходящий звонок";
 
 /* Toast notification */
 "Owner cannot leave the group" = "Владелец не может покинуть группу";
@@ -359,7 +395,8 @@
 /* Displayed when the type of attachment cannot be determined */
 "Unknown type" = "Неизвестный тип";
 
-/* Label shown next to an unsupported Drafty format element */
+/* Label shown next to an unsupported Drafty format element
+   Unsupported (unknown) Drafty tag */
 "Unsupported" = "Не поддерживается";
 
 /* Error message */
@@ -373,6 +410,10 @@
 
 /* Error message */
 "Verification failure: %d %@" = "Ошибка верификации: %1$d %2$@";
+
+/* Label shown next to an inline video
+   Menu item: video call */
+"Video" = "Видео";
 
 /* This is 'you' */
 "You" = "Вы";

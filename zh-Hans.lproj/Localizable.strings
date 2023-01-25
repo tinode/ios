@@ -40,12 +40,21 @@
 /* Error message: attachment too large */
 "Attachment exceeds maximum size" = "附件超过最大尺寸";
 
+/* Menu item: audio-only call */
+"Audio-only" = "仅限音频";
+
 /* Alert action
    Invite reaction button */
 "Block" = "屏蔽";
 
 /* Alert action */
 "Block contact?" = "屏蔽联系人？";
+
+/* Text written on button face when all else fails. */
+"button" = "按钮";
+
+/* Menu title for selecting type of call */
+"Call" = "电话";
 
 /* Toast notification */
 "Can't change permissions for this user." = "无法更改此用户的权限。";
@@ -55,6 +64,9 @@
 
 /* Alert action */
 "Cancel" = "取消";
+
+/* Label for cancelled call */
+"cancelled" = "已取消";
 
 /* Error message */
 "Cannot send email: functionality not accessible." = "无法发送电子邮件：功能无法访问。";
@@ -86,6 +98,9 @@
 /* Toast info message */
 "Confirmed successfully" = "确认成功";
 
+/* Label for initiated call */
+"connecting" = "联运的";
+
 /* Toast notification */
 "Connection to server lost." = "与服务器的连接丢失。";
 
@@ -112,6 +127,9 @@
 /* Section title */
 "Directory" = "目录";
 
+/* Menu item */
+"Edit" = "编辑";
+
 /* Alert title */
 "Edit account name" = "修改帐号名称";
 
@@ -123,6 +141,9 @@
 
 /* Alert title */
 "Edit Title" = "编辑标题";
+
+/* `Edited` message marker */
+"edited" = "编辑";
 
 /* Alert action */
 "Email" = "电子邮件";
@@ -177,6 +198,12 @@
 
 /* Invite reaction button */
 "Ignore" = "忽略";
+
+/* Label for call in progress */
+"in progress" = "进行中";
+
+/* Label for incoming video/audio calls */
+"Incoming call" = "来电";
 
 /* Error message */
 "Invalid group ID: %d (%@)" = "无效的群组ID：%1$d (%2$@)";
@@ -242,6 +269,12 @@
 /* Placeholder in empty chat */
 "No messages in the conversation" = "对话中没有讯息";
 
+/* Error message when call cannot be started due to missing camera permission */
+"No permission to access camera" = "不允许访问相机";
+
+/* Error message when call cannot be started due to missing microphone permission */
+"No permission to access microphone" = "不允许访问麦克风";
+
 /* Alert action */
 "OK" = "好";
 
@@ -250,6 +283,9 @@
 
 /* Toast notification */
 "Only Owner can delete group" = "只有所有者可以删除群组";
+
+/* Label for outgoing video/audio calls */
+"Outgoing call" = "呼出电话";
 
 /* Toast notification */
 "Owner cannot leave the group" = "所有者不能离开群组";
@@ -359,7 +395,8 @@
 /* Displayed when the type of attachment cannot be determined */
 "Unknown type" = "未知类型";
 
-/* Label shown next to an unsupported Drafty format element */
+/* Label shown next to an unsupported Drafty format element
+   Unsupported (unknown) Drafty tag */
 "Unsupported" = "不支持";
 
 /* Error message */
@@ -373,6 +410,10 @@
 
 /* Error message */
 "Verification failure: %d %@" = "验证失败：%1$d (%2$@)";
+
+/* Label shown next to an inline video
+   Menu item: video call */
+"Video" = "影视";
 
 /* This is 'you' */
 "You" = "您";

@@ -40,12 +40,21 @@
 /* Error message: attachment too large */
 "Attachment exceeds maximum size" = "附件超過最大尺寸";
 
+/* Menu item: audio-only call */
+"Audio-only" = "僅限音訊";
+
 /* Alert action
    Invite reaction button */
 "Block" = "封鎖";
 
 /* Alert action */
 "Block contact?" = "要封鎖聯絡人嗎？";
+
+/* Text written on button face when all else fails. */
+"button" = "按鈕";
+
+/* Menu title for selecting type of call */
+"Call" = "呼叫";
 
 /* Toast notification */
 "Can't change permissions for this user." = "無法修改此使用者的權限。";
@@ -55,6 +64,9 @@
 
 /* Alert action */
 "Cancel" = "取消";
+
+/* Label for cancelled call */
+"cancelled" = "已取消";
 
 /* Error message */
 "Cannot send email: functionality not accessible." = "無法傳送郵件：無法存取功能。";
@@ -86,6 +98,9 @@
 /* Toast info message */
 "Confirmed successfully" = "確認成功";
 
+/* Label for initiated call */
+"connecting" = "連線";
+
 /* Toast notification */
 "Connection to server lost." = "失去與伺服器的連線。";
 
@@ -112,6 +127,9 @@
 /* Section title */
 "Directory" = "目錄";
 
+/* Menu item */
+"Edit" = "編輯";
+
 /* Alert title */
 "Edit account name" = "編輯帳號名稱";
 
@@ -123,6 +141,9 @@
 
 /* Alert title */
 "Edit Title" = "编辑标题";
+
+/* `Edited` message marker */
+"edited" = "編輯";
 
 /* Alert action */
 "Email" = "電子郵件地址";
@@ -177,6 +198,12 @@
 
 /* Invite reaction button */
 "Ignore" = "忽略";
+
+/* Label for call in progress */
+"in progress" = "正在進行中";
+
+/* Label for incoming video/audio calls */
+"Incoming call" = "來電";
 
 /* Error message */
 "Invalid group ID: %d (%@)" = "群組 ID 無效：%1$d (%2$@)";
@@ -242,6 +269,12 @@
 /* Placeholder in empty chat */
 "No messages in the conversation" = "對話中沒有訊息";
 
+/* Error message when call cannot be started due to missing camera permission */
+"No permission to access camera" = "無權訪問相機";
+
+/* Error message when call cannot be started due to missing microphone permission */
+"No permission to access microphone" = "無權訪問麥克風";
+
 /* Alert action */
 "OK" = "OK";
 
@@ -250,6 +283,9 @@
 
 /* Toast notification */
 "Only Owner can delete group" = "只有擁有者能夠刪除群組";
+
+/* Label for outgoing video/audio calls */
+"Outgoing call" = "撥出電話";
 
 /* Toast notification */
 "Owner cannot leave the group" = "擁有者不能離開群組";
@@ -359,7 +395,8 @@
 /* Displayed when the type of attachment cannot be determined */
 "Unknown type" = "未知型別";
 
-/* Label shown next to an unsupported Drafty format element */
+/* Label shown next to an unsupported Drafty format element
+   Unsupported (unknown) Drafty tag */
 "Unsupported" = "不受支援";
 
 /* Error message */
@@ -373,6 +410,10 @@
 
 /* Error message */
 "Verification failure: %d %@" = "驗證失敗：%1$d %2$@";
+
+/* Label shown next to an inline video
+   Menu item: video call */
+"Video" = "影片";
 
 /* This is 'you' */
 "You" = "您";

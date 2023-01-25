@@ -118,6 +118,9 @@
 /* Class = "UILabel"; text = "Add optional description"; ObjectID = "cD6-Om-VgZ"; */
 "cD6-Om-VgZ.text" = "Добавить описание (не обязательно)";
 
+/* Class = "UIViewController"; title = "Video Call"; ObjectID = "Cib-aE-hH5"; */
+"Cib-aE-hH5.title" = "Видеозвонок";
+
 /* Class = "UITextField"; placeholder = "Optional description"; ObjectID = "Cy6-Bq-QCi"; */
 "Cy6-Bq-QCi.placeholder" = "Описание (не обязательно)";
 
@@ -172,6 +175,9 @@
 /* Class = "UILabel"; text = "Send read receipts"; ObjectID = "geh-gC-6qO"; */
 "geh-gC-6qO.text" = "Уведомления о прочтении";
 
+/* Class = "UIViewController"; title = "Video Preview"; ObjectID = "gfT-SI-43h"; */
+"gfT-SI-43h.title" = "Превью видео";
+
 /* Class = "UITextField"; accessibilityHint = "Password"; ObjectID = "gLF-JR-ZfF"; */
 "gLF-JR-ZfF.accessibilityHint" = "Пароль";
 
@@ -183,6 +189,9 @@
 
 /* Class = "UITableViewSection"; headerTitle = "Default Permissions"; ObjectID = "H78-sG-L0j"; */
 "H78-sG-L0j.headerTitle" = "Разрешения по умолчанию";
+
+/* Class = "UINavigationItem"; title = "Video Preview"; ObjectID = "Hah-A8-0yd"; */
+"Hah-A8-0yd.title" = "Превью видео";
 
 /* Class = "UILabel"; text = "placeholder_file_name"; ObjectID = "HIs-n4-sFa"; */
 "HIs-n4-sFa.text" = "placeholder_file_name";
@@ -250,6 +259,9 @@
 /* Class = "UIViewController"; title = "Reset Password"; ObjectID = "lq5-3O-Yva"; */
 "lq5-3O-Yva.title" = "Напомнить пароль";
 
+/* Class = "UILabel"; text = "File name:"; ObjectID = "lRE-RJ-Qgv"; */
+"lRE-RJ-Qgv.text" = "Имя файла:";
+
 /* Class = "UINavigationItem"; title = "Edit Members"; ObjectID = "LRu-ae-drd"; */
 "LRu-ae-drd.title" = "Изменить участников";
 
@@ -316,6 +328,9 @@
 /* Class = "UILabel"; text = "Change password"; ObjectID = "qvs-D4-f94"; */
 "qvs-D4-f94.text" = "Изменить пароль";
 
+/* Class = "UILabel"; text = "Size:"; ObjectID = "qY7-Dy-tZI"; */
+"qY7-Dy-tZI.text" = "Размер:";
+
 /* Class = "UILabel"; text = "Manage Tags"; ObjectID = "r8j-wT-BLF"; */
 "r8j-wT-BLF.text" = "Настройки тэгов";
 
@@ -342,6 +357,9 @@
 
 /* Class = "UIButton"; normalTitle = "Sign up"; ObjectID = "Rv6-qQ-FqW"; */
 "Rv6-qQ-FqW.normalTitle" = "Зарегистрироваться";
+
+/* Class = "UILabel"; text = "Content type:"; ObjectID = "RvM-se-Nch"; */
+"RvM-se-Nch.text" = "Тип контента:";
 
 /* Class = "UILabel"; text = "N"; ObjectID = "s6S-ku-F63"; */
 "s6S-ku-F63.text" = "N";
