@@ -150,9 +150,10 @@ public class TheCard: Codable, Mergeable {
 
     public init() {}
 
-    public init(fn: String?, avatar: Photo?) {
+    public init(fn: String?, avatar: Photo?, note: String? = nil) {
         self.fn = fn
         self.photo = avatar
+        self.note = note
     }
 
     public init(fn: String?) {
@@ -160,8 +161,9 @@ public class TheCard: Codable, Mergeable {
 
     }
 
-    public init(fn: String?, avatar: UIImage?) {
+    public init(fn: String?, avatar: UIImage?, note: String? = nil) {
         self.fn = fn
+        self.note = note
 
         guard let avatar = avatar else { return }
         self.photo = Photo(image: avatar)

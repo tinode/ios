@@ -9,12 +9,17 @@ import UIKit
 import TinodeSDK
 
 class SignupViewController: UITableViewController {
+    // UI positions of the Contacts fields.
+    private static let kSectionContacts = 3
+    private static let kContactsEmail = 0
+    private static let kContactsTel = 1
 
     @IBOutlet weak var avatarImageView: RoundImageView!
     @IBOutlet weak var loginTextField: UITextField!
     @IBOutlet weak var passwordTextField: UITextField!
     @IBOutlet weak var nameTextField: UITextField!
-    @IBOutlet weak var emailPhoneTextField: UITextField!
+    @IBOutlet weak var descriptionTextField: UITextField!
+    @IBOutlet weak var emailTextField: UITextField!
     @IBOutlet weak var signUpButton: UIButton!
     @IBOutlet var passwordVisibility: [UIButton]!
 
@@ -22,8 +27,29 @@ class SignupViewController: UITableViewController {
     var imagePicker: ImagePicker!
     var avatarReceived: Bool = false
 
+    // Required credential methods.
+    private var credMethods: [String]?
+
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        // Get required credential methods.
+        self.signUpButton.isEnabled = false
+        _ = try? Cache.tinode.connectDefault(inBackground: false)?.then(
+            onSuccess: { _ in
+                if let creds = Cache.tinode.getRequiredCredMethods(forAuthLevel: "auth") {
+                    self.credMethods = creds
+                }
+                DispatchQueue.main.async { self.signUpButton.isEnabled = true }
+                return nil
+            },
+            onFailure: { err in
+                Cache.log.error("Error connecting to tinode %@", err.localizedDescription)
+                DispatchQueue.main.async { UiUtils.showToast(message: NSLocalizedString("Service unavailable at this time. Please try again later.", comment: "Service unavailable")) }
+                return nil
+            }).thenFinally {
+                DispatchQueue.main.async { self.tableView.reloadData() }
+            }
 
         UiUtils.adjustPasswordVisibilitySwitchColor(for: passwordVisibility, setColor: .darkGray)
 
@@ -33,8 +59,20 @@ class SignupViewController: UITableViewController {
         loginTextField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: UIControl.Event.editingChanged)
         passwordTextField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: UIControl.Event.editingChanged)
         nameTextField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: UIControl.Event.editingChanged)
-        emailPhoneTextField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: UIControl.Event.editingChanged)
+        emailTextField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: UIControl.Event.editingChanged)
         UiUtils.dismissKeyboardForTaps(onView: self.view)
+    }
+
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        // Show only required credential fields.
+        if indexPath.section == SignupViewController.kSectionContacts {
+            if (indexPath.row == SignupViewController.kContactsEmail && !(self.credMethods?.contains("email") ?? false)) ||
+                (indexPath.row == SignupViewController.kContactsTel && !(self.credMethods?.contains("tel") ?? false)) {
+                return CGFloat.leastNonzeroMagnitude
+            }
+        }
+
+        return super.tableView(tableView, heightForRowAt: indexPath)
     }
 
     @objc func textFieldDidChange(_ textField: UITextField) {
@@ -58,33 +96,33 @@ class SignupViewController: UITableViewController {
         let login = UiUtils.ensureDataInTextField(loginTextField)
         let pwd = UiUtils.ensureDataInTextField(passwordTextField)
         let name = UiUtils.ensureDataInTextField(nameTextField, maxLength: UiUtils.kMaxTitleLength)
-        let credential = UiUtils.ensureDataInTextField(emailPhoneTextField)
 
-        guard !login.isEmpty && !pwd.isEmpty && !name.isEmpty && !credential.isEmpty else { return }
+        guard !login.isEmpty && !pwd.isEmpty && !name.isEmpty else { return }
 
-        var method: String?
-        if let cred = ValidatedCredential.parse(from: credential) {
-            switch cred {
-            case .email:
-                method = Credential.kMethEmail
-            case .phoneNum:
-                method = Credential.kMethPhone
+        var isError = false
+        var creds = [Credential]()
+        self.credMethods?.forEach { method in
+            switch method {
+            case Credential.kMethEmail:
+                let credential = UiUtils.ensureDataInTextField(emailTextField)
+                guard !credential.isEmpty, case let .email(cred) = ValidatedCredential.parse(from: credential) else {
+                    UiUtils.markTextFieldAsError(emailTextField)
+                    isError = true
+                    return
+                }
+                creds.append(Credential(meth: method, val: cred))
+            case Credential.kMethPhone:
+                // TODO
+                break
             default:
                 break
             }
         }
+        guard !isError else { return }
 
-        guard method != nil else {
-            UiUtils.markTextFieldAsError(emailPhoneTextField)
-            return
-        }
-
-        func doSignUp(pub: TheCard) {
+        func doSignUp(withPublicCard pub: TheCard, withCredentials creds: [Credential]) {
             let desc = MetaSetDesc<TheCard, String>(pub: pub, priv: nil)
             desc.attachments = pub.photoRefs
-            let cred = Credential(meth: method!, val: credential)
-            var creds = [Credential]()
-            creds.append(cred)
 
             UiUtils.toggleProgressOverlay(in: self, visible: true, title: NSLocalizedString("Registering...", comment: "Progress overlay"))
 
@@ -138,6 +176,10 @@ class SignupViewController: UITableViewController {
             avatar = nil
         }
 
+        var description: String?
+        if let desc = self.descriptionTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines) {
+            description = String(desc.prefix(UiUtils.kMaxTopicDdescriptionLength))
+        }
         if let imageBits = avatar?.pixelData(forMimeType: Photo.kDefaultType) {
             if imageBits.count > UiUtils.kMaxInbandAvatarBytes {
                 // Sending image out of band.
@@ -145,7 +187,7 @@ class SignupViewController: UITableViewController {
                     guard let error = error else {
                         let thumbnail = avatar!.resize(width: UiUtils.kAvatarPreviewDimensions, height: UiUtils.kAvatarPreviewDimensions, clip: true)
                         let photo = Photo(data: thumbnail?.pixelData(forMimeType: Photo.kDefaultType), ref: srvmsg?.ctrl?.getStringParam(for: "url"), width: Int(avatar!.size.width), height: Int(avatar!.size.height))
-                        doSignUp(pub: TheCard(fn: name, avatar: photo))
+                        doSignUp(withPublicCard: TheCard(fn: name, avatar: photo, note: description), withCredentials: creds)
                         return
                     }
                     UiUtils.ToastFailureHandler(err: error)
@@ -153,7 +195,8 @@ class SignupViewController: UITableViewController {
                 return
             }
         }
-        doSignUp(pub: TheCard(fn: name, avatar: avatar))
+
+        doSignUp(withPublicCard: TheCard(fn: name, avatar: avatar, note: description), withCredentials: creds)
     }
 }
 
