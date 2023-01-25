@@ -1,7 +1,7 @@
 //
 //  MessageViewController.swift
 //
-//  Copyright © 2019-2022 Tinode LLC. All rights reserved.
+//  Copyright © 2019-2023 Tinode LLC. All rights reserved.
 //
 
 import MobileVLCKit
@@ -590,15 +590,15 @@ class MessageViewController: UIViewController {
     }
 
     @objc func navBarCallTapped(sender: UIMenuController) {
-        let alert = UIAlertController(title: "Call", message: nil, preferredStyle: .actionSheet)
+        let alert = UIAlertController(title: NSLocalizedString("Call", comment: "Menu title for selecting type of call"), message: nil, preferredStyle: .actionSheet)
         alert.modalPresentationStyle = .popover
-        alert.addAction(UIAlertAction(title: "Audio-only", style: .default, handler: { audioCall in
+        alert.addAction(UIAlertAction(title: NSLocalizedString("Audio-only", comment: "Menu item: audio-only call"), style: .default, handler: { audioCall in
             self.performSegue(withIdentifier: "Messages2Call", sender: Constants.kAudioOnlyCall)
         }))
-        alert.addAction(UIAlertAction(title: "Video", style: .default, handler: { videoCall in
+        alert.addAction(UIAlertAction(title: NSLocalizedString("Video", comment: "Menu item: video call"), style: .default, handler: { videoCall in
             self.performSegue(withIdentifier: "Messages2Call", sender: Constants.kVideoCall)
         }))
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Alert action"), style: .cancel, handler: nil))
         if let presentation = alert.popoverPresentationController {
             presentation.barButtonItem = navBarCallBtn
         }
