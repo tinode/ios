@@ -42,6 +42,9 @@ class SignupViewController: UITableViewController {
                 if let creds = Cache.tinode.getRequiredCredMethods(forAuthLevel: "auth") {
                     self.credMethods = creds
                 }
+                if self.credMethods?.isEmpty ?? true {
+                    self.credMethods = [Credential.kMethEmail]
+                }
                 DispatchQueue.main.async { self.signUpButton.isEnabled = true }
                 return nil
             },
@@ -72,8 +75,10 @@ class SignupViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         // Show only required credential fields.
         if indexPath.section == SignupViewController.kSectionContacts {
-            if (indexPath.row == SignupViewController.kContactsEmail && !(self.credMethods?.contains("email") ?? false)) ||
-                (indexPath.row == SignupViewController.kContactsTel && !(self.credMethods?.contains("tel") ?? false)) {
+            let method = self.credMethods?.first
+            if method == nil ||
+                (indexPath.row == SignupViewController.kContactsEmail && method! != Credential.kMethEmail) ||
+                (indexPath.row == SignupViewController.kContactsTel && method! != Credential.kMethPhone) {
                 return CGFloat.leastNonzeroMagnitude
             }
         }

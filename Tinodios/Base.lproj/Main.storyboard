@@ -329,7 +329,7 @@
                                                     <color key="titleColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 </state>
                                                 <connections>
-                                                    <segue destination="lq5-3O-Yva" kind="show" id="Wq2-SJ-8P7"/>
+                                                    <segue destination="IMk-1F-WiZ" kind="show" identifier="Login2ResetPassword" id="9xG-ju-Q8O"/>
                                                 </connections>
                                             </button>
                                             <button opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="751" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="TvF-F9-blO">
@@ -390,60 +390,214 @@
             <point key="canvasLocation" x="-1452" y="123.68815592203899"/>
         </scene>
         <!--Reset Password-->
-        <scene sceneID="XJG-SC-LDS">
+        <scene sceneID="JEa-ys-Jnt">
             <objects>
-                <viewController title="Reset Password" id="lq5-3O-Yva" customClass="ResetPasswordViewController" customModule="Tinodios" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="Yaq-Qa-bSO">
+                <tableViewController title="Reset Password" id="IMk-1F-WiZ" customClass="ResetPasswordViewController" customModule="Tinodios" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="static" style="grouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="H62-Oe-V0q">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Get reset code by email or phone" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ykj-eb-phs">
-                                <rect key="frame" x="48" y="112" width="318" height="21"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="VJ5-b7-ozY" userLabel="Email or phone">
-                                <rect key="frame" x="48" y="141" width="318" height="40"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="40" id="h4Y-dG-mwN"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" type="system" pointSize="18"/>
-                                <textInputTraits key="textInputTraits"/>
-                                <connections>
-                                    <action selector="credentialTextChanged:" destination="lq5-3O-Yva" eventType="editingChanged" id="JsY-tF-gXD"/>
-                                </connections>
-                            </textField>
-                            <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" horizontalCompressionResistancePriority="751" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="i0f-S8-O1v">
-                                <rect key="frame" x="169.66666666666666" y="201" width="75" height="36"/>
-                                <fontDescription key="fontDescription" type="system" weight="medium" pointSize="20"/>
-                                <state key="normal" title="Request"/>
-                                <connections>
-                                    <action selector="onConfirm:" destination="1NU-b8-NVe" eventType="touchUpInside" id="iM3-YB-iQb"/>
-                                    <action selector="requestButtonClicked:" destination="lq5-3O-Yva" eventType="touchUpInside" id="qud-p2-kkt"/>
-                                </connections>
-                            </button>
-                        </subviews>
-                        <viewLayoutGuide key="safeArea" id="5k0-8Y-zwM"/>
-                        <constraints>
-                            <constraint firstItem="i0f-S8-O1v" firstAttribute="centerX" secondItem="5k0-8Y-zwM" secondAttribute="centerX" id="JYr-ln-dbm"/>
-                            <constraint firstItem="Ykj-eb-phs" firstAttribute="leading" secondItem="VJ5-b7-ozY" secondAttribute="leading" id="Qre-qX-183"/>
-                            <constraint firstItem="i0f-S8-O1v" firstAttribute="top" secondItem="VJ5-b7-ozY" secondAttribute="bottom" constant="20" id="R7a-vR-afl"/>
-                            <constraint firstItem="VJ5-b7-ozY" firstAttribute="leading" secondItem="5k0-8Y-zwM" secondAttribute="leading" constant="48" id="SWU-JT-Ktf"/>
-                            <constraint firstItem="5k0-8Y-zwM" firstAttribute="trailing" secondItem="VJ5-b7-ozY" secondAttribute="trailing" constant="48" id="a8g-nJ-fPb"/>
-                            <constraint firstItem="Ykj-eb-phs" firstAttribute="top" secondItem="5k0-8Y-zwM" secondAttribute="top" constant="68" id="ert-EH-7bH"/>
-                            <constraint firstItem="VJ5-b7-ozY" firstAttribute="trailing" secondItem="Ykj-eb-phs" secondAttribute="trailing" id="jBT-ZL-9aB"/>
-                            <constraint firstItem="VJ5-b7-ozY" firstAttribute="top" secondItem="Ykj-eb-phs" secondAttribute="bottom" constant="8" symbolic="YES" id="jgf-Cn-fzh"/>
-                        </constraints>
-                    </view>
-                    <navigationItem key="navigationItem" title="Reset Password" id="wWt-TO-3We"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <view key="tableFooterView" contentMode="scaleToFill" id="xVT-3S-OfV" userLabel="Blank footer">
+                            <rect key="frame" x="0.0" y="478.66667366027832" width="414" height="44"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        </view>
+                        <sections>
+                            <tableViewSection headerTitle="Request password reset code" id="BRf-xV-zvt">
+                                <cells>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="JqA-cN-gio" userLabel="Header">
+                                        <rect key="frame" x="0.0" y="55.333332061767578" width="414" height="43.666667938232422"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="JqA-cN-gio" id="99r-mu-0wj">
+                                            <rect key="frame" x="0.0" y="0.0" width="414" height="43.666667938232422"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="We will send confirmation code to the address below" textAlignment="natural" lineBreakMode="wordWrap" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9SI-IJ-VTf" userLabel="Prompt">
+                                                    <rect key="frame" x="20" y="14.666666666666664" width="374" height="14.333333333333336"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="9SI-IJ-VTf" firstAttribute="centerY" secondItem="99r-mu-0wj" secondAttribute="centerY" id="3J5-aT-Dfs"/>
+                                                <constraint firstItem="9SI-IJ-VTf" firstAttribute="leading" secondItem="99r-mu-0wj" secondAttribute="leadingMargin" id="CG3-OX-uWb"/>
+                                                <constraint firstAttribute="trailingMargin" secondItem="9SI-IJ-VTf" secondAttribute="trailing" id="eCS-B9-vLn"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="XRH-OV-kxd" userLabel="Email">
+                                        <rect key="frame" x="0.0" y="99" width="414" height="43.666667938232422"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="XRH-OV-kxd" id="p7Y-xl-EsC">
+                                            <rect key="frame" x="0.0" y="0.0" width="414" height="43.666667938232422"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Email" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Wyn-hP-c2H" userLabel="Email Text Field">
+                                                    <rect key="frame" x="20" y="10.333333333333334" width="374" height="23.333333333333329"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                                                    <textInputTraits key="textInputTraits"/>
+                                                </textField>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="Wyn-hP-c2H" firstAttribute="centerY" secondItem="p7Y-xl-EsC" secondAttribute="centerY" id="4bA-hS-tlp"/>
+                                                <constraint firstAttribute="trailingMargin" secondItem="Wyn-hP-c2H" secondAttribute="trailing" id="ZKo-G0-ofq"/>
+                                                <constraint firstItem="Wyn-hP-c2H" firstAttribute="leading" secondItem="p7Y-xl-EsC" secondAttribute="leadingMargin" id="dEh-LY-hh9"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="pw6-kC-n91" userLabel="Telephone">
+                                        <rect key="frame" x="0.0" y="142.66666793823242" width="414" height="43.666667938232422"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="pw6-kC-n91" id="PoH-b3-m8W">
+                                            <rect key="frame" x="0.0" y="0.0" width="414" height="43.666667938232422"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="hWc-uJ-Emq" userLabel="Tel Text Field" customClass="PhoneNumberTextField" customModule="PhoneNumberKit">
+                                                    <rect key="frame" x="20" y="10.333333333333334" width="374" height="23.333333333333329"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                                                    <textInputTraits key="textInputTraits"/>
+                                                </textField>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstAttribute="trailingMargin" secondItem="hWc-uJ-Emq" secondAttribute="trailing" id="JXh-11-Wsa"/>
+                                                <constraint firstItem="hWc-uJ-Emq" firstAttribute="centerY" secondItem="PoH-b3-m8W" secondAttribute="centerY" id="OTj-7b-dcE"/>
+                                                <constraint firstItem="hWc-uJ-Emq" firstAttribute="leading" secondItem="PoH-b3-m8W" secondAttribute="leadingMargin" id="gga-iB-Ndb"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="eCi-BC-3La" userLabel="Request button">
+                                        <rect key="frame" x="0.0" y="186.33333587646484" width="414" height="43.666667938232422"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="eCi-BC-3La" id="6x3-rb-HJX">
+                                            <rect key="frame" x="0.0" y="0.0" width="414" height="43.666667938232422"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="R6w-cr-96Z">
+                                                    <rect key="frame" x="169.66666666666666" y="4" width="75" height="36"/>
+                                                    <fontDescription key="fontDescription" type="system" weight="medium" pointSize="20"/>
+                                                    <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                                    <state key="normal" title="Request"/>
+                                                    <connections>
+                                                        <action selector="requestCodeClicked:" destination="IMk-1F-WiZ" eventType="touchUpInside" id="UFC-I3-5W7"/>
+                                                    </connections>
+                                                </button>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="R6w-cr-96Z" firstAttribute="centerX" secondItem="6x3-rb-HJX" secondAttribute="centerX" id="miO-In-6dX"/>
+                                                <constraint firstItem="R6w-cr-96Z" firstAttribute="centerY" secondItem="6x3-rb-HJX" secondAttribute="centerY" id="ufg-GS-9bZ"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="nSn-on-obI" userLabel="I have the code button">
+                                        <rect key="frame" x="0.0" y="230.00000381469727" width="414" height="43.666667938232422"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="nSn-on-obI" id="nPX-bl-ZVf">
+                                            <rect key="frame" x="0.0" y="0.0" width="414" height="43.666667938232422"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ab5-J1-Lx7">
+                                                    <rect key="frame" x="152.66666666666666" y="4" width="108.99999999999997" height="36"/>
+                                                    <fontDescription key="fontDescription" type="system" weight="medium" pointSize="20"/>
+                                                    <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                                    <state key="normal" title="I Have Code"/>
+                                                    <connections>
+                                                        <action selector="haveCodeClicked:" destination="IMk-1F-WiZ" eventType="touchUpInside" id="YAh-25-yor"/>
+                                                    </connections>
+                                                </button>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="ab5-J1-Lx7" firstAttribute="centerY" secondItem="nPX-bl-ZVf" secondAttribute="centerY" id="4Nb-2o-GGR"/>
+                                                <constraint firstItem="ab5-J1-Lx7" firstAttribute="centerX" secondItem="nPX-bl-ZVf" secondAttribute="centerX" id="vGc-FB-oOO"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </cells>
+                            </tableViewSection>
+                            <tableViewSection headerTitle="New Password" id="5lL-yL-i9X" userLabel="New Password">
+                                <cells>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="EGm-w6-hVS" userLabel="Confirmation Code">
+                                        <rect key="frame" x="0.0" y="329.66666984558105" width="414" height="43.666667938232422"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="EGm-w6-hVS" id="k8k-mD-1Zb">
+                                            <rect key="frame" x="0.0" y="0.0" width="414" height="43.666667938232422"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Enter confirmation code" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="y4A-Jz-woo" userLabel="Confirmation Code Text Field">
+                                                    <rect key="frame" x="20" y="10.333333333333334" width="374" height="23.333333333333329"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                                                    <textInputTraits key="textInputTraits"/>
+                                                </textField>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="y4A-Jz-woo" firstAttribute="centerY" secondItem="k8k-mD-1Zb" secondAttribute="centerY" id="BkT-rk-fGP"/>
+                                                <constraint firstItem="y4A-Jz-woo" firstAttribute="leading" secondItem="k8k-mD-1Zb" secondAttribute="leadingMargin" id="Cja-0W-WOH"/>
+                                                <constraint firstAttribute="trailingMargin" secondItem="y4A-Jz-woo" secondAttribute="trailing" id="ciT-Xt-oap"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="6Vk-X3-ncK" userLabel="New Password">
+                                        <rect key="frame" x="0.0" y="373.33333778381348" width="414" height="43.666667938232422"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="6Vk-X3-ncK" id="pl9-aT-JJv">
+                                            <rect key="frame" x="0.0" y="0.0" width="414" height="43.666667938232422"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Enter new password" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="WTE-Mf-oSE" userLabel="New Password Text Field">
+                                                    <rect key="frame" x="20" y="10.333333333333334" width="374" height="23.333333333333329"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                                                    <textInputTraits key="textInputTraits"/>
+                                                </textField>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstAttribute="trailingMargin" secondItem="WTE-Mf-oSE" secondAttribute="trailing" id="n6N-3R-NTg"/>
+                                                <constraint firstItem="WTE-Mf-oSE" firstAttribute="leading" secondItem="pl9-aT-JJv" secondAttribute="leadingMargin" id="sNe-Pt-j5P"/>
+                                                <constraint firstItem="WTE-Mf-oSE" firstAttribute="centerY" secondItem="pl9-aT-JJv" secondAttribute="centerY" id="zcb-Id-s8J"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="mPJ-QR-KGR" userLabel="Confirm button">
+                                        <rect key="frame" x="0.0" y="417.0000057220459" width="414" height="43.666667938232422"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="mPJ-QR-KGR" id="qCW-fg-XCq">
+                                            <rect key="frame" x="0.0" y="0.0" width="414" height="43.666667938232422"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cOw-88-WKy">
+                                                    <rect key="frame" x="170.66666666666666" y="4" width="73" height="36"/>
+                                                    <fontDescription key="fontDescription" type="system" weight="medium" pointSize="20"/>
+                                                    <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                                    <state key="normal" title="Confirm"/>
+                                                    <connections>
+                                                        <action selector="confirmCodeClicked:" destination="IMk-1F-WiZ" eventType="touchUpInside" id="1UQ-JZ-76i"/>
+                                                    </connections>
+                                                </button>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="cOw-88-WKy" firstAttribute="centerY" secondItem="qCW-fg-XCq" secondAttribute="centerY" id="FSh-6M-EhB"/>
+                                                <constraint firstItem="cOw-88-WKy" firstAttribute="centerX" secondItem="qCW-fg-XCq" secondAttribute="centerX" id="nYo-sy-Ptb"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </cells>
+                            </tableViewSection>
+                        </sections>
+                        <connections>
+                            <outlet property="dataSource" destination="IMk-1F-WiZ" id="DiN-Bu-1GY"/>
+                            <outlet property="delegate" destination="IMk-1F-WiZ" id="Nj9-Ke-Pb4"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" id="Go3-PA-Wn8"/>
                     <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
                     <connections>
-                        <outlet property="credentialTextField" destination="VJ5-b7-ozY" id="1rg-dP-3gF"/>
-                        <outlet property="requestButton" destination="i0f-S8-O1v" id="t5a-jD-6KE"/>
+                        <outlet property="confirmationCodeTextField" destination="y4A-Jz-woo" id="j0G-8A-W0a"/>
+                        <outlet property="emailTextField" destination="Wyn-hP-c2H" id="9kM-eu-5CR"/>
+                        <outlet property="newPasswordTextField" destination="WTE-Mf-oSE" id="sLV-s7-J4c"/>
+                        <outlet property="promptLabel" destination="9SI-IJ-VTf" id="dYc-QO-ePX"/>
+                        <outlet property="telTextField" destination="hWc-uJ-Emq" id="vdm-01-xoe"/>
                     </connections>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="QtJ-u7-Oyt" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="yId-Cf-Qr9" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-2368" y="878"/>
         </scene>
