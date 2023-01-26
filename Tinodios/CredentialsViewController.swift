@@ -13,6 +13,7 @@ class CredentialsViewController: UIViewController {
     @IBOutlet weak var codeText: UITextField!
 
     var meth: String?
+    var authToken: String?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -21,7 +22,7 @@ class CredentialsViewController: UIViewController {
         } else {
             self.view.backgroundColor = .white
         }
-
+        self.authToken = Cache.tinode.authToken
         UiUtils.dismissKeyboardForTaps(onView: self.view)
     }
 
@@ -47,7 +48,7 @@ class CredentialsViewController: UIViewController {
 
         let tinode = Cache.tinode
 
-        guard let token = tinode.authToken else {
+        guard let token = self.authToken else {
             self.dismiss(animated: true, completion: nil)
             return
         }
@@ -56,17 +57,24 @@ class CredentialsViewController: UIViewController {
         var creds = [Credential]()
         creds.append(c)
 
+        let errorMsgTemplate = NSLocalizedString("Verification failure: %d %@", comment: "Error message")
         tinode.loginToken(token: token, creds: creds)
-            .thenApply({ msg in
+            .then(onSuccess: { msg in
                 if let ctrl = msg?.ctrl, ctrl.code >= 300 {
                     DispatchQueue.main.async {
-                        UiUtils.showToast(message: String(format: NSLocalizedString("Verification failure: %d %@", comment: "Error message"), ctrl.code, ctrl.text))
+                        UiUtils.showToast(message: String(format: errorMsgTemplate, ctrl.code, ctrl.text))
                     }
                 } else {
                     if let token = tinode.authToken {
                         tinode.setAutoLoginWithToken(token: token)
                     }
                     UiUtils.routeToChatListVC()
+                }
+                return nil
+            }, onFailure: { err in
+                Cache.log.error("Error validating credentials: %@", err.localizedDescription)
+                DispatchQueue.main.async {
+                    UiUtils.showToast(message: String(format: errorMsgTemplate, -1, "Invalid code"))
                 }
                 return nil
             })

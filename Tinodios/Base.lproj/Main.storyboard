@@ -672,7 +672,7 @@
                                             <rect key="frame" x="0.0" y="0.0" width="414" height="43.666667938232422"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Tel number" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="9Co-1p-ugz">
+                                                <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Tel number" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="9Co-1p-ugz" customClass="PhoneNumberTextField" customModule="PhoneNumberKit">
                                                     <rect key="frame" x="20" y="10.333333333333334" width="374" height="23.333333333333329"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="18"/>
                                                     <textInputTraits key="textInputTraits"/>
@@ -724,6 +724,7 @@
                         <outlet property="nameTextField" destination="yKx-xt-rdn" id="mO0-4L-XQO"/>
                         <outlet property="passwordTextField" destination="ZQy-2N-acy" id="KBw-uB-kPL"/>
                         <outlet property="signUpButton" destination="Rv6-qQ-FqW" id="WMA-4n-H8P"/>
+                        <outlet property="telTextField" destination="9Co-1p-ugz" id="0fr-0E-vds"/>
                         <outletCollection property="passwordVisibility" destination="wBH-qF-T4u" collectionClass="NSMutableArray" id="DCY-Jz-h1u"/>
                         <outletCollection property="passwordVisibility" destination="Lbr-pr-fEn" collectionClass="NSMutableArray" id="IRj-iW-HIj"/>
                     </connections>

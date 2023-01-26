@@ -5,8 +5,9 @@
 //  Copyright © 2019 Tinode. All rights reserved.
 //
 
-import UIKit
+import PhoneNumberKit
 import TinodeSDK
+import UIKit
 
 class SignupViewController: UITableViewController {
     // UI positions of the Contacts fields.
@@ -20,6 +21,7 @@ class SignupViewController: UITableViewController {
     @IBOutlet weak var nameTextField: UITextField!
     @IBOutlet weak var descriptionTextField: UITextField!
     @IBOutlet weak var emailTextField: UITextField!
+    @IBOutlet weak var telTextField: PhoneNumberTextField!
     @IBOutlet weak var signUpButton: UIButton!
     @IBOutlet var passwordVisibility: [UIButton]!
 
@@ -60,6 +62,10 @@ class SignupViewController: UITableViewController {
         passwordTextField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: UIControl.Event.editingChanged)
         nameTextField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: UIControl.Event.editingChanged)
         emailTextField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: UIControl.Event.editingChanged)
+        telTextField.withFlag = true
+        telTextField.withPrefix = true
+        telTextField.withExamplePlaceholder = true
+        telTextField.withDefaultPickerUI = true
         UiUtils.dismissKeyboardForTaps(onView: self.view)
     }
 
@@ -112,8 +118,13 @@ class SignupViewController: UITableViewController {
                 }
                 creds.append(Credential(meth: method, val: cred))
             case Credential.kMethPhone:
-                // TODO
-                break
+                guard telTextField.isValidNumber else {
+                    UiUtils.markTextFieldAsError(telTextField)
+                    isError = true
+                    return
+                }
+                let cred = telTextField.phoneNumberKit.format(telTextField.phoneNumber!, toType: .e164)
+                creds.append(Credential(meth: method, val: cred))
             default:
                 break
             }
