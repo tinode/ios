@@ -15,6 +15,8 @@ class ResetPasswordViewController: UITableViewController {
     private static let kSectionNewPassword = 1
     private static let kMethodEmail = 1
     private static let kMethodTel = 2
+    private static let kRequestCodeButton = 3
+    private static let kIHaveCodeButton = 4
 
     @IBOutlet weak var promptLabel: UILabel!
     @IBOutlet weak var emailTextField: UITextField!
@@ -23,6 +25,7 @@ class ResetPasswordViewController: UITableViewController {
     @IBOutlet weak var newPasswordTextField: UITextField!
 
     private var passwordChangeSectionVisible = false
+    private var codeRequested = false
     // Required credential methods.
     private var credMethods: [String]?
 
@@ -59,11 +62,16 @@ class ResetPasswordViewController: UITableViewController {
 
         // Listen to text change events to clear the possible error from earlier attempt.
         emailTextField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: UIControl.Event.editingChanged)
+        telTextField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: UIControl.Event.editingChanged)
+        confirmationCodeTextField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: UIControl.Event.editingChanged)
 
         telTextField.withFlag = true
         telTextField.withPrefix = true
         telTextField.withExamplePlaceholder = true
         telTextField.withDefaultPickerUI = true
+
+        newPasswordTextField.configureForPasswordEntry()
+
         UiUtils.dismissKeyboardForTaps(onView: self.view)
     }
 
@@ -90,6 +98,13 @@ class ResetPasswordViewController: UITableViewController {
         return super.tableView(tableView, heightForHeaderInSection: section)
     }
 
+    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        if section == ResetPasswordViewController.kSectionNewPassword && !self.passwordChangeSectionVisible {
+            return nil
+        }
+        return super.tableView(tableView, titleForHeaderInSection: section)
+    }
+
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         // Show only required credential fields.
         switch indexPath.section {
@@ -97,7 +112,9 @@ class ResetPasswordViewController: UITableViewController {
             let method = self.credMethods?.first
             if method == nil ||
                 (indexPath.row == ResetPasswordViewController.kMethodEmail && method! != Credential.kMethEmail) ||
-                (indexPath.row == ResetPasswordViewController.kMethodTel && method! != Credential.kMethPhone) {
+                (indexPath.row == ResetPasswordViewController.kMethodTel && method! != Credential.kMethPhone) ||
+                (indexPath.row == ResetPasswordViewController.kRequestCodeButton && self.codeRequested) ||
+                (indexPath.row == ResetPasswordViewController.kIHaveCodeButton && self.passwordChangeSectionVisible) {
                 return CGFloat.leastNonzeroMagnitude
             }
         case ResetPasswordViewController.kSectionNewPassword:
@@ -165,6 +182,7 @@ class ResetPasswordViewController: UITableViewController {
         Cache.tinode.requestResetPassword(method: method, newValue: value).then(onSuccess: { msg in
             self.passwordChangeSectionVisible = true
             DispatchQueue.main.async { UiUtils.showToast(message: NSLocalizedString("Confirmation code sent", comment: "Confirmation code sent"), level: .info) }
+            self.codeRequested = true
             return nil
         }, onFailure : { err in
             Cache.log.error("Password reset error: %@", err.localizedDescription)

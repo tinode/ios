@@ -250,6 +250,7 @@ extension SettingsPersonalViewController {
         let cred = me.creds![indexPath.row - 1]
 
         cell.textLabel?.text = cred.description
+        cell.accessoryType = .disclosureIndicator
         cell.selectionStyle = .none
         cell.textLabel?.sizeToFit()
 
@@ -276,6 +277,13 @@ extension SettingsPersonalViewController {
         return super.tableView(tableView, heightForRowAt: indexPath)
     }
 
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "Settings2CredChange", let cred = sender as? Credential {
+            let destVC = segue.destination as! CredentialsChangeViewController
+            destVC.currentCredential = cred
+        }
+    }
+
     // Handle tap on a row with contact
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.section != SettingsPersonalViewController.kSectionContacts || indexPath.row == 0 {
@@ -285,9 +293,13 @@ extension SettingsPersonalViewController {
 
         tableView.deselectRow(at: indexPath, animated: true)
 
-        guard let cred = me.creds?[indexPath.row - 1], !cred.isDone, cred.meth != nil else { return }
+        guard let cred = me.creds?[indexPath.row - 1], cred.meth != nil else { return }
 
-        confirmCredentialClicked(meth: cred.meth!, at: indexPath)
+        if !cred.isDone {
+            confirmCredentialClicked(meth: cred.meth!, at: indexPath)
+        } else {
+            performSegue(withIdentifier: "Settings2CredChange", sender: cred)
+        }
     }
 
     // Enable swipe to delete credentials.
