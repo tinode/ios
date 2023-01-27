@@ -8,6 +8,11 @@ import TinodeSDK
 import UIKit
 
 class SettingsPersonalViewController: UITableViewController {
+    // Container for passing credentials to CredentialsChangeViewController.
+    private struct CredentialContainer {
+        let currentCred: Credential
+        let newCred: Credential?
+    }
 
     private static let kSectionPersonal = 0
     private static let kPersonalDescription = 1
@@ -160,30 +165,6 @@ class SettingsPersonalViewController: UITableViewController {
         self.present(alert, animated: true)
     }
 
-    private func confirmCredentialClicked(meth: String, at indexPath: IndexPath) {
-        let alert = UIAlertController(title: NSLocalizedString("Confirm contact", comment: "Alert title"), message: String(format: NSLocalizedString("Enter confirmation code sent to you by %@", comment: "Alert prompt"), meth), preferredStyle: .alert)
-        alert.addTextField(configurationHandler: nil)
-        alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: ""), style: .cancel, handler: nil))
-        alert.addAction(UIAlertAction(
-            title: NSLocalizedString("OK", comment: ""), style: .default,
-            handler: { _ in
-                guard let code = alert.textFields?.first?.text else { return }
-                self.me.confirmCred(meth: meth, response: code)
-                    .thenApply { [weak self] _ in
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
-                            self?.tableView.reloadRows(at: [indexPath], with: .automatic)
-                        })
-                        DispatchQueue.main.async {
-                            UiUtils.showToast(message: NSLocalizedString("Confirmed successfully", comment: "Toast info message"), level: .info)
-                            self?.reloadData()
-                        }
-                        return nil
-                    }
-                    .thenCatch(UiUtils.ToastFailureHandler)
-        }))
-        self.present(alert, animated: true)
-    }
-
     private func updateUserName(_ userName: String?) {
         guard let userName = userName else { return }
         let pub = me.pub == nil ? TheCard(fn: nil) : me.pub!.copy()
@@ -278,9 +259,10 @@ extension SettingsPersonalViewController {
     }
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "Settings2CredChange", let cred = sender as? Credential {
+        if segue.identifier == "Settings2CredChange", let container = sender as? CredentialContainer {
             let destVC = segue.destination as! CredentialsChangeViewController
-            destVC.currentCredential = cred
+            destVC.currentCredential = container.currentCred
+            destVC.newCred = container.newCred?.val
         }
     }
 
@@ -295,11 +277,14 @@ extension SettingsPersonalViewController {
 
         guard let cred = me.creds?[indexPath.row - 1], cred.meth != nil else { return }
 
+        var container: CredentialContainer!
         if !cred.isDone {
-            confirmCredentialClicked(meth: cred.meth!, at: indexPath)
+            let oldCred = me.creds?.first(where: { $0.meth == cred.meth && $0.isDone })
+            container = CredentialContainer(currentCred: oldCred!, newCred: cred)
         } else {
-            performSegue(withIdentifier: "Settings2CredChange", sender: cred)
+            container = CredentialContainer(currentCred: cred, newCred: nil)
         }
+        performSegue(withIdentifier: "Settings2CredChange", sender: container)
     }
 
     // Enable swipe to delete credentials.

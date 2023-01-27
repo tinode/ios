@@ -29,6 +29,8 @@ class CredentialsChangeViewController: UITableViewController {
     @IBOutlet weak var confirmationCodeField: UITextField!
 
     var currentCredential: Credential?
+    // Only value here as method is the same as in currentCredential.
+    var newCred: String?
     private var confirmationSectionVisible = false
 
     private func configureTelInputField(_ field: PhoneNumberTextField) {
@@ -44,9 +46,15 @@ class CredentialsChangeViewController: UITableViewController {
             switch cred.meth {
             case Credential.kMethEmail:
                 currentEmailField.text = cred.val
+                if let newCred = newCred {
+                    newEmailField.text = newCred
+                }
                 infoLabel.text = "We will send a message with confirmation code to the address above."
             case Credential.kMethPhone:
                 currentTelField.text = cred.val
+                if let newTel = newCred {
+                    newTelField.text = newCred
+                }
                 infoLabel.text = "We will send an SMS with confirmation code to the number above."
             default:
                 break
@@ -62,6 +70,9 @@ class CredentialsChangeViewController: UITableViewController {
 
         UiUtils.dismissKeyboardForTaps(onView: self.view)
         loadData()
+        if newCred != nil {
+            self.confirmationSectionVisible = true
+        }
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -150,13 +161,58 @@ class CredentialsChangeViewController: UITableViewController {
     }
 
     @IBAction func requestClicked(_ sender: Any) {
-        guard let method = self.currentCredential?.meth, let value = validateCredential(forMethod: method) else {
+        guard let method = self.currentCredential?.meth, let value = validateCredential(forMethod: method), let me = Cache.tinode.getMeTopic() else {
             return
         }
-        self.confirmationSectionVisible = true
-        self.tableView.reloadData()
+
+        self.showRequestProgressOverlay()
+        let newCred = Credential(meth: method, val: value)
+        me.setMeta(meta: MsgSetMeta(desc: nil, sub: nil, tags: nil, cred: newCred))
+            .then(onSuccess: { msg in
+                if let ctrl = msg?.ctrl, 200 <= ctrl.code && ctrl.code < 300 {
+                    self.confirmationSectionVisible = true
+                    DispatchQueue.main.async { UiUtils.showToast(message: "Confirmation code sent", level: .info) }
+                } else {
+                    UiUtils.showServerResponseErrorToast(for: msg)
+                }
+                return nil
+            }, onFailure: UiUtils.ToastFailureHandler)
+            .thenFinally {
+                DispatchQueue.main.async {
+                    self.tableView.reloadData()
+                    self.dismissProgressOverlay()
+                }
+            }
     }
 
     @IBAction func confirmClicked(_ sender: Any) {
+        let code = UiUtils.ensureDataInTextField(confirmationCodeField, maxLength: 10)
+        guard !code.isEmpty, let oldCred = self.currentCredential, let method = oldCred.meth, let me = Cache.tinode.getMeTopic() else {
+            return
+        }
+
+        self.showConfirmingProgressOverlay()
+        me.confirmCred(meth: method, response: code)
+            .then(onSuccess: { msg in
+                if let ctrl = msg?.ctrl, 200 <= ctrl.code && ctrl.code < 300 {
+                    // Delete old credential. Ignore error.
+                    me.delCredential(oldCred).thenCatch({ err in
+                        Cache.log.error("Failed to delete", err.localizedDescription)
+                        return nil
+                    })
+                    DispatchQueue.main.async {
+                        UiUtils.showToast(message: "Credentials confirmed", level: .info)
+                    }
+                    DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1)) {
+                        self.navigationController?.popViewController(animated: true)
+                    }
+                } else {
+                    UiUtils.showServerResponseErrorToast(for: msg)
+                }
+                return nil
+            }, onFailure: UiUtils.ToastFailureHandler)
+            .thenFinally {
+                self.dismissProgressOverlay()
+            }
     }
 }

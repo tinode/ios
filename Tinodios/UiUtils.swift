@@ -508,6 +508,11 @@ class UiUtils {
         }
         return nil
     }
+
+    public static func showServerResponseErrorToast(for response: ServerMessage?) {
+        DispatchQueue.main.async { UiUtils.showToast(message: String(format: "Server error: code (%d), '%@'", response?.ctrl?.code ?? 0, response?.ctrl?.text ?? "-")) }
+    }
+
     public static func showPermissionsEditDialog(over viewController: UIViewController?, acs: AcsHelper?, callback: PermissionsEditViewController.ChangeHandler?, disabledPermissions: String?) {
         guard let acs = acs else {
             Cache.log.error("%@: can't change nil permissions", viewController.debugDescription)
@@ -802,6 +807,22 @@ extension UIViewController {
             }
         }
     }
+
+    /// Presents a progress overlay over the specified VC with the simple "Confirming..." message (suitable for most credential verification scenarios).
+    public func showConfirmingProgressOverlay() {
+        UiUtils.toggleProgressOverlay(in: self, visible: true, title: NSLocalizedString("Confirming...", comment: "Progress overlay"))
+    }
+
+    /// Presents a progress overlay over the specified VC with the simple "Requesting..." message (suitable for most basic server requests).
+    public func showRequestProgressOverlay() {
+        UiUtils.toggleProgressOverlay(in: self, visible: true, title: NSLocalizedString("Requesting...", comment: "Progress overlay"))
+    }
+
+    /// Dismisses progress overlay (if any) currently presented over VC.
+    public func dismissProgressOverlay() {
+        UiUtils.toggleProgressOverlay(in: self, visible: false)
+    }
+
 }
 
 extension UITableViewController {

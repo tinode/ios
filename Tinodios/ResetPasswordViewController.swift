@@ -178,7 +178,7 @@ class ResetPasswordViewController: UITableViewController {
         guard let method = self.credMethods?.first, let value = validateCredential(forMethod: method) else {
             return
         }
-        UiUtils.toggleProgressOverlay(in: self, visible: true, title: NSLocalizedString("Requesting...", comment: "Progress overlay"))
+        self.showRequestProgressOverlay()
         Cache.tinode.requestResetPassword(method: method, newValue: value).then(onSuccess: { msg in
             self.passwordChangeSectionVisible = true
             DispatchQueue.main.async { UiUtils.showToast(message: NSLocalizedString("Confirmation code sent", comment: "Confirmation code sent"), level: .info) }
@@ -191,7 +191,7 @@ class ResetPasswordViewController: UITableViewController {
             return nil
         }).thenFinally {
             DispatchQueue.main.async {
-                UiUtils.toggleProgressOverlay(in: self, visible: false)
+                self.dismissProgressOverlay()
                 self.tableView.reloadData()
             }
         }
