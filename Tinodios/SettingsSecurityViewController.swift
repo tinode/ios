@@ -199,12 +199,21 @@ class SettingsSecurityViewController: UITableViewController {
             return
         }
         tinode.updateAccountBasic(uid: nil, username: userName, password: newPassword)
-            .thenCatch { err in
+            .then(onSuccess: { msg in
+                DispatchQueue.main.async {
+                    if let ctrl = msg?.ctrl, 200 <= ctrl.code && ctrl.code < 300 {
+                        UiUtils.showToast(message: NSLocalizedString("Password updated", comment: "Success message"), level: .info)
+                    } else {
+                        UiUtils.showToast(message: "Server error")
+                    }
+                }
+                return nil
+            }, onFailure: { err in
                 DispatchQueue.main.async {
                     UiUtils.showToast(message: String(format: NSLocalizedString("Could not change password: %@", comment: "Error message"), err.localizedDescription))
                 }
                 return nil
-            }
+            })
     }
 
     private func logout() {

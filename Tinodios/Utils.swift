@@ -342,3 +342,15 @@ extension TimeInterval {
         return String(format: "%02d:%02d", Int(self / 60), Int(self.truncatingRemainder(dividingBy: 60)))
     }
 }
+
+extension Tinode {
+    func getRequiredCredMethods(forAuthLevel authLevel: String) -> [String]? {
+        guard case let .dict(allCred) = self.getServerParam(for: "reqCred") else {
+            return nil
+        }
+        if let allMeth = allCred[authLevel], case let .array(meth) = allMeth {
+            return meth.map { $0.asString() ?? "" }.filter { !$0.isEmpty }
+        }
+        return nil
+    }
+}

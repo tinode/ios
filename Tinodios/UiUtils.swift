@@ -350,8 +350,8 @@ class UiUtils {
         return maxLength > 0 ? String(text.prefix(maxLength)) : text
     }
 
-    public static func markTextFieldAsError(_ field: UITextField) {
-        let imageView = UIImageView(image: UIImage(named: "important"))
+    fileprivate static func setRightView(onField field: UITextField, imageNamed name: String) {
+        let imageView = UIImageView(image: UIImage(named: name))
         imageView.contentMode = .scaleAspectFit
         imageView.frame = CGRect(x: 0, y: 0, width: 24, height: 24)
         imageView.tintColor = .red
@@ -364,6 +364,11 @@ class UiUtils {
         field.rightViewMode = .always
         field.rightView = rightView
     }
+
+    public static func markTextFieldAsError(_ field: UITextField) {
+        UiUtils.setRightView(onField: field, imageNamed: "important")
+    }
+
     public static func clearTextFieldError(_ field: UITextField) {
         field.rightViewMode = .never
         field.rightView = nil
@@ -471,7 +476,7 @@ class UiUtils {
             })
         })
     }
-    public static func setupTapRecognizer(forView view: UIView, action: Selector?, actionTarget: UIViewController) {
+    public static func setupTapRecognizer(forView view: UIView, action: Selector?, actionTarget: Any) {
         let tap = UITapGestureRecognizer(target: actionTarget, action: action)
         view.isUserInteractionEnabled = true
         view.addGestureRecognizer(tap)
@@ -503,6 +508,11 @@ class UiUtils {
         }
         return nil
     }
+
+    public static func showServerResponseErrorToast(for response: ServerMessage?) {
+        DispatchQueue.main.async { UiUtils.showToast(message: String(format: "Server error: code (%d), '%@'", response?.ctrl?.code ?? 0, response?.ctrl?.text ?? "-")) }
+    }
+
     public static func showPermissionsEditDialog(over viewController: UIViewController?, acs: AcsHelper?, callback: PermissionsEditViewController.ChangeHandler?, disabledPermissions: String?) {
         guard let acs = acs else {
             Cache.log.error("%@: can't change nil permissions", viewController.debugDescription)
@@ -797,6 +807,22 @@ extension UIViewController {
             }
         }
     }
+
+    /// Presents a progress overlay over the specified VC with the simple "Confirming..." message (suitable for most credential verification scenarios).
+    public func showConfirmingProgressOverlay() {
+        UiUtils.toggleProgressOverlay(in: self, visible: true, title: NSLocalizedString("Confirming...", comment: "Progress overlay"))
+    }
+
+    /// Presents a progress overlay over the specified VC with the simple "Requesting..." message (suitable for most basic server requests).
+    public func showRequestProgressOverlay() {
+        UiUtils.toggleProgressOverlay(in: self, visible: true, title: NSLocalizedString("Requesting...", comment: "Progress overlay"))
+    }
+
+    /// Dismisses progress overlay (if any) currently presented over VC.
+    public func dismissProgressOverlay() {
+        UiUtils.toggleProgressOverlay(in: self, visible: false)
+    }
+
 }
 
 extension UITableViewController {
@@ -1106,5 +1132,22 @@ extension UIView {
                 self.setNeedsLayout()
             }
         }
+    }
+}
+
+extension UITextField {
+    func configureForPasswordEntry() {
+        self.isSecureTextEntry = true
+        UiUtils.setRightView(onField: self, imageNamed: "eye-30")
+        let view = self.rightView!
+
+        UiUtils.setupTapRecognizer(forView: view, action: #selector(eyeIconTapped), actionTarget: self)
+    }
+
+    @objc func eyeIconTapped(sender: UITapGestureRecognizer) {
+        guard let parent = self.rightView, let view = parent.subviews.filter({ $0 is UIImageView }).first as? UIImageView else { return }
+
+        view.image = UIImage(named: isSecureTextEntry ? "invisible-30" : "eye-30")
+        isSecureTextEntry = !isSecureTextEntry
     }
 }

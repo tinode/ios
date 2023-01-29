@@ -266,6 +266,8 @@ extension Tinode {
         let (hostName, useTLS, _) = ConnectionSettingsHelper.getConnectionSettings()
         return (hostName ?? SharedUtils.kHostName, useTLS ?? SharedUtils.kUseTLS)
     }
+
+    @discardableResult
     public func connectDefault(inBackground bkg: Bool) throws -> PromisedReply<ServerMessage>? {
         let (hostName, useTLS) = Tinode.getConnectionParams()
         BaseDb.log.debug("Connecting to %@, secure %@", hostName, useTLS ? "YES" : "NO")

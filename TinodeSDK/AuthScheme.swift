@@ -7,13 +7,14 @@
 
 import Foundation
 
-struct AuthScheme {
+public struct AuthScheme {
     enum AuthSchemeError: Error {
         case invalidParams(String)
     }
     static let kLoginBasic = "basic"
     static let kLoginToken = "token"
     static let kLoginReset = "reset"
+    static let kLoginCode  = "code"
 
     let scheme: String
     let secret: String
@@ -73,6 +74,11 @@ struct AuthScheme {
 
     static func tokenInstance(secret: String) -> AuthScheme {
         return AuthScheme(scheme: kLoginToken, secret: secret)
+    }
+
+    public static func codeInstance(code: String, method: String, value: String) throws -> AuthScheme {
+        // The secret is structured as <code>:<cred_method>:<cred_value>, "123456:email:alice@example.com".
+        return AuthScheme(scheme: AuthScheme.kLoginCode, secret: try encodeResetToken(scheme: code, method: method, value: value))
     }
 }
 
