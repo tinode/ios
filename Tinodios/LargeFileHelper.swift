@@ -69,6 +69,8 @@ public class LargeFileHelper: NSObject {
     private var activeUploads: [String: Upload] = [:]
     private var downloadCallbacks: [Int: ((Error?) -> Void)] = [:]
     private var tinode: Tinode!
+    // Numeric id of upload.
+    private var reqId = 0
 
     init(with tinode: Tinode, config: URLSessionConfiguration) {
         super.init()
@@ -113,7 +115,23 @@ public class LargeFileHelper: NSObject {
         LargeFileHelper.addCommonHeaders(to: &request, using: self.tinode)
 
         var newData = Data()
-        let header = LargeFileHelper.kTwoHyphens + LargeFileHelper.kBoundary + LargeFileHelper.kLineEnd + "Content-Disposition: form-data; name=\"file\"; filename=\"\(filename)\"" + LargeFileHelper.kLineEnd + "Content-Type: \(mimetype)" + LargeFileHelper.kLineEnd + "Content-Transfer-Encoding: binary" + LargeFileHelper.kLineEnd + LargeFileHelper.kLineEnd
+        // Id section.
+        self.reqId += 1
+        var header = LargeFileHelper.kTwoHyphens + LargeFileHelper.kBoundary + LargeFileHelper.kLineEnd +
+            "Content-Disposition: form-data; name=\"id\"" + LargeFileHelper.kLineEnd + LargeFileHelper.kLineEnd +
+            "\(self.reqId)" + LargeFileHelper.kLineEnd
+        if !topicId.isEmpty {
+            // Topic.
+            header +=
+                LargeFileHelper.kTwoHyphens + LargeFileHelper.kBoundary + LargeFileHelper.kLineEnd +
+                "Content-Disposition: form-data; name=\"topic\"" + LargeFileHelper.kLineEnd + LargeFileHelper.kLineEnd + topicId + LargeFileHelper.kLineEnd
+        }
+        // File section.
+        // Content-Disposition: form-data; name="file"; filename="1519014549699.pdf"
+        header += LargeFileHelper.kTwoHyphens + LargeFileHelper.kBoundary + LargeFileHelper.kLineEnd +
+            "Content-Disposition: form-data; name=\"file\"; filename=\"\(filename)\"" + LargeFileHelper.kLineEnd
+        // Content type & transfer encoding.
+        header += "Content-Type: \(mimetype)" + LargeFileHelper.kLineEnd + "Content-Transfer-Encoding: binary" + LargeFileHelper.kLineEnd + LargeFileHelper.kLineEnd
         newData.append(contentsOf: header.utf8)
         newData.append(payload)
         let footer = LargeFileHelper.kLineEnd + LargeFileHelper.kTwoHyphens + LargeFileHelper.kBoundary + LargeFileHelper.kTwoHyphens + LargeFileHelper.kLineEnd
