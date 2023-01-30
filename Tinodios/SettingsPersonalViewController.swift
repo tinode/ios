@@ -219,6 +219,7 @@ extension SettingsPersonalViewController: ImagePickerDelegate {
         UiUtils.updateAvatar(forTopic: self.me, image: image)
             .thenApply { _ in
                 DispatchQueue.main.async {
+                    UiUtils.showToast(message: "Avatar successfully updated", level: .info)
                     self.reloadData()
                 }
                 return nil

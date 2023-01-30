@@ -141,7 +141,7 @@ class SignupViewController: UITableViewController {
         if let imageBits = avatar?.pixelData(forMimeType: Photo.kDefaultType) {
             if imageBits.count > UiUtils.kMaxInbandAvatarBytes {
                 // Sending image out of band.
-                Cache.getLargeFileHelper().startAvatarUpload(mimetype: Photo.kDefaultType, data: imageBits, topicId: Tinode.kTopicMe, completionCallback: {(srvmsg, error) in
+                Cache.getLargeFileHelper().startAvatarUpload(mimetype: Photo.kDefaultType, data: imageBits, topicId: "newacc", completionCallback: {(srvmsg, error) in
                     guard let error = error else {
                         let thumbnail = avatar!.resize(width: UiUtils.kAvatarPreviewDimensions, height: UiUtils.kAvatarPreviewDimensions, clip: true)
                         let photo = Photo(data: thumbnail?.pixelData(forMimeType: Photo.kDefaultType), ref: srvmsg?.ctrl?.getStringParam(for: "url"), width: Int(avatar!.size.width), height: Int(avatar!.size.height))
