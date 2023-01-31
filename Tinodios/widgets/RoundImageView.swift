@@ -235,17 +235,19 @@ public class RoundImageView: UIImageView {
         let icon: UIImage
         switch iconType {
         case .p2p:
-            icon = UIImage(systemName: "person.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: 32, weight: .medium, scale: .large))!
+            icon = UIImage(systemName: "person", withConfiguration: UIImage.SymbolConfiguration(pointSize: 32, weight: .medium, scale: .large))!
         case .grp:
-            icon = UIImage(systemName: "person.2.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: 32, weight: .medium, scale: .large))!
+            icon = UIImage(systemName: "person.2", withConfiguration: UIImage.SymbolConfiguration(pointSize: 32, weight: .medium, scale: .large))!
         default:
             icon =  UIImage(systemName: "questionmark", withConfiguration: UIImage.SymbolConfiguration(pointSize: 32, weight: .medium, scale: .large))!
         }
-        return icon.withTintColor(UIColor.systemBackground).withInset(6)!
+        return icon.withTintColor(.link).withInset(6)!
     }
 
     private func setCornerRadius() {
         layer.cornerRadius = min(bounds.width, bounds.height)/2
+        layer.borderColor = UIColor.black.cgColor
+        layer.borderWidth = 0.1
     }
 }
 
