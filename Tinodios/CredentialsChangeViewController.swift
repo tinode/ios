@@ -53,7 +53,7 @@ class CredentialsChangeViewController: UITableViewController {
             case Credential.kMethPhone:
                 currentTelField.text = cred.val
                 if let newTel = newCred {
-                    newTelField.text = newCred
+                    newTelField.text = newTel
                 }
                 infoLabel.text = "We will send an SMS with confirmation code to the number above."
             default:

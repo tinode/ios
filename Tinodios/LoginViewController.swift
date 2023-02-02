@@ -17,7 +17,7 @@ class LoginViewController: UIViewController {
     @IBOutlet weak var passwordTextEdit: UITextField!
     @IBOutlet weak var scrollView: UIScrollView!
     @IBOutlet var passwordVisibility: [UIButton]!
-    private var passwordVisible: Bool = false
+    private var passwordVisible = false
 
     override func viewDidLoad() {
         super.viewDidLoad()

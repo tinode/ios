@@ -24,8 +24,10 @@ class ResetPasswordViewController: UITableViewController {
     @IBOutlet weak var confirmationCodeTextField: UITextField!
     @IBOutlet weak var newPasswordTextField: UITextField!
 
+    private var passwordVisible = false
     private var passwordChangeSectionVisible = false
     private var codeRequested = false
+    private var haveCode = false
     // Required credential methods.
     private var credMethods: [String]?
 
@@ -40,16 +42,7 @@ class ResetPasswordViewController: UITableViewController {
                 if self.credMethods?.isEmpty ?? true {
                     self.credMethods = [Credential.kMethEmail]
                 }
-                DispatchQueue.main.async {
-                    switch self.credMethods!.first {
-                    case Credential.kMethEmail:
-                        self.promptLabel.text = NSLocalizedString("We will send an email with confirmation code to the address below", comment: "Email password reset prompt")
-                    case Credential.kMethPhone:
-                        self.promptLabel.text = NSLocalizedString("We will send a SMS with confirmation code to the number below", comment: "Telephone password reset prompt")
-                    default:
-                        break
-                    }
-                }
+                self.configurePageHeader()
                 return nil
             },
             onFailure: { err in
@@ -113,7 +106,7 @@ class ResetPasswordViewController: UITableViewController {
             if method == nil ||
                 (indexPath.row == ResetPasswordViewController.kMethodEmail && method! != Credential.kMethEmail) ||
                 (indexPath.row == ResetPasswordViewController.kMethodTel && method! != Credential.kMethPhone) ||
-                (indexPath.row == ResetPasswordViewController.kRequestCodeButton && self.codeRequested) ||
+                (indexPath.row == ResetPasswordViewController.kRequestCodeButton && (self.codeRequested || self.haveCode)) ||
                 (indexPath.row == ResetPasswordViewController.kIHaveCodeButton && self.passwordChangeSectionVisible) {
                 return CGFloat.leastNonzeroMagnitude
             }
@@ -134,6 +127,23 @@ class ResetPasswordViewController: UITableViewController {
         self.setInterfaceColors()
     }
 
+    private func configurePageHeader() {
+        DispatchQueue.main.async {
+            if self.haveCode {
+                self.promptLabel.text = NSLocalizedString("Current credential", comment: "Label for email or phone number entering")
+                return
+            }
+            switch self.credMethods!.first {
+            case Credential.kMethEmail:
+                self.promptLabel.text = NSLocalizedString("We will send an email with confirmation code to the address below", comment: "Email password reset prompt")
+            case Credential.kMethPhone:
+                self.promptLabel.text = NSLocalizedString("We will send a SMS with confirmation code to the number below", comment: "Telephone password reset prompt")
+            default:
+                break
+            }
+        }
+    }
+
     private func setInterfaceColors() {
         if traitCollection.userInterfaceStyle == .dark {
             self.view.backgroundColor = .black
@@ -148,7 +158,9 @@ class ResetPasswordViewController: UITableViewController {
 
     @IBAction func haveCodeClicked(_ sender: Any) {
         if !self.passwordChangeSectionVisible {
+            self.haveCode = true
             self.passwordChangeSectionVisible = true
+            self.configurePageHeader()
             self.tableView.reloadData()
         }
     }
@@ -181,8 +193,12 @@ class ResetPasswordViewController: UITableViewController {
         self.showRequestProgressOverlay()
         Cache.tinode.requestResetPassword(method: method, newValue: value).then(onSuccess: { msg in
             self.passwordChangeSectionVisible = true
-            DispatchQueue.main.async { UiUtils.showToast(message: NSLocalizedString("Confirmation code sent", comment: "Confirmation code sent"), level: .info) }
+            DispatchQueue.main.async {
+                self.telTextField.isEnabled = false
+                UiUtils.showToast(message: NSLocalizedString("Confirmation code sent", comment: "Confirmation code sent"), level: .info)
+            }
             self.codeRequested = true
+            self.configurePageHeader()
             return nil
         }, onFailure : { err in
             Cache.log.error("Password reset error: %@", err.localizedDescription)
