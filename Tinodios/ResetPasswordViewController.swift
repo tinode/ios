@@ -68,10 +68,6 @@ class ResetPasswordViewController: UITableViewController {
         UiUtils.dismissKeyboardForTaps(onView: self.view)
     }
 
-    override func viewDidAppear(_ animated: Bool) {
-        self.setInterfaceColors()
-    }
-
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         if self.isMovingFromParent {
@@ -120,13 +116,6 @@ class ResetPasswordViewController: UITableViewController {
         return super.tableView(tableView, heightForRowAt: indexPath)
     }
 
-    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        guard UIApplication.shared.applicationState == .active else {
-            return
-        }
-        self.setInterfaceColors()
-    }
-
     private func configurePageHeader() {
         DispatchQueue.main.async {
             if self.haveCode {
@@ -141,14 +130,6 @@ class ResetPasswordViewController: UITableViewController {
             default:
                 break
             }
-        }
-    }
-
-    private func setInterfaceColors() {
-        if traitCollection.userInterfaceStyle == .dark {
-            self.view.backgroundColor = .black
-        } else {
-            self.view.backgroundColor = .white
         }
     }
 
