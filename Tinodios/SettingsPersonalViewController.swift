@@ -34,8 +34,6 @@ class SettingsPersonalViewController: UITableViewController {
     weak var me: DefaultMeTopic!
     private var imagePicker: ImagePicker!
 
-    private let phoneNumberKit = PhoneNumberKit()
-
     override func viewDidLoad() {
         super.viewDidLoad()
         setup()
@@ -180,8 +178,8 @@ extension SettingsPersonalViewController {
 
         var contact = cred.val
         if cred.meth == "tel", let tel = contact {
-            if let number = try? phoneNumberKit.parse(tel) {
-                contact = phoneNumberKit.format(number, toType: .international)
+            if let number = try? Utils.phoneNumberKit.parse(tel) {
+                contact = Utils.phoneNumberKit.format(number, toType: .international)
             }
         }
         cell.textLabel?.text = contact
