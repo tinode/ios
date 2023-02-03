@@ -2,10 +2,10 @@
   "developmentRegion" : "en",
   "targetLocale" : "en",
   "toolInfo" : {
-    "toolBuildNumber" : "13F17a",
+    "toolBuildNumber" : "14C18",
     "toolID" : "com.apple.dt.xcode",
     "toolName" : "Xcode",
-    "toolVersion" : "13.4"
+    "toolVersion" : "14.2"
   },
   "version" : "1.0",
   "workspace" : "Tinodios.xcworkspace"

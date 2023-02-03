@@ -4,6 +4,7 @@
 //  Copyright © 2020-2022 Tinode LLC. All rights reserved.
 //
 
+import PhoneNumberKit
 import TinodeSDK
 import UIKit
 
@@ -32,6 +33,8 @@ class SettingsPersonalViewController: UITableViewController {
     weak var tinode: Tinode!
     weak var me: DefaultMeTopic!
     private var imagePicker: ImagePicker!
+
+    private let phoneNumberKit = PhoneNumberKit()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -175,7 +178,13 @@ extension SettingsPersonalViewController {
 
         let cred = me.creds![indexPath.row]
 
-        cell.textLabel?.text = cred.description
+        var contact = cred.val
+        if cred.meth == "tel", let tel = contact {
+            if let number = try? phoneNumberKit.parse(tel) {
+                contact = phoneNumberKit.format(number, toType: .international)
+            }
+        }
+        cell.textLabel?.text = contact
         cell.accessoryType = .disclosureIndicator
         cell.selectionStyle = .none
         cell.textLabel?.sizeToFit()
