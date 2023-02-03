@@ -4,6 +4,7 @@
 //  Copyright © 2020-2022 Tinode LLC. All rights reserved.
 //
 
+import PhoneNumberKit
 import TinodeSDK
 import UIKit
 
@@ -25,7 +26,6 @@ class SettingsPersonalViewController: UITableViewController {
     @IBOutlet weak var avatarImage: RoundImageView!
     @IBOutlet weak var loadAvatarButton: UIButton!
 
-    @IBOutlet weak var manageContacts: UITableViewCell!
     @IBOutlet weak var manageTags: UITableViewCell!
 
     // let descriptionEditor = UITextView(frame: CGRect.zero)
@@ -60,10 +60,6 @@ class SettingsPersonalViewController: UITableViewController {
         UiUtils.setupTapRecognizer(
             forView: manageTags,
             action: #selector(SettingsPersonalViewController.manageTagsClicked),
-            actionTarget: self)
-        UiUtils.setupTapRecognizer(
-            forView: manageContacts,
-            action: #selector(SettingsPersonalViewController.addContactClicked),
             actionTarget: self)
 
         self.imagePicker = ImagePicker(presentationController: self, delegate: self, editable: true)
@@ -119,52 +115,6 @@ class SettingsPersonalViewController: UITableViewController {
         UiUtils.presentManageTagsEditDialog(over: self, forTopic: self.me)
     }
 
-    @objc func addContactClicked(sender: UITapGestureRecognizer) {
-        let alert = UIAlertController(title: NSLocalizedString("Add contact", comment: "Alert title"), message: NSLocalizedString("Enter email or phone number", comment: "Alert message"), preferredStyle: .alert)
-        alert.addTextField(configurationHandler: nil)
-            alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: ""), style: .cancel, handler: nil))
-        alert.addAction(UIAlertAction(
-            title: NSLocalizedString("OK", comment: ""), style: .default,
-            handler: { _ in
-                var success = false
-                if let cred = ValidatedCredential.parse(from: alert.textFields?.first?.text) {
-                    let credMsg: Credential?
-                    switch cred {
-                    case .email(let emailStr):
-                        credMsg = Credential(meth: Credential.kMethEmail, val: emailStr)
-                    case .phoneNum(let phone):
-                        credMsg = Credential(meth: Credential.kMethPhone, val: phone)
-                    default:
-                        credMsg = nil
-                    }
-                    if let credential = credMsg {
-                        success = true
-                        let oldCount = self.me.creds?.count ?? 0
-                        self.me.setMeta(meta: MsgSetMeta(desc: nil, sub: nil, tags: nil, cred: credential)).then(
-                            onSuccess: { [weak self] _ in
-                                DispatchQueue.main.async {
-                                    UiUtils.showToast(message: String(format: NSLocalizedString("Confirmaition message sent to %@", comment: "Info message"), credential.val!), level: .info)
-                                    if let count = self?.me.creds?.count, count > oldCount {
-                                        let indexPath = IndexPath(row: count, section: SettingsPersonalViewController.kSectionContacts)
-                                        self?.tableView.insertRows(at: [indexPath], with: .automatic)
-                                    }
-                                }
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
-                                    // Update tags
-                                    self?.reloadData()
-                                }
-                                return nil
-                            },
-                            onFailure: UiUtils.ToastFailureHandler)
-                    }
-                }
-                if !success {
-                    UiUtils.showToast(message: NSLocalizedString("Entered text is neither email nor phone number.", comment: "Error message"))
-                }
-        }))
-        self.present(alert, animated: true)
-    }
-
     private func updateUserName(_ userName: String?) {
         guard let userName = userName else { return }
         let pub = me.pub == nil ? TheCard(fn: nil) : me.pub!.copy()
@@ -211,7 +161,7 @@ extension SettingsPersonalViewController: ImagePickerDelegate {
 extension SettingsPersonalViewController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if section == SettingsPersonalViewController.kSectionContacts {
-            return me.creds == nil ? 1 : (me.creds?.count ?? 0) + 1
+            return me.creds?.count ?? 0
         }
         return super.tableView(tableView, numberOfRowsInSection: section)
     }
@@ -221,17 +171,18 @@ extension SettingsPersonalViewController {
             return super.tableView(tableView, cellForRowAt: indexPath)
         }
 
-        if indexPath.row == 0 {
-            // [Add another] button cell.
-            return super.tableView(tableView, cellForRowAt: indexPath)
-        }
-
         // Cells with contacts.
         let cell = tableView.dequeueReusableCell(withIdentifier: "defaultCell") ?? UITableViewCell(style: .value1, reuseIdentifier: "defaultCell")
 
-        let cred = me.creds![indexPath.row - 1]
+        let cred = me.creds![indexPath.row]
 
-        cell.textLabel?.text = cred.description
+        var contact = cred.val
+        if cred.meth == "tel", let tel = contact {
+            if let number = try? Utils.phoneNumberKit.parse(tel) {
+                contact = Utils.phoneNumberKit.format(number, toType: .international)
+            }
+        }
+        cell.textLabel?.text = contact
         cell.accessoryType = .disclosureIndicator
         cell.selectionStyle = .none
         cell.textLabel?.sizeToFit()
@@ -245,14 +196,14 @@ extension SettingsPersonalViewController {
     }
 
     override func tableView(_ tableView: UITableView, indentationLevelForRowAt indexPath: IndexPath) -> Int {
-        if indexPath.section == SettingsPersonalViewController.kSectionContacts && indexPath.row > 0 {
+        if indexPath.section == SettingsPersonalViewController.kSectionContacts {
             return 0
         }
         return super.tableView(tableView, indentationLevelForRowAt: indexPath)
     }
 
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        if indexPath.section == SettingsPersonalViewController.kSectionContacts && indexPath.row > 0 {
+        if indexPath.section == SettingsPersonalViewController.kSectionContacts {
             return tableView.rowHeight
         }
 
@@ -269,14 +220,14 @@ extension SettingsPersonalViewController {
 
     // Handle tap on a row with contact
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if indexPath.section != SettingsPersonalViewController.kSectionContacts || indexPath.row == 0 {
+        if indexPath.section != SettingsPersonalViewController.kSectionContacts {
             // Don't call super.tableView.
             return
         }
 
         tableView.deselectRow(at: indexPath, animated: true)
 
-        guard let cred = me.creds?[indexPath.row - 1], cred.meth != nil else { return }
+        guard let cred = me.creds?[indexPath.row], cred.meth != nil else { return }
 
         var container: CredentialContainer!
         if !cred.isDone {
@@ -290,13 +241,13 @@ extension SettingsPersonalViewController {
 
     // Enable swipe to delete credentials.
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        return indexPath.section == SettingsPersonalViewController.kSectionContacts && indexPath.row > 0
+        return indexPath.section == SettingsPersonalViewController.kSectionContacts
     }
 
     // Actual handling of swipes.
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            guard let cred = me.creds?[indexPath.row - 1] else { return }
+            guard let cred = me.creds?[indexPath.row] else { return }
             self.me.delCredential(cred).then(
                 onSuccess: { [weak self] _ in
                     DispatchQueue.main.async {

@@ -53,7 +53,7 @@ class CredentialsChangeViewController: UITableViewController {
             case Credential.kMethPhone:
                 currentTelField.text = cred.val
                 if let newTel = newCred {
-                    newTelField.text = newCred
+                    newTelField.text = newTel
                 }
                 infoLabel.text = "We will send an SMS with confirmation code to the number above."
             default:
@@ -71,12 +71,10 @@ class CredentialsChangeViewController: UITableViewController {
         UiUtils.dismissKeyboardForTaps(onView: self.view)
         loadData()
         if newCred != nil {
+            self.newEmailField.isEnabled = false
+            self.newTelField.isEnabled = false
             self.confirmationSectionVisible = true
         }
-    }
-
-    override func viewDidAppear(_ animated: Bool) {
-        self.setInterfaceColors()
     }
 
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
@@ -120,21 +118,6 @@ class CredentialsChangeViewController: UITableViewController {
         return super.tableView(tableView, heightForRowAt: indexPath)
     }
 
-    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        guard UIApplication.shared.applicationState == .active else {
-            return
-        }
-        self.setInterfaceColors()
-    }
-
-    private func setInterfaceColors() {
-        if traitCollection.userInterfaceStyle == .dark {
-            self.view.backgroundColor = .black
-        } else {
-            self.view.backgroundColor = .white
-        }
-    }
-
     @objc func textFieldDidChange(_ textField: UITextField) {
         UiUtils.clearTextFieldError(textField)
     }
@@ -171,7 +154,11 @@ class CredentialsChangeViewController: UITableViewController {
             .then(onSuccess: { msg in
                 if let ctrl = msg?.ctrl, 200 <= ctrl.code && ctrl.code < 300 {
                     self.confirmationSectionVisible = true
-                    DispatchQueue.main.async { UiUtils.showToast(message: "Confirmation code sent", level: .info) }
+                    DispatchQueue.main.async {
+                        self.newTelField.isEnabled = false
+                        self.newEmailField.isEnabled = false
+                        UiUtils.showToast(message: "Confirmation code sent", level: .info)
+                    }
                 } else {
                     UiUtils.showServerResponseErrorToast(for: msg)
                 }

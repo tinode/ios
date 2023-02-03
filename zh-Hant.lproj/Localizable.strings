@@ -56,6 +56,9 @@
 /* Alert action */
 "Cancel" = "取消";
 
+/* Label for cancelled call */
+"cancelled" = "已取消";
+
 /* Error message */
 "Cannot send email: functionality not accessible." = "無法傳送郵件：無法存取功能。";
 
@@ -83,8 +86,17 @@
 /* Info message */
 "Confirmaition message sent to %@" = "已將確認訊息傳送給 %@";
 
+/* Confirmation code sent */
+"Confirmation code sent" = "傳送確認程式";
+
 /* Toast info message */
 "Confirmed successfully" = "確認成功";
+
+/* Progress overlay */
+"Confirming..." = "確認...";
+
+/* Label for initiated call */
+"connecting" = "連線";
 
 /* Toast notification */
 "Connection to server lost." = "失去與伺服器的連線。";
@@ -101,6 +113,9 @@
 /* Error message */
 "Couldn't connect to server at %@: %@" = "無法連接位於 %@ 的伺服器：%@";
 
+/* Label for email or phone number entering */
+"Current credential" = "當前證書";
+
 /* Alert action
    Menu item
    Swipe action */
@@ -111,6 +126,9 @@
 
 /* Section title */
 "Directory" = "目錄";
+
+/* Menu item */
+"Edit" = "編輯";
 
 /* Alert title */
 "Edit account name" = "編輯帳號名稱";
@@ -123,6 +141,9 @@
 
 /* Alert title */
 "Edit Title" = "编辑标题";
+
+/* `Edited` message marker */
+"edited" = "編輯";
 
 /* Alert action */
 "Email" = "電子郵件地址";
@@ -178,11 +199,20 @@
 /* Invite reaction button */
 "Ignore" = "忽略";
 
+/* Label for call in progress */
+"in progress" = "正在進行中";
+
+/* Label for incoming video/audio calls */
+"Incoming call" = "來電";
+
 /* Error message */
 "Invalid group ID: %d (%@)" = "群組 ID 無效：%1$d (%2$@)";
 
 /* Error message when the image cannot be processed */
 "Invalid image" = "影象無效";
+
+/* Password reset error */
+"Invalid or unknown address" = "無效或未知地址";
 
 /* Dialog title: call to action */
 "Invite" = "邀請";
@@ -242,6 +272,12 @@
 /* Placeholder in empty chat */
 "No messages in the conversation" = "對話中沒有訊息";
 
+/* Error message when call cannot be started due to missing camera permission */
+"No permission to access camera" = "無權訪問相機";
+
+/* Error message when call cannot be started due to missing microphone permission */
+"No permission to access microphone" = "無權訪問麥克風";
+
 /* Alert action */
 "OK" = "OK";
 
@@ -251,11 +287,17 @@
 /* Toast notification */
 "Only Owner can delete group" = "只有擁有者能夠刪除群組";
 
+/* Label for outgoing video/audio calls */
+"Outgoing call" = "撥出電話";
+
 /* Toast notification */
 "Owner cannot leave the group" = "擁有者不能離開群組";
 
 /* Error message */
 "Password too short" = "密碼過短";
+
+/* Success message */
+"Password updated" = "密碼更新";
 
 /* Toast notification */
 "Permissions not modified: %d (%s)" = "未修改權限：%1$d (%2$s)";
@@ -320,6 +362,9 @@
 /* Alert action */
 "Send message" = "傳送訊息";
 
+/* Service unavailable */
+"Service unavailable at this time. Please try again later." = "此時無法提供服務。 請稍後再試。";
+
 /* Toast notification */
 "Something went wrong: %d (%s)" = "有東西出錯了：%1$d (%2$s)";
 
@@ -359,8 +404,12 @@
 /* Displayed when the type of attachment cannot be determined */
 "Unknown type" = "未知型別";
 
-/* Label shown next to an unsupported Drafty format element */
+/* Label shown next to an unsupported Drafty format element
+   Unsupported (unknown) Drafty tag */
 "Unsupported" = "不受支援";
+
+/* Progress overlay */
+"Updating password..." = "更新密碼...";
 
 /* Error message */
 "Upload failed (%@): empty response body." = "上傳失敗 (%@)：回應本體空白。";
@@ -373,6 +422,15 @@
 
 /* Error message */
 "Verification failure: %d %@" = "驗證失敗：%1$d %2$@";
+
+/* Label shown next to an inline video */
+"Video" = "影片";
+
+/* Telephone password reset prompt */
+"We will send a SMS with confirmation code to the number below" = "我們將向以下號碼傳送帶有確認程式的簡訊";
+
+/* Email password reset prompt */
+"We will send an email with confirmation code to the address below" = "我們將向以下地址傳送一封帶有確認程式的電子郵件";
 
 /* This is 'you' */
 "You" = "您";
