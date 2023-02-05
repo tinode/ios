@@ -344,34 +344,10 @@ class UiUtils {
     public static func ensureDataInTextField(_ field: UITextField, maxLength: Int = -1) -> String {
         let text = (field.text ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
         if text.isEmpty {
-            markTextFieldAsError(field)
+            field.markAsError()
             return ""
         }
         return maxLength > 0 ? String(text.prefix(maxLength)) : text
-    }
-
-    fileprivate static func setRightView(onField field: UITextField, imageNamed name: String) {
-        let imageView = UIImageView(image: UIImage(named: name))
-        imageView.contentMode = .scaleAspectFit
-        imageView.frame = CGRect(x: 0, y: 0, width: 24, height: 24)
-        imageView.tintColor = .red
-        // Padding around the icon
-        let padding: CGFloat = 4
-        // Create the view that would act as the padding
-        let rightView = UIView(frame: CGRect(x: 0, y: 0, // keep this as 0, 0
-            width: imageView.frame.width + padding, height: imageView.frame.height))
-        rightView.addSubview(imageView)
-        field.rightViewMode = .always
-        field.rightView = rightView
-    }
-
-    public static func markTextFieldAsError(_ field: UITextField) {
-        UiUtils.setRightView(onField: field, imageNamed: "important")
-    }
-
-    public static func clearTextFieldError(_ field: UITextField) {
-        field.rightViewMode = .never
-        field.rightView = nil
     }
 
     public static func bytesToHumanSize(_ bytes: Int64) -> String {
@@ -679,14 +655,6 @@ class UiUtils {
                 .thenCatch(UiUtils.ToastFailureHandler)
         }
         alert.show(over: viewController)
-    }
-
-    // Sets tint color on the password visibility switch buttons.
-    public static func adjustPasswordVisibilitySwitchColor(for switches: [UIButton], setColor color: UIColor) {
-        switches.forEach {
-            $0.tintColor = color
-            $0.setImage($0.imageView?.image?.withRenderingMode(.alwaysTemplate), for: .normal)
-        }
     }
 
     /// Generate image of a given size with an icon in the ceneter.
@@ -1136,15 +1104,52 @@ extension UIView {
 }
 
 extension UITextField {
-    func configureForPasswordEntry() {
+    // Semantic types of the right view content.
+    private static let RightViewContentTypeError = 1
+    private static let RightViewContentTypePassword = 2
+
+    /// Presents an image with the given name on the right side of the field.
+    private func setRightView(imageNamed name: String, withTintColor tintColor: UIColor, withContentType type: Int = 0) {
+        let imageView = UIImageView(image: UIImage(named: name))
+        imageView.contentMode = .scaleAspectFit
+        imageView.frame = CGRect(x: 0, y: 0, width: 24, height: 24)
+        imageView.tintColor = tintColor
+        // Padding around the icon
+        let padding: CGFloat = 4
+        // Create the view that would act as the padding
+        let rightView = UIView(frame: CGRect(x: 0, y: 0, // keep this as 0, 0
+            width: imageView.frame.width + padding, height: imageView.frame.height))
+        rightView.tag = type
+        rightView.addSubview(imageView)
+        self.rightViewMode = .always
+        self.rightView = rightView
+    }
+
+    /// Shows an error sign on the right side of the field.
+    public func markAsError() {
+        self.setRightView(imageNamed: "important", withTintColor: .red, withContentType: UITextField.RightViewContentTypeError)
+    }
+
+    /// Removes error sign from the right side of the field.
+    public func clearErrorSign() {
+        guard self.rightView?.tag == UITextField.RightViewContentTypeError else { return }
+        self.rightViewMode = .never
+        self.rightView = nil
+        if [.password, .newPassword].contains(self.textContentType) {
+            self.showSecureEntrySwitch()
+        }
+    }
+
+    /// Turns secure text entry mode on and displays a little eye switch on the right side of the field.
+    public func showSecureEntrySwitch() {
         self.isSecureTextEntry = true
-        UiUtils.setRightView(onField: self, imageNamed: "eye-30")
+        self.setRightView(imageNamed: "eye-30", withTintColor: .gray, withContentType: UITextField.RightViewContentTypePassword)
         let view = self.rightView!
 
         UiUtils.setupTapRecognizer(forView: view, action: #selector(eyeIconTapped), actionTarget: self)
     }
 
-    @objc func eyeIconTapped(sender: UITapGestureRecognizer) {
+    @objc private func eyeIconTapped(sender: UITapGestureRecognizer) {
         guard let parent = self.rightView, let view = parent.subviews.filter({ $0 is UIImageView }).first as? UIImageView else { return }
 
         view.image = UIImage(named: isSecureTextEntry ? "invisible-30" : "eye-30")

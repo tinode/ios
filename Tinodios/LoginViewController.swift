@@ -16,17 +16,14 @@ class LoginViewController: UIViewController {
     @IBOutlet weak var userNameTextEdit: UITextField!
     @IBOutlet weak var passwordTextEdit: UITextField!
     @IBOutlet weak var scrollView: UIScrollView!
-    @IBOutlet var passwordVisibility: [UIButton]!
-    private var passwordVisible = false
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        UiUtils.adjustPasswordVisibilitySwitchColor(for: passwordVisibility, setColor: .darkGray)
-
         // Listen to text change events
         userNameTextEdit.addTarget(self, action: #selector(textFieldDidChange(_:)), for: UIControl.Event.editingChanged)
         passwordTextEdit.addTarget(self, action: #selector(textFieldDidChange(_:)), for: UIControl.Event.editingChanged)
+        passwordTextEdit.showSecureEntrySwitch()
 
         // This is needed in order to adjust the height of the scroll view when the keyboard appears.
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIControl.keyboardWillShowNotification, object: nil)
@@ -88,15 +85,7 @@ class LoginViewController: UIViewController {
     }
 
     @objc func textFieldDidChange(_ textField: UITextField) {
-        UiUtils.clearTextFieldError(textField)
-    }
-
-    @IBAction func passwordVisibilityClicked(_ sender: Any) {
-        passwordTextEdit.isSecureTextEntry = passwordVisible
-        passwordVisible = !passwordVisible
-        for v in passwordVisibility {
-            v.isHidden = !v.isHidden
-        }
+        textField.clearErrorSign()
     }
 
     @IBAction func loginClicked(_ sender: Any) {

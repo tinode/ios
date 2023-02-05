@@ -119,7 +119,7 @@ class CredentialsChangeViewController: UITableViewController {
     }
 
     @objc func textFieldDidChange(_ textField: UITextField) {
-        UiUtils.clearTextFieldError(textField)
+        textField.clearErrorSign()
     }
 
     private func validateCredential(forMethod method: String) -> String? {
@@ -127,13 +127,13 @@ class CredentialsChangeViewController: UITableViewController {
         case Credential.kMethEmail:
             let credential = UiUtils.ensureDataInTextField(newEmailField)
             guard !credential.isEmpty, case let .email(cred) = ValidatedCredential.parse(from: credential) else {
-                UiUtils.markTextFieldAsError(newEmailField)
+                newEmailField.markAsError()
                 return nil
             }
             return cred
         case Credential.kMethPhone:
             guard newTelField.isValidNumber else {
-                UiUtils.markTextFieldAsError(newTelField)
+                newTelField.markAsError()
                 return nil
             }
             return newTelField.phoneNumberKit.format(newTelField.phoneNumber!, toType: .e164)

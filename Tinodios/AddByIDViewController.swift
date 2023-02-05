@@ -43,7 +43,7 @@ class AddByIDViewController: UIViewController {
     }
 
     @objc func textFieldDidChange(_ textField: UITextField) {
-        UiUtils.clearTextFieldError(textField)
+        textField.clearErrorSign()
     }
     @IBAction func okayClicked(_ sender: Any) {
         let id = UiUtils.ensureDataInTextField(idTextField)

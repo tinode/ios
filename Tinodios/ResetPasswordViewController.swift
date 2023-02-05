@@ -63,7 +63,7 @@ class ResetPasswordViewController: UITableViewController {
         telTextField.withExamplePlaceholder = true
         telTextField.withDefaultPickerUI = true
 
-        newPasswordTextField.configureForPasswordEntry()
+        newPasswordTextField.showSecureEntrySwitch()
 
         UiUtils.dismissKeyboardForTaps(onView: self.view)
     }
@@ -134,7 +134,7 @@ class ResetPasswordViewController: UITableViewController {
     }
 
     @objc func textFieldDidChange(_ textField: UITextField) {
-        UiUtils.clearTextFieldError(textField)
+        textField.clearErrorSign()
     }
 
     @IBAction func haveCodeClicked(_ sender: Any) {
@@ -151,13 +151,13 @@ class ResetPasswordViewController: UITableViewController {
         case Credential.kMethEmail:
             let credential = UiUtils.ensureDataInTextField(emailTextField)
             guard !credential.isEmpty, case let .email(cred) = ValidatedCredential.parse(from: credential) else {
-                UiUtils.markTextFieldAsError(emailTextField)
+                emailTextField.markAsError()
                 return nil
             }
             return cred
         case Credential.kMethPhone:
             guard telTextField.isValidNumber else {
-                UiUtils.markTextFieldAsError(telTextField)
+                telTextField.markAsError()
                 return nil
             }
             return telTextField.phoneNumberKit.format(telTextField.phoneNumber!, toType: .e164)

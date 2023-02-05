@@ -8,6 +8,7 @@
 import PhoneNumberKit
 import TinodeSDK
 import UIKit
+import TinodiosDB
 
 class SignupViewController: UITableViewController {
     // UI positions of the Contacts fields.
@@ -23,9 +24,7 @@ class SignupViewController: UITableViewController {
     @IBOutlet weak var emailTextField: UITextField!
     @IBOutlet weak var telTextField: PhoneNumberTextField!
     @IBOutlet weak var signUpButton: UIButton!
-    @IBOutlet var passwordVisibility: [UIButton]!
 
-    private var passwordVisible: Bool = false
     var imagePicker: ImagePicker!
     var avatarReceived: Bool = false
 
@@ -56,8 +55,6 @@ class SignupViewController: UITableViewController {
                 DispatchQueue.main.async { self.tableView.reloadData() }
             }
 
-        UiUtils.adjustPasswordVisibilitySwitchColor(for: passwordVisibility, setColor: .darkGray)
-
         self.imagePicker = ImagePicker(presentationController: self, delegate: self, editable: true)
 
         // Listen to text change events to clear the possible error from earlier attempt.
@@ -65,10 +62,12 @@ class SignupViewController: UITableViewController {
         passwordTextField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: UIControl.Event.editingChanged)
         nameTextField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: UIControl.Event.editingChanged)
         emailTextField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: UIControl.Event.editingChanged)
+        telTextField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: UIControl.Event.editingChanged)
         telTextField.withFlag = true
         telTextField.withPrefix = true
         telTextField.withExamplePlaceholder = true
         telTextField.withDefaultPickerUI = true
+        passwordTextField.showSecureEntrySwitch()
         UiUtils.dismissKeyboardForTaps(onView: self.view)
     }
 
@@ -87,20 +86,12 @@ class SignupViewController: UITableViewController {
     }
 
     @objc func textFieldDidChange(_ textField: UITextField) {
-        UiUtils.clearTextFieldError(textField)
+        textField.clearErrorSign()
     }
 
     @IBAction func addAvatarClicked(_ sender: Any) {
         // Get avatar image
         self.imagePicker.present(from: self.view)
-    }
-
-    @IBAction func passwordVisibilityChanged(_ sender: Any) {
-        passwordTextField.isSecureTextEntry = passwordVisible
-        passwordVisible = !passwordVisible
-        for v in passwordVisibility {
-            v.isHidden = !v.isHidden
-        }
     }
 
     @IBAction func signUpClicked(_ sender: Any) {
@@ -117,14 +108,14 @@ class SignupViewController: UITableViewController {
             case Credential.kMethEmail:
                 let credential = UiUtils.ensureDataInTextField(emailTextField)
                 guard !credential.isEmpty, case let .email(cred) = ValidatedCredential.parse(from: credential) else {
-                    UiUtils.markTextFieldAsError(emailTextField)
+                    emailTextField.markAsError()
                     isError = true
                     return
                 }
                 creds.append(Credential(meth: method, val: cred))
             case Credential.kMethPhone:
                 guard telTextField.isValidNumber else {
-                    UiUtils.markTextFieldAsError(telTextField)
+                    telTextField.markAsError()
                     isError = true
                     return
                 }
@@ -148,6 +139,8 @@ class SignupViewController: UITableViewController {
                         return Cache.tinode.createAccountBasic(uname: login, pwd: pwd, login: true, tags: nil, desc: desc, creds: creds)
                     }
                     .thenApply { [weak self] msg in
+                        let tinode = Cache.tinode
+                        SharedUtils.saveAuthToken(for: login, token: tinode.authToken, expires: tinode.authTokenExpires)
                         if let ctrl = msg?.ctrl, ctrl.code >= 300, ctrl.text.contains("validate credentials") {
                             DispatchQueue.main.async {
                                 UiUtils.routeToCredentialsVC(in: self!.navigationController, verifying: ctrl.getStringArray(for: "cred")?.first)

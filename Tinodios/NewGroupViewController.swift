@@ -66,7 +66,7 @@ class NewGroupViewController: UITableViewController {
     }
 
     @objc func textFieldDidChange(_ textField: UITextField) {
-        UiUtils.clearTextFieldError(textField)
+        textField.clearErrorSign()
     }
 
     // MARK: - Table view data source
