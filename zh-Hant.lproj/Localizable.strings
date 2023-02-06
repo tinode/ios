@@ -40,12 +40,21 @@
 /* Error message: attachment too large */
 "Attachment exceeds maximum size" = "附件超過最大尺寸";
 
+/* Menu item: audio-only call */
+"Audio-only" = "僅限音訊";
+
 /* Alert action
    Invite reaction button */
 "Block" = "封鎖";
 
 /* Alert action */
 "Block contact?" = "要封鎖聯絡人嗎？";
+
+/* Text written on button face when all else fails. */
+"button" = "按鈕";
+
+/* Menu title for selecting type of call */
+"Call" = "呼叫";
 
 /* Toast notification */
 "Can't change permissions for this user." = "無法修改此使用者的權限。";

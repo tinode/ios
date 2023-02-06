@@ -75,6 +75,11 @@
         <target>Attachment exceeds maximum size</target>
         <note>Error message: attachment too large</note>
       </trans-unit>
+      <trans-unit id="Audio-only" xml:space="preserve">
+        <source>Audio-only</source>
+        <target>Audio-only</target>
+        <note>Menu item: audio-only call</note>
+      </trans-unit>
       <trans-unit id="Block" xml:space="preserve">
         <source>Block</source>
         <target>Block</target>
@@ -85,6 +90,11 @@
         <source>Block contact?</source>
         <target>Block contact?</target>
         <note>Alert action</note>
+      </trans-unit>
+      <trans-unit id="Call" xml:space="preserve">
+        <source>Call</source>
+        <target>Call</target>
+        <note>Menu title for selecting type of call</note>
       </trans-unit>
       <trans-unit id="Can't change permissions for this user." xml:space="preserve">
         <source>Can't change permissions for this user.</source>
@@ -1540,6 +1550,11 @@
         <source>File name:</source>
         <target>File name:</target>
         <note>Class = "UILabel"; text = "File name:"; ObjectID = "lRE-RJ-Qgv";</note>
+      </trans-unit>
+      <trans-unit id="lq5-3O-Yva.title" xml:space="preserve">
+        <source>Reset Password</source>
+        <target>Reset Password</target>
+        <note>Class = "UIViewController"; title = "Reset Password"; ObjectID = "lq5-3O-Yva";</note>
       </trans-unit>
       <trans-unit id="mTa-Ke-dom.text" xml:space="preserve">
         <source>N</source>

@@ -40,6 +40,9 @@
 /* Error message: attachment too large */
 "Attachment exceeds maximum size" = "El accesorio supera el tamaño máximo";
 
+/* Menu item: audio-only call */
+"Audio-only" = "Solo audio";
+
 /* Alert action
    Invite reaction button */
 "Block" = "Bloquear";
@@ -49,6 +52,9 @@
 
 /* Text written on button face when all else fails. */
 "button" = "pulsador";
+
+/* Menu title for selecting type of call */
+"Call" = "Llamada";
 
 /* Toast notification */
 "Can't change permissions for this user." = "No se puede cambiar los permisos para este usuario.";

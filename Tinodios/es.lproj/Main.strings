@@ -295,6 +295,9 @@
 /* Class = "UILabel"; text = "File name:"; ObjectID = "lRE-RJ-Qgv"; */
 "lRE-RJ-Qgv.text" = "Nombre del archivo:";
 
+/* Class = "UILabel"; text = "File name:"; ObjectID = "lRE-RJ-Qgv"; */
+"lRE-RJ-Qgv.text" = "Nombre del archivo:";
+
 /* Class = "UINavigationItem"; title = "Edit Members"; ObjectID = "LRu-ae-drd"; */
 "LRu-ae-drd.title" = "Editar miembros";
 
@@ -482,7 +485,7 @@
 "yKx-xt-rdn.placeholder" = "Nombres y apellidos";
 
 /* Class = "UILabel"; text = "image/jpeg"; ObjectID = "YLX-fZ-c26"; */
-"YLX-fZ-c26.text" = "image/jpeg";
+"YLX-fZ-c26.text" = "";
 
 /* Class = "UITableViewController"; title = "SignUp"; ObjectID = "YmQ-cB-rjH"; */
 "YmQ-cB-rjH.title" = "Regístrate";

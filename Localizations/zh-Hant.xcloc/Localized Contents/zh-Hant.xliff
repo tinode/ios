@@ -75,6 +75,11 @@
         <target>附件超過最大尺寸</target>
         <note>Error message: attachment too large</note>
       </trans-unit>
+      <trans-unit id="Audio-only" xml:space="preserve">
+        <source>Audio-only</source>
+        <target>僅限音訊</target>
+        <note>Menu item: audio-only call</note>
+      </trans-unit>
       <trans-unit id="Block" xml:space="preserve">
         <source>Block</source>
         <target>封鎖</target>
@@ -85,6 +90,11 @@
         <source>Block contact?</source>
         <target>要封鎖聯絡人嗎？</target>
         <note>Alert action</note>
+      </trans-unit>
+      <trans-unit id="Call" xml:space="preserve">
+        <source>Call</source>
+        <target>呼叫</target>
+        <note>Menu title for selecting type of call</note>
       </trans-unit>
       <trans-unit id="Can't change permissions for this user." xml:space="preserve">
         <source>Can't change permissions for this user.</source>
@@ -712,6 +722,7 @@
       </trans-unit>
       <trans-unit id="button" xml:space="preserve">
         <source>button</source>
+        <target>按鈕</target>
         <note>Text written on button face when all else fails.</note>
       </trans-unit>
       <trans-unit id="cancelled" xml:space="preserve">
@@ -1530,6 +1541,11 @@
         <target>檔名：</target>
         <note>Class = "UILabel"; text = "File name:"; ObjectID = "lRE-RJ-Qgv";</note>
       </trans-unit>
+      <trans-unit id="lq5-3O-Yva.title" xml:space="preserve">
+        <source>Reset Password</source>
+        <target>重設密碼</target>
+        <note>Class = "UIViewController"; title = "Reset Password"; ObjectID = "lq5-3O-Yva";</note>
+      </trans-unit>
       <trans-unit id="mTa-Ke-dom.text" xml:space="preserve">
         <source>N</source>
         <target>N</target>
@@ -1596,7 +1612,7 @@
       </trans-unit>
       <trans-unit id="qY7-Dy-tZI.text" xml:space="preserve">
         <source>Size:</source>
-        <target>大小：</target>
+        <target>尺寸：</target>
         <note>Class = "UILabel"; text = "Size:"; ObjectID = "qY7-Dy-tZI";</note>
       </trans-unit>
       <trans-unit id="qeU-hX-VEM.title" xml:space="preserve">
@@ -1841,6 +1857,7 @@
       </trans-unit>
       <trans-unit id="W0P-gB-P5h.text" xml:space="preserve">
         <source>Title</source>
+        <target>標題</target>
         <note>Class = "UILabel"; text = "Title"; ObjectID = "W0P-gB-P5h";</note>
       </trans-unit>
     </body>

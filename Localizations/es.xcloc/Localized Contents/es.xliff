@@ -75,6 +75,11 @@
         <target>El accesorio supera el tamaño máximo</target>
         <note>Error message: attachment too large</note>
       </trans-unit>
+      <trans-unit id="Audio-only" xml:space="preserve">
+        <source>Audio-only</source>
+        <target>Solo audio</target>
+        <note>Menu item: audio-only call</note>
+      </trans-unit>
       <trans-unit id="Block" xml:space="preserve">
         <source>Block</source>
         <target>Bloquear</target>
@@ -85,6 +90,11 @@
         <source>Block contact?</source>
         <target>¿Bloquear contacto?</target>
         <note>Alert action</note>
+      </trans-unit>
+      <trans-unit id="Call" xml:space="preserve">
+        <source>Call</source>
+        <target>Llamada</target>
+        <note>Menu title for selecting type of call</note>
       </trans-unit>
       <trans-unit id="Can't change permissions for this user." xml:space="preserve">
         <source>Can't change permissions for this user.</source>
@@ -1236,7 +1246,7 @@
       </trans-unit>
       <trans-unit id="YLX-fZ-c26.text" xml:space="preserve">
         <source>image/jpeg</source>
-        <target>image/jpeg</target>
+        <target/>
         <note>Class = "UILabel"; text = "image/jpeg"; ObjectID = "YLX-fZ-c26";</note>
       </trans-unit>
       <trans-unit id="YmQ-cB-rjH.title" xml:space="preserve">
@@ -1529,6 +1539,11 @@
         <source>File name:</source>
         <target>Nombre del archivo:</target>
         <note>Class = "UILabel"; text = "File name:"; ObjectID = "lRE-RJ-Qgv";</note>
+      </trans-unit>
+      <trans-unit id="lq5-3O-Yva.title" xml:space="preserve">
+        <source>Reset Password</source>
+        <target>Restablecer contraseña</target>
+        <note>Class = "UIViewController"; title = "Reset Password"; ObjectID = "lq5-3O-Yva";</note>
       </trans-unit>
       <trans-unit id="mTa-Ke-dom.text" xml:space="preserve">
         <source>N</source>
@@ -1841,6 +1856,7 @@
       </trans-unit>
       <trans-unit id="W0P-gB-P5h.text" xml:space="preserve">
         <source>Title</source>
+        <target>Reivindicación</target>
         <note>Class = "UILabel"; text = "Title"; ObjectID = "W0P-gB-P5h";</note>
       </trans-unit>
     </body>

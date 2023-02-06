@@ -203,7 +203,7 @@
 "geh-gC-6qO.text" = "Уведомления о прочтении";
 
 /* Class = "UIViewController"; title = "Video Preview"; ObjectID = "gfT-SI-43h"; */
-"gfT-SI-43h.title" = "Предпросмотр видео";
+"gfT-SI-43h.title" = "Превью видео";
 
 /* Class = "UITextField"; accessibilityHint = "Password"; ObjectID = "gLF-JR-ZfF"; */
 "gLF-JR-ZfF.accessibilityHint" = "Пароль";
@@ -218,7 +218,7 @@
 "H78-sG-L0j.headerTitle" = "Разрешения по умолчанию";
 
 /* Class = "UINavigationItem"; title = "Video Preview"; ObjectID = "Hah-A8-0yd"; */
-"Hah-A8-0yd.title" = "Предпросмотр видео";
+"Hah-A8-0yd.title" = "Превью видео";
 
 /* Class = "UILabel"; text = "placeholder_file_name"; ObjectID = "HIs-n4-sFa"; */
 "HIs-n4-sFa.text" = "placeholder_file_name";
@@ -291,6 +291,9 @@
 
 /* Class = "UITableViewSection"; headerTitle = "Group Members"; ObjectID = "lJB-qW-1zX"; */
 "lJB-qW-1zX.headerTitle" = "Участники";
+
+/* Class = "UILabel"; text = "File name:"; ObjectID = "lRE-RJ-Qgv"; */
+"lRE-RJ-Qgv.text" = "Имя файла:";
 
 /* Class = "UILabel"; text = "File name:"; ObjectID = "lRE-RJ-Qgv"; */
 "lRE-RJ-Qgv.text" = "Имя файла:";

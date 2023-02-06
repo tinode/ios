@@ -40,6 +40,9 @@
 /* Error message: attachment too large */
 "Attachment exceeds maximum size" = "Аттачмент слишком большой";
 
+/* Menu item: audio-only call */
+"Audio-only" = "Только звук";
+
 /* Alert action
    Invite reaction button */
 "Block" = "Заблокировать";
@@ -49,6 +52,9 @@
 
 /* Text written on button face when all else fails. */
 "button" = "кнопка";
+
+/* Menu title for selecting type of call */
+"Call" = "Звонок";
 
 /* Toast notification */
 "Can't change permissions for this user." = "Не получилось изменить права доступа.";
@@ -99,7 +105,7 @@
 "Confirming..." = "Проверка...";
 
 /* Label for initiated call */
-"connecting" = "соединяемся";
+"connecting" = "соединяется";
 
 /* Toast notification */
 "Connection to server lost." = "Свясь с сервером потеряна.";
@@ -131,7 +137,7 @@
 "Directory" = "Директория";
 
 /* Menu item */
-"Edit" = "Редактировать";
+"Edit" = "Изменить";
 
 /* Alert title */
 "Edit account name" = "Редактировать аккаунт";

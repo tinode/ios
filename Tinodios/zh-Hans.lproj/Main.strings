@@ -295,6 +295,9 @@
 /* Class = "UILabel"; text = "File name:"; ObjectID = "lRE-RJ-Qgv"; */
 "lRE-RJ-Qgv.text" = "文件名：";
 
+/* Class = "UILabel"; text = "File name:"; ObjectID = "lRE-RJ-Qgv"; */
+"lRE-RJ-Qgv.text" = "文件名：";
+
 /* Class = "UINavigationItem"; title = "Edit Members"; ObjectID = "LRu-ae-drd"; */
 "LRu-ae-drd.title" = "编辑成员";
 

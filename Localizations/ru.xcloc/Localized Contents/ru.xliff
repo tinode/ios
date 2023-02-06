@@ -75,6 +75,11 @@
         <target>Аттачмент слишком большой</target>
         <note>Error message: attachment too large</note>
       </trans-unit>
+      <trans-unit id="Audio-only" xml:space="preserve">
+        <source>Audio-only</source>
+        <target>Только звук</target>
+        <note>Menu item: audio-only call</note>
+      </trans-unit>
       <trans-unit id="Block" xml:space="preserve">
         <source>Block</source>
         <target>Заблокировать</target>
@@ -85,6 +90,11 @@
         <source>Block contact?</source>
         <target>Заблокировать контакт?</target>
         <note>Alert action</note>
+      </trans-unit>
+      <trans-unit id="Call" xml:space="preserve">
+        <source>Call</source>
+        <target>Звонок</target>
+        <note>Menu title for selecting type of call</note>
       </trans-unit>
       <trans-unit id="Can't change permissions for this user." xml:space="preserve">
         <source>Can't change permissions for this user.</source>
@@ -205,7 +215,7 @@
       </trans-unit>
       <trans-unit id="Edit" xml:space="preserve">
         <source>Edit</source>
-        <target>Редактировать</target>
+        <target>Изменить</target>
         <note>Menu item</note>
       </trans-unit>
       <trans-unit id="Edit Description" xml:space="preserve">
@@ -727,7 +737,7 @@
       </trans-unit>
       <trans-unit id="connecting" xml:space="preserve">
         <source>connecting</source>
-        <target>соединяемся</target>
+        <target>соединяется</target>
         <note>Label for initiated call</note>
       </trans-unit>
       <trans-unit id="edited" xml:space="preserve">
@@ -1048,7 +1058,7 @@
       </trans-unit>
       <trans-unit id="Hah-A8-0yd.title" xml:space="preserve">
         <source>Video Preview</source>
-        <target>Предпросмотр видео</target>
+        <target>Превью видео</target>
         <note>Class = "UINavigationItem"; title = "Video Preview"; ObjectID = "Hah-A8-0yd";</note>
       </trans-unit>
       <trans-unit id="IMk-1F-WiZ.title" xml:space="preserve">
@@ -1450,7 +1460,7 @@
       </trans-unit>
       <trans-unit id="gfT-SI-43h.title" xml:space="preserve">
         <source>Video Preview</source>
-        <target>Предпросмотр видео</target>
+        <target>Превью видео</target>
         <note>Class = "UIViewController"; title = "Video Preview"; ObjectID = "gfT-SI-43h";</note>
       </trans-unit>
       <trans-unit id="goO-Va-Eyu.title" xml:space="preserve">
@@ -1531,6 +1541,11 @@
         <source>File name:</source>
         <target>Имя файла:</target>
         <note>Class = "UILabel"; text = "File name:"; ObjectID = "lRE-RJ-Qgv";</note>
+      </trans-unit>
+      <trans-unit id="lq5-3O-Yva.title" xml:space="preserve">
+        <source>Reset Password</source>
+        <target>Напомнить пароль</target>
+        <note>Class = "UIViewController"; title = "Reset Password"; ObjectID = "lq5-3O-Yva";</note>
       </trans-unit>
       <trans-unit id="mTa-Ke-dom.text" xml:space="preserve">
         <source>N</source>

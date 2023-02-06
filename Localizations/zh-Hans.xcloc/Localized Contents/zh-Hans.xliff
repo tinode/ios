@@ -75,6 +75,11 @@
         <target>附件超过最大尺寸</target>
         <note>Error message: attachment too large</note>
       </trans-unit>
+      <trans-unit id="Audio-only" xml:space="preserve">
+        <source>Audio-only</source>
+        <target>仅限音频</target>
+        <note>Menu item: audio-only call</note>
+      </trans-unit>
       <trans-unit id="Block" xml:space="preserve">
         <source>Block</source>
         <target>屏蔽</target>
@@ -85,6 +90,11 @@
         <source>Block contact?</source>
         <target>屏蔽联系人？</target>
         <note>Alert action</note>
+      </trans-unit>
+      <trans-unit id="Call" xml:space="preserve">
+        <source>Call</source>
+        <target>电话</target>
+        <note>Menu title for selecting type of call</note>
       </trans-unit>
       <trans-unit id="Can't change permissions for this user." xml:space="preserve">
         <source>Can't change permissions for this user.</source>
@@ -1530,6 +1540,11 @@
         <target>文件名：</target>
         <note>Class = "UILabel"; text = "File name:"; ObjectID = "lRE-RJ-Qgv";</note>
       </trans-unit>
+      <trans-unit id="lq5-3O-Yva.title" xml:space="preserve">
+        <source>Reset Password</source>
+        <target>重置密码</target>
+        <note>Class = "UIViewController"; title = "Reset Password"; ObjectID = "lq5-3O-Yva";</note>
+      </trans-unit>
       <trans-unit id="mTa-Ke-dom.text" xml:space="preserve">
         <source>N</source>
         <target>N</target>
@@ -1596,7 +1611,7 @@
       </trans-unit>
       <trans-unit id="qY7-Dy-tZI.text" xml:space="preserve">
         <source>Size:</source>
-        <target>尺寸:</target>
+        <target>尺寸：</target>
         <note>Class = "UILabel"; text = "Size:"; ObjectID = "qY7-Dy-tZI";</note>
       </trans-unit>
       <trans-unit id="qeU-hX-VEM.title" xml:space="preserve">
