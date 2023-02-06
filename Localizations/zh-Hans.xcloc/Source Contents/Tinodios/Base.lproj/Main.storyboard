@@ -121,32 +121,7 @@
                                 </cells>
                             </tableViewSection>
                             <tableViewSection headerTitle="Contacts" id="bvE-OV-sy1">
-                                <cells>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" accessoryType="disclosureIndicator" indentationWidth="10" focusStyle="custom" textLabel="fLh-oI-CRP" imageView="6z9-5Y-HKA" style="IBUITableViewCellStyleDefault" id="WNR-81-Xt2">
-                                        <rect key="frame" x="0.0" y="300.66666603088379" width="414" height="43.666667938232422"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="WNR-81-Xt2" id="Ovf-BC-JGG">
-                                            <rect key="frame" x="0.0" y="0.0" width="383.66666666666669" height="43.666667938232422"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Add another" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="fLh-oI-CRP">
-                                                    <rect key="frame" x="59" y="0.0" width="316.66666666666669" height="43.666667938232422"/>
-                                                    <autoresizingMask key="autoresizingMask"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                    <nil key="textColor"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
-                                                <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="6z9-5Y-HKA">
-                                                    <rect key="frame" x="20.333333333333336" y="10.666666666666664" width="23.333333333333332" height="22"/>
-                                                    <autoresizingMask key="autoresizingMask"/>
-                                                    <imageReference key="image" image="plus" catalog="system" symbolScale="large"/>
-                                                    <preferredSymbolConfiguration key="preferredSymbolConfiguration" scale="large" weight="medium"/>
-                                                </imageView>
-                                            </subviews>
-                                        </tableViewCellContentView>
-                                        <color key="tintColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                    </tableViewCell>
-                                </cells>
+                                <cells/>
                             </tableViewSection>
                             <tableViewSection headerTitle="Tags (Content Discovery)" id="jal-tR-OpF">
                                 <cells>
@@ -286,40 +261,12 @@
                                                             <action selector="loginClicked:" destination="Lui-0V-oqF" eventType="editingDidEndOnExit" id="8GW-sp-xDu"/>
                                                         </connections>
                                                     </textField>
-                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="kUP-kl-SzZ" userLabel="eye">
-                                                        <rect key="frame" x="225" y="10" width="20" height="20"/>
-                                                        <constraints>
-                                                            <constraint firstAttribute="height" constant="20" id="4Bc-Ry-Mc4"/>
-                                                            <constraint firstAttribute="width" constant="20" id="iH8-2Q-1Sf"/>
-                                                        </constraints>
-                                                        <color key="tintColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                        <state key="normal" image="eye-30"/>
-                                                        <connections>
-                                                            <action selector="passwordVisibilityClicked:" destination="Lui-0V-oqF" eventType="touchUpInside" id="kdd-W8-8bU"/>
-                                                        </connections>
-                                                    </button>
-                                                    <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Qf5-ud-WtI" userLabel="invisible">
-                                                        <rect key="frame" x="225" y="10" width="20" height="20"/>
-                                                        <constraints>
-                                                            <constraint firstAttribute="width" constant="20" id="QIF-fi-VQe"/>
-                                                            <constraint firstAttribute="height" constant="20" id="u38-UB-abK"/>
-                                                        </constraints>
-                                                        <color key="tintColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                        <state key="normal" image="invisible-30"/>
-                                                        <connections>
-                                                            <action selector="passwordVisibilityClicked:" destination="Lui-0V-oqF" eventType="touchUpInside" id="Yrm-YU-b5U"/>
-                                                        </connections>
-                                                    </button>
                                                 </subviews>
                                                 <constraints>
-                                                    <constraint firstItem="kUP-kl-SzZ" firstAttribute="trailing" secondItem="gLF-JR-ZfF" secondAttribute="trailing" constant="-15" id="Plt-gh-StO"/>
                                                     <constraint firstItem="gLF-JR-ZfF" firstAttribute="width" secondItem="vPY-ED-Q8f" secondAttribute="width" id="Rcp-EQ-hXx"/>
                                                     <constraint firstItem="gLF-JR-ZfF" firstAttribute="centerY" secondItem="vPY-ED-Q8f" secondAttribute="centerY" id="UvP-pD-uwp"/>
-                                                    <constraint firstItem="Qf5-ud-WtI" firstAttribute="trailing" secondItem="gLF-JR-ZfF" secondAttribute="trailing" constant="-15" id="aWN-Wy-e1D"/>
                                                     <constraint firstItem="gLF-JR-ZfF" firstAttribute="centerX" secondItem="vPY-ED-Q8f" secondAttribute="centerX" id="bum-AF-beD"/>
-                                                    <constraint firstItem="kUP-kl-SzZ" firstAttribute="centerY" secondItem="gLF-JR-ZfF" secondAttribute="centerY" id="d9x-qg-V02"/>
                                                     <constraint firstItem="gLF-JR-ZfF" firstAttribute="height" secondItem="vPY-ED-Q8f" secondAttribute="height" id="h73-7U-aiX"/>
-                                                    <constraint firstItem="Qf5-ud-WtI" firstAttribute="centerY" secondItem="gLF-JR-ZfF" secondAttribute="centerY" id="z4Q-AD-iMO"/>
                                                 </constraints>
                                             </view>
                                             <button opaque="NO" contentMode="right" verticalCompressionResistancePriority="751" contentHorizontalAlignment="right" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="q6T-TC-n42">
@@ -381,8 +328,6 @@
                         <outlet property="passwordTextEdit" destination="gLF-JR-ZfF" id="DUo-EW-et6"/>
                         <outlet property="scrollView" destination="7rS-xG-6h7" id="mOV-2Q-Zlf"/>
                         <outlet property="userNameTextEdit" destination="ZTD-e7-fNF" id="Ftd-d5-2VO"/>
-                        <outletCollection property="passwordVisibility" destination="kUP-kl-SzZ" collectionClass="NSMutableArray" id="zno-eN-Dys"/>
-                        <outletCollection property="passwordVisibility" destination="Qf5-ud-WtI" collectionClass="NSMutableArray" id="Rik-rE-PkG"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="W9L-B6-xVx" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -940,39 +885,11 @@
                                                     <fontDescription key="fontDescription" type="system" pointSize="18"/>
                                                     <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" secureTextEntry="YES" smartDashesType="no" smartInsertDeleteType="no" smartQuotesType="no" textContentType="password"/>
                                                 </textField>
-                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Lbr-pr-fEn" userLabel="eye">
-                                                    <rect key="frame" x="359" y="12" width="20" height="20"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="width" constant="20" id="CUU-fG-vo8"/>
-                                                        <constraint firstAttribute="height" constant="20" id="MUJ-OG-3Y0"/>
-                                                    </constraints>
-                                                    <color key="tintColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                    <state key="normal" image="eye-30"/>
-                                                    <connections>
-                                                        <action selector="passwordVisibilityChanged:" destination="YmQ-cB-rjH" eventType="touchUpInside" id="1Nm-Zq-K7n"/>
-                                                    </connections>
-                                                </button>
-                                                <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wBH-qF-T4u" userLabel="invisible">
-                                                    <rect key="frame" x="359" y="12" width="20" height="20"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="height" constant="20" id="9pa-yU-y4U"/>
-                                                        <constraint firstAttribute="width" constant="20" id="CpN-aO-z52"/>
-                                                    </constraints>
-                                                    <color key="tintColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                    <state key="normal" image="invisible-30"/>
-                                                    <connections>
-                                                        <action selector="passwordVisibilityChanged:" destination="YmQ-cB-rjH" eventType="touchUpInside" id="uH0-AZ-sHk"/>
-                                                    </connections>
-                                                </button>
                                             </subviews>
                                             <constraints>
                                                 <constraint firstItem="ZQy-2N-acy" firstAttribute="centerY" secondItem="y4X-ec-onf" secondAttribute="centerY" id="7AO-it-OKa"/>
-                                                <constraint firstItem="wBH-qF-T4u" firstAttribute="centerY" secondItem="ZQy-2N-acy" secondAttribute="centerY" id="8WC-RB-LYA"/>
                                                 <constraint firstItem="ZQy-2N-acy" firstAttribute="leading" secondItem="y4X-ec-onf" secondAttribute="leadingMargin" id="IlJ-NW-XhT"/>
-                                                <constraint firstItem="Lbr-pr-fEn" firstAttribute="centerY" secondItem="ZQy-2N-acy" secondAttribute="centerY" id="Yzg-AM-3Y8"/>
-                                                <constraint firstItem="Lbr-pr-fEn" firstAttribute="trailing" secondItem="ZQy-2N-acy" secondAttribute="trailing" constant="-15" id="pwN-Fl-Saw"/>
                                                 <constraint firstAttribute="trailingMargin" secondItem="ZQy-2N-acy" secondAttribute="trailing" id="wNm-iH-3j9"/>
-                                                <constraint firstItem="wBH-qF-T4u" firstAttribute="trailing" secondItem="ZQy-2N-acy" secondAttribute="trailing" constant="-15" id="wiu-WY-Had"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
@@ -1104,8 +1021,6 @@
                         <outlet property="passwordTextField" destination="ZQy-2N-acy" id="KBw-uB-kPL"/>
                         <outlet property="signUpButton" destination="Rv6-qQ-FqW" id="WMA-4n-H8P"/>
                         <outlet property="telTextField" destination="9Co-1p-ugz" id="0fr-0E-vds"/>
-                        <outletCollection property="passwordVisibility" destination="wBH-qF-T4u" collectionClass="NSMutableArray" id="DCY-Jz-h1u"/>
-                        <outletCollection property="passwordVisibility" destination="Lbr-pr-fEn" collectionClass="NSMutableArray" id="IRj-iW-HIj"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="c7Y-7Y-fzb" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -2654,7 +2569,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Delete Messages" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="wnZ-ve-5xb">
-                                                    <rect key="frame" x="46" y="0.0" width="329.66666666666669" height="44"/>
+                                                    <rect key="frame" x="50" y="0.0" width="325.66666666666669" height="44"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
@@ -4194,9 +4109,7 @@
         <image name="checkmark.shield.fill" catalog="system" width="128" height="119"/>
         <image name="envelope.fill" catalog="system" width="128" height="93"/>
         <image name="exclamationmark.octagon.fill" catalog="system" width="128" height="112"/>
-        <image name="eye-30" width="30" height="30"/>
         <image name="hand.raised.fill" catalog="system" width="128" height="128"/>
-        <image name="invisible-30" width="30" height="30"/>
         <image name="lock.rotation" catalog="system" width="128" height="112"/>
         <image name="lock.shield" catalog="system" width="128" height="119"/>
         <image name="logo-ios" width="288" height="288"/>
@@ -4220,7 +4133,7 @@
         <image name="vc.fill" width="154" height="132"/>
         <image name="xmark.bin" catalog="system" width="128" height="92"/>
         <image name="xmark.bin.fill" catalog="system" width="128" height="92"/>
-        <image name="xmark.bubble" width="11" height="11"/>
+        <image name="xmark.bubble" width="15" height="14"/>
         <image name="xmark.circle" catalog="system" width="128" height="123"/>
         <systemColor name="groupTableViewBackgroundColor">
             <color red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
