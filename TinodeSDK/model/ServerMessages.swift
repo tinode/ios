@@ -153,6 +153,7 @@ public class MsgServerMeta: Codable {
 open class MsgServerData: Codable {
     public enum WebRTC: String {
         case kAccepted = "accepted"
+        case kBusy = "busy"
         case kDeclined = "declined"
         case kDisconnected = "disconnected"
         case kFinished = "finished"
