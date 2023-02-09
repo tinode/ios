@@ -717,6 +717,8 @@ class CallViewController: UIViewController {
         webRTCClient.delegate = self
         cameraManager.delegate = self
         Cache.tinode.addListener(self.listener)
+        // Prevent screen from dimming/going to sleep.
+        UIApplication.shared.isIdleTimerDisabled = true
 
         if let topic = self.topic {
             if !topic.attached {
@@ -870,6 +872,9 @@ class CallViewController: UIViewController {
     }
 
     func stopMedia() {
+        // Allow screen dimming/going to sleep.
+        UIApplication.shared.isIdleTimerDisabled = false
+
         self.webRTCClient.disconnect()
         cameraManager.stopCapture()
         if let observer = self.routeChangeObserver {
