@@ -215,7 +215,7 @@ class WebRTCClient: NSObject {
         }
     }
 
-    func createPeerConnection() -> Bool {
+    func createPeerConnection(withDataChannel dataChannel: Bool) -> Bool {
         let constraints = RTCMediaConstraints(mandatoryConstraints: nil, optionalConstraints: nil)
         guard let config = generateRTCConfig() else {
             Cache.log.info("WebRTCClient - missing configuration. Quitting.")
@@ -228,11 +228,12 @@ class WebRTCClient: NSObject {
             return false
         }
 
-        let chanConfig = RTCDataChannelConfiguration()
-        chanConfig.isOrdered = true
-        chanConfig.isNegotiated = true
-        self.localDataChannel = localPeer!.dataChannel(forLabel: "events", configuration: chanConfig)
-        self.localDataChannel?.delegate = self
+        if dataChannel {
+            let chanConfig = RTCDataChannelConfiguration()
+            chanConfig.isOrdered = true
+            self.localDataChannel = localPeer!.dataChannel(forLabel: "events", configuration: chanConfig)
+            self.localDataChannel?.delegate = self
+        }
 
         let stream = WebRTCClient.factory.mediaStream(withStreamId: "ARDAMS")
         stream.addAudioTrack(self.localAudioTrack!)
@@ -1070,7 +1071,7 @@ extension CallViewController: TinodeVideoCallDelegate {
             self.peerAvatarImageView.alpha = 0
         }
         // The callee has informed us (the caller) of the call acceptance.
-        guard self.webRTCClient.createPeerConnection() else {
+        guard self.webRTCClient.createPeerConnection(withDataChannel: true) else {
             Cache.log.error("CallVC.handleAcceptedMsg - createPeerConnection failed")
             self.handleCallClose()
             return
@@ -1084,7 +1085,8 @@ extension CallViewController: TinodeVideoCallDelegate {
             self.handleCallClose()
             return
         }
-        guard self.webRTCClient.createPeerConnection() else {
+        // Data channel should be created by the peer. Not creating one.
+        guard self.webRTCClient.createPeerConnection(withDataChannel: false) else {
             Cache.log.error("CallVC.handleOfferMsg - createPeerConnection failed")
             self.handleCallClose()
             return
