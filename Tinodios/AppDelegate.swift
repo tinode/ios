@@ -68,7 +68,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                         UIApplication.shared.endBackgroundTask(backgroundTaskIdentifier)
                     }
                 }
-            case .kAccepted, .kDeclined, .kMissed, .kDisconnected:
+            case .kAccepted, .kBusy, .kDeclined, .kMissed, .kDisconnected:
                 if !Cache.callManager.currentCallIsOutgoing {
                     Cache.log.info("Dismissing incoming call: topic=%@, seq=%d", topic.name, seqId)
                     Cache.callManager.dismissIncomingCall(onTopic: topic.name, withSeqId: seqId)
@@ -316,8 +316,7 @@ extension AppDelegate: PKPushRegistryDelegate {
                 // Tell PushKit that the notification is handled.
                 completion()
             })
-        case MsgServerData.WebRTC.kAccepted.rawValue, MsgServerData.WebRTC.kMissed.rawValue,
-            MsgServerData.WebRTC.kDeclined.rawValue, MsgServerData.WebRTC.kDisconnected.rawValue:
+        case MsgServerData.WebRTC.kAccepted.rawValue, MsgServerData.WebRTC.kBusy.rawValue, MsgServerData.WebRTC.kMissed.rawValue, MsgServerData.WebRTC.kDeclined.rawValue, MsgServerData.WebRTC.kDisconnected.rawValue:
             // This should not happen: the server sends just the "started" push as voip.
             guard let origSeq = Int(data["replace"] as? String ?? ""), origSeq > 0 else { return }
             Cache.callManager.dismissIncomingCall(onTopic: topicName, withSeqId: origSeq)

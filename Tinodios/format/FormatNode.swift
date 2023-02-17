@@ -624,7 +624,7 @@ class FormatNode: CustomStringConvertible {
         let arrow = NSMutableAttributedString()
         arrow.beginEditing()
 
-        let success = ![MsgServerData.WebRTC.kDisconnected.rawValue, MsgServerData.WebRTC.kMissed.rawValue, MsgServerData.WebRTC.kDeclined.rawValue].contains(callState)
+        let success = ![MsgServerData.WebRTC.kBusy.rawValue, MsgServerData.WebRTC.kDisconnected.rawValue, MsgServerData.WebRTC.kMissed.rawValue, MsgServerData.WebRTC.kDeclined.rawValue].contains(callState)
         let arrowIcon = NSTextAttachment()
         arrowIcon.image = AbstractFormatter.callStatusIcon(incoming: !isOutgoing, success: success)
         aspectRatio = 1
