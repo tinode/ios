@@ -2597,14 +2597,14 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Delete Messages" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="wnZ-ve-5xb">
-                                                    <rect key="frame" x="46" y="0.0" width="329.66666666666669" height="44"/>
+                                                    <rect key="frame" x="50" y="0.0" width="325.66666666666669" height="44"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="gCN-hc-uhY">
-                                                    <rect key="frame" x="20" y="16.333333333333332" width="11" height="11"/>
+                                                    <rect key="frame" x="20" y="15" width="15" height="14"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <imageReference key="image" image="xmark.bubble" symbolScale="medium"/>
                                                     <preferredSymbolConfiguration key="preferredSymbolConfiguration" scale="medium" weight="regular"/>
@@ -3153,7 +3153,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <view key="tableFooterView" contentMode="scaleToFill" id="xIw-r0-6Pv" userLabel="Footer to hide separators for empty rows">
-                            <rect key="frame" x="0.0" y="0.0" width="414" height="0.0"/>
+                            <rect key="frame" x="0.0" y="136" width="414" height="0.0"/>
                             <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
                             <accessibility key="accessibilityConfiguration" label="Footer">
                                 <accessibilityTraits key="traits" notEnabled="YES"/>
@@ -3794,7 +3794,7 @@
                                 </connections>
                             </button>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="ZjQ-xM-JhJ">
-                                <rect key="frame" x="48" y="186.33333333333334" width="318" height="388.66666666666663"/>
+                                <rect key="frame" x="48" y="165.33333333333334" width="318" height="388.66666666666663"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="My Code" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="w7y-oy-XLG" userLabel="Title">
                                         <rect key="frame" x="0.0" y="0.0" width="318" height="20.333333333333332"/>
@@ -3869,7 +3869,8 @@
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="K64-fR-Pcz"/>
                         <constraints>
-                            <constraint firstItem="ZjQ-xM-JhJ" firstAttribute="top" secondItem="DMQ-om-04T" secondAttribute="bottom" constant="56" id="2Os-yg-EZY"/>
+                            <constraint firstItem="ZjQ-xM-JhJ" firstAttribute="top" secondItem="DMQ-om-04T" secondAttribute="bottom" constant="35" id="2Os-yg-EZY"/>
+                            <constraint firstItem="K64-fR-Pcz" firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="ZjQ-xM-JhJ" secondAttribute="bottom" constant="20" id="5Lq-ZL-hSj"/>
                             <constraint firstItem="xmn-wq-Hpr" firstAttribute="trailing" secondItem="RA0-dx-dSp" secondAttribute="trailing" id="8ux-tK-1z8"/>
                             <constraint firstItem="xmn-wq-Hpr" firstAttribute="leading" secondItem="K64-fR-Pcz" secondAttribute="leading" constant="16" id="D9w-ln-g5l"/>
                             <constraint firstItem="K64-fR-Pcz" firstAttribute="trailing" secondItem="ZjQ-xM-JhJ" secondAttribute="trailing" constant="48" id="GD4-Zm-Pjg"/>
@@ -4243,7 +4244,7 @@
         <image name="vc.fill" width="154" height="132"/>
         <image name="xmark.bin" catalog="system" width="128" height="92"/>
         <image name="xmark.bin.fill" catalog="system" width="128" height="92"/>
-        <image name="xmark.bubble" width="11" height="11"/>
+        <image name="xmark.bubble" width="15" height="14"/>
         <image name="xmark.circle" catalog="system" width="128" height="123"/>
         <systemColor name="groupTableViewBackgroundColor">
             <color red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>

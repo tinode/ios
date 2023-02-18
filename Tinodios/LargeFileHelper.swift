@@ -102,7 +102,11 @@ public class LargeFileHelper: NSObject {
     }
 
     public func startMsgAttachmentUpload(filename: String, mimetype: String, data payload: Data, topicId: String, msgId: Int64, progressCallback: ((Float) -> Void)?, completionCallback: @escaping (ServerMessage?, Error?) -> Void) {
-        guard var url = tinode.baseURL(useWebsocketProtocol: false) else { return }
+        guard var url = tinode.baseURL(useWebsocketProtocol: false) else {
+            Cache.log.error("Upload failed: unable to form upload url")
+            completionCallback(nil, Upload.UploadError.invalidState("invalid upload url"))
+            return
+        }
         url.appendPathComponent("file/u/")
         let upload = Upload(url: url)
         var request = URLRequest(url: url)
@@ -144,6 +148,7 @@ public class LargeFileHelper: NSObject {
         try? newData.write(to: localURL)
 
         let uploadKey = LargeFileHelper.taskID(forTopic: topicId, msgId: msgId, filename: filename)
+        Cache.log.info("Starting upload (id='%@', topic='%@', dbMsgId=%lld): file name = %@", uploadKey, topicId, msgId, filename, mimetype)
         upload.task = urlSession.uploadTask(with: request, fromFile: localURL)
         upload.task!.taskDescription = uploadKey
         upload.isUploading = true
@@ -222,6 +227,7 @@ extension LargeFileHelper: URLSessionDataDelegate {
 // Upload progress
 extension LargeFileHelper: URLSessionTaskDelegate {
     public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError: Error?) {
+        Cache.log.info("Upload (id=%@) complete. Status: %@", task.taskDescription ?? "UNKNOWN", didCompleteWithError?.localizedDescription ?? "ok")
         guard let taskId = task.taskDescription, let upload = self.getActiveUpload(for: taskId) else {
             return
         }
