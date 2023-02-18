@@ -207,6 +207,8 @@ class AbstractFormatter: DraftyFormatter {
     static func callStatusText(incoming: Bool, event: String) -> String {
         var comment: String
         switch event {
+        case MsgServerData.WebRTC.kBusy.rawValue:
+            comment = NSLocalizedString(MsgServerData.WebRTC.kBusy.rawValue, comment: "Label for declined call due to line being busy")
         case MsgServerData.WebRTC.kDeclined.rawValue:
             comment = NSLocalizedString(MsgServerData.WebRTC.kDeclined.rawValue, comment: "Label for declined call")
         case MsgServerData.WebRTC.kMissed.rawValue:
