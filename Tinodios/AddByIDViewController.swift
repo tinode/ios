@@ -216,8 +216,7 @@ class AddByIDViewController: UIViewController, AVCaptureMetadataOutputObjectsDel
             guard let stringValue = readableObject.stringValue else { return }
             AudioServicesPlaySystemSound(SystemSoundID(kSystemSoundID_Vibrate))
             if stringValue.hasPrefix(AddByIDViewController.kTopicUriPrefix) {
-                let swiftSucks = stringValue.index(stringValue.startIndex, offsetBy: AddByIDViewController.kTopicUriPrefix.count)
-                let id = stringValue[swiftSucks...]
+                let id = stringValue.dropFirst(AddByIDViewController.kTopicUriPrefix.count)
                 handleCodeEntered(String(id))
             }
         }
