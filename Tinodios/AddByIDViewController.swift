@@ -164,9 +164,8 @@ class AddByIDViewController: UIViewController, AVCaptureMetadataOutputObjectsDel
         }
 
         guard let videoCaptureDevice = AVCaptureDevice.default(for: .video) else {
-            UiUtils.showToast(message: NSLocalizedString("Unable to access camera",
-                                                         comment: "Error message when video camera is not accessible"))
             Cache.log.info("Failed to get default capture device for video")
+            scanFailed()
             return
         }
         let videoInput: AVCaptureDeviceInput
@@ -174,7 +173,8 @@ class AddByIDViewController: UIViewController, AVCaptureMetadataOutputObjectsDel
         do {
             videoInput = try AVCaptureDeviceInput(device: videoCaptureDevice)
         } catch {
-            Cache.log.info("Failed to get video input")
+            Cache.log.info("Failed to obtain video input")
+            scanFailed()
             return
         }
 
@@ -182,6 +182,8 @@ class AddByIDViewController: UIViewController, AVCaptureMetadataOutputObjectsDel
         if (captureSession.canAddInput(videoInput)) {
             captureSession.addInput(videoInput)
         } else {
+            Cache.log.info("Failed to add video input")
+            scanFailed()
             captureSession = nil
             return
         }
@@ -194,6 +196,8 @@ class AddByIDViewController: UIViewController, AVCaptureMetadataOutputObjectsDel
             metadataOutput.setMetadataObjectsDelegate(self, queue: DispatchQueue.main)
             metadataOutput.metadataObjectTypes = [.qr]
         } else {
+            Cache.log.info("Failed to add video output")
+            scanFailed()
             captureSession = nil
             return
         }
@@ -220,5 +224,9 @@ class AddByIDViewController: UIViewController, AVCaptureMetadataOutputObjectsDel
                 handleCodeEntered(String(id))
             }
         }
+    }
+
+    func scanFailed() {
+        UiUtils.showToast(message: NSLocalizedString("QRCode scanner failed to initialize", comment: "Error message when QR code scanner failed to init"))
     }
 }
