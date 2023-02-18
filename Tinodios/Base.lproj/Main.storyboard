@@ -3153,7 +3153,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <view key="tableFooterView" contentMode="scaleToFill" id="xIw-r0-6Pv" userLabel="Footer to hide separators for empty rows">
-                            <rect key="frame" x="0.0" y="136" width="414" height="0.0"/>
+                            <rect key="frame" x="0.0" y="0.0" width="414" height="0.0"/>
                             <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES"/>
                             <accessibility key="accessibilityConfiguration" label="Footer">
                                 <accessibilityTraits key="traits" notEnabled="YES"/>
@@ -3775,7 +3775,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="ZjQ-xM-JhJ">
-                                <rect key="frame" x="48" y="8" width="318" height="503"/>
+                                <rect key="frame" x="48" y="8" width="318" height="494.66666666666669"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Group or user ID" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RA0-dx-dSp">
                                         <rect key="frame" x="0.0" y="0.0" width="318" height="20.333333333333332"/>
@@ -3783,27 +3783,43 @@
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="usr123aBcDef" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="xmn-wq-Hpr">
+                                    <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Cdl-md-jze">
                                         <rect key="frame" x="0.0" y="28.333333333333336" width="318" height="34"/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                        <textInputTraits key="textInputTraits"/>
-                                    </textField>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="DMQ-om-04T">
-                                        <rect key="frame" x="0.0" y="70.333333333333329" width="318" height="36"/>
-                                        <fontDescription key="fontDescription" type="system" weight="medium" pointSize="20"/>
-                                        <state key="normal" title="OK"/>
-                                        <connections>
-                                            <action selector="okayClicked:" destination="6na-ed-mpJ" eventType="touchUpInside" id="mpe-8k-llY"/>
-                                        </connections>
-                                    </button>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="My Code" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="w7y-oy-XLG" userLabel="Title">
-                                        <rect key="frame" x="0.0" y="114.33333333333333" width="318" height="20.333333333333329"/>
+                                        <subviews>
+                                            <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="249" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="usr123aBcDef" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="xmn-wq-Hpr">
+                                                <rect key="frame" x="0.0" y="0.0" width="270" height="34"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                <textInputTraits key="textInputTraits"/>
+                                            </textField>
+                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="DMQ-om-04T">
+                                                <rect key="frame" x="270" y="0.0" width="48" height="34"/>
+                                                <fontDescription key="fontDescription" type="system" weight="medium" pointSize="20"/>
+                                                <inset key="contentEdgeInsets" minX="10" minY="0.0" maxX="10" maxY="0.0"/>
+                                                <state key="normal" title="OK"/>
+                                                <connections>
+                                                    <action selector="okayClicked:" destination="6na-ed-mpJ" eventType="touchUpInside" id="mpe-8k-llY"/>
+                                                </connections>
+                                            </button>
+                                        </subviews>
+                                    </stackView>
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="pqw-Xa-1g0">
+                                        <rect key="frame" x="0.0" y="70.333333333333329" width="318" height="24"/>
+                                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="24" id="b0u-GQ-RRC"/>
+                                        </constraints>
+                                    </view>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" text="My Code" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="w7y-oy-XLG" userLabel="Title">
+                                        <rect key="frame" x="0.0" y="102.33333333333333" width="318" height="24"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="24" id="BTc-Jl-Xsz"/>
+                                        </constraints>
                                         <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="1RV-Sn-YUq" userLabel="Container">
-                                        <rect key="frame" x="0.0" y="142.66666666666663" width="318" height="318"/>
+                                        <rect key="frame" x="0.0" y="134.33333333333337" width="318" height="318"/>
                                         <subviews>
                                             <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="JoE-LU-ZDy" userLabel="Preview">
                                                 <rect key="frame" x="0.0" y="0.0" width="318" height="318"/>
@@ -3831,11 +3847,12 @@
                                         </constraints>
                                     </view>
                                     <stackView opaque="NO" contentMode="center" distribution="equalCentering" alignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="xjq-vw-etX">
-                                        <rect key="frame" x="0.0" y="468.66666666666669" width="318" height="34.333333333333314"/>
+                                        <rect key="frame" x="0.0" y="460.33333333333331" width="318" height="34.333333333333314"/>
                                         <subviews>
                                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="IP5-9X-LlM" userLabel="ShowCode">
                                                 <rect key="frame" x="0.0" y="0.0" width="111" height="34.333333333333336"/>
                                                 <color key="backgroundColor" systemColor="linkColor"/>
+                                                <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
                                                 <buttonConfiguration key="configuration" style="plain" title="Show Code"/>
                                                 <userDefinedRuntimeAttributes>
@@ -3888,7 +3905,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ICE-Ms-S7M" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2475" y="1734"/>
+            <point key="canvasLocation" x="2473.913043478261" y="1733.967391304348"/>
         </scene>
         <!--Edit Members Navigation Controller-->
         <scene sceneID="e7X-e4-a5C">
