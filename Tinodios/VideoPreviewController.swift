@@ -327,7 +327,13 @@ extension VideoPreviewController: VLCMediaPlayerDelegate {
             controlsView.alpha = 1
             playPauseButton.isHidden = false
             UiUtils.showToast(message: "Video playback error")
-        case .stopped, .paused, .ended:
+        case .ended:
+            // Update slider position and ts label
+            // in case the corresponding VLCMediaPlayer event doesn't fire for whatever reason.
+            videoSlider.value = 1
+            currentTimeLabel.text = self.durationLabel.text
+            fallthrough
+        case .stopped, .paused:
             updatePlayPauseButton(isPlaying: false)
         default:
             break
