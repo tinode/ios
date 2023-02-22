@@ -86,6 +86,7 @@ public class BaseDb {
     }
 
     private func initDb() {
+        BaseDb.log.info("Initializing local store.")
         self.accountDb = AccountDb(self.db!)
         self.userDb = UserDb(self.db!, baseDb: self)
         self.topicDb = TopicDb(self.db!, baseDb: self)
@@ -106,6 +107,7 @@ public class BaseDb {
             self.db!.schemaVersion = BaseDb.kSchemaVersion
         }
 
+        BaseDb.log.info("Creating SQLite db tables.")
         self.accountDb!.createTable()
         self.userDb!.createTable()
         self.topicDb!.createTable()
@@ -122,12 +124,14 @@ public class BaseDb {
     }
 
     private func dropDb() {
+        BaseDb.log.info("Dropping local store (SQLite db).")
         self.messageDb?.destroyTable()
         self.subscriberDb?.destroyTable()
         self.topicDb?.destroyTable()
         self.userDb?.destroyTable()
         self.accountDb?.destroyTable()
     }
+
     public static var sharedInstance: BaseDb {
         return BaseDb.accessQueue.sync {
             if let instance = BaseDb.default {
@@ -162,8 +166,17 @@ public class BaseDb {
         }
     }
     public func logout() {
-        _ = try? self.accountDb?.deactivateAll()
-        self.setUid(uid: nil, credMethods: nil)
+        // Drop database altogether.
+        // Db will be recreated when the user logs back in.
+        //
+        // Data can also be retained by deactivating the account:
+        //
+        // _ = try? self.accountDb?.deactivateAll()
+        // self.setUid(uid: nil, credMethods: nil)
+        BaseDb.accessQueue.sync {
+            self.dropDb()
+            BaseDb.default = nil
+        }
     }
 
     public func deleteUid(_ uid: String) -> Bool {

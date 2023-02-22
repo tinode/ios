@@ -140,7 +140,7 @@ class LoginViewController: UIViewController {
                         DispatchQueue.main.async {
                             UiUtils.showToast(message: toastMsg)
                         }
-                        tinode.logout()
+                        Cache.invalidate()
                         return nil
                     }).thenFinally { [weak self] in
                         guard let loginVC = self else { return }

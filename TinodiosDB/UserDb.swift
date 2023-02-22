@@ -86,6 +86,9 @@ public class UserDb {
                     self.pub <- serializedPub
             ))
             return rowid
+        } catch SQLite.Result.error(message: let errMsg, code: let code, statement: _) {
+            BaseDb.log.error("UserDb - SQL error: uid = %@, code = %d, error = %@", uid, code, errMsg)
+            return -1
         } catch {
             BaseDb.log.error("UserDb - insert operation failed: uid = %@, error = %@", uid, error.localizedDescription)
             return -1

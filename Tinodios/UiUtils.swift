@@ -236,13 +236,13 @@ class UiUtils {
 
     public static func logoutAndRouteToLoginVC() {
         Cache.log.info("UiUtils - Invalidating cache and logging out.")
-        BaseDb.sharedInstance.logout()
-        Cache.invalidate()
         SharedUtils.removeAuthToken()
-        UiUtils.routeToLoginVC()
+        UiUtils.routeToLoginVC() {
+            Cache.invalidate()
+        }
     }
 
-    private static func routeToLoginVC() {
+    private static func routeToLoginVC(completion: (() -> (Void))? = nil) {
         DispatchQueue.main.async {
             let storyboard = UIStoryboard(name: "Main", bundle: nil)
             let destinationVC = storyboard.instantiateViewController(withIdentifier: "StartNavigator") as! UINavigationController
@@ -250,6 +250,7 @@ class UiUtils {
             if let window = (UIApplication.shared.delegate as! AppDelegate).window {
                 window.rootViewController = destinationVC
             }
+            completion?()
         }
     }
 
