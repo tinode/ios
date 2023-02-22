@@ -69,6 +69,7 @@ public class MessageDb {
         self.content = Expression<String?>("content")
     }
     func destroyTable() {
+        if self.db.locked
         try! self.db.run(self.table.dropIndex(topicId, effectiveSeq.desc, ifExists: true))
         try! self.db.run(self.table.dropIndex(topicId, seq.desc, ifExists: true))
         try! self.db.run(self.table.drop(ifExists: true))
@@ -219,6 +220,9 @@ public class MessageDb {
                 try self.insertRaw(topic: topic, msg: msg, withEffectiveSeq: effSeq, withEffectiveTs: effTs)
             }
             return msg.msgId
+        } catch SQLite.Result.error(message: let errMsg, code: let code, statement: _) {
+            BaseDb.log.error("MessageDb[topic: %@, seq: %d] - insert SQLite error: code = %d, error = %@", topic.name, msg.seqId, code, errMsg)
+            return -1
         } catch {
             BaseDb.log.error("MessageDb - insert operation failed: %@", error.localizedDescription.debugDescription)
             return -1
@@ -237,6 +241,8 @@ public class MessageDb {
         if !setters.isEmpty {
             do {
                 return try self.db.run(record.update(setters)) > 0
+            } catch SQLite.Result.error(message: let errMsg, code: let code, statement: _) {
+                BaseDb.log.error("MessageDb[msgId = %lld] - update status operation SQLite error: code = %d, error = %@", msgId, code, errMsg)
             } catch {
                 BaseDb.log.error("MessageDb - update status operation failed: msgId = %lld, error = %@", msgId, error.localizedDescription)
             }
@@ -252,6 +258,9 @@ public class MessageDb {
                 self.ts <- ts, self.seq <- seq,
                 self.effectiveSeq <- self.replSeq ?? seq,
                 self.effectiveTs <- self.effectiveTs ?? ts)) > 0
+        } catch SQLite.Result.error(message: let errMsg, code: let code, statement: _) {
+            BaseDb.log.error("MessageDb[msgId = %lld]: update delivery SQLite error: code = %d, error = %@", msgId, code, errMsg)
+            return false
         } catch {
             BaseDb.log.error("MessageDb - update delivery operation failed: msgId = %lld, error = %@", msgId, error.localizedDescription.debugDescription)
             return false
@@ -265,6 +274,9 @@ public class MessageDb {
         let rows = self.table.filter(self.topicId == topicId)
         do {
             return try self.db.run(rows.delete()) > 0
+        } catch SQLite.Result.error(message: let errMsg, code: let code, statement: _) {
+            BaseDb.log.error("MessageDb[topicId = %lld] - deleteAll SQLite error: code = %d, error = %@", topicId, code, errMsg)
+            return false
         } catch {
             BaseDb.log.error("MessageDb - deleteAll(forTopic) operation failed: topicId = %lld, error = %@", topicId, error.localizedDescription)
             return false
@@ -280,6 +292,9 @@ public class MessageDb {
         let rows = self.table.filter(self.topicId == topicId && self.status == BaseDb.Status.failed.rawValue)
         do {
             return try self.db.run(rows.delete()) > 0
+        } catch SQLite.Result.error(message: let errMsg, code: let code, statement: _) {
+            BaseDb.log.error("MessageDb[topicId = %lld] - deleteFailed SQLite error: code = %d, error = %@", topicId, code, errMsg)
+            return false
         } catch {
             BaseDb.log.error("MessageDb - deleteFailed(forTopic) operation failed: topicId = %lld, error = %@", topicId, error.localizedDescription)
             return false
@@ -303,6 +318,8 @@ public class MessageDb {
                 }
             }
             success = true
+        } catch SQLite.Result.error(message: let errMsg, code: let code, statement: _) {
+            BaseDb.log.error("MessageDb[topicId = %lld] - deleteOrMarkDeleted SQLite error: code = %d, error = %@", topicId, code, errMsg)
         } catch {
             BaseDb.log.error("MessageDb - deleteOrMarkDeleted2 with ranges failed: topicId = %lld, error = %@", topicId, error.localizedDescription)
         }
@@ -377,6 +394,9 @@ public class MessageDb {
                 updateResult = try db.run(self.table.insert(setters)) > 0
             }
             return updateResult
+        } catch SQLite.Result.error(message: let errMsg, code: let code, statement: _) {
+            BaseDb.log.error("MessageDb[topicId = %lld] - markDeleted SQLite error: code = %d, error = %@", topicId, code, errMsg)
+            return false
         } catch {
             BaseDb.log.error("MessageDb - markDeleted operation failed: topicId = %lld, error = %@", topicId, error.localizedDescription)
             return false
@@ -386,6 +406,9 @@ public class MessageDb {
         let record = self.table.filter(self.id == msgId)
         do {
             return try self.db.run(record.delete()) > 0
+        } catch SQLite.Result.error(message: let errMsg, code: let code, statement: _) {
+            BaseDb.log.error("MessageDb[msgId = %lld] - delete SQLite error: code = %d, error = %@", msgId, code, errMsg)
+            return false
         } catch {
             BaseDb.log.error("MessageDb - delete operation failed: msgId = %lld, error = %@", msgId, error.localizedDescription)
             return false
@@ -395,6 +418,9 @@ public class MessageDb {
         let record = self.table.filter(self.topicId == topicId && self.seq == seqId)
         do {
             return try self.db.run(record.delete()) > 0
+        } catch SQLite.Result.error(message: let errMsg, code: let code, statement: _) {
+            BaseDb.log.error("MessageDb[topicId = %lld, seq = %d] - delete SQLite error: code = %d, error = %@", topicId, seqId, code, errMsg)
+            return false
         } catch {
             BaseDb.log.error("MessageDb - delete operation failed: topicId = %lld, seq = %d, error = %@", topicId, seqId, error.localizedDescription)
             return false
@@ -435,6 +461,9 @@ public class MessageDb {
                 messages.append(sm)
             }
             return messages
+        } catch SQLite.Result.error(message: let errMsg, code: let code, statement: _) {
+            BaseDb.log.error("MessageDb[topicId = %lld] - query SQLite error: code = %d, error = %@", topicId, code, errMsg)
+            return nil
         } catch {
             BaseDb.log.error("MessageDb - query operation failed: topicId = %lld, error = %@", topicId, error.localizedDescription)
             return nil
@@ -467,6 +496,9 @@ public class MessageDb {
                 }
             }
             return ranges
+        } catch SQLite.Result.error(message: let errMsg, code: let code, statement: _) {
+            BaseDb.log.error("MessageDb[topicId = %lld] - queryDelete SQLite error: code = %d, error = %@", topicId, code, errMsg)
+            return nil
         } catch {
             BaseDb.log.error("MessageDb - queryDeleted operation failed: topicId = %lld, error = %@", topicId, error.localizedDescription)
             return nil
@@ -484,6 +516,9 @@ public class MessageDb {
                 messages.append(sm)
             }
             return messages
+        } catch SQLite.Result.error(message: let errMsg, code: let code, statement: _) {
+            BaseDb.log.error("MessageDb[topicId = %lld] - queryUnsent SQLite error: code = %d, error = %@", topicId ?? -1, code, errMsg)
+            return nil
         } catch {
             BaseDb.log.error("MessageDb - queryUnsent operation failed: topicId = %lld, error = %@", topicId ?? -1, error.localizedDescription)
             return nil
@@ -539,6 +574,9 @@ public class MessageDb {
                 messages.append(sm)
             }
             return messages
+        } catch SQLite.Result.error(message: let errMsg, code: let code, statement: _) {
+            BaseDb.log.error("MessageDb - queryLatest SQLite error: code = %d, error = %@", code, errMsg)
+            return nil
         } catch {
             BaseDb.log.error("MessageDb - queryLatest operation failed: error = %@", error.localizedDescription)
             return nil
@@ -570,6 +608,9 @@ public class MessageDb {
                 }
             }
             return seqIds
+        } catch SQLite.Result.error(message: let errMsg, code: let code, statement: _) {
+            BaseDb.log.error("MessageDb[topicId = %lld] - getAllVersions SQLite error: code = %d, error = %@", topicId, code, errMsg)
+            return nil
         } catch {
             BaseDb.log.error("MessageDb - getAllVersions operation failed: topicId = %lld, error = %@", topicId, error.localizedDescription)
             return nil

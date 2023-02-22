@@ -32,6 +32,7 @@ class Cache {
     public static func invalidate() {
         if let tinode = Cache.shared.tinodeInstance {
             Cache.shared.timer.suspend()
+            tinode.remoteAllListeners()
             tinode.logout()
             Messaging.messaging().deleteToken { error in
                 Cache.log.debug("Failed to delete FCM token: %@", error.debugDescription)

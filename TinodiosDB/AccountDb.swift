@@ -92,8 +92,11 @@ public class AccountDb {
                     result?.credMethods = meth
                 }
             }
+        } catch SQLite.Result.error(message: let err, code: let code, statement: _) {
+            BaseDb.log.error("Failed to add account for uid %@: SQLite code = %d, error = %@", uid, code, err)
+            result = nil
         } catch {
-            BaseDb.log.debug("failed to add account '%@'", error.localizedDescription)
+            BaseDb.log.error("Failed to add account '%@'", error.localizedDescription)
             result = nil
         }
         return result

@@ -252,6 +252,10 @@ public class Tinode {
             }
         }
 
+        public func removeAll() {
+            queue.sync { listeners.removeAll() }
+        }
+
         public var listenersThreadSafe: [TinodeEventListener] {
             queue.sync { return self.listeners }
         }
@@ -399,6 +403,9 @@ public class Tinode {
     }
     public func removeListener(_ l: TinodeEventListener) {
         listenerNotifier.removeListener(l)
+    }
+    public func remoteAllListeners() {
+        listenerNotifier.removeAll()
     }
 
     @discardableResult
