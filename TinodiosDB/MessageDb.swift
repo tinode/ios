@@ -69,7 +69,6 @@ public class MessageDb {
         self.content = Expression<String?>("content")
     }
     func destroyTable() {
-        if self.db.locked
         try! self.db.run(self.table.dropIndex(topicId, effectiveSeq.desc, ifExists: true))
         try! self.db.run(self.table.dropIndex(topicId, seq.desc, ifExists: true))
         try! self.db.run(self.table.drop(ifExists: true))
@@ -98,6 +97,12 @@ public class MessageDb {
         // Partial index over topicId + effectiveSeq.
         let partIdx = self.table.createIndex(topicId, effectiveSeq.desc, unique: true, ifNotExists: true)
         try! self.db.run([partIdx, "WHERE", (self.effectiveSeq != nil).asSQL()].joined(separator: " "))
+    }
+
+    // Deletes all records from `messages` table.
+    func truncateTable() {
+        // Note: SQLite optimizes 'DELETE FROM table' to behave like `TRUNCATE TABLE`.
+        try! self.db.run(self.table.delete())
     }
 
     @discardableResult
@@ -186,8 +191,9 @@ public class MessageDb {
         if (msg.topicId ?? -1) <= 0 {
             msg.topicId = topicId
         }
+        let savepointName = "MessageDb.insert"
         do {
-            try db.savepoint("MessageDb.insert") {
+            try db.savepoint(savepointName) {
                 var effSeq: Int?
                 var effTs: Date?
                 if let replaceSeq = msg.replacesSeq {
@@ -221,9 +227,13 @@ public class MessageDb {
             }
             return msg.msgId
         } catch SQLite.Result.error(message: let errMsg, code: let code, statement: _) {
+            // Explicitly releasing savepoint since ROLLBACK TO (SQLite.swift behavior) won't release the savepoint transaction.
+            self.db.releaseSavepoint(withName: savepointName)
             BaseDb.log.error("MessageDb[topic: %@, seq: %d] - insert SQLite error: code = %d, error = %@", topic.name, msg.seqId, code, errMsg)
             return -1
         } catch {
+            // Explicitly releasing savepoint since ROLLBACK TO (SQLite.swift behavior) won't release the savepoint transaction.
+            self.db.releaseSavepoint(withName: savepointName)
             BaseDb.log.error("MessageDb - insert operation failed: %@", error.localizedDescription.debugDescription)
             return -1
         }
@@ -309,8 +319,9 @@ public class MessageDb {
     @discardableResult
     func deleteOrMarkDeleted(topicId: Int64, delId: Int?, inRanges ranges: [MsgRange], hard: Bool) -> Bool {
         var success = false
+        let savepointName = "MessageDb.deleteOrMarkDeleted-ranges"
         do {
-            try db.savepoint("MessageDb.deleteOrMarkDeleted-ranges") {
+            try db.savepoint(savepointName) {
                 for r in ranges {
                     if !deleteOrMarkDeleted(topicId: topicId, delId: delId, from: r.lower, to: r.upper, hard: hard) {
                         throw MessageDbError.dbError("Failed to process: delId \(delId ?? -1) range: \(r)")
@@ -319,8 +330,12 @@ public class MessageDb {
             }
             success = true
         } catch SQLite.Result.error(message: let errMsg, code: let code, statement: _) {
+            // Explicitly releasing savepoint since ROLLBACK TO (SQLite.swift behavior) won't release the savepoint transaction.
+            self.db.releaseSavepoint(withName: savepointName)
             BaseDb.log.error("MessageDb[topicId = %lld] - deleteOrMarkDeleted SQLite error: code = %d, error = %@", topicId, code, errMsg)
         } catch {
+            // Explicitly releasing savepoint since ROLLBACK TO (SQLite.swift behavior) won't release the savepoint transaction.
+            self.db.releaseSavepoint(withName: savepointName)
             BaseDb.log.error("MessageDb - deleteOrMarkDeleted2 with ranges failed: topicId = %lld, error = %@", topicId, error.localizedDescription)
         }
         return success
@@ -333,10 +348,11 @@ public class MessageDb {
         if endId == 0 {
             endId = startId + 1
         }
+        let savepointName = "MessageDb.deleteOrMarkDeleted-plain"
         // 1. Delete all messages in the range.
         do {
             var updateResult = false
-            try db.savepoint("MessageDb.deleteOrMarkDeleted-plain") {
+            try db.savepoint(savepointName) {
                 // Message selector: all messages in a given topic with seq between fromId and toId [inclusive, exclusive).
                 let messageSelector = self.table.filter(
                     self.topicId == topicId && startId <= self.seq && self.seq < endId && self.status <= BaseDb.Status.synced.rawValue)
@@ -395,9 +411,13 @@ public class MessageDb {
             }
             return updateResult
         } catch SQLite.Result.error(message: let errMsg, code: let code, statement: _) {
+            // Explicitly releasing savepoint since ROLLBACK TO (SQLite.swift behavior) won't release the savepoint transaction.
+            self.db.releaseSavepoint(withName: savepointName)
             BaseDb.log.error("MessageDb[topicId = %lld] - markDeleted SQLite error: code = %d, error = %@", topicId, code, errMsg)
             return false
         } catch {
+            // Explicitly releasing savepoint since ROLLBACK TO (SQLite.swift behavior) won't release the savepoint transaction.
+            self.db.releaseSavepoint(withName: savepointName)
             BaseDb.log.error("MessageDb - markDeleted operation failed: topicId = %lld, error = %@", topicId, error.localizedDescription)
             return false
         }

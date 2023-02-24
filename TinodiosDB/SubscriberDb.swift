@@ -88,10 +88,17 @@ public class SubscriberDb {
         })
         try! self.db.run(self.table.createIndex(topicId, ifNotExists: true))
     }
+
+    // Deletes all records from `subscribers` table.
+    func truncateTable() {
+        try! self.db.run(self.table.delete())
+    }
+
     func insert(for topicId: Int64, with status: BaseDb.Status, using sub: SubscriptionProto) -> Int64 {
         var rowId: Int64 = -1
+        let savepointName = "SubscriberDb.insert"
         do {
-            try self.db.savepoint("SubscriberDb.insert") {
+            try self.db.savepoint(savepointName) {
                 let ss = StoredSubscription()
                 let userDb = baseDb.userDb!
                 ss.userId = userDb.getId(for: sub.user)
@@ -125,6 +132,8 @@ public class SubscriberDb {
                 sub.payload = ss
             }
         } catch {
+            // Explicitly releasing savepoint since ROLLBACK TO (SQLite.swift behavior) won't release the savepoint transaction.
+            self.db.releaseSavepoint(withName: savepointName)
             BaseDb.log.error("SubscriberDb - insert operation failed: topicId = %lld, error = %@", topicId, error.localizedDescription)
             return -1
         }
@@ -136,8 +145,9 @@ public class SubscriberDb {
         }
         let record = self.table.filter(self.id == recordId)
         var updated = 0
+        let savepointName = "SubscriberDb.update"
         do {
-            try self.db.savepoint("SubscriberDb.update") {
+            try self.db.savepoint(savepointName) {
                 var status = ss.status!
                 _ = baseDb.userDb!.update(sub: sub)
                 var setters = [Setter]()
@@ -159,6 +169,8 @@ public class SubscriberDb {
                 ss.status = status
             }
         } catch {
+            // Explicitly releasing savepoint since ROLLBACK TO (SQLite.swift behavior) won't release the savepoint transaction.
+            self.db.releaseSavepoint(withName: savepointName)
             BaseDb.log.error("SubscriberDb - update operation failed: subId = %lld, error = %@", recordId, error.localizedDescription)
             return false
         }

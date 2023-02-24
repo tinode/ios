@@ -123,6 +123,17 @@ public class BaseDb {
         self.account = self.accountDb!.getActiveAccount()
     }
 
+    private func clearDb() {
+        BaseDb.log.info("Clearing local store (SQLite db).")
+        try! self.db!.transaction {
+            self.messageDb?.truncateTable()
+            self.subscriberDb?.truncateTable()
+            self.topicDb?.truncateTable()
+            self.userDb?.truncateTable()
+            self.accountDb?.truncateTable()
+        }
+    }
+
     private func dropDb() {
         BaseDb.log.info("Dropping local store (SQLite db).")
         self.messageDb?.destroyTable()
@@ -174,7 +185,7 @@ public class BaseDb {
         // _ = try? self.accountDb?.deactivateAll()
         // self.setUid(uid: nil, credMethods: nil)
         BaseDb.accessQueue.sync {
-            self.dropDb()
+            self.clearDb()
             BaseDb.default = nil
         }
     }
@@ -191,8 +202,9 @@ public class BaseDb {
             BaseDb.log.error("Could not find account for uid [%@]", uid)
             return false
         }
+        let savepointName = "BaseDb.deleteUid"
         do {
-            try self.db?.savepoint("BaseDb.deleteUid") {
+            try self.db?.savepoint(savepointName) {
                 if !(self.topicDb?.deleteAll(forAccount: acc2.id) ?? true) {
                     BaseDb.log.error("Failed to clear topics/messages/subscribers for account id [%lld]", acc2.id)
                 }
@@ -204,6 +216,8 @@ public class BaseDb {
                 }
             }
         } catch {
+            // Explicitly releasing savepoint since ROLLBACK TO (SQLite.swift behavior) won't release the savepoint transaction.
+            self.db?.releaseSavepoint(withName: savepointName)
             BaseDb.log.error("BaseDb - deleteUid operation failed: uid = %@, error = %@", uid, error.localizedDescription)
             return false
         }
@@ -237,5 +251,10 @@ extension SQLite.Connection {
     public var schemaVersion: Int32 {
         get { return Int32((try? scalar("PRAGMA user_version") as? Int64) ?? -1) }
         set { try! run("PRAGMA user_version = \(newValue)") }
+    }
+
+    /// Releases a savepoint explicitly.
+    public func releaseSavepoint(withName savepointName: String) {
+        try! self.execute("RELEASE '\(savepointName)'")
     }
 }

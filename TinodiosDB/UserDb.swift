@@ -59,6 +59,11 @@ public class UserDb {
         try! self.db.run(self.table.createIndex(accountId, uid, ifNotExists: true))
     }
 
+    // Deletes all records from `users` table.
+    public func truncateTable() {
+        try! self.db.run(self.table.delete())
+    }
+
     public func insert(user: UserProto?) -> Int64 {
         guard let user = user else { return 0 }
         let id = self.insert(uid: user.uid, updated: user.updated, serializedPub: user.serializePub())

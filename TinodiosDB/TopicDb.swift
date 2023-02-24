@@ -128,6 +128,11 @@ public class TopicDb {
         try! db.run(self.table.createIndex(accountId, topic, unique: true, ifNotExists: true))
     }
 
+    // Deletes all records from `topics` table.
+    public func truncateTable() {
+        try! self.db.run(self.table.delete())
+    }
+
     public static func isUnsentSeq(seq: Int) -> Bool {
         return seq >= TopicDb.kUnsentIdStart
     }
