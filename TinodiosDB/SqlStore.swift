@@ -84,19 +84,20 @@ public class SqlStore: Storage {
 
     public func topicDelete(topic: TopicProto, hard: Bool) -> Bool {
         guard let st = topic.payload as? StoredTopic, let topicId = st.id else { return false }
+        let savepointName = "SqlStore.topicDelete"
         do {
             if hard {
-                try dbh?.db?.savepoint("SqlStore.topicDelete") {
+                try dbh?.db?.savepoint(savepointName) {
                     self.dbh?.messageDb?.deleteAll(forTopic: topicId)
                     self.dbh?.subscriberDb?.deleteForTopic(topicId: topicId)
                     self.dbh?.topicDb?.delete(recordId: topicId)
-
                 }
             } else {
                 self.dbh?.topicDb?.markDeleted(recordId: topicId)
             }
             return true
         } catch {
+            dbh?.db?.releaseSavepoint(withName: savepointName)
             BaseDb.log.error("SqlStore - topicDelete operation failed: topicId = %lld, error = %@", topicId, error.localizedDescription)
             return false
         }
@@ -204,8 +205,9 @@ public class SqlStore: Storage {
         sm.topicId = topicId
         sm.userId = userId
         sm.dbStatus = .synced
+        let savepointName = "SqlStore.msgReceived"
         do {
-            try dbh?.db?.savepoint("SqlStore.msgReceived") {
+            try dbh?.db?.savepoint(savepointName) {
                 sm.msgId = self.dbh?.messageDb?.insert(topic: topic, msg: sm) ?? -1
                 if sm.msgId <= 0 || !(self.dbh?.topicDb?.msgReceived(topic: topic, ts: sm.ts ?? Date(), seq: sm.seqId) ?? false) {
                     throw SqlStoreError.dbError("Could not handle received message: msgId = \(sm.msgId), topicId = \(topicId), userId = \(userId)")
@@ -213,6 +215,7 @@ public class SqlStore: Storage {
             }
             return sm
         } catch {
+            dbh?.db?.releaseSavepoint(withName: savepointName)
             BaseDb.log.error("SqlStore - msgReceived operation failed: %@", error.localizedDescription)
             return nil
         }
@@ -286,8 +289,9 @@ public class SqlStore: Storage {
     }
 
     public func msgDelivered(topic: TopicProto, dbMessageId: Int64, timestamp: Date, seq: Int) -> Bool {
+        let savepointName = "SqlStore.msgDelivered"
         do {
-            try dbh?.db?.savepoint("SqlStore.msgDelivered") {
+            try dbh?.db?.savepoint(savepointName) {
                 let messageDbSuccessful = self.dbh?.messageDb?.delivered(msgId: dbMessageId, ts: timestamp, seq: seq) ?? false
                 let topicDbSuccessful = self.dbh?.topicDb?.msgReceived(topic: topic, ts: timestamp, seq: seq) ?? false
                 if !(messageDbSuccessful && topicDbSuccessful) {
@@ -296,6 +300,7 @@ public class SqlStore: Storage {
             }
             return true
         } catch {
+            dbh?.db?.releaseSavepoint(withName: savepointName)
             BaseDb.log.error("SqlStore - msgDelivered operation failed %@", error.localizedDescription)
             return false
         }
@@ -316,12 +321,14 @@ public class SqlStore: Storage {
         guard let st = topic.payload as? StoredTopic, let topicId = st.id else { return false }
         let idHi = idHi <= 0 ? (st.maxLocalSeq ?? 0) + 1 : idHi
         var success = false
+        let savepointName = "SqlStore.msgDelete-bounds"
         do {
-            try dbh?.db?.savepoint("SqlStore.msgDelete-bounds") {
+            try dbh?.db?.savepoint(savepointName) {
                 success = (dbh?.topicDb?.msgDeleted(topic: topic, delId: delId, from: idLo, to: idHi) ?? false) &&
                     (dbh?.messageDb?.delete(topicId: topicId, deleteId: delId, from: idLo, to: idHi) ?? false)
             }
         } catch {
+            dbh?.db?.releaseSavepoint(withName: savepointName)
             BaseDb.log.error("SqlStore - msgDelete operation failed %@", error.localizedDescription)
         }
         return success
@@ -333,12 +340,15 @@ public class SqlStore: Storage {
         let collapsedRanges = MsgRange.collapse(ranges)
         let enclosing = MsgRange.enclosing(for: collapsedRanges)
         var success = false
+        let savepointName = "SqlStore.msgDelete-ranges"
         do {
-            try dbh?.db?.savepoint("SqlStore.msgDelete-ranges") {
+            try dbh?.db?.savepoint(savepointName) {
                 success = (dbh?.topicDb?.msgDeleted(topic: topic, delId: delId, from: enclosing!.lower, to: enclosing!.upper) ?? false) &&
                     (dbh?.messageDb?.deleteOrMarkDeleted(topicId: topicId, delId: delId, inRanges: collapsedRanges, hard: false) ?? false)
             }
         } catch {
+            // Explicitly releasing savepoint since ROLLBACK TO (SQLite.swift behavior) won't release the savepoint transaction.
+            dbh?.db?.releaseSavepoint(withName: savepointName)
             BaseDb.log.error("SqlStore - msgDelete operation failed %@", error.localizedDescription)
         }
         return success

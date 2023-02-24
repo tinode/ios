@@ -237,9 +237,8 @@ class UiUtils {
     public static func logoutAndRouteToLoginVC() {
         Cache.log.info("UiUtils - Invalidating cache and logging out.")
         SharedUtils.removeAuthToken()
-        UiUtils.routeToLoginVC() {
-            Cache.invalidate()
-        }
+        Cache.invalidate()
+        UiUtils.routeToLoginVC()
     }
 
     private static func routeToLoginVC(completion: (() -> (Void))? = nil) {

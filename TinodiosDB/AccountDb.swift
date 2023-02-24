@@ -57,6 +57,12 @@ public class AccountDb {
         try! self.db.run(self.table.createIndex(uid, unique: true, ifNotExists: true))
         try! self.db.run(self.table.createIndex(active, ifNotExists: true))
     }
+
+    // Deletes all records from `accounts` table.
+    public func truncateTable() {
+        try! self.db.run(self.table.delete())
+    }
+
     @discardableResult
     func deactivateAll() throws -> Int {
         return try self.db.run(self.table.update(self.active <- 0))
@@ -68,9 +74,10 @@ public class AccountDb {
         return nil
     }
     func addOrActivateAccount(for uid: String, withCredMethods meth: [String]?) -> StoredAccount? {
+        let savepointName = "AccountDb.addOrActivateAccount"
         var result: StoredAccount?
         do {
-            try db.savepoint("AccountDb.addOrActivateAccount") {
+            try db.savepoint(savepointName) {
                 try self.deactivateAll()
                 result = self.getByUid(uid: uid)
                 let serializedCredMeth = meth?.joined(separator: ",")
@@ -93,9 +100,13 @@ public class AccountDb {
                 }
             }
         } catch SQLite.Result.error(message: let err, code: let code, statement: _) {
+            // Explicitly releasing savepoint since ROLLBACK TO (SQLite.swift behavior) won't release the savepoint transaction.
+            self.db.releaseSavepoint(withName: savepointName)
             BaseDb.log.error("Failed to add account for uid %@: SQLite code = %d, error = %@", uid, code, err)
             result = nil
         } catch {
+            // Explicitly releasing savepoint since ROLLBACK TO (SQLite.swift behavior) won't release the savepoint transaction.
+            self.db.releaseSavepoint(withName: savepointName)
             BaseDb.log.error("Failed to add account '%@'", error.localizedDescription)
             result = nil
         }
