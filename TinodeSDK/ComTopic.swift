@@ -128,9 +128,7 @@ public class ComTopic: Topic<TheCard, PrivateType, TheCard, PrivateType> {
         // Not enough messages in cache to fullfill the request, call the server.
 
         // Use query builder to get cached message ranges.
-        // 'since' is inclusive (>=), 'before' is exclusive (<).
-        let (since, before) = forward ? (lastLoadedSeq + 1, nil) : (nil, lastLoadedSeq)
-        let query = metaGetBuilder().withData(since: since, before: before, limit: remainingCount)
+        let query = metaGetBuilder().withEarlierData(limit: limit)
         getMeta(query: query.build())
             .thenApply({ _ in
                 // Read message page from DB.
