@@ -282,7 +282,7 @@ class MessageViewController: UIViewController {
     func appBecameActive() {
         self.interactor?.setup(topicName: topicName, sendReadReceipts: self.sendReadReceipts)
         self.interactor?.attachToTopic(interactively: true)
-        self.interactor?.loadMessagesFromCache(scrollToMostRecentMessage: false)
+        self.interactor?.loadMessagesFromCache(numMessagesToLoad: nil, scrollToMostRecentMessage: false)
     }
     @objc
     func appGoingInactive() {
@@ -394,7 +394,7 @@ class MessageViewController: UIViewController {
 
         if self.interactor?.setup(topicName: self.topicName, sendReadReceipts: self.sendReadReceipts) ?? false {
             self.interactor?.deleteFailedMessages()
-            self.interactor?.loadMessagesFromCache(scrollToMostRecentMessage: true)
+            self.interactor?.loadMessagesFromCache(numMessagesToLoad: nil, scrollToMostRecentMessage: true)
         }
     }
 
@@ -433,7 +433,7 @@ class MessageViewController: UIViewController {
             self.showInPreviewBar(content: fwdPreview, forwarded: true)
         }
         self.interactor?.attachToTopic(interactively: true)
-        self.interactor?.loadMessagesFromCache(scrollToMostRecentMessage: false)
+        self.interactor?.loadMessagesFromCache(numMessagesToLoad: nil, scrollToMostRecentMessage: false)
         self.interactor?.sendReadNotification(explicitSeq: nil, when: .now() + .seconds(1))
         self.applyTopicPermissions()
     }
