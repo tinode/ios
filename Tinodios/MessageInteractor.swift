@@ -50,7 +50,7 @@ protocol MessageBusinessLogic: AnyObject {
 protocol MessageDataStore {
     var topicName: String? { get set }
     var topic: DefaultComTopic? { get set }
-    func loadMessagesFromCache(numMessagesToLoad: Int?, scrollToMostRecentMessage: Bool)
+    func loadMessagesFromCache(scrollToMostRecentMessage: Bool)
     func loadPreviousPage()
     func deleteMessage(_ message: Message)
     func deleteFailedMessages()
@@ -213,7 +213,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                     self?.messageInteractorQueue.async {
                         self?.topic?.syncAll().then(
                             onSuccess: { [weak self] _ in
-                                self?.loadMessagesFromCache(numMessagesToLoad: self?.messages.count)
+                                self?.loadMessagesFromCache()
                                 return nil
                             },
                             onFailure: { err in
@@ -225,7 +225,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                     if self?.topicId == -1 {
                         self?.topicId = BaseDb.sharedInstance.topicDb?.getId(topic: self?.topicName)
                     }
-                    self?.loadMessagesFromCache(numMessagesToLoad: self?.messages.count)
+                    self?.loadMessagesFromCache()
                     self?.presenter?.applyTopicPermissions(withError: nil)
                     return nil
                 },
@@ -321,7 +321,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
     func sendMessage(content: Drafty) {
         guard let topic = self.topic else { return }
         defer {
-            loadMessagesFromCache(numMessagesToLoad: self.messages.count + 1)
+            loadMessagesFromCache()
         }
         var message = content
         var head: [String: JSONValue]? = nil
@@ -338,9 +338,12 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                 head = ["replace": .string(":" + String(replaceSeq))]
             }
         }
+        while self.messages.count >= self.pagesToLoad * MessageInteractor.kMessagesPerPage {
+            self.pagesToLoad += 1
+        }
         topic.publish(content: message, withExtraHeaders: head).then(
             onSuccess: { [weak self] _ in
-                self?.loadMessagesFromCache(numMessagesToLoad: self?.messages.count)
+                self?.loadMessagesFromCache()
                 return nil
             },
             onFailure: { err in
@@ -389,17 +392,13 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
     }
 
     /// Load the most recent `kMessagesPerPage` messages from cache.
-    func loadMessagesFromCache(numMessagesToLoad numMessages: Int?, scrollToMostRecentMessage: Bool = true) {
+    func loadMessagesFromCache(scrollToMostRecentMessage: Bool = true) {
         guard let t = self.topic else { return }
-        let numMessages = numMessages ?? self.messages.count
-        let numToLoad = max(numMessages, MessageInteractor.kMessagesPerPage)
+        let numToLoad = self.pagesToLoad * MessageInteractor.kMessagesPerPage
         self.messageInteractorQueue.async {
             if let messagePage = BaseDb.sharedInstance.sqlStore?.getMessagePage(topic: t, from: Int.max, limit: numToLoad, forward: false) {
                 // Replace messages with the new page.
-                // The app should normally only increase number of loaded messages.
-                if messagePage.count > self.messages.count {
-                    self.messages = messagePage.map { $0 as! StoredMessage }.reversed()
-                }
+                self.messages = messagePage.map { $0 as! StoredMessage }.reversed()
                 self.presenter?.presentMessages(messages: self.messages, scrollToMostRecentMessage)
             }
         }
@@ -442,6 +441,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         guard let topic = topic, let store = topic.store else {
             return
         }
+        let origCount = self.messages.count
         var seqIds: [Int] = []
         if let replSeq = message.replacesSeq, let versionSeqIds = topic.store?.getAllMsgVersions(fromTopic: topic, forSeq: replSeq, limit: nil) {
             for seq in versionSeqIds {
@@ -459,11 +459,11 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         }
         topic.delMessages(ids: seqIds, hard: false).then(
             onSuccess: { [weak self] _ in
-                self?.loadMessagesFromCache(numMessagesToLoad: self?.messages.count)
+                self?.loadMessagesFromCache()
                 return nil
             },
             onFailure: UiUtils.ToastFailureHandler)
-        self.loadMessagesFromCache(numMessagesToLoad: self.messages.count)
+        self.loadMessagesFromCache()
     }
 
     func deleteFailedMessages() {
@@ -671,7 +671,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                     if !success {
                         _ = topic.store?.msgDiscard(topic: topic, dbMessageId: msg.msgId)
                     }
-                    interactor?.loadMessagesFromCache(numMessagesToLoad: interactor?.messages.count)
+                    interactor?.loadMessagesFromCache()
                 }
                 guard error == nil else {
                     switch error! {
@@ -712,12 +712,12 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                     _ = topic.store?.msgReady(topic: topic, dbMessageId: msg.msgId, data: content)
                     topic.syncOne(msgId: msg.msgId)
                         .thenFinally({
-                            interactor?.loadMessagesFromCache(numMessagesToLoad: self?.messages.count)
+                            interactor?.loadMessagesFromCache()
                         })
                     success = true
                 }
             }
-            self.loadMessagesFromCache(numMessagesToLoad: self.messages.count)
+            self.loadMessagesFromCache()
         }
     }
 
@@ -773,8 +773,10 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
     override func onData(data: MsgServerData?) {
         guard let data = data, let topic = topic else { return }
         let newData = data.getSeq >= (topic.seq ?? 0)
-        let numToLoad = self.messages.count + (newData ? 1 : 0)
-        self.loadMessagesFromCache(numMessagesToLoad: numToLoad, scrollToMostRecentMessage: newData)
+        if self.messages.count + (newData ? 1 : 0) > self.pagesToLoad * MessageInteractor.kMessagesPerPage {
+            self.pagesToLoad += 1
+        }
+        self.loadMessagesFromCache(scrollToMostRecentMessage: newData)
         if let from = data.from, let seq = data.seq, !Cache.tinode.isMe(uid: from) {
             sendReadNotification(explicitSeq: seq, when: .now() + .seconds(1))
         }
