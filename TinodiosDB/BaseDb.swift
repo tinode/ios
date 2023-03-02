@@ -123,6 +123,11 @@ public class BaseDb {
         self.account = self.accountDb!.getActiveAccount()
     }
 
+    private func clearSequences() {
+        let table = Table("sqlite_sequence")
+        try! self.db!.run(table.delete())
+    }
+
     private func clearDb() {
         BaseDb.log.info("Clearing local store (SQLite db).")
         try! self.db!.transaction {
@@ -131,6 +136,7 @@ public class BaseDb {
             self.topicDb?.truncateTable()
             self.userDb?.truncateTable()
             self.accountDb?.truncateTable()
+            self.clearSequences()
         }
     }
 
@@ -185,6 +191,7 @@ public class BaseDb {
         // _ = try? self.accountDb?.deactivateAll()
         // self.setUid(uid: nil, credMethods: nil)
         BaseDb.accessQueue.sync {
+            self.setUid(uid: nil, credMethods: nil)
             self.clearDb()
             BaseDb.default = nil
         }
