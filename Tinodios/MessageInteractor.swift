@@ -771,7 +771,10 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
     }
 
     override func onData(data: MsgServerData?) {
-        guard let data = data, let topic = topic else { return }
+        guard let data = data, let topic = topic else {
+            self.loadMessagesFromCache()
+            return
+        }
         let newData = data.getSeq >= (topic.seq ?? 0)
         self.loadMessagesFromCache(scrollToMostRecentMessage: newData)
         if let from = data.from, let seq = data.seq, !Cache.tinode.isMe(uid: from) {
