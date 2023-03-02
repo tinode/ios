@@ -338,9 +338,6 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                 head = ["replace": .string(":" + String(replaceSeq))]
             }
         }
-        while self.messages.count >= self.pagesToLoad * MessageInteractor.kMessagesPerPage {
-            self.pagesToLoad += 1
-        }
         topic.publish(content: message, withExtraHeaders: head).then(
             onSuccess: { [weak self] _ in
                 self?.loadMessagesFromCache()
@@ -417,6 +414,10 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
             return
         }
 
+        if self.messages.count <= self.pagesToLoad * MessageInteractor.kMessagesPerPage {
+            self.pagesToLoad += 1
+        }
+
         self.messageInteractorQueue.async {
             t.loadMessagePage(startWithSeq: firstSeqId, pageSize: MessageInteractor.kMessagesPerPage, forward: false, onLoaded: { [weak self] (messagePage, error) in
                 self?.presenter?.endRefresh()
@@ -441,7 +442,6 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         guard let topic = topic, let store = topic.store else {
             return
         }
-        let origCount = self.messages.count
         var seqIds: [Int] = []
         if let replSeq = message.replacesSeq, let versionSeqIds = topic.store?.getAllMsgVersions(fromTopic: topic, forSeq: replSeq, limit: nil) {
             for seq in versionSeqIds {
@@ -773,9 +773,6 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
     override func onData(data: MsgServerData?) {
         guard let data = data, let topic = topic else { return }
         let newData = data.getSeq >= (topic.seq ?? 0)
-        if self.messages.count + (newData ? 1 : 0) > self.pagesToLoad * MessageInteractor.kMessagesPerPage {
-            self.pagesToLoad += 1
-        }
         self.loadMessagesFromCache(scrollToMostRecentMessage: newData)
         if let from = data.from, let seq = data.seq, !Cache.tinode.isMe(uid: from) {
             sendReadNotification(explicitSeq: seq, when: .now() + .seconds(1))
