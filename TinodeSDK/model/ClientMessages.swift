@@ -76,6 +76,8 @@ public class Credential: Codable, Comparable, CustomStringConvertible {
 public class MsgClientAcc<Pu: Codable, Pr: Codable>: Codable {
     var id: String?
     var user: String?
+    var tmpscheme: String?
+    var tmpsecret: String?
     var scheme: String?
     var secret: String?
     var login: Bool?
@@ -85,12 +87,16 @@ public class MsgClientAcc<Pu: Codable, Pr: Codable>: Codable {
 
     init(id: String?,
          uid: String?,
+         tmpscheme: String? = nil,
+         tmpsecret: String? = nil,
          scheme: String?,
          secret: String?,
          doLogin: Bool,
          desc: MetaSetDesc<Pu, Pr>?) {
         self.id = id
         self.user = uid
+        self.tmpscheme = tmpscheme
+        self.tmpsecret = tmpsecret
         self.scheme = scheme
         self.login = doLogin
         self.desc = desc

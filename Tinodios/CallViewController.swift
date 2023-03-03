@@ -571,6 +571,7 @@ class CallViewController: UIViewController {
 
     @IBOutlet weak var peerNameLabel: PaddedLabel!
     @IBOutlet weak var peerAvatarImageView: RoundImageView!
+    @IBOutlet weak var peerNameRemoteVideoLabel: PaddedLabel!
 
     @IBOutlet weak var dialingAnimationContainer: UIView!
 
@@ -643,6 +644,8 @@ class CallViewController: UIViewController {
         if let topic = topic {
             peerNameLabel.text = topic.pub?.fn
             peerNameLabel.sizeToFit()
+            peerNameRemoteVideoLabel.text = peerNameLabel.text
+            peerNameRemoteVideoLabel.sizeToFit()
             peerAvatarImageView.set(pub: topic.pub, id: topic.name, deleted: false)
         }
     }
@@ -718,6 +721,8 @@ class CallViewController: UIViewController {
         webRTCClient.delegate = self
         cameraManager.delegate = self
         Cache.tinode.addListener(self.listener)
+        // Prevent screen from dimming/going to sleep.
+        UIApplication.shared.isIdleTimerDisabled = true
 
         if let topic = self.topic {
             if !topic.attached {
@@ -850,7 +855,7 @@ class CallViewController: UIViewController {
             let localRenderer = RTCMTLVideoView(frame: self.localView.frame)
             let remoteRenderer = RTCMTLVideoView(frame: self.remoteView.frame)
             localRenderer.videoContentMode = .scaleAspectFit
-            remoteRenderer.videoContentMode = .scaleAspectFit
+            remoteRenderer.videoContentMode = .scaleAspectFill
         #else
             // Using OpenGLES for the rest
             let localRenderer = RTCEAGLVideoView(frame: self.localView.frame)
@@ -866,11 +871,15 @@ class CallViewController: UIViewController {
         self.remoteRenderer = remoteRenderer
         if self.isAudioOnlyCall {
             remoteView.isHidden = true
+            peerNameRemoteVideoLabel.isHidden = true
             localView.isHidden = true
         }
     }
 
     func stopMedia() {
+        // Allow screen dimming/going to sleep.
+        UIApplication.shared.isIdleTimerDisabled = false
+
         self.webRTCClient.disconnect()
         cameraManager.stopCapture()
         if let observer = self.routeChangeObserver {
@@ -1048,6 +1057,7 @@ extension CallViewController: WebRTCClientDelegate {
     func toggleRemoteVideo(remoteLive: Bool) {
         DispatchQueue.main.async {
             self.remoteView.isHidden = !remoteLive
+            self.peerNameRemoteVideoLabel.isHidden = !remoteLive
             self.peerNameLabel.alpha = !remoteLive ? 1 : 0
             self.peerAvatarImageView.alpha = !remoteLive ? 1 : 0
         }

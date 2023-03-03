@@ -16,6 +16,9 @@
 /* Class = "UILabel"; text = "Send typing notifications"; ObjectID = "4ll-eW-b8Z"; */
 "4ll-eW-b8Z.text" = "发送键入通知";
 
+/* Class = "UITableViewController"; title = "Credentials Change"; ObjectID = "4ur-p6-jff"; */
+"4ur-p6-jff.title" = "凭证变更";
+
 /* Class = "UILabel"; text = "Optional comment (private)"; ObjectID = "6Nd-3S-JBo"; */
 "6Nd-3S-JBo.text" = "可选评论（私人）";
 
@@ -34,6 +37,9 @@
 /* Class = "UILabel"; text = "Anonymous users"; ObjectID = "8wo-Rg-iTZ"; */
 "8wo-Rg-iTZ.text" = "匿名用户";
 
+/* Class = "UITextField"; placeholder = "Phone number"; ObjectID = "9Co-1p-ugz"; */
+"9Co-1p-ugz.placeholder" = "电话号码";
+
 /* Class = "UILabel"; text = "Terms of use"; ObjectID = "9dk-JW-5z0"; */
 "9dk-JW-5z0.text" = "使用条款";
 
@@ -49,6 +55,12 @@
 /* Class = "UILabel"; text = "N"; ObjectID = "9rO-zX-bOn"; */
 "9rO-zX-bOn.text" = "N";
 
+/* Class = "UILabel"; text = "We will send confirmation code to the address below"; ObjectID = "9SI-IJ-VTf"; */
+"9SI-IJ-VTf.text" = "我们将向以下地址发送确认码";
+
+/* Class = "UITableViewSection"; headerTitle = "New Credential"; ObjectID = "9Zn-Sl-aQb"; */
+"9Zn-Sl-aQb.headerTitle" = "新的凭证";
+
 /* Class = "UILabel"; text = "Size:"; ObjectID = "12g-Mq-Ht6"; */
 "12g-Mq-Ht6.text" = "尺寸:";
 
@@ -57,6 +69,9 @@
 
 /* Class = "UILabel"; text = "1.0.0 (222)"; ObjectID = "71p-KF-hSv"; */
 "71p-KF-hSv.text" = "1.0.0 (222)";
+
+/* Class = "UITextField"; placeholder = "Enter Confirmation Code"; ObjectID = "82W-36-na3"; */
+"82W-36-na3.placeholder" = "输入确认码";
 
 /* Class = "UIViewController"; title = "Image Preview"; ObjectID = "a2m-CR-0Zc"; */
 "a2m-CR-0Zc.title" = "图片预览";
@@ -69,6 +84,9 @@
 
 /* Class = "UILabel"; text = "File name:"; ObjectID = "aA7-FA-fcf"; */
 "aA7-FA-fcf.text" = "文件名:";
+
+/* Class = "UIButton"; normalTitle = "I Have Code"; ObjectID = "ab5-J1-Lx7"; */
+"ab5-J1-Lx7.normalTitle" = "我有代码";
 
 /* Class = "UILabel"; text = "Notifications"; ObjectID = "aCk-Z4-8m7"; */
 "aCk-Z4-8m7.text" = "通知";
@@ -94,8 +112,17 @@
 /* Class = "UILabel"; text = "Verified"; ObjectID = "axr-PN-Xcr"; */
 "axr-PN-Xcr.text" = "值得信赖";
 
+/* Class = "UITextField"; placeholder = "Description (optional)"; ObjectID = "bca-bT-6Tn"; */
+"bca-bT-6Tn.placeholder" = "描述（可选）";
+
 /* Class = "UILabel"; text = "Last active"; ObjectID = "bEA-WA-uoH"; */
 "bEA-WA-uoH.text" = "上次登录";
+
+/* Class = "UILabel"; text = "We will send a message with confirmation code to address above"; ObjectID = "bfU-AG-oM0"; */
+"bfU-AG-oM0.text" = "我们将发送一条带有确认码的消息，以解决上述地址";
+
+/* Class = "UITableViewSection"; headerTitle = "Password reset"; ObjectID = "BRf-xV-zvt"; */
+"BRf-xV-zvt.headerTitle" = "密码重设";
 
 /* Class = "UILabel"; text = "Tinode"; ObjectID = "BS4-zj-4bf"; */
 "BS4-zj-4bf.text" = "Tinode";
@@ -120,6 +147,9 @@
 
 /* Class = "UIViewController"; title = "Video Call"; ObjectID = "Cib-aE-hH5"; */
 "Cib-aE-hH5.title" = "视频通话";
+
+/* Class = "UIButton"; normalTitle = "Change"; ObjectID = "cOw-88-WKy"; */
+"cOw-88-WKy.normalTitle" = "改变";
 
 /* Class = "UITextField"; placeholder = "Optional description"; ObjectID = "Cy6-Bq-QCi"; */
 "Cy6-Bq-QCi.placeholder" = "可选描述";
@@ -157,9 +187,6 @@
 /* Class = "UILabel"; text = "Delete account"; ObjectID = "Fjs-5K-JCI"; */
 "Fjs-5K-JCI.text" = "删除帐户";
 
-/* Class = "UILabel"; text = "Add another"; ObjectID = "fLh-oI-CRP"; */
-"fLh-oI-CRP.text" = "添加联系人";
-
 /* Class = "UINavigationItem"; title = "Forward To"; ObjectID = "fO5-2o-Zk6"; */
 "fO5-2o-Zk6.title" = "重定向消息";
 
@@ -196,6 +223,9 @@
 /* Class = "UILabel"; text = "placeholder_file_name"; ObjectID = "HIs-n4-sFa"; */
 "HIs-n4-sFa.text" = "占位_文件_名称";
 
+/* Class = "UIButton"; normalTitle = "Request"; ObjectID = "hoE-gS-bIw"; */
+"hoE-gS-bIw.normalTitle" = "请求";
+
 /* Class = "UINavigationItem"; title = "Blocked Contacts"; ObjectID = "hTR-e8-PeX"; */
 "hTR-e8-PeX.title" = "被阻止的联系人";
 
@@ -205,20 +235,26 @@
 /* Class = "UINavigationItem"; title = "New Chat"; ObjectID = "hZA-k4-xku"; */
 "hZA-k4-xku.title" = "新会话";
 
-/* Class = "UIButton"; normalTitle = "Request"; ObjectID = "i0f-S8-O1v"; */
-"i0f-S8-O1v.normalTitle" = "请求";
-
 /* Class = "UILabel"; text = "Add optional description"; ObjectID = "IbJ-of-vl0"; */
 "IbJ-of-vl0.text" = "添加可选描述";
 
+/* Class = "UITableViewController"; title = "Reset Password"; ObjectID = "IMk-1F-WiZ"; */
+"IMk-1F-WiZ.title" = "重设密码";
+
 /* Class = "UITextView"; text = "Title"; ObjectID = "ity-bg-zqr"; */
 "ity-bg-zqr.text" = "主题标题（公开）";
+
+/* Class = "UITableViewSection"; headerTitle = "General"; ObjectID = "iYo-Ip-40L"; */
+"iYo-Ip-40L.headerTitle" = "将军";
 
 /* Class = "UILabel"; text = "Verified"; ObjectID = "IzY-DL-wiS"; */
 "IzY-DL-wiS.text" = "值得信赖";
 
 /* Class = "UITableViewSection"; headerTitle = "Tags (Content Discovery)"; ObjectID = "jal-tR-OpF"; */
 "jal-tR-OpF.headerTitle" = "标签（内容发现）";
+
+/* Class = "UITableViewSection"; headerTitle = "Confirmation"; ObjectID = "jjO-7B-XRZ"; */
+"jjO-7B-XRZ.headerTitle" = "确认";
 
 /* Class = "UILabel"; text = "Confirmation code"; ObjectID = "JlG-TH-asZ"; */
 "JlG-TH-asZ.text" = "确认码";
@@ -256,8 +292,8 @@
 /* Class = "UITableViewSection"; headerTitle = "Group Members"; ObjectID = "lJB-qW-1zX"; */
 "lJB-qW-1zX.headerTitle" = "群组成员";
 
-/* Class = "UIViewController"; title = "Reset Password"; ObjectID = "lq5-3O-Yva"; */
-"lq5-3O-Yva.title" = "重置密码";
+/* Class = "UILabel"; text = "File name:"; ObjectID = "lRE-RJ-Qgv"; */
+"lRE-RJ-Qgv.text" = "文件名：";
 
 /* Class = "UILabel"; text = "File name:"; ObjectID = "lRE-RJ-Qgv"; */
 "lRE-RJ-Qgv.text" = "文件名：";
@@ -285,6 +321,9 @@
 
 /* Class = "UITextField"; placeholder = "Login"; ObjectID = "nho-5Y-Mt8"; */
 "nho-5Y-Mt8.placeholder" = "登录";
+
+/* Class = "UITextField"; placeholder = "New Email Address"; ObjectID = "NNn-m0-IQE"; */
+"NNn-m0-IQE.placeholder" = "新电子邮件地址";
 
 /* Class = "UILabel"; text = "No results"; ObjectID = "ntt-8z-Ay2"; */
 "ntt-8z-Ay2.text" = "没有结果";
@@ -328,8 +367,14 @@
 /* Class = "UILabel"; text = "Change password"; ObjectID = "qvs-D4-f94"; */
 "qvs-D4-f94.text" = "更改密码";
 
+/* Class = "UITableViewSection"; headerTitle = "Security"; ObjectID = "QwO-fs-VYW"; */
+"QwO-fs-VYW.headerTitle" = "安全";
+
 /* Class = "UILabel"; text = "Size:"; ObjectID = "qY7-Dy-tZI"; */
-"qY7-Dy-tZI.text" = "尺寸：";
+"qY7-Dy-tZI.text" = "尺寸:";
+
+/* Class = "UIButton"; normalTitle = "Request"; ObjectID = "R6w-cr-96Z"; */
+"R6w-cr-96Z.normalTitle" = "请求";
 
 /* Class = "UILabel"; text = "Manage Tags"; ObjectID = "r8j-wT-BLF"; */
 "r8j-wT-BLF.text" = "管理标签";
@@ -367,6 +412,9 @@
 /* Class = "UILabel"; text = "This is a channel"; ObjectID = "skU-B7-Zed"; Note = "Label for channel switch"; */
 "skU-B7-Zed.text" = "这是一个频道";
 
+/* Class = "UITextField"; placeholder = "Email"; ObjectID = "SQN-GC-qEL"; */
+"SQN-GC-qEL.placeholder" = "电子邮件";
+
 /* Class = "UILabel"; text = "John Doe"; ObjectID = "syF-Vp-vRc"; */
 "syF-Vp-vRc.text" = "例如张伟";
 
@@ -375,6 +423,9 @@
 
 /* Class = "UIView"; accessibilityLabel = "Footer"; ObjectID = "te7-Jx-ztq"; */
 "te7-Jx-ztq.accessibilityLabel" = "Footer";
+
+/* Class = "UITableViewSection"; headerTitle = "Contacts"; ObjectID = "TQV-dP-vL9"; */
+"TQV-dP-vL9.headerTitle" = "联系人";
 
 /* Class = "UIButton"; normalTitle = "Sign In"; ObjectID = "TvF-F9-blO"; */
 "TvF-F9-blO.normalTitle" = "登录";
@@ -391,6 +442,9 @@
 /* Class = "UILabel"; text = "N"; ObjectID = "Un9-ds-iQd"; */
 "Un9-ds-iQd.text" = "N";
 
+/* Class = "UITableViewSection"; headerTitle = "Current Credential"; ObjectID = "VLd-3M-5wj"; */
+"VLd-3M-5wj.headerTitle" = "当前凭证";
+
 /* Class = "UILabel"; text = "Authenticated users"; ObjectID = "wd7-ah-oJu"; */
 "wd7-ah-oJu.text" = "经过身份验证的用户";
 
@@ -406,8 +460,8 @@
 /* Class = "UILabel"; text = "The name of the group"; ObjectID = "WVu-hr-VVU"; */
 "WVu-hr-VVU.text" = "群组名称";
 
-/* Class = "UINavigationItem"; title = "Reset Password"; ObjectID = "wWt-TO-3We"; */
-"wWt-TO-3We.title" = "重置密码";
+/* Class = "UITextField"; placeholder = "Email"; ObjectID = "Wyn-hP-c2H"; */
+"Wyn-hP-c2H.placeholder" = "电子邮件";
 
 /* Class = "UIView"; accessibilityLabel = "Footer"; ObjectID = "xIw-r0-6Pv"; */
 "xIw-r0-6Pv.accessibilityLabel" = "Footer";
@@ -421,8 +475,11 @@
 /* Class = "UILabel"; text = "Incognito mode"; ObjectID = "xyg-ee-0pd"; Note = "Label for incognito mode switch"; */
 "xyg-ee-0pd.text" = "无痕模式";
 
-/* Class = "UILabel"; text = "Get reset code by email or phone"; ObjectID = "Ykj-eb-phs"; */
-"Ykj-eb-phs.text" = "通过电子邮件或电话请求重置代码";
+/* Class = "UITextField"; placeholder = "Confirmation code"; ObjectID = "y4A-Jz-woo"; */
+"y4A-Jz-woo.placeholder" = "确认码";
+
+/* Class = "UIButton"; normalTitle = "Confirm"; ObjectID = "yFq-90-cu1"; */
+"yFq-90-cu1.normalTitle" = "确认";
 
 /* Class = "UITextField"; placeholder = "First and last name"; ObjectID = "yKx-xt-rdn"; */
 "yKx-xt-rdn.placeholder" = "姓名";
@@ -442,7 +499,7 @@
 /* Class = "UILabel"; text = "Staff-managed"; ObjectID = "zkl-8R-Tma"; */
 "zkl-8R-Tma.text" = "工作人员管理";
 
-/* Class = "UITextField"; placeholder = "Email or phone number"; ObjectID = "zmL-3Y-R2r"; */
+/* Class = "UITextField"; placeholder = "Email"; ObjectID = "zmL-3Y-R2r"; */
 "zmL-3Y-R2r.placeholder" = "邮箱或手机号";
 
 /* Class = "UILabel"; text = "Privacy policy"; ObjectID = "Zn8-7V-BcX"; */

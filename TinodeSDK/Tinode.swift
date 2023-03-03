@@ -842,9 +842,9 @@ public class Tinode {
     ///   - desc: default access parameters for this account
     ///   - creds: creds
     /// - Returns: PromisedReply of the reply ctrl message
-    public func account<Pu: Codable, Pr: Codable>(uid: String?, scheme: String, secret: String, loginNow: Bool, tags: [String]?, desc: MetaSetDesc<Pu, Pr>?, creds: [Credential]?) -> PromisedReply<ServerMessage> {
+    public func account<Pu: Codable, Pr: Codable>(uid: String?, tmpscheme: String? = nil, tmpsecret: String? = nil, scheme: String, secret: String, loginNow: Bool, tags: [String]?, desc: MetaSetDesc<Pu, Pr>?, creds: [Credential]?) -> PromisedReply<ServerMessage> {
         let msgId = getNextMsgId()
-        let msga = MsgClientAcc(id: msgId, uid: uid, scheme: scheme, secret: secret, doLogin: loginNow, desc: desc)
+        let msga = MsgClientAcc(id: msgId, uid: uid, tmpscheme: tmpscheme, tmpsecret: tmpsecret, scheme: scheme, secret: secret, doLogin: loginNow, desc: desc)
 
         if let creds = creds, creds.count > 0 {
             for c in creds {
@@ -974,8 +974,10 @@ public class Tinode {
             }
         }
     }
-    private func updateAccountSecret(uid: String?, scheme: String, secret: String) -> PromisedReply<ServerMessage> {
-        return account(uid: uid, scheme: scheme, secret: secret, loginNow: false, tags: nil, desc: nil as MetaSetDesc<Int, Int>?, creds: nil)
+    private func updateAccountSecret(uid: String?,
+                                     tmpscheme: String? = nil, tmpsecret: String? = nil,
+                                     scheme: String, secret: String) -> PromisedReply<ServerMessage> {
+        return account(uid: uid, tmpscheme: tmpscheme, tmpsecret: tmpsecret, scheme: scheme, secret: secret, loginNow: false, tags: nil, desc: nil as MetaSetDesc<Int, Int>?, creds: nil)
     }
     @discardableResult
     public func updateAccountBasic(uid: String?, username: String, password: String) -> PromisedReply<ServerMessage> {
@@ -986,6 +988,17 @@ public class Tinode {
             return PromisedReply(error: error)
         }
     }
+
+    @discardableResult
+    public func updateAccountBasic(usingAuthScheme auth: AuthScheme, username: String, password: String) -> PromisedReply<ServerMessage> {
+        do {
+            return try updateAccountSecret(uid: nil, tmpscheme: auth.scheme, tmpsecret: auth.secret, scheme: AuthScheme.kLoginBasic,
+                secret: AuthScheme.encodeBasicToken(uname: username, password: password))
+        } catch {
+            return PromisedReply(error: error)
+        }
+    }
+
     public func requestResetPassword(method: String, newValue: String) -> PromisedReply<ServerMessage> {
         do {
             return try login(scheme: AuthScheme.kLoginReset, secret: AuthScheme.encodeResetToken(scheme: AuthScheme.kLoginBasic, method: method, value: newValue), creds: nil)

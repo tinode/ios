@@ -214,6 +214,13 @@ class VideoPreviewController: UIViewController {
         let im = UIImage(systemName: isPlaying ? "pause.fill" : "play.fill",
                          withConfiguration: UIImage.SymbolConfiguration(pointSize: 70, weight: .regular, scale: .large))
         playPauseButton.setImage(im, for: .normal)
+        if isPlaying {
+            UIView.animate(withDuration: 1) {
+                self.playPauseButton.alpha = 0.2
+            }
+        } else {
+            self.playPauseButton.alpha = 1
+        }
     }
 
     @IBAction func playPauseClicked(_ sender: Any) {

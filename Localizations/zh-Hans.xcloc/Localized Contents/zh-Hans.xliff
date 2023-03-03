@@ -151,10 +151,20 @@
         <target>确认消息已发送至%@</target>
         <note>Info message</note>
       </trans-unit>
+      <trans-unit id="Confirmation code sent" xml:space="preserve">
+        <source>Confirmation code sent</source>
+        <target>已发送确认码</target>
+        <note>Confirmation code sent</note>
+      </trans-unit>
       <trans-unit id="Confirmed successfully" xml:space="preserve">
         <source>Confirmed successfully</source>
         <target>确认成功</target>
         <note>Toast info message</note>
+      </trans-unit>
+      <trans-unit id="Confirming..." xml:space="preserve">
+        <source>Confirming...</source>
+        <target>确认...</target>
+        <note>Progress overlay</note>
       </trans-unit>
       <trans-unit id="Connection to server lost." xml:space="preserve">
         <source>Connection to server lost.</source>
@@ -180,6 +190,11 @@
         <source>Couldn't connect to server at %@: %@</source>
         <target>无法连接到服务器 (%@)：%@</target>
         <note>Error message</note>
+      </trans-unit>
+      <trans-unit id="Current credential" xml:space="preserve">
+        <source>Current credential</source>
+        <target>当前证书</target>
+        <note>Label for email or phone number entering</note>
       </trans-unit>
       <trans-unit id="Delete" xml:space="preserve">
         <source>Delete</source>
@@ -328,6 +343,11 @@
         <target>图像无效</target>
         <note>Error message when the image cannot be processed</note>
       </trans-unit>
+      <trans-unit id="Invalid or unknown address" xml:space="preserve">
+        <source>Invalid or unknown address</source>
+        <target>地址无效或未知</target>
+        <note>Password reset error</note>
+      </trans-unit>
       <trans-unit id="Invite" xml:space="preserve">
         <source>Invite</source>
         <target>邀请</target>
@@ -459,6 +479,11 @@
         <target>密码太短</target>
         <note>Error message</note>
       </trans-unit>
+      <trans-unit id="Password updated" xml:space="preserve">
+        <source>Password updated</source>
+        <target>密码已更新</target>
+        <note>Success message</note>
+      </trans-unit>
       <trans-unit id="Permissions not modified: %d (%s)" xml:space="preserve">
         <source>Permissions not modified: %1$d (%2$s)</source>
         <target>权限未修改：%1$d (%2$s)</target>
@@ -564,6 +589,11 @@
         <target>发信息</target>
         <note>Alert action</note>
       </trans-unit>
+      <trans-unit id="Service unavailable at this time. Please try again later." xml:space="preserve">
+        <source>Service unavailable at this time. Please try again later.</source>
+        <target>服务目前不可用。请稍后再试。</target>
+        <note>Service unavailable</note>
+      </trans-unit>
       <trans-unit id="Something went wrong: %d (%s)" xml:space="preserve">
         <source>Something went wrong: %1$d (%2$s)</source>
         <target>有些不对劲：%1$d (%2$s)</target>
@@ -626,6 +656,11 @@
         <note>Label shown next to an unsupported Drafty format element
    Unsupported (unknown) Drafty tag</note>
       </trans-unit>
+      <trans-unit id="Updating password..." xml:space="preserve">
+        <source>Updating password...</source>
+        <target>更新密码...</target>
+        <note>Progress overlay</note>
+      </trans-unit>
       <trans-unit id="Upload failed (%@). No server response." xml:space="preserve">
         <source>Upload failed (%@). No server response.</source>
         <target>上传失败（％@）。没有服务器响应。</target>
@@ -648,9 +683,19 @@
       </trans-unit>
       <trans-unit id="Video" xml:space="preserve">
         <source>Video</source>
-        <target>影视</target>
+        <target>视频</target>
         <note>Label shown next to an inline video
    Menu item: video call</note>
+      </trans-unit>
+      <trans-unit id="We will send a SMS with confirmation code to the number below" xml:space="preserve">
+        <source>We will send a SMS with confirmation code to the number below</source>
+        <target>我们将向以下号码发送带有确认码的短信</target>
+        <note>Telephone password reset prompt</note>
+      </trans-unit>
+      <trans-unit id="We will send an email with confirmation code to the address below" xml:space="preserve">
+        <source>We will send an email with confirmation code to the address below</source>
+        <target>我们将向以下地址发送一封包含确认码的电子邮件</target>
+        <note>Email password reset prompt</note>
       </trans-unit>
       <trans-unit id="You" xml:space="preserve">
         <source>You</source>
@@ -720,45 +765,54 @@
       </trans-unit>
     </body>
   </file>
-  <file original="Pods/en.lproj/Localizable.strings" datatype="plaintext" source-language="en" target-language="zh-Hans">
+  <file original="Pods/en.lproj/Localizable.strings" source-language="en" target-language="zh-Hans" datatype="plaintext">
     <header>
       <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="14.2" build-num="14C18"/>
     </header>
     <body>
       <trans-unit id="An error occured whilst validating the phone number." xml:space="preserve">
         <source>An error occured whilst validating the phone number.</source>
+        <target>验证电话号码时出错。</target>
         <note>No comment provided by engineer.</note>
       </trans-unit>
       <trans-unit id="Phone number type is unknown." xml:space="preserve">
         <source>Phone number type is unknown.</source>
+        <target>电话号码类型未知。</target>
         <note>No comment provided by engineer.</note>
       </trans-unit>
       <trans-unit id="PhoneNumberKit.CountryCodePicker.Common" xml:space="preserve">
         <source>Common</source>
+        <target>常见的</target>
         <note>Name of \"Common\" section</note>
       </trans-unit>
       <trans-unit id="PhoneNumberKit.CountryCodePicker.Current" xml:space="preserve">
         <source>Current</source>
+        <target>流</target>
         <note>Name of \"Current\" section</note>
       </trans-unit>
       <trans-unit id="PhoneNumberKit.CountryCodePicker.Title" xml:space="preserve">
         <source>Choose your country</source>
+        <target>选择你的国家/地区</target>
         <note>Title of CountryCodePicker ViewController</note>
       </trans-unit>
       <trans-unit id="The country code is invalid." xml:space="preserve">
         <source>The country code is invalid.</source>
+        <target>国家或地区代码无效。</target>
         <note>No comment provided by engineer.</note>
       </trans-unit>
       <trans-unit id="The number provided is invalid." xml:space="preserve">
         <source>The number provided is invalid.</source>
+        <target>提供的号码无效。</target>
         <note>No comment provided by engineer.</note>
       </trans-unit>
       <trans-unit id="The number provided is too long." xml:space="preserve">
         <source>The number provided is too long.</source>
+        <target>提供的数字太长了。</target>
         <note>No comment provided by engineer.</note>
       </trans-unit>
       <trans-unit id="The number provided is too short." xml:space="preserve">
         <source>The number provided is too short.</source>
+        <target>提供的数字太短了。</target>
         <note>No comment provided by engineer.</note>
       </trans-unit>
       <trans-unit id="This function is deprecated." xml:space="preserve">
@@ -810,6 +864,11 @@
         <target>发送键入通知</target>
         <note>Class = "UILabel"; text = "Send typing notifications"; ObjectID = "4ll-eW-b8Z";</note>
       </trans-unit>
+      <trans-unit id="4ur-p6-jff.title" xml:space="preserve">
+        <source>Credentials Change</source>
+        <target>凭证变更</target>
+        <note>Class = "UITableViewController"; title = "Credentials Change"; ObjectID = "4ur-p6-jff";</note>
+      </trans-unit>
       <trans-unit id="5CT-4e-SGR.text" xml:space="preserve">
         <source>image/jpeg</source>
         <note>Class = "UILabel"; text = "image/jpeg"; ObjectID = "5CT-4e-SGR";</note>
@@ -844,10 +903,25 @@
         <target>匿名用户</target>
         <note>Class = "UILabel"; text = "Anonymous users"; ObjectID = "8wo-Rg-iTZ";</note>
       </trans-unit>
+      <trans-unit id="9Co-1p-ugz.placeholder" xml:space="preserve">
+        <source>Phone number</source>
+        <target>电话号码</target>
+        <note>Class = "UITextField"; placeholder = "Phone number"; ObjectID = "9Co-1p-ugz";</note>
+      </trans-unit>
       <trans-unit id="9Lj-hp-MkL.text" xml:space="preserve">
         <source>Contact us</source>
         <target>联系我们</target>
         <note>Class = "UILabel"; text = "Contact us"; ObjectID = "9Lj-hp-MkL";</note>
+      </trans-unit>
+      <trans-unit id="9SI-IJ-VTf.text" xml:space="preserve">
+        <source>We will send confirmation code to the address below</source>
+        <target>我们将向以下地址发送确认码</target>
+        <note>Class = "UILabel"; text = "We will send confirmation code to the address below"; ObjectID = "9SI-IJ-VTf";</note>
+      </trans-unit>
+      <trans-unit id="9Zn-Sl-aQb.headerTitle" xml:space="preserve">
+        <source>New Credential</source>
+        <target>新的凭证</target>
+        <note>Class = "UITableViewSection"; headerTitle = "New Credential"; ObjectID = "9Zn-Sl-aQb";</note>
       </trans-unit>
       <trans-unit id="9dk-JW-5z0.text" xml:space="preserve">
         <source>Terms of use</source>
@@ -884,6 +958,11 @@
         <target>1.0.0 (222)</target>
         <note>Class = "UILabel"; text = "1.0.0 (222)"; ObjectID = "71p-KF-hSv";</note>
       </trans-unit>
+      <trans-unit id="82W-36-na3.placeholder" xml:space="preserve">
+        <source>Enter Confirmation Code</source>
+        <target>输入确认码</target>
+        <note>Class = "UITextField"; placeholder = "Enter Confirmation Code"; ObjectID = "82W-36-na3";</note>
+      </trans-unit>
       <trans-unit id="AXP-O2-x5k.text" xml:space="preserve">
         <source>App Version</source>
         <target>应用版本</target>
@@ -898,6 +977,11 @@
         <source>Muted</source>
         <target>静音</target>
         <note>Class = "UILabel"; text = "Muted"; ObjectID = "AoI-xo-VbS";</note>
+      </trans-unit>
+      <trans-unit id="BRf-xV-zvt.headerTitle" xml:space="preserve">
+        <source>Password reset</source>
+        <target>密码重设</target>
+        <note>Class = "UITableViewSection"; headerTitle = "Password reset"; ObjectID = "BRf-xV-zvt";</note>
       </trans-unit>
       <trans-unit id="BS4-zj-4bf.text" xml:space="preserve">
         <source>Tinode</source>
@@ -977,6 +1061,11 @@
         <target>视频预览</target>
         <note>Class = "UINavigationItem"; title = "Video Preview"; ObjectID = "Hah-A8-0yd";</note>
       </trans-unit>
+      <trans-unit id="IMk-1F-WiZ.title" xml:space="preserve">
+        <source>Reset Password</source>
+        <target>重设密码</target>
+        <note>Class = "UITableViewController"; title = "Reset Password"; ObjectID = "IMk-1F-WiZ";</note>
+      </trans-unit>
       <trans-unit id="IbJ-of-vl0.text" xml:space="preserve">
         <source>Add optional description</source>
         <target>添加可选描述</target>
@@ -1032,6 +1121,11 @@
         <target>已屏蔽的联系人</target>
         <note>Class = "UILabel"; text = "Blocked contacts"; ObjectID = "Lh9-1X-ez1";</note>
       </trans-unit>
+      <trans-unit id="NNn-m0-IQE.placeholder" xml:space="preserve">
+        <source>New Email Address</source>
+        <target>新电子邮件地址</target>
+        <note>Class = "UITextField"; placeholder = "New Email Address"; ObjectID = "NNn-m0-IQE";</note>
+      </trans-unit>
       <trans-unit id="O9h-LB-2lW.title" xml:space="preserve">
         <source>Notifications</source>
         <target>通知</target>
@@ -1056,6 +1150,16 @@
         <source>First and Last Name</source>
         <target>名和姓</target>
         <note>Class = "UILabel"; text = "First and Last Name"; ObjectID = "PuQ-zO-4Of";</note>
+      </trans-unit>
+      <trans-unit id="QwO-fs-VYW.headerTitle" xml:space="preserve">
+        <source>Security</source>
+        <target>安全</target>
+        <note>Class = "UITableViewSection"; headerTitle = "Security"; ObjectID = "QwO-fs-VYW";</note>
+      </trans-unit>
+      <trans-unit id="R6w-cr-96Z.normalTitle" xml:space="preserve">
+        <source>Request</source>
+        <target>请求</target>
+        <note>Class = "UIButton"; normalTitle = "Request"; ObjectID = "R6w-cr-96Z";</note>
       </trans-unit>
       <trans-unit id="RA0-dx-dSp.text" xml:space="preserve">
         <source>Topic or user ID</source>
@@ -1082,10 +1186,20 @@
         <target>内容类型：</target>
         <note>Class = "UILabel"; text = "Content type:"; ObjectID = "RvM-se-Nch";</note>
       </trans-unit>
+      <trans-unit id="SQN-GC-qEL.placeholder" xml:space="preserve">
+        <source>Email</source>
+        <target>电子邮件</target>
+        <note>Class = "UITextField"; placeholder = "Email"; ObjectID = "SQN-GC-qEL";</note>
+      </trans-unit>
       <trans-unit id="T7l-iC-Rs6.title" xml:space="preserve">
         <source>By ID</source>
         <target>通过ID</target>
         <note>Class = "UITabBarItem"; title = "By ID"; ObjectID = "T7l-iC-Rs6";</note>
+      </trans-unit>
+      <trans-unit id="TQV-dP-vL9.headerTitle" xml:space="preserve">
+        <source>Contacts</source>
+        <target>联系人</target>
+        <note>Class = "UITableViewSection"; headerTitle = "Contacts"; ObjectID = "TQV-dP-vL9";</note>
       </trans-unit>
       <trans-unit id="TvF-F9-blO.normalTitle" xml:space="preserve">
         <source>Sign In</source>
@@ -1112,20 +1226,29 @@
         <target>N</target>
         <note>Class = "UILabel"; text = "N"; ObjectID = "Un9-ds-iQd";</note>
       </trans-unit>
+      <trans-unit id="VLd-3M-5wj.headerTitle" xml:space="preserve">
+        <source>Current Credential</source>
+        <target>当前凭证</target>
+        <note>Class = "UITableViewSection"; headerTitle = "Current Credential"; ObjectID = "VLd-3M-5wj";</note>
+      </trans-unit>
+      <trans-unit id="WTE-Mf-oSE.placeholder" xml:space="preserve">
+        <source>New password</source>
+        <note>Class = "UITextField"; placeholder = "New password"; ObjectID = "WTE-Mf-oSE";</note>
+      </trans-unit>
       <trans-unit id="WVu-hr-VVU.text" xml:space="preserve">
         <source>The name of the group</source>
         <target>群组名称</target>
         <note>Class = "UILabel"; text = "The name of the group"; ObjectID = "WVu-hr-VVU";</note>
       </trans-unit>
+      <trans-unit id="Wyn-hP-c2H.placeholder" xml:space="preserve">
+        <source>Email</source>
+        <target>电子邮件</target>
+        <note>Class = "UITextField"; placeholder = "Email"; ObjectID = "Wyn-hP-c2H";</note>
+      </trans-unit>
       <trans-unit id="YLX-fZ-c26.text" xml:space="preserve">
         <source>image/jpeg</source>
         <target>image/jpeg</target>
         <note>Class = "UILabel"; text = "image/jpeg"; ObjectID = "YLX-fZ-c26";</note>
-      </trans-unit>
-      <trans-unit id="Ykj-eb-phs.text" xml:space="preserve">
-        <source>Get reset code by email or phone</source>
-        <target>通过电子邮件或电话请求重置代码</target>
-        <note>Class = "UILabel"; text = "Get reset code by email or phone"; ObjectID = "Ykj-eb-phs";</note>
       </trans-unit>
       <trans-unit id="YmQ-cB-rjH.title" xml:space="preserve">
         <source>SignUp</source>
@@ -1202,6 +1325,11 @@
         <target>N</target>
         <note>Class = "UILabel"; text = "N"; ObjectID = "aMv-to-Vu2";</note>
       </trans-unit>
+      <trans-unit id="ab5-J1-Lx7.normalTitle" xml:space="preserve">
+        <source>I Have Code</source>
+        <target>我有代码</target>
+        <note>Class = "UIButton"; normalTitle = "I Have Code"; ObjectID = "ab5-J1-Lx7";</note>
+      </trans-unit>
       <trans-unit id="af7-97-1pu.title" xml:space="preserve">
         <source>ForwardTo</source>
         <note>Class = "UITableViewController"; title = "ForwardTo"; ObjectID = "af7-97-1pu";</note>
@@ -1235,6 +1363,16 @@
         <target>N</target>
         <note>Class = "UILabel"; text = "N"; ObjectID = "bZv-2Q-BI9";</note>
       </trans-unit>
+      <trans-unit id="bca-bT-6Tn.placeholder" xml:space="preserve">
+        <source>Description (optional)</source>
+        <target>描述（可选）</target>
+        <note>Class = "UITextField"; placeholder = "Description (optional)"; ObjectID = "bca-bT-6Tn";</note>
+      </trans-unit>
+      <trans-unit id="bfU-AG-oM0.text" xml:space="preserve">
+        <source>We will send a message with confirmation code to address above</source>
+        <target>我们将发送一条带有确认码的消息，以解决上述地址</target>
+        <note>Class = "UILabel"; text = "We will send a message with confirmation code to address above"; ObjectID = "bfU-AG-oM0";</note>
+      </trans-unit>
       <trans-unit id="bvE-OV-sy1.headerTitle" xml:space="preserve">
         <source>Contacts</source>
         <target>联系人</target>
@@ -1249,6 +1387,11 @@
         <source>Add optional description</source>
         <target>添加可选描述</target>
         <note>Class = "UILabel"; text = "Add optional description"; ObjectID = "cD6-Om-VgZ";</note>
+      </trans-unit>
+      <trans-unit id="cOw-88-WKy.normalTitle" xml:space="preserve">
+        <source>Change</source>
+        <target>改变</target>
+        <note>Class = "UIButton"; normalTitle = "Change"; ObjectID = "cOw-88-WKy";</note>
       </trans-unit>
       <trans-unit id="d7l-9Y-8mk.title" xml:space="preserve">
         <source>Help and About</source>
@@ -1273,11 +1416,6 @@
         <source>128x365; 35KB</source>
         <target>128x365; 35KB</target>
         <note>Class = "UILabel"; text = "128x365; 35KB"; ObjectID = "eVu-vx-CU8";</note>
-      </trans-unit>
-      <trans-unit id="fLh-oI-CRP.text" xml:space="preserve">
-        <source>Add another</source>
-        <target>添加联系人</target>
-        <note>Class = "UILabel"; text = "Add another"; ObjectID = "fLh-oI-CRP";</note>
       </trans-unit>
       <trans-unit id="fO5-2o-Zk6.title" xml:space="preserve">
         <source>Forward To</source>
@@ -1343,10 +1481,15 @@
         <target>新会话</target>
         <note>Class = "UINavigationItem"; title = "New Chat"; ObjectID = "hZA-k4-xku";</note>
       </trans-unit>
-      <trans-unit id="i0f-S8-O1v.normalTitle" xml:space="preserve">
+      <trans-unit id="hoE-gS-bIw.normalTitle" xml:space="preserve">
         <source>Request</source>
         <target>请求</target>
-        <note>Class = "UIButton"; normalTitle = "Request"; ObjectID = "i0f-S8-O1v";</note>
+        <note>Class = "UIButton"; normalTitle = "Request"; ObjectID = "hoE-gS-bIw";</note>
+      </trans-unit>
+      <trans-unit id="iYo-Ip-40L.headerTitle" xml:space="preserve">
+        <source>General</source>
+        <target>将军</target>
+        <note>Class = "UITableViewSection"; headerTitle = "General"; ObjectID = "iYo-Ip-40L";</note>
       </trans-unit>
       <trans-unit id="ity-bg-zqr.text" xml:space="preserve">
         <source>Title</source>
@@ -1362,6 +1505,11 @@
         <source>Tags (Content Discovery)</source>
         <target>标签（内容发现）</target>
         <note>Class = "UITableViewSection"; headerTitle = "Tags (Content Discovery)"; ObjectID = "jal-tR-OpF";</note>
+      </trans-unit>
+      <trans-unit id="jjO-7B-XRZ.headerTitle" xml:space="preserve">
+        <source>Confirmation</source>
+        <target>确认</target>
+        <note>Class = "UITableViewSection"; headerTitle = "Confirmation"; ObjectID = "jjO-7B-XRZ";</note>
       </trans-unit>
       <trans-unit id="kDN-bf-JDL.placeholder" xml:space="preserve">
         <source>Name of the group</source>
@@ -1392,11 +1540,6 @@
         <source>File name:</source>
         <target>文件名：</target>
         <note>Class = "UILabel"; text = "File name:"; ObjectID = "lRE-RJ-Qgv";</note>
-      </trans-unit>
-      <trans-unit id="lq5-3O-Yva.title" xml:space="preserve">
-        <source>Reset Password</source>
-        <target>重置密码</target>
-        <note>Class = "UIViewController"; title = "Reset Password"; ObjectID = "lq5-3O-Yva";</note>
       </trans-unit>
       <trans-unit id="mTa-Ke-dom.text" xml:space="preserve">
         <source>N</source>
@@ -1464,7 +1607,7 @@
       </trans-unit>
       <trans-unit id="qY7-Dy-tZI.text" xml:space="preserve">
         <source>Size:</source>
-        <target>尺寸：</target>
+        <target>尺寸:</target>
         <note>Class = "UILabel"; text = "Size:"; ObjectID = "qY7-Dy-tZI";</note>
       </trans-unit>
       <trans-unit id="qeU-hX-VEM.title" xml:space="preserve">
@@ -1527,11 +1670,6 @@
         <target>你的</target>
         <note>Class = "UILabel"; text = "Yours"; ObjectID = "wPJ-94-8aV";</note>
       </trans-unit>
-      <trans-unit id="wWt-TO-3We.title" xml:space="preserve">
-        <source>Reset Password</source>
-        <target>重置密码</target>
-        <note>Class = "UINavigationItem"; title = "Reset Password"; ObjectID = "wWt-TO-3We";</note>
-      </trans-unit>
       <trans-unit id="wd7-ah-oJu.text" xml:space="preserve">
         <source>Authenticated users</source>
         <target>经过身份验证的用户</target>
@@ -1571,6 +1709,16 @@
         <target>无痕模式</target>
         <note>Class = "UILabel"; text = "Incognito mode"; ObjectID = "xyg-ee-0pd"; Note = "Label for incognito mode switch";</note>
       </trans-unit>
+      <trans-unit id="y4A-Jz-woo.placeholder" xml:space="preserve">
+        <source>Confirmation code</source>
+        <target>确认码</target>
+        <note>Class = "UITextField"; placeholder = "Confirmation code"; ObjectID = "y4A-Jz-woo";</note>
+      </trans-unit>
+      <trans-unit id="yFq-90-cu1.normalTitle" xml:space="preserve">
+        <source>Confirm</source>
+        <target>确认</target>
+        <note>Class = "UIButton"; normalTitle = "Confirm"; ObjectID = "yFq-90-cu1";</note>
+      </trans-unit>
       <trans-unit id="yKx-xt-rdn.placeholder" xml:space="preserve">
         <source>First and last name</source>
         <target>姓名</target>
@@ -1592,9 +1740,9 @@
         <note>Class = "UILabel"; text = "Staff-managed"; ObjectID = "zkl-8R-Tma";</note>
       </trans-unit>
       <trans-unit id="zmL-3Y-R2r.placeholder" xml:space="preserve">
-        <source>Email or phone number</source>
+        <source>Email</source>
         <target>邮箱或手机号</target>
-        <note>Class = "UITextField"; placeholder = "Email or phone number"; ObjectID = "zmL-3Y-R2r";</note>
+        <note>Class = "UITextField"; placeholder = "Email"; ObjectID = "zmL-3Y-R2r";</note>
       </trans-unit>
       <trans-unit id="zr8-yN-F8L.text" xml:space="preserve">
         <source>Leave Conversation</source>

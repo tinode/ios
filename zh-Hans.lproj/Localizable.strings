@@ -95,8 +95,14 @@
 /* Info message */
 "Confirmaition message sent to %@" = "确认消息已发送至%@";
 
+/* Confirmation code sent */
+"Confirmation code sent" = "已发送确认码";
+
 /* Toast info message */
 "Confirmed successfully" = "确认成功";
+
+/* Progress overlay */
+"Confirming..." = "确认...";
 
 /* Label for initiated call */
 "connecting" = "联运的";
@@ -115,6 +121,9 @@
 
 /* Error message */
 "Couldn't connect to server at %@: %@" = "无法连接到服务器 (%@)：%@";
+
+/* Label for email or phone number entering */
+"Current credential" = "当前证书";
 
 /* Alert action
    Menu item
@@ -211,6 +220,9 @@
 /* Error message when the image cannot be processed */
 "Invalid image" = "图像无效";
 
+/* Password reset error */
+"Invalid or unknown address" = "地址无效或未知";
+
 /* Dialog title: call to action */
 "Invite" = "邀请";
 
@@ -293,6 +305,9 @@
 /* Error message */
 "Password too short" = "密码太短";
 
+/* Success message */
+"Password updated" = "密码已更新";
+
 /* Toast notification */
 "Permissions not modified: %d (%s)" = "权限未修改：%1$d (%2$s)";
 
@@ -356,6 +371,9 @@
 /* Alert action */
 "Send message" = "发信息";
 
+/* Service unavailable */
+"Service unavailable at this time. Please try again later." = "服务目前不可用。请稍后再试。";
+
 /* Toast notification */
 "Something went wrong: %d (%s)" = "有些不对劲：%1$d (%2$s)";
 
@@ -399,6 +417,9 @@
    Unsupported (unknown) Drafty tag */
 "Unsupported" = "不支持";
 
+/* Progress overlay */
+"Updating password..." = "更新密码...";
+
 /* Error message */
 "Upload failed (%@): empty response body." = "上传失败（％@）：响应正文为空。";
 
@@ -411,9 +432,14 @@
 /* Error message */
 "Verification failure: %d %@" = "验证失败：%1$d (%2$@)";
 
-/* Label shown next to an inline video
-   Menu item: video call */
-"Video" = "影视";
+/* Label shown next to an inline video */
+"Video" = "视频";
+
+/* Telephone password reset prompt */
+"We will send a SMS with confirmation code to the number below" = "我们将向以下号码发送带有确认码的短信";
+
+/* Email password reset prompt */
+"We will send an email with confirmation code to the address below" = "我们将向以下地址发送一封包含确认码的电子邮件";
 
 /* This is 'you' */
 "You" = "您";

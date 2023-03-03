@@ -344,29 +344,10 @@ class UiUtils {
     public static func ensureDataInTextField(_ field: UITextField, maxLength: Int = -1) -> String {
         let text = (field.text ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
         if text.isEmpty {
-            markTextFieldAsError(field)
+            field.markAsError()
             return ""
         }
         return maxLength > 0 ? String(text.prefix(maxLength)) : text
-    }
-
-    public static func markTextFieldAsError(_ field: UITextField) {
-        let imageView = UIImageView(image: UIImage(named: "important"))
-        imageView.contentMode = .scaleAspectFit
-        imageView.frame = CGRect(x: 0, y: 0, width: 24, height: 24)
-        imageView.tintColor = .red
-        // Padding around the icon
-        let padding: CGFloat = 4
-        // Create the view that would act as the padding
-        let rightView = UIView(frame: CGRect(x: 0, y: 0, // keep this as 0, 0
-            width: imageView.frame.width + padding, height: imageView.frame.height))
-        rightView.addSubview(imageView)
-        field.rightViewMode = .always
-        field.rightView = rightView
-    }
-    public static func clearTextFieldError(_ field: UITextField) {
-        field.rightViewMode = .never
-        field.rightView = nil
     }
 
     public static func bytesToHumanSize(_ bytes: Int64) -> String {
@@ -471,7 +452,7 @@ class UiUtils {
             })
         })
     }
-    public static func setupTapRecognizer(forView view: UIView, action: Selector?, actionTarget: UIViewController) {
+    public static func setupTapRecognizer(forView view: UIView, action: Selector?, actionTarget: Any) {
         let tap = UITapGestureRecognizer(target: actionTarget, action: action)
         view.isUserInteractionEnabled = true
         view.addGestureRecognizer(tap)
@@ -503,6 +484,11 @@ class UiUtils {
         }
         return nil
     }
+
+    public static func showServerResponseErrorToast(for response: ServerMessage?) {
+        DispatchQueue.main.async { UiUtils.showToast(message: String(format: "Server error: code (%d), '%@'", response?.ctrl?.code ?? 0, response?.ctrl?.text ?? "-")) }
+    }
+
     public static func showPermissionsEditDialog(over viewController: UIViewController?, acs: AcsHelper?, callback: PermissionsEditViewController.ChangeHandler?, disabledPermissions: String?) {
         guard let acs = acs else {
             Cache.log.error("%@: can't change nil permissions", viewController.debugDescription)
@@ -671,14 +657,6 @@ class UiUtils {
         alert.show(over: viewController)
     }
 
-    // Sets tint color on the password visibility switch buttons.
-    public static func adjustPasswordVisibilitySwitchColor(for switches: [UIButton], setColor color: UIColor) {
-        switches.forEach {
-            $0.tintColor = color
-            $0.setImage($0.imageView?.image?.withRenderingMode(.alwaysTemplate), for: .normal)
-        }
-    }
-
     /// Generate image of a given size with an icon in the ceneter.
     public static func placeholderImage(named: String, withBackground bg: UIImage?, width: CGFloat, height: CGFloat) -> UIImage {
         let size = CGSize(width: width, height: height)
@@ -797,6 +775,22 @@ extension UIViewController {
             }
         }
     }
+
+    /// Presents a progress overlay over the specified VC with the simple "Confirming..." message (suitable for most credential verification scenarios).
+    public func showConfirmingProgressOverlay() {
+        UiUtils.toggleProgressOverlay(in: self, visible: true, title: NSLocalizedString("Confirming...", comment: "Progress overlay"))
+    }
+
+    /// Presents a progress overlay over the specified VC with the simple "Requesting..." message (suitable for most basic server requests).
+    public func showRequestProgressOverlay() {
+        UiUtils.toggleProgressOverlay(in: self, visible: true, title: NSLocalizedString("Requesting...", comment: "Progress overlay"))
+    }
+
+    /// Dismisses progress overlay (if any) currently presented over VC.
+    public func dismissProgressOverlay() {
+        UiUtils.toggleProgressOverlay(in: self, visible: false)
+    }
+
 }
 
 extension UITableViewController {
@@ -1043,6 +1037,13 @@ extension UIColor {
             rendererContext.fill(CGRect(origin: .zero, size: size))
         }
     }
+
+    /// Invert color.
+    var inverted: UIColor {
+        var r: CGFloat = 0.0, g: CGFloat = 0.0, b: CGFloat = 0.0, a: CGFloat = 0.0
+        self.getRed(&r, green: &g, blue: &b, alpha: &a)
+        return UIColor(red: (1 - r), green: (1 - g), blue: (1 - b), alpha: a)
+    }
 }
 
 public enum UIButtonBorderSide {
@@ -1106,5 +1107,59 @@ extension UIView {
                 self.setNeedsLayout()
             }
         }
+    }
+}
+
+extension UITextField {
+    // Semantic types of the right view content.
+    private static let RightViewContentTypeError = 1
+    private static let RightViewContentTypePassword = 2
+
+    /// Presents an image with the given name on the right side of the field.
+    private func setRightView(imageNamed name: String, withTintColor tintColor: UIColor, withContentType type: Int = 0) {
+        let imageView = UIImageView(image: UIImage(named: name))
+        imageView.contentMode = .scaleAspectFit
+        imageView.frame = CGRect(x: 0, y: 0, width: 24, height: 24)
+        imageView.tintColor = tintColor
+        // Padding around the icon
+        let padding: CGFloat = 4
+        // Create the view that would act as the padding
+        let rightView = UIView(frame: CGRect(x: 0, y: 0, // keep this as 0, 0
+            width: imageView.frame.width + padding, height: imageView.frame.height))
+        rightView.tag = type
+        rightView.addSubview(imageView)
+        self.rightViewMode = .always
+        self.rightView = rightView
+    }
+
+    /// Shows an error sign on the right side of the field.
+    public func markAsError() {
+        self.setRightView(imageNamed: "important", withTintColor: .red, withContentType: UITextField.RightViewContentTypeError)
+    }
+
+    /// Removes error sign from the right side of the field.
+    public func clearErrorSign() {
+        guard self.rightView?.tag == UITextField.RightViewContentTypeError else { return }
+        self.rightViewMode = .never
+        self.rightView = nil
+        if [.password, .newPassword].contains(self.textContentType) {
+            self.showSecureEntrySwitch()
+        }
+    }
+
+    /// Turns secure text entry mode on and displays a little eye switch on the right side of the field.
+    public func showSecureEntrySwitch() {
+        self.isSecureTextEntry = true
+        self.setRightView(imageNamed: "eye-30", withTintColor: .gray, withContentType: UITextField.RightViewContentTypePassword)
+        let view = self.rightView!
+
+        UiUtils.setupTapRecognizer(forView: view, action: #selector(eyeIconTapped), actionTarget: self)
+    }
+
+    @objc private func eyeIconTapped(sender: UITapGestureRecognizer) {
+        guard let parent = self.rightView, let view = parent.subviews.filter({ $0 is UIImageView }).first as? UIImageView else { return }
+
+        view.image = UIImage(named: isSecureTextEntry ? "invisible-30" : "eye-30")
+        isSecureTextEntry = !isSecureTextEntry
     }
 }

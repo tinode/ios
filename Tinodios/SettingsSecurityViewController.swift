@@ -118,29 +118,8 @@ class SettingsSecurityViewController: UITableViewController {
             alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: ""), style: .cancel, handler: nil))
         alert.addTextField(configurationHandler: { textField in
             textField.placeholder = NSLocalizedString("Enter new password", comment: "Alert prompt")
-            textField.isSecureTextEntry = true
-
-            let iconNames = ["eye-30", "invisible-30"]
-            let frameRect = CGRect(
-                x: 0,
-                y: 0,
-                width: CGFloat(20), height: CGFloat(20))
-            let container = UIView()
-            container.frame = frameRect
-
-            let passwordVisibility: [UIButton] = iconNames.map {
-                let button = UIButton(type: .custom)
-                button.setImage(UIImage(named: $0), for: .normal)
-                button.frame = frameRect
-                button.addTarget(self, action: #selector(self.passwordVisibilityChanged), for: .touchUpInside)
-                return button
-            }
-
-            passwordVisibility[1].isHidden = true
-            passwordVisibility.forEach { container.addSubview($0) }
-            UiUtils.adjustPasswordVisibilitySwitchColor(for: passwordVisibility, setColor: .darkGray)
-            textField.rightView = container
-            textField.rightViewMode = .always
+            textField.textContentType = .newPassword
+            textField.showSecureEntrySwitch()
         })
         alert.addAction(UIAlertAction(
             title: NSLocalizedString("OK", comment: ""), style: .default,
@@ -150,17 +129,6 @@ class SettingsSecurityViewController: UITableViewController {
                 }
             }))
         self.present(alert, animated: true)
-    }
-
-    @objc func passwordVisibilityChanged(_ sender: Any) {
-        if let container = (sender as? UIButton)?.superview,
-            let textField = container.superview as? UITextField {
-            // Flip password switch visibility and show/hide password.
-            textField.isSecureTextEntry = !textField.isSecureTextEntry
-            for v in container.subviews {
-                v.isHidden = !v.isHidden
-            }
-        }
     }
 
     @objc func logoutClicked(sender: UITapGestureRecognizer) {
@@ -199,12 +167,21 @@ class SettingsSecurityViewController: UITableViewController {
             return
         }
         tinode.updateAccountBasic(uid: nil, username: userName, password: newPassword)
-            .thenCatch { err in
+            .then(onSuccess: { msg in
+                DispatchQueue.main.async {
+                    if let ctrl = msg?.ctrl, 200 <= ctrl.code && ctrl.code < 300 {
+                        UiUtils.showToast(message: NSLocalizedString("Password updated", comment: "Success message"), level: .info)
+                    } else {
+                        UiUtils.showToast(message: "Server error")
+                    }
+                }
+                return nil
+            }, onFailure: { err in
                 DispatchQueue.main.async {
                     UiUtils.showToast(message: String(format: NSLocalizedString("Could not change password: %@", comment: "Error message"), err.localizedDescription))
                 }
                 return nil
-            }
+            })
     }
 
     private func logout() {

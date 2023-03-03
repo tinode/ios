@@ -16,6 +16,9 @@
 /* Class = "UILabel"; text = "Send typing notifications"; ObjectID = "4ll-eW-b8Z"; */
 "4ll-eW-b8Z.text" = "Enviar notificaciones de escritura";
 
+/* Class = "UITableViewController"; title = "Credentials Change"; ObjectID = "4ur-p6-jff"; */
+"4ur-p6-jff.title" = "Cambio de credenciales";
+
 /* Class = "UILabel"; text = "Optional comment (private)"; ObjectID = "6Nd-3S-JBo"; */
 "6Nd-3S-JBo.text" = "Comentario opcional (privado)";
 
@@ -34,6 +37,9 @@
 /* Class = "UILabel"; text = "Anonymous users"; ObjectID = "8wo-Rg-iTZ"; */
 "8wo-Rg-iTZ.text" = "Usuarios anónimos";
 
+/* Class = "UITextField"; placeholder = "Phone number"; ObjectID = "9Co-1p-ugz"; */
+"9Co-1p-ugz.placeholder" = "Número de teléfono";
+
 /* Class = "UILabel"; text = "Terms of use"; ObjectID = "9dk-JW-5z0"; */
 "9dk-JW-5z0.text" = "Términos de uso";
 
@@ -49,6 +55,12 @@
 /* Class = "UILabel"; text = "N"; ObjectID = "9rO-zX-bOn"; */
 "9rO-zX-bOn.text" = "N";
 
+/* Class = "UILabel"; text = "We will send confirmation code to the address below"; ObjectID = "9SI-IJ-VTf"; */
+"9SI-IJ-VTf.text" = "Enviaremos el código de confirmación a la siguiente dirección";
+
+/* Class = "UITableViewSection"; headerTitle = "New Credential"; ObjectID = "9Zn-Sl-aQb"; */
+"9Zn-Sl-aQb.headerTitle" = "Nueva credencial";
+
 /* Class = "UILabel"; text = "Size:"; ObjectID = "12g-Mq-Ht6"; */
 "12g-Mq-Ht6.text" = "Tamaño:";
 
@@ -57,6 +69,9 @@
 
 /* Class = "UILabel"; text = "1.0.0 (222)"; ObjectID = "71p-KF-hSv"; */
 "71p-KF-hSv.text" = "1.0.0 (222)";
+
+/* Class = "UITextField"; placeholder = "Enter Confirmation Code"; ObjectID = "82W-36-na3"; */
+"82W-36-na3.placeholder" = "Introduzca el código de confirmación";
 
 /* Class = "UIViewController"; title = "Image Preview"; ObjectID = "a2m-CR-0Zc"; */
 "a2m-CR-0Zc.title" = "Vista previa de la imagen";
@@ -69,6 +84,9 @@
 
 /* Class = "UILabel"; text = "File name:"; ObjectID = "aA7-FA-fcf"; */
 "aA7-FA-fcf.text" = "Nombre del archivo:";
+
+/* Class = "UIButton"; normalTitle = "I Have Code"; ObjectID = "ab5-J1-Lx7"; */
+"ab5-J1-Lx7.normalTitle" = "Tengo Código";
 
 /* Class = "UILabel"; text = "Notifications"; ObjectID = "aCk-Z4-8m7"; */
 "aCk-Z4-8m7.text" = "Notificaciones";
@@ -94,8 +112,17 @@
 /* Class = "UILabel"; text = "Verified"; ObjectID = "axr-PN-Xcr"; */
 "axr-PN-Xcr.text" = "Verificado";
 
+/* Class = "UITextField"; placeholder = "Description (optional)"; ObjectID = "bca-bT-6Tn"; */
+"bca-bT-6Tn.placeholder" = "Descripción (opcional)";
+
 /* Class = "UILabel"; text = "Last active"; ObjectID = "bEA-WA-uoH"; */
 "bEA-WA-uoH.text" = "Estaba activo";
+
+/* Class = "UILabel"; text = "We will send a message with confirmation code to address above"; ObjectID = "bfU-AG-oM0"; */
+"bfU-AG-oM0.text" = "Enviaremos un mensaje con el código de confirmación a la dirección anterior";
+
+/* Class = "UITableViewSection"; headerTitle = "Password reset"; ObjectID = "BRf-xV-zvt"; */
+"BRf-xV-zvt.headerTitle" = "Restablecimiento de contraseña";
 
 /* Class = "UILabel"; text = "Tinode"; ObjectID = "BS4-zj-4bf"; */
 "BS4-zj-4bf.text" = "Tinode";
@@ -120,6 +147,9 @@
 
 /* Class = "UIViewController"; title = "Video Call"; ObjectID = "Cib-aE-hH5"; */
 "Cib-aE-hH5.title" = "Videollamada";
+
+/* Class = "UIButton"; normalTitle = "Change"; ObjectID = "cOw-88-WKy"; */
+"cOw-88-WKy.normalTitle" = "Cambio";
 
 /* Class = "UITextField"; placeholder = "Optional description"; ObjectID = "Cy6-Bq-QCi"; */
 "Cy6-Bq-QCi.placeholder" = "Descripción opcional";
@@ -157,9 +187,6 @@
 /* Class = "UILabel"; text = "Delete account"; ObjectID = "Fjs-5K-JCI"; */
 "Fjs-5K-JCI.text" = "Eliminar cuenta";
 
-/* Class = "UILabel"; text = "Add another"; ObjectID = "fLh-oI-CRP"; */
-"fLh-oI-CRP.text" = "Añadir contacto";
-
 /* Class = "UINavigationItem"; title = "Forward To"; ObjectID = "fO5-2o-Zk6"; */
 "fO5-2o-Zk6.title" = "Reenviar";
 
@@ -196,6 +223,9 @@
 /* Class = "UILabel"; text = "placeholder_file_name"; ObjectID = "HIs-n4-sFa"; */
 "HIs-n4-sFa.text" = "placeholder_file_name";
 
+/* Class = "UIButton"; normalTitle = "Request"; ObjectID = "hoE-gS-bIw"; */
+"hoE-gS-bIw.normalTitle" = "Petición";
+
 /* Class = "UINavigationItem"; title = "Blocked Contacts"; ObjectID = "hTR-e8-PeX"; */
 "hTR-e8-PeX.title" = "已屏蔽的联系人";
 
@@ -205,20 +235,26 @@
 /* Class = "UINavigationItem"; title = "New Chat"; ObjectID = "hZA-k4-xku"; */
 "hZA-k4-xku.title" = "Nuevo chat";
 
-/* Class = "UIButton"; normalTitle = "Request"; ObjectID = "i0f-S8-O1v"; */
-"i0f-S8-O1v.normalTitle" = "Solicitud";
-
 /* Class = "UILabel"; text = "Add optional description"; ObjectID = "IbJ-of-vl0"; */
 "IbJ-of-vl0.text" = "Añadir descripción opcional";
 
+/* Class = "UITableViewController"; title = "Reset Password"; ObjectID = "IMk-1F-WiZ"; */
+"IMk-1F-WiZ.title" = "Restablecer contraseña";
+
 /* Class = "UITextView"; text = "Title"; ObjectID = "ity-bg-zqr"; */
 "ity-bg-zqr.text" = "Título del tema (público)";
+
+/* Class = "UITableViewSection"; headerTitle = "General"; ObjectID = "iYo-Ip-40L"; */
+"iYo-Ip-40L.headerTitle" = "General";
 
 /* Class = "UILabel"; text = "Verified"; ObjectID = "IzY-DL-wiS"; */
 "IzY-DL-wiS.text" = "Verificado";
 
 /* Class = "UITableViewSection"; headerTitle = "Tags (Content Discovery)"; ObjectID = "jal-tR-OpF"; */
 "jal-tR-OpF.headerTitle" = "Etiquetas (descubrimiento de contenido)";
+
+/* Class = "UITableViewSection"; headerTitle = "Confirmation"; ObjectID = "jjO-7B-XRZ"; */
+"jjO-7B-XRZ.headerTitle" = "Confirmación";
 
 /* Class = "UILabel"; text = "Confirmation code"; ObjectID = "JlG-TH-asZ"; */
 "JlG-TH-asZ.text" = "Código de confirmación";
@@ -256,8 +292,8 @@
 /* Class = "UITableViewSection"; headerTitle = "Group Members"; ObjectID = "lJB-qW-1zX"; */
 "lJB-qW-1zX.headerTitle" = "Miembros del grupo";
 
-/* Class = "UIViewController"; title = "Reset Password"; ObjectID = "lq5-3O-Yva"; */
-"lq5-3O-Yva.title" = "Restablecer contraseña";
+/* Class = "UILabel"; text = "File name:"; ObjectID = "lRE-RJ-Qgv"; */
+"lRE-RJ-Qgv.text" = "Nombre del archivo:";
 
 /* Class = "UILabel"; text = "File name:"; ObjectID = "lRE-RJ-Qgv"; */
 "lRE-RJ-Qgv.text" = "Nombre del archivo:";
@@ -285,6 +321,9 @@
 
 /* Class = "UITextField"; placeholder = "Login"; ObjectID = "nho-5Y-Mt8"; */
 "nho-5Y-Mt8.placeholder" = "Iniciar sesión";
+
+/* Class = "UITextField"; placeholder = "New Email Address"; ObjectID = "NNn-m0-IQE"; */
+"NNn-m0-IQE.placeholder" = "Nueva dirección de correo electrónico";
 
 /* Class = "UILabel"; text = "No results"; ObjectID = "ntt-8z-Ay2"; */
 "ntt-8z-Ay2.text" = "No hay resultados";
@@ -328,8 +367,14 @@
 /* Class = "UILabel"; text = "Change password"; ObjectID = "qvs-D4-f94"; */
 "qvs-D4-f94.text" = "Cambiar contraseña";
 
+/* Class = "UITableViewSection"; headerTitle = "Security"; ObjectID = "QwO-fs-VYW"; */
+"QwO-fs-VYW.headerTitle" = "Seguridad";
+
 /* Class = "UILabel"; text = "Size:"; ObjectID = "qY7-Dy-tZI"; */
 "qY7-Dy-tZI.text" = "Tamaño:";
+
+/* Class = "UIButton"; normalTitle = "Request"; ObjectID = "R6w-cr-96Z"; */
+"R6w-cr-96Z.normalTitle" = "Petición";
 
 /* Class = "UILabel"; text = "Manage Tags"; ObjectID = "r8j-wT-BLF"; */
 "r8j-wT-BLF.text" = "Gestionar etiquetas";
@@ -367,6 +412,9 @@
 /* Class = "UILabel"; text = "This is a channel"; ObjectID = "skU-B7-Zed"; Note = "Label for channel switch"; */
 "skU-B7-Zed.text" = "Este es un canal";
 
+/* Class = "UITextField"; placeholder = "Email"; ObjectID = "SQN-GC-qEL"; */
+"SQN-GC-qEL.placeholder" = "Correo electrónico";
+
 /* Class = "UILabel"; text = "John Doe"; ObjectID = "syF-Vp-vRc"; */
 "syF-Vp-vRc.text" = "Juan González Hernández";
 
@@ -375,6 +423,9 @@
 
 /* Class = "UIView"; accessibilityLabel = "Footer"; ObjectID = "te7-Jx-ztq"; */
 "te7-Jx-ztq.accessibilityLabel" = "Pie";
+
+/* Class = "UITableViewSection"; headerTitle = "Contacts"; ObjectID = "TQV-dP-vL9"; */
+"TQV-dP-vL9.headerTitle" = "Contactos";
 
 /* Class = "UIButton"; normalTitle = "Sign In"; ObjectID = "TvF-F9-blO"; */
 "TvF-F9-blO.normalTitle" = "Iniciar sesión";
@@ -391,6 +442,9 @@
 /* Class = "UILabel"; text = "N"; ObjectID = "Un9-ds-iQd"; */
 "Un9-ds-iQd.text" = "N";
 
+/* Class = "UITableViewSection"; headerTitle = "Current Credential"; ObjectID = "VLd-3M-5wj"; */
+"VLd-3M-5wj.headerTitle" = "Credencial actual";
+
 /* Class = "UILabel"; text = "Authenticated users"; ObjectID = "wd7-ah-oJu"; */
 "wd7-ah-oJu.text" = "Usuarios autenticados";
 
@@ -403,11 +457,11 @@
 /* Class = "UILabel"; text = "Yours"; ObjectID = "wPJ-94-8aV"; */
 "wPJ-94-8aV.text" = "Yours";
 
+/* Class = "UITextField"; placeholder = "New password"; ObjectID = "WTE-Mf-oSE"; */
+"WTE-Mf-oSE.placeholder" = "Nueva contraseña";
+
 /* Class = "UILabel"; text = "The name of the group"; ObjectID = "WVu-hr-VVU"; */
 "WVu-hr-VVU.text" = "El nombre del grupo";
-
-/* Class = "UINavigationItem"; title = "Reset Password"; ObjectID = "wWt-TO-3We"; */
-"wWt-TO-3We.title" = "Restablecer la contraseña";
 
 /* Class = "UIView"; accessibilityLabel = "Footer"; ObjectID = "xIw-r0-6Pv"; */
 "xIw-r0-6Pv.accessibilityLabel" = "Footer";
@@ -421,8 +475,11 @@
 /* Class = "UILabel"; text = "Incognito mode"; ObjectID = "xyg-ee-0pd"; Note = "Label for incognito mode switch"; */
 "xyg-ee-0pd.text" = "Modo incógnito";
 
-/* Class = "UILabel"; text = "Get reset code by email or phone"; ObjectID = "Ykj-eb-phs"; */
-"Ykj-eb-phs.text" = "Obtenga el código de recuperación por correo electrónico o teléfono";
+/* Class = "UITextField"; placeholder = "Confirmation code"; ObjectID = "y4A-Jz-woo"; */
+"y4A-Jz-woo.placeholder" = "Código de confirmación";
+
+/* Class = "UIButton"; normalTitle = "Confirm"; ObjectID = "yFq-90-cu1"; */
+"yFq-90-cu1.normalTitle" = "Confirmar";
 
 /* Class = "UITextField"; placeholder = "First and last name"; ObjectID = "yKx-xt-rdn"; */
 "yKx-xt-rdn.placeholder" = "Nombres y apellidos";
@@ -442,7 +499,7 @@
 /* Class = "UILabel"; text = "Staff-managed"; ObjectID = "zkl-8R-Tma"; */
 "zkl-8R-Tma.text" = "Gestionado por el personal";
 
-/* Class = "UITextField"; placeholder = "Email or phone number"; ObjectID = "zmL-3Y-R2r"; */
+/* Class = "UITextField"; placeholder = "Email"; ObjectID = "zmL-3Y-R2r"; */
 "zmL-3Y-R2r.placeholder" = "Correo electrónico o número de teléfono";
 
 /* Class = "UILabel"; text = "Privacy policy"; ObjectID = "Zn8-7V-BcX"; */
