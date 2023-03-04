@@ -15,6 +15,7 @@ public class SharedUtils {
     static public let kTinodePrefLastLogin = "tinodeLastLogin"
     static public let kTinodePrefReadReceipts = "tinodePrefSendReadReceipts"
     static public let kTinodePrefTypingNotifications = "tinodePrefTypingNoficications"
+    static public let kTinodePrefAppLaunchedBefore = "tinodePrefAppLaunchedBefore"
 
     // App Tinode api key.
     private static let kApiKey = "AQEAAAABAAD_rAp4DJh05a1HAwFT3A6K"
@@ -40,6 +41,16 @@ public class SharedUtils {
         public static let kHostName = "api.tinode.co" // production cluster
         public static let kUseTLS = true
     #endif
+
+    // Returns true if the app is being launched for the first time.
+    public static var isFirstLaunch: Bool {
+        get {
+            return !SharedUtils.kAppDefaults.bool(forKey: SharedUtils.kTinodePrefAppLaunchedBefore)
+        }
+        set {
+            SharedUtils.kAppDefaults.set(!newValue, forKey: SharedUtils.kTinodePrefAppLaunchedBefore)
+        }
+    }
 
     public static func getSavedLoginUserName() -> String? {
         return SharedUtils.kAppDefaults.string(forKey: SharedUtils.kTinodePrefLastLogin)

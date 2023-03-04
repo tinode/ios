@@ -81,6 +81,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         Cache.log.info("App launched with options: %@", launchOptions ?? [:])
+        if SharedUtils.isFirstLaunch {
+            Cache.log.info("First time launch. Setting up...")
+            SharedUtils.isFirstLaunch = false
+        }
         SharedUtils.registerUserDefaults()
         let baseDb = BaseDb.sharedInstance
         if baseDb.isReady {
