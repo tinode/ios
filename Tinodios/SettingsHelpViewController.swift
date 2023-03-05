@@ -6,6 +6,7 @@
 //
 
 import MessageUI
+import TinodiosDB
 import UIKit
 
 class SettingsHelpViewController: UITableViewController {
@@ -13,6 +14,9 @@ class SettingsHelpViewController: UITableViewController {
     @IBOutlet weak var termsOfUse: UITableViewCell!
     @IBOutlet weak var privacyPolicy: UITableViewCell!
     @IBOutlet weak var appVersion: UILabel!
+
+    private var tosUrl: URL!
+    private var privacyUrl: URL!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -36,14 +40,17 @@ class SettingsHelpViewController: UITableViewController {
         let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "0.0.0"
         let versionCode = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "0"
         self.appVersion.text = "\(version) (\(versionCode))"
+
+        self.tosUrl = URL(string: SharedUtils.tosUrl ?? "https://tinode.co/terms.html")
+        self.privacyUrl = URL(string: SharedUtils.privacyUrl ?? "https://tinode.co/privacy.html")
     }
 
     @objc func termsOfUseClicked(sender: UITapGestureRecognizer) {
-        UIApplication.shared.open(URL(string: "https://tinode.co/terms.html")!)
+        UIApplication.shared.open(self.tosUrl)
     }
 
     @objc func privacyPolicyClicked(sender: UITapGestureRecognizer) {
-        UIApplication.shared.open(URL(string: "https://tinode.co/privacy.html")!)
+        UIApplication.shared.open(self.privacyUrl)
     }
 
     @objc func contactUsClicked(sender: UITapGestureRecognizer) {

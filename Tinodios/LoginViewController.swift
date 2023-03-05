@@ -16,6 +16,8 @@ class LoginViewController: UIViewController {
     @IBOutlet weak var userNameTextEdit: UITextField!
     @IBOutlet weak var passwordTextEdit: UITextField!
     @IBOutlet weak var scrollView: UIScrollView!
+    @IBOutlet weak var logoView: UIImageView!
+    @IBOutlet weak var serviceNameLabel: UILabel!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -30,6 +32,13 @@ class LoginViewController: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: UIControl.keyboardWillHideNotification, object: nil)
 
         UiUtils.dismissKeyboardForTaps(onView: self.view)
+
+        if let logo = SharedUtils.smallIcon {
+            self.logoView.image = logo
+        }
+        if let serviceName = SharedUtils.serviceName {
+            self.serviceNameLabel.text = serviceName
+        }
     }
 
     deinit {

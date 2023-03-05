@@ -84,6 +84,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if SharedUtils.isFirstLaunch {
             Cache.log.info("First time launch. Setting up...")
             SharedUtils.isFirstLaunch = false
+            // TODO: uncomment when branding setup is complete.
+            // SharedUtils.setUpBranding()
         }
         SharedUtils.registerUserDefaults()
         let baseDb = BaseDb.sharedInstance

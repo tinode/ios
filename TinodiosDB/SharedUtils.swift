@@ -17,6 +17,13 @@ public class SharedUtils {
     static public let kTinodePrefTypingNotifications = "tinodePrefTypingNoficications"
     static public let kTinodePrefAppLaunchedBefore = "tinodePrefAppLaunchedBefore"
 
+    static public let kTinodePrefTosUrl = "tinodePrefTosUrl"
+    static public let kTinodePrefServiceName = "tinodePrefServiceName"
+    static public let kTinodePrefPrivacyUrl = "tinodePrefPrivacyUrl"
+    static public let kTinodePrefAppId = "tinodePrefAppId"
+    static public let kTinodePrefSmallIcon = "tinodePrefSmallIcon"
+    static public let kTinodePrefLargeIcon = "tinodePrefLargeIcon"
+
     // App Tinode api key.
     private static let kApiKey = "AQEAAAABAAD_rAp4DJh05a1HAwFT3A6K"
 
@@ -49,6 +56,72 @@ public class SharedUtils {
         }
         set {
             SharedUtils.kAppDefaults.set(!newValue, forKey: SharedUtils.kTinodePrefAppLaunchedBefore)
+        }
+    }
+
+    // App TOS url string.
+    public static var tosUrl: String? {
+        get {
+            return SharedUtils.kAppDefaults.string(forKey: SharedUtils.kTinodePrefTosUrl)
+        }
+        set {
+            SharedUtils.kAppDefaults.set(newValue, forKey: SharedUtils.kTinodePrefTosUrl)
+        }
+    }
+
+    // Application service name.
+    public static var serviceName: String? {
+        get {
+            return SharedUtils.kAppDefaults.string(forKey: SharedUtils.kTinodePrefServiceName)
+        }
+        set {
+            SharedUtils.kAppDefaults.set(newValue, forKey: SharedUtils.kTinodePrefServiceName)
+        }
+    }
+
+    // Application privacy policy url.
+    public static var privacyUrl: String? {
+        get {
+            return SharedUtils.kAppDefaults.string(forKey: SharedUtils.kTinodePrefPrivacyUrl)
+        }
+        set {
+            SharedUtils.kAppDefaults.set(newValue, forKey: SharedUtils.kTinodePrefPrivacyUrl)
+        }
+    }
+
+    // App's registration id in Tinode console.
+    public static var appId: String? {
+        get {
+            return SharedUtils.kAppDefaults.string(forKey: SharedUtils.kTinodePrefAppId)
+        }
+        set {
+            SharedUtils.kAppDefaults.set(newValue, forKey: SharedUtils.kTinodePrefAppId)
+        }
+    }
+
+    // Apps' small icon.
+    public static var smallIcon: UIImage? {
+        get {
+            if let data = SharedUtils.kAppDefaults.object(forKey: SharedUtils.kTinodePrefSmallIcon) as? Data {
+                return UIImage(data: data)
+            }
+            return nil
+        }
+        set {
+            SharedUtils.kAppDefaults.set(newValue?.pngData(), forKey: SharedUtils.kTinodePrefSmallIcon)
+        }
+    }
+
+    // Apps' large icon.
+    public static var largeIcon: UIImage? {
+        get {
+            if let data = SharedUtils.kAppDefaults.object(forKey: SharedUtils.kTinodePrefLargeIcon) as? Data {
+                return UIImage(data: data)
+            }
+            return nil
+        }
+        set {
+            SharedUtils.kAppDefaults.set(newValue?.pngData(), forKey: SharedUtils.kTinodePrefLargeIcon)
         }
     }
 
@@ -269,6 +342,77 @@ public class SharedUtils {
             }
         }
         return .noData
+    }
+
+    // Downloads an image.
+    private static func downloadIcon(fromPath path: String, relativeTo baseUrl: URL, completion: @escaping ((UIImage?) -> Void)) {
+        print("Downloading icon: ", path, baseUrl)
+        guard let url = URL(string: path, relativeTo: baseUrl) else {
+            print("Invalid icon url: ", path, baseUrl.absoluteString)
+            completion(nil)
+            return
+        }
+        let task = URLSession.shared.dataTask(with: URLRequest(url: url)) { data, req, error in
+            if let error = error {
+                print(error.localizedDescription)
+            }
+            completion(data != nil ? UIImage(data: data!) : nil)
+        }
+        task.resume()
+    }
+
+    // Configures application branding and connection settings.
+    public static func setUpBranding() {
+        // Dummy url.
+        // TODO: url should be based on the device fp (e.g. UIDevice.current.identifierForVendor).
+        let url = URL(string: "https://hosts.tinode.co/id/AB6WU")!
+
+        print("Configuring branding and app settings. Request url: ", url.absoluteString)
+        let task = URLSession.shared.dataTask(with: URLRequest(url: url)) { data, response, error in
+            guard let data = data, error == nil else {
+                print(error?.localizedDescription ?? "No data")
+                return
+            }
+            let responseJSON = try? JSONSerialization.jsonObject(with: data, options: [])
+            if let responseJSON = responseJSON as? [String: Any] {
+                print("Branding configuration: ", responseJSON)
+
+                if let tosUrl = URL(string: responseJSON["tos_url"] as? String ?? "") {
+                    SharedUtils.tosUrl = tosUrl.absoluteString
+                }
+                if let serviceName = responseJSON["service_name"] as? String {
+                    SharedUtils.serviceName = serviceName
+                }
+                if let privacyUrl  = URL(string: responseJSON["privacy_url"] as? String ?? "") {
+                    SharedUtils.privacyUrl = privacyUrl.absoluteString
+                }
+                if let apiUrl = URL(string: responseJSON["api_url"] as? String ?? "") {
+                    ConnectionSettingsHelper.setHostName(apiUrl.host!)
+                    let useTls = ["https", "ws"].contains(apiUrl.scheme)
+                    ConnectionSettingsHelper.setUseTLS(useTls ? "true" : "false")
+                }
+                if let id = responseJSON["id"] as? String {
+                    SharedUtils.appId = id
+                }
+
+                // Icons.
+                if let assetsBase = responseJSON["assets_base"] as? String, let base = URL(string: assetsBase) {
+                    if let smallIcon = responseJSON["icon_small"] as? String {
+                        downloadIcon(fromPath: smallIcon, relativeTo: base) { img in
+                            guard let img = img else { return }
+                            SharedUtils.smallIcon = img
+                        }
+                    }
+                    if let largeIcon = responseJSON["icon_large"] as? String {
+                        downloadIcon(fromPath: largeIcon, relativeTo: base) { img in
+                            guard let img = img else { return }
+                            SharedUtils.largeIcon = img
+                        }
+                    }
+                }
+            }
+        }
+        task.resume()
     }
 }
 
