@@ -5,8 +5,11 @@
 //  Copyright © 2023 Tinode LLC. All rights reserved.
 //
 
+import TinodiosDB
 import UIKit
 
+// Branding configuration VC.
+// Allows
 class BrandingViewController: UIViewController {
     static let kTinodeHostUriPrefix = "tinode:host/"
 
@@ -18,6 +21,9 @@ class BrandingViewController: UIViewController {
     override func viewDidLoad() {
         self.configurationCodeField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: UIControl.Event.editingChanged)
         self.qrScanner = QRScanner(embedIn: self.cameraPreviewView, expectedCodePrefix: BrandingViewController.kTinodeHostUriPrefix, delegate: self)
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
         self.qrScanner.start()
     }
 
@@ -40,14 +46,23 @@ class BrandingViewController: UIViewController {
     }
 
     private func handleCodeEntered(_ code: String) {
-        print("code:", code)
+        UiUtils.showToast(message: "Configuring. Config ID: " + code, level: .info)
+        SharedUtils.setUpBranding(withConfigurationCode: code)
+        self.navigationController?.popViewController(animated: true)
     }
 }
 
 extension BrandingViewController: QRScannerDelegate {
     func qrScanner(didScanCode codeValue: String?) {
         guard let code = codeValue else {
-            Cache.log.error("Invalid QR code")
+            Cache.log.error("Invalid host QR code")
+            DispatchQueue.main.async {
+                UiUtils.showToast(message: "Invalid Tinode configuration QR code")
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1)) { [weak self] in
+                // Restart QR scanner.
+                self?.qrScanner.start()
+            }
             return
         }
         handleCodeEntered(code)
