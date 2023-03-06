@@ -10,6 +10,9 @@ import SwiftKeychainWrapper
 import TinodeSDK
 
 public class SharedUtils {
+    static public let kNotificationBrandingSmallIconAvailable = "BrandingSmallIconAvailable"
+    static public let kNotificationBrandingServiceNameAvailable = "BrandingServiceNameAvailable"
+
     static public let kTinodeMetaVersion = "tinodeMetaVersion"
 
     static public let kTinodePrefLastLogin = "tinodeLastLogin"
@@ -382,6 +385,8 @@ public class SharedUtils {
                 }
                 if let serviceName = responseJSON["service_name"] as? String {
                     SharedUtils.serviceName = serviceName
+                    // Send a notification so all interested parties may use the new service name.
+                    NotificationCenter.default.post(name: Notification.Name(SharedUtils.kNotificationBrandingServiceNameAvailable), object: serviceName)
                 }
                 if let privacyUrl  = URL(string: responseJSON["privacy_url"] as? String ?? "") {
                     SharedUtils.privacyUrl = privacyUrl.absoluteString
@@ -401,6 +406,8 @@ public class SharedUtils {
                         downloadIcon(fromPath: smallIcon, relativeTo: base) { img in
                             guard let img = img else { return }
                             SharedUtils.smallIcon = img
+                            // Send notifications so all interested parties may use the new icon.
+                            NotificationCenter.default.post(name: Notification.Name(SharedUtils.kNotificationBrandingSmallIconAvailable), object: img)
                         }
                     }
                     if let largeIcon = responseJSON["icon_large"] as? String {

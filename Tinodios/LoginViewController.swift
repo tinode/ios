@@ -19,6 +19,17 @@ class LoginViewController: UIViewController {
     @IBOutlet weak var logoView: UIImageView!
     @IBOutlet weak var serviceNameLabel: UILabel!
 
+    override func loadView() {
+        super.loadView()
+        // This is needed in order to adjust the height of the scroll view when the keyboard appears.
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIControl.keyboardWillShowNotification, object: self)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: UIControl.keyboardWillHideNotification, object: self)
+        // Make sure LoginVC gets notified when app logo icon becomes available.
+        NotificationCenter.default.addObserver(self, selector: #selector(logoAvailable(_:)), name: Notification.Name(SharedUtils.kNotificationBrandingSmallIconAvailable), object: nil)
+        // Get notified with the branding service name becomes available.
+        NotificationCenter.default.addObserver(self, selector: #selector(serviceNameAvailable(_:)), name: Notification.Name(SharedUtils.kNotificationBrandingServiceNameAvailable), object: nil)
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -26,10 +37,6 @@ class LoginViewController: UIViewController {
         userNameTextEdit.addTarget(self, action: #selector(textFieldDidChange(_:)), for: UIControl.Event.editingChanged)
         passwordTextEdit.addTarget(self, action: #selector(textFieldDidChange(_:)), for: UIControl.Event.editingChanged)
         passwordTextEdit.showSecureEntrySwitch()
-
-        // This is needed in order to adjust the height of the scroll view when the keyboard appears.
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIControl.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: UIControl.keyboardWillHideNotification, object: nil)
 
         UiUtils.dismissKeyboardForTaps(onView: self.view)
 
@@ -42,8 +49,10 @@ class LoginViewController: UIViewController {
     }
 
     deinit {
-        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardDidShowNotification, object: nil)
-        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardDidHideNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardDidShowNotification, object: self)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardDidHideNotification, object: self)
+        NotificationCenter.default.removeObserver(self, name: Notification.Name(SharedUtils.kNotificationBrandingSmallIconAvailable), object: self)
+        NotificationCenter.default.removeObserver(self, name: Notification.Name(SharedUtils.kNotificationBrandingServiceNameAvailable), object: self)
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -95,6 +104,24 @@ class LoginViewController: UIViewController {
 
     @objc func textFieldDidChange(_ textField: UITextField) {
         textField.clearErrorSign()
+    }
+
+    // Logo image has just been downloaded. Use it.
+    @objc func logoAvailable(_ notification: Notification) {
+        guard let logo = notification.object as? UIImage else {
+            Cache.log.error("LoginVC: logo available notification with an empty payload")
+            return
+        }
+        DispatchQueue.main.async { self.logoView.image = logo }
+    }
+
+    // Service name has just become available. Use it.
+    @objc func serviceNameAvailable(_ notification: Notification) {
+        guard let serviceName = notification.object as? String else {
+            Cache.log.error("LoginVC: service name available notification with an empty payload")
+            return
+        }
+        DispatchQueue.main.async { self.serviceNameLabel.text = serviceName }
     }
 
     @IBAction func loginClicked(_ sender: Any) {
