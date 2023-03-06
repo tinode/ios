@@ -29,6 +29,8 @@
 		0A4BD27129568B8E00493A04 /* VideoPreviewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4BD27029568B8E00493A04 /* VideoPreviewController.swift */; };
 		0A4E1D3022829C46006C0912 /* ContactsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4E1D2F22829C46006C0912 /* ContactsManager.swift */; };
 		0A57890927487B9400E77F0C /* ForwardToViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A57890827487B9400E77F0C /* ForwardToViewController.swift */; };
+		0A68703E29B5951200A6F126 /* BrandingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A68703D29B5951200A6F126 /* BrandingViewController.swift */; };
+		0A68704029B5A10C00A6F126 /* QRScanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A68703F29B5A10C00A6F126 /* QRScanner.swift */; };
 		0A69D47F22A6552300769426 /* TopicInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A69D47E22A6552300769426 /* TopicInfoViewController.swift */; };
 		0A6AC322229FAA130025A4EC /* PermissionsEditView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0A6AC321229FAA130025A4EC /* PermissionsEditView.xib */; };
 		0A6AC324229FB0EE0025A4EC /* PermissionsEditViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A6AC323229FB0ED0025A4EC /* PermissionsEditViewController.swift */; };
@@ -200,6 +202,8 @@
 		0A4BD27029568B8E00493A04 /* VideoPreviewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPreviewController.swift; sourceTree = "<group>"; };
 		0A4E1D2F22829C46006C0912 /* ContactsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsManager.swift; sourceTree = "<group>"; };
 		0A57890827487B9400E77F0C /* ForwardToViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForwardToViewController.swift; sourceTree = "<group>"; };
+		0A68703D29B5951200A6F126 /* BrandingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrandingViewController.swift; sourceTree = "<group>"; };
+		0A68703F29B5A10C00A6F126 /* QRScanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRScanner.swift; sourceTree = "<group>"; };
 		0A69D47E22A6552300769426 /* TopicInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopicInfoViewController.swift; sourceTree = "<group>"; };
 		0A6AC321229FAA130025A4EC /* PermissionsEditView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PermissionsEditView.xib; sourceTree = "<group>"; };
 		0A6AC323229FB0ED0025A4EC /* PermissionsEditViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionsEditViewController.swift; sourceTree = "<group>"; };
@@ -408,6 +412,8 @@
 				0A0380D721B3CC8100A3FA0E /* AppDelegate.swift */,
 				0AB5FDCD22C20D1900F44AFD /* ArchivedChatsTableViewController.swift */,
 				B09C5651246C0E6B00D6615D /* BlockedContactsTableViewController.swift */,
+				0A68703D29B5951200A6F126 /* BrandingViewController.swift */,
+				0A68703F29B5A10C00A6F126 /* QRScanner.swift */,
 				0A8A8BD921C380E80090BCBA /* Cache.swift */,
 				0A0D92D828410D4100B5B5B0 /* CallManager.swift */,
 				0A0D92D62840EFEF00B5B5B0 /* CallProviderDelegate.swift */,
@@ -929,6 +935,7 @@
 				B008593C22741B8A002C5168 /* FullFormatter.swift in Sources */,
 				0A0380DA21B3CC8100A3FA0E /* ChatListViewController.swift in Sources */,
 				0A2F81C6229677DD007E562C /* AddByIDViewController.swift in Sources */,
+				0A68704029B5A10C00A6F126 /* QRScanner.swift in Sources */,
 				0AE50D4422156A250021F7B7 /* FindViewController.swift in Sources */,
 				B0BE302B27B8A3B600B04631 /* TopicSecurityViewController.swift in Sources */,
 				B01C693F22F87B5C003C0AA7 /* SignupViewController.swift in Sources */,
@@ -1002,6 +1009,7 @@
 				0A4B11FE2373DC1400199310 /* TagsEditDialogView.swift in Sources */,
 				0A69D47F22A6552300769426 /* TopicInfoViewController.swift in Sources */,
 				B03066452805FAD300497EF4 /* MultiImageTextAttachment.swift in Sources */,
+				0A68703E29B5951200A6F126 /* BrandingViewController.swift in Sources */,
 				0A9E7149237BCC8400C1D491 /* NewChatTabController.swift in Sources */,
 				0A57890927487B9400E77F0C /* ForwardToViewController.swift in Sources */,
 				0A0016E921E736CD00088188 /* MessagePresenter.swift in Sources */,
