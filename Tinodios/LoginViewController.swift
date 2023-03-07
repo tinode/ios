@@ -18,6 +18,8 @@ class LoginViewController: UIViewController {
     @IBOutlet weak var scrollView: UIScrollView!
     @IBOutlet weak var logoView: UIImageView!
     @IBOutlet weak var serviceNameLabel: UILabel!
+    @IBOutlet weak var poweredByStack: UIStackView!
+    @IBOutlet weak var configureConnectionButton: UIButton!
 
     override func loadView() {
         super.loadView()
@@ -27,7 +29,7 @@ class LoginViewController: UIViewController {
         // Make sure LoginVC gets notified when app logo icon becomes available.
         NotificationCenter.default.addObserver(self, selector: #selector(logoAvailable(_:)), name: Notification.Name(SharedUtils.kNotificationBrandingSmallIconAvailable), object: nil)
         // Get notified with the branding service name becomes available.
-        NotificationCenter.default.addObserver(self, selector: #selector(serviceNameAvailable(_:)), name: Notification.Name(SharedUtils.kNotificationBrandingServiceNameAvailable), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(brandingConfigAvailable(_:)), name: Notification.Name(SharedUtils.kNotificationBrandingConfigAvailable), object: nil)
     }
 
     override func viewDidLoad() {
@@ -40,6 +42,13 @@ class LoginViewController: UIViewController {
 
         UiUtils.dismissKeyboardForTaps(onView: self.view)
 
+        if SharedUtils.appId != nil {
+            // Branding is configured. Show "Powered by" view.
+            self.poweredByStack.isHidden = false
+        } else {
+            // Branding is not configured. Show "Configure connection" button.
+            self.configureConnectionButton.isHidden = false
+        }
         if let logo = SharedUtils.smallIcon {
             self.logoView.image = logo
         }
@@ -52,7 +61,7 @@ class LoginViewController: UIViewController {
         NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardDidShowNotification, object: self)
         NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardDidHideNotification, object: self)
         NotificationCenter.default.removeObserver(self, name: Notification.Name(SharedUtils.kNotificationBrandingSmallIconAvailable), object: self)
-        NotificationCenter.default.removeObserver(self, name: Notification.Name(SharedUtils.kNotificationBrandingServiceNameAvailable), object: self)
+        NotificationCenter.default.removeObserver(self, name: Notification.Name(SharedUtils.kNotificationBrandingConfigAvailable), object: self)
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -116,12 +125,16 @@ class LoginViewController: UIViewController {
     }
 
     // Service name has just become available. Use it.
-    @objc func serviceNameAvailable(_ notification: Notification) {
-        guard let serviceName = notification.object as? String else {
-            Cache.log.error("LoginVC: service name available notification with an empty payload")
-            return
+    @objc func brandingConfigAvailable(_ notification: Notification) {
+        DispatchQueue.main.async {
+            if SharedUtils.appId != nil {
+                self.configureConnectionButton.isHidden = true
+                self.poweredByStack.isHidden = false
+            }
+            if let serviceName = SharedUtils.serviceName {
+                self.serviceNameLabel.text = serviceName
+            }
         }
-        DispatchQueue.main.async { self.serviceNameLabel.text = serviceName }
     }
 
     @IBAction func loginClicked(_ sender: Any) {

@@ -6,6 +6,7 @@
 //
 
 import MessageUI
+import TinodeSDK
 import TinodiosDB
 import UIKit
 
@@ -14,6 +15,10 @@ class SettingsHelpViewController: UITableViewController {
     @IBOutlet weak var termsOfUse: UITableViewCell!
     @IBOutlet weak var privacyPolicy: UITableViewCell!
     @IBOutlet weak var appVersion: UILabel!
+    @IBOutlet weak var logoView: UIImageView!
+    @IBOutlet weak var serviceNameLabel: UILabel!
+    @IBOutlet weak var serviceLinkLabel: UILabel!
+    @IBOutlet weak var serverAddressLabel: UILabel!
 
     private var tosUrl: URL!
     private var privacyUrl: URL!
@@ -43,6 +48,25 @@ class SettingsHelpViewController: UITableViewController {
 
         self.tosUrl = URL(string: SharedUtils.tosUrl ?? "https://tinode.co/terms.html")
         self.privacyUrl = URL(string: SharedUtils.privacyUrl ?? "https://tinode.co/privacy.html")
+
+        // Logo.
+        if let logo = SharedUtils.largeIcon {
+            logoView.image = logo
+        } else {
+            logoView.image = UIImage(named: "logo-ios")
+        }
+        // Service name.
+        if let serviceName = SharedUtils.serviceName {
+            serviceNameLabel.text = serviceName
+        }
+        // Service link (strip path from privacy url).
+        var components = URLComponents()
+        components.scheme = privacyUrl!.scheme
+        components.host = privacyUrl!.host
+        serviceLinkLabel.text = components.url!.absoluteString
+        // Server address.
+        let (host, tls) = Tinode.getConnectionParams()
+        serverAddressLabel.text = (tls ? "https://" : "http://") + host
     }
 
     @objc func termsOfUseClicked(sender: UITapGestureRecognizer) {

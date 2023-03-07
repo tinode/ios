@@ -11,7 +11,7 @@ import TinodeSDK
 
 public class SharedUtils {
     static public let kNotificationBrandingSmallIconAvailable = "BrandingSmallIconAvailable"
-    static public let kNotificationBrandingServiceNameAvailable = "BrandingServiceNameAvailable"
+    static public let kNotificationBrandingConfigAvailable = "BrandingConfigAvailable"
 
     static public let kTinodeMetaVersion = "tinodeMetaVersion"
 
@@ -390,8 +390,6 @@ public class SharedUtils {
                 }
                 if let serviceName = responseJSON["service_name"] as? String {
                     SharedUtils.serviceName = serviceName
-                    // Send a notification so all interested parties may use the new service name.
-                    NotificationCenter.default.post(name: Notification.Name(SharedUtils.kNotificationBrandingServiceNameAvailable), object: serviceName)
                 }
                 if let privacyUrl  = URL(string: responseJSON["privacy_url"] as? String ?? "") {
                     SharedUtils.privacyUrl = privacyUrl.absoluteString
@@ -405,6 +403,8 @@ public class SharedUtils {
                     SharedUtils.appId = id
                 }
 
+                // Send a notification so all interested parties may use branding config.
+                NotificationCenter.default.post(name: Notification.Name(SharedUtils.kNotificationBrandingConfigAvailable), object: nil)
                 // Icons.
                 if let assetsBase = responseJSON["assets_base"] as? String, let base = URL(string: assetsBase) {
                     if let smallIcon = responseJSON["icon_small"] as? String {
