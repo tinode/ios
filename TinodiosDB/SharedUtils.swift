@@ -364,6 +364,29 @@ public class SharedUtils {
         task.resume()
     }
 
+    // Identifies device with Tinode server and fetches branding configuration code.
+    public static func identifyAndConfigureBranding() {
+        let url = URL(string: "https://hosts.tinode.co/whoami")!
+        print("Self-identifying with the server. Endpoint: ", url.absoluteString)
+        let task = URLSession.shared.dataTask(with: URLRequest(url: url)) { data, response, error in
+            guard let data = data, error == nil else {
+                print("Branding config response error: " + (error?.localizedDescription ?? "Failed to self-identify"))
+                return
+            }
+            let responseJSON = try? JSONSerialization.jsonObject(with: data, options: [])
+            if let responseJSON = responseJSON as? [String: Any] {
+                print("Branding identity config: ", responseJSON)
+
+                if let code = responseJSON["code"] as? String {
+                    SharedUtils.setUpBranding(withConfigurationCode: code)
+                } else {
+                    print("Branding config error: Missing configuration code in the response. Quitting.")
+                }
+            }
+        }
+        task.resume()
+    }
+
     // Configures application branding and connection settings.
     public static func setUpBranding(withConfigurationCode configCode: String) {
         guard !configCode.isEmpty else {

@@ -268,6 +268,9 @@ class UiUtils {
         DispatchQueue.main.async {
             let storyboard = UIStoryboard(name: "Main", bundle: nil)
             let initialViewController = storyboard.instantiateViewController(withIdentifier: "ChatsNavigator") as! UINavigationController
+            if let serviceName = SharedUtils.serviceName {
+                initialViewController.title = serviceName
+            }
             if let window = (UIApplication.shared.delegate as! AppDelegate).window {
                 window.rootViewController = initialViewController
             }
@@ -326,6 +329,9 @@ class UiUtils {
             } else {
                 rootVC = storyboard.instantiateViewController(
                     withIdentifier: "ChatsNavigator") as! UINavigationController
+                if let serviceName = SharedUtils.serviceName {
+                    rootVC.title = serviceName
+                }
             }
             let messageVC =
                 storyboard.instantiateViewController(
