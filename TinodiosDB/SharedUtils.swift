@@ -11,7 +11,7 @@ import TinodeSDK
 
 public class SharedUtils {
     static public let kNotificationBrandingSmallIconAvailable = "BrandingSmallIconAvailable"
-    static public let kNotificationBrandingServiceNameAvailable = "BrandingServiceNameAvailable"
+    static public let kNotificationBrandingConfigAvailable = "BrandingConfigAvailable"
 
     static public let kTinodeMetaVersion = "tinodeMetaVersion"
 
@@ -364,11 +364,39 @@ public class SharedUtils {
         task.resume()
     }
 
+    // Identifies device with Tinode server and fetches branding configuration code.
+    public static func identifyAndConfigureBranding() {
+        let url = URL(string: "https://hosts.tinode.co/whoami")!
+        print("Self-identifying with the server. Endpoint: ", url.absoluteString)
+        let task = URLSession.shared.dataTask(with: URLRequest(url: url)) { data, response, error in
+            guard let data = data, error == nil else {
+                print("Branding config response error: " + (error?.localizedDescription ?? "Failed to self-identify"))
+                return
+            }
+            let responseJSON = try? JSONSerialization.jsonObject(with: data, options: [])
+            if let responseJSON = responseJSON as? [String: Any] {
+                print("Branding identity config: ", responseJSON)
+
+                if let code = responseJSON["code"] as? String {
+                    SharedUtils.setUpBranding(withConfigurationCode: code)
+                } else {
+                    print("Branding config error: Missing configuration code in the response. Quitting.")
+                }
+            }
+        }
+        task.resume()
+    }
+
     // Configures application branding and connection settings.
-    public static func setUpBranding() {
+    public static func setUpBranding(withConfigurationCode configCode: String) {
+        guard !configCode.isEmpty else {
+            print("Branding configuration code may not be empty. Skipping branding config.")
+            return
+        }
+        print("Configuring branding with code '\(configCode)'")
         // Dummy url.
         // TODO: url should be based on the device fp (e.g. UIDevice.current.identifierForVendor).
-        let url = URL(string: "https://hosts.tinode.co/id/AB6WU")!
+        let url = URL(string: "https://hosts.tinode.co/id/\(configCode)")!
 
         print("Configuring branding and app settings. Request url: ", url.absoluteString)
         let task = URLSession.shared.dataTask(with: URLRequest(url: url)) { data, response, error in
@@ -385,8 +413,6 @@ public class SharedUtils {
                 }
                 if let serviceName = responseJSON["service_name"] as? String {
                     SharedUtils.serviceName = serviceName
-                    // Send a notification so all interested parties may use the new service name.
-                    NotificationCenter.default.post(name: Notification.Name(SharedUtils.kNotificationBrandingServiceNameAvailable), object: serviceName)
                 }
                 if let privacyUrl  = URL(string: responseJSON["privacy_url"] as? String ?? "") {
                     SharedUtils.privacyUrl = privacyUrl.absoluteString
@@ -400,6 +426,8 @@ public class SharedUtils {
                     SharedUtils.appId = id
                 }
 
+                // Send a notification so all interested parties may use branding config.
+                NotificationCenter.default.post(name: Notification.Name(SharedUtils.kNotificationBrandingConfigAvailable), object: nil)
                 // Icons.
                 if let assetsBase = responseJSON["assets_base"] as? String, let base = URL(string: assetsBase) {
                     if let smallIcon = responseJSON["icon_small"] as? String {
