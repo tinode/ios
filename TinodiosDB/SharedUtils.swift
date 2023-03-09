@@ -366,7 +366,9 @@ public class SharedUtils {
 
     // Identifies device with Tinode server and fetches branding configuration code.
     public static func identifyAndConfigureBranding() {
-        let url = URL(string: "https://hosts.tinode.co/whoami")!
+        let device = UIDevice.current.userInterfaceIdiom == .phone ? "iphone" : UIDevice.current.userInterfaceIdiom == .pad ? "ipad" : ""
+        let version = UIDevice.current.systemVersion
+        let url = URL(string: "https://hosts.tinode.co/whoami?os=ios-\(version)&dev=\(device)")!
         print("Self-identifying with the server. Endpoint: ", url.absoluteString)
         let task = URLSession.shared.dataTask(with: URLRequest(url: url)) { data, response, error in
             guard let data = data, error == nil else {
