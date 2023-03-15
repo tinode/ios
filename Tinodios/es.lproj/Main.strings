@@ -238,8 +238,14 @@
 /* Class = "UILabel"; text = "Add optional description"; ObjectID = "IbJ-of-vl0"; */
 "IbJ-of-vl0.text" = "Añadir descripción opcional";
 
+/* Class = "UIButton"; configuration.title = "Scan Code"; ObjectID = "ImI-af-TFh"; */
+"ImI-af-TFh.configuration.title" = "Código de escaneo";
+
 /* Class = "UITableViewController"; title = "Reset Password"; ObjectID = "IMk-1F-WiZ"; */
 "IMk-1F-WiZ.title" = "Restablecer contraseña";
+
+/* Class = "UIButton"; configuration.title = "Show Code"; ObjectID = "IP5-9X-LlM"; */
+"IP5-9X-LlM.configuration.title" = "Mostrar código";
 
 /* Class = "UITextView"; text = "Title"; ObjectID = "ity-bg-zqr"; */
 "ity-bg-zqr.text" = "Título del tema (público)";
@@ -291,9 +297,6 @@
 
 /* Class = "UITableViewSection"; headerTitle = "Group Members"; ObjectID = "lJB-qW-1zX"; */
 "lJB-qW-1zX.headerTitle" = "Miembros del grupo";
-
-/* Class = "UILabel"; text = "File name:"; ObjectID = "lRE-RJ-Qgv"; */
-"lRE-RJ-Qgv.text" = "Nombre del archivo:";
 
 /* Class = "UILabel"; text = "File name:"; ObjectID = "lRE-RJ-Qgv"; */
 "lRE-RJ-Qgv.text" = "Nombre del archivo:";
@@ -379,7 +382,7 @@
 /* Class = "UILabel"; text = "Manage Tags"; ObjectID = "r8j-wT-BLF"; */
 "r8j-wT-BLF.text" = "Gestionar etiquetas";
 
-/* Class = "UILabel"; text = "Topic or user ID"; ObjectID = "RA0-dx-dSp"; */
+/* Class = "UILabel"; text = "Group or user ID"; ObjectID = "RA0-dx-dSp"; */
 "RA0-dx-dSp.text" = "Tema o ID de usuario";
 
 /* Class = "UITableViewSection"; headerTitle = "Actions"; ObjectID = "raq-d6-2nI"; */
@@ -444,6 +447,9 @@
 
 /* Class = "UITableViewSection"; headerTitle = "Current Credential"; ObjectID = "VLd-3M-5wj"; */
 "VLd-3M-5wj.headerTitle" = "Credencial actual";
+
+/* Class = "UILabel"; text = "My Code"; ObjectID = "w7y-oy-XLG"; */
+"w7y-oy-XLG.text" = "Mi código";
 
 /* Class = "UILabel"; text = "Authenticated users"; ObjectID = "wd7-ah-oJu"; */
 "wd7-ah-oJu.text" = "Usuarios autenticados";

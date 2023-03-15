@@ -259,6 +259,9 @@
 /* Alert action */
 "Messages" = "Mensajes";
 
+/* Title for displaying a QR Code */
+"My Code" = "Mi código";
+
 /* Alert placeholder */
 "Name of the group" = "Nombre del grupo";
 
@@ -326,6 +329,9 @@
 /* Placeholder text in editor */
 "Private info: not set" = "Información privada: no establecida";
 
+/* Error message when QR code scanner failed to init */
+"QRCode scanner failed to initialize" = "El escáner QRCode no se pudo inicializar";
+
 /* Error message */
 "Recording failed" = "Error al grabar";
 
@@ -358,6 +364,9 @@
 
 /* Progress overlay */
 "Requesting..." = "Solicitando...";
+
+/* Title for camera preview when scanning a QR code */
+"Scan Code" = "Código de escaneo";
 
 /* Placeholder prompt */
 "Search by tags" = "Buscar por etiquetas";
@@ -432,7 +441,8 @@
 /* Error message */
 "Verification failure: %d %@" = "Error de verificación: %1$d %2$@";
 
-/* Label shown next to an inline video */
+/* Label shown next to an inline video
+   Menu item: video call */
 "Video" = "Vídeo";
 
 /* Telephone password reset prompt */

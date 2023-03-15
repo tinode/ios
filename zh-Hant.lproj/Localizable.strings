@@ -259,6 +259,9 @@
 /* Alert action */
 "Messages" = "訊息";
 
+/* Title for displaying a QR Code */
+"My Code" = "我的程式";
+
 /* Alert placeholder */
 "Name of the group" = "群組名稱";
 
@@ -326,6 +329,9 @@
 /* Placeholder text in editor */
 "Private info: not set" = "私人資訊：未設定";
 
+/* Error message when QR code scanner failed to init */
+"QRCode scanner failed to initialize" = "QRCode掃描器初始化失敗";
+
 /* Error message */
 "Recording failed" = "錄音失敗";
 
@@ -358,6 +364,9 @@
 
 /* Progress overlay */
 "Requesting..." = "正在請求...";
+
+/* Title for camera preview when scanning a QR code */
+"Scan Code" = "掃描程式";
 
 /* Placeholder prompt */
 "Search by tags" = "以標籤搜尋";
@@ -432,7 +441,8 @@
 /* Error message */
 "Verification failure: %d %@" = "驗證失敗：%1$d %2$@";
 
-/* Label shown next to an inline video */
+/* Label shown next to an inline video
+   Menu item: video call */
 "Video" = "影片";
 
 /* Telephone password reset prompt */

@@ -238,6 +238,9 @@
 /* Class = "UILabel"; text = "Add optional description"; ObjectID = "IbJ-of-vl0"; */
 "IbJ-of-vl0.text" = "Добавить описание (не обязательно)";
 
+/* Class = "UIButton"; configuration.title = "Scan Code"; ObjectID = "ImI-af-TFh"; */
+"ImI-af-TFh.configuration.title" = "Сканировать код";
+
 /* Class = "UITableViewController"; title = "Reset Password"; ObjectID = "IMk-1F-WiZ"; */
 "IMk-1F-WiZ.title" = "Восстановить пароль";
 
@@ -291,9 +294,6 @@
 
 /* Class = "UITableViewSection"; headerTitle = "Group Members"; ObjectID = "lJB-qW-1zX"; */
 "lJB-qW-1zX.headerTitle" = "Участники";
-
-/* Class = "UILabel"; text = "File name:"; ObjectID = "lRE-RJ-Qgv"; */
-"lRE-RJ-Qgv.text" = "Имя файла:";
 
 /* Class = "UILabel"; text = "File name:"; ObjectID = "lRE-RJ-Qgv"; */
 "lRE-RJ-Qgv.text" = "Имя файла:";
@@ -379,7 +379,7 @@
 /* Class = "UILabel"; text = "Manage Tags"; ObjectID = "r8j-wT-BLF"; */
 "r8j-wT-BLF.text" = "Настройки тэгов";
 
-/* Class = "UILabel"; text = "Topic or user ID"; ObjectID = "RA0-dx-dSp"; */
+/* Class = "UILabel"; text = "Group or user ID"; ObjectID = "RA0-dx-dSp"; */
 "RA0-dx-dSp.text" = "Адрес пользователя или группы";
 
 /* Class = "UITableViewSection"; headerTitle = "Actions"; ObjectID = "raq-d6-2nI"; */
@@ -444,6 +444,9 @@
 
 /* Class = "UITableViewSection"; headerTitle = "Current Credential"; ObjectID = "VLd-3M-5wj"; */
 "VLd-3M-5wj.headerTitle" = "Текущая запись";
+
+/* Class = "UILabel"; text = "My Code"; ObjectID = "w7y-oy-XLG"; */
+"w7y-oy-XLG.text" = "Мой код";
 
 /* Class = "UILabel"; text = "Authenticated users"; ObjectID = "wd7-ah-oJu"; */
 "wd7-ah-oJu.text" = "Авторизованныые";

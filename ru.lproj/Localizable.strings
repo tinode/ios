@@ -259,6 +259,9 @@
 /* Alert action */
 "Messages" = "Сообщения";
 
+/* Title for displaying a QR Code */
+"My Code" = "Мой код";
+
 /* Alert placeholder */
 "Name of the group" = "Название группы";
 
@@ -326,6 +329,9 @@
 /* Placeholder text in editor */
 "Private info: not set" = "Только для себя: отсутствует";
 
+/* Error message when QR code scanner failed to init */
+"QRCode scanner failed to initialize" = "Сканер QR кодов не работает";
+
 /* Error message */
 "Recording failed" = "Ошибка записи";
 
@@ -358,6 +364,9 @@
 
 /* Progress overlay */
 "Requesting..." = "Запрос...";
+
+/* Title for camera preview when scanning a QR code */
+"Scan Code" = "Сканировать код";
 
 /* Placeholder prompt */
 "Search by tags" = "Поиск по тэгам";
@@ -432,7 +441,8 @@
 /* Error message */
 "Verification failure: %d %@" = "Ошибка верификации: %1$d %2$@";
 
-/* Label shown next to an inline video */
+/* Label shown next to an inline video
+   Menu item: video call */
 "Video" = "Видео";
 
 /* Telephone password reset prompt */

@@ -259,6 +259,9 @@
 /* Alert action */
 "Messages" = "“信息”";
 
+/* Title for displaying a QR Code */
+"My Code" = "我的代码";
+
 /* Alert placeholder */
 "Name of the group" = "组名";
 
@@ -326,6 +329,9 @@
 /* Placeholder text in editor */
 "Private info: not set" = "私人信息：未设置";
 
+/* Error message when QR code scanner failed to init */
+"QRCode scanner failed to initialize" = "QRCode扫描仪初始化失败";
+
 /* Error message */
 "Recording failed" = "录音失败";
 
@@ -358,6 +364,9 @@
 
 /* Progress overlay */
 "Requesting..." = "请求中...";
+
+/* Title for camera preview when scanning a QR code */
+"Scan Code" = "扫描代码";
 
 /* Placeholder prompt */
 "Search by tags" = "按标签搜索";
@@ -432,7 +441,8 @@
 /* Error message */
 "Verification failure: %d %@" = "验证失败：%1$d (%2$@)";
 
-/* Label shown next to an inline video */
+/* Label shown next to an inline video
+   Menu item: video call */
 "Video" = "视频";
 
 /* Telephone password reset prompt */
