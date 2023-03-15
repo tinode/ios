@@ -408,6 +408,11 @@
         <target>Messages</target>
         <note>Alert action</note>
       </trans-unit>
+      <trans-unit id="My Code" xml:space="preserve">
+        <source>My Code</source>
+        <target>My Code</target>
+        <note>Title for displaying a QR Code</note>
+      </trans-unit>
       <trans-unit id="Name of the group" xml:space="preserve">
         <source>Name of the group</source>
         <target>Name of the group</target>
@@ -514,6 +519,11 @@
         <target>Private info: not set</target>
         <note>Placeholder text in editor</note>
       </trans-unit>
+      <trans-unit id="QRCode scanner failed to initialize" xml:space="preserve">
+        <source>QRCode scanner failed to initialize</source>
+        <target>QRCode scanner failed to initialize</target>
+        <note>Error message when QR code scanner failed to init</note>
+      </trans-unit>
       <trans-unit id="Recording failed" xml:space="preserve">
         <source>Recording failed</source>
         <target>Recording failed</target>
@@ -568,6 +578,11 @@
         <source>Requesting...</source>
         <target>Requesting...</target>
         <note>Progress overlay</note>
+      </trans-unit>
+      <trans-unit id="Scan Code" xml:space="preserve">
+        <source>Scan Code</source>
+        <target>Scan Code</target>
+        <note>Title for camera preview when scanning a QR code</note>
       </trans-unit>
       <trans-unit id="Search by tags" xml:space="preserve">
         <source>Search by tags</source>
@@ -1072,10 +1087,25 @@
         <target>Reset Password</target>
         <note>Class = "UITableViewController"; title = "Reset Password"; ObjectID = "IMk-1F-WiZ";</note>
       </trans-unit>
+      <trans-unit id="IP5-9X-LlM.configuration.title" xml:space="preserve">
+        <source>Show Code</source>
+        <target>Show Code</target>
+        <note>Class = "UIButton"; configuration.title = "Show Code"; ObjectID = "IP5-9X-LlM";</note>
+      </trans-unit>
       <trans-unit id="IbJ-of-vl0.text" xml:space="preserve">
         <source>Add optional description</source>
         <target>Add optional description</target>
         <note>Class = "UILabel"; text = "Add optional description"; ObjectID = "IbJ-of-vl0";</note>
+      </trans-unit>
+      <trans-unit id="ImI-af-TFh.configuration.title" xml:space="preserve">
+        <source>Scan Code</source>
+        <target>Scan Code</target>
+        <note>Class = "UIButton"; configuration.title = "Scan Code"; ObjectID = "ImI-af-TFh";</note>
+      </trans-unit>
+      <trans-unit id="ImI-af-TFh.normalTitle" xml:space="preserve">
+        <source>Button</source>
+        <target>Button</target>
+        <note>Class = "UIButton"; normalTitle = "Button"; ObjectID = "ImI-af-TFh";</note>
       </trans-unit>
       <trans-unit id="IzY-DL-wiS.text" xml:space="preserve">
         <source>Verified</source>
@@ -1168,9 +1198,9 @@
         <note>Class = "UIButton"; normalTitle = "Request"; ObjectID = "R6w-cr-96Z";</note>
       </trans-unit>
       <trans-unit id="RA0-dx-dSp.text" xml:space="preserve">
-        <source>Topic or user ID</source>
+        <source>Group or user ID</source>
         <target>Topic or user ID</target>
-        <note>Class = "UILabel"; text = "Topic or user ID"; ObjectID = "RA0-dx-dSp";</note>
+        <note>Class = "UILabel"; text = "Group or user ID"; ObjectID = "RA0-dx-dSp";</note>
       </trans-unit>
       <trans-unit id="ROK-aW-Tlk.text" xml:space="preserve">
         <source>Staff-managed</source>
@@ -1522,6 +1552,11 @@
         <target>Confirmation</target>
         <note>Class = "UITableViewSection"; headerTitle = "Confirmation"; ObjectID = "jjO-7B-XRZ";</note>
       </trans-unit>
+      <trans-unit id="jrt-hR-wyQ.text" xml:space="preserve">
+        <source>Alice Hatter</source>
+        <target>Alice Hatter</target>
+        <note>Class = "UILabel"; text = "Alice Hatter"; ObjectID = "jrt-hR-wyQ";</note>
+      </trans-unit>
       <trans-unit id="kDN-bf-JDL.placeholder" xml:space="preserve">
         <source>Name of the group</source>
         <target>Name of the group</target>
@@ -1676,6 +1711,11 @@
         <source>Footer</source>
         <target>Footer</target>
         <note>Class = "UIView"; accessibilityLabel = "Footer"; ObjectID = "te7-Jx-ztq";</note>
+      </trans-unit>
+      <trans-unit id="w7y-oy-XLG.text" xml:space="preserve">
+        <source>My Code</source>
+        <target>My Code</target>
+        <note>Class = "UILabel"; text = "My Code"; ObjectID = "w7y-oy-XLG";</note>
       </trans-unit>
       <trans-unit id="wPJ-94-8aV.text" xml:space="preserve">
         <source>Yours</source>

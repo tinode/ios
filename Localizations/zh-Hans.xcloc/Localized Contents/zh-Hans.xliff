@@ -408,6 +408,11 @@
         <target>“信息”</target>
         <note>Alert action</note>
       </trans-unit>
+      <trans-unit id="My Code" xml:space="preserve">
+        <source>My Code</source>
+        <target>我的代码</target>
+        <note>Title for displaying a QR Code</note>
+      </trans-unit>
       <trans-unit id="Name of the group" xml:space="preserve">
         <source>Name of the group</source>
         <target>组名</target>
@@ -514,6 +519,11 @@
         <target>私人信息：未设置</target>
         <note>Placeholder text in editor</note>
       </trans-unit>
+      <trans-unit id="QRCode scanner failed to initialize" xml:space="preserve">
+        <source>QRCode scanner failed to initialize</source>
+        <target>QRCode扫描仪初始化失败</target>
+        <note>Error message when QR code scanner failed to init</note>
+      </trans-unit>
       <trans-unit id="Recording failed" xml:space="preserve">
         <source>Recording failed</source>
         <target>录音失败</target>
@@ -568,6 +578,11 @@
         <source>Requesting...</source>
         <target>请求中...</target>
         <note>Progress overlay</note>
+      </trans-unit>
+      <trans-unit id="Scan Code" xml:space="preserve">
+        <source>Scan Code</source>
+        <target>扫描代码</target>
+        <note>Title for camera preview when scanning a QR code</note>
       </trans-unit>
       <trans-unit id="Search by tags" xml:space="preserve">
         <source>Search by tags</source>
@@ -817,10 +832,12 @@
       </trans-unit>
       <trans-unit id="This function is deprecated." xml:space="preserve">
         <source>This function is deprecated.</source>
+        <target>此功能已弃用。</target>
         <note>No comment provided by engineer.</note>
       </trans-unit>
       <trans-unit id="Valid metadata is missing." xml:space="preserve">
         <source>Valid metadata is missing.</source>
+        <target>缺少有效的元数据。</target>
         <note>No comment provided by engineer.</note>
       </trans-unit>
     </body>
@@ -1066,10 +1083,24 @@
         <target>重设密码</target>
         <note>Class = "UITableViewController"; title = "Reset Password"; ObjectID = "IMk-1F-WiZ";</note>
       </trans-unit>
+      <trans-unit id="IP5-9X-LlM.configuration.title" xml:space="preserve">
+        <source>Show Code</source>
+        <target>显示代码</target>
+        <note>Class = "UIButton"; configuration.title = "Show Code"; ObjectID = "IP5-9X-LlM";</note>
+      </trans-unit>
       <trans-unit id="IbJ-of-vl0.text" xml:space="preserve">
         <source>Add optional description</source>
         <target>添加可选描述</target>
         <note>Class = "UILabel"; text = "Add optional description"; ObjectID = "IbJ-of-vl0";</note>
+      </trans-unit>
+      <trans-unit id="ImI-af-TFh.configuration.title" xml:space="preserve">
+        <source>Scan Code</source>
+        <target>扫描代码</target>
+        <note>Class = "UIButton"; configuration.title = "Scan Code"; ObjectID = "ImI-af-TFh";</note>
+      </trans-unit>
+      <trans-unit id="ImI-af-TFh.normalTitle" xml:space="preserve">
+        <source>Button</source>
+        <note>Class = "UIButton"; normalTitle = "Button"; ObjectID = "ImI-af-TFh";</note>
       </trans-unit>
       <trans-unit id="IzY-DL-wiS.text" xml:space="preserve">
         <source>Verified</source>
@@ -1162,9 +1193,9 @@
         <note>Class = "UIButton"; normalTitle = "Request"; ObjectID = "R6w-cr-96Z";</note>
       </trans-unit>
       <trans-unit id="RA0-dx-dSp.text" xml:space="preserve">
-        <source>Topic or user ID</source>
+        <source>Group or user ID</source>
         <target>主题或用户ID</target>
-        <note>Class = "UILabel"; text = "Topic or user ID"; ObjectID = "RA0-dx-dSp";</note>
+        <note>Class = "UILabel"; text = "Group or user ID"; ObjectID = "RA0-dx-dSp";</note>
       </trans-unit>
       <trans-unit id="ROK-aW-Tlk.text" xml:space="preserve">
         <source>Staff-managed</source>
@@ -1233,6 +1264,7 @@
       </trans-unit>
       <trans-unit id="WTE-Mf-oSE.placeholder" xml:space="preserve">
         <source>New password</source>
+        <target>新密码</target>
         <note>Class = "UITextField"; placeholder = "New password"; ObjectID = "WTE-Mf-oSE";</note>
       </trans-unit>
       <trans-unit id="WVu-hr-VVU.text" xml:space="preserve">
@@ -1511,6 +1543,10 @@
         <target>确认</target>
         <note>Class = "UITableViewSection"; headerTitle = "Confirmation"; ObjectID = "jjO-7B-XRZ";</note>
       </trans-unit>
+      <trans-unit id="jrt-hR-wyQ.text" xml:space="preserve">
+        <source>Alice Hatter</source>
+        <note>Class = "UILabel"; text = "Alice Hatter"; ObjectID = "jrt-hR-wyQ";</note>
+      </trans-unit>
       <trans-unit id="kDN-bf-JDL.placeholder" xml:space="preserve">
         <source>Name of the group</source>
         <target>群组名称</target>
@@ -1664,6 +1700,11 @@
         <source>Footer</source>
         <target>Footer</target>
         <note>Class = "UIView"; accessibilityLabel = "Footer"; ObjectID = "te7-Jx-ztq";</note>
+      </trans-unit>
+      <trans-unit id="w7y-oy-XLG.text" xml:space="preserve">
+        <source>My Code</source>
+        <target>我的代码</target>
+        <note>Class = "UILabel"; text = "My Code"; ObjectID = "w7y-oy-XLG";</note>
       </trans-unit>
       <trans-unit id="wPJ-94-8aV.text" xml:space="preserve">
         <source>Yours</source>
