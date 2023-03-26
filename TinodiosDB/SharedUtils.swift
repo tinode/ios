@@ -10,11 +10,22 @@ import SwiftKeychainWrapper
 import TinodeSDK
 
 public class SharedUtils {
+    static public let kNotificationBrandingSmallIconAvailable = "BrandingSmallIconAvailable"
+    static public let kNotificationBrandingConfigAvailable = "BrandingConfigAvailable"
+
     static public let kTinodeMetaVersion = "tinodeMetaVersion"
 
     static public let kTinodePrefLastLogin = "tinodeLastLogin"
     static public let kTinodePrefReadReceipts = "tinodePrefSendReadReceipts"
     static public let kTinodePrefTypingNotifications = "tinodePrefTypingNoficications"
+    static public let kTinodePrefAppLaunchedBefore = "tinodePrefAppLaunchedBefore"
+
+    static public let kTinodePrefTosUrl = "tinodePrefTosUrl"
+    static public let kTinodePrefServiceName = "tinodePrefServiceName"
+    static public let kTinodePrefPrivacyUrl = "tinodePrefPrivacyUrl"
+    static public let kTinodePrefAppId = "tinodePrefAppId"
+    static public let kTinodePrefSmallIcon = "tinodePrefSmallIcon"
+    static public let kTinodePrefLargeIcon = "tinodePrefLargeIcon"
 
     // App Tinode api key.
     private static let kApiKey = "AQEAAAABAAD_rAp4DJh05a1HAwFT3A6K"
@@ -40,6 +51,82 @@ public class SharedUtils {
         public static let kHostName = "api.tinode.co" // production cluster
         public static let kUseTLS = true
     #endif
+
+    // Returns true if the app is being launched for the first time.
+    public static var isFirstLaunch: Bool {
+        get {
+            return !SharedUtils.kAppDefaults.bool(forKey: SharedUtils.kTinodePrefAppLaunchedBefore)
+        }
+        set {
+            SharedUtils.kAppDefaults.set(!newValue, forKey: SharedUtils.kTinodePrefAppLaunchedBefore)
+        }
+    }
+
+    // App TOS url string.
+    public static var tosUrl: String? {
+        get {
+            return SharedUtils.kAppDefaults.string(forKey: SharedUtils.kTinodePrefTosUrl)
+        }
+        set {
+            SharedUtils.kAppDefaults.set(newValue, forKey: SharedUtils.kTinodePrefTosUrl)
+        }
+    }
+
+    // Application service name.
+    public static var serviceName: String? {
+        get {
+            return SharedUtils.kAppDefaults.string(forKey: SharedUtils.kTinodePrefServiceName)
+        }
+        set {
+            SharedUtils.kAppDefaults.set(newValue, forKey: SharedUtils.kTinodePrefServiceName)
+        }
+    }
+
+    // Application privacy policy url.
+    public static var privacyUrl: String? {
+        get {
+            return SharedUtils.kAppDefaults.string(forKey: SharedUtils.kTinodePrefPrivacyUrl)
+        }
+        set {
+            SharedUtils.kAppDefaults.set(newValue, forKey: SharedUtils.kTinodePrefPrivacyUrl)
+        }
+    }
+
+    // App's registration id in Tinode console.
+    public static var appId: String? {
+        get {
+            return SharedUtils.kAppDefaults.string(forKey: SharedUtils.kTinodePrefAppId)
+        }
+        set {
+            SharedUtils.kAppDefaults.set(newValue, forKey: SharedUtils.kTinodePrefAppId)
+        }
+    }
+
+    // Apps' small icon.
+    public static var smallIcon: UIImage? {
+        get {
+            if let data = SharedUtils.kAppDefaults.object(forKey: SharedUtils.kTinodePrefSmallIcon) as? Data {
+                return UIImage(data: data)
+            }
+            return nil
+        }
+        set {
+            SharedUtils.kAppDefaults.set(newValue?.pngData(), forKey: SharedUtils.kTinodePrefSmallIcon)
+        }
+    }
+
+    // Apps' large icon.
+    public static var largeIcon: UIImage? {
+        get {
+            if let data = SharedUtils.kAppDefaults.object(forKey: SharedUtils.kTinodePrefLargeIcon) as? Data {
+                return UIImage(data: data)
+            }
+            return nil
+        }
+        set {
+            SharedUtils.kAppDefaults.set(newValue?.pngData(), forKey: SharedUtils.kTinodePrefLargeIcon)
+        }
+    }
 
     public static func getSavedLoginUserName() -> String? {
         return SharedUtils.kAppDefaults.string(forKey: SharedUtils.kTinodePrefLastLogin)
@@ -258,6 +345,111 @@ public class SharedUtils {
             }
         }
         return .noData
+    }
+
+    // Downloads an image.
+    private static func downloadIcon(fromPath path: String, relativeTo baseUrl: URL, completion: @escaping ((UIImage?) -> Void)) {
+        print("Downloading icon: ", path, baseUrl)
+        guard let url = URL(string: path, relativeTo: baseUrl) else {
+            print("Invalid icon url: ", path, baseUrl.absoluteString)
+            completion(nil)
+            return
+        }
+        let task = URLSession.shared.dataTask(with: URLRequest(url: url)) { data, req, error in
+            if let error = error {
+                print(error.localizedDescription)
+            }
+            completion(data != nil ? UIImage(data: data!) : nil)
+        }
+        task.resume()
+    }
+
+    // Identifies device with Tinode server and fetches branding configuration code.
+    public static func identifyAndConfigureBranding() {
+        let device = UIDevice.current.userInterfaceIdiom == .phone ? "iphone" : UIDevice.current.userInterfaceIdiom == .pad ? "ipad" : ""
+        let version = UIDevice.current.systemVersion
+        let url = URL(string: "https://hosts.tinode.co/whoami?os=ios-\(version)&dev=\(device)")!
+        print("Self-identifying with the server. Endpoint: ", url.absoluteString)
+        let task = URLSession.shared.dataTask(with: URLRequest(url: url)) { data, response, error in
+            guard let data = data, error == nil else {
+                print("Branding config response error: " + (error?.localizedDescription ?? "Failed to self-identify"))
+                return
+            }
+            let responseJSON = try? JSONSerialization.jsonObject(with: data, options: [])
+            if let responseJSON = responseJSON as? [String: Any] {
+                print("Branding identity config: ", responseJSON)
+
+                if let code = responseJSON["code"] as? String {
+                    SharedUtils.setUpBranding(withConfigurationCode: code)
+                } else {
+                    print("Branding config error: Missing configuration code in the response. Quitting.")
+                }
+            }
+        }
+        task.resume()
+    }
+
+    // Configures application branding and connection settings.
+    public static func setUpBranding(withConfigurationCode configCode: String) {
+        guard !configCode.isEmpty else {
+            print("Branding configuration code may not be empty. Skipping branding config.")
+            return
+        }
+        print("Configuring branding with code '\(configCode)'")
+        // Dummy url.
+        // TODO: url should be based on the device fp (e.g. UIDevice.current.identifierForVendor).
+        let url = URL(string: "https://hosts.tinode.co/id/\(configCode)")!
+
+        print("Configuring branding and app settings. Request url: ", url.absoluteString)
+        let task = URLSession.shared.dataTask(with: URLRequest(url: url)) { data, response, error in
+            guard let data = data, error == nil else {
+                print(error?.localizedDescription ?? "No data")
+                return
+            }
+            let responseJSON = try? JSONSerialization.jsonObject(with: data, options: [])
+            if let responseJSON = responseJSON as? [String: Any] {
+                print("Branding configuration: ", responseJSON)
+
+                if let tosUrl = URL(string: responseJSON["tos_url"] as? String ?? "") {
+                    SharedUtils.tosUrl = tosUrl.absoluteString
+                }
+                if let serviceName = responseJSON["service_name"] as? String {
+                    SharedUtils.serviceName = serviceName
+                }
+                if let privacyUrl  = URL(string: responseJSON["privacy_url"] as? String ?? "") {
+                    SharedUtils.privacyUrl = privacyUrl.absoluteString
+                }
+                if let apiUrl = URL(string: responseJSON["api_url"] as? String ?? "") {
+                    ConnectionSettingsHelper.setHostName(apiUrl.host!)
+                    let useTls = ["https", "ws"].contains(apiUrl.scheme)
+                    ConnectionSettingsHelper.setUseTLS(useTls ? "true" : "false")
+                }
+                if let id = responseJSON["id"] as? String {
+                    SharedUtils.appId = id
+                }
+
+                // Send a notification so all interested parties may use branding config.
+                NotificationCenter.default.post(name: Notification.Name(SharedUtils.kNotificationBrandingConfigAvailable), object: nil)
+                // Icons.
+                if let assetsBase = responseJSON["assets_base"] as? String, let base = URL(string: assetsBase) {
+                    if let smallIcon = responseJSON["icon_small"] as? String {
+                        downloadIcon(fromPath: smallIcon, relativeTo: base) { img in
+                            guard let img = img else { return }
+                            SharedUtils.smallIcon = img
+                            // Send notifications so all interested parties may use the new icon.
+                            NotificationCenter.default.post(name: Notification.Name(SharedUtils.kNotificationBrandingSmallIconAvailable), object: img)
+                        }
+                    }
+                    if let largeIcon = responseJSON["icon_large"] as? String {
+                        downloadIcon(fromPath: largeIcon, relativeTo: base) { img in
+                            guard let img = img else { return }
+                            SharedUtils.largeIcon = img
+                        }
+                    }
+                }
+            }
+        }
+        task.resume()
     }
 }
 

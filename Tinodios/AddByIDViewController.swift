@@ -5,16 +5,14 @@
 //  Copyright © 2019-2023 Tinode. All rights reserved.
 //
 
-import AVFoundation
 import UIKit
 import TinodeSDK
 
-class AddByIDViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate {
+class AddByIDViewController: UIViewController {
     static let kTopicUriPrefix = "tinode:topic/"
 
-    var captureSession: AVCaptureSession!
-
-    var tinode: Tinode!
+    private var qrScanner: QRScanner?
+    private var tinode: Tinode!
 
     @IBOutlet weak var showCodeButton: UIButton!
     @IBOutlet weak var scanCodeButton: UIButton!
@@ -46,9 +44,7 @@ class AddByIDViewController: UIViewController, AVCaptureMetadataOutputObjectsDel
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
 
-        if let cs = self.captureSession, cs.isRunning {
-            cs.stopRunning()
-        }
+        qrScanner?.stop()
     }
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
@@ -81,8 +77,9 @@ class AddByIDViewController: UIViewController, AVCaptureMetadataOutputObjectsDel
     }
 
     @IBAction func showCodePressed(_ sender: Any) {
-        if let cs = self.captureSession, cs.isRunning {
-            cs.stopRunning()
+        if let cs = self.qrScanner {
+            cs.stop()
+            self.qrScanner = nil
         }
 
         cameraPreviewView.isHidden = true
@@ -154,79 +151,26 @@ class AddByIDViewController: UIViewController, AVCaptureMetadataOutputObjectsDel
     }
 
     func scanQRCode() {
-        if let cs = captureSession {
-            DispatchQueue.global(qos: .background).async {
-                if !cs.isRunning {
-                    cs.startRunning()
-                }
+        if qrScanner == nil {
+            qrScanner = QRScanner(embedIn: self.cameraPreviewView, expectedCodePrefix: AddByIDViewController.kTopicUriPrefix, delegate: self)
+            qrScanner?.start()
+        }
+    }
+}
+
+extension AddByIDViewController: QRScannerDelegate {
+    func qrScanner(didScanCode codeValue: String?) {
+        guard let code = codeValue else {
+            Cache.log.error("Invalid Tinode topic QR code")
+            DispatchQueue.main.async {
+                UiUtils.showToast(message: "Invalid Tinode topic QR code")
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1)) { [weak self] in
+                // Restart QR scanner.
+                self?.qrScanner?.start()
             }
             return
         }
-
-        guard let videoCaptureDevice = AVCaptureDevice.default(for: .video) else {
-            Cache.log.info("Failed to get default capture device for video")
-            scanFailed()
-            return
-        }
-        let videoInput: AVCaptureDeviceInput
-
-        do {
-            videoInput = try AVCaptureDeviceInput(device: videoCaptureDevice)
-        } catch {
-            Cache.log.info("Failed to obtain video input")
-            scanFailed()
-            return
-        }
-
-        captureSession = AVCaptureSession()
-        if (captureSession.canAddInput(videoInput)) {
-            captureSession.addInput(videoInput)
-        } else {
-            Cache.log.info("Failed to add video input")
-            scanFailed()
-            captureSession = nil
-            return
-        }
-
-        let metadataOutput = AVCaptureMetadataOutput()
-
-        if (captureSession.canAddOutput(metadataOutput)) {
-            captureSession.addOutput(metadataOutput)
-
-            metadataOutput.setMetadataObjectsDelegate(self, queue: DispatchQueue.main)
-            metadataOutput.metadataObjectTypes = [.qr]
-        } else {
-            Cache.log.info("Failed to add video output")
-            scanFailed()
-            captureSession = nil
-            return
-        }
-
-        let previewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
-        previewLayer.frame = cameraPreviewView.layer.bounds
-        previewLayer.videoGravity = .resizeAspectFill
-        cameraPreviewView.layer.addSublayer(previewLayer)
-
-        DispatchQueue.global(qos: .background).async {
-            self.captureSession.startRunning()
-        }
-    }
-
-    func metadataOutput(_ output: AVCaptureMetadataOutput, didOutput metadataObjects: [AVMetadataObject], from connection: AVCaptureConnection) {
-        captureSession.stopRunning()
-
-        if let metadataObject = metadataObjects.first {
-            guard let readableObject = metadataObject as? AVMetadataMachineReadableCodeObject else { return }
-            guard let stringValue = readableObject.stringValue else { return }
-            AudioServicesPlaySystemSound(SystemSoundID(kSystemSoundID_Vibrate))
-            if stringValue.hasPrefix(AddByIDViewController.kTopicUriPrefix) {
-                let id = stringValue.dropFirst(AddByIDViewController.kTopicUriPrefix.count)
-                handleCodeEntered(String(id))
-            }
-        }
-    }
-
-    func scanFailed() {
-        UiUtils.showToast(message: NSLocalizedString("QRCode scanner failed to initialize", comment: "Error message when QR code scanner failed to init"))
+        handleCodeEntered(code)
     }
 }

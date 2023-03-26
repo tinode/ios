@@ -7,6 +7,7 @@
 
 import UIKit
 import TinodeSDK
+import TinodiosDB
 
 protocol ChatListDisplayLogic: AnyObject {
     func displayChats(_ topics: [DefaultComTopic], archivedTopics: [DefaultComTopic]?)
@@ -57,6 +58,10 @@ class ChatListViewController: UITableViewController, ChatListDisplayLogic {
         button.addTarget(self, action: #selector(navigateToArchive), for: .touchUpInside)
         archivedChatsFooter!.addSubview(button)
         tableView.tableFooterView = archivedChatsFooter
+        // Customize the title if needed.
+        if let serviceName = SharedUtils.serviceName {
+            self.title = serviceName
+        }
     }
 
     private func toggleFooter(visible: Bool) {
