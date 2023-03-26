@@ -28,6 +28,9 @@
 /* Class = "UILabel"; text = "placeholder_file_name"; ObjectID = "6rW-B5-NCp"; */
 "6rW-B5-NCp.text" = "占位_文件_名称";
 
+/* Class = "UIButton"; normalTitle = "Configure Connection"; ObjectID = "6zX-Sq-TK6"; */
+"6zX-Sq-TK6.normalTitle" = "配置连接";
+
 /* Class = "UILabel"; text = "Report Contact"; ObjectID = "8eC-OS-Net"; */
 "8eC-OS-Net.text" = "报告联系人";
 
@@ -121,6 +124,9 @@
 /* Class = "UILabel"; text = "We will send a message with confirmation code to address above"; ObjectID = "bfU-AG-oM0"; */
 "bfU-AG-oM0.text" = "我们将发送一条带有确认码的消息，以解决上述地址";
 
+/* Class = "UILabel"; text = "Configuration Code"; ObjectID = "BJV-dk-s3m"; */
+"BJV-dk-s3m.text" = "配置代码";
+
 /* Class = "UITableViewSection"; headerTitle = "Password reset"; ObjectID = "BRf-xV-zvt"; */
 "BRf-xV-zvt.headerTitle" = "密码重设";
 
@@ -147,6 +153,9 @@
 
 /* Class = "UIViewController"; title = "Video Call"; ObjectID = "Cib-aE-hH5"; */
 "Cib-aE-hH5.title" = "视频通话";
+
+/* Class = "UIButton"; normalTitle = " OK "; ObjectID = "cNq-5G-f58"; */
+"cNq-5G-f58.normalTitle" = "好的";
 
 /* Class = "UIButton"; normalTitle = "Change"; ObjectID = "cOw-88-WKy"; */
 "cOw-88-WKy.normalTitle" = "改变";
@@ -187,6 +196,9 @@
 /* Class = "UILabel"; text = "Delete account"; ObjectID = "Fjs-5K-JCI"; */
 "Fjs-5K-JCI.text" = "删除帐户";
 
+/* Class = "UILabel"; text = "Server"; ObjectID = "FKi-Zf-cyS"; */
+"FKi-Zf-cyS.text" = "服务器";
+
 /* Class = "UINavigationItem"; title = "Forward To"; ObjectID = "fO5-2o-Zk6"; */
 "fO5-2o-Zk6.title" = "重定向消息";
 
@@ -219,6 +231,9 @@
 
 /* Class = "UINavigationItem"; title = "Video Preview"; ObjectID = "Hah-A8-0yd"; */
 "Hah-A8-0yd.title" = "视频预览";
+
+/* Class = "UITextField"; placeholder = "Configuration Code"; ObjectID = "hDW-u7-vzK"; */
+"hDW-u7-vzK.placeholder" = "配置代码";
 
 /* Class = "UILabel"; text = "placeholder_file_name"; ObjectID = "HIs-n4-sFa"; */
 "HIs-n4-sFa.text" = "占位_文件_名称";
@@ -297,6 +312,9 @@
 
 /* Class = "UITableViewSection"; headerTitle = "Group Members"; ObjectID = "lJB-qW-1zX"; */
 "lJB-qW-1zX.headerTitle" = "群组成员";
+
+/* Class = "UILabel"; text = "Scan Code"; ObjectID = "LoW-9v-9fd"; */
+"LoW-9v-9fd.text" = "扫描代码";
 
 /* Class = "UILabel"; text = "File name:"; ObjectID = "lRE-RJ-Qgv"; */
 "lRE-RJ-Qgv.text" = "文件名：";
