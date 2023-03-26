@@ -43,11 +43,13 @@ class LoginViewController: UIViewController {
         UiUtils.dismissKeyboardForTaps(onView: self.view)
 
         if SharedUtils.appId != nil {
-            // Branding is configured. Show "Powered by" view.
+            // Branding is configured. Show "Powered by" view, hide configureConnectionButton.
             self.poweredByStack.isHidden = false
+            self.configureConnectionButton.isHidden = true
         } else {
-            // Branding is not configured. Show "Configure connection" button.
+            // Branding is not configured. Show "Configure connection" button, hide "Powered by" view.
             self.configureConnectionButton.isHidden = false
+            self.poweredByStack.isHidden = true
         }
         if let logo = SharedUtils.smallIcon {
             self.logoView.image = logo
