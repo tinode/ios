@@ -876,6 +876,10 @@
         <target>常規設定</target>
         <note>Class = "UITableViewController"; title = "General Settings"; ObjectID = "4dd-0I-UFm";</note>
       </trans-unit>
+      <trans-unit id="4hf-MD-NbA.text" xml:space="preserve">
+        <source>https://tinode.co</source>
+        <note>Class = "UILabel"; text = "https://tinode.co"; ObjectID = "4hf-MD-NbA";</note>
+      </trans-unit>
       <trans-unit id="4ll-eW-b8Z.text" xml:space="preserve">
         <source>Send typing notifications</source>
         <target>傳送輸入中提示</target>
@@ -904,6 +908,11 @@
         <source>placeholder_file_name</source>
         <target>placeholder_file_name</target>
         <note>Class = "UILabel"; text = "placeholder_file_name"; ObjectID = "6rW-B5-NCp";</note>
+      </trans-unit>
+      <trans-unit id="6zX-Sq-TK6.normalTitle" xml:space="preserve">
+        <source>Configure Connection</source>
+        <target>配置連線</target>
+        <note>Class = "UIButton"; normalTitle = "Configure Connection"; ObjectID = "6zX-Sq-TK6";</note>
       </trans-unit>
       <trans-unit id="8RW-nB-5t3.text" xml:space="preserve">
         <source>Log out</source>
@@ -995,6 +1004,11 @@
         <target>已靜音</target>
         <note>Class = "UILabel"; text = "Muted"; ObjectID = "AoI-xo-VbS";</note>
       </trans-unit>
+      <trans-unit id="BJV-dk-s3m.text" xml:space="preserve">
+        <source>Configuration Code</source>
+        <target>配置程式</target>
+        <note>Class = "UILabel"; text = "Configuration Code"; ObjectID = "BJV-dk-s3m";</note>
+      </trans-unit>
       <trans-unit id="BRf-xV-zvt.headerTitle" xml:space="preserve">
         <source>Password reset</source>
         <target>密碼重置</target>
@@ -1049,6 +1063,11 @@
         <source>00:00D</source>
         <note>Class = "UILabel"; text = "00:00D"; ObjectID = "DtN-H7-Ovv";</note>
       </trans-unit>
+      <trans-unit id="FKi-Zf-cyS.text" xml:space="preserve">
+        <source>Server</source>
+        <target>伺服器</target>
+        <note>Class = "UILabel"; text = "Server"; ObjectID = "FKi-Zf-cyS";</note>
+      </trans-unit>
       <trans-unit id="FeF-3T-sWp.text" xml:space="preserve">
         <source>Add members</source>
         <target>新增成員</target>
@@ -1067,6 +1086,10 @@
         <source>Default Permissions</source>
         <target>預設權限</target>
         <note>Class = "UITableViewSection"; headerTitle = "Default Permissions"; ObjectID = "H78-sG-L0j";</note>
+      </trans-unit>
+      <trans-unit id="HCG-mB-BeX.text" xml:space="preserve">
+        <source>Tinode</source>
+        <note>Class = "UILabel"; text = "Tinode"; ObjectID = "HCG-mB-BeX";</note>
       </trans-unit>
       <trans-unit id="HIs-n4-sFa.text" xml:space="preserve">
         <source>placeholder_file_name</source>
@@ -1152,6 +1175,11 @@
         <target>已屏蔽的聯繫人</target>
         <note>Class = "UILabel"; text = "Blocked contacts"; ObjectID = "Lh9-1X-ez1";</note>
       </trans-unit>
+      <trans-unit id="LoW-9v-9fd.text" xml:space="preserve">
+        <source>Scan Code</source>
+        <target>掃描程式</target>
+        <note>Class = "UILabel"; text = "Scan Code"; ObjectID = "LoW-9v-9fd";</note>
+      </trans-unit>
       <trans-unit id="NNn-m0-IQE.placeholder" xml:space="preserve">
         <source>New Email Address</source>
         <target>新電子郵件地址</target>
@@ -1171,6 +1199,10 @@
         <source>Address</source>
         <target>地址</target>
         <note>Class = "UILabel"; text = "Address"; ObjectID = "OwU-2N-QQV";</note>
+      </trans-unit>
+      <trans-unit id="P9L-Ga-c1q.text" xml:space="preserve">
+        <source>https://127.0.0.1:6060</source>
+        <note>Class = "UILabel"; text = "https://127.0.0.1:6060"; ObjectID = "P9L-Ga-c1q";</note>
       </trans-unit>
       <trans-unit id="Pnk-9m-ZVg.title" xml:space="preserve">
         <source>Account Settings</source>
@@ -1257,6 +1289,10 @@
         <target>N</target>
         <note>Class = "UILabel"; text = "N"; ObjectID = "Un9-ds-iQd";</note>
       </trans-unit>
+      <trans-unit id="Uy7-tG-NGm.title" xml:space="preserve">
+        <source>BrandingViewController</source>
+        <note>Class = "UIViewController"; title = "BrandingViewController"; ObjectID = "Uy7-tG-NGm";</note>
+      </trans-unit>
       <trans-unit id="VLd-3M-5wj.headerTitle" xml:space="preserve">
         <source>Current Credential</source>
         <target>當前證書</target>
@@ -1286,6 +1322,10 @@
         <source>SignUp</source>
         <target>SignUp</target>
         <note>Class = "UITableViewController"; title = "SignUp"; ObjectID = "YmQ-cB-rjH";</note>
+      </trans-unit>
+      <trans-unit id="ZQJ-Ja-aBa.text" xml:space="preserve">
+        <source>Tinode</source>
+        <note>Class = "UILabel"; text = "Tinode"; ObjectID = "ZQJ-Ja-aBa";</note>
       </trans-unit>
       <trans-unit id="ZQy-2N-acy.placeholder" xml:space="preserve">
         <source>Password</source>
@@ -1420,6 +1460,10 @@
         <target>新增可選描述</target>
         <note>Class = "UILabel"; text = "Add optional description"; ObjectID = "cD6-Om-VgZ";</note>
       </trans-unit>
+      <trans-unit id="cNq-5G-f58.normalTitle" xml:space="preserve">
+        <source> OK </source>
+        <note>Class = "UIButton"; normalTitle = " OK "; ObjectID = "cNq-5G-f58";</note>
+      </trans-unit>
       <trans-unit id="cOw-88-WKy.normalTitle" xml:space="preserve">
         <source>Change</source>
         <target>改變</target>
@@ -1497,6 +1541,11 @@
       <trans-unit id="goO-Va-Eyu.title" xml:space="preserve">
         <source>FowardTo Navigation</source>
         <note>Class = "UINavigationController"; title = "FowardTo Navigation"; ObjectID = "goO-Va-Eyu";</note>
+      </trans-unit>
+      <trans-unit id="hDW-u7-vzK.placeholder" xml:space="preserve">
+        <source>Configuration Code</source>
+        <target>配置程式</target>
+        <note>Class = "UITextField"; placeholder = "Configuration Code"; ObjectID = "hDW-u7-vzK";</note>
       </trans-unit>
       <trans-unit id="hTR-e8-PeX.title" xml:space="preserve">
         <source>Blocked Contacts</source>
@@ -1769,6 +1818,10 @@
         <source>Account and Security</source>
         <target>賬戶和安全</target>
         <note>Class = "UILabel"; text = "Account and Security"; ObjectID = "z08-iK-CeG";</note>
+      </trans-unit>
+      <trans-unit id="zCU-jx-lsJ.text" xml:space="preserve">
+        <source>Tinode</source>
+        <note>Class = "UILabel"; text = "Tinode"; ObjectID = "zCU-jx-lsJ";</note>
       </trans-unit>
       <trans-unit id="zW8-KF-N8J.headerTitle" xml:space="preserve">
         <source>Default Permissions</source>
