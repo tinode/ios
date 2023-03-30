@@ -122,6 +122,8 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
         open func onMetaDesc(desc: Description<DP, DR>) {}
         // {meta what="tags"} message received.
         open func onMetaTags(tags: [String]) {}
+        // {meta what="aux"} message received.
+        open func onMetaAux(aux: [String:JSONValue]) {}
         // {meta what="sub"} message received and all subs were processed.
         open func onSubsUpdated() {}
         // {pres} received.
@@ -195,6 +197,10 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
         }
         public func withTags() -> MetaGetBuilder {
             meta.setTags()
+            return self
+        }
+        public func withAux() -> MetaGetBuilder {
+            meta.setAux()
             return self
         }
         public func build() -> MsgGetMeta {
@@ -313,6 +319,7 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
     // Cache of topic subscribers indexed by userID
     internal var subs: [String: Subscription<SP, SR>]?
     public var tags: [String]?
+    public var aux: [String: JSONValue]?
     private var lastKeyPress: Date = Date(timeIntervalSince1970: 0)
 
     public var online: Bool = false {
@@ -699,6 +706,16 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
         self.tags = tags
         store?.topicUpdate(topic: self)
     }
+
+    internal func update(aux: [String:JSONValue]) {
+        if self.aux == nil {
+            self.aux = aux
+        } else {
+            _ = self.aux!.merge(with: aux)
+        }
+        store?.topicUpdate(topic: self)
+    }
+
     internal func update(desc: MetaSetDesc<DP, DR>) {
         if self.description.merge(desc: desc) {
             self.store?.topicUpdate(topic: self)
@@ -829,6 +846,11 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
         listener?.onMetaTags(tags: tags)
     }
 
+    private func routeMetaAux(aux: [String:JSONValue]) {
+        self.update(aux: aux)
+        listener?.onMetaAux(aux: aux)
+    }
+
     public func routeMeta(meta: MsgServerMeta) {
         if meta.desc != nil {
             routeMetaDesc(meta: meta)
@@ -844,6 +866,9 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
         }
         if meta.tags != nil {
             routeMetaTags(tags: meta.tags!)
+        }
+        if meta.aux != nil {
+            routeMetaAux(aux: meta.aux!)
         }
         // update listener
         listener?.onMeta(meta: meta)
@@ -1165,6 +1190,18 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
             if let s = sub {
                 processSub(newsub: s)
             }
+        case .kUpd:
+            // A topic subscriber has updated his description.
+            if (pres.src != nil && tinode!.getTopic(topicName: pres.src!) == nil) {
+                // Issue {get sub} only if the current user has no relationship with the updated user.
+                // Otherwise 'me' will issue a {get desc} request.
+                getMeta(query: metaGetBuilder().withSub(user: pres.src).build())
+            }
+        case .kAux:
+            getMeta(query: metaGetBuilder().withAux().build())
+        case .kMsg, .kRecv, .kRead:
+            // Explicitly ignored: handled by the 'me' topic.
+            break
         default:
             Tinode.log.error("pres message - unknown what: %@", String(describing: pres.what))
         }
@@ -1369,6 +1406,18 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
             return PromisedReply<ServerMessage>(error: TopicError.deleteFailure("No messages to delete"))
         }
         return delMessages(inRanges: l, hard: hard)
+    }
+
+    public func getAux(key: String) -> JSONValue? {
+        guard let aux = aux else { return nil }
+        return aux[key]
+    }
+
+    public func setAux(key: String, value: JSONValue?) {
+        if (aux == nil) {
+            aux = [:]
+        }
+        aux![key] = value
     }
 
     public func syncOne(msgId: Int64) -> PromisedReply<ServerMessage> {

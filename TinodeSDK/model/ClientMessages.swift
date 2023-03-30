@@ -176,6 +176,7 @@ public class MsgGetMeta: CustomStringConvertible, Codable {
     private static let kDelSet = 0x08
     private static let kTagsSet = 0x10
     private static let kCredSet = 0x20
+    private static let kAuxSet = 0x40
 
     static let kDesc = "desc"
     static let kSub = "sub"
@@ -183,6 +184,7 @@ public class MsgGetMeta: CustomStringConvertible, Codable {
     static let kDel = "del"
     static let kTags = "tags"
     static let kCred = "cred"
+    static let kAux = "aux"
 
     private var set = 0
 
@@ -213,13 +215,14 @@ public class MsgGetMeta: CustomStringConvertible, Codable {
             " data=[\(data_str)]," +
             " del=[\(del_str)]" +
             " tags=[\((set & MsgGetMeta.kTagsSet) != 0 ? "set" : "nil")]" +
-            " cred=[\((set & MsgGetMeta.kCredSet) != 0 ? "set" : "nil")]"
+            " cred=[\((set & MsgGetMeta.kCredSet) != 0 ? "set" : "nil")]" +
+            " aux=[\((set & MsgGetMeta.kAuxSet) != 0 ? "set" : "nil")]"
     }
 
     init() {
         self.what = "\(MsgGetMeta.kDesc) \(MsgGetMeta.kData) \(MsgGetMeta.kDel) \(MsgGetMeta.kTags)"
     }
-    public init(desc: MetaGetDesc?, sub: MetaGetSub?, data: MetaGetData?, del: MetaGetData?, tags: Bool, cred: Bool) {
+    public init(desc: MetaGetDesc? = nil, sub: MetaGetSub? = nil, data: MetaGetData? = nil, del: MetaGetData? = nil, tags: Bool = false, cred: Bool = false, aux: Bool = false) {
         self.desc = desc
         self.sub = sub
         self.data = data
@@ -251,6 +254,9 @@ public class MsgGetMeta: CustomStringConvertible, Codable {
         }
         if (self.set & MsgGetMeta.kCredSet) != 0 {
             parts.append(MsgGetMeta.kCred)
+        }
+        if (self.set & MsgGetMeta.kAuxSet) != 0 {
+            parts.append(MsgGetMeta.kAux)
         }
         self.what = parts.joined(separator: " ")
     }
@@ -289,6 +295,10 @@ public class MsgGetMeta: CustomStringConvertible, Codable {
     }
     func setCred() {
         set |= MsgGetMeta.kCredSet
+        buildWhat()
+    }
+    func setAux() {
+        set |= MsgGetMeta.kAuxSet
         buildWhat()
     }
     private init(what: String) {
@@ -348,12 +358,14 @@ public class MsgSetMeta<Pu: Codable, Pr: Codable>: Codable {
     let sub: MetaSetSub?
     let tags: [String]?
     let cred: Credential?
+    let aux: [String:JSONValue]?
 
-    public init(desc: MetaSetDesc<Pu, Pr>?, sub: MetaSetSub?, tags: [String]?, cred: Credential?) {
+    public init(desc: MetaSetDesc<Pu, Pr>? = nil, sub: MetaSetSub? = nil, tags: [String]? = nil, cred: Credential? = nil, aux: [String:JSONValue]? = nil) {
         self.desc = desc
         self.sub = sub
         self.tags = tags
         self.cred = cred
+        self.aux = aux
     }
 }
 
@@ -395,16 +407,18 @@ public class MsgClientSet<Pu: Codable, Pr: Codable>: Codable {
     let sub: MetaSetSub?
     let tags: [String]?
     let cred: Credential?
-    init(id: String, topic: String, desc: MetaSetDesc<Pu, Pr>?, sub: MetaSetSub?, tags: [String]?, cred: Credential?) {
+    let aux: [String: JSONValue]?
+    init(id: String, topic: String, desc: MetaSetDesc<Pu, Pr>? = nil, sub: MetaSetSub? = nil, tags: [String]? = nil, cred: Credential? = nil, aux: [String: JSONValue]? = nil) {
         self.id = id
         self.topic = topic
         self.desc = desc
         self.sub = sub
         self.tags = tags
         self.cred = cred
+        self.aux = aux
     }
     convenience init(id: String, topic: String, meta: MsgSetMeta<Pu, Pr>?) {
-        self.init(id: id, topic: topic, desc: meta?.desc, sub: meta?.sub, tags: meta?.tags, cred: meta?.cred)
+        self.init(id: id, topic: topic, desc: meta?.desc, sub: meta?.sub, tags: meta?.tags, cred: meta?.cred, aux: meta?.aux)
     }
 }
 

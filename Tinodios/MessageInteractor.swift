@@ -195,6 +195,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
             .withSub()
             .withLaterData(limit: MessageInteractor.kMessagesPerPage)
             .withDel()
+            .withAux()
         if topic.isOwner {
             builder = builder.withTags()
         }

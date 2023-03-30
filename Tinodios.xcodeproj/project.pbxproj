@@ -93,6 +93,9 @@
 		B052ABD12863F82000A7D550 /* dialing.m4a in Resources */ = {isa = PBXBuildFile; fileRef = B052ABD02863F82000A7D550 /* dialing.m4a */; };
 		B05ACEB322FDAB5200276713 /* ResetPasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B05ACEB222FDAB5200276713 /* ResetPasswordViewController.swift */; };
 		B079062523EEA0C90019ED75 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B079062423EEA0C90019ED75 /* GoogleService-Info.plist */; };
+		B081B27F29D621380026089C /* DotSelectorImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B081B27E29D621380026089C /* DotSelectorImage.swift */; };
+		B081B28129D638850026089C /* PagerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B081B28029D638850026089C /* PagerView.swift */; };
+		B081B28329D6512E0026089C /* PagerViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B081B28229D6512E0026089C /* PagerViewCell.swift */; };
 		B091BA442808ED6000317CDC /* MessageCell+VLCMediaPlayerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B091BA432808ED6000317CDC /* MessageCell+VLCMediaPlayerDelegate.swift */; };
 		B091BA462808FE8500317CDC /* MessageViewController+MessageCellDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B091BA452808FE8500317CDC /* MessageViewController+MessageCellDelegate.swift */; };
 		B091BA482809048000317CDC /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B091BA472809048000317CDC /* AVFoundation.framework */; };
@@ -276,6 +279,9 @@
 		B052ABD02863F82000A7D550 /* dialing.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = dialing.m4a; sourceTree = "<group>"; };
 		B05ACEB222FDAB5200276713 /* ResetPasswordViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResetPasswordViewController.swift; sourceTree = "<group>"; };
 		B079062423EEA0C90019ED75 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		B081B27E29D621380026089C /* DotSelectorImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DotSelectorImage.swift; sourceTree = "<group>"; };
+		B081B28029D638850026089C /* PagerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PagerView.swift; sourceTree = "<group>"; };
+		B081B28229D6512E0026089C /* PagerViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PagerViewCell.swift; sourceTree = "<group>"; };
 		B091BA432808ED6000317CDC /* MessageCell+VLCMediaPlayerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MessageCell+VLCMediaPlayerDelegate.swift"; sourceTree = "<group>"; };
 		B091BA452808FE8500317CDC /* MessageViewController+MessageCellDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MessageViewController+MessageCellDelegate.swift"; sourceTree = "<group>"; };
 		B091BA472809048000317CDC /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
@@ -573,6 +579,7 @@
 				0AE7339B22C33FEF0089C8D8 /* ChatListViewCell.xib */,
 				B0125996229C982900688FCE /* ContactViewCell.swift */,
 				B0125997229C982900688FCE /* ContactViewCell.xib */,
+				B081B27E29D621380026089C /* DotSelectorImage.swift */,
 				0A3AE3B4274CAD2500CB673E /* ForwardMessageBar.swift */,
 				0A3AE3B6274CAD5800CB673E /* ForwardMessageBar.xib */,
 				B02F5C8A22679BC80079A97E /* ImagePicker.swift */,
@@ -580,6 +587,8 @@
 				B0BE302927B831D400B04631 /* MultilineAlertView.xib */,
 				B0BE302227B771E100B04631 /* MultilineAlertView.swift */,
 				B0DF031E227C6898000F9492 /* PaddedLabel.swift */,
+				B081B28029D638850026089C /* PagerView.swift */,
+				B081B28229D6512E0026089C /* PagerViewCell.swift */,
 				0A6AC321229FAA130025A4EC /* PermissionsEditView.xib */,
 				0A6AC323229FB0ED0025A4EC /* PermissionsEditViewController.swift */,
 				B0DF03302283FFD8000F9492 /* PlaceholderTextView.swift */,
@@ -946,6 +955,7 @@
 				B027E5AE278901CA00A34C17 /* PreviewFormatter.swift in Sources */,
 				B0DF031D227C604C000F9492 /* MessageCell.swift in Sources */,
 				B0DF0323228051B4000F9492 /* MessageViewController+Keyboard.swift in Sources */,
+				B081B28329D6512E0026089C /* PagerViewCell.swift in Sources */,
 				B091BA542824916800317CDC /* WaveImage.swift in Sources */,
 				FA37AD24238B0D6F00301261 /* KeyboardInfo.swift in Sources */,
 				0AE50D4822156A5B0021F7B7 /* FindPresenter.swift in Sources */,
@@ -966,6 +976,7 @@
 				B0BE302327B771E100B04631 /* MultilineAlertView.swift in Sources */,
 				0A0016E721E7236900088188 /* MessageInteractor.swift in Sources */,
 				B027E5B02789020D00A34C17 /* QuoteFormatter.swift in Sources */,
+				B081B27F29D621380026089C /* DotSelectorImage.swift in Sources */,
 				0A36776922B09C1900724873 /* EditMembersViewController.swift in Sources */,
 				B0125998229C982900688FCE /* ContactViewCell.swift in Sources */,
 				0A8EA5B029838E5900B116EA /* CredentialsChangeViewController.swift in Sources */,
@@ -1023,6 +1034,7 @@
 				0AEE8BEE226456080022EC3F /* UiUtils.swift in Sources */,
 				0AC33D032293C7A00060D263 /* NewGroupViewController.swift in Sources */,
 				0AE50D4622156A4B0021F7B7 /* FindInteractor.swift in Sources */,
+				B081B28129D638850026089C /* PagerView.swift in Sources */,
 				0A8C8A4621E5E72D00D8751E /* MessageViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

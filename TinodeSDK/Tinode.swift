@@ -147,8 +147,10 @@ public class Tinode {
     public static let kNullValue = "\u{2421}"
     internal static let log = Log(subsystem: "co.tinode.tinodesdk")
 
+    public static let kMaxPinnedCount = 5
+
     let kProtocolVersion = "0"
-    let kVersion = "0.22"
+    let kVersion = "0.23"
     let kLibVersion = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as! String
     let kLocale = Locale.current.languageCode!
     public var OsVersion: String = ""

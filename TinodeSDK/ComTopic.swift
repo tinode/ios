@@ -20,7 +20,7 @@ public class ComTopic: Topic<TheCard, PrivateType, TheCard, PrivateType> {
             if let pub = self.pub {
                 desc.attachments = pub.photoRefs
             }
-            return subscribe(set: MsgSetMeta(desc: desc, sub: nil, tags: self.tags, cred: nil), get: nil)
+            return subscribe(set: MsgSetMeta(desc: desc, tags: self.tags), get: nil)
         }
         return super.subscribe()
     }
@@ -82,12 +82,61 @@ public class ComTopic: Topic<TheCard, PrivateType, TheCard, PrivateType> {
     public func updateArchived(archived: Bool) -> PromisedReply<ServerMessage>? {
         var priv = PrivateType()
         priv.archived = archived
-        let meta = MsgSetMeta<TheCard, PrivateType>(
-            desc: MetaSetDesc(pub: nil, priv: priv),
-            sub: nil,
-            tags: nil,
-            cred: nil)
+        let meta = MsgSetMeta<TheCard, PrivateType>(desc: MetaSetDesc(pub: nil, priv: priv))
         return setMeta(meta: meta)
+    }
+
+    /// Set message as pinned or unpinned by adding it to aux.pins array.
+    /// - Parameters:
+    ///     - seq: ID of the message to pin or un-pin.
+    ///     - pin: `true` to pin the message, `false` to un-pin.
+    /// - Returns:
+    ///     Promise to be resolved/rejected when the server responds to request.
+    public func pinMessage(seq: Int, pin: Bool) -> PromisedReply<ServerMessage>? {
+        var pinned = getAux(key: "pins")?.asArray() ?? []
+        var changed = false
+        if pin {
+            if !isPinned(seq: seq) {
+                changed = true
+                if pinned.count == Tinode.kMaxPinnedCount {
+                    // Too many elements: drop the earliest.
+                    pinned.remove(at: 0)
+                }
+                pinned.append(.int(seq))
+            }
+        } else {
+            let count = pinned.count
+            pinned.removeAll(where: { $0.asInt() == seq })
+            changed = count != pinned.count
+        }
+
+        if (changed) {
+            var aux = [String:JSONValue]()
+            aux["pins"] = pinned.count > 0 ? .array(pinned) : .string(Tinode.kNullValue)
+            return setMeta(meta: MsgSetMeta<TheCard, PrivateType>(aux: aux))
+        }
+
+        return PromisedReply<ServerMessage>(value: ServerMessage())
+    }
+
+    public func isPinned(seq: Int) -> Bool {
+        let pinned = getAux(key: "pins")?.asArray()
+        return pinned?.contains(where: { $0.asInt() == seq }) ?? false
+     }
+
+    public func pinnedIndex(seq: Int) -> Int {
+        let pinned = getAux(key: "pins")?.asArray()
+        return pinned?.first(where: { $0.asInt() == seq })?.asInt() ?? -1
+     }
+
+    public var pinned: [Int] {
+        guard let pinned = getAux(key: "pins")?.asArray() else { return [] }
+        return pinned.map { $0.asInt() ?? -1 }.filter { $0 > 0 }
+    }
+
+    public var pinnedCount: Int {
+        guard let pinned = getAux(key: "pins")?.asArray() else { return 0 }
+        return pinned.count
     }
 
     /// First read messages from the local cache. If cache does not contain enough messages, fetch more from the server.
