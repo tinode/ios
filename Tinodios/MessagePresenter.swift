@@ -13,6 +13,7 @@ protocol MessagePresentationLogic {
     func updateTitleBar(pub: TheCard?, online: Bool?, deleted: Bool)
     func setOnline(online: Bool?)
     func runTypingAnimation()
+    func displayPinnedMessages(pins: [Int], selected: Int)
     func presentMessages(messages: [StoredMessage], _ scrollToMostRecentMessage: Bool)
     func reloadMessages(fromSeqId loId: Int, toSeqId hiId: Int)
     func reloadAllMessages()
@@ -43,6 +44,13 @@ class MessagePresenter: MessagePresentationLogic {
             self.viewController?.setOnline(online: online)
         }
     }
+    func displayPinnedMessages(pins: [Int], selected: Int) {
+        DispatchQueue.main.async {
+            print("Calling controller with pins \(pins)")
+            self.viewController?.displayPinnedMessages(pins: pins, selected: selected)
+        }
+    }
+
     func presentMessages(messages: [StoredMessage], _ scrollToMostRecentMessage: Bool) {
         DispatchQueue.main.async {
             self.viewController?.displayChatMessages(messages: messages, scrollToMostRecentMessage)

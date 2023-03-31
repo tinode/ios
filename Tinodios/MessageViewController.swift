@@ -19,6 +19,7 @@ protocol MessageDisplayLogic: AnyObject {
     func reloadMessages(fromSeqId loId: Int, toSeqId hiId: Int)
     func updateProgress(forMsgId msgId: Int64, progress: Float)
     func applyTopicPermissions(withError: Error?)
+    func displayPinnedMessages(pins: [Int], selected: Int)
     func endRefresh()
     func dismissVC()
     // Display or dismiss preview (e.g. reply preview) in the send message bar.
@@ -154,12 +155,28 @@ class MessageViewController: UIViewController {
             style: .plain, target: self, action: #selector(navBarCallTapped(sender:)))
     }()
 
+    /// Pinned messages view.
+    private lazy var pinnedMessagesView: PinnedMessagesView = {
+        let panel = PinnedMessagesView()
+        self.view.addSubview(panel)
+
+        let guide = self.view.safeAreaLayoutGuide
+        panel.translatesAutoresizingMaskIntoConstraints = false
+
+        panel.trailingAnchor.constraint(equalTo: guide.trailingAnchor).isActive = true
+        panel.leadingAnchor.constraint(equalTo: guide.leadingAnchor).isActive = true
+        panel.topAnchor.constraint(equalTo: guide.topAnchor).isActive = true
+        panel.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        return panel
+    }()
+
     /// Pointer to the view holding messages.
     weak var collectionView: MessageView!
     private var collectionViewBottomAnchor: NSLayoutConstraint!
-    /// Pointer to the view holding messages.
+    /// Button [GO to latest message].
     weak var goToLatestButton: UIButton!
     private var goToLatestButtonBottomAnchor: NSLayoutConstraint!
+
 
     var interactor: (MessageBusinessLogic & MessageDataStore)?
     private let refreshControl = UIRefreshControl()
@@ -657,6 +674,18 @@ extension MessageViewController: MessageDisplayLogic {
             items.append(self.navBarCallBtn)
         }
         self.navigationItem.setRightBarButtonItems(items, animated: false)
+    }
+
+    func displayPinnedMessages(pins: [Int], selected: Int) {
+        assert(Thread.isMainThread)
+        if pins.isEmpty {
+            print("displayPinnedMessages -- empty \(pins)")
+            pinnedMessagesView.isHidden = true
+        } else {
+            print("Shown \(pins)")
+            pinnedMessagesView.pins = pins
+            pinnedMessagesView.isHidden = false
+        }
     }
 
     func setOnline(online: Bool?) {

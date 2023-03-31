@@ -161,6 +161,12 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                 }
             }
         }
+
+        if let pins = topic?.pinned {
+            print("Calling presenter with pins \(pins)")
+            self.presenter?.displayPinnedMessages(pins: pins, selected: 0)
+        }
+
         return self.topic != nil
     }
     func cleanup() {
@@ -841,5 +847,11 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
             self.knownSubs.insert(user)
             self.newSubsAvailable = true
         }
+    }
+    override func onMetaAux(aux: [String:JSONValue]) {
+        print("onMetaAux -->")
+        guard let topic = topic else { return }
+        print("onMetaAux \(topic.pinned)")
+        self.presenter?.displayPinnedMessages(pins: topic.pinned, selected: -1)
     }
 }

@@ -67,6 +67,7 @@
 		7DDADC5221D5C219009733B5 /* ValidatedCredential.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DDADC5121D5C219009733B5 /* ValidatedCredential.swift */; };
 		7DDADC5421D5C2E6009733B5 /* CredentialsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DDADC5321D5C2E6009733B5 /* CredentialsViewController.swift */; };
 		B008593C22741B8A002C5168 /* FullFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B008593B22741B89002C5168 /* FullFormatter.swift */; };
+		B00CB5F629D7461B00BFE5C2 /* PinnedMessagesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00CB5F529D7461B00BFE5C2 /* PinnedMessagesView.swift */; };
 		B0125998229C982900688FCE /* ContactViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0125996229C982900688FCE /* ContactViewCell.swift */; };
 		B0125999229C982900688FCE /* ContactViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B0125997229C982900688FCE /* ContactViewCell.xib */; };
 		B012599C229CEBE600688FCE /* SelectedMemberViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B012599A229CEBE600688FCE /* SelectedMemberViewCell.swift */; };
@@ -93,9 +94,10 @@
 		B052ABD12863F82000A7D550 /* dialing.m4a in Resources */ = {isa = PBXBuildFile; fileRef = B052ABD02863F82000A7D550 /* dialing.m4a */; };
 		B05ACEB322FDAB5200276713 /* ResetPasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B05ACEB222FDAB5200276713 /* ResetPasswordViewController.swift */; };
 		B079062523EEA0C90019ED75 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B079062423EEA0C90019ED75 /* GoogleService-Info.plist */; };
-		B081B27F29D621380026089C /* DotSelectorImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B081B27E29D621380026089C /* DotSelectorImage.swift */; };
+		B081B27F29D621380026089C /* DotSelectorImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B081B27E29D621380026089C /* DotSelectorImageView.swift */; };
 		B081B28129D638850026089C /* PagerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B081B28029D638850026089C /* PagerView.swift */; };
 		B081B28329D6512E0026089C /* PagerViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B081B28229D6512E0026089C /* PagerViewCell.swift */; };
+		B081B28529D73EE10026089C /* PinnedMessagesView.xib in Resources */ = {isa = PBXBuildFile; fileRef = B081B28429D73EE10026089C /* PinnedMessagesView.xib */; };
 		B091BA442808ED6000317CDC /* MessageCell+VLCMediaPlayerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B091BA432808ED6000317CDC /* MessageCell+VLCMediaPlayerDelegate.swift */; };
 		B091BA462808FE8500317CDC /* MessageViewController+MessageCellDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B091BA452808FE8500317CDC /* MessageViewController+MessageCellDelegate.swift */; };
 		B091BA482809048000317CDC /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B091BA472809048000317CDC /* AVFoundation.framework */; };
@@ -248,6 +250,7 @@
 		7DDADC5321D5C2E6009733B5 /* CredentialsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CredentialsViewController.swift; sourceTree = "<group>"; };
 		8941EC0EF6DEEA661A222467 /* libPods-TinodiosUITests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-TinodiosUITests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B008593B22741B89002C5168 /* FullFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullFormatter.swift; sourceTree = "<group>"; };
+		B00CB5F529D7461B00BFE5C2 /* PinnedMessagesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PinnedMessagesView.swift; sourceTree = "<group>"; };
 		B01120B72357469300EFCB1F /* devel.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = devel.xcconfig; sourceTree = "<group>"; };
 		B01120B8235746BF00EFCB1F /* prod.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = prod.xcconfig; sourceTree = "<group>"; };
 		B0125996229C982900688FCE /* ContactViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactViewCell.swift; sourceTree = "<group>"; };
@@ -279,9 +282,10 @@
 		B052ABD02863F82000A7D550 /* dialing.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = dialing.m4a; sourceTree = "<group>"; };
 		B05ACEB222FDAB5200276713 /* ResetPasswordViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResetPasswordViewController.swift; sourceTree = "<group>"; };
 		B079062423EEA0C90019ED75 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
-		B081B27E29D621380026089C /* DotSelectorImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DotSelectorImage.swift; sourceTree = "<group>"; };
+		B081B27E29D621380026089C /* DotSelectorImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DotSelectorImageView.swift; sourceTree = "<group>"; };
 		B081B28029D638850026089C /* PagerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PagerView.swift; sourceTree = "<group>"; };
 		B081B28229D6512E0026089C /* PagerViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PagerViewCell.swift; sourceTree = "<group>"; };
+		B081B28429D73EE10026089C /* PinnedMessagesView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PinnedMessagesView.xib; sourceTree = "<group>"; };
 		B091BA432808ED6000317CDC /* MessageCell+VLCMediaPlayerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MessageCell+VLCMediaPlayerDelegate.swift"; sourceTree = "<group>"; };
 		B091BA452808FE8500317CDC /* MessageViewController+MessageCellDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MessageViewController+MessageCellDelegate.swift"; sourceTree = "<group>"; };
 		B091BA472809048000317CDC /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
@@ -579,7 +583,7 @@
 				0AE7339B22C33FEF0089C8D8 /* ChatListViewCell.xib */,
 				B0125996229C982900688FCE /* ContactViewCell.swift */,
 				B0125997229C982900688FCE /* ContactViewCell.xib */,
-				B081B27E29D621380026089C /* DotSelectorImage.swift */,
+				B081B27E29D621380026089C /* DotSelectorImageView.swift */,
 				0A3AE3B4274CAD2500CB673E /* ForwardMessageBar.swift */,
 				0A3AE3B6274CAD5800CB673E /* ForwardMessageBar.xib */,
 				B02F5C8A22679BC80079A97E /* ImagePicker.swift */,
@@ -591,6 +595,8 @@
 				B081B28229D6512E0026089C /* PagerViewCell.swift */,
 				0A6AC321229FAA130025A4EC /* PermissionsEditView.xib */,
 				0A6AC323229FB0ED0025A4EC /* PermissionsEditViewController.swift */,
+				B081B28429D73EE10026089C /* PinnedMessagesView.xib */,
+				B00CB5F529D7461B00BFE5C2 /* PinnedMessagesView.swift */,
 				B0DF03302283FFD8000F9492 /* PlaceholderTextView.swift */,
 				B026F242257C59CA003BA14B /* ProgressView.xib */,
 				B026F246257C5EFF003BA14B /* ProgressView.swift */,
@@ -736,6 +742,7 @@
 				B0CF83E0244E074A00E79D22 /* Localizable.strings in Resources */,
 				0AE7339C22C33FEF0089C8D8 /* ChatListViewCell.xib in Resources */,
 				B0BE301C27B3367E00B04631 /* InfoPlist.strings in Resources */,
+				B081B28529D73EE10026089C /* PinnedMessagesView.xib in Resources */,
 				0A3AE3B7274CAD5800CB673E /* ForwardMessageBar.xib in Resources */,
 				B0133AE323D1AADF00C813CA /* SendImageBar.xib in Resources */,
 				B0DF032D2282EE8A000F9492 /* SendMessageBar.xib in Resources */,
@@ -945,6 +952,7 @@
 				0A0380DA21B3CC8100A3FA0E /* ChatListViewController.swift in Sources */,
 				0A2F81C6229677DD007E562C /* AddByIDViewController.swift in Sources */,
 				0A68704029B5A10C00A6F126 /* QRScanner.swift in Sources */,
+				B00CB5F629D7461B00BFE5C2 /* PinnedMessagesView.swift in Sources */,
 				0AE50D4422156A250021F7B7 /* FindViewController.swift in Sources */,
 				B0BE302B27B8A3B600B04631 /* TopicSecurityViewController.swift in Sources */,
 				B01C693F22F87B5C003C0AA7 /* SignupViewController.swift in Sources */,
@@ -976,7 +984,7 @@
 				B0BE302327B771E100B04631 /* MultilineAlertView.swift in Sources */,
 				0A0016E721E7236900088188 /* MessageInteractor.swift in Sources */,
 				B027E5B02789020D00A34C17 /* QuoteFormatter.swift in Sources */,
-				B081B27F29D621380026089C /* DotSelectorImage.swift in Sources */,
+				B081B27F29D621380026089C /* DotSelectorImageView.swift in Sources */,
 				0A36776922B09C1900724873 /* EditMembersViewController.swift in Sources */,
 				B0125998229C982900688FCE /* ContactViewCell.swift in Sources */,
 				0A8EA5B029838E5900B116EA /* CredentialsChangeViewController.swift in Sources */,

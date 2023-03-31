@@ -12,12 +12,17 @@ public protocol PagerViewDelegate: AnyObject {
     func didSelectPage(index: Int)
 }
 
+@IBDesignable
 public class PagerView: UIView, UICollectionViewDelegateFlowLayout, UICollectionViewDataSource {
 
     // MARK: - Initialization
     init(pages: [UIView] = []) {
         self.pages = pages
         super.init(frame: .zero)
+
+        // Make right-side corners round.
+        self.layer.cornerRadius = 20
+        self.layer.maskedCorners = [.layerMaxXMinYCorner, .layerMaxXMaxYCorner]
 
         self.translatesAutoresizingMaskIntoConstraints = false
 
