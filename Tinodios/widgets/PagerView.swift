@@ -14,32 +14,7 @@ public protocol PagerViewDelegate: AnyObject {
 
 @IBDesignable
 public class PagerView: UIView, UICollectionViewDelegateFlowLayout, UICollectionViewDataSource {
-
-    // MARK: - Initialization
-    init(pages: [UIView] = []) {
-        self.pages = pages
-        super.init(frame: .zero)
-
-        // Make right-side corners round.
-        self.layer.cornerRadius = 20
-        self.layer.maskedCorners = [.layerMaxXMinYCorner, .layerMaxXMaxYCorner]
-
-        self.translatesAutoresizingMaskIntoConstraints = false
-
-        self.addSubview(collectionView)
-        collectionView.backgroundColor = .systemBackground
-
-        NSLayoutConstraint.activate([
-            collectionView.widthAnchor.constraint(equalTo: self.widthAnchor),
-            collectionView.heightAnchor.constraint(equalTo: self.heightAnchor),
-            collectionView.centerXAnchor.constraint(equalTo: self.centerXAnchor),
-            collectionView.centerYAnchor.constraint(equalTo: self.centerYAnchor)
-        ])
-    }
-
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
+    private static let kCornerRadius:CGFloat = 10
 
     // MARK: - Properties
     public weak var delegate: PagerViewDelegate?
@@ -47,6 +22,36 @@ public class PagerView: UIView, UICollectionViewDelegateFlowLayout, UICollection
         didSet {
             self.collectionView.reloadData()
         }
+    }
+
+    // MARK: - Initialization
+    init(pages: [UIView] = []) {
+        self.pages = pages
+        super.init(frame: .zero)
+        setup()
+    }
+
+    required init?(coder: NSCoder) {
+        self.pages = []
+        super.init(coder: coder)
+        setup()
+    }
+
+    private func setup() {
+        self.translatesAutoresizingMaskIntoConstraints = false
+
+        self.addSubview(collectionView)
+        collectionView.backgroundColor = .secondarySystemBackground
+        // Make right-side corners round.
+        collectionView.layer.cornerRadius = PagerView.kCornerRadius
+        collectionView.layer.maskedCorners = [.layerMaxXMinYCorner, .layerMaxXMaxYCorner]
+
+        NSLayoutConstraint.activate([
+            collectionView.widthAnchor.constraint(equalTo: self.widthAnchor),
+            collectionView.heightAnchor.constraint(equalTo: self.heightAnchor),
+            collectionView.centerXAnchor.constraint(equalTo: self.centerXAnchor),
+            collectionView.centerYAnchor.constraint(equalTo: self.centerYAnchor)
+        ])
     }
 
     private lazy var collectionView: UICollectionView = {
@@ -92,8 +97,7 @@ public class PagerView: UIView, UICollectionViewDelegateFlowLayout, UICollection
     // MARK: - Layout Delegate
     public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
 
-        return CGSize(width: self.collectionView.frame.width,
-                      height: self.collectionView.frame.height)
+        return CGSize(width: self.collectionView.frame.width, height: self.collectionView.frame.height)
     }
 
     public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {

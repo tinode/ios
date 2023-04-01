@@ -141,6 +141,14 @@ extension MessageViewController: MessageCellDelegate {
                     menuItems.append(MessageMenuItem(title: NSLocalizedString("Edit", comment: "Menu item"), action: #selector(showEditPreview(sender:)), seqId: cell.seqId))
                 }
             }
+
+            if self.topic?.isAdmin ?? false {
+                if self.topic!.pinned.contains(where: { $0 == cell.seqId }) {
+                    menuItems.append(MessageMenuItem(title: NSLocalizedString("Unpin", comment: "Menu item for un-pinning message"), action: #selector(unpinMessage(sender:)), seqId: cell.seqId))
+                } else {
+                    menuItems.append(MessageMenuItem(title: NSLocalizedString("Pin", comment: "Menu item for pinning message"), action: #selector(pinMessage(sender:)), seqId: cell.seqId))
+                }
+            }
         }
 
         UIMenuController.shared.menuItems = menuItems
@@ -198,6 +206,16 @@ extension MessageViewController: MessageCellDelegate {
             self.sendMessageBar.inputField.text = original
             self.showInPreviewBar(content: quote, forwarded: false, onAction: .edit)
         }
+    }
+
+    @objc func pinMessage(sender: UIMenuController) {
+        guard let menuItem = sender.menuItems?.first as? MessageMenuItem, menuItem.seqId > 0 else { return }
+        _ = self.topic?.pinMessage(seq: menuItem.seqId , pin: true)
+    }
+
+    @objc func unpinMessage(sender: UIMenuController) {
+        guard let menuItem = sender.menuItems?.first as? MessageMenuItem, menuItem.seqId > 0 else { return }
+        _ = self.topic?.pinMessage(seq: menuItem.seqId , pin: false)
     }
 
     private func showQuotedPreview(sender: UIMenuController, isReply: Bool, completion: @escaping (PendingMessage?) -> Void) {

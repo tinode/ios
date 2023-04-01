@@ -158,6 +158,7 @@ class MessageViewController: UIViewController {
     /// Pinned messages view.
     private lazy var pinnedMessagesView: PinnedMessagesView = {
         let panel = PinnedMessagesView()
+        panel.topicName = self.topicName
         self.view.addSubview(panel)
 
         let guide = self.view.safeAreaLayoutGuide
@@ -683,6 +684,7 @@ extension MessageViewController: MessageDisplayLogic {
             pinnedMessagesView.isHidden = true
         } else {
             print("Shown \(pins)")
+            pinnedMessagesView.topicName = self.topicName
             pinnedMessagesView.pins = pins
             pinnedMessagesView.isHidden = false
         }

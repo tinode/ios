@@ -10,15 +10,27 @@ import UIKit
 @IBDesignable
 public class DotSelectorImageView: UIImageView {
     private static let kSelectedColor = UIColor.link.cgColor
-    private static let kNormalColor = CGColor.init(gray: 0.50, alpha: 0.9)
-
-    private static let kCornerRadius:CGFloat = 20
+    private static let kNormalColor = CGColor.init(gray: 0.70, alpha: 0.9)
+    private static let kDotRadius: CGFloat = 3.5
+    private static let kCornerRadius:CGFloat = 10
 
     public var selectedColor: CGColor
     public var normalColor: CGColor
 
-    var dotCount: Int = 3
-    var selected: Int = 0
+    var dotCount: Int = 0 {
+        didSet {
+            if let image = renderImage() {
+                self.image = image
+            }
+        }
+    }
+    var selected: Int = 0 {
+        didSet {
+            if let image = renderImage() {
+                self.image = image
+            }
+        }
+    }
 
     // MARK: - Initializers.
 
@@ -42,8 +54,9 @@ public class DotSelectorImageView: UIImageView {
         self.image = self.renderImage()
 
         // Make left-side corners round.
+        self.layer.masksToBounds = true
         self.layer.cornerRadius = DotSelectorImageView.kCornerRadius
-        self.layer.maskedCorners = [.layerMaxXMinYCorner, .layerMaxXMaxYCorner]
+        self.layer.maskedCorners = [.layerMinXMinYCorner, .layerMinXMaxYCorner]
     }
 
     // MARK: - support display in storyboard.
@@ -53,18 +66,9 @@ public class DotSelectorImageView: UIImageView {
         }
     }
 
-    public func setDotCount(count: Int) {
-        if dotCount != count {
-            dotCount = count
-            if let image = renderImage() {
-                self.image = image
-            }
-        }
-    }
-
-    public func select(index: Int) {
-        if selected != index {
-            selected = index
+    // MARK: - catch bounds change
+    override public var bounds: CGRect {
+        didSet {
             if let image = renderImage() {
                 self.image = image
             }
@@ -84,13 +88,17 @@ public class DotSelectorImageView: UIImageView {
         context.saveGState()
         context.clip(to: bounds)
 
-        let yStep = frame.height / CGFloat(dotCount + 1)
-        let radius = min(frame.width / 4.0, yStep - 4)
+        context.setFillColor(UIColor.secondarySystemBackground.cgColor)
+        context.fill(bounds)
+
+        let yStep = bounds.height / CGFloat(dotCount + 1)
+        let radius: CGFloat = DotSelectorImageView.kDotRadius
         let yStart = bounds.minY + yStep
         let sel = dotCount - selected - 1
         for i in 0 ..< dotCount {
             context.setFillColor(i == sel ? selectedColor : normalColor)
-            context.addArc(center: CGPoint(x: bounds.midX, y: yStart + yStep * CGFloat(i)), radius: radius + (i == sel ? 1 : 0), startAngle: 0, endAngle: .pi * 2, clockwise: true)
+            context.addArc(center: CGPoint(x: bounds.midX, y: yStart + yStep * CGFloat(i)), radius: radius + (i == sel ? 0.5 : 0), startAngle: 0, endAngle: .pi * 2, clockwise: true)
+            context.fillPath()
         }
 
         context.restoreGState()

@@ -849,9 +849,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         }
     }
     override func onMetaAux(aux: [String:JSONValue]) {
-        print("onMetaAux -->")
         guard let topic = topic else { return }
-        print("onMetaAux \(topic.pinned)")
         self.presenter?.displayPinnedMessages(pins: topic.pinned, selected: -1)
     }
 }
