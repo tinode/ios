@@ -39,6 +39,7 @@ class MessageViewController: UIViewController {
         static let kAvatarSize: CGFloat = 30
 
         static let kProgressViewHeight: CGFloat = 30
+        static let kPinnedMessagesViewHeight: CGFloat = 50
 
         // Size of delivery marker (checkmarks etc)
         static let kDeliveryMarkerSize: CGFloat = 16
@@ -160,14 +161,16 @@ class MessageViewController: UIViewController {
         let panel = PinnedMessagesView()
         panel.topicName = self.topicName
         self.view.addSubview(panel)
+        let navbar = self.navigationController?.navigationBar
 
-        let guide = self.view.safeAreaLayoutGuide
         panel.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            panel.bottomAnchor.constraint(equalTo: collectionView.topAnchor),
+            panel.heightAnchor.constraint(equalToConstant: Constants.kPinnedMessagesViewHeight),
+            panel.trailingAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.trailingAnchor),
+            panel.leadingAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.leadingAnchor)
+        ])
 
-        panel.trailingAnchor.constraint(equalTo: guide.trailingAnchor).isActive = true
-        panel.leadingAnchor.constraint(equalTo: guide.leadingAnchor).isActive = true
-        panel.topAnchor.constraint(equalTo: guide.topAnchor).isActive = true
-        panel.heightAnchor.constraint(equalToConstant: 50).isActive = true
         return panel
     }()
 
@@ -359,14 +362,16 @@ class MessageViewController: UIViewController {
         view.addSubview(collectionView)
         self.collectionView = collectionView
 
-        collectionView.addSubview(refreshControl)
+        collectionView.refreshControl = refreshControl
         refreshControl.addTarget(self, action: #selector(self.loadPreviousPage), for: .valueChanged)
 
         // Setup UICollectionView constraints: fill the screen
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         self.collectionViewBottomAnchor = collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -(inputAccessoryView?.frame.height ?? 0))
         NSLayoutConstraint.activate([
-            collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: Constants.kPinnedMessagesViewHeight),
+            // collectionView.topAnchor.constraint(equalTo: pinnedMessagesView.bottomAnchor),
+            // collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             self.collectionViewBottomAnchor,
             collectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
             collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor)
@@ -660,7 +665,6 @@ extension MessageViewController: MessageDisplayLogic {
     func updateTitleBar(pub: TheCard?, online: Bool?, deleted: Bool) {
         assert(Thread.isMainThread)
         self.navigationItem.title = pub?.fn ?? NSLocalizedString("Undefined", comment: "Undefined chat name")
-
         navBarAvatarView.set(pub: pub, id: topicName, online: online, deleted: deleted)
         navBarAvatarView.bounds = CGRect(x: 0, y: 0, width: Constants.kNavBarAvatarSmallState, height: Constants.kNavBarAvatarSmallState)
 

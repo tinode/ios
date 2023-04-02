@@ -57,6 +57,7 @@ class PinnedMessagesView: UIView {
                     guard let msg = topic.getMessage(byEffectiveSeq: seq) else { return }
                     if let promise = self.preparePreview(msg) {
                         let tv = UITextView()
+                        tv.isUserInteractionEnabled = false
                         tv.backgroundColor = .secondarySystemBackground
                         pages.append(tv)
                         promise.thenApply { [weak self] content in
