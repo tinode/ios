@@ -65,12 +65,12 @@ class MessageViewLayout: UICollectionViewFlowLayout {
 
         // Calculate and cache cell attributes.
         attrCellCache.removeAll(keepingCapacity: true)
-        var yOffset: CGFloat = 0 // collectionView.layoutMargins.top
         let leftMargin = collectionView.layoutMargins.left
         self.attrHeader = MessageViewLayoutAttributes(forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, with: IndexPath(item: 0, section: 0))
-        self.attrHeader.frame = CGRect(origin: CGPoint(), size: CGSize(width: 400, height: 50))
+        self.attrHeader.frame = CGRect(origin: CGPoint(), size: CGSize(width: 400, height: 50)) // collectionView.layoutMargins.top
         self.attrHeader.zIndex = 1
-        // yOffset += self.attrHeader.frame.maxY
+
+        var yOffset: CGFloat = self.attrHeader.frame.maxY
         for item in 0 ..< itemCount {
             let indexPath = IndexPath(item: item, section: 0)
             let cellAttr = MessageViewLayoutAttributes(forCellWith: indexPath)
