@@ -224,7 +224,7 @@ final class TinodiosUITests: XCTestCase {
             if let lastSeen = lastSeen {
                 desc.seen = LastSeen(when: lastSeen, ua: "dummy")
             }
-            result.meta = MsgServerMeta(id: id, topic: topic, ts: now, desc: desc, sub: nil, del: nil, tags: nil, cred: nil)
+            result.meta = MsgServerMeta(id: id, topic: topic, ts: now, desc: desc, sub: nil, del: nil, tags: nil, cred: nil»)
 
             return result
         }

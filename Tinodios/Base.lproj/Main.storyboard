@@ -126,7 +126,7 @@
                             <tableViewSection headerTitle="Tags (Content Discovery)" id="jal-tR-OpF">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" accessoryType="disclosureIndicator" indentationWidth="10" focusStyle="custom" textLabel="eHa-mE-ZbY" detailTextLabel="K7L-Uc-b68" imageView="iGu-Eb-fCF" style="IBUITableViewCellStyleSubtitle" id="Nl1-fA-AeA">
-                                        <rect key="frame" x="0.0" y="339.66666603088373" width="414" height="55.666667938232422"/>
+                                        <rect key="frame" x="0.0" y="339.66666603088379" width="414" height="55.666667938232422"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Nl1-fA-AeA" id="SiW-3F-rOw">
                                             <rect key="frame" x="0.0" y="0.0" width="383.66666666666669" height="55.666667938232422"/>
@@ -902,7 +902,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="groupTableViewBackgroundColor"/>
                         <view key="tableFooterView" contentMode="scaleToFill" id="CSz-pB-KzR" userLabel="Blank footer">
-                            <rect key="frame" x="0.0" y="680.00000762939464" width="414" height="44"/>
+                            <rect key="frame" x="0.0" y="680.00000762939453" width="414" height="44"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         </view>
@@ -3141,7 +3141,7 @@
                             <tableViewSection id="E2p-f7-Hof" userLabel="Manage tags">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="none" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" focusStyle="custom" textLabel="r8j-wT-BLF" detailTextLabel="Zdw-nR-1tB" imageView="Fh4-hd-jpY" rowHeight="54" style="IBUITableViewCellStyleSubtitle" id="43D-n4-gOk" userLabel="Manage Tags">
-                                        <rect key="frame" x="0.0" y="312.33333587646479" width="414" height="54"/>
+                                        <rect key="frame" x="0.0" y="312.33333587646484" width="414" height="54"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="43D-n4-gOk" id="7PK-OU-Xwy">
                                             <rect key="frame" x="0.0" y="0.0" width="383.66666666666669" height="54"/>
@@ -3934,7 +3934,7 @@
                             <tableViewSection headerTitle="Group Members" id="26s-2T-nI0">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="FeF-3T-sWp" imageView="i4w-uL-EcP" style="IBUITableViewCellStyleDefault" id="IF5-Bs-9cB" userLabel="Add Members">
-                                        <rect key="frame" x="0.0" y="468.99999999999994" width="414" height="50.000000000000057"/>
+                                        <rect key="frame" x="0.0" y="469" width="414" height="50"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="IF5-Bs-9cB" id="uqg-aO-L4d">
                                             <rect key="frame" x="0.0" y="0.0" width="383.66666666666669" height="50"/>

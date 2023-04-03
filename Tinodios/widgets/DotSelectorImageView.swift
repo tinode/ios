@@ -88,7 +88,7 @@ public class DotSelectorImageView: UIImageView {
         context.saveGState()
         context.clip(to: bounds)
 
-        context.setFillColor(UIColor.secondarySystemBackground.cgColor)
+        context.setFillColor(UIColor.systemBackground.cgColor)
         context.fill(bounds)
 
         let yStep = bounds.height / CGFloat(dotCount + 1)

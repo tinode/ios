@@ -57,10 +57,7 @@ public class PagerView: UIView, UICollectionViewDelegateFlowLayout, UICollection
     private lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
-        let collectionView = UICollectionView(
-            frame: .zero,
-            collectionViewLayout: layout
-        )
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.showsHorizontalScrollIndicator = false
         collectionView.isPagingEnabled = true
         collectionView.register(PagerViewCell.self, forCellWithReuseIdentifier: "PagerViewCell")

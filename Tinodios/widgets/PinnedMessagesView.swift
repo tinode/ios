@@ -58,7 +58,7 @@ class PinnedMessagesView: UIView {
                     if let promise = self.preparePreview(msg) {
                         let tv = UITextView()
                         tv.isUserInteractionEnabled = false
-                        tv.backgroundColor = .secondarySystemBackground
+                        tv.backgroundColor = .systemBackground
                         pages.append(tv)
                         promise.thenApply { [weak self] content in
                             guard let pmv = self else { return nil }
@@ -66,7 +66,6 @@ class PinnedMessagesView: UIView {
                             tv.attributedText = text
                             // Center text vertically.
                             let deadSpace = pmv.pagerView.bounds.height - tv.contentSize.height
-                            print("Dead space: \(deadSpace), bounds.height: \(pmv.pagerView.bounds.height), content.height: \(tv.contentSize.height)")
                             let inset = max(0, deadSpace/2)
                             tv.contentInset = UIEdgeInsets(top: inset, left: tv.contentInset.left, bottom: tv.contentInset.bottom, right: tv.contentInset.right)
                             return nil
