@@ -30,18 +30,6 @@ class MessageViewLayout: UICollectionViewFlowLayout {
         return collectionView.bounds.width - (insets.left + insets.right)
     }
 
-    // MARK: initializers.
-
-    override init() {
-        super.init()
-        self.sectionHeadersPinToVisibleBounds = true
-    }
-
-    required init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
-        self.sectionHeadersPinToVisibleBounds = true
-    }
-
     // MARK: overriden methods
 
     override class var layoutAttributesClass: AnyClass {
@@ -92,7 +80,7 @@ class MessageViewLayout: UICollectionViewFlowLayout {
         visibleAttributes.append(adjustHeaderAttributesIfNeeded(attrHeader))
 
         // Loop through the cache and look for items in the rect
-        for attr in attrCellCache[0...] {
+        for attr in attrCellCache {
             if attr.frame.intersects(rect) {
                 visibleAttributes.append(attr)
             }
