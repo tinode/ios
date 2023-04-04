@@ -73,6 +73,13 @@ extension MessageViewController: MessageDisplayLogic {
         collectionView.layoutIfNeeded()
     }
 
+    func reloadPinned(forSeq seq: Int) {
+        if self.pinnedMessageSeqs.contains(where: { $0 == seq }) {
+            collectionView.reloadSections(IndexSet(integer: 0))
+            collectionView.layoutIfNeeded()
+        }
+    }
+
     func setOnline(online: Bool?) {
         assert(Thread.isMainThread)
         navBarAvatarView.online = online

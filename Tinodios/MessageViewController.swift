@@ -20,6 +20,7 @@ protocol MessageDisplayLogic: AnyObject {
     func updateProgress(forMsgId msgId: Int64, progress: Float)
     func applyTopicPermissions(withError: Error?)
     func displayPinnedMessages(pins: [Int], selected: Int)
+    func reloadPinned(forSeq: Int)
     func endRefresh()
     func dismissVC()
     // Display or dismiss preview (e.g. reply preview) in the send message bar.

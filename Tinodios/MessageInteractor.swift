@@ -45,6 +45,7 @@ protocol MessageBusinessLogic: AnyObject {
     func createForwardedMessage(from original: Message?) -> PendingMessage?
     func prepareToForward(message: Drafty, forwardedFrom: String, preview: Drafty)
     func pinMessage(seqId: Int, pin: Bool)
+    func reloadPinned(forSeq: Int)
     var pendingMessage: PendingMessage? { get }
 }
 
@@ -332,6 +333,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         }
         var message = content
         var head: [String: JSONValue]? = nil
+        var editedSeq = 0
         if let pendingMsg = self.pendingMessage {
             // If we have a pending message, handle it.
             switch pendingMsg {
@@ -343,11 +345,15 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                 head = ["forwarded": .string(origin)]
             case .edit(_, _, let replaceSeq):
                 head = ["replace": .string(":" + String(replaceSeq))]
+                editedSeq = replaceSeq
             }
         }
         topic.publish(content: message, withExtraHeaders: head).then(
             onSuccess: { [weak self] _ in
                 self?.loadMessagesFromCache()
+                if editedSeq > 0 {
+                    self?.reloadPinned(forSeq: editedSeq)
+                }
                 return nil
             },
             onFailure: { err in
@@ -359,7 +365,9 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                         return nil
                     }
                 }
-                DispatchQueue.main.async { UiUtils.showToast(message: NSLocalizedString("Message not sent.", comment: "Toast notification")) }
+                DispatchQueue.main.async {
+                    UiUtils.showToast(message: NSLocalizedString("Message not sent.", comment: "Toast notification"))
+                }
                 return nil
             }
         ).thenFinally {
@@ -533,6 +541,10 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
 
     func pinMessage(seqId: Int, pin: Bool) {
         _ = self.topic?.pinMessage(seq: seqId, pin: pin)
+    }
+
+    func reloadPinned(forSeq seq: Int) {
+        self.presenter?.reloadPinned(forSeq: seq)
     }
 
     static private func existingInteractor(for topicName: String?) -> MessageInteractor? {
