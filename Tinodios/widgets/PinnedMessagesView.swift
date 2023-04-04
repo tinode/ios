@@ -71,6 +71,8 @@ class PinnedMessagesView: UICollectionReusableView {
                         let tv = UITextView()
                         tv.delegate = self
                         tv.backgroundColor = .systemBackground
+                        tv.autocorrectionType = .no
+                        tv.spellCheckingType = .no
                         pages.append(tv)
                         promise.thenApply { [weak self] content in
                             guard let pmv = self else { return nil }
