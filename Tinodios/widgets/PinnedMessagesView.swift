@@ -18,6 +18,7 @@ protocol PinnedMessagesDelegate: AnyObject {
 
 class PinnedMessagesView: UICollectionReusableView {
     private static let kCornerRadius:CGFloat = 25
+    private static let kPinnedCollectionHeight = MessageViewController.Constants.kPinnedMessagesViewHeight - 4
 
     @IBOutlet weak var dotSelectorView: DotSelectorImageView!
     @IBOutlet weak var pagerView: PagerView!
@@ -75,9 +76,10 @@ class PinnedMessagesView: UICollectionReusableView {
                             guard let pmv = self else { return nil }
                             let text = SendReplyFormatter(defaultAttributes: [:]).toAttributed(content!, fitIn: CGSize(width: pmv.pagerView.bounds.width, height: pmv.pagerView.bounds.height))
                             tv.attributedText = text
+                            tv.sizeToFit()
                             // Center text vertically.
-                            let inset = max(0, (pmv.pagerView.bounds.height - tv.contentSize.height)/4)
-                            tv.contentInset = UIEdgeInsets(top: inset, left: tv.contentInset.left, bottom: tv.contentInset.bottom, right: tv.contentInset.right)
+                            let topInset = max(0, (PinnedMessagesView.kPinnedCollectionHeight - tv.contentSize.height)/2)
+                            tv.contentInset = UIEdgeInsets(top: topInset, left: tv.contentInset.left, bottom: tv.contentInset.bottom, right: tv.contentInset.right)
                             return nil
                         }
                     }
