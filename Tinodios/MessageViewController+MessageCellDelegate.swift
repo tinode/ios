@@ -434,7 +434,7 @@ extension MessageViewController: MessageCellDelegate {
             // after the view scrolls the cell into the viewport.
             self.highlightCellAtPathAfterScroll = path
         }
-        self.collectionView.scrollToItem(at: path, at: .top, animated: true)
+        self.collectionView.scrollToItem(at: path, at: .centeredVertically, animated: true)
     }
 }
 
