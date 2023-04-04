@@ -317,6 +317,9 @@
 /* Label shown next to an inline image */
 "Picture" = "照片";
 
+/* Menu item for pinning message */
+"Pin" = "固定";
+
 /* Error message */
 "Playback failed" = "播放失败";
 
@@ -421,6 +424,9 @@
 
 /* Displayed when the type of attachment cannot be determined */
 "Unknown type" = "未知类型";
+
+/* Menu item for un-pinning message */
+"Unpin" = "取消固定";
 
 /* Label shown next to an unsupported Drafty format element
    Unsupported (unknown) Drafty tag */
