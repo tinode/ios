@@ -63,15 +63,14 @@ extension MessageViewController: MessageDisplayLogic {
 
     func displayPinnedMessages(pins: [Int], selected: Int) {
         assert(Thread.isMainThread)
-        if pins.isEmpty {
-            print("displayPinnedMessages -- empty \(pins)")
-            pinnedMessagesView.isHidden = true
-        } else {
-            print("Shown \(pins)")
-            pinnedMessagesView.topicName = self.topicName
-            pinnedMessagesView.pins = pins
-            pinnedMessagesView.isHidden = true // = false; DEBUG
+        guard collectionView != nil else { return }
+
+        self.pinnedMessageSeqs = pins
+        if selected >= 0 && selected < pins.count {
+            self.pinnedSelectionIndex = selected
         }
+        collectionView.reloadSections(IndexSet(integer: 0))
+        collectionView.layoutIfNeeded()
     }
 
     func setOnline(online: Bool?) {

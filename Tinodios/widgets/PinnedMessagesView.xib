@@ -32,7 +32,7 @@
                 </button>
                 <view userInteractionEnabled="NO" contentMode="scaleAspectFit" translatesAutoresizingMaskIntoConstraints="NO" id="fKR-5v-8cl" userLabel="Page Indicator" customClass="DotSelectorImageView" customModule="Tinodios" customModuleProvider="target">
                     <rect key="frame" x="41.666666666666664" y="2" width="23.999999999999993" height="61"/>
-                    <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
                     <accessibility key="accessibilityConfiguration">
                         <accessibilityTraits key="traits" notEnabled="YES"/>
                     </accessibility>
@@ -42,10 +42,10 @@
                 </view>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="jVo-2x-tyr" customClass="PagerView" customModule="Tinodios" customModuleProvider="target">
                     <rect key="frame" x="65.666666666666657" y="2" width="353.33333333333337" height="61"/>
-                    <color key="backgroundColor" systemColor="secondarySystemFillColor"/>
+                    <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
                 </view>
             </subviews>
-            <color key="backgroundColor" systemColor="secondarySystemFillColor"/>
+            <color key="backgroundColor" systemColor="secondarySystemBackgroundColor"/>
             <constraints>
                 <constraint firstItem="jVo-2x-tyr" firstAttribute="leading" secondItem="fKR-5v-8cl" secondAttribute="trailing" id="1wc-QN-fub"/>
                 <constraint firstItem="Q3g-pt-nlo" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="8" id="33a-ho-dfa"/>
@@ -63,11 +63,8 @@
     </objects>
     <resources>
         <image name="xmark.circle" catalog="system" width="128" height="123"/>
-        <systemColor name="secondarySystemFillColor">
-            <color red="0.47058823529411764" green="0.47058823529411764" blue="0.50196078431372548" alpha="0.16" colorSpace="custom" customColorSpace="sRGB"/>
-        </systemColor>
-        <systemColor name="systemBackgroundColor">
-            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        <systemColor name="secondarySystemBackgroundColor">
+            <color red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>

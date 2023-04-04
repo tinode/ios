@@ -8,7 +8,7 @@
 import UIKit
 import TinodeSDK
 
-class PinnedMessagesView: UIView {
+class PinnedMessagesView: UICollectionReusableView {
     private static let kCornerRadius:CGFloat = 20
 
     @IBOutlet weak var dotSelectorView: DotSelectorImageView!
@@ -43,6 +43,7 @@ class PinnedMessagesView: UIView {
     }
 
     @IBAction func unpinMessageClick(_ sender: Any) {
+        print("Unpin message seq=\(pins[selectedPage])")
     }
 
     public var topicName: String?

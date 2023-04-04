@@ -164,24 +164,6 @@ class MessageViewController: UIViewController {
             style: .plain, target: self, action: #selector(navBarCallTapped(sender:)))
     }()
 
-    /// Pinned messages view.
-    lazy var pinnedMessagesView: PinnedMessagesView = {
-        let panel = PinnedMessagesView()
-        panel.topicName = self.topicName
-        self.view.addSubview(panel)
-        let navbar = self.navigationController?.navigationBar
-
-        panel.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            panel.bottomAnchor.constraint(equalTo: collectionView.topAnchor),
-            panel.heightAnchor.constraint(equalToConstant: Constants.kPinnedMessagesViewHeight),
-            panel.trailingAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.trailingAnchor),
-            panel.leadingAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.leadingAnchor)
-        ])
-
-        return panel
-    }()
-
     /// Pointer to the view holding messages.
     weak var collectionView: MessageView!
     private var collectionViewBottomAnchor: NSLayoutConstraint!
@@ -219,6 +201,10 @@ class MessageViewController: UIViewController {
     var messageSeqIdIndex: [Int: Int] = [:]
     // * Database message id -> message offset.
     var messageDbIdIndex: [Int64: Int] = [:]
+
+    // Pinned messages.
+    var pinnedMessageSeqs: [Int] = []
+    var pinnedSelectionIndex: Int = 0
 
     var isInitialLayout = true
 
@@ -374,8 +360,6 @@ class MessageViewController: UIViewController {
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         self.collectionViewBottomAnchor = collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -(inputAccessoryView?.frame.height ?? 0))
         NSLayoutConstraint.activate([
-            //collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: Constants.kPinnedMessagesViewHeight),
-            // collectionView.topAnchor.constraint(equalTo: pinnedMessagesView.bottomAnchor),
             collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             self.collectionViewBottomAnchor,
             collectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
@@ -647,6 +631,21 @@ extension MessageViewController: UICollectionViewDataSource {
         return messages.count
     }
 
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        if kind == UICollectionView.elementKindSectionHeader {
+            let sectionHeader = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: String(describing: PinnedMessagesView.self), for: indexPath) as! PinnedMessagesView
+
+            // Configure header.
+            sectionHeader.topicName = self.topicName
+            sectionHeader.pins = self.pinnedMessageSeqs
+            sectionHeader.selected = 0
+
+            return sectionHeader
+        }
+
+        return UICollectionReusableView()
+    }
+
     // Configure message cell for the given index: fill data and lay out subviews.
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
 
@@ -695,18 +694,6 @@ extension MessageViewController: UICollectionViewDataSource {
         bubbleDecorator(for: message, at: indexPath)(cell.containerView)
 
         return cell
-    }
-
-    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        print("Header requested \(kind) == \(UICollectionView.elementKindSectionHeader)")
-        if kind == UICollectionView.elementKindSectionHeader {
-            print("Dequeing section header")
-             let sectionHeader = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: String(describing: TempSectionHeader.self), for: indexPath) as! TempSectionHeader
-             sectionHeader.label.text = "This is a section header"
-             return sectionHeader
-        }
-
-        return UICollectionReusableView()
     }
 
     private func configureCell(cell: MessageCell, with message: Message, at indexPath: IndexPath) {
@@ -890,6 +877,19 @@ extension MessageViewController: MessageViewLayoutDelegate {
 
     // Claculate positions and sizes of all subviews in a cell.
     func collectionView(_ collectionView: UICollectionView, fillAttributes attr: MessageViewLayoutAttributes) {
+        if attr.representedElementCategory == .supplementaryView {
+            // Request for pinned area attributes (section header).
+            let height: CGFloat = self.pinnedMessageSeqs.isEmpty ? 0 : Constants.kPinnedMessagesViewHeight
+            attr.frame = CGRect(origin: CGPoint(), size: CGSize(width: collectionView.frame.width - collectionView.layoutMargins.left - collectionView.layoutMargins.right, height: height))
+            attr.zIndex = 1
+            return
+        } else if attr.representedElementCategory == .decorationView {
+            // This should not happen.
+            return
+        }
+
+        // Fill out attributes for a regular message bubble.
+
         let indexPath = attr.indexPath
 
         // Cell content
@@ -995,7 +995,6 @@ extension MessageViewController: MessageViewLayoutDelegate {
         let showProgress = shouldShowProgressBar(for: message)
         let containerHeight = calcContainerSize(for: message, avatarsVisible: hasAvatars, progressVisible: showProgress).height
         let size = CGSize(width: calcCellWidth(), height: calcCellHeightFromContent(for: message, at: indexPath, containerHeight: containerHeight, avatarsVisible: hasAvatars, progressVisible: showProgress))
-        // cellSizeCache[indexPath.item] = size
         return size
     }
 

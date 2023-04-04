@@ -26,7 +26,7 @@ class MessageView: UICollectionView {
 
         // Reusable message cells
         register(MessageCell.self, forCellWithReuseIdentifier: String(describing: MessageCell.self))
-        register(TempSectionHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: String(describing: TempSectionHeader.self))
+        register(PinnedMessagesView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: String(describing: PinnedMessagesView.self))
 
         // Gesture recognizer: short tap, long tap.
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTapGesture(_:)))

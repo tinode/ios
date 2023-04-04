@@ -67,8 +67,7 @@ class MessageViewLayout: UICollectionViewFlowLayout {
         attrCellCache.removeAll(keepingCapacity: true)
         let leftMargin = collectionView.layoutMargins.left
         self.attrHeader = MessageViewLayoutAttributes(forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, with: IndexPath(item: 0, section: 0))
-        self.attrHeader.frame = CGRect(origin: CGPoint(), size: CGSize(width: 400, height: 50)) // collectionView.layoutMargins.top
-        self.attrHeader.zIndex = 1
+        delegate.collectionView(collectionView, fillAttributes: self.attrHeader)
 
         var yOffset: CGFloat = self.attrHeader.frame.maxY
         for item in 0 ..< itemCount {
