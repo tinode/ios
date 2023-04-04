@@ -8,11 +8,21 @@
 import UIKit
 import TinodeSDK
 
+/// A protocol used to detect taps in the pinned messages carusel.
+protocol PinnedMessagesDelegate: AnyObject {
+    /// Tap on Cancel button.
+    func didTapCancel(seq: Int)
+    /// Tap on the message.
+    func didTapMessage(seq: Int)
+}
+
 class PinnedMessagesView: UICollectionReusableView {
-    private static let kCornerRadius:CGFloat = 20
+    private static let kCornerRadius:CGFloat = 25
 
     @IBOutlet weak var dotSelectorView: DotSelectorImageView!
     @IBOutlet weak var pagerView: PagerView!
+
+    public var delegate: PinnedMessagesDelegate?
 
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
@@ -43,7 +53,7 @@ class PinnedMessagesView: UICollectionReusableView {
     }
 
     @IBAction func unpinMessageClick(_ sender: Any) {
-        print("Unpin message seq=\(pins[selectedPage])")
+        delegate?.didTapCancel(seq: pins[selectedPage])
     }
 
     public var topicName: String?
@@ -58,7 +68,7 @@ class PinnedMessagesView: UICollectionReusableView {
                     guard let msg = topic.getMessage(byEffectiveSeq: seq) else { return }
                     if let promise = self.preparePreview(msg) {
                         let tv = UITextView()
-                        tv.isUserInteractionEnabled = false
+                        tv.delegate = self
                         tv.backgroundColor = .systemBackground
                         pages.append(tv)
                         promise.thenApply { [weak self] content in
@@ -66,8 +76,7 @@ class PinnedMessagesView: UICollectionReusableView {
                             let text = SendReplyFormatter(defaultAttributes: [:]).toAttributed(content!, fitIn: CGSize(width: pmv.pagerView.bounds.width, height: pmv.pagerView.bounds.height))
                             tv.attributedText = text
                             // Center text vertically.
-                            let deadSpace = pmv.pagerView.bounds.height - tv.contentSize.height
-                            let inset = max(0, deadSpace/2)
+                            let inset = max(0, (pmv.pagerView.bounds.height - tv.contentSize.height)/4)
                             tv.contentInset = UIEdgeInsets(top: inset, left: tv.contentInset.left, bottom: tv.contentInset.bottom, right: tv.contentInset.right)
                             return nil
                         }
@@ -110,5 +119,18 @@ class PinnedMessagesView: UICollectionReusableView {
 extension PinnedMessagesView: PagerViewDelegate {
     func didSelectPage(index: Int) {
         dotSelectorView.selected = index
+    }
+}
+
+extension PinnedMessagesView: UITextViewDelegate {
+    func textViewShouldBeginEditing(_ textView: UITextView) -> Bool {
+        UIView.animate(withDuration: 0.2, delay: 0, options: .curveLinear, animations: {
+            textView.backgroundColor = .secondarySystemBackground
+        }, completion: { _ in
+            textView.backgroundColor = .systemBackground
+        })
+
+        delegate?.didTapMessage(seq: pins[selectedPage])
+        return false
     }
 }

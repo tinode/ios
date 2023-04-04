@@ -622,7 +622,6 @@ class MessageViewController: UIViewController {
 extension MessageViewController: UICollectionViewDataSource {
 
     func numberOfSections(in: UICollectionView) -> Int {
-        print("numberOfSections")
         return 1
     }
 
@@ -636,9 +635,15 @@ extension MessageViewController: UICollectionViewDataSource {
             let sectionHeader = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: String(describing: PinnedMessagesView.self), for: indexPath) as! PinnedMessagesView
 
             // Configure header.
-            sectionHeader.topicName = self.topicName
-            sectionHeader.pins = self.pinnedMessageSeqs
-            sectionHeader.selected = 0
+            if self.pinnedMessageSeqs.isEmpty {
+                sectionHeader.isHidden = true
+            } else {
+                sectionHeader.delegate = self
+                sectionHeader.topicName = self.topicName
+                sectionHeader.pins = self.pinnedMessageSeqs
+                sectionHeader.selected = 0
+                sectionHeader.isHidden = false
+            }
 
             return sectionHeader
         }
@@ -1136,11 +1141,3 @@ extension MessageViewController: UICollectionViewDelegate {
         cell.highlightAnimated(withDuration: 4.0)
     }
 }
-
-extension MessageViewController: UICollectionViewDelegateFlowLayout {
-    public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        print("Header size requested")
-        return CGSize(width: collectionView.frame.width, height: 50)
-    }
-}
-

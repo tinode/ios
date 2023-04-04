@@ -419,9 +419,13 @@ extension MessageViewController: MessageCellDelegate {
 
     func handleQuoteClick(in cell: MessageCell) {
         guard let index = messageSeqIdIndex[cell.seqId] else { return }
-        let msg = messages[index]
-        guard let seqId = Int(msg.head?["reply"]?.asString() ?? ""), let itemIdx = messageSeqIdIndex[seqId] else { return }
-        let path = IndexPath(item: itemIdx, section: 0)
+        guard let seqId = Int(messages[index].head?["reply"]?.asString() ?? "") else { return }
+        flashMessage(seqId: seqId)
+    }
+
+    func flashMessage(seqId: Int) {
+        guard let index = messageSeqIdIndex[seqId] else { return }
+        let path = IndexPath(item: index, section: 0)
         if let cell = collectionView.cellForItem(at: path) as? MessageCell {
             // If the cell is already visible.
             cell.highlightAnimated(withDuration: 4.0)
@@ -431,5 +435,17 @@ extension MessageViewController: MessageCellDelegate {
             self.highlightCellAtPathAfterScroll = path
         }
         self.collectionView.scrollToItem(at: path, at: .top, animated: true)
+    }
+}
+
+extension MessageViewController: PinnedMessagesDelegate {
+    /// Tap on Cancel button.
+    func didTapCancel(seq: Int) {
+        self.interactor?.pinMessage(seqId: seq, pin: false)
+    }
+
+    /// Tap on the message.
+    func didTapMessage(seq: Int) {
+        flashMessage(seqId: seq)
     }
 }

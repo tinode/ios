@@ -44,6 +44,7 @@ protocol MessageBusinessLogic: AnyObject {
 
     func createForwardedMessage(from original: Message?) -> PendingMessage?
     func prepareToForward(message: Drafty, forwardedFrom: String, preview: Drafty)
+    func pinMessage(seqId: Int, pin: Bool)
     var pendingMessage: PendingMessage? { get }
 }
 
@@ -163,7 +164,6 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         }
 
         if let pins = topic?.pinned {
-            print("Calling presenter with pins \(pins)")
             self.presenter?.displayPinnedMessages(pins: pins, selected: 0)
         }
 
@@ -529,6 +529,10 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
             .thenFinally({
                 self.presenter?.dismiss()
             })
+    }
+
+    func pinMessage(seqId: Int, pin: Bool) {
+        _ = self.topic?.pinMessage(seq: seqId, pin: pin)
     }
 
     static private func existingInteractor(for topicName: String?) -> MessageInteractor? {

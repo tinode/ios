@@ -46,7 +46,6 @@ class MessagePresenter: MessagePresentationLogic {
     }
     func displayPinnedMessages(pins: [Int], selected: Int) {
         DispatchQueue.main.async {
-            print("Calling controller with pins \(pins)")
             self.viewController?.displayPinnedMessages(pins: pins, selected: selected)
         }
     }
