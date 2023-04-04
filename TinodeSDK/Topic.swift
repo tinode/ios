@@ -743,6 +743,10 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
             self.update(tags: tags)
             self.listener?.onMetaTags(tags: tags)
         }
+        if let aux = meta.aux {
+            self.update(aux: aux)
+            self.listener?.onMetaAux(aux: aux)
+        }
     }
     internal func update(acsMap: [String: String]?, sub: MetaSetSub) {
         var user = sub.user
