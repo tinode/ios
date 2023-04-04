@@ -121,6 +121,7 @@ class PinnedMessagesView: UICollectionReusableView {
 extension PinnedMessagesView: PagerViewDelegate {
     func didSelectPage(index: Int) {
         dotSelectorView.selected = index
+        self.selectedPage = index
     }
 }
 
