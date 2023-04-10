@@ -219,19 +219,31 @@ extension NewGroupViewController: EditMembersDelegate {
     func editMembersDidEndEditing(_: UIView, added: [String], removed: [String]) {
         selectedUids.formUnion(added)
         selectedUids.subtract(removed)
+        var success = true
         // A simple tableView.reloadData() results in a crash. Thus doing this crazy stuff.
         let removedPaths = removed.map({(rem: String) -> IndexPath in
-            let row = selectedContacts.firstIndex(where: { h in h.uniqueId == rem })
-            assert(row != nil, "Removed non-existent user")
-            return IndexPath(row: row! + 1, section: 1)
+            if let row = selectedContacts.firstIndex(where: { h in h.uniqueId == rem }) {
+                return IndexPath(row: row + 1, section: 1)
+            } else {
+                success = false
+                UiUtils.showToast(message: "Removed non-existent user.")
+                return IndexPath(row: -1, section: 1)
+            }
         })
+        guard success else { return }
         let newSelection = ContactsManager.default.fetchContacts(withUids: selectedMembers) ?? []
         let addedPaths = added.map({(add: String) -> IndexPath in
-            let row = newSelection.firstIndex(where: { h in h.uniqueId == add })
-            assert(row != nil, "Added non-existent user")
-            return IndexPath(row: row! + 1, section: 1)
+            if let row = newSelection.firstIndex(where: { h in h.uniqueId == add }) {
+                return IndexPath(row: row + 1, section: 1)
+            } else {
+                UiUtils.showToast(message: "Added non-existent user")
+                return IndexPath(row: -1, section: 1)
+            }
         })
-        assert(selectedUids.count == newSelection.count)
+        guard success && selectedUids.count == newSelection.count else {
+            UiUtils.showToast(message: "Invalid member selection. Try again.")
+            return
+        }
 
         tableView.beginUpdates()
         selectedContacts = newSelection
