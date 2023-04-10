@@ -685,7 +685,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
                     dg.leave()
                 })
 
-            dg.notify(queue: .main) { [weak self] in
+            dg.notify(queue: DispatchQueue.global(qos: .userInteractive)) { [weak self] in
                 let serverMessage = attachmentResult.result
                 let error = attachmentResult.error
                 let interactor = self ?? MessageInteractor.existingInteractor(for: topic.name)
