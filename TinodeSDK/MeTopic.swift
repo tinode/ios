@@ -231,7 +231,7 @@ open class MeTopic<DP: Codable & Mergeable>: Topic<DP, PrivateType, DP, PrivateT
             case .kUpd: // pub/priv updated
                 getMeta(query: metaGetBuilder().withSub(user: pres.src).build())
             case .kAcs: // access mode changed
-                if topic.updateAccessMode(ac: pres.dacs) {
+                if pres.tgt == nil && topic.updateAccessMode(ac: pres.dacs) {
                     self.store?.topicUpdate(topic: topic)
                 }
             case .kUa: // user agent changed
