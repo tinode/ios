@@ -90,6 +90,10 @@ class MessageViewLayout: UICollectionViewFlowLayout {
     }
 
     override func layoutAttributesForItem(at indexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
+        if attrCellCache.count <= indexPath.item {
+            // FIXME: It should not happen. This is some kind of data race which I'm unable to catch.
+            return nil
+        }
         return attrCellCache[indexPath.item]
     }
 
