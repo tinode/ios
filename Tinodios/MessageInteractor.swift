@@ -418,22 +418,34 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
 
     // Browsing backwards: load page from cache amd maybe from server.
     func loadPreviousPage() {
+        print("loadPreviousPage 1")
         guard let t = self.topic else {
             self.presenter?.endRefresh()
             return
         }
 
+        print("loadPreviousPage 2")
         let firstSeqId = self.messages.first?.seqId ?? Int.max
         if firstSeqId <= 1 {
             self.presenter?.endRefresh()
             return
         }
 
+        print("loadPreviousPage 3")
         if self.messages.count <= self.pagesToLoad * MessageInteractor.kMessagesPerPage {
             self.pagesToLoad += 1
         }
 
+
         self.messageInteractorQueue.async {
+            print("loadPreviousPage 4")
+            if let missing = t.missingMessageRanges(startFrom: firstSeqId, pageSize: MessageInteractor.kMessagesPerPage, newer: false), !missing.isEmpty {
+                // Found missing ranges.
+                print("Missing ranges: \(missing)")
+                self.presenter?.endRefresh()
+                return
+            }
+
             t.loadMessagePage(startWithSeq: firstSeqId, pageSize: MessageInteractor.kMessagesPerPage, forward: false, onLoaded: { [weak self] (messagePage, error) in
                 self?.presenter?.endRefresh()
                 if let err = error {

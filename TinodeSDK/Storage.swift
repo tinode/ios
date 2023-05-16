@@ -249,10 +249,16 @@ public protocol Storage: AnyObject {
     // Get seq IDs of the stored messages as a Range.
     func getCachedMessagesRange(topic: TopicProto) -> MsgRange?
 
-    // Get the maximum seq ID range of the messages missing in cache,
-    // inclusive-exclusive [low, hi).
-    // Returns null if all messages are present or no messages are found.
-    func getNextMissingRange(topic: TopicProto) -> MsgRange?
+    /// Returns message ranges present in DB.
+    /// - Parameters:
+    ///  - topic topic to query.
+    ///  - ranges message ranges to test for presence in the local cache.
+    /// - Returns message ranges which are present in the local cache.
+    func msgIsCached(topic: TopicProto, ranges: [MsgRange]) -> [MsgRange]
+
+    // Get the ranges of the messages missing in cache, inclusive-exclusive [low, hi).
+    // Returns empty array if all messages are present or no messages are found.
+    func getMissingRanges(topic: TopicProto, startFrom: Int, pageSize: Int, newer: Bool) -> [MsgRange]
 
     // Retrieves a single message by database id.
     func getMessageById(dbMessageId: Int64) -> Message?

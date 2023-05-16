@@ -2,14 +2,14 @@
 //  MsgRange.swift
 //  TinodeSDK
 //
-//  Copyright © 2019 Tinode. All rights reserved.
+//  Copyright © 2019-2023 Tinode LLC. All rights reserved.
 //
 
 import Foundation
 
 // Represents a contiguous range of message sequence ids:
 // inclusive on the left - exclusive on the right.
-public class MsgRange: Codable {
+public class MsgRange: Codable, Comparable {
     public var low: Int
     public var hi: Int?
     public var lower: Int { return low }
@@ -32,12 +32,16 @@ public class MsgRange: Codable {
         self.hi = another.hi
     }
 
-    private static func cmp(_ val1: Int?, _ val2: Int?) -> Int {
-        return (val1 ?? 0) - (val2 ?? 0)
+    public static func == (lhs: MsgRange, rhs: MsgRange) -> Bool {
+        return lhs.lower == rhs.lower && lhs.upper == rhs.upper
     }
-    public func compare(to other: MsgRange) -> Int {
-        let rl = MsgRange.cmp(self.low, other.low)
-        return rl == 0 ? MsgRange.cmp(other.hi, self.hi) : rl
+
+    public static func < (lhs: MsgRange, rhs: MsgRange) -> Bool {
+        var diff = lhs.low - rhs.low
+        if diff == 0 {
+            diff = rhs.upper - lhs.upper
+        }
+        return diff < 0
     }
 
     // Attempts to extend current range with id.
@@ -67,7 +71,7 @@ public class MsgRange: Codable {
         }
     }
 
-    public static func listToRanges(_ list: [Int]) -> [MsgRange]? {
+    public static func toRanges(_ list: [Int]) -> [MsgRange]? {
         guard !list.isEmpty else { return nil }
         let slist = list.sorted()
         var result: [MsgRange] = []
@@ -86,11 +90,10 @@ public class MsgRange: Codable {
     }
 
     /**
-     * Collapse multiple possibly overlapping ranges into as few ranges non-overlapping
+     * Collapse multiple possibly overlapping ranges into as few non-overlapping
      * ranges as possible: [1..6],[2..4],[5..7] -> [1..7].
      *
      * The input array of ranges must be sorted.
-     *
      * @param ranges ranges to collapse
      * @return non-overlapping ranges.
      */
@@ -99,7 +102,7 @@ public class MsgRange: Codable {
 
         var result = [MsgRange(from: ranges[0])]
         for i in 1..<ranges.count {
-            if MsgRange.cmp(result.last!.low, ranges[i].low) == 0 {
+            if result.last!.lower == ranges[i].lower {
                 // Same starting point.
 
                 // Earlier range is guaranteed to be wider or equal to the later range,
@@ -136,5 +139,53 @@ public class MsgRange: Codable {
             first.hi = first.upper
         }
         return first
+    }
+
+    /**
+     * Find gaps in the given array of non-overlapping ranges. The input must be sorted and overlaps removed.
+     */
+    public static func gaps(ranges: [MsgRange]) -> [MsgRange] {
+        guard ranges.count >= 2 else { return [] }
+
+        var gaps: [MsgRange] = []
+
+        for i in 1..<ranges.count {
+            if ranges[i-1].upper < ranges[i].lower {
+                // Gap found
+                gaps.append(MsgRange(low: ranges[i-1].upper, hi: ranges[i].lower))
+            }
+        }
+
+        return gaps
+    }
+
+    /**
+     * Cut 'clip' range out of the 'src' range.
+     *
+     * @param src source range to subtract from.
+     * @param clip range to subtract.
+     * @return array with 0, 1 or 2 elements.
+     */
+    public static func clip(src: MsgRange, clip: MsgRange) -> [MsgRange] {
+        guard clip.upper >= src.lower && clip.lower < src.upper else {
+            // Clip is completely outside of src, no intersection.
+            return [src]
+        }
+
+        if clip.low <= src.low {
+            if clip.upper >= src.upper {
+                // The source range is completely inside the clipping range.
+                return []
+            }
+            // Partial clipping at the top.
+            return [MsgRange(low: src.lower, hi: clip.upper)]
+        }
+
+        // Range on the lower end.
+        let lower = MsgRange(low: src.lower, hi: clip.lower)
+        if clip.upper < src.upper {
+            return [lower, MsgRange(low: clip.upper, hi: src.upper)];
+        }
+        return [lower]
     }
 }
