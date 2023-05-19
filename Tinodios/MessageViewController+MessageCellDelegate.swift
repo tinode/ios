@@ -420,10 +420,10 @@ extension MessageViewController: MessageCellDelegate {
     func handleQuoteClick(in cell: MessageCell) {
         guard let index = messageSeqIdIndex[cell.seqId] else { return }
         guard let seqId = Int(messages[index].head?["reply"]?.asString() ?? "") else { return }
-        flashMessage(seqId: seqId)
+        scrollToAndAnimate(seqId: seqId)
     }
 
-    func flashMessage(seqId: Int) {
+    func scrollToAndAnimate(seqId: Int) {
         guard let index = messageSeqIdIndex[seqId] else { return }
         let path = IndexPath(item: index, section: 0)
         if let cell = collectionView.cellForItem(at: path) as? MessageCell {
@@ -446,6 +446,6 @@ extension MessageViewController: PinnedMessagesDelegate {
 
     /// Tap on the message.
     func didTapMessage(seq: Int) {
-        flashMessage(seqId: seq)
+        scrollToAndAnimate(seqId: seq)
     }
 }
