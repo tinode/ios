@@ -545,13 +545,12 @@ public class MessageDb {
         }
     }
 
-    /**
-     * Using provided <code>ranges</code>, find those which are present in the database.
-     *
-     * @param topicId Tinode topic ID (topics._id) to select from;
-     * @param ranges ranges to search for presence in the DB.
-     * @return ranges of missing IDs present in the database.
-     */
+    /// Using provided `ranges`, find those which are present in the database.
+    ///
+    /// - Parameters:
+    ///  - topicId Tinode topic ID (topics._id) to select from;
+    ///  - ranges ranges to search for presence in the DB.
+    /// - Returns ranges of missing IDs present in the database.
     func getCachedRanges(topicId: Int64?, ranges: [MsgRange]) -> [MsgRange] {
         var constr: Expression<Bool?> = Expression(value: false)
         for r in ranges {
@@ -589,15 +588,14 @@ public class MessageDb {
         }
     }
 
-    /**
-     * Find the ranges of messages missing from the DB.
-     *
-     * @param topicId Tinode topic ID (topics._id) to select from;
-     * @param startFrom seq ID to search from (exclusive).
-     * @param pageSize maximum number of messages to cover by the ranges.
-     * @param newer if <code>true</code>, find newer messages, otherwise older.
-     * @return range of missing IDs if found, null if either all messages are present or no messages are found.
-     */
+    /// Find the ranges of messages missing from the DB.
+    ///
+    /// - Parameters:
+    ///  - topicId Tinode topic ID (topics._id) to select from;
+    ///  - startFrom seq ID to search from (exclusive).
+    ///  - pageSize maximum number of messages to cover by the ranges.
+    ///  - newer if `true`, find newer messages, otherwise older.
+    /// - Returns: range of missing IDs if found, null if either all messages are present or no messages are found.
     func getMissingRanges(topicId: Int64?, startFrom: Int, pageSize: Int, newer: Bool) -> [MsgRange] {
         let constr = newer ? ((self.high ?? (self.seq + 1))>startFrom) : ((self.high ?? (self.seq + 1))<startFrom)
         var query = self.table

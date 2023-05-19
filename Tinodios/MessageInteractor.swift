@@ -880,4 +880,38 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         guard let topic = topic else { return }
         self.presenter?.displayPinnedMessages(pins: topic.pinned, selected: -1)
     }
+
+    override func onAllMessagesReceived(count: Int) {
+        guard let topic = topic else { return }
+
+        // Make sure all pinned messages are cached.
+        guard let pinsArray = MsgRange.toRanges(topic.pinned) else { return }
+        let found = BaseDb.sharedInstance.sqlStore?.msgIsCached(topic: topic, ranges: pinsArray) ?? []
+        var missing: [MsgRange] = []
+        if found.count <= topic.pinned.count {
+            missing = pinsArray
+            for f in found {
+                var tmp: [MsgRange] = []
+                for pin in missing {
+                    let p = MsgRange(from: pin)
+                    let clipped = MsgRange.clip(src: p, clip: f)
+                    if !clipped.isEmpty {
+                        tmp.append(clipped[0])
+                        if clipped.count > 1 {
+                            tmp.append(clipped[1])
+                        }
+                    }
+                }
+
+                missing = tmp
+                if missing.isEmpty {
+                    break
+                }
+            }
+        }
+
+        if !missing.isEmpty {
+            topic.getMeta(query: topic.metaGetBuilder().withData(ranges: missing, limit: MessageInteractor.kMessagesPerPage).build())
+        }
+    }
 }

@@ -89,14 +89,13 @@ public class MsgRange: Codable, Comparable {
         return result
     }
 
-    /**
-     * Collapse multiple possibly overlapping ranges into as few non-overlapping
-     * ranges as possible: [1..6],[2..4],[5..7] -> [1..7].
-     *
-     * The input array of ranges must be sorted.
-     * @param ranges ranges to collapse
-     * @return non-overlapping ranges.
-     */
+    /// Collapse multiple possibly overlapping ranges into as few non-overlapping
+    /// ranges as possible: [1..6],[2..4],[5..7] -> [1..7].
+    /// The input array of ranges must be sorted.
+    ///
+    /// - Parameters:
+    ///  - ranges ranges to collapse
+    /// - Returns array of non-overlapping ranges.
     public static func collapse(_ ranges: [MsgRange]) -> [MsgRange] {
         guard ranges.count > 1 else { return ranges }
 
@@ -127,9 +126,7 @@ public class MsgRange: Codable, Comparable {
         }
         return result
     }
-    /**
-     * Get maximum enclosing range. The input array must be sorted.
-     */
+    /// Get maximum enclosing range. The input array must be sorted.
     public static func enclosing(for ranges: [MsgRange]?) -> MsgRange? {
         guard let ranges = ranges, !ranges.isEmpty else { return nil }
         let first = MsgRange(from: ranges[0])
@@ -141,9 +138,8 @@ public class MsgRange: Codable, Comparable {
         return first
     }
 
-    /**
-     * Find gaps in the given array of non-overlapping ranges. The input must be sorted and overlaps removed.
-     */
+    /// Find gaps in the given array of non-overlapping ranges.
+    /// The input must be sorted and overlaps removed.
     public static func gaps(ranges: [MsgRange]) -> [MsgRange] {
         guard ranges.count >= 2 else { return [] }
 
@@ -159,13 +155,12 @@ public class MsgRange: Codable, Comparable {
         return gaps
     }
 
-    /**
-     * Cut 'clip' range out of the 'src' range.
-     *
-     * @param src source range to subtract from.
-     * @param clip range to subtract.
-     * @return array with 0, 1 or 2 elements.
-     */
+    /// Cut 'clip' range out of the 'src' range.
+    ///
+    /// - Parameters:
+    ///  - src source range to subtract from.
+    ///  - clip range to subtract.
+    /// - Returns array with 0, 1 or 2 elements.
     public static func clip(src: MsgRange, clip: MsgRange) -> [MsgRange] {
         guard clip.upper >= src.lower && clip.lower < src.upper else {
             // Clip is completely outside of src, no intersection.
