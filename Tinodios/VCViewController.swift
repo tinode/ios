@@ -139,10 +139,14 @@ extension VCViewController: UICollectionViewDelegate, UICollectionViewDataSource
         if indexPath.row == 0 {
             // Local video.
             cell.videoView.track = room.localParticipant?.localVideoTracks.first?.track as? VideoTrack
+            cell.peerNameLabel.text = "You"
+            cell.peerNameLabel.sizeToFit()
         } else {
             // Remote participants.
             let idx = indexPath.row - 1
             let p = self.remoteParticipants[idx]
+            cell.peerNameLabel.text = (Cache.tinode.getUser(with: p.identity) as? User<TheCard>)?.pub?.fn ?? p.identity
+            cell.peerNameLabel.sizeToFit()
             cell.videoView.track = p.videoTracks.first?.track as? VideoTrack
         }
         return cell
