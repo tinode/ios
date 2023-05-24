@@ -90,6 +90,11 @@ class MessageViewLayout: UICollectionViewFlowLayout {
     }
 
     override func layoutAttributesForItem(at indexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
+        guard attrCellCache.indices.contains(indexPath.item) else {
+            // FIXME: this shouldn't happen.
+            Cache.log.error("MessageViewLayout attributes cache missing index %d", indexPath.item)
+            return MessageViewLayoutAttributes(forCellWith: indexPath)
+        }
         return attrCellCache[indexPath.item]
     }
 

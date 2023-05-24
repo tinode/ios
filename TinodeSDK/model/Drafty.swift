@@ -41,7 +41,7 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
 
     // Entity data field names which will be processed.
     private static let kKnownDataFelds =
-        ["act", "duration", "height", "incoming", "mime", "name", "premime", "preview", "preref", "ref", "size", "state", "title", "url", "val", "width"]
+        ["act", "duration", "height", "incoming", "mime", "name", "premime", "preview", "preref", "ref", "size", "state", "title", "url", "val", "vc", "width"]
 
     // Regular expressions for parsing inline formats.
     private static let kInlineStyles = try! [
@@ -1306,7 +1306,7 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
         tree = SpanTreeProcessor.treeTopDown(tree: tree, using: Preview()) ?? tree
         tree = SpanTreeProcessor.treeTopDown(tree: tree, using: ShorteningTransformer(length: previewLen, tail: "…")) ?? tree
         tree = SpanTreeProcessor.treeTopDown(tree: tree, using: LightCopyTransformer(
-            allowedFields: ["state", "incoming", "preview", "preref", "val", "ref"], forTypes: ["IM", "VC", "VD"])) ?? tree
+            allowedFields: ["state", "incoming", "preview", "preref", "val", "vc", "ref"], forTypes: ["IM", "VC", "VD"])) ?? tree
 
         var keymap = [Int: Int]()
         var result = Drafty()
@@ -1493,6 +1493,9 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
         e.data!["state"] = params["webrtc"]
         e.data!["duration"] = params["webrtc-duration"]
         e.data!["incoming"] = .bool(isIncoming)
+        if params["vc"]?.asBool() ?? false {
+            e.data!["vc"] = .bool(true)
+        }
     }
 
     /// Format converts Drafty object into a collection of nodes with format definitions.

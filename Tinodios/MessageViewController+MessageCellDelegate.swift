@@ -36,10 +36,10 @@ extension MessageViewController: MessageCellDelegate {
                 break
             case "/audio/toggle-play":
                 handleToggleAudioPlay(in: cell, draftyEntityKey: Int(url.extractQueryParam(named: "key") ?? ""))
-                break
             case "/video":
                 showVideoPreview(in: cell, draftyEntityKey: Int(url.extractQueryParam(named: "key") ?? ""))
-                break
+            case "/vc-join":
+                handleVCJoinTap(in: cell)
             default:
                 Cache.log.error("MessageVC - unknown tinode:// action: %@", url.description)
             }
@@ -415,6 +415,12 @@ extension MessageViewController: MessageCellDelegate {
         )
 
         performSegue(withIdentifier: "ShowVideoPreview", sender: content)
+    }
+
+    private func handleVCJoinTap(in cell: MessageCell) {
+        guard let topicName = self.topicName else { return }
+        let req = VCJoinRequest(topic: topicName, seq: cell.seqId)
+        performSegue(withIdentifier: "Messages2VC", sender: req)
     }
 
     func handleQuoteClick(in cell: MessageCell) {

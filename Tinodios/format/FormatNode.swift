@@ -18,7 +18,7 @@ struct Attachment {
         case video
         case button
         case quote
-        case call(Bool, String, Int)  // isOutgoing, callState, callDuration
+        case call(Bool, String, Int, Bool)  // isOutgoing, callState, callDuration, isConferenceCall
         case empty
         case unkn
 
@@ -597,13 +597,14 @@ class FormatNode: CustomStringConvertible {
     }
 
     private func createVideoCallAttachmentString(isOutgoing: Bool, callState: String, callDuration: Int,
+                                                 isConferenceCall: Bool,
                                                  defaultAttrs attributes: [NSAttributedString.Key: Any]) -> NSAttributedString {
         let attributed = NSMutableAttributedString(string: "\u{2009}")
         attributed.beginEditing()
 
         // Large phone icon.
         let icon = NSTextAttachment()
-        icon.image = UIImage(systemName: "phone")?.withRenderingMode(.alwaysTemplate)
+        icon.image = UIImage(systemName: isConferenceCall ? "video" : "phone")?.withRenderingMode(.alwaysTemplate)
         var aspectRatio: CGFloat = 1
         if let size = icon.image?.size {
             aspectRatio = size.width / size.height
@@ -615,7 +616,10 @@ class FormatNode: CustomStringConvertible {
         attributed.addAttributes(attributes, range: NSRange(location: 0, length: attributed.length))
         attributed.append(NSAttributedString(string: " "))
 
-        attributed.append(NSAttributedString(string: isOutgoing ? NSLocalizedString("Outgoing call", comment: "Label for outgoing video/audio calls") : NSLocalizedString("Incoming call", comment: "Label for incoming video/audio calls"), attributes: attributes))
+        attributed.append(NSAttributedString(string:
+            isConferenceCall ? NSLocalizedString("Conference call", comment: "Label for conference video/audio calls") :
+            // Regular call.
+            isOutgoing ? NSLocalizedString("Outgoing call", comment: "Label for outgoing video/audio calls") : NSLocalizedString("Incoming call", comment: "Label for incoming video/audio calls"), attributes: attributes))
 
         // Linebreak.
         attributed.append(NSAttributedString(string: "\u{2009}\n", attributes: [NSAttributedString.Key.font: baseFont]))
@@ -645,13 +649,31 @@ class FormatNode: CustomStringConvertible {
         if callDuration > 0 {
             arrow.append(NSAttributedString(string: AbstractFormatter.millisToTime(millis: callDuration), attributes: attributes))
         } else {
-            arrow.append(NSAttributedString(string: AbstractFormatter.callStatusText(incoming: !isOutgoing, event: callState), attributes: attributes))
+            arrow.append(NSAttributedString(string: AbstractFormatter.callStatusText(incoming: !isOutgoing, event: callState, isConferenceCall: isConferenceCall), attributes: attributes))
         }
 
         arrow.addAttribute(.font, value: baseFont.withSize(baseFont.pointSize * 0.9), range: NSRange(location: 0, length: arrow.length))
 
         arrow.endEditing()
         attributed.append(arrow)
+
+        if isConferenceCall && callState == MsgServerData.WebRTC.kStarted.rawValue {
+            // Linebreak.
+            attributed.append(NSAttributedString(string: "\u{2009}\n", attributes: [NSAttributedString.Key.font: baseFont]))
+            // Join link.
+            let baseUrl = URLComponents(string: "tinode:///vc-join")!
+            let paragraph = NSMutableParagraphStyle()
+            paragraph.firstLineHeadIndent = Constants.kCallIconSize + baseFont.capHeight * 0.5
+            paragraph.lineSpacing = 0
+            paragraph.lineHeightMultiple = 1
+            arrow.addAttributes([NSAttributedString.Key.paragraphStyle: paragraph], range: NSRange(location: 0, length: arrow.length))
+
+            var attrs = attributes
+            attrs[NSAttributedString.Key.link] = baseUrl.url
+            attrs[NSAttributedString.Key.paragraphStyle] = paragraph
+            attributed.append(NSAttributedString(string:
+                NSLocalizedString("Join", comment: "Label for join conference link"), attributes: attrs))
+        }
 
         attributed.endEditing()
         return attributed
@@ -697,8 +719,8 @@ class FormatNode: CustomStringConvertible {
             let faceText = composeBody(defaultText: " ", defaultAttrs: attributes, fontTraits: fontTraits, maxSize: size)
             return NSAttributedString(attachment: QuotedAttachment(quotedText: faceText, fitIn: size, fullWidth: attachment.fullWidth ?? false))
 
-        case .call(let isOutgoing, let callState, let callDuration):
-            return createVideoCallAttachmentString(isOutgoing: isOutgoing, callState: callState, callDuration: callDuration, defaultAttrs: attributes)
+        case .call(let isOutgoing, let callState, let callDuration, let isConferenceCall):
+            return createVideoCallAttachmentString(isOutgoing: isOutgoing, callState: callState, callDuration: callDuration, isConferenceCall: isConferenceCall, defaultAttrs: attributes)
 
         // File attachment is harder: construct attributed string showing an attachment.
         case .data, .empty:

@@ -54,8 +54,7 @@ extension MessageViewController: MessageDisplayLogic {
                 navBarAvatarView.widthAnchor.constraint(equalTo: navBarAvatarView.heightAnchor)
             ])
         var items = [UIBarButtonItem(customView: navBarAvatarView)]
-        let webrtc = Cache.tinode.getServerParam(for: "iceServers") != nil
-        if let t = self.topic, t.isP2PType, webrtc {
+        if let t = self.topic, t.callsAllowed {
             items.append(self.navBarCallBtn)
         }
         self.navigationItem.setRightBarButtonItems(items, animated: false)

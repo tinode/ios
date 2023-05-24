@@ -119,7 +119,7 @@ class CallManager {
         let senderName = user?.pub?.fn ?? NSLocalizedString("Unknown", comment: "Placeholder for missing user name")
         callDelegate.reportIncomingCall(uuid: uuid, handle: senderName, audioOnly: audioOnly) { err in
             if err == nil {
-                Cache.log.info("Reporting incoming call (uuid: %@) on topic: %@, seq: %d", self.callInProgress!.uuid.uuidString, topicName, seq)
+                Cache.log.info("Reporting incoming call (uuid: %@) on topic: %@, seq: %d", self.callInProgress?.uuid.uuidString ?? "missing", topicName, seq)
                 CallManager.activateAudioSession(withSpeaker: !audioOnly)
                 tinode.videoCall(topic: topicName, seq: seq, event: "ringing")
                 let timeout = (tinode.getServerParam(for: "callTimeout")?.asInt() ?? CallManager.kCallTimeout) + 5
