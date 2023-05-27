@@ -65,7 +65,7 @@ class VCViewController: UIViewController {
 
         view.backgroundColor = .white
         self.listener = InfoListener(delegateEventsTo: self)
-        self.endpoint = Cache.tinode.getServerParam(for: "vcEndpoint")!.asString()!
+        self.endpoint = Cache.tinode.getServerParam(for: "vcEndpoint")?.asString()
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -87,7 +87,9 @@ class VCViewController: UIViewController {
             },
             onFailure: UiUtils.ToastFailureHandler)
         case .incoming:
-            self.topic?.videoCall(event: "vc-join", seq: self.callSeqId)
+            if self.endpoint != nil {
+                self.topic?.videoCall(event: "vc-join", seq: self.callSeqId)
+            }
         default:
             break
         }
@@ -153,6 +155,58 @@ extension VCViewController: UICollectionViewDelegate, UICollectionViewDataSource
     }
 }
 
+extension VCViewController: RoomDelegateObjC {
+    func room(_ room: Room, didUpdate connectionState: ConnectionStateObjC, oldValue oldConnectionState: ConnectionStateObjC) {}
+
+    func room(_ room: Room, participantDidJoin participant: RemoteParticipant) {
+        self.remoteParticipants.append(participant)
+        DispatchQueue.main.async {
+            self.collectionView.reloadData()
+        }
+    }
+
+    func room(_ room: Room, participantDidLeave participant: RemoteParticipant) {
+        self.remoteParticipants.removeAll(where: { $0.sid == participant.sid })
+        DispatchQueue.main.async {
+            self.collectionView.reloadData()
+        }
+    }
+
+    // Active speakers changed.
+    func room(_ room: Room, didUpdate speakers: [Participant]) {
+        var dict = [String: IndexPath]()
+        for (i, r) in self.remoteParticipants.enumerated() {
+            dict[r.sid] = IndexPath(row: i + 1, section: 0)
+        }
+        for s in speakers {
+            //s.isSpeaking
+            if let ix = dict[s.sid] {
+                DispatchQueue.main.async {
+                    let cell = self.collectionView.cellForItem(at: ix) as! VCViewCell
+                    // highlight
+                }
+            }
+        }
+    }
+
+    func room(_ room: Room, didUpdate metadata: String?) {}
+
+    func room(_ room: Room, participant: Participant, didUpdate connectionQuality: ConnectionQuality) {}
+
+    func room(_ room: Room, participant: Participant, didUpdate publication: TrackPublication, muted: Bool) {
+        if let idx = self.remoteParticipants.firstIndex(where: { $0.sid == participant.sid }) {
+            DispatchQueue.main.async {
+                if let cell = self.collectionView.cellForItem(at: IndexPath(row: idx + 1, section: 0)) as? VCViewCell {
+                    cell.isMuted = muted
+                }
+            }
+        }
+    }
+    func room(_ room: Room, participant: Participant, didUpdate permissions: ParticipantPermissions) {}
+    func room(_ room: Room, participant: RemoteParticipant, didPublish publication: RemoteTrackPublication) {}
+    func room(_ room: Room, participant: RemoteParticipant, didUnpublish publication: RemoteTrackPublication) {}
+}
+
 extension VCViewController: RoomDelegate {
 
     func room(_ room: Room, localParticipant: LocalParticipant, didPublish publication: LocalTrackPublication) {
@@ -171,20 +225,6 @@ extension VCViewController: RoomDelegate {
             DispatchQueue.main.async {
                 self.collectionView.insertItems(at: [IndexPath(row: self.collectionView.numberOfItems(inSection: 0), section: 0)])
             }
-        }
-    }
-
-    func room(_ room: Room, participantDidJoin participant: RemoteParticipant) {
-        self.remoteParticipants.append(participant)
-        DispatchQueue.main.async {
-            self.collectionView.reloadData()
-        }
-    }
-
-    func room(_ room: Room, participantDidLeave participant: RemoteParticipant) {
-        self.remoteParticipants.removeAll(where: { $0.sid == participant.sid })
-        DispatchQueue.main.async {
-            self.collectionView.reloadData()
         }
     }
 }
