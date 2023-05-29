@@ -14,6 +14,8 @@ class VCViewCell: UICollectionViewCell {
 
     var videoView = VideoView()
     var assetIdentifier: String?
+    var avatarView = RoundImageView()
+
     var peerNameLabel: PaddedLabel = {
         var label = PaddedLabel()
         label.topInset = 2
@@ -34,9 +36,11 @@ class VCViewCell: UICollectionViewCell {
     var mutedImage: UIImageView = {
         var v = UIImageView()
         v.alpha = 0.6
-        v.image = UIImage(systemName: "speaker.slash.fill")
+        v.image = UIImage(systemName: "speaker.slash.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: 10, weight: .regular, scale: .default))!.withTintColor(.gray, renderingMode: .alwaysOriginal)
         v.backgroundColor = .systemBackground
         v.translatesAutoresizingMaskIntoConstraints = false
+        v.layer.cornerRadius = 10
+        v.clipsToBounds = true
         v.isHidden = true
         return v
     }()
@@ -52,6 +56,9 @@ class VCViewCell: UICollectionViewCell {
         self.clipsToBounds = true
         self.autoresizesSubviews = true
 
+        avatarView.translatesAutoresizingMaskIntoConstraints = false
+        self.addSubview(avatarView)
+
         videoView.frame = self.bounds
         videoView.contentMode = .scaleAspectFill
         videoView.clipsToBounds = true
@@ -61,23 +68,26 @@ class VCViewCell: UICollectionViewCell {
         self.addSubview(peerNameLabel)
         self.addSubview(mutedImage)
         NSLayoutConstraint.activate([
+            // Avatar view.
+            avatarView.centerXAnchor.constraint(equalTo: avatarView.superview!.centerXAnchor),
+            avatarView.centerYAnchor.constraint(equalTo: avatarView.superview!.centerYAnchor),
+            avatarView.widthAnchor.constraint(equalToConstant: 80),
+            avatarView.heightAnchor.constraint(equalToConstant: 80),
+            // Peer name label.
             peerNameLabel.heightAnchor.constraint(
                 equalToConstant: CGFloat(24)),
             peerNameLabel.widthAnchor.constraint(
                 greaterThanOrEqualToConstant: CGFloat(30)),
             peerNameLabel.leftAnchor.constraint(equalTo: peerNameLabel.superview!.leftAnchor, constant: 10),
             peerNameLabel.bottomAnchor.constraint(equalTo: peerNameLabel.superview!.bottomAnchor, constant: -10),
+            // Muted image.
             mutedImage.heightAnchor.constraint(equalToConstant: 20),
             mutedImage.widthAnchor.constraint(equalToConstant: 20),
             mutedImage.rightAnchor.constraint(equalTo: mutedImage.superview!.rightAnchor, constant: -10),
             mutedImage.topAnchor.constraint(equalTo: mutedImage.superview!.topAnchor, constant: 10)
         ])
 
-        // Use a random background color.
-        let redColor = CGFloat(arc4random_uniform(255)) / 255.0
-        let greenColor = CGFloat(arc4random_uniform(255)) / 255.0
-        let blueColor = CGFloat(arc4random_uniform(255)) / 255.0
-        self.backgroundColor = UIColor(red: redColor, green: greenColor, blue: blueColor, alpha: 1.0)
+        self.backgroundColor = .systemBackground
     }
 
     required init?(coder aDecoder: NSCoder) {

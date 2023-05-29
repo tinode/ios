@@ -21,6 +21,69 @@ struct VCJoinRequest {
 }
 
 class VCViewController: UIViewController {
+    class VCRoom: ObservableRoom {
+        weak var controller: VCViewController?
+
+        init(withController ctrl: VCViewController) {
+            super.init()
+            self.controller = ctrl
+        }
+
+        var localParticipant: LocalParticipant? {
+            return room.localParticipant
+        }
+
+        override func room(_ room: Room, participantDidJoin participant: RemoteParticipant) {
+            super.room(room, participantDidJoin: participant)
+            controller?.remoteParticipants.append(participant)
+            DispatchQueue.main.async {
+                self.controller?.collectionView.reloadData()
+            }
+        }
+
+        override func room(_ room: Room, participantDidLeave participant: RemoteParticipant) {
+            super.room(room, participantDidLeave: participant)
+            controller?.remoteParticipants.removeAll(where: { $0.sid == participant.sid })
+            DispatchQueue.main.async {
+                self.controller?.collectionView.reloadData()
+            }
+        }
+
+        override func room(_ room: Room, participant: Participant, didUpdate publication: TrackPublication, muted: Bool) {
+            super.room(room, participant: participant, didUpdate: publication, muted: muted)
+            if let idx = controller?.remoteParticipants.firstIndex(where: { $0.sid == participant.sid }) {
+                DispatchQueue.main.async {
+                    if let cell = self.controller?.collectionView.cellForItem(at: IndexPath(row: idx + 1, section: 0)) as? VCViewCell {
+                        cell.isMuted = muted
+                    }
+                }
+            }
+        }
+
+        override func room(_ room: Room, localParticipant: LocalParticipant, didPublish publication: LocalTrackPublication) {
+            super.room(room, localParticipant: localParticipant, didPublish: publication)
+            DispatchQueue.main.async {
+                self.controller?.collectionView.reloadItems(at: [IndexPath(row: 0, section: 0)])
+            }
+        }
+
+        override func room(_ room: Room, participant: RemoteParticipant, didSubscribe publication: RemoteTrackPublication, track: Track) {
+            super.room(room, participant: participant, didSubscribe: publication, track: track)
+            if let idx = controller?.remoteParticipants.firstIndex(where: { $0.sid == participant.sid }) {
+                DispatchQueue.main.async {
+                    self.controller?.collectionView.reloadItems(at: [IndexPath(row: idx, section: 0)])
+                }
+            } else {
+                controller?.remoteParticipants.append(participant)
+                DispatchQueue.main.async {
+                    if let ctrl = self.controller {
+                        ctrl.collectionView.insertItems(at: [IndexPath(row: ctrl.collectionView.numberOfItems(inSection: 0), section: 0)])
+                    }
+                }
+            }
+        }
+    }
+
     weak var topic: DefaultComTopic?
     var callDirection: CallViewController.CallDirection = .none
     var callSeqId: Int = -1
@@ -50,7 +113,7 @@ class VCViewController: UIViewController {
     }
 
     var endpoint: String?
-    lazy var room = Room(delegate: self)
+    lazy var room = VCRoom(withController: self)//Room(delegate: self)
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -103,10 +166,22 @@ class VCViewController: UIViewController {
         self.handleCallClose()
     }
 
+    @IBAction func didTapToggleLoudspeaker(_ sender: Any) {
+        //self.room.loud
+    }
+
+    @IBAction func didTapToggleAudio(_ sender: Any) {
+        self.room.toggleMicrophoneEnabled()
+    }
+
+    @IBAction func didTapToggleVideo(_ sender: Any) {
+        self.room.toggleCameraEnabled()
+    }
+
     func joinRoom(withToken token: String) {
         let token: String = token
 
-        room.connect(self.endpoint!, token).then { room in
+        room.room.connect(self.endpoint!, token).then { room in
             // Publish camera & mic
             room.localParticipant?.setCamera(enabled: true)
             room.localParticipant?.setMicrophone(enabled: true)
@@ -120,7 +195,7 @@ class VCViewController: UIViewController {
         if self.callSeqId > 0 {
             self.topic?.videoCall(event: "hang-up", seq: self.callSeqId)
         }
-        self.room.disconnect()
+        self.room.room.disconnect()
         self.callSeqId = -1
         self.remoteParticipants.removeAll()
         DispatchQueue.main.async {
@@ -132,7 +207,7 @@ class VCViewController: UIViewController {
 
 extension VCViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return (room.localParticipant != nil ? 1 : 0) + self.remoteParticipants.count
+        return (room.room.localParticipant != nil ? 1 : 0) + self.remoteParticipants.count
     }
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: VCViewCell.kIdentifer, for: indexPath) as? VCViewCell
@@ -141,91 +216,28 @@ extension VCViewController: UICollectionViewDelegate, UICollectionViewDataSource
         if indexPath.row == 0 {
             // Local video.
             cell.videoView.track = room.localParticipant?.localVideoTracks.first?.track as? VideoTrack
+            // Avatar.
+            let me = Cache.tinode.getMeTopic()
+            cell.avatarView.set(pub: me?.pub, id: Cache.tinode.myUid, deleted: false)
+            cell.avatarView.letterTileFont = cell.avatarView.letterTileFont.withSize(CGFloat(50))
+
             cell.peerNameLabel.text = "You"
             cell.peerNameLabel.sizeToFit()
         } else {
             // Remote participants.
             let idx = indexPath.row - 1
             let p = self.remoteParticipants[idx]
-            cell.peerNameLabel.text = (Cache.tinode.getUser(with: p.identity) as? User<TheCard>)?.pub?.fn ?? p.identity
+
+            let pub = (Cache.tinode.getUser(with: p.identity) as? User<TheCard>)?.pub
+            // Avatar.
+            cell.avatarView.set(pub: pub, id: p.identity, deleted: false)
+            cell.avatarView.letterTileFont = cell.avatarView.letterTileFont.withSize(CGFloat(50))
+
+            cell.peerNameLabel.text = pub?.fn ?? p.identity
             cell.peerNameLabel.sizeToFit()
             cell.videoView.track = p.videoTracks.first?.track as? VideoTrack
         }
         return cell
-    }
-}
-
-extension VCViewController: RoomDelegateObjC {
-    func room(_ room: Room, didUpdate connectionState: ConnectionStateObjC, oldValue oldConnectionState: ConnectionStateObjC) {}
-
-    func room(_ room: Room, participantDidJoin participant: RemoteParticipant) {
-        self.remoteParticipants.append(participant)
-        DispatchQueue.main.async {
-            self.collectionView.reloadData()
-        }
-    }
-
-    func room(_ room: Room, participantDidLeave participant: RemoteParticipant) {
-        self.remoteParticipants.removeAll(where: { $0.sid == participant.sid })
-        DispatchQueue.main.async {
-            self.collectionView.reloadData()
-        }
-    }
-
-    // Active speakers changed.
-    func room(_ room: Room, didUpdate speakers: [Participant]) {
-        var dict = [String: IndexPath]()
-        for (i, r) in self.remoteParticipants.enumerated() {
-            dict[r.sid] = IndexPath(row: i + 1, section: 0)
-        }
-        for s in speakers {
-            //s.isSpeaking
-            if let ix = dict[s.sid] {
-                DispatchQueue.main.async {
-                    let cell = self.collectionView.cellForItem(at: ix) as! VCViewCell
-                    // highlight
-                }
-            }
-        }
-    }
-
-    func room(_ room: Room, didUpdate metadata: String?) {}
-
-    func room(_ room: Room, participant: Participant, didUpdate connectionQuality: ConnectionQuality) {}
-
-    func room(_ room: Room, participant: Participant, didUpdate publication: TrackPublication, muted: Bool) {
-        if let idx = self.remoteParticipants.firstIndex(where: { $0.sid == participant.sid }) {
-            DispatchQueue.main.async {
-                if let cell = self.collectionView.cellForItem(at: IndexPath(row: idx + 1, section: 0)) as? VCViewCell {
-                    cell.isMuted = muted
-                }
-            }
-        }
-    }
-    func room(_ room: Room, participant: Participant, didUpdate permissions: ParticipantPermissions) {}
-    func room(_ room: Room, participant: RemoteParticipant, didPublish publication: RemoteTrackPublication) {}
-    func room(_ room: Room, participant: RemoteParticipant, didUnpublish publication: RemoteTrackPublication) {}
-}
-
-extension VCViewController: RoomDelegate {
-
-    func room(_ room: Room, localParticipant: LocalParticipant, didPublish publication: LocalTrackPublication) {
-        DispatchQueue.main.async {
-            self.collectionView.reloadItems(at: [IndexPath(row: 0, section: 0)])
-        }
-    }
-
-    func room(_ room: Room, participant: RemoteParticipant, didSubscribe publication: RemoteTrackPublication, track: Track) {
-        if let idx = self.remoteParticipants.firstIndex(where: { $0.sid == participant.sid }) {
-            DispatchQueue.main.async {
-                self.collectionView.reloadItems(at: [IndexPath(row: idx, section: 0)])
-            }
-        } else {
-            self.remoteParticipants.append(participant)
-            DispatchQueue.main.async {
-                self.collectionView.insertItems(at: [IndexPath(row: self.collectionView.numberOfItems(inSection: 0), section: 0)])
-            }
-        }
     }
 }
 
