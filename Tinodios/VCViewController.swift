@@ -33,7 +33,13 @@ class VCViewController: UIViewController {
             return room.localParticipant
         }
 
+        public func setParticipants() {
+            controller?.remoteParticipants = Array(room.remoteParticipants.values)
+            controller?.collectionView.reloadData()
+        }
+
         override func room(_ room: Room, participantDidJoin participant: RemoteParticipant) {
+            print("participant did join -> \(participant)")
             super.room(room, participantDidJoin: participant)
             controller?.remoteParticipants.append(participant)
             DispatchQueue.main.async {
@@ -42,6 +48,7 @@ class VCViewController: UIViewController {
         }
 
         override func room(_ room: Room, participantDidLeave participant: RemoteParticipant) {
+            print("participant did leave -> \(participant)")
             super.room(room, participantDidLeave: participant)
             controller?.remoteParticipants.removeAll(where: { $0.sid == participant.sid })
             DispatchQueue.main.async {
@@ -59,29 +66,6 @@ class VCViewController: UIViewController {
                 }
             }
         }
-
-        override func room(_ room: Room, localParticipant: LocalParticipant, didPublish publication: LocalTrackPublication) {
-            super.room(room, localParticipant: localParticipant, didPublish: publication)
-            DispatchQueue.main.async {
-                self.controller?.collectionView.reloadItems(at: [IndexPath(row: 0, section: 0)])
-            }
-        }
-
-        override func room(_ room: Room, participant: RemoteParticipant, didSubscribe publication: RemoteTrackPublication, track: Track) {
-            super.room(room, participant: participant, didSubscribe: publication, track: track)
-            if let idx = controller?.remoteParticipants.firstIndex(where: { $0.sid == participant.sid }) {
-                DispatchQueue.main.async {
-                    self.controller?.collectionView.reloadItems(at: [IndexPath(row: idx, section: 0)])
-                }
-            } else {
-                controller?.remoteParticipants.append(participant)
-                DispatchQueue.main.async {
-                    if let ctrl = self.controller {
-                        ctrl.collectionView.insertItems(at: [IndexPath(row: ctrl.collectionView.numberOfItems(inSection: 0), section: 0)])
-                    }
-                }
-            }
-        }
     }
 
     weak var topic: DefaultComTopic?
@@ -89,7 +73,9 @@ class VCViewController: UIViewController {
     var callSeqId: Int = -1
     // VC info messages listener.
     var listener: InfoListener!
-    var remoteParticipants = [RemoteParticipant]()
+    private var remoteParticipants = [RemoteParticipant]()
+    private var timer: Timer!
+    private var cellReference = NSHashTable<VCViewCell>.weakObjects()
 
     @IBOutlet weak var collectionView: UICollectionView!
 
@@ -129,6 +115,11 @@ class VCViewController: UIViewController {
         view.backgroundColor = .white
         self.listener = InfoListener(delegateEventsTo: self)
         self.endpoint = Cache.tinode.getServerParam(for: "vcEndpoint")?.asString()
+        //
+        self.timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true, block: { [weak self] _ in
+            guard let self = self else { return }
+            self.updateVideoViews()
+        })
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -178,6 +169,19 @@ class VCViewController: UIViewController {
         self.room.toggleCameraEnabled()
     }
 
+    private func updateVideoViews() {
+        let visibleCells = self.collectionView.visibleCells.compactMap { $0 as? VCViewCell }
+        let offScreenCells = self.cellReference.allObjects.filter { !visibleCells.contains($0) }
+
+        for cell in visibleCells.filter({ !$0.videoView.isEnabled }) {
+            cell.videoView.isEnabled = true
+        }
+
+        for cell in offScreenCells.filter({ $0.videoView.isEnabled }) {
+            cell.videoView.isEnabled = false
+        }
+    }
+
     func joinRoom(withToken token: String) {
         let token: String = token
 
@@ -185,6 +189,7 @@ class VCViewController: UIViewController {
             // Publish camera & mic
             room.localParticipant?.setCamera(enabled: true)
             room.localParticipant?.setMicrophone(enabled: true)
+            self.room.setParticipants()
         }.catch { error in
             // failed to connect
             print(error)
@@ -213,9 +218,10 @@ extension VCViewController: UICollectionViewDelegate, UICollectionViewDataSource
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: VCViewCell.kIdentifer, for: indexPath) as? VCViewCell
             else { preconditionFailure("Failed to load collection view cell") }
 
+        cellReference.add(cell)
         if indexPath.row == 0 {
             // Local video.
-            cell.videoView.track = room.localParticipant?.localVideoTracks.first?.track as? VideoTrack
+            cell.participant = room.localParticipant
             // Avatar.
             let me = Cache.tinode.getMeTopic()
             cell.avatarView.set(pub: me?.pub, id: Cache.tinode.myUid, deleted: false)
@@ -227,6 +233,7 @@ extension VCViewController: UICollectionViewDelegate, UICollectionViewDataSource
             // Remote participants.
             let idx = indexPath.row - 1
             let p = self.remoteParticipants[idx]
+            cell.participant = p
 
             let pub = (Cache.tinode.getUser(with: p.identity) as? User<TheCard>)?.pub
             // Avatar.
@@ -235,7 +242,6 @@ extension VCViewController: UICollectionViewDelegate, UICollectionViewDataSource
 
             cell.peerNameLabel.text = pub?.fn ?? p.identity
             cell.peerNameLabel.sizeToFit()
-            cell.videoView.track = p.videoTracks.first?.track as? VideoTrack
         }
         return cell
     }

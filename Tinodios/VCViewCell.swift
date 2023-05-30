@@ -51,6 +51,27 @@ class VCViewCell: UICollectionViewCell {
         }
     }
 
+    // weak reference to the Participant
+    public weak var participant: Participant? {
+        didSet {
+            guard oldValue != participant else { return }
+
+            if let oldValue = oldValue {
+                // Unlisten to events.
+                oldValue.remove(delegate: self)
+                videoView.track = nil
+            }
+
+            if let participant = participant {
+                // Listen to events.
+                participant.add(delegate: self)
+                setFirstVideoTrack()
+
+                setNeedsLayout()
+            }
+        }
+    }
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         self.clipsToBounds = true
@@ -98,5 +119,24 @@ class VCViewCell: UICollectionViewCell {
         super.prepareForReuse()
         videoView.track = nil
         assetIdentifier = nil
+    }
+
+    private func setFirstVideoTrack() {
+        let track = participant?.videoTracks.first?.track as? VideoTrack
+        self.videoView.track = track
+    }
+}
+
+extension VCViewCell: ParticipantDelegate {
+    func participant(_ participant: RemoteParticipant, didSubscribe publication: RemoteTrackPublication, track: Track) {
+        DispatchQueue.main.async { [weak self] in
+            self?.setFirstVideoTrack()
+        }
+    }
+
+    func participant(_ participant: RemoteParticipant, didUnsubscribe publication: RemoteTrackPublication, track: Track) {
+        DispatchQueue.main.async { [weak self] in
+            self?.setFirstVideoTrack()
+        }
     }
 }
