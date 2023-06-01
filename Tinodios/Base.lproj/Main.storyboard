@@ -2248,34 +2248,10 @@
                                 </cells>
                             </collectionView>
                             <stackView opaque="NO" contentMode="scaleToFill" distribution="equalCentering" alignment="center" spacing="32" translatesAutoresizingMaskIntoConstraints="NO" id="RSt-pm-Ovv" userLabel="Controls Stack">
-                                <rect key="frame" x="36.666666666666657" y="750" width="320" height="56"/>
+                                <rect key="frame" x="80.666666666666686" y="750" width="232" height="56"/>
                                 <subviews>
-                                    <button opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7r3-PB-ZQt" userLabel="Loudspeaker">
-                                        <rect key="frame" x="0.0" y="0.0" width="56" height="56"/>
-                                        <color key="backgroundColor" systemColor="systemGrayColor"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" constant="56" id="93o-iG-t2T"/>
-                                            <constraint firstAttribute="height" constant="56" id="o2j-vy-fhR"/>
-                                        </constraints>
-                                        <color key="tintColor" systemColor="systemBackgroundColor"/>
-                                        <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
-                                        <state key="normal">
-                                            <imageReference key="image" image="speaker.wave.3.fill" catalog="system" symbolScale="large"/>
-                                            <preferredSymbolConfiguration key="preferredSymbolConfiguration" configurationType="pointSize" pointSize="17" scale="large" weight="regular"/>
-                                        </state>
-                                        <userDefinedRuntimeAttributes>
-                                            <userDefinedRuntimeAttribute type="boolean" keyPath="layer.masksToBounds" value="YES"/>
-                                            <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
-                                                <integer key="value" value="28"/>
-                                            </userDefinedRuntimeAttribute>
-                                        </userDefinedRuntimeAttributes>
-                                        <connections>
-                                            <action selector="didTapToggleLoudspeaker:" destination="7If-eT-2kL" eventType="touchUpInside" id="zcK-iY-ch0"/>
-                                            <action selector="didToggleSpeaker:" destination="Cib-aE-hH5" eventType="touchUpInside" id="pTc-Ju-HiY"/>
-                                        </connections>
-                                    </button>
                                     <button opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Giq-ic-gDc" userLabel="Mute">
-                                        <rect key="frame" x="88" y="0.0" width="56" height="56"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="56" height="56"/>
                                         <color key="backgroundColor" systemColor="systemGrayColor"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="56" id="0RP-6y-jHx"/>
@@ -2299,7 +2275,7 @@
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleAspectFit" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Hdg-Kr-JEo" userLabel="Video Off">
-                                        <rect key="frame" x="176" y="0.0" width="56" height="56"/>
+                                        <rect key="frame" x="87.999999999999986" y="0.0" width="56.000000000000014" height="56"/>
                                         <color key="backgroundColor" systemColor="systemGrayColor"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="56" id="h8e-1J-c9F"/>
@@ -2322,7 +2298,7 @@
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="snb-mF-pAQ" userLabel="End Call">
-                                        <rect key="frame" x="264" y="0.0" width="56" height="56"/>
+                                        <rect key="frame" x="176" y="0.0" width="56" height="56"/>
                                         <color key="backgroundColor" red="1" green="0.14913141730000001" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="56" id="1RF-HW-6jH"/>
@@ -2364,6 +2340,8 @@
                     <navigationItem key="navigationItem" id="s25-ao-iXy"/>
                     <connections>
                         <outlet property="collectionView" destination="trN-dD-UBu" id="DY2-gz-ksr"/>
+                        <outlet property="muteAudioButton" destination="Giq-ic-gDc" id="b7X-Yp-1D8"/>
+                        <outlet property="muteVideoButton" destination="Hdg-Kr-JEo" id="pWi-pz-PLl"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="VVY-ga-eSm" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>

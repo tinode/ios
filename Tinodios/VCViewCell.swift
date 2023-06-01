@@ -117,6 +117,7 @@ class VCViewCell: UICollectionViewCell {
 
     override func prepareForReuse() {
         super.prepareForReuse()
+        participant = nil
         videoView.track = nil
         assetIdentifier = nil
     }
@@ -138,5 +139,27 @@ extension VCViewCell: ParticipantDelegate {
         DispatchQueue.main.async { [weak self] in
             self?.setFirstVideoTrack()
         }
+    }
+
+    func participant(_ participant: Participant, didUpdate speaking: Bool) {
+        DispatchQueue.main.async {
+            let anim = CABasicAnimation(keyPath: "borderColor")
+            anim.fromValue = UIColor.clear.cgColor
+            anim.toValue = UIColor.red.cgColor
+            self.layer.borderColor = UIColor.clear.cgColor
+            anim.duration = CATransaction.animationDuration()
+            self.layer.add(anim, forKey: "speaking")
+
+            let anim2 = CABasicAnimation(keyPath: "borderWidth")
+            anim2.fromValue = 0
+            anim2.toValue = 4
+            //self.layer.borderColor = UIColor.clear.cgColor
+            anim2.duration = CATransaction.animationDuration()
+            self.layer.add(anim2, forKey: "speaking-width")
+        }
+    }
+
+    func participant(_ participant: Participant, didUpdate publication: TrackPublication, muted: Bool) {
+        DispatchQueue.main.async { self.isMuted = muted }
     }
 }
