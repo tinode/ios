@@ -6,6 +6,7 @@ labels: 'bug'
 assignees: ''
 
 ---
+## If you are not reporting a bug, please post to https://groups.google.com/d/forum/tinode instead.
 
 **Describe the bug**
 A clear and concise description of what the bug is.
