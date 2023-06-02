@@ -201,6 +201,7 @@ extension VCViewController: UICollectionViewDelegate, UICollectionViewDataSource
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: VCViewCell.kIdentifer, for: indexPath) as? VCViewCell
             else { preconditionFailure("Failed to load collection view cell") }
 
+        print("cell \(indexPath) asset id -> \(cell.assetIdentifier ?? "-")")
         cellReference.add(cell)
         if indexPath.row == 0 {
             // Local video.
@@ -209,6 +210,7 @@ extension VCViewController: UICollectionViewDelegate, UICollectionViewDataSource
             let me = Cache.tinode.getMeTopic()
             cell.avatarView.set(pub: me?.pub, id: Cache.tinode.myUid, deleted: false)
             cell.avatarView.letterTileFont = cell.avatarView.letterTileFont.withSize(CGFloat(50))
+            cell.assetIdentifier = "l-" + (Cache.tinode.myUid ?? "M")
 
             cell.peerNameLabel.text = "You"
             cell.peerNameLabel.sizeToFit()
@@ -218,6 +220,7 @@ extension VCViewController: UICollectionViewDelegate, UICollectionViewDataSource
             let p = self.remoteParticipants[idx]
             cell.participant = p
 
+            cell.assetIdentifier = "r-" + p.identity
             let pub = (Cache.tinode.getUser(with: p.identity) as? User<TheCard>)?.pub
             // Avatar.
             cell.avatarView.set(pub: pub, id: p.identity, deleted: false)

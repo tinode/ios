@@ -119,12 +119,14 @@ class VCViewCell: UICollectionViewCell {
         super.prepareForReuse()
         participant = nil
         videoView.track = nil
+        videoView.isHidden = true
         assetIdentifier = nil
     }
 
     private func setFirstVideoTrack() {
         let track = participant?.videoTracks.first?.track as? VideoTrack
         self.videoView.track = track
+        videoView.isHidden = track == nil
     }
 }
 
@@ -153,13 +155,19 @@ extension VCViewCell: ParticipantDelegate {
             let anim2 = CABasicAnimation(keyPath: "borderWidth")
             anim2.fromValue = 0
             anim2.toValue = 4
-            //self.layer.borderColor = UIColor.clear.cgColor
             anim2.duration = CATransaction.animationDuration()
             self.layer.add(anim2, forKey: "speaking-width")
         }
     }
 
     func participant(_ participant: Participant, didUpdate publication: TrackPublication, muted: Bool) {
-        DispatchQueue.main.async { self.isMuted = muted }
+        switch publication.kind {
+        case .audio:
+            DispatchQueue.main.async { self.isMuted = muted }
+        case .video:
+            DispatchQueue.main.async { self.videoView.isHidden = muted }
+        case .none:
+            break
+        }
     }
 }
