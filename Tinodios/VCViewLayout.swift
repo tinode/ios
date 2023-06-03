@@ -64,9 +64,11 @@ class VCViewLayout: UICollectionViewLayout {
         var segment: SegmentStyle = count < 4 ? .fullWidth : .fiftyFifty
         var lastFrame: CGRect = .zero
         let cvWidth = collectionView.bounds.size.width
+        // Video cells occupy at least a half of the screen vertically.
+        let minHeight = collectionView.bounds.size.height / 2
 
         while currentIndex < count {
-            let segmentFrame = CGRect(x: 0, y: lastFrame.maxY + 1.0, width: cvWidth, height: max(collectionView.bounds.size.height / CGFloat(count), 200.0))
+            let segmentFrame = CGRect(x: 0, y: lastFrame.maxY + 1.0, width: cvWidth, height: max(collectionView.bounds.size.height / CGFloat(count), minHeight))
 
             var segmentRects = [CGRect]()
             switch segment {
@@ -99,6 +101,7 @@ class VCViewLayout: UICollectionViewLayout {
                 currentIndex += 1
                 lastFrame = rect
             }
+            contentBounds = contentBounds.union(lastFrame)
 
             // Determine the next segment style.
             segment = nextSegment(forRemainingCells: count - currentIndex, prevSegment: segment)
@@ -154,10 +157,8 @@ class VCViewLayout: UICollectionViewLayout {
             }
             if attr.frame.maxY < rect.minY {
                 l = m + 1
-                //return binSearch(rect, start: (mid + 1), end: end)
             } else {
                 r = m - 1
-                //return binSearch(rect, start: start, end: (mid - 1))
             }
         }
         return nil

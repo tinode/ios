@@ -203,6 +203,8 @@ extension VCViewController: UICollectionViewDelegate, UICollectionViewDataSource
 
         print("cell \(indexPath) asset id -> \(cell.assetIdentifier ?? "-")")
         cellReference.add(cell)
+        cell.index = indexPath
+        cell.parent = collectionView
         if indexPath.row == 0 {
             // Local video.
             cell.participant = room.localParticipant

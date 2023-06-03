@@ -13,6 +13,8 @@ class VCViewCell: UICollectionViewCell {
     static let kIdentifer = "kVideoCollectionViewCell"
 
     var videoView = VideoView()
+    var index: IndexPath?
+    weak var parent: UICollectionView?
     var assetIdentifier: String?
     var avatarView = RoundImageView()
 
@@ -65,7 +67,7 @@ class VCViewCell: UICollectionViewCell {
             if let participant = participant {
                 // Listen to events.
                 participant.add(delegate: self)
-                setFirstVideoTrack()
+                setTracks()
 
                 setNeedsLayout()
             }
@@ -121,41 +123,53 @@ class VCViewCell: UICollectionViewCell {
         videoView.track = nil
         videoView.isHidden = true
         assetIdentifier = nil
+        index = nil
+        parent = nil
     }
 
-    private func setFirstVideoTrack() {
-        let track = participant?.videoTracks.first?.track as? VideoTrack
-        self.videoView.track = track
-        videoView.isHidden = track == nil
+    private func setTracks() {
+        // Video.
+        let videoTrack = participant?.videoTracks.first?.track as? VideoTrack
+        self.videoView.track = videoTrack
+        videoView.isHidden = videoTrack == nil
+        // Audio.
+        let audioTrack = participant?.audioTracks.first?.track as? AudioTrack
+        isMuted = audioTrack?.muted ?? false
     }
 }
 
 extension VCViewCell: ParticipantDelegate {
     func participant(_ participant: RemoteParticipant, didSubscribe publication: RemoteTrackPublication, track: Track) {
         DispatchQueue.main.async { [weak self] in
-            self?.setFirstVideoTrack()
+            self?.setTracks()
         }
     }
 
     func participant(_ participant: RemoteParticipant, didUnsubscribe publication: RemoteTrackPublication, track: Track) {
         DispatchQueue.main.async { [weak self] in
-            self?.setFirstVideoTrack()
+            self?.setTracks()
         }
     }
 
     func participant(_ participant: Participant, didUpdate speaking: Bool) {
         DispatchQueue.main.async {
+            if let idx = self.index {
+                if let parent = self.parent {
+                    parent.scrollToItem(at: idx, at: .top   , animated: true)
+                }
+            }
+            // Animate a red border around the speaker.
             let anim = CABasicAnimation(keyPath: "borderColor")
             anim.fromValue = UIColor.clear.cgColor
             anim.toValue = UIColor.red.cgColor
             self.layer.borderColor = UIColor.clear.cgColor
-            anim.duration = CATransaction.animationDuration()
+            anim.duration = 1
             self.layer.add(anim, forKey: "speaking")
 
             let anim2 = CABasicAnimation(keyPath: "borderWidth")
             anim2.fromValue = 0
             anim2.toValue = 4
-            anim2.duration = CATransaction.animationDuration()
+            anim2.duration = 1
             self.layer.add(anim2, forKey: "speaking-width")
         }
     }
