@@ -42,13 +42,14 @@ arch -x86_64 pod install
 ### Completed
 
 * One-on-one conversations and group chats.
-* Video or audio calling.
+* Video or audio calling one-on-one.
 * Channels with unlimited number of read-only subscribers.
 * Unread message counters.
 * Push notifications and in-app presence notifications.
 * Message status notifications: message delivery to server; received and read notifications.
 * Markdown-style formatting of text, e.g. \*style\* → **style**.
 * Replying and forwarding messages.
+* Pinning important messages to the top of a conversation.
 * Trusted account badges: verified account, staff, etc.
 * Form messages suitable for chatbots.
 * Attachments and inline images, voice/audio messages.

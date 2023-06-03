@@ -146,10 +146,18 @@ public class MetaGetData: Codable {
     let before: Int?
     /// Limit the number of messages loaded.
     let limit: Int?
+    let ranges: [MsgRange]?
     init(since: Int?, before: Int?, limit: Int?) {
         self.since = since
         self.before = before
         self.limit = limit
+        self.ranges = nil
+    }
+    init(ranges: [MsgRange], limit: Int?) {
+        self.since = nil
+        self.before = nil
+        self.limit = limit
+        self.ranges = ranges
     }
 }
 public class MetaGetDesc: Codable {
@@ -265,6 +273,11 @@ public class MsgGetMeta: CustomStringConvertible, Codable {
         if since != nil || before != nil || limit != nil {
             data = MetaGetData(since: since, before: before, limit: limit)
         }
+        set |= MsgGetMeta.kDataSet
+        buildWhat()
+    }
+    func setData(ranges: [MsgRange], limit: Int?) {
+        data = MetaGetData(ranges: ranges, limit: limit)
         set |= MsgGetMeta.kDataSet
         buildWhat()
     }

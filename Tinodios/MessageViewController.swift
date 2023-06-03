@@ -209,7 +209,7 @@ class MessageViewController: UIViewController {
 
     var isInitialLayout = true
 
-    // Highlight this cell when scroll finishes (after the user tapped on a quote).
+    // Highlight this cell when scroll finishes (after the user tapped on a quote or a pinned message).
     var highlightCellAtPathAfterScroll: IndexPath?
 
     // Size of the present update batch.

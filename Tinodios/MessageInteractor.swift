@@ -416,7 +416,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         }
     }
 
-    // Browsing backwards: load page from cache amd maybe from server.
+    // Browsing backwards: load page from cache and maybe from server.
     func loadPreviousPage() {
         guard let t = self.topic else {
             self.presenter?.endRefresh()
@@ -434,20 +434,30 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         }
 
         self.messageInteractorQueue.async {
-            t.loadMessagePage(startWithSeq: firstSeqId, pageSize: MessageInteractor.kMessagesPerPage, forward: false, onLoaded: { [weak self] (messagePage, error) in
+            if let missing = t.missingMessageRanges(startFrom: firstSeqId, pageSize: MessageInteractor.kMessagesPerPage, newer: false), !missing.isEmpty {
+                // Found missing ranges.
+                let query = t.metaGetBuilder().withData(ranges: missing, limit: MessageInteractor.kMessagesPerPage)
+                t.getMeta(query: query.build())
+                    .thenCatch({ err in
+                        Cache.log.error("Failed to load missing message ranges: %@", err.localizedDescription)
+                        return nil
+                    }).thenFinally { [weak self] in
+                        self?.presenter?.endRefresh()
+                    }
+                return
+            }
+            t.loadMessagePage(startWithSeq: firstSeqId, pageSize: MessageInteractor.kMessagesPerPage, forward: false, onLoaded: { [weak self] (messages, error) in
                 self?.presenter?.endRefresh()
                 if let err = error {
                     Cache.log.error("Failed to load message page: %@", err.localizedDescription)
-                } else if let messagePage = messagePage, !messagePage.isEmpty {
+                } else if let messagePage = messages, !messagePage.isEmpty {
                     var page = messagePage.map { $0 as! StoredMessage }
                     // Page is returned in descending order, reverse.
                     page.reverse()
                     // Append older messages to the end of the fetched page.
                     page.append(contentsOf: self?.messages ?? [])
                     self?.messages = page
-                    if self != nil {
-                        self!.presenter?.presentMessages(messages: self!.messages, false)
-                    }
+                    self?.presenter?.presentMessages(messages: page, false)
                 }
             })
         }
@@ -867,5 +877,39 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
     override func onMetaAux(aux: [String:JSONValue]) {
         guard let topic = topic else { return }
         self.presenter?.displayPinnedMessages(pins: topic.pinned, selected: -1)
+    }
+
+    override func onAllMessagesReceived(count: Int) {
+        guard let topic = topic else { return }
+
+        // Make sure all pinned messages are cached.
+        guard let pinsArray = MsgRange.toRanges(topic.pinned) else { return }
+        let found = BaseDb.sharedInstance.sqlStore?.msgIsCached(topic: topic, ranges: pinsArray) ?? []
+        var missing: [MsgRange] = []
+        if found.count <= topic.pinned.count {
+            missing = pinsArray
+            for f in found {
+                var tmp: [MsgRange] = []
+                for pin in missing {
+                    let p = MsgRange(from: pin)
+                    let clipped = MsgRange.clip(src: p, clip: f)
+                    if !clipped.isEmpty {
+                        tmp.append(clipped[0])
+                        if clipped.count > 1 {
+                            tmp.append(clipped[1])
+                        }
+                    }
+                }
+
+                missing = tmp
+                if missing.isEmpty {
+                    break
+                }
+            }
+        }
+
+        if !missing.isEmpty {
+            topic.getMeta(query: topic.metaGetBuilder().withData(ranges: missing, limit: MessageInteractor.kMessagesPerPage).build())
+        }
     }
 }

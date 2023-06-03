@@ -32,7 +32,6 @@ public protocol TopicProto: AnyObject {
     var lastSeen: LastSeen? { get set }
     var online: Bool { get set }
     var cachedMessageRange: MsgRange? { get }
-    var missingMessageRange: MsgRange? { get }
     var isArchived: Bool { get }
     var isJoiner: Bool { get }
     var isBlocked: Bool { get }
@@ -60,6 +59,7 @@ public protocol TopicProto: AnyObject {
     func expunge(hard: Bool)
     func setSetAndFetch(newSeq: Int?)
     func getMessage(byEffectiveSeq seqId: Int) -> Message?
+    func missingMessageRanges(startFrom: Int, pageSize: Int, newer: Bool) -> [MsgRange]?
 
     func allMessagesReceived(count: Int?)
     func allSubsReceived()
@@ -147,9 +147,13 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
             meta.setData(since: since, before: before, limit: limit)
             return self
         }
+        public func withData(ranges: [MsgRange], limit: Int?) -> MetaGetBuilder {
+            meta.setData(ranges: ranges, limit: limit);
+            return self
+        }
         public func withEarlierData(limit: Int?) -> MetaGetBuilder {
-            if let r = topic.missingMessageRange, r.low >= 1 {
-                return withData(since: r.lower, before: r.upper, limit: limit)
+            if let r = topic.cachedMessageRange, r.low >= 1 {
+                return withData(since: nil, before: r.lower, limit: limit)
             }
             return withData(since: nil, before: nil, limit: limit)
         }
@@ -436,8 +440,8 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
         return store?.getCachedMessagesRange(topic: self)
     }
 
-    public var missingMessageRange: MsgRange? {
-        return store?.getNextMissingRange(topic: self)
+    public func missingMessageRanges(startFrom: Int, pageSize: Int, newer: Bool) -> [MsgRange]? {
+        return store?.getMissingRanges(topic: self, startFrom: startFrom, pageSize: pageSize, newer: newer)
     }
 
     // Tells how many topic subscribers have reported the message as read or received.
@@ -1406,7 +1410,7 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
     }
 
     public func delMessages(ids: [Int], hard: Bool) -> PromisedReply<ServerMessage> {
-        guard let l = MsgRange.listToRanges(ids) else {
+        guard let l = MsgRange.toRanges(ids) else {
             return PromisedReply<ServerMessage>(error: TopicError.deleteFailure("No messages to delete"))
         }
         return delMessages(inRanges: l, hard: hard)
