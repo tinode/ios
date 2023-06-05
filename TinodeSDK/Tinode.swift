@@ -963,6 +963,9 @@ public class Tinode {
 
         // auth expires
         if ctrl.code < ServerMessage.kStatusMultipleChoices {
+            guard authToken != nil else {
+                throw TinodeError.invalidState("Server did not return auth token")
+            }
             isConnectionAuthenticated = true
             store?.myUid = newUid
             setAutoLoginWithToken(token: authToken!)
