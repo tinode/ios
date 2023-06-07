@@ -142,8 +142,11 @@ public class Tinode {
     public static let kMaxFileUploadSize = "maxFileUploadSize"
 
     public static let kNoteKp = "kp"
+    public static let kNoteKpA = "kpa"
+    public static let kNoteKpV = "kpv"
     public static let kNoteRead = "read"
     public static let kNoteRecv = "recv"
+    public static let kNoteCall = "call"
     public static let kNullValue = "\u{2421}"
     internal static let log = Log(subsystem: "co.tinode.tinodesdk")
 
@@ -793,6 +796,13 @@ public class Tinode {
             }
         }
         return r
+    }
+
+    public static func isChannel(name: String?) -> Bool {
+        if let name = name, !name.isEmpty {
+            return name.starts(with: kTopicChnPrefix) || name.starts(with: kChannelNew)
+        }
+        return false
     }
 
     /// Create account using a single basic authentication scheme. A connection must be established

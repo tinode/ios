@@ -364,6 +364,10 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
     public var isGrpType: Bool {
         return topicType == .grp
     }
+    public var isChannelType: Bool {
+        Tinode.isChannel(name: self.name)
+    }
+
     public var isManager: Bool {
         return description.acs?.isManager ?? false
     }
@@ -962,6 +966,16 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
         }
         listener?.onData(data: data)
 
+        // Use data message from another person to mark messages as read by him.
+        if data.from != nil && !(tinode?.isMe(uid: data.from) ?? false) && !isChannelType {
+            var info = MsgServerInfo()
+            info.what = Tinode.kNoteRead
+            info.from = data.from
+            info.seq = data.seq
+            // Mark messages as read by the sender.
+            routeInfo(info: info)
+        }
+
         // Call notification listener on 'me' to refresh chat list, if appropriate.
         if let me = tinode?.getMeTopic() {
             me.setMsgReadRecv(from: self.name, what: "", seq: 0)
@@ -1115,12 +1129,20 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
     }
 
     public func routeInfo(info: MsgServerInfo) {
-        if info.what != Tinode.kNoteKp {
+        switch info.what {
+        case Tinode.kNoteKp, Tinode.kNoteKpA, Tinode.kNoteKpV:
+            break
+        case Tinode.kNoteCall:
+            break
+        case Tinode.kNoteRead, Tinode.kNoteRecv:
             setReadRecvByRemote(from: info.from, what: info.what, seq: info.seq)
             if let t = tinode, t.isMe(uid: info.from), let me = t.getMeTopic() {
                 me.setMsgReadRecv(from: self.name, what: info.what, seq: info.seq)
             }
+        default:
+            break
         }
+
         listener?.onInfo(info: info)
     }
 
