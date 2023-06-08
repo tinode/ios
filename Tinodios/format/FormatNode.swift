@@ -604,6 +604,7 @@ class FormatNode: CustomStringConvertible {
 
         // Large phone icon.
         let icon = NSTextAttachment()
+        // FIXME: use a custom icon instead of 'video' (reserved for Facetime).
         icon.image = UIImage(systemName: isConferenceCall ? "video" : "phone")?.withRenderingMode(.alwaysTemplate)
         var aspectRatio: CGFloat = 1
         if let size = icon.image?.size {

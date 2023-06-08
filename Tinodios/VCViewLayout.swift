@@ -10,42 +10,16 @@ import UIKit
 // Video conferencing participants.
 class VCViewLayout: UICollectionViewLayout {
     enum SegmentStyle {
+        // Segment occupies the full screen width.
         case fullWidth
+        // Screen is shared by two segments of equal height.
         case fiftyFifty
-        case twoThirdsOneThird
-        case oneThirdTwoThirds
-    }
-    enum LayoutStyle {
-        case tile
-        case mosaic
     }
 
     func nextSegment(forRemainingCells cells: Int, prevSegment: SegmentStyle) -> SegmentStyle {
-        switch layoutStyle {
-        case .tile:
-            return cells > 1 ? .fiftyFifty : .fullWidth
-        case .mosaic:
-            switch cells {
-            case 1:
-                return .fullWidth
-            case 2:
-                return .fiftyFifty
-            default:
-                switch prevSegment {
-                case .fullWidth:
-                    return .fiftyFifty
-                case .fiftyFifty:
-                    return .twoThirdsOneThird
-                case .twoThirdsOneThird:
-                    return .oneThirdTwoThirds
-                case .oneThirdTwoThirds:
-                    return .fiftyFifty
-                }
-            }
-        }
+        return cells > 1 ? .fiftyFifty : .fullWidth
     }
 
-    var layoutStyle: LayoutStyle = .tile
     var contentBounds = CGRect.zero
     var cachedAttributes = [UICollectionViewLayoutAttributes]()
 
@@ -78,16 +52,6 @@ class VCViewLayout: UICollectionViewLayout {
             case .fiftyFifty:
                 let horizontalSlices = segmentFrame.dividedIntegral(fraction: 0.5, from: .minXEdge)
                 segmentRects = [horizontalSlices.first, horizontalSlices.second]
-
-            case .twoThirdsOneThird:
-                let horizontalSlices = segmentFrame.dividedIntegral(fraction: (2.0 / 3.0), from: .minXEdge)
-                let verticalSlices = horizontalSlices.second.dividedIntegral(fraction: 0.5, from: .minYEdge)
-                segmentRects = [horizontalSlices.first, verticalSlices.first, verticalSlices.second]
-
-            case .oneThirdTwoThirds:
-                let horizontalSlices = segmentFrame.dividedIntegral(fraction: (1.0 / 3.0), from: .minXEdge)
-                let verticalSlices = horizontalSlices.first.dividedIntegral(fraction: 0.5, from: .minYEdge)
-                segmentRects = [verticalSlices.first, verticalSlices.second, horizontalSlices.second]
             }
 
             // Create and cache layout attributes for calculated frames.

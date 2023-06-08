@@ -48,7 +48,6 @@ class VCViewController: UIViewController {
         get { return room.localParticipant?.isMicrophoneEnabled() ?? false }
         set {
             room.localParticipant?.setMicrophone(enabled: newValue).then(on: DispatchQueue.main) { _ in
-                //self.updateControlButtons()
                 self.muteAudioButton.setImage(UIImage(systemName: self.micEnabled ? "mic.fill" : "mic.slash.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: 16, weight: .regular)), for: .normal)
             }
         }
@@ -201,7 +200,6 @@ extension VCViewController: UICollectionViewDelegate, UICollectionViewDataSource
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: VCViewCell.kIdentifer, for: indexPath) as? VCViewCell
             else { preconditionFailure("Failed to load collection view cell") }
 
-        print("cell \(indexPath) asset id -> \(cell.assetIdentifier ?? "-")")
         cellReference.add(cell)
         cell.index = indexPath
         cell.parent = collectionView
@@ -237,7 +235,6 @@ extension VCViewController: UICollectionViewDelegate, UICollectionViewDataSource
 
 extension VCViewController: RoomDelegateObjC {
     func room(_ room: Room, participantDidJoin participant: RemoteParticipant) {
-        print("participant did join -> \(participant)")
         self.remoteParticipants.append(participant)
         DispatchQueue.main.async {
             self.collectionView.reloadData()
@@ -245,7 +242,6 @@ extension VCViewController: RoomDelegateObjC {
     }
 
     func room(_ room: Room, participantDidLeave participant: RemoteParticipant) {
-        print("participant did leave -> \(participant)")
         self.remoteParticipants.removeAll(where: { $0.sid == participant.sid })
         DispatchQueue.main.async {
             self.collectionView.reloadData()
