@@ -204,7 +204,8 @@ class AbstractFormatter: DraftyFormatter {
         return result
     }
 
-    static func callStatusText(incoming: Bool, event: String) -> String {
+    static func callStatusText(incoming: Bool, event: String, isConferenceCall: Bool) -> String {
+        let inProgress = NSLocalizedString("in progress", comment: "Label for call in progress")
         var comment: String
         switch event {
         case MsgServerData.WebRTC.kBusy.rawValue:
@@ -216,9 +217,9 @@ class AbstractFormatter: DraftyFormatter {
                 NSLocalizedString(MsgServerData.WebRTC.kMissed.rawValue, comment: "Label for missed call") :
                 NSLocalizedString("cancelled", comment: "Label for cancelled call")
         case MsgServerData.WebRTC.kStarted.rawValue:
-            comment = NSLocalizedString("connecting", comment: "Label for initiated call")
+            comment = isConferenceCall ? inProgress : NSLocalizedString("connecting", comment: "Label for initiated call")
         case MsgServerData.WebRTC.kAccepted.rawValue:
-            comment = NSLocalizedString("in progress", comment: "Label for call in progress")
+            comment = inProgress
         default:
             comment = NSLocalizedString(MsgServerData.WebRTC.kDisconnected.rawValue, comment: "Label for disconnected call")
         }

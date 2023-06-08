@@ -582,6 +582,15 @@ class MessageViewController: UIViewController {
                 destinationVC.isAudioOnlyCall = (sender as? Int) == Constants.kAudioOnlyCall
             }
             destinationVC.topic = self.topic
+        case "Messages2VC":
+            let destinationVC = segue.destination as! VCViewController
+            if let req = sender as? VCJoinRequest {
+                destinationVC.callDirection = .incoming
+                destinationVC.callSeqId = req.seq
+            } else {
+                destinationVC.callDirection = .outgoing
+            }
+            destinationVC.topic = self.topic
         default:
             break
         }
@@ -603,19 +612,26 @@ class MessageViewController: UIViewController {
     }
 
     @objc func navBarCallTapped(sender: UIMenuController) {
-        let alert = UIAlertController(title: NSLocalizedString("Call", comment: "Menu title for selecting type of call"), message: nil, preferredStyle: .actionSheet)
-        alert.modalPresentationStyle = .popover
-        alert.addAction(UIAlertAction(title: NSLocalizedString("Audio-only", comment: "Menu item: audio-only call"), style: .default, handler: { audioCall in
-            self.performSegue(withIdentifier: "Messages2Call", sender: Constants.kAudioOnlyCall)
-        }))
-        alert.addAction(UIAlertAction(title: NSLocalizedString("Video", comment: "Menu item: video call"), style: .default, handler: { videoCall in
-            self.performSegue(withIdentifier: "Messages2Call", sender: Constants.kVideoCall)
-        }))
-        alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Alert action"), style: .cancel, handler: nil))
-        if let presentation = alert.popoverPresentationController {
-            presentation.barButtonItem = navBarCallBtn
+        switch self.topicType {
+        case .p2p:
+            let alert = UIAlertController(title: NSLocalizedString("Call", comment: "Menu title for selecting type of call"), message: nil, preferredStyle: .actionSheet)
+            alert.modalPresentationStyle = .popover
+            alert.addAction(UIAlertAction(title: NSLocalizedString("Audio-only", comment: "Menu item: audio-only call"), style: .default, handler: { audioCall in
+                self.performSegue(withIdentifier: "Messages2Call", sender: Constants.kAudioOnlyCall)
+            }))
+            alert.addAction(UIAlertAction(title: NSLocalizedString("Video", comment: "Menu item: video call"), style: .default, handler: { videoCall in
+                self.performSegue(withIdentifier: "Messages2Call", sender: Constants.kVideoCall)
+            }))
+            alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Alert action"), style: .cancel, handler: nil))
+            if let presentation = alert.popoverPresentationController {
+                presentation.barButtonItem = navBarCallBtn
+            }
+            self.present(alert, animated: true, completion: nil)
+        case .grp:
+            self.performSegue(withIdentifier: "Messages2VC", sender: nil)
+        default:
+            break
         }
-        self.present(alert, animated: true, completion: nil)
     }
 }
 

@@ -17,6 +17,7 @@
 		0A0D92D72840EFEF00B5B5B0 /* CallProviderDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A0D92D62840EFEF00B5B5B0 /* CallProviderDelegate.swift */; };
 		0A0D92D928410D4100B5B5B0 /* CallManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A0D92D828410D4100B5B5B0 /* CallManager.swift */; };
 		0A11912D22F03E3100A1BBA1 /* TagsEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A11912C22F03E3100A1BBA1 /* TagsEditView.swift */; };
+		0A1BA3F02A0F382300990578 /* VCViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A1BA3EF2A0F382300990578 /* VCViewController.swift */; };
 		0A2F81C6229677DD007E562C /* AddByIDViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2F81C5229677DD007E562C /* AddByIDViewController.swift */; };
 		0A35BA9E22836CCF00AA5E2F /* ContactsSynchronizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A35BA9D22836CCF00AA5E2F /* ContactsSynchronizer.swift */; };
 		0A35BAA02283A37500AA5E2F /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A35BA9F2283A37500AA5E2F /* Utils.swift */; };
@@ -41,6 +42,8 @@
 		0A8D945A22BEF08100DC154E /* AvatarWithOnlineIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8D945922BEF08100DC154E /* AvatarWithOnlineIndicator.swift */; };
 		0A8D945C22BF5B7F00DC154E /* AvatarWithOnlineIndicator+TypingAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8D945B22BF5B7F00DC154E /* AvatarWithOnlineIndicator+TypingAnimation.swift */; };
 		0A8EA5B029838E5900B116EA /* CredentialsChangeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8EA5AF29838E5900B116EA /* CredentialsChangeViewController.swift */; };
+		0A8FF2302A1DA927005A223A /* VCViewLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8FF22F2A1DA927005A223A /* VCViewLayout.swift */; };
+		0A8FF2322A1DA94F005A223A /* VCViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8FF2312A1DA94F005A223A /* VCViewCell.swift */; };
 		0A910AFC2383A60500C95AD3 /* TinodiosDB.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0ACE9E7E23814157006BE575 /* TinodiosDB.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		0A95F4D4229BD95900AEF7D3 /* AccountSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A95F4D3229BD95900AEF7D3 /* AccountSettingsViewController.swift */; };
 		0A9E7149237BCC8400C1D491 /* NewChatTabController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A9E7148237BCC8400C1D491 /* NewChatTabController.swift */; };
@@ -196,6 +199,7 @@
 		0A0D92D62840EFEF00B5B5B0 /* CallProviderDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallProviderDelegate.swift; sourceTree = "<group>"; };
 		0A0D92D828410D4100B5B5B0 /* CallManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallManager.swift; sourceTree = "<group>"; };
 		0A11912C22F03E3100A1BBA1 /* TagsEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagsEditView.swift; sourceTree = "<group>"; };
+		0A1BA3EF2A0F382300990578 /* VCViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VCViewController.swift; sourceTree = "<group>"; };
 		0A2F81C5229677DD007E562C /* AddByIDViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddByIDViewController.swift; sourceTree = "<group>"; };
 		0A35BA9D22836CCF00AA5E2F /* ContactsSynchronizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsSynchronizer.swift; sourceTree = "<group>"; };
 		0A35BA9F2283A37500AA5E2F /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
@@ -220,6 +224,8 @@
 		0A8D945922BEF08100DC154E /* AvatarWithOnlineIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvatarWithOnlineIndicator.swift; sourceTree = "<group>"; };
 		0A8D945B22BF5B7F00DC154E /* AvatarWithOnlineIndicator+TypingAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AvatarWithOnlineIndicator+TypingAnimation.swift"; sourceTree = "<group>"; };
 		0A8EA5AF29838E5900B116EA /* CredentialsChangeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CredentialsChangeViewController.swift; sourceTree = "<group>"; };
+		0A8FF22F2A1DA927005A223A /* VCViewLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VCViewLayout.swift; sourceTree = "<group>"; };
+		0A8FF2312A1DA94F005A223A /* VCViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VCViewCell.swift; sourceTree = "<group>"; };
 		0A95F4D3229BD95900AEF7D3 /* AccountSettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountSettingsViewController.swift; sourceTree = "<group>"; };
 		0A9E7148237BCC8400C1D491 /* NewChatTabController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewChatTabController.swift; sourceTree = "<group>"; };
 		0AB5FDCD22C20D1900F44AFD /* ArchivedChatsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchivedChatsTableViewController.swift; sourceTree = "<group>"; };
@@ -473,6 +479,9 @@
 				B0BE302A27B8A3B600B04631 /* TopicSecurityViewController.swift */,
 				0AEE8BED226456080022EC3F /* UiUtils.swift */,
 				0A35BA9F2283A37500AA5E2F /* Utils.swift */,
+				0A1BA3EF2A0F382300990578 /* VCViewController.swift */,
+				0A8FF22F2A1DA927005A223A /* VCViewLayout.swift */,
+				0A8FF2312A1DA94F005A223A /* VCViewCell.swift */,
 				0A4BD27029568B8E00493A04 /* VideoPreviewController.swift */,
 				0A0380DB21B3CC8100A3FA0E /* Main.storyboard */,
 				B0BC2B5B235E0DB800BEEB4B /* Tinodios.entitlements */,
@@ -977,6 +986,7 @@
 				B0BE302D27BAC90E00B04631 /* TopicGeneralViewController.swift in Sources */,
 				B091BA5628272A2400317CDC /* WaveImageView.swift in Sources */,
 				B027E5B22789026200A34C17 /* SendReplyFormatter.swift in Sources */,
+				0A8FF2302A1DA927005A223A /* VCViewLayout.swift in Sources */,
 				0A35BA9E22836CCF00AA5E2F /* ContactsSynchronizer.swift in Sources */,
 				0A0D92D72840EFEF00B5B5B0 /* CallProviderDelegate.swift in Sources */,
 				B03066432805F2AA00497EF4 /* EntityTextAttachment.swift in Sources */,
@@ -1025,6 +1035,7 @@
 				B0DF03172279F027000F9492 /* RoundImageView.swift in Sources */,
 				B0A612B72294289000569DFE /* MessageViewController+SendMessageBarDelegate.swift in Sources */,
 				B0BA208523D5D8CF00C59BD4 /* FilePreviewController.swift in Sources */,
+				0A8FF2322A1DA94F005A223A /* VCViewCell.swift in Sources */,
 				0A35BAA02283A37500AA5E2F /* Utils.swift in Sources */,
 				B0A612B3228EDC7B00569DFE /* ButtonAttachment.swift in Sources */,
 				0ADDBC8B2249F617000BD00D /* ChatListViewCell.swift in Sources */,
@@ -1048,6 +1059,7 @@
 				0AE50D4622156A4B0021F7B7 /* FindInteractor.swift in Sources */,
 				B081B28129D638850026089C /* PagerView.swift in Sources */,
 				0A8C8A4621E5E72D00D8751E /* MessageViewController.swift in Sources */,
+				0A1BA3F02A0F382300990578 /* VCViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

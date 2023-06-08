@@ -354,3 +354,43 @@ extension Tinode {
         return nil
     }
 }
+
+extension DefaultComTopic {
+    // Returns true if the topic allows calls to be placed.
+    var callsAllowed: Bool {
+        let t = Cache.tinode
+        // The user is allowed to post messages and
+        // - for p2p topics, we have ice servers to establish communication via.
+        // - for group topics, we have media server endpoint.
+        return self.isWriter && ((self.isP2PType && t.getServerParam(for: "iceServers") != nil)
+            || (self.isGrpType && t.getServerParam(for: "vcEndpoint") != nil))
+    }
+}
+
+extension CGRect {
+    // Splits self into two rectangles measuring `fraction` (between 0..1) from the specified edge
+    func dividedIntegral(fraction: CGFloat, from fromEdge: CGRectEdge) -> (first: CGRect, second: CGRect) {
+        let dimension: CGFloat
+
+        switch fromEdge {
+        case .minXEdge, .maxXEdge:
+            dimension = self.size.width
+        case .minYEdge, .maxYEdge:
+            dimension = self.size.height
+        }
+
+        let distance = (dimension * fraction).rounded(.up)
+        var slices = self.divided(atDistance: distance, from: fromEdge)
+
+        switch fromEdge {
+        case .minXEdge, .maxXEdge:
+            slices.remainder.origin.x += 1
+            slices.remainder.size.width -= 1
+        case .minYEdge, .maxYEdge:
+            slices.remainder.origin.y += 1
+            slices.remainder.size.height -= 1
+        }
+
+        return (first: slices.slice, second: slices.remainder)
+    }
+}

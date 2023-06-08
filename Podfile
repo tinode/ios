@@ -1,5 +1,5 @@
 # Uncomment the next line to define a global platform for your project
-platform :ios, '12.0'
+platform :ios, '13.0'
 
 # https://stackoverflow.com/a/58067562/6692196 !use_frameworks is no longer needed.
 # use_frameworks!
@@ -28,6 +28,7 @@ target 'TinodiosDB' do
 end
 
 def app_pods
+  use_modular_headers!
   pod 'Firebase'
   pod 'FirebaseCore'
   pod 'FirebaseMessaging'
@@ -36,7 +37,7 @@ def app_pods
   pod 'Kingfisher', '~> 5.0'
   pod 'MobileVLCKit', '~> 3.5.0'
   pod 'PhoneNumberKit', '~> 3.3'
-  pod 'WebRTC-lib', '~> 96.0.0'
+  pod 'LiveKitClient', '~> 1.0.8'
 end
 
 # UI tests.
