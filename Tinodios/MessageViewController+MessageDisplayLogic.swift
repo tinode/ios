@@ -54,7 +54,7 @@ extension MessageViewController: MessageDisplayLogic {
                 navBarAvatarView.widthAnchor.constraint(equalTo: navBarAvatarView.heightAnchor)
             ])
         var items = [UIBarButtonItem(customView: navBarAvatarView)]
-        if let t = self.topic, t.callsAllowed {
+        if let t = self.topic, t.callsAllowed || true {
             items.append(self.navBarCallBtn)
         }
         self.navigationItem.setRightBarButtonItems(items, animated: false)

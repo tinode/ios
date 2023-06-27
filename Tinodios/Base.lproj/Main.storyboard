@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="21507" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="oPa-Qr-HlP">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="21701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="oPa-Qr-HlP">
     <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21505"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21679"/>
         <capability name="Image references" minToolsVersion="12.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="Stack View standard spacing" minToolsVersion="9.0"/>
@@ -1568,7 +1568,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="Cmv-ie-mJi">
-                                                    <rect key="frame" x="22.5" y="11.999999999999998" width="19" height="19.333333333333332"/>
+                                                    <rect key="frame" x="22.5" y="11.999999999999998" width="19.000000000000004" height="19.333333333333332"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <imageReference key="image" image="bell.badge" catalog="system" symbolScale="medium"/>
                                                     <preferredSymbolConfiguration key="preferredSymbolConfiguration" scale="medium" weight="regular"/>
@@ -2695,14 +2695,14 @@
             <objects>
                 <viewController id="buX-Ye-w3b" userLabel="Edit Members" customClass="EditMembersViewController" customModule="Tinodios" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="O3T-QZ-1RZ">
-                        <rect key="frame" x="0.0" y="0.0" width="393" height="727"/>
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="786"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="fnj-gY-RQy">
-                                <rect key="frame" x="0.0" y="0.0" width="393" height="727"/>
+                                <rect key="frame" x="0.0" y="0.0" width="393" height="786"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="X9H-Bp-dMj" userLabel="ContentView">
-                                        <rect key="frame" x="0.0" y="0.0" width="393" height="727"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="393" height="786"/>
                                         <subviews>
                                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="GROUP MEMBERS" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="a45-p0-44d" customClass="PaddedLabel" customModule="Tinodios" customModuleProvider="target">
                                                 <rect key="frame" x="0.0" y="0.0" width="393" height="40"/>
@@ -2762,7 +2762,7 @@
                                                 </userDefinedRuntimeAttributes>
                                             </label>
                                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="60" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="Bzn-Pa-JP8">
-                                                <rect key="frame" x="0.0" y="172" width="393" height="555"/>
+                                                <rect key="frame" x="0.0" y="172" width="393" height="614"/>
                                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                                 <view key="tableFooterView" contentMode="scaleToFill" id="te7-Jx-ztq" userLabel="Footer to hide separators">
                                                     <rect key="frame" x="0.0" y="0.0" width="393" height="0.0"/>
@@ -2850,14 +2850,14 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Delete Messages" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="wnZ-ve-5xb">
-                                                    <rect key="frame" x="50" y="0.0" width="304.66666666666669" height="44"/>
+                                                    <rect key="frame" x="46" y="0.0" width="308.66666666666669" height="44"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="gCN-hc-uhY">
-                                                    <rect key="frame" x="20" y="15" width="15" height="14"/>
+                                                    <rect key="frame" x="20" y="16.333333333333332" width="11" height="11"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <imageReference key="image" image="xmark.bubble" symbolScale="medium"/>
                                                     <preferredSymbolConfiguration key="preferredSymbolConfiguration" scale="medium" weight="regular"/>
@@ -4606,7 +4606,7 @@
         <image name="vc.fill" width="154" height="132"/>
         <image name="xmark.bin" catalog="system" width="128" height="92"/>
         <image name="xmark.bin.fill" catalog="system" width="128" height="92"/>
-        <image name="xmark.bubble" width="15" height="14"/>
+        <image name="xmark.bubble" width="11" height="11"/>
         <image name="xmark.circle" catalog="system" width="128" height="123"/>
         <systemColor name="groupTableViewBackgroundColor">
             <color red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>

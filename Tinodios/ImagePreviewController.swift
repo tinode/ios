@@ -62,7 +62,7 @@ class ImagePreviewController: UIViewController, UIScrollViewDelegate {
             imageDetailsPanel.bounds = CGRect()
         case .rawdata(let bits, let ref):
             let errorImage = UiUtils.placeholderImage(
-                named: "broken-image", withBackground: nil,
+                named: "image-broken", withBackground: nil,
                 width: CGFloat(content.width ?? 64), height: CGFloat(content.height ?? 64))
             // Viewing received image.
 
@@ -91,7 +91,7 @@ class ImagePreviewController: UIViewController, UIScrollViewDelegate {
 
         if imageView.image == nil {
             imageView.image = UiUtils.placeholderImage(
-                named: "broken-image", withBackground: nil,
+                named: "image-broken", withBackground: nil,
                 width: CGFloat(content.width ?? 64), height: CGFloat(content.height ?? 64))
         }
 

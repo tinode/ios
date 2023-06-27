@@ -461,7 +461,7 @@ class FormatNode: CustomStringConvertible {
 
         let scaledSize = UiUtils.sizeUnder(original: originalSize, fitUnder: size, scale: 1, clip: false).dst
         if image == nil {
-            let iconName = attachment.ref != nil ? "image-wait" : "broken-image"
+            let iconName = attachment.ref != nil ? "image-wait" : "image-broken"
             // No need to scale the stock image.
             wrapper.image = UiUtils.placeholderImage(named: iconName, withBackground: nil, width: scaledSize.width, height: scaledSize.height)
         } else {
@@ -469,7 +469,7 @@ class FormatNode: CustomStringConvertible {
         }
         wrapper.bounds = CGRect(origin: attachment.offset ?? .zero, size: scaledSize)
 
-        (wrapper as? AsyncImageTextAttachment)?.startDownload(onError: UiUtils.placeholderImage(named: "broken-image", withBackground: image, width: scaledSize.width, height: scaledSize.height))
+        (wrapper as? AsyncImageTextAttachment)?.startDownload(onError: UiUtils.placeholderImage(named: "image-broken", withBackground: image, width: scaledSize.width, height: scaledSize.height))
 
         return NSAttributedString(attachment: wrapper)
     }
@@ -604,8 +604,7 @@ class FormatNode: CustomStringConvertible {
 
         // Large phone icon.
         let icon = NSTextAttachment()
-        // FIXME: use a custom icon instead of 'video' (reserved for Facetime).
-        icon.image = UIImage(systemName: isConferenceCall ? "video" : "phone")?.withRenderingMode(.alwaysTemplate)
+        icon.image = (isConferenceCall ? UIImage(named: "videoconf") : UIImage(systemName: "phone"))?.withRenderingMode(.alwaysTemplate)
         var aspectRatio: CGFloat = 1
         if let size = icon.image?.size {
             aspectRatio = size.width / size.height
