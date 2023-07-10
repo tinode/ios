@@ -109,6 +109,11 @@ class DraftyTest: XCTestCase {
         d2 = Drafty(text: "first 😀 line second line",
                     fmt: [Style(tp: "BR", at: 12, len: 1), Style(tp: "ST", at: 20, len: 4)], ent: nil)
         XCTAssertEqual(d1, d2, "String 13 - two lines with emoji in the first and style in the second")
+
+        // String 14: another compound Unicode test
+        d1 = Drafty(content: "🔴Hello🔴\n🟠Hello🟠")
+        d2 = Drafty(text: "🔴Hello🔴 🟠Hello🟠", fmt: [Style(tp: "BR", at: 7, len: 1)], ent: nil)
+        XCTAssertEqual(d1, d2, "String 14 - two lines with compound emojis")
     }
 
     func testShorten() {
