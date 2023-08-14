@@ -1,9 +1,6 @@
-
-/* Class = "UIButton"; normalTitle = "OK"; ObjectID = "PJ7-dH-ATp"; */
-"PJ7-dH-ATp.normalTitle" = "OK";
-
 /* Class = "UILabel"; text = "Tags (content discovery)"; ObjectID = "eeW-SH-URg"; */
-"eeW-SH-URg.text" = "Tags (content discovery)";
+"eeW-SH-URg.text" = "Теги (пошук контактів)";
 
 /* Class = "UIButton"; normalTitle = "Cancel"; ObjectID = "vOv-C1-oEb"; */
-"vOv-C1-oEb.normalTitle" = "Cancel";
+"vOv-C1-oEb.normalTitle" = "Скасувати";
+

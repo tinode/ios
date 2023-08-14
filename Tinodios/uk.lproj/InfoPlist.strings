@@ -1,0 +1,15 @@
+/* Privacy - Camera Usage Description */
+"NSCameraUsageDescription" = "Tinode використовує камеру щоб зробити фото в якості аватара, а також, щоб надіслати фото вашим контактам";
+
+/* Privacy - Contacts Usage Description */
+"NSContactsUsageDescription" = "Tinode зберігає емейлы і номери телефонів на сервері для того, щоб знайти по ним ваших знайомих";
+
+/* Privacy - Microphone Usage Description */
+"NSMicrophoneUsageDescription" = "Tinode використовує мікрофон для запису аудіо, які ви надсилаєте у своїх повідомленнях";
+
+/* Privacy - Photo Library Additions Usage Description */
+"NSPhotoLibraryAddUsageDescription" = "Фото і картинки з Tinode можна зберегти в бібліотеці фотографій";
+
+/* Privacy - Photo Library Usage Description */
+"NSPhotoLibraryUsageDescription" = "Tinode потрібен доступ до ваших фотографій, щоб ви змогли приєднати їх до повідомлень";
+

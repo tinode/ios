@@ -276,6 +276,8 @@
 		B04D95592A8A79D900558612 /* uk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = uk; path = uk.lproj/Main.strings; sourceTree = "<group>"; };
 		B04D955A2A8A79D900558612 /* uk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = uk; path = uk.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
 		B04D955B2A8A79D900558612 /* uk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = uk; path = uk.lproj/Localizable.strings; sourceTree = "<group>"; };
+		B04D955F2A8A7D2000558612 /* uk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = uk; path = uk.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		B04D95602A8A7D2000558612 /* uk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = uk; path = uk.lproj/Localizable.strings; sourceTree = "<group>"; };
 		B052ABCC2863F7E700A7D550 /* call-end.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = "call-end.m4a"; sourceTree = "<group>"; };
 		B052ABCE2863F81500A7D550 /* call-out.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = "call-out.m4a"; sourceTree = "<group>"; };
 		B052ABD02863F82000A7D550 /* dialing.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = dialing.m4a; sourceTree = "<group>"; };
@@ -1100,6 +1102,7 @@
 				B02725FD283DB3C70055D446 /* zh-Hans */,
 				B02725FE283DB3D10055D446 /* ru */,
 				B02725FF283DB3DB0055D446 /* es */,
+				B04D95602A8A7D2000558612 /* uk */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
@@ -1111,6 +1114,7 @@
 				B0BE301D27B3378100B04631 /* es */,
 				B0BE301E27B3388700B04631 /* zh-Hans */,
 				B0BE301F27B3389100B04631 /* zh-Hant */,
+				B04D955F2A8A7D2000558612 /* uk */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
