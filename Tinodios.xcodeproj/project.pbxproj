@@ -271,6 +271,11 @@
 		B03066442805FAD300497EF4 /* MultiImageTextAttachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiImageTextAttachment.swift; sourceTree = "<group>"; };
 		B031BE542263075E004160AE /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		B03B51332803AF26006C714B /* WaveTextAttachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaveTextAttachment.swift; sourceTree = "<group>"; };
+		B04D95572A8A79D800558612 /* uk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = uk; path = uk.lproj/MultilineAlertView.strings; sourceTree = "<group>"; };
+		B04D95582A8A79D900558612 /* uk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = uk; path = uk.lproj/TagsEditDialogView.strings; sourceTree = "<group>"; };
+		B04D95592A8A79D900558612 /* uk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = uk; path = uk.lproj/Main.strings; sourceTree = "<group>"; };
+		B04D955A2A8A79D900558612 /* uk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = uk; path = uk.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
+		B04D955B2A8A79D900558612 /* uk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = uk; path = uk.lproj/Localizable.strings; sourceTree = "<group>"; };
 		B052ABCC2863F7E700A7D550 /* call-end.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = "call-end.m4a"; sourceTree = "<group>"; };
 		B052ABCE2863F81500A7D550 /* call-out.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = "call-out.m4a"; sourceTree = "<group>"; };
 		B052ABD02863F82000A7D550 /* dialing.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = dialing.m4a; sourceTree = "<group>"; };
@@ -703,6 +708,7 @@
 				es,
 				"zh-Hant",
 				ru,
+				uk,
 			);
 			mainGroup = 0A0380CB21B3CC8100A3FA0E;
 			productRefGroup = 0A0380D521B3CC8100A3FA0E /* Products */;
@@ -1069,6 +1075,7 @@
 				B0CEF8D726B5EC21000028C2 /* zh-Hant */,
 				B0CEF8D926B603E3000028C2 /* ru */,
 				B093F50426C5BD4200FAA4E8 /* en */,
+				B04D95592A8A79D900558612 /* uk */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";
@@ -1081,6 +1088,7 @@
 				B0941BC52487CEE100A891B7 /* es */,
 				B0CEF8D826B5EC5D000028C2 /* zh-Hant */,
 				B0CEF8DA26B603E3000028C2 /* ru */,
+				B04D955A2A8A79D900558612 /* uk */,
 			);
 			name = LaunchScreen.storyboard;
 			sourceTree = "<group>";
@@ -1115,6 +1123,7 @@
 				B0979FCE27BD9A070045FC73 /* ru */,
 				B0979FD027BD9A2A0045FC73 /* zh-Hans */,
 				B0979FD227BD9A3B0045FC73 /* zh-Hant */,
+				B04D95582A8A79D900558612 /* uk */,
 			);
 			name = TagsEditDialogView.xib;
 			sourceTree = "<group>";
@@ -1127,6 +1136,7 @@
 				B0979FCD27BD9A070045FC73 /* ru */,
 				B0979FCF27BD9A2A0045FC73 /* zh-Hans */,
 				B0979FD127BD9A3B0045FC73 /* zh-Hant */,
+				B04D95572A8A79D800558612 /* uk */,
 			);
 			name = MultilineAlertView.xib;
 			sourceTree = "<group>";
@@ -1139,6 +1149,7 @@
 				B0CEF8DB26B603E4000028C2 /* ru */,
 				B093F50126C5BBF300FAA4E8 /* zh-Hant */,
 				B093F50526C5BD8800FAA4E8 /* en */,
+				B04D955B2A8A79D900558612 /* uk */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
