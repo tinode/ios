@@ -1,7 +1,7 @@
 //
 //  JSONValue.swift
 //
-//  Copyright © 2019-2022 Tinode LLC. All rights reserved.
+//  Copyright © 2019-2023 Tinode LLC. All rights reserved.
 //
 
 import Foundation
@@ -17,6 +17,7 @@ public enum JSONValue: Codable, Equatable {
     case dict([String: JSONValue])
     case array([JSONValue])
     case bytes(Data)
+    case null
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
@@ -37,12 +38,16 @@ public enum JSONValue: Codable, Equatable {
             try container.encode(v)
         case .bytes(let v):
             try container.encode(v)
+        case .null:
+            try container.encodeNil()
         }
     }
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
-        if let value = try? container.decode(String.self) {
+        if container.decodeNil() {
+            self = .null
+        } else if let value = try? container.decode(String.self) {
             self = .string(value)
         } else if let value = try? container.decode(Int.self) {
             self = .int(value)
@@ -120,5 +125,9 @@ public enum JSONValue: Codable, Equatable {
             return v
         }
         return nil
+    }
+
+    public func isNil() -> Bool {
+        return self == .null
     }
 }
