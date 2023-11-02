@@ -58,7 +58,7 @@ public protocol TopicProto: AnyObject {
     func updateAccessMode(ac: AccessChange?) -> Bool
     func persist()
     func expunge(hard: Bool)
-    func setSetAndFetch(newSeq: Int?)
+    func setSeqAndFetch(newSeq: Int?)
     func getMessage(byEffectiveSeq seqId: Int) -> Message?
 
     func allMessagesReceived(count: Int?)
@@ -1434,7 +1434,7 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
         return result
     }
 
-    public func setSetAndFetch(newSeq: Int?) {
+    public func setSeqAndFetch(newSeq: Int?) {
         guard let newSeq = newSeq, newSeq > description.getSeq else { return }
         let limit = newSeq - description.getSeq
         self.setSeq(seq: newSeq)
