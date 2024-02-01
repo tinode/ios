@@ -133,17 +133,19 @@ public class Utils {
 
     public static func generateQRCode(from string: String) -> UIImage? {
         let data = string.data(using: String.Encoding.ascii)
+        guard let filter = CIFilter(name: "CIQRCodeGenerator") else { return nil }
 
-        if let filter = CIFilter(name: "CIQRCodeGenerator") {
-            filter.setValue(data, forKey: "inputMessage")
-            let transform = CGAffineTransform(scaleX: 3, y: 3)
+        filter.setValue(data, forKey: "inputMessage")
 
-            if let output = filter.outputImage?.transformed(by: transform) {
-                return UIImage(ciImage: output)
-            }
-        }
+        guard let qrcode = filter.outputImage else { return nil }
 
-        return nil
+        // QR code is very small. Scaling it up without smoothing.
+        let scaledImageSize = qrcode.extent.size.applying(CGAffineTransform(scaleX: 3, y: 3))
+        UIGraphicsBeginImageContext(scaledImageSize)
+        let scaledContext = UIGraphicsGetCurrentContext()!
+        scaledContext.interpolationQuality = .none
+        UIImage(ciImage: qrcode).draw(in: CGRect(origin: .zero, size: scaledImageSize))
+        return UIGraphicsGetImageFromCurrentImageContext()!
     }
 }
 

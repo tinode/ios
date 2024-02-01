@@ -2316,8 +2316,9 @@
                                                             <nil key="textColor"/>
                                                             <nil key="highlightedColor"/>
                                                         </label>
-                                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wXw-YX-QGk" userLabel="Copy">
+                                                        <button opaque="NO" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wXw-YX-QGk" userLabel="Copy">
                                                             <rect key="frame" x="313.66666666666669" y="0.0" width="27.333333333333314" height="44"/>
+                                                            <color key="tintColor" systemColor="secondaryLabelColor"/>
                                                             <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
                                                             <state key="normal">
                                                                 <imageReference key="image" image="doc.on.doc" catalog="system" symbolScale="large"/>
@@ -2326,8 +2327,9 @@
                                                                 <action selector="copyTopicID:" destination="ZxW-bT-ZdQ" eventType="touchUpInside" id="0GK-gY-5xc"/>
                                                             </connections>
                                                         </button>
-                                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="aTy-DZ-Bk9" userLabel="QRCode">
+                                                        <button opaque="NO" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="aTy-DZ-Bk9" userLabel="QRCode">
                                                             <rect key="frame" x="349" y="0.0" width="25" height="44"/>
+                                                            <color key="tintColor" systemColor="secondaryLabelColor"/>
                                                             <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
                                                             <state key="normal">
                                                                 <imageReference key="image" image="qrcode" catalog="system" symbolScale="large"/>
