@@ -9,8 +9,6 @@ import UIKit
 import TinodeSDK
 
 class AddByIDViewController: UIViewController {
-    static let kTopicUriPrefix = "tinode:topic/"
-
     private var qrScanner: QRScanner?
     private var tinode: Tinode!
 
@@ -33,7 +31,7 @@ class AddByIDViewController: UIViewController {
 
         showCodeButton.tintColor = UIColor.label.inverted
         if let myUid = tinode.myUid {
-            qrcodeImageView.image = generateQRCode(from: AddByIDViewController.kTopicUriPrefix + myUid)
+            qrcodeImageView.image = Utils.generateQRCode(from: Utils.kTopicUriPrefix + myUid)
         }
     }
 
@@ -135,24 +133,9 @@ class AddByIDViewController: UIViewController {
             })
     }
 
-    func generateQRCode(from string: String) -> UIImage? {
-        let data = string.data(using: String.Encoding.ascii)
-
-        if let filter = CIFilter(name: "CIQRCodeGenerator") {
-            filter.setValue(data, forKey: "inputMessage")
-            let transform = CGAffineTransform(scaleX: 3, y: 3)
-
-            if let output = filter.outputImage?.transformed(by: transform) {
-                return UIImage(ciImage: output)
-            }
-        }
-
-        return nil
-    }
-
     func scanQRCode() {
         if qrScanner == nil {
-            qrScanner = QRScanner(embedIn: self.cameraPreviewView, expectedCodePrefix: AddByIDViewController.kTopicUriPrefix, delegate: self)
+            qrScanner = QRScanner(embedIn: self.cameraPreviewView, expectedCodePrefix: Utils.kTopicUriPrefix, delegate: self)
             qrScanner?.start()
         }
     }

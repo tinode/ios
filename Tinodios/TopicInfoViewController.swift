@@ -144,6 +144,26 @@ class TopicInfoViewController: UITableViewController {
             })
     }
 
+    @IBAction func copyTopicID(_ sender: Any) {
+        let pasteboard = UIPasteboard.general
+        pasteboard.string = topic.name
+        UiUtils.showToast(message: NSLocalizedString("Address copied", comment: "Toast notification"), level: .info)
+    }
+
+
+    @IBAction func showTopicIDQRCode(_ sender: Any) {
+        let alert = UIAlertController(title: "Scan QR code", message: "\n\n\n\n\n\n\n\n", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+        let qrcode = UIImageView(image: Utils.generateQRCode(from: Utils.kTopicUriPrefix + topic.name))
+        alert.view.addSubview(qrcode)
+        qrcode.translatesAutoresizingMaskIntoConstraints = false
+        alert.view.addConstraint(NSLayoutConstraint(item: qrcode, attribute: .centerX, relatedBy: .equal, toItem: alert.view, attribute: .centerX, multiplier: 1, constant: 0))
+        alert.view.addConstraint(NSLayoutConstraint(item: qrcode, attribute: .centerY, relatedBy: .equal, toItem: alert.view, attribute: .centerY, multiplier: 1, constant: 0))
+        alert.view.addConstraint(NSLayoutConstraint(item: qrcode, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 128.0))
+        alert.view.addConstraint(NSLayoutConstraint(item: qrcode, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1.0, constant: 128.0))
+        self.present(alert, animated: true, completion: nil)
+    }
+
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         switch segue.identifier {
         case "TopicInfo2EditMembers":

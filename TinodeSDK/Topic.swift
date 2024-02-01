@@ -968,7 +968,7 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
 
         // Use data message from another person to mark messages as read by him.
         if data.from != nil && !(tinode?.isMe(uid: data.from) ?? false) && !isChannelType {
-            var info = MsgServerInfo()
+            let info = MsgServerInfo()
             info.what = Tinode.kNoteRead
             info.from = data.from
             info.seq = data.seq
