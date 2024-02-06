@@ -1,0 +1,14 @@
+/* Bundle display name */
+"CFBundleDisplayName" = "Tinode";
+/* Bundle name */
+"CFBundleName" = "Tinodios";
+/* Privacy - Camera Usage Description */
+"NSCameraUsageDescription" = "Tinode takes photos with the camera to use as avatar or to send them to your contacts";
+/* Privacy - Contacts Usage Description */
+"NSContactsUsageDescription" = "Tinode sends only emails and phone numbers to the Tinode server to help you connect with other users";
+/* Privacy - Microphone Usage Description */
+"NSMicrophoneUsageDescription" = "Tinode uses microphone to record audio messages you send to your contacts";
+/* Privacy - Photo Library Additions Usage Description */
+"NSPhotoLibraryAddUsageDescription" = "Images and pictures from Tinode can be saved in the photo library";
+/* Privacy - Photo Library Usage Description */
+"NSPhotoLibraryUsageDescription" = "Tinode needs access to your photos to let you you send them to your contacts";

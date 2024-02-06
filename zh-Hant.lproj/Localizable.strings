@@ -16,6 +16,9 @@
 /* Alert placeholder */
 "Additional info (private)" = "額外資訊 (私人)";
 
+/* Toast notification */
+"Address copied" = "地址已複製";
+
 /* Alert explanation */
 "Also block and remove all messages" = "同時封鎖並移除所有訊息";
 
@@ -291,7 +294,7 @@
 "No permission to access microphone" = "無權訪問麥克風";
 
 /* Alert action */
-"OK" = "OK";
+"OK" = "好的";
 
 /* The topic or user is currently online */
 "online now" = "現在線上";

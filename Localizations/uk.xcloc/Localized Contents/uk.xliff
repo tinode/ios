@@ -1,467 +1,467 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 http://docs.oasis-open.org/xliff/v1.2/os/xliff-core-1.2-strict.xsd">
-  <file original="en.lproj/Localizable.strings" source-language="en" target-language="es" datatype="plaintext">
+  <file original="en.lproj/Localizable.strings" source-language="en" target-language="uk" datatype="plaintext">
     <header>
       <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="15.2" build-num="15C500b"/>
     </header>
     <body>
       <trans-unit id="  Content deleted" xml:space="preserve">
         <source>  Content deleted</source>
-        <target>  Este mensaje fue eliminado</target>
+        <target>  Контент видалено</target>
         <note>Replacement for chat message with no content</note>
       </trans-unit>
       <trans-unit id="Accept" xml:space="preserve">
         <source>Accept</source>
-        <target>Aceptar</target>
+        <target>Прийняти</target>
         <note>Invite reaction button</note>
       </trans-unit>
       <trans-unit id="Action failed: %@" xml:space="preserve">
         <source>Action failed: %@</source>
-        <target>Se ha producido un error al realizar la acción: %@</target>
+        <target>Помилка виконання: %@</target>
         <note>Toast notification</note>
       </trans-unit>
       <trans-unit id="Add contact" xml:space="preserve">
         <source>Add contact</source>
-        <target>Añadir contacto</target>
+        <target>Додати контакт</target>
         <note>Alert title</note>
       </trans-unit>
       <trans-unit id="Add optional description" xml:space="preserve">
         <source>Add optional description</source>
-        <target>Añadir descripción opcional</target>
+        <target>Опис (не обов'язково)</target>
         <note>Placeholder for missing topic description</note>
       </trans-unit>
       <trans-unit id="Additional info (private)" xml:space="preserve">
         <source>Additional info (private)</source>
-        <target>Información adicional (sólo visible para tí)</target>
+        <target>Додатково (тільки для себе)</target>
         <note>Alert placeholder</note>
       </trans-unit>
       <trans-unit id="Address copied" xml:space="preserve">
         <source>Address copied</source>
-        <target state="translated">Dirección copiada</target>
+        <target state="translated">Адресу скопійовано</target>
         <note>Toast notification</note>
       </trans-unit>
       <trans-unit id="Also block and remove all messages" xml:space="preserve">
         <source>Also block and remove all messages</source>
-        <target>También bloquear y eliminar todos los mensajes</target>
+        <target>Заблокувати та видалити всі повідомлення</target>
         <note>Alert explanation</note>
       </trans-unit>
       <trans-unit id="Archive" xml:space="preserve">
         <source>Archive</source>
-        <target>Archivar</target>
+        <target>Архів</target>
         <note>Swipe action</note>
       </trans-unit>
       <trans-unit id="Archived Chats" xml:space="preserve">
         <source>Archived Chats</source>
-        <target>Chats archivados</target>
+        <target>Архів чатів</target>
         <note>View title</note>
       </trans-unit>
       <trans-unit id="Archived Chats (%@)" xml:space="preserve">
         <source>Archived Chats (%@)</source>
-        <target>Chats archivados (%@)</target>
+        <target>Архів чатів (%@)</target>
         <note>Button to open chat archive</note>
       </trans-unit>
       <trans-unit id="Are you sure you want to delete your account? It cannot be undone." xml:space="preserve">
         <source>Are you sure you want to delete your account? It cannot be undone.</source>
-        <target>¿Estás seguro de que deseas eliminar permanentemente tu cuenta? Esta acción es irreversible.</target>
+        <target>Ви впевнені, що бажаєте видалити акаунт? Видалення остаточне.</target>
         <note>Warning in delete account alert</note>
       </trans-unit>
       <trans-unit id="Are you sure you want to log out?" xml:space="preserve">
         <source>Are you sure you want to log out?</source>
-        <target>¿Estás seguro de que quieres cerrar la sesión?</target>
+        <target>Ви впевнені, що бажаєте вийти із додатку?</target>
         <note>Warning in logout alert</note>
       </trans-unit>
       <trans-unit id="Attachment" xml:space="preserve">
         <source>Attachment</source>
-        <target>Apego</target>
+        <target>Аттачмент</target>
         <note>Label shown next to an attachment</note>
       </trans-unit>
       <trans-unit id="Attachment exceeds maximum size" xml:space="preserve">
         <source>Attachment exceeds maximum size</source>
-        <target>El accesorio supera el tamaño máximo</target>
+        <target>Аттачмент перевищує максимальний розмір</target>
         <note>Error message: attachment too large</note>
       </trans-unit>
       <trans-unit id="Audio-only" xml:space="preserve">
         <source>Audio-only</source>
-        <target>Solo audio</target>
+        <target>Тільки звук</target>
         <note>Menu item: audio-only call</note>
       </trans-unit>
       <trans-unit id="Block" xml:space="preserve">
         <source>Block</source>
-        <target>Bloquear</target>
+        <target>Заблокувати</target>
         <note>Alert action
    Invite reaction button</note>
       </trans-unit>
       <trans-unit id="Block contact?" xml:space="preserve">
         <source>Block contact?</source>
-        <target>¿Bloquear contacto?</target>
+        <target>Заблокувати контакт?</target>
         <note>Alert action</note>
       </trans-unit>
       <trans-unit id="Call" xml:space="preserve">
         <source>Call</source>
-        <target>Llamada</target>
+        <target>Дзвінок</target>
         <note>Menu title for selecting type of call</note>
       </trans-unit>
       <trans-unit id="Can't change permissions for this user." xml:space="preserve">
         <source>Can't change permissions for this user.</source>
-        <target>No se puede cambiar los permisos para este usuario.</target>
+        <target>Не вдалося змінити права доступу.</target>
         <note>Toast notification</note>
       </trans-unit>
       <trans-unit id="Can't make this user owner." xml:space="preserve">
         <source>Can't make this user owner.</source>
-        <target>No se puede convertir a este usuario en propietario.</target>
+        <target>Не вдалося передати права володіння.</target>
         <note>Toast notification</note>
       </trans-unit>
       <trans-unit id="Cancel" xml:space="preserve">
         <source>Cancel</source>
-        <target>Cancelar</target>
+        <target>Скасувати</target>
         <note>Alert action</note>
       </trans-unit>
       <trans-unit id="Cannot send email: functionality not accessible." xml:space="preserve">
         <source>Cannot send email: functionality not accessible.</source>
-        <target>No se puede enviar correo electrónico: funcionalidad no accesible.</target>
+        <target>Неможливо надіслати емейл: функція недоступна.</target>
         <note>Error message</note>
       </trans-unit>
       <trans-unit id="Change Password" xml:space="preserve">
         <source>Change Password</source>
-        <target>Cambiar contraseña</target>
+        <target>Змінити пароль</target>
         <note>Alert title</note>
       </trans-unit>
       <trans-unit id="Change permissions" xml:space="preserve">
         <source>Change permissions</source>
-        <target>Cambiar permisos</target>
+        <target>Змінити права доступу</target>
         <note>Alert action</note>
       </trans-unit>
       <trans-unit id="Check out Tinode Messenger" xml:space="preserve">
         <source>Check out Tinode Messenger</source>
-        <target>Echa un vistazo a Tinode Messenger</target>
+        <target>Подивись Tinode Messenger</target>
         <note>Invitation subject</note>
       </trans-unit>
       <trans-unit id="Check out Tinode Messenger: https://tinode.co/" xml:space="preserve">
         <source>Check out Tinode Messenger: https://tinode.co/</source>
-        <target>Echa un vistazo a Tinode Messenger: https://tinode.co/</target>
+        <target>Подивись на Tinode Messenger: https://tinode.co/</target>
         <note>Invitation body</note>
       </trans-unit>
       <trans-unit id="Clear all messages?" xml:space="preserve">
         <source>Clear all messages?</source>
-        <target>¿Borrar todos los mensajes?</target>
+        <target>Видалити всі повідомлення?</target>
         <note>Alert title</note>
       </trans-unit>
       <trans-unit id="Confirm contact" xml:space="preserve">
         <source>Confirm contact</source>
-        <target>Confirmar contacto</target>
+        <target>Підтвердити контакт</target>
         <note>Alert title</note>
       </trans-unit>
       <trans-unit id="Confirmaition message sent to %@" xml:space="preserve">
         <source>Confirmaition message sent to %@</source>
-        <target>El mensaje de confirmación ha sido enviado a %@</target>
+        <target>Підтвердження надіслано на %@</target>
         <note>Info message</note>
       </trans-unit>
       <trans-unit id="Confirmation code sent" xml:space="preserve">
         <source>Confirmation code sent</source>
-        <target>Código de confirmación</target>
+        <target>Код підтвердження надіслано</target>
         <note>Confirmation code sent</note>
       </trans-unit>
       <trans-unit id="Confirmed successfully" xml:space="preserve">
         <source>Confirmed successfully</source>
-        <target>Confirmado con éxito</target>
+        <target>Успішно підтверджено</target>
         <note>Toast info message</note>
       </trans-unit>
       <trans-unit id="Confirming..." xml:space="preserve">
         <source>Confirming...</source>
-        <target>Confirmando...</target>
+        <target>Перевірка...</target>
         <note>Progress overlay</note>
       </trans-unit>
       <trans-unit id="Connection to server lost." xml:space="preserve">
         <source>Connection to server lost.</source>
-        <target>Se perdió la conexión al servidor.</target>
+        <target>Зв'язок із сервером втрачено.</target>
         <note>Toast notification</note>
       </trans-unit>
       <trans-unit id="Copy" xml:space="preserve">
         <source>Copy</source>
-        <target>Copiar</target>
+        <target>Копіювати</target>
         <note>Menu item</note>
       </trans-unit>
       <trans-unit id="Copy to clipboard" xml:space="preserve">
         <source>Copy to clipboard</source>
-        <target>Copiar al portapapeles</target>
+        <target>Копіювати</target>
         <note>Alert action</note>
       </trans-unit>
       <trans-unit id="Could not change password: %@" xml:space="preserve">
         <source>Could not change password: %@</source>
-        <target>No se pudo cambiar la contraseña: %@</target>
+        <target>Не вдалося змінити пароль: %@</target>
         <note>Error message</note>
       </trans-unit>
       <trans-unit id="Couldn't connect to server at %@: %@" xml:space="preserve">
         <source>Couldn't connect to server at %@: %@</source>
-        <target>No se pudo conectar al servidor en %@: %@</target>
+        <target>Не вдалося підключитися до сервера %@: %@</target>
         <note>Error message</note>
       </trans-unit>
       <trans-unit id="Current credential" xml:space="preserve">
         <source>Current credential</source>
-        <target>Credencial actual</target>
+        <target>Поточне значення</target>
         <note>Label for email or phone number entering</note>
       </trans-unit>
       <trans-unit id="Delete" xml:space="preserve">
         <source>Delete</source>
-        <target>Eliminar</target>
+        <target>Видалити</target>
         <note>Alert action
    Menu item
    Swipe action</note>
       </trans-unit>
       <trans-unit id="Delete the group?" xml:space="preserve">
         <source>Delete the group?</source>
-        <target>¿Eliminar el grupo?</target>
+        <target>Видалити групу?</target>
         <note>Alert title</note>
       </trans-unit>
       <trans-unit id="Directory" xml:space="preserve">
         <source>Directory</source>
-        <target>Directorio</target>
+        <target>Директорія</target>
         <note>Section title</note>
       </trans-unit>
       <trans-unit id="Edit" xml:space="preserve">
         <source>Edit</source>
-        <target>Editar</target>
+        <target>Змінити</target>
         <note>Menu item</note>
       </trans-unit>
       <trans-unit id="Edit Description" xml:space="preserve">
         <source>Edit Description</source>
-        <target>Editar descripción</target>
+        <target>Опис</target>
         <note>Alert title</note>
       </trans-unit>
       <trans-unit id="Edit Group" xml:space="preserve">
         <source>Edit Group</source>
-        <target>Editar grupo</target>
+        <target>Редагувати групу</target>
         <note>Alert title</note>
       </trans-unit>
       <trans-unit id="Edit Title" xml:space="preserve">
         <source>Edit Title</source>
-        <target>Editar título</target>
+        <target>Назва</target>
         <note>Alert title</note>
       </trans-unit>
       <trans-unit id="Edit account name" xml:space="preserve">
         <source>Edit account name</source>
-        <target>Editar nombre de la cuenta</target>
+        <target>Редагувати акаунт</target>
         <note>Alert title</note>
       </trans-unit>
       <trans-unit id="Email" xml:space="preserve">
         <source>Email</source>
-        <target>Correo electrónico</target>
+        <target>Емейл</target>
         <note>Alert action</note>
       </trans-unit>
       <trans-unit id="Enter a valid credential (phone or email)." xml:space="preserve">
         <source>Enter a valid credential (phone or email).</source>
-        <target>Introduzca una credencial válida (teléfono o correo electrónico).</target>
+        <target>Введіть коректний емейл або телефон.</target>
         <note>Toast error message</note>
       </trans-unit>
       <trans-unit id="Enter confirmation code sent to you by %@" xml:space="preserve">
         <source>Enter confirmation code sent to you by %@</source>
-        <target>Introduzca el código de confirmación enviado a tu %@</target>
+        <target>Введіть код підтвердження, надісланий вам по %@</target>
         <note>Alert prompt</note>
       </trans-unit>
       <trans-unit id="Enter email or phone number" xml:space="preserve">
         <source>Enter email or phone number</source>
-        <target>Introduzca correo electrónico o número de teléfono</target>
+        <target>Введіть емейл або телефон</target>
         <note>Alert message</note>
       </trans-unit>
       <trans-unit id="Enter new password" xml:space="preserve">
         <source>Enter new password</source>
-        <target>Introduzca una nueva contraseña</target>
+        <target>Введіть новий пароль</target>
         <note>Alert prompt</note>
       </trans-unit>
       <trans-unit id="Entered text is neither email nor phone number." xml:space="preserve">
         <source>Entered text is neither email nor phone number.</source>
-        <target>El texto introducido no es ni correo electrónico ni número de teléfono.</target>
+        <target>Введений текст не схожий на емейл або телефон.</target>
         <note>Error message</note>
       </trans-unit>
       <trans-unit id="Error changing permissions: %@" xml:space="preserve">
         <source>Error changing permissions: %@</source>
-        <target>Error al cambiar permisos: %@</target>
+        <target>Помилка зміни прав доступу: %@</target>
         <note>Toast notification</note>
       </trans-unit>
       <trans-unit id="Failed to create URL string for file: %@" xml:space="preserve">
         <source>Failed to create URL string for file: %@</source>
-        <target>Error al crear una cadena de URL para el archivo: %@</target>
+        <target>Помилка створення URL для файлу %@</target>
         <note>Error message: malformed URL string</note>
       </trans-unit>
       <trans-unit id="Failed to create account: %@" xml:space="preserve">
         <source>Failed to create account: %@</source>
-        <target>No se pudo crear cuenta: %@</target>
+        <target>Помилка створення акаунта: %@</target>
         <note>Error message</note>
       </trans-unit>
       <trans-unit id="Failed to save group and contact info." xml:space="preserve">
         <source>Failed to save group and contact info.</source>
-        <target>No se pudo guardar el grupo y la información de contacto.</target>
+        <target>Не вдалося зберегти групу та контактну інформацію.</target>
         <note>Error message</note>
       </trans-unit>
       <trans-unit id="Failed to send email: %@" xml:space="preserve">
         <source>Failed to send email: %@</source>
-        <target>No se pudo enviar el correo electrónico: %@</target>
+        <target>Не вдалося надіслати емейл: %@</target>
         <note>Error message</note>
       </trans-unit>
       <trans-unit id="Failed to subscribe to topic: %@" xml:space="preserve">
         <source>Failed to subscribe to topic: %@</source>
-        <target>Error al suscribirse al tema: %@</target>
+        <target>Не вдалося підписатися на: %@</target>
         <note>Error message</note>
       </trans-unit>
       <trans-unit id="For all" xml:space="preserve">
         <source>For all</source>
-        <target>Para todos</target>
+        <target>Для всіх</target>
         <note>Alert action qualifier as in 'Delete for all'</note>
       </trans-unit>
       <trans-unit id="For me" xml:space="preserve">
         <source>For me</source>
-        <target>Para mí</target>
+        <target>Для себе</target>
         <note>Alert action 'Delete for me'</note>
       </trans-unit>
       <trans-unit id="Form" xml:space="preserve">
         <source>Form</source>
-        <target>Formulario</target>
+        <target>Форма</target>
         <note>Label shown next to a form in preview</note>
       </trans-unit>
       <trans-unit id="Forward" xml:space="preserve">
         <source>Forward</source>
-        <target>Reenviar</target>
+        <target>Переслати</target>
         <note>Menu item</note>
       </trans-unit>
       <trans-unit id="Full name, e.g. John Doe" xml:space="preserve">
         <source>Full name, e.g. John Doe</source>
-        <target>Nombre completo, p.ej. Juan González Hernández</target>
+        <target>Повне ім'я, напр. Дмитро Соколов</target>
         <note>User name prompt</note>
       </trans-unit>
       <trans-unit id="Ignore" xml:space="preserve">
         <source>Ignore</source>
-        <target>Ignorar</target>
+        <target>Ігнорувати</target>
         <note>Invite reaction button</note>
       </trans-unit>
       <trans-unit id="Incoming call" xml:space="preserve">
         <source>Incoming call</source>
-        <target>Llamada entrante</target>
+        <target>Вхідний дзвінок</target>
         <note>Label for incoming video/audio calls</note>
       </trans-unit>
       <trans-unit id="Invalid group ID: %d (%@)" xml:space="preserve">
         <source>Invalid group ID: %1$d (%2$@)</source>
-        <target>ID del grupo no es válido %1$d (%2$@)</target>
+        <target>Недійсний ID групи: %1$d (%2$@)</target>
         <note>Error message</note>
       </trans-unit>
       <trans-unit id="Invalid image" xml:space="preserve">
         <source>Invalid image</source>
-        <target>Imagen no válida</target>
+        <target>Зображення з помилкою</target>
         <note>Error message when the image cannot be processed</note>
       </trans-unit>
       <trans-unit id="Invalid or unknown address" xml:space="preserve">
         <source>Invalid or unknown address</source>
-        <target>Dirección no válida o desconocida</target>
+        <target>Невідома адреса</target>
         <note>Password reset error</note>
       </trans-unit>
       <trans-unit id="Invite" xml:space="preserve">
         <source>Invite</source>
-        <target>Invitar</target>
+        <target>Запросити</target>
         <note>Dialog title: call to action</note>
       </trans-unit>
       <trans-unit id="Leave" xml:space="preserve">
         <source>Leave</source>
-        <target>Dejar</target>
+        <target>Вийти</target>
         <note>Alert action</note>
       </trans-unit>
       <trans-unit id="Leave the conversation?" xml:space="preserve">
         <source>Leave the conversation?</source>
-        <target>¿Dejar la conversación?</target>
+        <target>Вийти з чату?</target>
         <note>Alert title</note>
       </trans-unit>
       <trans-unit id="Leave the group?" xml:space="preserve">
         <source>Leave the group?</source>
-        <target>¿Dejar el grupo?</target>
+        <target>Вийти з групи?</target>
         <note>Alert title</note>
       </trans-unit>
       <trans-unit id="Local Contacts" xml:space="preserve">
         <source>Local Contacts</source>
-        <target>Contactos locales</target>
+        <target>Контакти на телефоні</target>
         <note>Section title</note>
       </trans-unit>
       <trans-unit id="Logging in..." xml:space="preserve">
         <source>Logging in...</source>
-        <target>Iniciando sesión...</target>
+        <target>Вхід...</target>
         <note>Login progress text</note>
       </trans-unit>
       <trans-unit id="Login info missing..." xml:space="preserve">
         <source>Login info missing...</source>
-        <target>Falta la información de inicio de sesión...</target>
+        <target>Логін не повний...</target>
         <note>Error message</note>
       </trans-unit>
       <trans-unit id="Make owner" xml:space="preserve">
         <source>Make owner</source>
-        <target>Convertitr en propietario</target>
+        <target>Зробити власником</target>
         <note>Alert action</note>
       </trans-unit>
       <trans-unit id="Manage members" xml:space="preserve">
         <source>Manage members</source>
-        <target>Gestionar miembros</target>
+        <target>Управління учасниками</target>
         <note>View title</note>
       </trans-unit>
       <trans-unit id="Message not sent." xml:space="preserve">
         <source>Message not sent.</source>
-        <target>No se pudo enviar mensaje.</target>
+        <target>Повідомлення не надіслано.</target>
         <note>Toast notification</note>
       </trans-unit>
       <trans-unit id="Message with instructions sent to the provided address." xml:space="preserve">
         <source>Message with instructions sent to the provided address.</source>
-        <target>Mensaje con instrucciones ha sido enviado a la dirección de correo electrónico proporcionada.</target>
+        <target>Повідомлення з інструкціями надіслано на вказану адресу.</target>
         <note>Toast info</note>
       </trans-unit>
       <trans-unit id="Messages" xml:space="preserve">
         <source>Messages</source>
-        <target>Mensajes</target>
+        <target>Повідомлення</target>
         <note>Alert action</note>
       </trans-unit>
       <trans-unit id="My Code" xml:space="preserve">
         <source>My Code</source>
-        <target>Mi código</target>
+        <target>Мій код</target>
         <note>Title for displaying a QR Code</note>
       </trans-unit>
       <trans-unit id="Name of the group" xml:space="preserve">
         <source>Name of the group</source>
-        <target>Nombre del grupo</target>
+        <target>Назва групи</target>
         <note>Alert placeholder</note>
       </trans-unit>
       <trans-unit id="Never ??:??" xml:space="preserve">
         <source>Never ??:??</source>
-        <target>Nunca ??:??</target>
+        <target>Ніколи ??:??</target>
         <note>Invalid date</note>
       </trans-unit>
       <trans-unit id="New Chat" xml:space="preserve">
         <source>New Chat</source>
-        <target>Nuevo chat</target>
+        <target>Новий чат</target>
         <note>View title</note>
       </trans-unit>
       <trans-unit id="No access to email" xml:space="preserve">
         <source>No access to email</source>
-        <target>No hay acceso al correo electrónico</target>
+        <target>Немає доступу до емейлу</target>
         <note>Error message</note>
       </trans-unit>
       <trans-unit id="No access to messages" xml:space="preserve">
         <source>No access to messages</source>
-        <target>No hay acceso a los mensajes</target>
+        <target>Немає доступу до повідомлень</target>
         <note>No read access in chat
    Toast error message</note>
       </trans-unit>
       <trans-unit id="No members selected" xml:space="preserve">
         <source>No members selected</source>
-        <target>No hay miembros seleccionados</target>
+        <target>Учасників не обрано</target>
         <note>Placeholder when no members are selected</note>
       </trans-unit>
       <trans-unit id="No messages in the conversation" xml:space="preserve">
         <source>No messages in the conversation</source>
-        <target>No hay mensajes en la conversación</target>
+        <target>Повідомлення відсутні</target>
         <note>Placeholder in empty chat</note>
       </trans-unit>
       <trans-unit id="No permission to access camera" xml:space="preserve">
         <source>No permission to access camera</source>
-        <target>No hay permiso para acceder a la cámara</target>
+        <target>Немає доступу до камери</target>
         <note>Error message when call cannot be started due to missing camera permission</note>
       </trans-unit>
       <trans-unit id="No permission to access microphone" xml:space="preserve">
         <source>No permission to access microphone</source>
-        <target>No hay permiso para acceder al micrófono</target>
+        <target>Немає доступу до мікрофону</target>
         <note>Error message when call cannot be started due to missing microphone permission</note>
       </trans-unit>
       <trans-unit id="OK" xml:space="preserve">
@@ -471,403 +471,415 @@
       </trans-unit>
       <trans-unit id="Only Owner can delete group" xml:space="preserve">
         <source>Only Owner can delete group</source>
-        <target>Sólo el propietario puede eliminar el grupo</target>
+        <target>Тільки власник може видалити групу</target>
         <note>Toast notification</note>
       </trans-unit>
       <trans-unit id="Outgoing call" xml:space="preserve">
         <source>Outgoing call</source>
-        <target>Llamada saliente</target>
+        <target>Вихідний дзвінок</target>
         <note>Label for outgoing video/audio calls</note>
       </trans-unit>
       <trans-unit id="Owner cannot leave the group" xml:space="preserve">
         <source>Owner cannot leave the group</source>
-        <target>El propietario del grupo no puede darse de baja</target>
+        <target>Власник не може покинути групу</target>
         <note>Toast notification</note>
       </trans-unit>
       <trans-unit id="Password too short" xml:space="preserve">
         <source>Password too short</source>
-        <target>La contraseña es demasiado corta</target>
+        <target>Пароль надто короткий</target>
         <note>Error message</note>
       </trans-unit>
       <trans-unit id="Password updated" xml:space="preserve">
         <source>Password updated</source>
-        <target>Contraseña actualizada</target>
+        <target>Пароль змінений</target>
         <note>Success message</note>
       </trans-unit>
       <trans-unit id="Permissions not modified: %d (%s)" xml:space="preserve">
         <source>Permissions not modified: %1$d (%2$s)</source>
-        <target>No se pudo modificar los permisos %1$d (%2$s)</target>
+        <target>Права не змінені: %1$d (%2$s)</target>
         <note>Toast notification</note>
       </trans-unit>
       <trans-unit id="Picture" xml:space="preserve">
         <source>Picture</source>
-        <target>Fotografía</target>
+        <target>Картинка</target>
         <note>Label shown next to an inline image</note>
       </trans-unit>
       <trans-unit id="Playback failed" xml:space="preserve">
         <source>Playback failed</source>
-        <target>Error en la reproducción</target>
+        <target>Помилка при запуску</target>
         <note>Error message</note>
       </trans-unit>
       <trans-unit id="Please wait..." xml:space="preserve">
         <source>Please wait...</source>
-        <target>Por favor, espera...</target>
+        <target>Зачекайте...</target>
         <note>Progress overlay</note>
       </trans-unit>
       <trans-unit id="Private Comment" xml:space="preserve">
         <source>Private Comment</source>
-        <target>Comentario privado</target>
+        <target>Приватний коментар</target>
         <note>Alert title</note>
       </trans-unit>
       <trans-unit id="Private info: not set" xml:space="preserve">
         <source>Private info: not set</source>
-        <target>Información privada: no establecida</target>
+        <target>Приватна інформація: не налаштована</target>
         <note>Placeholder text in editor</note>
       </trans-unit>
       <trans-unit id="QRCode scanner failed to initialize" xml:space="preserve">
         <source>QRCode scanner failed to initialize</source>
-        <target>El escáner QRCode no se pudo inicializar</target>
+        <target>Сканер QR кодів не працює</target>
         <note>Error message when QR code scanner failed to init</note>
       </trans-unit>
       <trans-unit id="Recording failed" xml:space="preserve">
         <source>Recording failed</source>
-        <target>Error al grabar</target>
+        <target>Помилка запису</target>
         <note>Error message</note>
       </trans-unit>
       <trans-unit id="Registering..." xml:space="preserve">
         <source>Registering...</source>
-        <target>Registrando...</target>
+        <target>Реєстрація...</target>
         <note>Progress overlay</note>
       </trans-unit>
       <trans-unit id="Remove" xml:space="preserve">
         <source>Remove</source>
-        <target>Eliminar</target>
+        <target>Видалити</target>
         <note>Alert action</note>
       </trans-unit>
       <trans-unit id="Remove %@ from %@?" xml:space="preserve">
         <source>Remove %1$@ from %2$@?</source>
-        <target>Eliminar a %1$@ del %2$@?</target>
+        <target>Видалити %1$@ з %2$@?</target>
         <note>Confirmation</note>
       </trans-unit>
       <trans-unit id="Remove and ban %@ from %@?" xml:space="preserve">
         <source>Remove and ban %1$@ from %2$@?</source>
-        <target>Eliminar y bloquear a %1$@ del %2$@?</target>
+        <target>Видалити та заблокувати %1$@ з %2$@?</target>
         <note>Confirmation</note>
       </trans-unit>
       <trans-unit id="Reply" xml:space="preserve">
         <source>Reply</source>
-        <target>Respuesta</target>
+        <target>Відповісти</target>
         <note>Menu item</note>
       </trans-unit>
       <trans-unit id="Report" xml:space="preserve">
         <source>Report</source>
-        <target>Reportar</target>
+        <target>Поскаржитись</target>
         <note>Alert action</note>
       </trans-unit>
       <trans-unit id="Report Group?" xml:space="preserve">
         <source>Report Group?</source>
-        <target>¿Report grupo?</target>
+        <target>Сповістити про порушення?</target>
         <note>Alert title</note>
       </trans-unit>
       <trans-unit id="Report contact?" xml:space="preserve">
         <source>Report contact?</source>
-        <target>¿Reportar contacto?</target>
+        <target>Сповістити про порушення?</target>
         <note>Alert title</note>
       </trans-unit>
       <trans-unit id="Request failed: %@" xml:space="preserve">
         <source>Request failed: %@</source>
-        <target>Se produjo un error al procesar la solicitud: %@</target>
+        <target>Помилка запиту: %@</target>
         <note>Error message</note>
       </trans-unit>
       <trans-unit id="Requesting..." xml:space="preserve">
         <source>Requesting...</source>
-        <target>Solicitando...</target>
+        <target>Запит...</target>
         <note>Progress overlay</note>
       </trans-unit>
       <trans-unit id="Scan Code" xml:space="preserve">
         <source>Scan Code</source>
-        <target>Código de escaneo</target>
+        <target>Сканувати код</target>
         <note>Title for camera preview when scanning a QR code</note>
       </trans-unit>
       <trans-unit id="Search by tags" xml:space="preserve">
         <source>Search by tags</source>
-        <target>Buscar por etiquetas</target>
+        <target>Пошук по тегам</target>
         <note>Placeholder prompt</note>
       </trans-unit>
       <trans-unit id="Search functionality limited. Grant Contacts permission." xml:space="preserve">
         <source>Search functionality limited. Grant Contacts permission.</source>
-        <target>Funcionalidad de búsqueda limitada. Otorga permisos a los contactos.</target>
+        <target>Пошук не працює: дайте доступ до контактів.</target>
         <note>Error message when permissions are missing</note>
       </trans-unit>
       <trans-unit id="Select at least one group member" xml:space="preserve">
         <source>Select at least one group member</source>
-        <target>Selecciona al menos un usuario para el grupo</target>
+        <target>Виберіть хоча б одного члена групи</target>
         <note>Error message</note>
       </trans-unit>
       <trans-unit id="Send message" xml:space="preserve">
         <source>Send message</source>
-        <target>Enviar mensaje</target>
+        <target>Надіслати повідомлення</target>
         <note>Alert action</note>
       </trans-unit>
       <trans-unit id="Service unavailable at this time. Please try again later." xml:space="preserve">
         <source>Service unavailable at this time. Please try again later.</source>
-        <target>El servicio no está disponible en este momento. Por favor, inténtelo de nuevo más tarde.</target>
+        <target>Служба наразі недоступна. Будь ласка, спробуйте пізніше.</target>
         <note>Service unavailable</note>
       </trans-unit>
       <trans-unit id="Something went wrong: %d (%s)" xml:space="preserve">
         <source>Something went wrong: %1$d (%2$s)</source>
-        <target>Algo salió mal: %1$d (%2$s)</target>
+        <target>Щось пішло не так: %1$d (%2$s)</target>
         <note>Toast notification</note>
       </trans-unit>
       <trans-unit id="Tags missing." xml:space="preserve">
         <source>Tags missing.</source>
-        <target>Faltan las etiquetas.</target>
+        <target>Теги не знайдено.</target>
         <note>Toast notification</note>
       </trans-unit>
       <trans-unit id="The avatar is too small." xml:space="preserve">
         <source>The avatar is too small.</source>
-        <target>El avatar es demasiado pequeño.</target>
+        <target>Аватар надто маленький</target>
         <note>Toast notification</note>
       </trans-unit>
       <trans-unit id="The file size exceeds the limit %@" xml:space="preserve">
         <source>The file size exceeds the limit %@</source>
-        <target>El tamaño del archivo excede el límite %@</target>
+        <target>Розмір файлу перевищив ліміт %@</target>
         <note>Error message</note>
       </trans-unit>
       <trans-unit id="Topic name missing" xml:space="preserve">
         <source>Topic name missing</source>
-        <target>Falta el nombre del tema</target>
+        <target>Назва відсутня</target>
         <note>Toast notification</note>
       </trans-unit>
       <trans-unit id="Unarchive" xml:space="preserve">
         <source>Unarchive</source>
-        <target>Desarchivar</target>
+        <target>Розархівувати</target>
         <note>Swipe action</note>
       </trans-unit>
       <trans-unit id="Unblock" xml:space="preserve">
         <source>Unblock</source>
-        <target>Desatascar</target>
+        <target>Розблокувати</target>
         <note>Swipe action</note>
       </trans-unit>
       <trans-unit id="Undefined" xml:space="preserve">
         <source>Undefined</source>
-        <target>Sin nombre</target>
+        <target>Без назви</target>
         <note>Undefined chat name</note>
       </trans-unit>
       <trans-unit id="Unknown" xml:space="preserve">
         <source>Unknown</source>
-        <target>Desconocido</target>
+        <target>Невідомо</target>
         <note>Placeholder for missing topic name
    Placeholder for missing user name</note>
       </trans-unit>
       <trans-unit id="Unknown %@" xml:space="preserve">
         <source>Unknown %@</source>
-        <target>Desconocido %@</target>
+        <target>Невідомий %@</target>
         <note>Sender with missing name</note>
       </trans-unit>
       <trans-unit id="Unknown type" xml:space="preserve">
         <source>Unknown type</source>
-        <target>Tipo desconocido</target>
+        <target>Невідомий тип</target>
         <note>Displayed when the type of attachment cannot be determined</note>
       </trans-unit>
       <trans-unit id="Unsupported" xml:space="preserve">
         <source>Unsupported</source>
-        <target>Sin base</target>
+        <target>Не підтримується</target>
         <note>Label shown next to an unsupported Drafty format element
    Unsupported (unknown) Drafty tag</note>
       </trans-unit>
       <trans-unit id="Updating password..." xml:space="preserve">
         <source>Updating password...</source>
-        <target>Actualización de la contraseña...</target>
+        <target>Пароль змінюється...</target>
         <note>Progress overlay</note>
       </trans-unit>
       <trans-unit id="Upload failed (%@). No server response." xml:space="preserve">
         <source>Upload failed (%@). No server response.</source>
-        <target>Error al subir el archivo (%@). No hay respuesta del servidor.</target>
+        <target>Помилка завантаження (%@). Сервер не доступний.</target>
         <note>Error message</note>
       </trans-unit>
       <trans-unit id="Upload failed (%@): empty response body." xml:space="preserve">
         <source>Upload failed (%@): empty response body.</source>
-        <target>Error al subir el archivo (%@): respuesta vacía.</target>
+        <target>Помилка завантаження (%@): порожня відповідь сервера.</target>
         <note>Error message</note>
       </trans-unit>
       <trans-unit id="Upload failed (%@): response code %d." xml:space="preserve">
         <source>Upload failed (%1$@): response code %2$d.</source>
-        <target>Error al subir el archivo (%1$@): código de la respuesta %2$d.</target>
+        <target>Помилка завантаження (%1$@): код %2$d.</target>
         <note>Error message</note>
       </trans-unit>
       <trans-unit id="Verification failure: %d %@" xml:space="preserve">
         <source>Verification failure: %1$d %2$@</source>
-        <target>Error de verificación: %1$d %2$@</target>
+        <target>Помилка верифікації: %1$d %2$@</target>
         <note>Error message</note>
       </trans-unit>
       <trans-unit id="Video" xml:space="preserve">
         <source>Video</source>
-        <target>Vídeo</target>
+        <target>Відео</target>
         <note>Label shown next to an inline video
    Menu item: video call</note>
       </trans-unit>
       <trans-unit id="We will send a SMS with confirmation code to the number below" xml:space="preserve">
         <source>We will send a SMS with confirmation code to the number below</source>
-        <target>Enviaremos un SMS con el código de confirmación al siguiente número</target>
+        <target>Ми надішлемо СМС з кодом підтвердження на вказаний нижче номер</target>
         <note>Telephone password reset prompt</note>
       </trans-unit>
       <trans-unit id="We will send an email with confirmation code to the address below" xml:space="preserve">
         <source>We will send an email with confirmation code to the address below</source>
-        <target>Enviaremos un correo electrónico con el código de confirmación a la siguiente dirección</target>
+        <target>Ми надішлемо емейл з кодом підтвердження на вказану нижче адресу</target>
         <note>Email password reset prompt</note>
       </trans-unit>
       <trans-unit id="You" xml:space="preserve">
         <source>You</source>
-        <target>Tú</target>
+        <target>Ви</target>
         <note>This is 'you'</note>
       </trans-unit>
       <trans-unit id="You are invited to start a new chat. What would you like?" xml:space="preserve">
         <source>You are invited to start a new chat. What would you like?</source>
-        <target>Estás invitado participar en un nuevo chat. ¿Qué te gustaría hacer?</target>
+        <target>Вас запросили до чату. Підтвердити?</target>
         <note>Call to action</note>
       </trans-unit>
       <trans-unit id="You are offline." xml:space="preserve">
         <source>You are offline.</source>
-        <target>Estás desconectado.</target>
+        <target>Ви офлайн.</target>
         <note>Toast notification</note>
       </trans-unit>
       <trans-unit id="You have no chats&#10;&#10;¯\_(ツ)_/¯" xml:space="preserve">
         <source>You have no chats
 
 ¯\_(ツ)_/¯</source>
-        <target>No tienes chats
+        <target>Немає чатів
 
 ¯\_(ツ)_/¯</target>
         <note>Placeholder when no chats found</note>
       </trans-unit>
       <trans-unit id="button" xml:space="preserve">
         <source>button</source>
-        <target>pulsador</target>
+        <target>кнопка</target>
         <note>Text written on button face when all else fails.</note>
       </trans-unit>
       <trans-unit id="cancelled" xml:space="preserve">
         <source>cancelled</source>
-        <target>cancelado</target>
+        <target>скасовано</target>
         <note>Label for cancelled call</note>
       </trans-unit>
       <trans-unit id="confirm" xml:space="preserve">
         <source>confirm</source>
-        <target>confirmar</target>
+        <target>підтвердити</target>
         <note>Button text</note>
       </trans-unit>
       <trans-unit id="connecting" xml:space="preserve">
         <source>connecting</source>
-        <target>conectando</target>
+        <target>з'єднується</target>
         <note>Label for initiated call</note>
       </trans-unit>
       <trans-unit id="edited" xml:space="preserve">
         <source>edited</source>
-        <target>editado</target>
+        <target>змінено</target>
         <note>`Edited` message marker</note>
       </trans-unit>
       <trans-unit id="in progress" xml:space="preserve">
         <source>in progress</source>
-        <target>en progreso</target>
+        <target>в процесі</target>
         <note>Label for call in progress</note>
       </trans-unit>
       <trans-unit id="online now" xml:space="preserve">
         <source>online now</source>
-        <target>en línea ahora</target>
+        <target>зараз онлайн</target>
         <note>The topic or user is currently online</note>
       </trans-unit>
       <trans-unit id="undefined" xml:space="preserve">
         <source>undefined</source>
-        <target>indefinido</target>
+        <target>без назви</target>
         <note>Button with missing text
    Placeholder for missing file name
    Placeholder for missing file type</note>
       </trans-unit>
     </body>
   </file>
-  <file original="Pods/en.lproj/Localizable.strings" datatype="plaintext" source-language="en" target-language="es">
+  <file original="Pods/en.lproj/Localizable.strings" source-language="en" target-language="uk" datatype="plaintext">
     <header>
       <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="15.2" build-num="15C500b"/>
     </header>
     <body>
       <trans-unit id="An error occured whilst validating the phone number." xml:space="preserve">
         <source>An error occured whilst validating the phone number.</source>
+        <target>Помилка перевірки телефонного номера.</target>
         <note>No comment provided by engineer.</note>
       </trans-unit>
       <trans-unit id="Phone number type is unknown." xml:space="preserve">
         <source>Phone number type is unknown.</source>
+        <target>Невідомий тип номеру.</target>
         <note>No comment provided by engineer.</note>
       </trans-unit>
       <trans-unit id="PhoneNumberKit.CountryCodePicker.Common" xml:space="preserve">
         <source>Common</source>
+        <target>Загальне</target>
         <note>Name of \"Common\" section</note>
       </trans-unit>
       <trans-unit id="PhoneNumberKit.CountryCodePicker.Current" xml:space="preserve">
         <source>Current</source>
+        <target>Поточний</target>
         <note>Name of \"Current\" section</note>
       </trans-unit>
       <trans-unit id="PhoneNumberKit.CountryCodePicker.Title" xml:space="preserve">
         <source>Choose your country</source>
+        <target>Виберіть країну</target>
         <note>Title of CountryCodePicker ViewController</note>
       </trans-unit>
       <trans-unit id="The country code is invalid." xml:space="preserve">
         <source>The country code is invalid.</source>
+        <target>Невірний код країни.</target>
         <note>No comment provided by engineer.</note>
       </trans-unit>
       <trans-unit id="The number provided is invalid." xml:space="preserve">
         <source>The number provided is invalid.</source>
+        <target>Вказаний номер невірний.</target>
         <note>No comment provided by engineer.</note>
       </trans-unit>
       <trans-unit id="The number provided is too long." xml:space="preserve">
         <source>The number provided is too long.</source>
+        <target>Вказаний номер занадто довгий.</target>
         <note>No comment provided by engineer.</note>
       </trans-unit>
       <trans-unit id="The number provided is too short." xml:space="preserve">
         <source>The number provided is too short.</source>
+        <target>Вказаний номер занадто короткий.</target>
         <note>No comment provided by engineer.</note>
       </trans-unit>
       <trans-unit id="This function is deprecated." xml:space="preserve">
         <source>This function is deprecated.</source>
+        <target>Ця функція застаріла.</target>
         <note>No comment provided by engineer.</note>
       </trans-unit>
       <trans-unit id="Valid metadata is missing." xml:space="preserve">
         <source>Valid metadata is missing.</source>
+        <target>Відсутні коректні метадані.</target>
         <note>No comment provided by engineer.</note>
       </trans-unit>
     </body>
   </file>
-  <file original="Tinodios/Base.lproj/Main.storyboard" source-language="en" target-language="es" datatype="plaintext">
+  <file original="Tinodios/Base.lproj/Main.storyboard" source-language="en" target-language="uk" datatype="plaintext">
     <header>
       <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="15.2" build-num="15C500b"/>
     </header>
     <body>
       <trans-unit id="0Fx-rq-hiS.title" xml:space="preserve">
         <source>New Group</source>
-        <target>Nuevo grupo</target>
+        <target>Нова група</target>
         <note>Class = "UITabBarItem"; title = "New Group"; ObjectID = "0Fx-rq-hiS";</note>
       </trans-unit>
       <trans-unit id="1tv-os-KfJ.normalTitle" xml:space="preserve">
         <source>Sign Up</source>
-        <target>Regístrate</target>
+        <target>Реєстрація</target>
         <note>Class = "UIButton"; normalTitle = "Sign Up"; ObjectID = "1tv-os-KfJ";</note>
       </trans-unit>
       <trans-unit id="3hX-RM-7Ha.text" xml:space="preserve">
         <source>Administration and Security</source>
-        <target>Administración y seguridad</target>
+        <target>Адміністративні налаштування</target>
         <note>Class = "UILabel"; text = "Administration and Security"; ObjectID = "3hX-RM-7Ha";</note>
       </trans-unit>
       <trans-unit id="3lo-iH-I5e.text" xml:space="preserve">
         <source>placeholder_file_name</source>
+        <target>ім'я файлу</target>
         <note>Class = "UILabel"; text = "placeholder_file_name"; ObjectID = "3lo-iH-I5e";</note>
       </trans-unit>
       <trans-unit id="3zN-CC-6bS.title" xml:space="preserve">
         <source>Invite</source>
-        <target>Invitación</target>
+        <target>Запросити</target>
         <note>Class = "UIBarButtonItem"; title = "Invite"; ObjectID = "3zN-CC-6bS";</note>
       </trans-unit>
       <trans-unit id="4dd-0I-UFm.title" xml:space="preserve">
         <source>General Settings</source>
-        <target>Configuración general</target>
+        <target>Загальні налаштування</target>
         <note>Class = "UITableViewController"; title = "General Settings"; ObjectID = "4dd-0I-UFm";</note>
       </trans-unit>
       <trans-unit id="4hf-MD-NbA.text" xml:space="preserve">
@@ -876,87 +888,86 @@
       </trans-unit>
       <trans-unit id="4ll-eW-b8Z.text" xml:space="preserve">
         <source>Send typing notifications</source>
-        <target>Enviar notificaciones de escritura</target>
+        <target>Індикатор друку</target>
         <note>Class = "UILabel"; text = "Send typing notifications"; ObjectID = "4ll-eW-b8Z";</note>
       </trans-unit>
       <trans-unit id="4ur-p6-jff.title" xml:space="preserve">
         <source>Credentials Change</source>
-        <target>Cambio de credenciales</target>
+        <target>Зміна облікових даних</target>
         <note>Class = "UITableViewController"; title = "Credentials Change"; ObjectID = "4ur-p6-jff";</note>
       </trans-unit>
       <trans-unit id="5CT-4e-SGR.text" xml:space="preserve">
         <source>image/jpeg</source>
-        <target state="translated">image/jpeg</target>
         <note>Class = "UILabel"; text = "image/jpeg"; ObjectID = "5CT-4e-SGR";</note>
       </trans-unit>
       <trans-unit id="6Nd-3S-JBo.text" xml:space="preserve">
         <source>Optional comment (private)</source>
-        <target>Comentario opcional (privado)</target>
+        <target>Коментар (тільки для себе)</target>
         <note>Class = "UILabel"; text = "Optional comment (private)"; ObjectID = "6Nd-3S-JBo";</note>
       </trans-unit>
       <trans-unit id="6ON-kt-aM9.text" xml:space="preserve">
         <source>John Doe</source>
-        <target>Juan González Hernández</target>
+        <target>Дмитро Соколов</target>
         <note>Class = "UILabel"; text = "John Doe"; ObjectID = "6ON-kt-aM9";</note>
       </trans-unit>
       <trans-unit id="6rW-B5-NCp.text" xml:space="preserve">
         <source>placeholder_file_name</source>
-        <target>placeholder_file_name</target>
+        <target>ім'я файлу</target>
         <note>Class = "UILabel"; text = "placeholder_file_name"; ObjectID = "6rW-B5-NCp";</note>
       </trans-unit>
       <trans-unit id="6zX-Sq-TK6.normalTitle" xml:space="preserve">
         <source>Configure Connection</source>
-        <target>Configurar la conexión</target>
+        <target>Налаштування зв'язку</target>
         <note>Class = "UIButton"; normalTitle = "Configure Connection"; ObjectID = "6zX-Sq-TK6";</note>
       </trans-unit>
       <trans-unit id="8RW-nB-5t3.text" xml:space="preserve">
         <source>Log out</source>
-        <target>Cerrar sesión</target>
+        <target>Вийти</target>
         <note>Class = "UILabel"; text = "Log out"; ObjectID = "8RW-nB-5t3";</note>
       </trans-unit>
       <trans-unit id="8eC-OS-Net.text" xml:space="preserve">
         <source>Report Contact</source>
-        <target>Contacto de informe</target>
+        <target>Поскаржитись</target>
         <note>Class = "UILabel"; text = "Report Contact"; ObjectID = "8eC-OS-Net";</note>
       </trans-unit>
       <trans-unit id="8wo-Rg-iTZ.text" xml:space="preserve">
         <source>Anonymous users</source>
-        <target>Usuarios anónimos</target>
+        <target>Анонімні користувачі</target>
         <note>Class = "UILabel"; text = "Anonymous users"; ObjectID = "8wo-Rg-iTZ";</note>
       </trans-unit>
       <trans-unit id="9Co-1p-ugz.placeholder" xml:space="preserve">
         <source>Phone number</source>
-        <target>Número de teléfono</target>
+        <target>Номер телефону</target>
         <note>Class = "UITextField"; placeholder = "Phone number"; ObjectID = "9Co-1p-ugz";</note>
       </trans-unit>
       <trans-unit id="9Lj-hp-MkL.text" xml:space="preserve">
         <source>Contact us</source>
-        <target>Contáctanos</target>
+        <target>Зворотній зв'язок</target>
         <note>Class = "UILabel"; text = "Contact us"; ObjectID = "9Lj-hp-MkL";</note>
       </trans-unit>
       <trans-unit id="9SI-IJ-VTf.text" xml:space="preserve">
         <source>We will send confirmation code to the address below</source>
-        <target>Enviaremos el código de confirmación a la siguiente dirección</target>
+        <target>Ми надішлемо код підтвердження на вказану адресу</target>
         <note>Class = "UILabel"; text = "We will send confirmation code to the address below"; ObjectID = "9SI-IJ-VTf";</note>
       </trans-unit>
       <trans-unit id="9Zn-Sl-aQb.headerTitle" xml:space="preserve">
         <source>New Credential</source>
-        <target>Nueva credencial</target>
+        <target>Новий акаунт</target>
         <note>Class = "UITableViewSection"; headerTitle = "New Credential"; ObjectID = "9Zn-Sl-aQb";</note>
       </trans-unit>
       <trans-unit id="9dk-JW-5z0.text" xml:space="preserve">
         <source>Terms of use</source>
-        <target>Términos de uso</target>
+        <target>Умови використання</target>
         <note>Class = "UILabel"; text = "Terms of use"; ObjectID = "9dk-JW-5z0";</note>
       </trans-unit>
       <trans-unit id="9gO-eS-keH.text" xml:space="preserve">
         <source>Authenticated users</source>
-        <target>Usuarios autenticados</target>
+        <target>Автентифіковані користувачі</target>
         <note>Class = "UILabel"; text = "Authenticated users"; ObjectID = "9gO-eS-keH";</note>
       </trans-unit>
       <trans-unit id="9mf-og-8Hl.title" xml:space="preserve">
         <source>Settings</source>
-        <target>Ajustes</target>
+        <target>Налаштування</target>
         <note>Class = "UINavigationItem"; title = "Settings"; ObjectID = "9mf-og-8Hl";</note>
       </trans-unit>
       <trans-unit id="9rO-zX-bOn.text" xml:space="preserve">
@@ -966,12 +977,12 @@
       </trans-unit>
       <trans-unit id="12g-Mq-Ht6.text" xml:space="preserve">
         <source>Size:</source>
-        <target>Tamaño:</target>
+        <target>Розмір:</target>
         <note>Class = "UILabel"; text = "Size:"; ObjectID = "12g-Mq-Ht6";</note>
       </trans-unit>
       <trans-unit id="26s-2T-nI0.headerTitle" xml:space="preserve">
         <source>Group Members</source>
-        <target>Miembros del grupo</target>
+        <target>Учасники групи</target>
         <note>Class = "UITableViewSection"; headerTitle = "Group Members"; ObjectID = "26s-2T-nI0";</note>
       </trans-unit>
       <trans-unit id="71p-KF-hSv.text" xml:space="preserve">
@@ -981,22 +992,22 @@
       </trans-unit>
       <trans-unit id="82W-36-na3.placeholder" xml:space="preserve">
         <source>Enter Confirmation Code</source>
-        <target>Introduzca el código de confirmación</target>
+        <target>Введіть код підтвердження</target>
         <note>Class = "UITextField"; placeholder = "Enter Confirmation Code"; ObjectID = "82W-36-na3";</note>
       </trans-unit>
       <trans-unit id="AXP-O2-x5k.text" xml:space="preserve">
         <source>App Version</source>
-        <target>Versión de la app</target>
+        <target>Версія додатку</target>
         <note>Class = "UILabel"; text = "App Version"; ObjectID = "AXP-O2-x5k";</note>
       </trans-unit>
       <trans-unit id="Akq-Gr-LNH.text" xml:space="preserve">
         <source>Private comment</source>
-        <target>Comentario privado</target>
+        <target>Коментар (тільки для себе)</target>
         <note>Class = "UITextView"; text = "Private comment"; ObjectID = "Akq-Gr-LNH";</note>
       </trans-unit>
       <trans-unit id="AoI-xo-VbS.text" xml:space="preserve">
         <source>Muted</source>
-        <target>Silenciado</target>
+        <target>Без сповіщень</target>
         <note>Class = "UILabel"; text = "Muted"; ObjectID = "AoI-xo-VbS";</note>
       </trans-unit>
       <trans-unit id="AyV-WL-p4N.text" xml:space="preserve">
@@ -1005,12 +1016,12 @@
       </trans-unit>
       <trans-unit id="BJV-dk-s3m.text" xml:space="preserve">
         <source>Configuration Code</source>
-        <target>Código de configuración</target>
+        <target>Код конфігурації</target>
         <note>Class = "UILabel"; text = "Configuration Code"; ObjectID = "BJV-dk-s3m";</note>
       </trans-unit>
       <trans-unit id="BRf-xV-zvt.headerTitle" xml:space="preserve">
         <source>Password reset</source>
-        <target>Restablecimiento de contraseña</target>
+        <target>Пароль змінений</target>
         <note>Class = "UITableViewSection"; headerTitle = "Password reset"; ObjectID = "BRf-xV-zvt";</note>
       </trans-unit>
       <trans-unit id="BS4-zj-4bf.text" xml:space="preserve">
@@ -1025,22 +1036,22 @@
       </trans-unit>
       <trans-unit id="Cib-aE-hH5.title" xml:space="preserve">
         <source>Video Call</source>
-        <target>Videollamada</target>
+        <target>Відеодзвінок</target>
         <note>Class = "UIViewController"; title = "Video Call"; ObjectID = "Cib-aE-hH5";</note>
       </trans-unit>
       <trans-unit id="Cy6-Bq-QCi.placeholder" xml:space="preserve">
         <source>Optional description</source>
-        <target>Descripción opcional</target>
+        <target>Опис (не обов'язково)</target>
         <note>Class = "UITextField"; placeholder = "Optional description"; ObjectID = "Cy6-Bq-QCi";</note>
       </trans-unit>
       <trans-unit id="D3z-yf-zJA.text" xml:space="preserve">
         <source>Description</source>
-        <target>Subtítulo del tema (privado)</target>
+        <target>Пояснення (тільки для себе)</target>
         <note>Class = "UITextView"; text = "Description"; ObjectID = "D3z-yf-zJA";</note>
       </trans-unit>
       <trans-unit id="DEM-ia-TIj.text" xml:space="preserve">
         <source>Archived</source>
-        <target>Archivado</target>
+        <target>Архівований</target>
         <note>Class = "UILabel"; text = "Archived"; ObjectID = "DEM-ia-TIj";</note>
       </trans-unit>
       <trans-unit id="DMQ-om-04T.normalTitle" xml:space="preserve">
@@ -1050,7 +1061,7 @@
       </trans-unit>
       <trans-unit id="Do2-Ue-UdA.placeholder" xml:space="preserve">
         <source>Additional info (private)</source>
-        <target>Información adicional (privado)</target>
+        <target>Пояснення (тільки для себе)</target>
         <note>Class = "UITextField"; placeholder = "Additional info (private)"; ObjectID = "Do2-Ue-UdA";</note>
       </trans-unit>
       <trans-unit id="Drz-OH-b0d.text" xml:space="preserve">
@@ -1063,17 +1074,17 @@
       </trans-unit>
       <trans-unit id="FKi-Zf-cyS.text" xml:space="preserve">
         <source>Server</source>
-        <target>Servidor</target>
+        <target>Сервер</target>
         <note>Class = "UILabel"; text = "Server"; ObjectID = "FKi-Zf-cyS";</note>
       </trans-unit>
       <trans-unit id="FeF-3T-sWp.text" xml:space="preserve">
         <source>Add members</source>
-        <target>Añadir miembros</target>
+        <target>Запросити</target>
         <note>Class = "UILabel"; text = "Add members"; ObjectID = "FeF-3T-sWp";</note>
       </trans-unit>
       <trans-unit id="Fjs-5K-JCI.text" xml:space="preserve">
         <source>Delete account</source>
-        <target>Eliminar cuenta</target>
+        <target>Видалити акаунт</target>
         <note>Class = "UILabel"; text = "Delete account"; ObjectID = "Fjs-5K-JCI";</note>
       </trans-unit>
       <trans-unit id="GgZ-QG-K19.text" xml:space="preserve">
@@ -1082,7 +1093,7 @@
       </trans-unit>
       <trans-unit id="H78-sG-L0j.headerTitle" xml:space="preserve">
         <source>Default Permissions</source>
-        <target>Permisos predeterminados</target>
+        <target>Дозвіл по замовчуванню</target>
         <note>Class = "UITableViewSection"; headerTitle = "Default Permissions"; ObjectID = "H78-sG-L0j";</note>
       </trans-unit>
       <trans-unit id="HCG-mB-BeX.text" xml:space="preserve">
@@ -1091,111 +1102,112 @@
       </trans-unit>
       <trans-unit id="HIs-n4-sFa.text" xml:space="preserve">
         <source>placeholder_file_name</source>
-        <target>placeholder_file_name</target>
+        <target>ім'я файлу</target>
         <note>Class = "UILabel"; text = "placeholder_file_name"; ObjectID = "HIs-n4-sFa";</note>
       </trans-unit>
       <trans-unit id="Hah-A8-0yd.title" xml:space="preserve">
         <source>Video Preview</source>
-        <target>Vista previa del vídeo</target>
+        <target>Прев'ю відео</target>
         <note>Class = "UINavigationItem"; title = "Video Preview"; ObjectID = "Hah-A8-0yd";</note>
       </trans-unit>
       <trans-unit id="IMk-1F-WiZ.title" xml:space="preserve">
         <source>Reset Password</source>
-        <target>Restablecer contraseña</target>
+        <target>Відновити пароль</target>
         <note>Class = "UITableViewController"; title = "Reset Password"; ObjectID = "IMk-1F-WiZ";</note>
       </trans-unit>
       <trans-unit id="IP5-9X-LlM.configuration.title" xml:space="preserve">
         <source>Show Code</source>
-        <target>Mostrar código</target>
+        <target>Показати код</target>
         <note>Class = "UIButton"; configuration.title = "Show Code"; ObjectID = "IP5-9X-LlM";</note>
       </trans-unit>
       <trans-unit id="IbJ-of-vl0.text" xml:space="preserve">
         <source>Add optional description</source>
-        <target>Añadir descripción opcional</target>
+        <target>Додайте опис (не обов'язково)</target>
         <note>Class = "UILabel"; text = "Add optional description"; ObjectID = "IbJ-of-vl0";</note>
       </trans-unit>
       <trans-unit id="ImI-af-TFh.configuration.title" xml:space="preserve">
         <source>Scan Code</source>
-        <target>Código de escaneo</target>
+        <target>Сканувати код</target>
         <note>Class = "UIButton"; configuration.title = "Scan Code"; ObjectID = "ImI-af-TFh";</note>
       </trans-unit>
       <trans-unit id="ImI-af-TFh.normalTitle" xml:space="preserve">
         <source>Button</source>
+        <target>Кнопка</target>
         <note>Class = "UIButton"; normalTitle = "Button"; ObjectID = "ImI-af-TFh";</note>
       </trans-unit>
       <trans-unit id="IzY-DL-wiS.text" xml:space="preserve">
         <source>Verified</source>
-        <target>Verificado</target>
+        <target>Перевірений</target>
         <note>Class = "UILabel"; text = "Verified"; ObjectID = "IzY-DL-wiS";</note>
       </trans-unit>
       <trans-unit id="JlG-TH-asZ.text" xml:space="preserve">
         <source>Confirmation code</source>
-        <target>Código de confirmación</target>
+        <target>Код підтвердження</target>
         <note>Class = "UILabel"; text = "Confirmation code"; ObjectID = "JlG-TH-asZ";</note>
       </trans-unit>
       <trans-unit id="JpP-JB-AWY.title" xml:space="preserve">
         <source>Image Preview</source>
-        <target>Vista previa de la imagen</target>
+        <target>Предпросмотр</target>
         <note>Class = "UINavigationItem"; title = "Image Preview"; ObjectID = "JpP-JB-AWY";</note>
       </trans-unit>
       <trans-unit id="K7L-Uc-b68.text" xml:space="preserve">
         <source>Subtitle</source>
-        <target>Subtítulo</target>
+        <target>Підзаголовок</target>
         <note>Class = "UILabel"; text = "Subtitle"; ObjectID = "K7L-Uc-b68";</note>
       </trans-unit>
       <trans-unit id="KL3-O0-A0I.text" xml:space="preserve">
         <source>Untrustworthy</source>
-        <target>De poca confianza</target>
+        <target>Підозрілий</target>
         <note>Class = "UILabel"; text = "Untrustworthy"; ObjectID = "KL3-O0-A0I";</note>
       </trans-unit>
       <trans-unit id="KSy-US-Bkx.text" xml:space="preserve">
         <source>Block Contact</source>
-        <target>Bloquear contacto</target>
+        <target>Заблокувати контакт</target>
         <note>Class = "UILabel"; text = "Block Contact"; ObjectID = "KSy-US-Bkx";</note>
       </trans-unit>
       <trans-unit id="LRu-ae-drd.title" xml:space="preserve">
         <source>Edit Members</source>
-        <target>Editar miembros</target>
+        <target>Редагувати учасників</target>
         <note>Class = "UINavigationItem"; title = "Edit Members"; ObjectID = "LRu-ae-drd";</note>
       </trans-unit>
       <trans-unit id="LVG-dB-flA.title" xml:space="preserve">
         <source>New Chat</source>
-        <target>Nuevo chat</target>
+        <target>Новий чат</target>
         <note>Class = "UIBarButtonItem"; title = "New Chat"; ObjectID = "LVG-dB-flA";</note>
       </trans-unit>
       <trans-unit id="LVW-qL-KG8.text" xml:space="preserve">
         <source>Untrusworthy</source>
-        <target>Intrusable</target>
+        <target>Підозрілий</target>
         <note>Class = "UILabel"; text = "Untrusworthy"; ObjectID = "LVW-qL-KG8";</note>
       </trans-unit>
       <trans-unit id="Lh9-1X-ez1.text" xml:space="preserve">
         <source>Blocked contacts</source>
-        <target>Contactos bloqueados</target>
+        <target>Заблоковані контакти</target>
         <note>Class = "UILabel"; text = "Blocked contacts"; ObjectID = "Lh9-1X-ez1";</note>
       </trans-unit>
       <trans-unit id="LoW-9v-9fd.text" xml:space="preserve">
         <source>Scan Code</source>
-        <target>Código de escaneo</target>
+        <target>Сканувати код</target>
         <note>Class = "UILabel"; text = "Scan Code"; ObjectID = "LoW-9v-9fd";</note>
       </trans-unit>
       <trans-unit id="NNn-m0-IQE.placeholder" xml:space="preserve">
         <source>New Email Address</source>
-        <target>Nueva dirección de correo electrónico</target>
+        <target>Новий емейл</target>
         <note>Class = "UITextField"; placeholder = "New Email Address"; ObjectID = "NNn-m0-IQE";</note>
       </trans-unit>
       <trans-unit id="O9h-LB-2lW.title" xml:space="preserve">
         <source>Notifications</source>
-        <target>Notificaciones</target>
+        <target>Сповіщення</target>
         <note>Class = "UINavigationItem"; title = "Notifications"; ObjectID = "O9h-LB-2lW";</note>
       </trans-unit>
       <trans-unit id="OeG-Kx-gwG.text" xml:space="preserve">
         <source>Content type:</source>
-        <target>Tipo de contenido:</target>
+        <target>Тип контента:</target>
         <note>Class = "UILabel"; text = "Content type:"; ObjectID = "OeG-Kx-gwG";</note>
       </trans-unit>
       <trans-unit id="OwU-2N-QQV.text" xml:space="preserve">
         <source>Address</source>
-        <target>Dirección</target>
+        <target>Адреса</target>
         <note>Class = "UILabel"; text = "Address"; ObjectID = "OwU-2N-QQV";</note>
       </trans-unit>
       <trans-unit id="P9L-Ga-c1q.text" xml:space="preserve">
@@ -1204,32 +1216,32 @@
       </trans-unit>
       <trans-unit id="Pnk-9m-ZVg.title" xml:space="preserve">
         <source>Account Settings</source>
-        <target>Ajustes de la cuenta</target>
+        <target>Налаштування акаунта</target>
         <note>Class = "UITableViewController"; title = "Account Settings"; ObjectID = "Pnk-9m-ZVg";</note>
       </trans-unit>
       <trans-unit id="PuQ-zO-4Of.text" xml:space="preserve">
         <source>First and Last Name</source>
-        <target>Nombre y apellido</target>
+        <target>Ім'я та Прізвище</target>
         <note>Class = "UILabel"; text = "First and Last Name"; ObjectID = "PuQ-zO-4Of";</note>
       </trans-unit>
       <trans-unit id="QwO-fs-VYW.headerTitle" xml:space="preserve">
         <source>Security</source>
-        <target>Seguridad</target>
+        <target>Безпека</target>
         <note>Class = "UITableViewSection"; headerTitle = "Security"; ObjectID = "QwO-fs-VYW";</note>
       </trans-unit>
       <trans-unit id="R6w-cr-96Z.normalTitle" xml:space="preserve">
         <source>Request</source>
-        <target>Petición</target>
+        <target>Запит</target>
         <note>Class = "UIButton"; normalTitle = "Request"; ObjectID = "R6w-cr-96Z";</note>
       </trans-unit>
       <trans-unit id="RA0-dx-dSp.text" xml:space="preserve">
         <source>Group or user ID</source>
-        <target>Tema o ID de usuario</target>
+        <target>Адреса користувача або групи</target>
         <note>Class = "UILabel"; text = "Group or user ID"; ObjectID = "RA0-dx-dSp";</note>
       </trans-unit>
       <trans-unit id="ROK-aW-Tlk.text" xml:space="preserve">
         <source>Staff-managed</source>
-        <target>Gestionado por el personal</target>
+        <target>Адміністративний</target>
         <note>Class = "UILabel"; text = "Staff-managed"; ObjectID = "ROK-aW-Tlk";</note>
       </trans-unit>
       <trans-unit id="Rgo-YL-uPZ.title" xml:space="preserve">
@@ -1239,47 +1251,47 @@
       </trans-unit>
       <trans-unit id="Rv6-qQ-FqW.normalTitle" xml:space="preserve">
         <source>Sign up</source>
-        <target>Regístrate</target>
+        <target>Зареєструватися</target>
         <note>Class = "UIButton"; normalTitle = "Sign up"; ObjectID = "Rv6-qQ-FqW";</note>
       </trans-unit>
       <trans-unit id="RvM-se-Nch.text" xml:space="preserve">
         <source>Content type:</source>
-        <target>Tipo de contenido:</target>
+        <target>Тип контента:</target>
         <note>Class = "UILabel"; text = "Content type:"; ObjectID = "RvM-se-Nch";</note>
       </trans-unit>
       <trans-unit id="SQN-GC-qEL.placeholder" xml:space="preserve">
         <source>Email</source>
-        <target>Correo electrónico</target>
+        <target>Емейл</target>
         <note>Class = "UITextField"; placeholder = "Email"; ObjectID = "SQN-GC-qEL";</note>
       </trans-unit>
       <trans-unit id="T7l-iC-Rs6.title" xml:space="preserve">
         <source>By ID</source>
-        <target>Por ID</target>
+        <target>По ID</target>
         <note>Class = "UITabBarItem"; title = "By ID"; ObjectID = "T7l-iC-Rs6";</note>
       </trans-unit>
       <trans-unit id="TQV-dP-vL9.headerTitle" xml:space="preserve">
         <source>Contacts</source>
-        <target>Contactos</target>
+        <target>Контакти</target>
         <note>Class = "UITableViewSection"; headerTitle = "Contacts"; ObjectID = "TQV-dP-vL9";</note>
       </trans-unit>
       <trans-unit id="TvF-F9-blO.normalTitle" xml:space="preserve">
         <source>Sign In</source>
-        <target>Iniciar sesión</target>
+        <target>Увійти</target>
         <note>Class = "UIButton"; normalTitle = "Sign In"; ObjectID = "TvF-F9-blO";</note>
       </trans-unit>
       <trans-unit id="U5T-k4-DgP.headerTitle" xml:space="preserve">
         <source>Actions</source>
-        <target>Acciones</target>
+        <target>Дії</target>
         <note>Class = "UITableViewSection"; headerTitle = "Actions"; ObjectID = "U5T-k4-DgP";</note>
       </trans-unit>
       <trans-unit id="UgX-En-K1m.title" xml:space="preserve">
         <source>Find Controller</source>
-        <target>Encontrar controlador</target>
+        <target>Знайти контролер</target>
         <note>Class = "UITableViewController"; title = "Find Controller"; ObjectID = "UgX-En-K1m";</note>
       </trans-unit>
       <trans-unit id="Ukl-EW-zMS.text" xml:space="preserve">
         <source>Anonymous users</source>
-        <target>Usuarios anónimos</target>
+        <target>Анонімні користувачі</target>
         <note>Class = "UILabel"; text = "Anonymous users"; ObjectID = "Ukl-EW-zMS";</note>
       </trans-unit>
       <trans-unit id="Un9-ds-iQd.text" xml:space="preserve">
@@ -1293,31 +1305,32 @@
       </trans-unit>
       <trans-unit id="VLd-3M-5wj.headerTitle" xml:space="preserve">
         <source>Current Credential</source>
-        <target>Credencial actual</target>
+        <target>Поточний запис</target>
         <note>Class = "UITableViewSection"; headerTitle = "Current Credential"; ObjectID = "VLd-3M-5wj";</note>
       </trans-unit>
       <trans-unit id="WTE-Mf-oSE.placeholder" xml:space="preserve">
         <source>New password</source>
-        <target>Nueva contraseña</target>
+        <target>Новий пароль</target>
         <note>Class = "UITextField"; placeholder = "New password"; ObjectID = "WTE-Mf-oSE";</note>
       </trans-unit>
       <trans-unit id="WVu-hr-VVU.text" xml:space="preserve">
         <source>The name of the group</source>
-        <target>El nombre del grupo</target>
+        <target>Назва групи</target>
         <note>Class = "UILabel"; text = "The name of the group"; ObjectID = "WVu-hr-VVU";</note>
       </trans-unit>
       <trans-unit id="Wyn-hP-c2H.placeholder" xml:space="preserve">
         <source>Email</source>
+        <target>Емейл</target>
         <note>Class = "UITextField"; placeholder = "Email"; ObjectID = "Wyn-hP-c2H";</note>
       </trans-unit>
       <trans-unit id="YLX-fZ-c26.text" xml:space="preserve">
         <source>image/jpeg</source>
-        <target state="translated">image/jpeg</target>
+        <target>image/jpeg</target>
         <note>Class = "UILabel"; text = "image/jpeg"; ObjectID = "YLX-fZ-c26";</note>
       </trans-unit>
       <trans-unit id="YmQ-cB-rjH.title" xml:space="preserve">
         <source>SignUp</source>
-        <target>Regístrate</target>
+        <target>Реєстрація</target>
         <note>Class = "UITableViewController"; title = "SignUp"; ObjectID = "YmQ-cB-rjH";</note>
       </trans-unit>
       <trans-unit id="ZQJ-Ja-aBa.text" xml:space="preserve">
@@ -1326,67 +1339,67 @@
       </trans-unit>
       <trans-unit id="ZQy-2N-acy.placeholder" xml:space="preserve">
         <source>Password</source>
-        <target>Contraseña</target>
+        <target>Пароль</target>
         <note>Class = "UITextField"; placeholder = "Password"; ObjectID = "ZQy-2N-acy";</note>
       </trans-unit>
       <trans-unit id="ZTD-e7-fNF.accessibilityHint" xml:space="preserve">
         <source>Login</source>
-        <target>Entrar</target>
+        <target>Логін</target>
         <note>Class = "UITextField"; accessibilityHint = "Login"; ObjectID = "ZTD-e7-fNF";</note>
       </trans-unit>
       <trans-unit id="ZTD-e7-fNF.accessibilityLabel" xml:space="preserve">
         <source>Login</source>
-        <target>Entrar</target>
+        <target>Логін</target>
         <note>Class = "UITextField"; accessibilityLabel = "Login"; ObjectID = "ZTD-e7-fNF";</note>
       </trans-unit>
       <trans-unit id="ZTD-e7-fNF.placeholder" xml:space="preserve">
         <source>User name</source>
-        <target>Nombre de usuario</target>
+        <target>Ім'я користувача</target>
         <note>Class = "UITextField"; placeholder = "User name"; ObjectID = "ZTD-e7-fNF";</note>
       </trans-unit>
       <trans-unit id="ZTN-Oj-COh.title" xml:space="preserve">
         <source>File Preview</source>
-        <target>Vista previa del archivo</target>
+        <target>Предпросмотр</target>
         <note>Class = "UIViewController"; title = "File Preview"; ObjectID = "ZTN-Oj-COh";</note>
       </trans-unit>
       <trans-unit id="Zdw-nR-1tB.text" xml:space="preserve">
         <source>Others can find group by these tags</source>
-        <target>Otros pueden encontrar grupos por estas etiquetas</target>
+        <target>Теги для пошуку</target>
         <note>Class = "UILabel"; text = "Others can find group by these tags"; ObjectID = "Zdw-nR-1tB";</note>
       </trans-unit>
       <trans-unit id="Zn8-7V-BcX.text" xml:space="preserve">
         <source>Privacy policy</source>
-        <target>Política de privacidad</target>
+        <target>Політика конфіденційності</target>
         <note>Class = "UILabel"; text = "Privacy policy"; ObjectID = "Zn8-7V-BcX";</note>
       </trans-unit>
       <trans-unit id="a2m-CR-0Zc.title" xml:space="preserve">
         <source>Image Preview</source>
-        <target>Vista previa de la imagen</target>
+        <target>Предпросмотр</target>
         <note>Class = "UIViewController"; title = "Image Preview"; ObjectID = "a2m-CR-0Zc";</note>
       </trans-unit>
       <trans-unit id="a4o-bz-GPx.text" xml:space="preserve">
         <source>Report Group</source>
-        <target>Grupo de informes</target>
+        <target>Поскаржитися на групу</target>
         <note>Class = "UILabel"; text = "Report Group"; ObjectID = "a4o-bz-GPx";</note>
       </trans-unit>
       <trans-unit id="a45-p0-44d.text" xml:space="preserve">
         <source>GROUP MEMBERS</source>
-        <target>MIEMBROS DEL GRUPO</target>
+        <target>УЧАСНИКИ ГРУПИ</target>
         <note>Class = "UILabel"; text = "GROUP MEMBERS"; ObjectID = "a45-p0-44d";</note>
       </trans-unit>
       <trans-unit id="aA7-FA-fcf.text" xml:space="preserve">
         <source>File name:</source>
-        <target>Nombre del archivo:</target>
+        <target>Ім'я файлу:</target>
         <note>Class = "UILabel"; text = "File name:"; ObjectID = "aA7-FA-fcf";</note>
       </trans-unit>
       <trans-unit id="aCk-Z4-8m7.text" xml:space="preserve">
         <source>Notifications</source>
-        <target>Notificaciones</target>
+        <target>Сповіщення</target>
         <note>Class = "UILabel"; text = "Notifications"; ObjectID = "aCk-Z4-8m7";</note>
       </trans-unit>
       <trans-unit id="aFc-MO-QyO.normalTitle" xml:space="preserve">
         <source>Confirm</source>
-        <target>Confirmar</target>
+        <target>Підтвердити</target>
         <note>Class = "UIButton"; normalTitle = "Confirm"; ObjectID = "aFc-MO-QyO";</note>
       </trans-unit>
       <trans-unit id="aMv-to-Vu2.text" xml:space="preserve">
@@ -1396,7 +1409,7 @@
       </trans-unit>
       <trans-unit id="ab5-J1-Lx7.normalTitle" xml:space="preserve">
         <source>I Have Code</source>
-        <target>Tengo Código</target>
+        <target>У мене є код</target>
         <note>Class = "UIButton"; normalTitle = "I Have Code"; ObjectID = "ab5-J1-Lx7";</note>
       </trans-unit>
       <trans-unit id="af7-97-1pu.title" xml:space="preserve">
@@ -1405,12 +1418,12 @@
       </trans-unit>
       <trans-unit id="awR-up-0dD.title" xml:space="preserve">
         <source>General Settings</source>
-        <target>Ajustes generales</target>
+        <target>Загальні налаштування</target>
         <note>Class = "UITableViewController"; title = "General Settings"; ObjectID = "awR-up-0dD";</note>
       </trans-unit>
       <trans-unit id="axr-PN-Xcr.text" xml:space="preserve">
         <source>Verified</source>
-        <target>Verificado</target>
+        <target>Перевірений</target>
         <note>Class = "UILabel"; text = "Verified"; ObjectID = "axr-PN-Xcr";</note>
       </trans-unit>
       <trans-unit id="aza-Xk-MXu.text" xml:space="preserve">
@@ -1419,12 +1432,12 @@
       </trans-unit>
       <trans-unit id="bEA-WA-uoH.text" xml:space="preserve">
         <source>Last active</source>
-        <target>Estaba activo</target>
+        <target>Був онлайн</target>
         <note>Class = "UILabel"; text = "Last active"; ObjectID = "bEA-WA-uoH";</note>
       </trans-unit>
       <trans-unit id="bYc-bz-7iK.text" xml:space="preserve">
         <source>No results</source>
-        <target>No hay resultados</target>
+        <target>Немає результатів</target>
         <note>Class = "UILabel"; text = "No results"; ObjectID = "bYc-bz-7iK";</note>
       </trans-unit>
       <trans-unit id="bZv-2Q-BI9.text" xml:space="preserve">
@@ -1434,42 +1447,41 @@
       </trans-unit>
       <trans-unit id="bca-bT-6Tn.placeholder" xml:space="preserve">
         <source>Description (optional)</source>
-        <target>Descripción (opcional)</target>
+        <target>Опис (не обов'язково)</target>
         <note>Class = "UITextField"; placeholder = "Description (optional)"; ObjectID = "bca-bT-6Tn";</note>
       </trans-unit>
       <trans-unit id="bfU-AG-oM0.text" xml:space="preserve">
         <source>We will send a message with confirmation code to address above</source>
-        <target>Enviaremos un mensaje con el código de confirmación a la dirección anterior</target>
+        <target>Ми надішлемо повідомлення з кодом підтвердження на вказану адресу</target>
         <note>Class = "UILabel"; text = "We will send a message with confirmation code to address above"; ObjectID = "bfU-AG-oM0";</note>
       </trans-unit>
       <trans-unit id="bvE-OV-sy1.headerTitle" xml:space="preserve">
         <source>Contacts</source>
-        <target>Contactos</target>
+        <target>Контакти</target>
         <note>Class = "UITableViewSection"; headerTitle = "Contacts"; ObjectID = "bvE-OV-sy1";</note>
       </trans-unit>
       <trans-unit id="bvN-my-ZPi.text" xml:space="preserve">
         <source> MyUID</source>
-        <target> MiUID</target>
+        <target> MyUID</target>
         <note>Class = "UILabel"; text = " MyUID"; ObjectID = "bvN-my-ZPi";</note>
       </trans-unit>
       <trans-unit id="cD6-Om-VgZ.text" xml:space="preserve">
         <source>Add optional description</source>
-        <target>Añadir descripción opcional</target>
+        <target>Додайте опис (не обов'язково)</target>
         <note>Class = "UILabel"; text = "Add optional description"; ObjectID = "cD6-Om-VgZ";</note>
       </trans-unit>
       <trans-unit id="cNq-5G-f58.normalTitle" xml:space="preserve">
         <source> OK </source>
-        <target>Vale</target>
         <note>Class = "UIButton"; normalTitle = " OK "; ObjectID = "cNq-5G-f58";</note>
       </trans-unit>
       <trans-unit id="cOw-88-WKy.normalTitle" xml:space="preserve">
         <source>Change</source>
-        <target>Cambio</target>
+        <target>Змінити</target>
         <note>Class = "UIButton"; normalTitle = "Change"; ObjectID = "cOw-88-WKy";</note>
       </trans-unit>
       <trans-unit id="d7l-9Y-8mk.title" xml:space="preserve">
         <source>Help and About</source>
-        <target>Ayuda y sobre</target>
+        <target>Допомога, про додаток</target>
         <note>Class = "UINavigationItem"; title = "Help and About"; ObjectID = "d7l-9Y-8mk";</note>
       </trans-unit>
       <trans-unit id="dLA-fr-G0I.text" xml:space="preserve">
@@ -1478,12 +1490,12 @@
       </trans-unit>
       <trans-unit id="dT7-dW-WFv.text" xml:space="preserve">
         <source>Delete Group</source>
-        <target>Eliminar grupo</target>
+        <target>Видалити групу</target>
         <note>Class = "UILabel"; text = "Delete Group"; ObjectID = "dT7-dW-WFv";</note>
       </trans-unit>
       <trans-unit id="eHa-mE-ZbY.text" xml:space="preserve">
         <source>Manage tags</source>
-        <target>Gestionar</target>
+        <target>Керування тегами</target>
         <note>Class = "UILabel"; text = "Manage tags"; ObjectID = "eHa-mE-ZbY";</note>
       </trans-unit>
       <trans-unit id="eVu-vx-CU8.text" xml:space="preserve">
@@ -1493,101 +1505,102 @@
       </trans-unit>
       <trans-unit id="fO5-2o-Zk6.title" xml:space="preserve">
         <source>Forward To</source>
-        <target>Reenviar</target>
+        <target>Переслати до</target>
         <note>Class = "UINavigationItem"; title = "Forward To"; ObjectID = "fO5-2o-Zk6";</note>
       </trans-unit>
       <trans-unit id="fP4-sa-3Wz.title" xml:space="preserve">
         <source>Archived chats</source>
-        <target>Chats archivados</target>
+        <target>Архів чатів</target>
         <note>Class = "UINavigationItem"; title = "Archived chats"; ObjectID = "fP4-sa-3Wz";</note>
       </trans-unit>
       <trans-unit id="fPM-Ht-gZz.text" xml:space="preserve">
         <source>Help and About</source>
-        <target>Ayuda y Acerca de</target>
+        <target>Допомога, про додаток</target>
         <note>Class = "UILabel"; text = "Help and About"; ObjectID = "fPM-Ht-gZz";</note>
       </trans-unit>
       <trans-unit id="ftJ-J6-tqx.text" xml:space="preserve">
         <source>ALL USERS</source>
-        <target>TODOS LOS USUARIOS</target>
+        <target>ВСІ КОРИСТУВАЧІ</target>
         <note>Class = "UILabel"; text = "ALL USERS"; ObjectID = "ftJ-J6-tqx";</note>
       </trans-unit>
       <trans-unit id="gLF-JR-ZfF.accessibilityHint" xml:space="preserve">
         <source>Password</source>
-        <target>Contraseña</target>
+        <target>Пароль</target>
         <note>Class = "UITextField"; accessibilityHint = "Password"; ObjectID = "gLF-JR-ZfF";</note>
       </trans-unit>
       <trans-unit id="gLF-JR-ZfF.accessibilityLabel" xml:space="preserve">
         <source>Password</source>
-        <target>Contraseña</target>
+        <target>Пароль</target>
         <note>Class = "UITextField"; accessibilityLabel = "Password"; ObjectID = "gLF-JR-ZfF";</note>
       </trans-unit>
       <trans-unit id="gLF-JR-ZfF.placeholder" xml:space="preserve">
         <source>Password</source>
-        <target>Contraseña</target>
+        <target>Пароль</target>
         <note>Class = "UITextField"; placeholder = "Password"; ObjectID = "gLF-JR-ZfF";</note>
       </trans-unit>
       <trans-unit id="geh-gC-6qO.text" xml:space="preserve">
         <source>Send read receipts</source>
-        <target>Enviar recibos de lectura</target>
+        <target>Сповіщення про читання</target>
         <note>Class = "UILabel"; text = "Send read receipts"; ObjectID = "geh-gC-6qO";</note>
       </trans-unit>
       <trans-unit id="gfT-SI-43h.title" xml:space="preserve">
         <source>Video Preview</source>
-        <target>Vista previa del vídeo</target>
+        <target>Прев'ю відео</target>
         <note>Class = "UIViewController"; title = "Video Preview"; ObjectID = "gfT-SI-43h";</note>
       </trans-unit>
       <trans-unit id="goO-Va-Eyu.title" xml:space="preserve">
         <source>FowardTo Navigation</source>
+        <target>Навігація вперед</target>
         <note>Class = "UINavigationController"; title = "FowardTo Navigation"; ObjectID = "goO-Va-Eyu";</note>
       </trans-unit>
       <trans-unit id="hDW-u7-vzK.placeholder" xml:space="preserve">
         <source>Configuration Code</source>
-        <target>Código de configuración</target>
+        <target>Код конфігурації</target>
         <note>Class = "UITextField"; placeholder = "Configuration Code"; ObjectID = "hDW-u7-vzK";</note>
       </trans-unit>
       <trans-unit id="hTR-e8-PeX.title" xml:space="preserve">
         <source>Blocked Contacts</source>
-        <target>Contactos bloqueados</target>
+        <target>Заблоковані контакти</target>
         <note>Class = "UINavigationItem"; title = "Blocked Contacts"; ObjectID = "hTR-e8-PeX";</note>
       </trans-unit>
       <trans-unit id="hUo-8f-ZiA.title" xml:space="preserve">
         <source>Personal</source>
-        <target>Sobre mí</target>
+        <target>Про себе</target>
         <note>Class = "UINavigationItem"; title = "Personal"; ObjectID = "hUo-8f-ZiA";</note>
       </trans-unit>
       <trans-unit id="hZA-k4-xku.title" xml:space="preserve">
         <source>New Chat</source>
-        <target>Nuevo chat</target>
+        <target>Новий чат</target>
         <note>Class = "UINavigationItem"; title = "New Chat"; ObjectID = "hZA-k4-xku";</note>
       </trans-unit>
       <trans-unit id="hoE-gS-bIw.normalTitle" xml:space="preserve">
         <source>Request</source>
-        <target>Petición</target>
+        <target>Запит</target>
         <note>Class = "UIButton"; normalTitle = "Request"; ObjectID = "hoE-gS-bIw";</note>
       </trans-unit>
       <trans-unit id="iYo-Ip-40L.headerTitle" xml:space="preserve">
         <source>General</source>
-        <target>General</target>
+        <target>Загальний</target>
         <note>Class = "UITableViewSection"; headerTitle = "General"; ObjectID = "iYo-Ip-40L";</note>
       </trans-unit>
       <trans-unit id="ity-bg-zqr.text" xml:space="preserve">
         <source>Title</source>
-        <target>Título del tema (público)</target>
+        <target>Назва групи</target>
         <note>Class = "UITextView"; text = "Title"; ObjectID = "ity-bg-zqr";</note>
       </trans-unit>
       <trans-unit id="jZE-Vv-ggf.text" xml:space="preserve">
         <source>Add Members</source>
-        <target>Añadir miembros</target>
+        <target>Додайте учасників</target>
         <note>Class = "UILabel"; text = "Add Members"; ObjectID = "jZE-Vv-ggf";</note>
       </trans-unit>
       <trans-unit id="jal-tR-OpF.headerTitle" xml:space="preserve">
         <source>Tags (Content Discovery)</source>
-        <target>Etiquetas (descubrimiento de contenido)</target>
+        <target>Теги (пошук груп та контактів)</target>
         <note>Class = "UITableViewSection"; headerTitle = "Tags (Content Discovery)"; ObjectID = "jal-tR-OpF";</note>
       </trans-unit>
       <trans-unit id="jjO-7B-XRZ.headerTitle" xml:space="preserve">
         <source>Confirmation</source>
-        <target>Confirmación</target>
+        <target>Підтвердження</target>
         <note>Class = "UITableViewSection"; headerTitle = "Confirmation"; ObjectID = "jjO-7B-XRZ";</note>
       </trans-unit>
       <trans-unit id="jrt-hR-wyQ.text" xml:space="preserve">
@@ -1596,32 +1609,32 @@
       </trans-unit>
       <trans-unit id="kDN-bf-JDL.placeholder" xml:space="preserve">
         <source>Name of the group</source>
-        <target>Nombre del grupo</target>
+        <target>Назва групи</target>
         <note>Class = "UITextField"; placeholder = "Name of the group"; ObjectID = "kDN-bf-JDL";</note>
       </trans-unit>
       <trans-unit id="kJw-Pr-jNc.headerTitle" xml:space="preserve">
         <source>Permissions</source>
-        <target>Permisos</target>
+        <target>Права доступу</target>
         <note>Class = "UITableViewSection"; headerTitle = "Permissions"; ObjectID = "kJw-Pr-jNc";</note>
       </trans-unit>
       <trans-unit id="kSc-xN-hqx.text" xml:space="preserve">
         <source>File name:</source>
-        <target>Nombre del archivo:</target>
+        <target>Ім'я файлу:</target>
         <note>Class = "UILabel"; text = "File name:"; ObjectID = "kSc-xN-hqx";</note>
       </trans-unit>
       <trans-unit id="kiu-a5-pT6.text" xml:space="preserve">
         <source>Content type:</source>
-        <target>Tipo de contenido:</target>
+        <target>Тип контента:</target>
         <note>Class = "UILabel"; text = "Content type:"; ObjectID = "kiu-a5-pT6";</note>
       </trans-unit>
       <trans-unit id="lJB-qW-1zX.headerTitle" xml:space="preserve">
         <source>Group Members</source>
-        <target>Miembros del grupo</target>
+        <target>Учасники групи</target>
         <note>Class = "UITableViewSection"; headerTitle = "Group Members"; ObjectID = "lJB-qW-1zX";</note>
       </trans-unit>
       <trans-unit id="lRE-RJ-Qgv.text" xml:space="preserve">
         <source>File name:</source>
-        <target>Nombre del archivo:</target>
+        <target>Ім'я файлу:</target>
         <note>Class = "UILabel"; text = "File name:"; ObjectID = "lRE-RJ-Qgv";</note>
       </trans-unit>
       <trans-unit id="mTa-Ke-dom.text" xml:space="preserve">
@@ -1631,27 +1644,27 @@
       </trans-unit>
       <trans-unit id="mV4-Fq-kmc.title" xml:space="preserve">
         <source>Account and Security</source>
-        <target>Cuenta y seguridad</target>
+        <target>Акаунт та безпека</target>
         <note>Class = "UINavigationItem"; title = "Account and Security"; ObjectID = "mV4-Fq-kmc";</note>
       </trans-unit>
       <trans-unit id="moa-6V-LhX.text" xml:space="preserve">
         <source>Size: </source>
-        <target>Tamaño: </target>
+        <target>Розмір: </target>
         <note>Class = "UILabel"; text = "Size: "; ObjectID = "moa-6V-LhX";</note>
       </trans-unit>
       <trans-unit id="n9d-hv-55K.title" xml:space="preserve">
         <source>Chats</source>
-        <target>Chats</target>
+        <target>Чати</target>
         <note>Class = "UIViewController"; title = "Chats"; ObjectID = "n9d-hv-55K";</note>
       </trans-unit>
       <trans-unit id="nho-5Y-Mt8.placeholder" xml:space="preserve">
         <source>Login</source>
-        <target>Iniciar sesión</target>
+        <target>Логін</target>
         <note>Class = "UITextField"; placeholder = "Login"; ObjectID = "nho-5Y-Mt8";</note>
       </trans-unit>
       <trans-unit id="ntt-8z-Ay2.text" xml:space="preserve">
         <source>No results</source>
-        <target>No hay resultados</target>
+        <target>Не знайдено</target>
         <note>Class = "UILabel"; text = "No results"; ObjectID = "ntt-8z-Ay2";</note>
       </trans-unit>
       <trans-unit id="o1j-Ss-Jhj.accessibilityLabel" xml:space="preserve">
@@ -1665,7 +1678,7 @@
       </trans-unit>
       <trans-unit id="oER-Xi-WOZ.title" xml:space="preserve">
         <source>Confirm credentials</source>
-        <target>Confirmar credenciales</target>
+        <target>Підтвердити емейл</target>
         <note>Class = "UINavigationItem"; title = "Confirm credentials"; ObjectID = "oER-Xi-WOZ";</note>
       </trans-unit>
       <trans-unit id="oPa-Qr-HlP.title" xml:space="preserve">
@@ -1675,52 +1688,52 @@
       </trans-unit>
       <trans-unit id="q6T-TC-n42.normalTitle" xml:space="preserve">
         <source>Forgot password?</source>
-        <target>¿Olvidaste tu contraseña?</target>
+        <target>Забули пароль?</target>
         <note>Class = "UIButton"; normalTitle = "Forgot password?"; ObjectID = "q6T-TC-n42";</note>
       </trans-unit>
       <trans-unit id="qBo-ye-avT.title" xml:space="preserve">
         <source>New chat</source>
-        <target>Nuevo chat</target>
+        <target>Новий чат</target>
         <note>Class = "UITabBarController"; title = "New chat"; ObjectID = "qBo-ye-avT";</note>
       </trans-unit>
       <trans-unit id="qY7-Dy-tZI.text" xml:space="preserve">
         <source>Size:</source>
-        <target>Tamaño:</target>
+        <target>Розмір:</target>
         <note>Class = "UILabel"; text = "Size:"; ObjectID = "qY7-Dy-tZI";</note>
       </trans-unit>
       <trans-unit id="qeU-hX-VEM.title" xml:space="preserve">
         <source>Administrative and Security</source>
-        <target>Administrativo y de seguridad</target>
+        <target>Адміністративні налаштування</target>
         <note>Class = "UINavigationItem"; title = "Administrative and Security"; ObjectID = "qeU-hX-VEM";</note>
       </trans-unit>
       <trans-unit id="qvs-D4-f94.text" xml:space="preserve">
         <source>Change password</source>
-        <target>Cambiar contraseña</target>
+        <target>Змінити пароль</target>
         <note>Class = "UILabel"; text = "Change password"; ObjectID = "qvs-D4-f94";</note>
       </trans-unit>
       <trans-unit id="r8j-wT-BLF.text" xml:space="preserve">
         <source>Manage Tags</source>
-        <target>Gestionar etiquetas</target>
+        <target>Налаштування тегів</target>
         <note>Class = "UILabel"; text = "Manage Tags"; ObjectID = "r8j-wT-BLF";</note>
       </trans-unit>
       <trans-unit id="raq-d6-2nI.headerTitle" xml:space="preserve">
         <source>Actions</source>
-        <target>Acciones</target>
+        <target>Дії</target>
         <note>Class = "UITableViewSection"; headerTitle = "Actions"; ObjectID = "raq-d6-2nI";</note>
       </trans-unit>
       <trans-unit id="rlG-v4-QUc.title" xml:space="preserve">
         <source>Profile</source>
-        <target>Perfil</target>
+        <target>Профіль</target>
         <note>Class = "UIBarButtonItem"; title = "Profile"; ObjectID = "rlG-v4-QUc";</note>
       </trans-unit>
       <trans-unit id="rlX-B4-4KE.text" xml:space="preserve">
         <source>Leave Group</source>
-        <target>Grupo de vacaciones</target>
+        <target>Покинути групу</target>
         <note>Class = "UILabel"; text = "Leave Group"; ObjectID = "rlX-B4-4KE";</note>
       </trans-unit>
       <trans-unit id="rqZ-eR-8TP.title" xml:space="preserve">
         <source>Find</source>
-        <target>Encontrar</target>
+        <target>Знайти</target>
         <note>Class = "UITabBarItem"; title = "Find"; ObjectID = "rqZ-eR-8TP";</note>
       </trans-unit>
       <trans-unit id="s6S-ku-F63.text" xml:space="preserve">
@@ -1730,17 +1743,17 @@
       </trans-unit>
       <trans-unit id="skU-B7-Zed.text" xml:space="preserve">
         <source>This is a channel</source>
-        <target>Este es un canal</target>
+        <target>Це канал</target>
         <note>Class = "UILabel"; text = "This is a channel"; ObjectID = "skU-B7-Zed"; Note = "Label for channel switch";</note>
       </trans-unit>
       <trans-unit id="syF-Vp-vRc.text" xml:space="preserve">
         <source>John Doe</source>
-        <target>Juan González Hernández</target>
+        <target>Дмитро Соколов</target>
         <note>Class = "UILabel"; text = "John Doe"; ObjectID = "syF-Vp-vRc";</note>
       </trans-unit>
       <trans-unit id="te7-Jx-ztq.accessibilityLabel" xml:space="preserve">
         <source>Footer</source>
-        <target>Pie</target>
+        <target>Нижній</target>
         <note>Class = "UIView"; accessibilityLabel = "Footer"; ObjectID = "te7-Jx-ztq";</note>
       </trans-unit>
       <trans-unit id="uVG-l4-TS9.configuration.title" xml:space="preserve">
@@ -1753,17 +1766,17 @@
       </trans-unit>
       <trans-unit id="w7y-oy-XLG.text" xml:space="preserve">
         <source>My Code</source>
-        <target>Mi código</target>
+        <target>Мій код</target>
         <note>Class = "UILabel"; text = "My Code"; ObjectID = "w7y-oy-XLG";</note>
       </trans-unit>
       <trans-unit id="wPJ-94-8aV.text" xml:space="preserve">
         <source>Yours</source>
-        <target>Yours</target>
+        <target>Ваш</target>
         <note>Class = "UILabel"; text = "Yours"; ObjectID = "wPJ-94-8aV";</note>
       </trans-unit>
       <trans-unit id="wd7-ah-oJu.text" xml:space="preserve">
         <source>Authenticated users</source>
-        <target>Usuarios autenticados</target>
+        <target>Авторизовані користувачі</target>
         <note>Class = "UILabel"; text = "Authenticated users"; ObjectID = "wd7-ah-oJu";</note>
       </trans-unit>
       <trans-unit id="wfA-TG-Chj.text" xml:space="preserve">
@@ -1773,7 +1786,7 @@
       </trans-unit>
       <trans-unit id="wnZ-ve-5xb.text" xml:space="preserve">
         <source>Delete Messages</source>
-        <target>Eliminar mensajes</target>
+        <target>Видалити повідомлення</target>
         <note>Class = "UILabel"; text = "Delete Messages"; ObjectID = "wnZ-ve-5xb";</note>
       </trans-unit>
       <trans-unit id="x1J-Xq-2H1.text" xml:space="preserve">
@@ -1782,12 +1795,12 @@
       </trans-unit>
       <trans-unit id="xIw-r0-6Pv.accessibilityLabel" xml:space="preserve">
         <source>Footer</source>
-        <target>Footer</target>
+        <target>Нижній</target>
         <note>Class = "UIView"; accessibilityLabel = "Footer"; ObjectID = "xIw-r0-6Pv";</note>
       </trans-unit>
       <trans-unit id="xMh-7W-PhM.text" xml:space="preserve">
         <source>Subtitle</source>
-        <target>Subtítulo</target>
+        <target>Підзаголовок</target>
         <note>Class = "UILabel"; text = "Subtitle"; ObjectID = "xMh-7W-PhM";</note>
       </trans-unit>
       <trans-unit id="xmn-wq-Hpr.placeholder" xml:space="preserve">
@@ -1797,27 +1810,27 @@
       </trans-unit>
       <trans-unit id="xyg-ee-0pd.text" xml:space="preserve">
         <source>Incognito mode</source>
-        <target>Modo incógnito</target>
+        <target>Інкогніто</target>
         <note>Class = "UILabel"; text = "Incognito mode"; ObjectID = "xyg-ee-0pd"; Note = "Label for incognito mode switch";</note>
       </trans-unit>
       <trans-unit id="y4A-Jz-woo.placeholder" xml:space="preserve">
         <source>Confirmation code</source>
-        <target>Código de confirmación</target>
+        <target>Код підтвердження</target>
         <note>Class = "UITextField"; placeholder = "Confirmation code"; ObjectID = "y4A-Jz-woo";</note>
       </trans-unit>
       <trans-unit id="yFq-90-cu1.normalTitle" xml:space="preserve">
         <source>Confirm</source>
-        <target>Confirmar</target>
+        <target>Підтвердити</target>
         <note>Class = "UIButton"; normalTitle = "Confirm"; ObjectID = "yFq-90-cu1";</note>
       </trans-unit>
       <trans-unit id="yKx-xt-rdn.placeholder" xml:space="preserve">
         <source>First and last name</source>
-        <target>Nombres y apellidos</target>
+        <target>Ім'я та Прізвище</target>
         <note>Class = "UITextField"; placeholder = "First and last name"; ObjectID = "yKx-xt-rdn";</note>
       </trans-unit>
       <trans-unit id="z08-iK-CeG.text" xml:space="preserve">
         <source>Account and Security</source>
-        <target>Cuenta y seguridad</target>
+        <target>Акаунт та безпека</target>
         <note>Class = "UILabel"; text = "Account and Security"; ObjectID = "z08-iK-CeG";</note>
       </trans-unit>
       <trans-unit id="zCU-jx-lsJ.text" xml:space="preserve">
@@ -1826,37 +1839,37 @@
       </trans-unit>
       <trans-unit id="zW8-KF-N8J.headerTitle" xml:space="preserve">
         <source>Default Permissions</source>
-        <target>Permisos predeterminados</target>
+        <target>Права доступу по замовчуванню</target>
         <note>Class = "UITableViewSection"; headerTitle = "Default Permissions"; ObjectID = "zW8-KF-N8J";</note>
       </trans-unit>
       <trans-unit id="zkl-8R-Tma.text" xml:space="preserve">
         <source>Staff-managed</source>
-        <target>Gestionado por el personal</target>
+        <target>Адміністративний</target>
         <note>Class = "UILabel"; text = "Staff-managed"; ObjectID = "zkl-8R-Tma";</note>
       </trans-unit>
       <trans-unit id="zmL-3Y-R2r.placeholder" xml:space="preserve">
         <source>Email</source>
-        <target>Correo electrónico o número de teléfono</target>
+        <target>Емейл або телефон</target>
         <note>Class = "UITextField"; placeholder = "Email"; ObjectID = "zmL-3Y-R2r";</note>
       </trans-unit>
       <trans-unit id="zr8-yN-F8L.text" xml:space="preserve">
         <source>Leave Conversation</source>
-        <target>Deja la conversación</target>
+        <target>Покинути чат</target>
         <note>Class = "UILabel"; text = "Leave Conversation"; ObjectID = "zr8-yN-F8L";</note>
       </trans-unit>
       <trans-unit id="zww-h7-9s0.title" xml:space="preserve">
         <source>Settings</source>
-        <target>Ajustes</target>
+        <target>Налаштування</target>
         <note>Class = "UINavigationItem"; title = "Settings"; ObjectID = "zww-h7-9s0";</note>
       </trans-unit>
       <trans-unit id="zz2-fg-2IG.text" xml:space="preserve">
         <source>Permissions, block or report chat</source>
-        <target>Permisos, bloquear o informar de chat</target>
+        <target>Дозвіл, блокувати або скаржитися</target>
         <note>Class = "UILabel"; text = "Permissions, block or report chat"; ObjectID = "zz2-fg-2IG";</note>
       </trans-unit>
     </body>
   </file>
-  <file original="Tinodios/en.lproj/InfoPlist.strings" source-language="en" target-language="es" datatype="plaintext">
+  <file original="Tinodios/en.lproj/InfoPlist.strings" source-language="en" target-language="uk" datatype="plaintext">
     <header>
       <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="15.2" build-num="15C500b"/>
     </header>
@@ -1871,88 +1884,87 @@
       </trans-unit>
       <trans-unit id="NSCameraUsageDescription" xml:space="preserve">
         <source>Tinode takes photos with the camera to use as avatar or to send them to your contacts</source>
-        <target>Tinode toma fotos con la cámara para usarlas como avatar o para enviarlas a tus contactos</target>
+        <target>Tinode використовує камеру щоб зробити фото в якості аватара, а також, щоб надіслати фото вашим контактам</target>
         <note>Privacy - Camera Usage Description</note>
       </trans-unit>
       <trans-unit id="NSContactsUsageDescription" xml:space="preserve">
         <source>Tinode sends only emails and phone numbers to the Tinode server to help you connect with other users</source>
-        <target>Tinode envía solo correos electrónicos y números de teléfono al servidor de Tinode para ayudarte a conectarte con otros usuarios</target>
+        <target>Tinode зберігає емейлы і номери телефонів на сервері для того, щоб знайти по ним ваших знайомих</target>
         <note>Privacy - Contacts Usage Description</note>
       </trans-unit>
       <trans-unit id="NSMicrophoneUsageDescription" xml:space="preserve">
         <source>Tinode uses microphone to record audio messages you send to your contacts</source>
-        <target>Tinode utiliza el micrófono para grabar los mensajes de audio que envías a tus contactos</target>
+        <target>Tinode використовує мікрофон для запису аудіо, які ви надсилаєте у своїх повідомленнях</target>
         <note>Privacy - Microphone Usage Description</note>
       </trans-unit>
       <trans-unit id="NSPhotoLibraryAddUsageDescription" xml:space="preserve">
         <source>Images and pictures from Tinode can be saved in the photo library</source>
-        <target>Las imágenes e imágenes de Tinode se pueden guardar en la fototeca</target>
+        <target>Фото і картинки з Tinode можна зберегти в бібліотеці фотографій</target>
         <note>Privacy - Photo Library Additions Usage Description</note>
       </trans-unit>
       <trans-unit id="NSPhotoLibraryUsageDescription" xml:space="preserve">
         <source>Tinode needs access to your photos to let you you send them to your contacts</source>
-        <target>Tinode necesita acceso a tus fotos para que puedas enviarlas a tus contactos</target>
+        <target>Tinode потрібен доступ до ваших фотографій, щоб ви змогли приєднати їх до повідомлень</target>
         <note>Privacy - Photo Library Usage Description</note>
       </trans-unit>
     </body>
   </file>
-  <file original="Tinodios/Settings.bundle/en.lproj/ConnectionSettings.strings" source-language="en" target-language="es" datatype="plaintext">
+  <file original="Tinodios/Settings.bundle/en.lproj/ConnectionSettings.strings" source-language="en" target-language="uk" datatype="plaintext">
     <header>
       <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="15.2" build-num="15C500b"/>
     </header>
     <body>
       <trans-unit id="Host name" xml:space="preserve">
         <source>Host name</source>
-        <target>Nombre de host</target>
+        <target>Назва сервера</target>
         <note/>
       </trans-unit>
       <trans-unit id="Use TLS" xml:space="preserve">
         <source>Use TLS</source>
-        <target>Usar TLS</target>
+        <target>Використовувати TLS</target>
         <note/>
       </trans-unit>
       <trans-unit id="Wire transport" xml:space="preserve">
         <source>Wire transport</source>
-        <target>Transporte por cable</target>
+        <target>Протокол обміну</target>
         <note>A single strings file, whose title is specified in your preferences schema. The strings files provide the localized content to display to the user for each of your preferences.</note>
       </trans-unit>
     </body>
   </file>
-  <file original="Tinodios/Settings.bundle/en.lproj/Root.strings" source-language="en" target-language="es" datatype="plaintext">
+  <file original="Tinodios/Settings.bundle/en.lproj/Root.strings" source-language="en" target-language="uk" datatype="plaintext">
     <header>
       <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="15.2" build-num="15C500b"/>
     </header>
     <body>
       <trans-unit id="Connection settings" xml:space="preserve">
         <source>Connection settings</source>
-        <target>Ajustes de conexión</target>
+        <target>Налаштування з'єднання</target>
         <note>A single strings file, whose title is specified in your preferences schema. The strings files provide the localized content to display to the user for each of your preferences.</note>
       </trans-unit>
     </body>
   </file>
-  <file original="Tinodios/widgets/Base.lproj/MultilineAlertView.xib" source-language="en" target-language="es" datatype="plaintext">
+  <file original="Tinodios/widgets/Base.lproj/MultilineAlertView.xib" source-language="en" target-language="uk" datatype="plaintext">
     <header>
       <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="15.2" build-num="15C500b"/>
     </header>
     <body>
       <trans-unit id="A57-2v-ao9.normalTitle" xml:space="preserve">
         <source>OK</source>
-        <target>OK</target>
         <note>Class = "UIButton"; normalTitle = "OK"; ObjectID = "A57-2v-ao9";</note>
       </trans-unit>
       <trans-unit id="AMx-JQ-2f8.normalTitle" xml:space="preserve">
         <source>Cancel</source>
-        <target>Cancelar</target>
+        <target>Скасувати</target>
         <note>Class = "UIButton"; normalTitle = "Cancel"; ObjectID = "AMx-JQ-2f8";</note>
       </trans-unit>
       <trans-unit id="W0P-gB-P5h.text" xml:space="preserve">
         <source>Title</source>
-        <target>Reivindicación</target>
+        <target>Назва</target>
         <note>Class = "UILabel"; text = "Title"; ObjectID = "W0P-gB-P5h";</note>
       </trans-unit>
     </body>
   </file>
-  <file original="Tinodios/widgets/Base.lproj/TagsEditDialogView.xib" source-language="en" target-language="es" datatype="plaintext">
+  <file original="Tinodios/widgets/Base.lproj/TagsEditDialogView.xib" source-language="en" target-language="uk" datatype="plaintext">
     <header>
       <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="15.2" build-num="15C500b"/>
     </header>
@@ -1963,17 +1975,17 @@
       </trans-unit>
       <trans-unit id="eeW-SH-URg.text" xml:space="preserve">
         <source>Tags (content discovery)</source>
-        <target>Etiquetas (descubrimiento de contenido)</target>
+        <target>Теги (пошук контактів)</target>
         <note>Class = "UILabel"; text = "Tags (content discovery)"; ObjectID = "eeW-SH-URg";</note>
       </trans-unit>
       <trans-unit id="vOv-C1-oEb.normalTitle" xml:space="preserve">
         <source>Cancel</source>
-        <target>Cancelar</target>
+        <target>Скасувати</target>
         <note>Class = "UIButton"; normalTitle = "Cancel"; ObjectID = "vOv-C1-oEb";</note>
       </trans-unit>
     </body>
   </file>
-  <file original="TinodiosNSExtension/en.lproj/InfoPlist.strings" datatype="plaintext" source-language="en" target-language="es">
+  <file original="TinodiosNSExtension/en.lproj/InfoPlist.strings" datatype="plaintext" source-language="en" target-language="uk">
     <header>
       <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="15.2" build-num="15C500b"/>
     </header>
@@ -1988,19 +2000,19 @@
       </trans-unit>
     </body>
   </file>
-  <file original="TinodiosNSExtension/en.lproj/Localizable.strings" source-language="en" target-language="es" datatype="plaintext">
+  <file original="TinodiosNSExtension/en.lproj/Localizable.strings" source-language="en" target-language="uk" datatype="plaintext">
     <header>
       <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="15.2" build-num="15C500b"/>
     </header>
     <body>
       <trans-unit id="New chat" xml:space="preserve">
         <source>New chat</source>
-        <target>Nuevo chat</target>
+        <target>Новий чат</target>
         <note>Push notification title</note>
       </trans-unit>
       <trans-unit id="Unknown" xml:space="preserve">
         <source>Unknown</source>
-        <target>Desconocido</target>
+        <target>Невідомий</target>
         <note>Placeholder for missing topic name
    Placeholder for missing user name</note>
       </trans-unit>

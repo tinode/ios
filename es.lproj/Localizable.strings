@@ -16,6 +16,9 @@
 /* Alert placeholder */
 "Additional info (private)" = "Información adicional (sólo visible para tí)";
 
+/* Toast notification */
+"Address copied" = "Dirección copiada";
+
 /* Alert explanation */
 "Also block and remove all messages" = "También bloquear y eliminar todos los mensajes";
 

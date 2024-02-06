@@ -16,6 +16,9 @@
 /* Alert placeholder */
 "Additional info (private)" = "附加信息（私人）";
 
+/* Toast notification */
+"Address copied" = "地址已复制";
+
 /* Alert explanation */
 "Also block and remove all messages" = "同时阻止并删除所有消息";
 

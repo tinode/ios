@@ -1,0 +1,327 @@
+/* Replacement for chat message with no content */
+"  Content deleted" = "  Content deleted";
+
+/* Invite reaction button */
+"Accept" = "Accept";
+
+/* Toast notification */
+"Action failed: %@" = "Action failed: %@";
+
+/* Alert title */
+"Add contact" = "Add contact";
+
+/* Alert placeholder */
+"Additional info (private)" = "Additional info (private)";
+
+/* Alert explanation */
+"Also block and remove all messages" = "Also block and remove all messages";
+
+/* Swipe action */
+"Archive" = "Archive";
+
+/* View title */
+"Archived Chats" = "Archived Chats";
+
+/* Button to open chat archive */
+"Archived Chats (%@)" = "Archived Chats (%@)";
+
+/* Warning in delete account alert */
+"Are you sure you want to delete your account? It cannot be undone." = "Are you sure you want to delete your account? It cannot be undone.";
+
+/* Warning in logout alert */
+"Are you sure you want to log out?" = "Are you sure you want to log out?";
+
+/* Alert action
+   Invite reaction button */
+"Block" = "Block";
+
+/* Alert action */
+"Block contact?" = "Block contact?";
+
+/* Toast notification */
+"Can't change permissions for this user." = "Can't change permissions for this user.";
+
+/* Toast notification */
+"Can't make this user owner." = "Can't make this user owner.";
+
+/* Alert action */
+"Cancel" = "Cancel";
+
+/* Error message */
+"Cannot send email: functionality not accessible." = "Cannot send email: functionality not accessible.";
+
+/* Alert title */
+"Change Password" = "Change Password";
+
+/* Alert action */
+"Change permissions" = "Change permissions";
+
+/* Invitation subject */
+"Check out Tinode Messenger" = "Check out Tinode Messenger";
+
+/* Invitation body */
+"Check out Tinode Messenger: https://tinode.co/" = "Check out Tinode Messenger: https://tinode.co/";
+
+/* Alert title */
+"Clear all messages?" = "Clear all messages?";
+
+/* Button text */
+"confirm" = "confirm";
+
+/* Alert title */
+"Confirm contact" = "Confirm contact";
+
+/* Info message */
+"Confirmaition message sent to %@" = "Confirmaition message sent to %@";
+
+/* Toast info message */
+"Confirmed successfully" = "Confirmed successfully";
+
+/* Toast notification */
+"Connection to server lost." = "Connection to server lost.";
+
+/* Menu item */
+"Copy" = "Copy";
+
+/* Alert action */
+"Copy to clipboard" = "Copy to clipboard";
+
+/* Error message */
+"Could not change password: %@" = "Could not change password: %@";
+
+/* Error message */
+"Couldn't connect to server at %@: %@" = "Couldn't connect to server at %@: %@";
+
+/* Alert action
+   Menu item
+   Swipe action */
+"Delete" = "Delete";
+
+/* Alert title */
+"Delete the group?" = "Delete the group?";
+
+/* Section title */
+"Directory" = "Directory";
+
+/* Alert title */
+"Edit account name" = "Edit account name";
+
+/* Alert title */
+"Edit Group" = "Edit Group";
+
+/* Alert action */
+"Email" = "Email";
+
+/* Toast error message */
+"Enter a valid credential (phone or email)." = "Enter a valid credential (phone or email).";
+
+/* Alert prompt */
+"Enter confirmation code sent to you by %@" = "Enter confirmation code sent to you by %@";
+
+/* Alert message */
+"Enter email or phone number" = "Enter email or phone number";
+
+/* Alert prompt */
+"Enter new password" = "Enter new password";
+
+/* Error message */
+"Entered text is neither email nor phone number." = "Entered text is neither email nor phone number.";
+
+/* Toast notification */
+"Error changing permissions: %@" = "Error changing permissions: %@";
+
+/* Error message */
+"Failed to create account: %@" = "Failed to create account: %@";
+
+/* Error message */
+"Failed to save group and contact info." = "Failed to save group and contact info.";
+
+/* Error message */
+"Failed to subscribe to topic: %@" = "Failed to subscribe to topic: %@";
+
+/* Alert action qualifier as in 'Delete for all' */
+"For all" = "For all";
+
+/* Alert action 'Delete for me' */
+"For me" = "For me";
+
+/* User name prompt */
+"Full name, e.g. John Doe" = "Full name, e.g. John Doe";
+
+/* Invite reaction button */
+"Ignore" = "Ignore";
+
+/* Error message */
+"Invalid group ID: %d (%@)" = "Invalid group ID: %1$d (%2$@)";
+
+/* Dialog title: call to action */
+"Invite" = "Invite";
+
+/* Alert action */
+"Leave" = "Leave";
+
+/* Alert title */
+"Leave the conversation?" = "Leave the conversation?";
+
+/* Alert title */
+"Leave the group?" = "Leave the group?";
+
+/* Section title */
+"Local Contacts" = "Local Contacts";
+
+/* Login progress text */
+"Logging in..." = "Logging in...";
+
+/* Error message */
+"Login info missing..." = "Login info missing...";
+
+/* Alert action */
+"Make owner" = "Make owner";
+
+/* View title */
+"Manage members" = "Manage members";
+
+/* Toast notification */
+"Message not sent." = "Message not sent.";
+
+/* Toast info */
+"Message with instructions sent to the provided address." = "Message with instructions sent to the provided address.";
+
+/* Alert action */
+"Messages" = "Messages";
+
+/* Alert placeholder */
+"Name of the group" = "Name of the group";
+
+/* Invalid date */
+"Never ??:??" = "Never ??:??";
+
+/* View title */
+"New Chat" = "New Chat";
+
+/* Error message */
+"No access to email" = "No access to email";
+
+/* No read access in chat
+   Toast error message */
+"No access to messages" = "No access to messages";
+
+/* Placeholder when no members are selected */
+"No members selected" = "No members selected";
+
+/* Placeholder in empty chat */
+"No messages in the conversation" = "No messages in the conversation";
+
+/* Alert action */
+"OK" = "OK";
+
+/* Toast notification */
+"Only Owner can delete group" = "Only Owner can delete group";
+
+/* Toast notification */
+"Owner cannot leave the group" = "Owner cannot leave the group";
+
+/* Error message */
+"Password too short" = "Password too short";
+
+/* Toast notification */
+"Permissions not modified: %d (%s)" = "Permissions not modified: %1$d (%2$s)";
+
+/* Progress overlay */
+"Please wait..." = "Please wait...";
+
+/* Placeholder text in editor */
+"Private info: not set" = "Private info: not set";
+
+/* Progress overlay */
+"Registering..." = "Registering...";
+
+/* Alert action */
+"Remove" = "Remove";
+
+/* Confirmation */
+"Remove %@ from %@?" = "Remove %1$@ from %2$@?";
+
+/* Confirmation */
+"Remove and ban %@ from %@?" = "Remove and ban %1$@ from %2$@?";
+
+/* Alert action */
+"Report" = "Report";
+
+/* Alert title */
+"Report contact?" = "Report contact?";
+
+/* Alert title */
+"Report Group?" = "Report Group?";
+
+/* Error message */
+"Request failed: %@" = "Request failed: %@";
+
+/* Progress overlay */
+"Requesting..." = "Requesting...";
+
+/* Placeholder prompt */
+"Search by tags" = "Search by tags";
+
+/* Error message when permissions are missing */
+"Search functionality limited. Grant Contacts permission." = "Search functionality limited. Grant Contacts permission.";
+
+/* Error message */
+"Select at least one group member" = "Select at least one group member";
+
+/* Alert action */
+"Send message" = "Send message";
+
+/* Toast notification */
+"Something went wrong: %d (%s)" = "Something went wrong: %1$d (%2$s)";
+
+/* Toast notification */
+"Tags missing." = "Tags missing.";
+
+/* Error message */
+"The file size exceeds the limit %@" = "The file size exceeds the limit %@";
+
+/* Toast notification */
+"Topic name missing" = "Topic name missing";
+
+/* Swipe action */
+"Unarchive" = "Unarchive";
+
+/* Undefined chat name */
+"Undefined" = "Undefined";
+
+/* Button with missing text
+   Placeholder for missing file name
+   Placeholder for missing file type */
+"undefined" = "undefined";
+
+/* Placeholder for missing topic name
+   Placeholder for missing user name */
+"Unknown" = "Unknown";
+
+/* Sender with missing name */
+"Unknown %@" = "Unknown %@";
+
+/* Error message */
+"Upload failed (%@). No server response." = "Upload failed (%@). No server response.";
+
+/* Error message */
+"Upload failed (%@): empty response body." = "Upload failed (%@): empty response body.";
+
+/* Error message */
+"Upload failed (%@): response code %d." = "Upload failed (%1$@): response code %2$d.";
+
+/* Error message */
+"Verification failure: %d %@" = "Verification failure: %1$d %2$@";
+
+/* This is 'you' */
+"You" = "You";
+
+/* Call to action */
+"You are invited to start a new chat. What would you like?" = "You are invited to start a new chat. What would you like?";
+
+/* Toast notification */
+"You are offline." = "You are offline.";
+
+/* Placeholder when no chats found */
+"You have no chats\n\n¯\\_(ツ)_/¯" = "You have no chats\n\n¯\\_(ツ)_/¯";

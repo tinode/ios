@@ -154,6 +154,9 @@
 /* Class = "UIViewController"; title = "Video Call"; ObjectID = "Cib-aE-hH5"; */
 "Cib-aE-hH5.title" = "影片通話";
 
+/* Class = "UIButton"; normalTitle = " OK "; ObjectID = "cNq-5G-f58"; */
+"cNq-5G-f58.normalTitle" = "好的";
+
 /* Class = "UIButton"; normalTitle = "Change"; ObjectID = "cOw-88-WKy"; */
 "cOw-88-WKy.normalTitle" = "改變";
 
@@ -163,9 +166,6 @@
 /* Class = "UITextView"; text = "Description"; ObjectID = "D3z-yf-zJA"; */
 "D3z-yf-zJA.text" = "主題說明 (私人)";
 
-/* Class = "UILabel"; text = "Address"; ObjectID = "D6H-jy-Zh4"; */
-"D6H-jy-Zh4.text" = "地址";
-
 /* Class = "UINavigationItem"; title = "Help and About"; ObjectID = "d7l-9Y-8mk"; */
 "d7l-9Y-8mk.title" = "幫助和關於";
 
@@ -173,7 +173,7 @@
 "DEM-ia-TIj.text" = "存檔";
 
 /* Class = "UIButton"; normalTitle = "OK"; ObjectID = "DMQ-om-04T"; */
-"DMQ-om-04T.normalTitle" = "OK";
+"DMQ-om-04T.normalTitle" = "好的";
 
 /* Class = "UITextField"; placeholder = "Additional info (private)"; ObjectID = "Do2-Ue-UdA"; */
 "Do2-Ue-UdA.placeholder" = "額外資訊 (私人)";
@@ -357,9 +357,6 @@
 
 /* Class = "UINavigationItem"; title = "Confirm credentials"; ObjectID = "oER-Xi-WOZ"; */
 "oER-Xi-WOZ.title" = "確認認證";
-
-/* Class = "UILabel"; text = "TopicID"; ObjectID = "om5-K5-yRq"; */
-"om5-K5-yRq.text" = "TopicID";
 
 /* Class = "UINavigationController"; title = "StartNavigationController"; ObjectID = "oPa-Qr-HlP"; */
 "oPa-Qr-HlP.title" = "StartNavigationController";

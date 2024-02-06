@@ -16,6 +16,9 @@
 /* Alert placeholder */
 "Additional info (private)" = "Дополнительно (только для себя)";
 
+/* Toast notification */
+"Address copied" = "Адрес скопирован";
+
 /* Alert explanation */
 "Also block and remove all messages" = "Заблокировать и удалить все сообщения";
 

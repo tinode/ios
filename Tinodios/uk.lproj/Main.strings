@@ -166,9 +166,6 @@
 /* Class = "UITextView"; text = "Description"; ObjectID = "D3z-yf-zJA"; */
 "D3z-yf-zJA.text" = "Пояснення (тільки для себе)";
 
-/* Class = "UILabel"; text = "Address"; ObjectID = "D6H-jy-Zh4"; */
-"D6H-jy-Zh4.text" = "Адреса";
-
 /* Class = "UINavigationItem"; title = "Help and About"; ObjectID = "d7l-9Y-8mk"; */
 "d7l-9Y-8mk.title" = "Допомога, про додаток";
 
@@ -366,9 +363,6 @@
 
 /* Class = "UINavigationItem"; title = "Confirm credentials"; ObjectID = "oER-Xi-WOZ"; */
 "oER-Xi-WOZ.title" = "Підтвердити емейл";
-
-/* Class = "UILabel"; text = "TopicID"; ObjectID = "om5-K5-yRq"; */
-"om5-K5-yRq.text" = "TopicID";
 
 /* Class = "UINavigationController"; title = "StartNavigationController"; ObjectID = "oPa-Qr-HlP"; */
 "oPa-Qr-HlP.title" = "StartNavigationController";
