@@ -23,7 +23,7 @@
 	<key>CFBundleShortVersionString</key>
 	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleVersion</key>
-	<string>Assigned by build script: `git rev-list HEAD --count`</string>
+	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>HOST_NAME</key>
 	<string>$(HOST_NAME)</string>
 	<key>LSApplicationCategoryType</key>

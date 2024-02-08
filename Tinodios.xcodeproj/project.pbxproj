@@ -617,12 +617,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 0A0380E621B3CC8200A3FA0E /* Build configuration list for PBXNativeTarget "Tinodios" */;
 			buildPhases = (
+				B094C9AA2315841E00C98B64 /* Assign build version from git */,
 				46966AD24309BE3586965D61 /* [CP] Check Pods Manifest.lock */,
 				0A0380D021B3CC8100A3FA0E /* Sources */,
 				0A0380D121B3CC8100A3FA0E /* Frameworks */,
 				0A0380D221B3CC8100A3FA0E /* Resources */,
 				0A431C052244A26200A837F7 /* Embed Frameworks */,
-				B094C9AA2315841E00C98B64 /* Assign build version from git */,
 				B0BC2B5423589CE100BEEB4B /* Assign DefaultValue in app preferences */,
 				0ACE9E7A23813A1D006BE575 /* Embed Foundation Extensions */,
 				9F57E04FA7B9924948AFF5D2 /* [CP] Copy Pods Resources */,
@@ -642,10 +642,10 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 0ACE9E7D23813A1D006BE575 /* Build configuration list for PBXNativeTarget "TinodiosNSExtension" */;
 			buildPhases = (
+				B0DB87172383FEF0005FBBC1 /* Assign bundle version from git */,
 				0ACE9E6E23813A1D006BE575 /* Sources */,
 				0ACE9E6F23813A1D006BE575 /* Frameworks */,
 				0ACE9E7023813A1D006BE575 /* Resources */,
-				B0DB87172383FEF0005FBBC1 /* Assign bundle version from git */,
 			);
 			buildRules = (
 			);
@@ -1199,6 +1199,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1736;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_BITCODE = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -1219,6 +1220,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				MARKETING_VERSION = 1.22.12;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -1265,6 +1267,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = "$(GIT_COMMIT_COUNT)";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_BITCODE = NO;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -1279,6 +1282,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				MARKETING_VERSION = "$(GIT_TAG)";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -1298,6 +1302,7 @@
 				CODE_SIGN_ENTITLEMENTS = Tinodios/Tinodios.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = "$(CURRENT_PROJECT_VERSION)";
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = Tinodios/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -1305,7 +1310,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.2.0;
+				MARKETING_VERSION = "$(MARKETING_VERSION)";
 				PRODUCT_BUNDLE_IDENTIFIER = co.tinode.tinodios;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1323,6 +1328,7 @@
 				CODE_SIGN_ENTITLEMENTS = Tinodios/Tinodios.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = "$(CURRENT_PROJECT_VERSION)";
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = Tinodios/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
@@ -1330,7 +1336,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.2.0;
+				MARKETING_VERSION = "$(MARKETING_VERSION)";
 				PRODUCT_BUNDLE_IDENTIFIER = co.tinode.tinodios;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1347,7 +1353,7 @@
 				CODE_SIGN_ENTITLEMENTS = TinodiosNSExtension/TinodiosNSExtension.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = "Assigned by build script: `git rev-list HEAD --count`";
+				CURRENT_PROJECT_VERSION = "$(CURRENT_PROJECT_VERSION)";
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
@@ -1358,7 +1364,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.2.0;
+				MARKETING_VERSION = "$(MARKETING_VERSION)";
 				PRODUCT_BUNDLE_IDENTIFIER = co.tinode.tinodios.TinodiosNSExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -1375,7 +1381,7 @@
 				CODE_SIGN_ENTITLEMENTS = TinodiosNSExtension/TinodiosNSExtension.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = "Assigned by build script: `git rev-list HEAD --count`";
+				CURRENT_PROJECT_VERSION = "$(CURRENT_PROJECT_VERSION)";
 				DEVELOPMENT_TEAM = "";
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				INFOPLIST_FILE = TinodiosNSExtension/Info.plist;
@@ -1385,7 +1391,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 1.2.0;
+				MARKETING_VERSION = "$(MARKETING_VERSION)";
 				PRODUCT_BUNDLE_IDENTIFIER = co.tinode.tinodios.TinodiosNSExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;

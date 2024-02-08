@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# taken from blog post: http://www.mokacoding.com/blog/automatic-xcode-versioning-with-git/
 # Automatically sets version of target based on most recent tag in git
 # Automatically sets build number to number of commits
 #
@@ -8,23 +7,15 @@
 # put this script in the root of the xcode project in a directory called scripts (good idea to version control this too)
 # call the script as $SRCROOT/scripts/set_build_number.sh in xcode
 
+cd "$SRCROOT"
+
 git=$(sh /etc/profile; which git)
 number_of_commits=$("$git" rev-list HEAD --count)
-git_release_version=$("$git" describe --tags --always --abbrev=0)
+tag=$("$git" describe --tags --always --abbrev=0)
+git_version=${tag#?}
 
-# $TARGET_BUILD_DIR = ~/Library/Developer/Xcode/DerivedData/Tinodios-eqpxjmfeshykdhenvfigilydnzgz/Build/Products/Debug-iphonesimulator
-# $INFOPLIST_PATH = Tinodios.app/Info.plist
-target_plist="$TARGET_BUILD_DIR/$INFOPLIST_PATH"
-# $DWARF_DSYM_FOLDER_PATH = ~/Library/Developer/Xcode/DerivedData/Tinodios-eqpxjmfeshykdhenvfigilydnzgz/Build/Products/Release-iphoneos
-# $DWARF_DSYM_FILE_NAME = Tinodios.app.dSYM
-dsym_plist="$DWARF_DSYM_FOLDER_PATH/$DWARF_DSYM_FILE_NAME/Contents/Info.plist"
+sed -i -e "/GIT_TAG =/ s/= .*/= $git_version/" prod.xcconfig
+sed -i -e "/GIT_COMMIT_COUNT =/ s/= .*/= $number_of_commits/" prod.xcconfig
 
-for plist in "$target_plist" "$dsym_plist"; do
-  if [ -f "$plist" ]; then
-    echo "Modifying '$plist'"
-    /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $number_of_commits" "$plist"
-    echo "Assigned '$number_of_commits' to :CFBundleVersion"
-    /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString ${git_release_version#*v}" "$plist"
-    echo "Assigned '$git_release_version' to :CFBundleShortVersionString"
-  fi
-done
+# Delete old version of the file.
+rm prod.xcconfig-e
