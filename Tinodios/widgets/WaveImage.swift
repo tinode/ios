@@ -294,7 +294,7 @@ public class WaveImage {
 
     // Create button as image
     private func renderWaveImage() -> UIImage? {
-        if bars.isEmpty {
+        if bars.isEmpty || size.width <= 0 || size.height <= 0 {
             return nil
         }
 
