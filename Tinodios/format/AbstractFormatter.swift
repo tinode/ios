@@ -12,7 +12,9 @@ import TinodeSDK
 /// DraftyFormatter implementation to break out individual format handlers.
 /// Implemented as a class instead of a protocol because of this bug: https://bugs.swift.org/browse/SR-103
 class AbstractFormatter: DraftyFormatter {
-    let defaultAttrs: [NSAttributedString.Key: Any]
+    private static let emojiScaling = [1.26, 1.55, 1.93, 2.40, 3.00]
+
+    var defaultAttrs: [NSAttributedString.Key: Any]
 
     init(defaultAttributes attrs: [NSAttributedString.Key: Any], defaultFont: UIFont) {
         var attributes = attrs
@@ -180,6 +182,11 @@ class AbstractFormatter: DraftyFormatter {
     ///    - fitIn: maximum size of attached images.
     public func toAttributed(_ content: Drafty, fitIn maxSize: CGSize) -> NSAttributedString {
         if content.isPlain {
+            // If message consists of 1-5 emoji only, make font larger.
+            if content.string.isEmojiOnly && content.string.count <= AbstractFormatter.emojiScaling.count && !content.string.isEmpty {
+                let defaultFont = self.defaultAttrs[.font]! as! UIFont
+                self.defaultAttrs[.font] = defaultFont.withSize(defaultFont.pointSize * AbstractFormatter.emojiScaling[AbstractFormatter.emojiScaling.count - content.string.count])
+            }
             return NSMutableAttributedString(string: content.string, attributes: self.defaultAttrs)
         }
 

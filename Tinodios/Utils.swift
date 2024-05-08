@@ -373,3 +373,16 @@ extension Tinode {
         return nil
     }
 }
+
+extension Character {
+    var isEmoji: Bool {
+        guard let firstScalar = unicodeScalars.first else {
+            return false
+        }
+        return firstScalar.properties.isEmoji && (unicodeScalars.count > 1 || firstScalar.value > 0x238C)
+    }
+}
+
+extension String {
+    var isEmojiOnly: Bool { !isEmpty && !contains { !$0.isEmoji } }
+}
