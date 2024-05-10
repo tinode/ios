@@ -2,11 +2,12 @@
 //  BaseDb.swift
 //  ios
 //
-//  Copyright © 2019-2022 Tinode. All rights reserved.
+//  Copyright © 2019-2024 Tinode. All rights reserved.
 //
 
 import Foundation
 import SQLite
+import SQLite3
 import TinodeSDK
 
 public class BaseDb {
@@ -95,8 +96,8 @@ public class BaseDb {
 
         var account: StoredAccount? = nil
         var deviceToken: String? = nil
-        if self.db!.schemaVersion != BaseDb.kSchemaVersion {
-            BaseDb.log.info("BaseDb - schema has changed from %d to %d", (self.db?.schemaVersion ?? -1), BaseDb.kSchemaVersion)
+        if self.db!.userVersion != BaseDb.kSchemaVersion {
+            BaseDb.log.info("BaseDb - schema has changed from %d to %d", (self.db?.userVersion ?? -1), BaseDb.kSchemaVersion)
 
             // Retain active account accross DB upgrades to keep user logged in.
             account = self.accountDb!.getActiveAccount()
@@ -104,7 +105,7 @@ public class BaseDb {
 
             // Schema has changed, delete database.
             self.dropDb()
-            self.db!.schemaVersion = BaseDb.kSchemaVersion
+            self.db!.userVersion = BaseDb.kSchemaVersion
         }
 
         BaseDb.log.info("Creating SQLite db tables.")
@@ -245,6 +246,8 @@ public class BaseDb {
                     if code == SQLITE_OK || code == SQLITE_DONE || code == SQLITE_ROW {
                         return false
                     }
+                default:
+                    break
                 }
             }
             BaseDb.log.error("BaseDb - updateCounter failed %@", error.localizedDescription)

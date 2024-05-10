@@ -7,6 +7,9 @@ platform :ios, '12.0'
 # ignore all warnings from all pods
 inhibit_all_warnings!
 
+# The Swift pod `FirebaseCoreInternal` depends upon `GoogleUtilities`, which does not define modules. To opt into those targets generating module maps (which is necessary to import them from Swift when building as static libraries), you may set `use_modular_headers!` globally in your Podfile, or specify `:modular_headers => true` for particular dependencies.
+# use_modular_headers!
+
 workspace 'Tinodios'
 
 project 'Tinodios'
@@ -14,7 +17,7 @@ project 'TinodeSDK'
 
 
 def db_pods
-  pod 'SQLite.swift', '~> 0.13'
+  pod 'SQLite.swift', '~> 0.15'
   pod 'SwiftKeychainWrapper', '~> 3.2'
 end
 
@@ -33,9 +36,9 @@ def app_pods
   pod 'FirebaseMessaging'
   pod 'FirebaseAnalytics'
   pod 'FirebaseCrashlytics'
-  pod 'Kingfisher', '~> 5.0'
-  pod 'MobileVLCKit', '~> 3.5.0'
-  pod 'PhoneNumberKit', '~> 3.3'
+  pod 'Kingfisher', '~> 5'
+  pod 'MobileVLCKit', '~> 3'
+  pod 'PhoneNumberKit', '~> 3'
   pod 'WebRTC-lib', '~> 96.0.0'
 end
 

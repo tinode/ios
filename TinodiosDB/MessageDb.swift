@@ -96,7 +96,7 @@ public class MessageDb {
         try! self.db.run(self.table.createIndex(topicId, seq.desc, unique: true, ifNotExists: true))
         // Partial index over topicId + effectiveSeq.
         let partIdx = self.table.createIndex(topicId, effectiveSeq.desc, unique: true, ifNotExists: true)
-        try! self.db.run([partIdx, "WHERE", (self.effectiveSeq != nil).asSQL()].joined(separator: " "))
+        try! self.db.run([partIdx, "WHERE", (self.effectiveSeq != nil).description].joined(separator: " "))
     }
 
     // Deletes all records from `messages` table.

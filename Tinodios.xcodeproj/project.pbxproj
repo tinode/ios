@@ -617,8 +617,8 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 0A0380E621B3CC8200A3FA0E /* Build configuration list for PBXNativeTarget "Tinodios" */;
 			buildPhases = (
-				B094C9AA2315841E00C98B64 /* Assign build version from git */,
 				46966AD24309BE3586965D61 /* [CP] Check Pods Manifest.lock */,
+				B094C9AA2315841E00C98B64 /* Assign build version from git */,
 				0A0380D021B3CC8100A3FA0E /* Sources */,
 				0A0380D121B3CC8100A3FA0E /* Frameworks */,
 				0A0380D221B3CC8100A3FA0E /* Resources */,
