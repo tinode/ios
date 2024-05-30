@@ -111,9 +111,9 @@ class DraftyTest: XCTestCase {
         XCTAssertEqual(d1, d2, "String 13 - two lines with emoji in the first and style in the second")
 
         // String 14: another compound Unicode test
-        d1 = Drafty(content: "🔴Hello🔴\n🟠Hello🟠")
-        d2 = Drafty(text: "🔴Hello🔴 🟠Hello🟠", fmt: [Style(tp: "BR", at: 7, len: 1)], ent: nil)
-        XCTAssertEqual(d1, d2, "String 14 - two lines with compound emojis")
+        d1 = Drafty(content: "🔴Hello🔴\n🟠Hello🟠\n🟡Hello🟡")
+        d2 = Drafty(text: "🔴Hello🔴 🟠Hello🟠 🟡Hello🟡", fmt: [Style(tp: "BR", at: 7, len: 1), Style(tp: "BR", at: 15, len: 1)], ent: nil)
+        XCTAssertEqual(d1, d2, "String 14 - three lines with compound emojis")
     }
 
     func testShorten() {
@@ -588,6 +588,12 @@ class DraftyTest: XCTestCase {
         )
         XCTAssertEqual(expected, actual, "Reply 5 has failed");
 
+        // ------- Reply 6 (emoji + reply text)
+        src = Drafty(
+            content: "☝️"
+        )
+        // This is actually broken, it should be {"at":0,"len":14,"tp":"QQ"}
+        // expected = {"ent":[{"data":{"val":"usr1YxpmUGIjRk"},"tp":"MN"}],"fmt":[{"at":0,"key":0,"len":12},{"at":12,"len":1,"tp":"BR"},{"at":0,"len":15,"tp":"QQ"}],"txt":"Alice Hatter ☝️yes"}}}
     }
 
     func testFormat() {

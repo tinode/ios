@@ -15,6 +15,7 @@ import UIKit
 class FullFormatter: AbstractFormatter {
     internal enum Constants {
         static let kDefaultFont: UIFont = UIFont.preferredFont(forTextStyle: .body)
+        static let emojiScaling = [1.26, 1.55, 1.93, 2.40, 3.00]
     }
 
     var quoteFormatter: QuoteFormatter?
@@ -217,6 +218,22 @@ class FullFormatter: AbstractFormatter {
         let node = FormatNode()
         node.attachment(attachment)
         return node
+    }
+
+    /// Convert drafty object into NSAttributedString
+    /// - Parameters:
+    ///    - content: Drafty object to convert
+    ///    - fitIn: maximum size of attached images.
+    override public func toAttributed(_ content: Drafty, fitIn maxSize: CGSize) -> NSAttributedString {
+        if content.isPlain {
+            var attrs = self.defaultAttrs
+            // If a message consists of 1-5 emoji only, make font larger.
+            if content.string.isEmojiOnly && content.string.count <= Constants.emojiScaling.count && !content.string.isEmpty, let defaultFont =  self.defaultAttrs[.font] as? UIFont {
+                attrs[.font] = defaultFont.withSize(defaultFont.pointSize * Constants.emojiScaling[Constants.emojiScaling.count - content.string.count])
+            }
+            return NSMutableAttributedString(string: content.string, attributes: attrs)
+        }
+        return super.toAttributed(content, fitIn: maxSize)
     }
 
     // Convert button payload to an URL.
