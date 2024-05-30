@@ -224,7 +224,7 @@ final class TinodiosUITests: XCTestCase {
             if let lastSeen = lastSeen {
                 desc.seen = LastSeen(when: lastSeen, ua: "dummy")
             }
-            result.meta = MsgServerMeta(id: id, topic: topic, ts: now, desc: desc, sub: nil, del: nil, tags: nil, cred: nil)
+            result.meta = MsgServerMeta(id: id, topic: topic, ts: now, desc: desc, sub: nil, del: nil, tags: nil, cred: nil, aux: nil)
 
             return result
         }
@@ -254,7 +254,7 @@ final class TinodiosUITests: XCTestCase {
                 let subBob = subMsg(topic: "usrBob", updatedTs: now.addingTimeInterval(-86400), read: 2, recv: 2, acs: Acs(given: "JRWPS", want: "JRWPS", mode: "JRWPS"), pub: TheCard(fn: "Bob"), priv: ["comment": .string("bla")])
 
                 let subGrp = subMsg(topic: "grpGroup", updatedTs: now.addingTimeInterval(-100000), read: 0, recv: 0, acs: Acs(given: "JRWPS", want: "JRWPS", mode: "JRWPS"), pub: TheCard(fn: "Test group"), priv: ["comment": .string("Group description")])
-                metaSub.meta = MsgServerMeta(id: sreq.id, topic: "me", ts: now, desc: nil, sub: [subBob, subGrp], del: nil, tags: nil, cred: nil)
+                metaSub.meta = MsgServerMeta(id: sreq.id, topic: "me", ts: now, desc: nil, sub: [subBob, subGrp], del: nil, tags: nil, cred: nil, aux: nil)
                 return [responseCtrl, metaDesc, metaSub]
             case "usrBob":
                 let now = Date()
@@ -266,7 +266,7 @@ final class TinodiosUITests: XCTestCase {
                 let metaSub = ServerMessage()
                 let sub1 = subMsg(topic: "usrBob", updatedTs: now.addingTimeInterval(-100), read: 2, recv: 2, acs: Acs(given: "JRWPS", want: "JRWPS", mode: "JRWPS"), pub: nil, priv: nil)
                 let sub2 = subMsg(topic: "usrAlice", updatedTs: now.addingTimeInterval(-100), read: 2, recv: 2, acs: Acs(given: "JRWPS", want: "JRWPS", mode: "JRWPS"), pub: nil, priv: nil)
-                metaSub.meta = MsgServerMeta(id: sreq.id, topic: sreq.topic, ts: now, desc: nil, sub: [sub1, sub2], del: nil, tags: nil, cred: nil)
+                metaSub.meta = MsgServerMeta(id: sreq.id, topic: sreq.topic, ts: now, desc: nil, sub: [sub1, sub2], del: nil, tags: nil, cred: nil, aux: nil)
 
                 let data1 = ServerMessage()
                 data1.data = MsgServerData(id: sreq.id, topic: sreq.topic, from: sreq.topic, ts: now.addingTimeInterval(-2000), head: nil, seq: 1, content: Drafty(plainText: "hello message"))
@@ -285,7 +285,7 @@ final class TinodiosUITests: XCTestCase {
                 let metaSub = ServerMessage()
                 let sub1 = subMsg(topic: "usrBob", updatedTs: now.addingTimeInterval(-100000), read: 0, recv: 0, acs: Acs(given: "JRWPS", want: "JRWPS", mode: "JRWPS"), pub: nil, priv: nil)
                 let sub2 = subMsg(topic: "usrAlice", updatedTs: now.addingTimeInterval(-100000), read: 0, recv: 0, acs: Acs(given: "JRWPASDO", want: "JRWPASDO", mode: "JRWPASDO"), pub: nil, priv: nil)
-                metaSub.meta = MsgServerMeta(id: sreq.id, topic: sreq.topic, ts: now, desc: nil, sub: [sub1, sub2], del: nil, tags: nil, cred: nil)
+                metaSub.meta = MsgServerMeta(id: sreq.id, topic: sreq.topic, ts: now, desc: nil, sub: [sub1, sub2], del: nil, tags: nil, cred: nil, aux: nil)
 
                 return [responseCtrl, metaDesc, metaSub]
             default:

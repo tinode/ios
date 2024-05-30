@@ -2,7 +2,7 @@
 //  MessageView.swift
 //  Tinodios
 //
-//  Copyright © 2019-2022 Tinode LLC. All rights reserved.
+//  Copyright © 2019-2023 Tinode LLC. All rights reserved.
 //
 
 import UIKit
@@ -26,6 +26,7 @@ class MessageView: UICollectionView {
 
         // Reusable message cells
         register(MessageCell.self, forCellWithReuseIdentifier: String(describing: MessageCell.self))
+        register(PinnedMessagesView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: String(describing: PinnedMessagesView.self))
 
         // Gesture recognizer: short tap, long tap.
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTapGesture(_:)))

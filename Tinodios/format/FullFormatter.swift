@@ -214,7 +214,8 @@ class FullFormatter: AbstractFormatter {
         let state = data["state"]?.asString() ?? ""
         let duration = data["duration"]?.asInt() ?? 0
         let incoming = data["incoming"]?.asBool() ?? false
-        let attachment = Attachment(content: .call(!incoming, state, duration))
+        let vc = data["vc"]?.asBool() ?? false
+        let attachment = Attachment(content: .call(!incoming, state, duration, vc))
         let node = FormatNode()
         node.attachment(attachment)
         return node

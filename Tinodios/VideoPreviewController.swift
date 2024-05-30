@@ -302,7 +302,6 @@ extension VideoPreviewController: VLCMediaPlayerDelegate {
                 // Set initial time.
                 setTime(VLCTime(number: 0))
             }
-            print("playing")
             spinner.stopAnimating()
             spinner.isHidden = true
             controlsView.backgroundColor = .clear
@@ -313,7 +312,6 @@ extension VideoPreviewController: VLCMediaPlayerDelegate {
             }
             updatePlayPauseButton(isPlaying: !shouldPause)
         case .opening:
-            print("opening")
             controlsView.backgroundColor = .white
             controlsView.alpha = 0.5
             spinner.startAnimating()

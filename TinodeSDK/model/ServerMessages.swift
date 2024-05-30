@@ -90,9 +90,10 @@ public class MsgServerMeta: Codable {
     public let del: DelValues?
     public let tags: [String]?
     public let cred: [Credential]?
+    public let aux: [String:JSONValue]?
 
     private enum CodingKeys: String, CodingKey {
-        case id, topic, ts, desc, sub, del, tags, cred
+        case id, topic, ts, desc, sub, del, tags, cred, aux
     }
 
     required public init (from decoder: Decoder) throws {
@@ -103,6 +104,7 @@ public class MsgServerMeta: Codable {
         del = try? container.decode(DelValues.self, forKey: .del)
         tags = try? container.decode(Array<String>.self, forKey: .tags)
         cred = try? container.decode(Array<Credential>.self, forKey: .cred)
+        aux = try? container.decode([String:JSONValue].self, forKey: .aux)
         if topic == Tinode.kTopicMe {
             desc = try? container.decode(DefaultDescription.self, forKey: .desc)
             sub = try? container.decode(Array<DefaultSubscription>.self, forKey: .sub)
@@ -124,6 +126,7 @@ public class MsgServerMeta: Codable {
         if let del = del { try container.encode(del, forKey: .del) }
         if let tags = tags { try container.encode(tags, forKey: .tags) }
         if let cred = cred { try container.encode(cred, forKey: .cred) }
+        if let aux = cred { try container.encode(aux, forKey: .aux) }
         if topic == Tinode.kTopicMe {
             if let desc = desc as? DefaultDescription { try container.encode(desc, forKey: .desc) }
             if let sub = sub as? Array<DefaultSubscription> { try container.encode(sub, forKey: .sub) }
@@ -138,7 +141,7 @@ public class MsgServerMeta: Codable {
 
     // Testing only.
     internal init(id: String?, topic: String?, ts: Date, desc: DescriptionProto?,
-                sub: [SubscriptionProto]?, del: DelValues?, tags: [String]?, cred: [Credential]?) {
+                  sub: [SubscriptionProto]?, del: DelValues?, tags: [String]?, cred: [Credential]?, aux: [String:JSONValue]?) {
         self.id = id
         self.topic = topic
         self.ts = ts
@@ -147,6 +150,7 @@ public class MsgServerMeta: Codable {
         self.del = del
         self.tags = tags
         self.cred = cred
+        self.aux = aux
     }
 }
 
@@ -218,7 +222,7 @@ public class AccessChange: Codable {
 
 public class MsgServerPres: Codable {
     enum What {
-        case kOn, kOff, kUpd, kGone, kTerm, kAcs, kMsg, kUa, kRecv, kRead, kDel, kTags, kUnknown
+        case kOn, kOff, kUpd, kGone, kTerm, kAcs, kMsg, kUa, kRecv, kRead, kDel, kTags, kAux, kUnknown
     }
     public var topic: String?
     public var src: String?
@@ -260,6 +264,8 @@ public class MsgServerPres: Codable {
             return .kDel
         case "tags":
             return .kTags
+        case "aux":
+            return .kAux
         default:
             return .kUnknown
         }

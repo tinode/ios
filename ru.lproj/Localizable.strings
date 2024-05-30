@@ -320,6 +320,9 @@
 /* Label shown next to an inline image */
 "Picture" = "Картинка";
 
+/* Menu item for pinning message */
+"Pin" = "Закрепить";
+
 /* Error message */
 "Playback failed" = "Невозможно исполнить";
 
@@ -424,6 +427,9 @@
 
 /* Displayed when the type of attachment cannot be determined */
 "Unknown type" = "Неизвестный тип";
+
+/* Menu item for un-pinning message */
+"Unpin" = "Открепить";
 
 /* Label shown next to an unsupported Drafty format element
    Unsupported (unknown) Drafty tag */

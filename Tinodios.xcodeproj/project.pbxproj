@@ -17,6 +17,7 @@
 		0A0D92D72840EFEF00B5B5B0 /* CallProviderDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A0D92D62840EFEF00B5B5B0 /* CallProviderDelegate.swift */; };
 		0A0D92D928410D4100B5B5B0 /* CallManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A0D92D828410D4100B5B5B0 /* CallManager.swift */; };
 		0A11912D22F03E3100A1BBA1 /* TagsEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A11912C22F03E3100A1BBA1 /* TagsEditView.swift */; };
+		0A1BA3F02A0F382300990578 /* VCViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A1BA3EF2A0F382300990578 /* VCViewController.swift */; };
 		0A2F81C6229677DD007E562C /* AddByIDViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A2F81C5229677DD007E562C /* AddByIDViewController.swift */; };
 		0A35BA9E22836CCF00AA5E2F /* ContactsSynchronizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A35BA9D22836CCF00AA5E2F /* ContactsSynchronizer.swift */; };
 		0A35BAA02283A37500AA5E2F /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A35BA9F2283A37500AA5E2F /* Utils.swift */; };
@@ -41,6 +42,8 @@
 		0A8D945A22BEF08100DC154E /* AvatarWithOnlineIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8D945922BEF08100DC154E /* AvatarWithOnlineIndicator.swift */; };
 		0A8D945C22BF5B7F00DC154E /* AvatarWithOnlineIndicator+TypingAnimation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8D945B22BF5B7F00DC154E /* AvatarWithOnlineIndicator+TypingAnimation.swift */; };
 		0A8EA5B029838E5900B116EA /* CredentialsChangeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8EA5AF29838E5900B116EA /* CredentialsChangeViewController.swift */; };
+		0A8FF2302A1DA927005A223A /* VCViewLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8FF22F2A1DA927005A223A /* VCViewLayout.swift */; };
+		0A8FF2322A1DA94F005A223A /* VCViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8FF2312A1DA94F005A223A /* VCViewCell.swift */; };
 		0A910AFC2383A60500C95AD3 /* TinodiosDB.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0ACE9E7E23814157006BE575 /* TinodiosDB.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		0A95F4D4229BD95900AEF7D3 /* AccountSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A95F4D3229BD95900AEF7D3 /* AccountSettingsViewController.swift */; };
 		0A9E7149237BCC8400C1D491 /* NewChatTabController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A9E7148237BCC8400C1D491 /* NewChatTabController.swift */; };
@@ -67,6 +70,7 @@
 		7DDADC5221D5C219009733B5 /* ValidatedCredential.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DDADC5121D5C219009733B5 /* ValidatedCredential.swift */; };
 		7DDADC5421D5C2E6009733B5 /* CredentialsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DDADC5321D5C2E6009733B5 /* CredentialsViewController.swift */; };
 		B008593C22741B8A002C5168 /* FullFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B008593B22741B89002C5168 /* FullFormatter.swift */; };
+		B00CB5F629D7461B00BFE5C2 /* PinnedMessagesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B00CB5F529D7461B00BFE5C2 /* PinnedMessagesView.swift */; };
 		B0125998229C982900688FCE /* ContactViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0125996229C982900688FCE /* ContactViewCell.swift */; };
 		B0125999229C982900688FCE /* ContactViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B0125997229C982900688FCE /* ContactViewCell.xib */; };
 		B012599C229CEBE600688FCE /* SelectedMemberViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B012599A229CEBE600688FCE /* SelectedMemberViewCell.swift */; };
@@ -93,6 +97,10 @@
 		B052ABD12863F82000A7D550 /* dialing.m4a in Resources */ = {isa = PBXBuildFile; fileRef = B052ABD02863F82000A7D550 /* dialing.m4a */; };
 		B05ACEB322FDAB5200276713 /* ResetPasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B05ACEB222FDAB5200276713 /* ResetPasswordViewController.swift */; };
 		B079062523EEA0C90019ED75 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B079062423EEA0C90019ED75 /* GoogleService-Info.plist */; };
+		B081B27F29D621380026089C /* DotSelectorImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B081B27E29D621380026089C /* DotSelectorImageView.swift */; };
+		B081B28129D638850026089C /* PagerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B081B28029D638850026089C /* PagerView.swift */; };
+		B081B28329D6512E0026089C /* PagerViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B081B28229D6512E0026089C /* PagerViewCell.swift */; };
+		B081B28529D73EE10026089C /* PinnedMessagesView.xib in Resources */ = {isa = PBXBuildFile; fileRef = B081B28429D73EE10026089C /* PinnedMessagesView.xib */; };
 		B091BA442808ED6000317CDC /* MessageCell+VLCMediaPlayerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B091BA432808ED6000317CDC /* MessageCell+VLCMediaPlayerDelegate.swift */; };
 		B091BA462808FE8500317CDC /* MessageViewController+MessageCellDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B091BA452808FE8500317CDC /* MessageViewController+MessageCellDelegate.swift */; };
 		B091BA482809048000317CDC /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B091BA472809048000317CDC /* AVFoundation.framework */; };
@@ -130,6 +138,7 @@
 		B0DF032D2282EE8A000F9492 /* SendMessageBar.xib in Resources */ = {isa = PBXBuildFile; fileRef = B0DF032C2282EE8A000F9492 /* SendMessageBar.xib */; };
 		B0DF032F2282FF46000F9492 /* SendMessageBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0DF032E2282FF46000F9492 /* SendMessageBar.swift */; };
 		B0DF03312283FFD8000F9492 /* PlaceholderTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0DF03302283FFD8000F9492 /* PlaceholderTextView.swift */; };
+		B0F2F0C929DA295900100B24 /* MessageViewController+MessageDisplayLogic.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0F2F0C829DA295900100B24 /* MessageViewController+MessageDisplayLogic.swift */; };
 		B0F98C8322E381C300444121 /* MessageMenuItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0F98C8222E381C300444121 /* MessageMenuItem.swift */; };
 		FA37AD24238B0D6F00301261 /* KeyboardInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA37AD23238B0D6F00301261 /* KeyboardInfo.swift */; };
 /* End PBXBuildFile section */
@@ -190,6 +199,7 @@
 		0A0D92D62840EFEF00B5B5B0 /* CallProviderDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallProviderDelegate.swift; sourceTree = "<group>"; };
 		0A0D92D828410D4100B5B5B0 /* CallManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallManager.swift; sourceTree = "<group>"; };
 		0A11912C22F03E3100A1BBA1 /* TagsEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagsEditView.swift; sourceTree = "<group>"; };
+		0A1BA3EF2A0F382300990578 /* VCViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VCViewController.swift; sourceTree = "<group>"; };
 		0A2F81C5229677DD007E562C /* AddByIDViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddByIDViewController.swift; sourceTree = "<group>"; };
 		0A35BA9D22836CCF00AA5E2F /* ContactsSynchronizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsSynchronizer.swift; sourceTree = "<group>"; };
 		0A35BA9F2283A37500AA5E2F /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
@@ -214,6 +224,8 @@
 		0A8D945922BEF08100DC154E /* AvatarWithOnlineIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvatarWithOnlineIndicator.swift; sourceTree = "<group>"; };
 		0A8D945B22BF5B7F00DC154E /* AvatarWithOnlineIndicator+TypingAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AvatarWithOnlineIndicator+TypingAnimation.swift"; sourceTree = "<group>"; };
 		0A8EA5AF29838E5900B116EA /* CredentialsChangeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CredentialsChangeViewController.swift; sourceTree = "<group>"; };
+		0A8FF22F2A1DA927005A223A /* VCViewLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VCViewLayout.swift; sourceTree = "<group>"; };
+		0A8FF2312A1DA94F005A223A /* VCViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VCViewCell.swift; sourceTree = "<group>"; };
 		0A95F4D3229BD95900AEF7D3 /* AccountSettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountSettingsViewController.swift; sourceTree = "<group>"; };
 		0A9E7148237BCC8400C1D491 /* NewChatTabController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewChatTabController.swift; sourceTree = "<group>"; };
 		0AB5FDCD22C20D1900F44AFD /* ArchivedChatsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchivedChatsTableViewController.swift; sourceTree = "<group>"; };
@@ -245,6 +257,7 @@
 		7DDADC5321D5C2E6009733B5 /* CredentialsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CredentialsViewController.swift; sourceTree = "<group>"; };
 		8941EC0EF6DEEA661A222467 /* libPods-TinodiosUITests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-TinodiosUITests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B008593B22741B89002C5168 /* FullFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullFormatter.swift; sourceTree = "<group>"; };
+		B00CB5F529D7461B00BFE5C2 /* PinnedMessagesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PinnedMessagesView.swift; sourceTree = "<group>"; };
 		B01120B72357469300EFCB1F /* devel.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = devel.xcconfig; sourceTree = "<group>"; };
 		B01120B8235746BF00EFCB1F /* prod.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = prod.xcconfig; sourceTree = "<group>"; };
 		B0125996229C982900688FCE /* ContactViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactViewCell.swift; sourceTree = "<group>"; };
@@ -283,6 +296,10 @@
 		B052ABD02863F82000A7D550 /* dialing.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = dialing.m4a; sourceTree = "<group>"; };
 		B05ACEB222FDAB5200276713 /* ResetPasswordViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResetPasswordViewController.swift; sourceTree = "<group>"; };
 		B079062423EEA0C90019ED75 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		B081B27E29D621380026089C /* DotSelectorImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DotSelectorImageView.swift; sourceTree = "<group>"; };
+		B081B28029D638850026089C /* PagerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PagerView.swift; sourceTree = "<group>"; };
+		B081B28229D6512E0026089C /* PagerViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PagerViewCell.swift; sourceTree = "<group>"; };
+		B081B28429D73EE10026089C /* PinnedMessagesView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PinnedMessagesView.xib; sourceTree = "<group>"; };
 		B091BA432808ED6000317CDC /* MessageCell+VLCMediaPlayerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MessageCell+VLCMediaPlayerDelegate.swift"; sourceTree = "<group>"; };
 		B091BA452808FE8500317CDC /* MessageViewController+MessageCellDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MessageViewController+MessageCellDelegate.swift"; sourceTree = "<group>"; };
 		B091BA472809048000317CDC /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
@@ -344,6 +361,7 @@
 		B0DF032C2282EE8A000F9492 /* SendMessageBar.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SendMessageBar.xib; sourceTree = "<group>"; };
 		B0DF032E2282FF46000F9492 /* SendMessageBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendMessageBar.swift; sourceTree = "<group>"; };
 		B0DF03302283FFD8000F9492 /* PlaceholderTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaceholderTextView.swift; sourceTree = "<group>"; };
+		B0F2F0C829DA295900100B24 /* MessageViewController+MessageDisplayLogic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MessageViewController+MessageDisplayLogic.swift"; sourceTree = "<group>"; };
 		B0F98C8222E381C300444121 /* MessageMenuItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageMenuItem.swift; sourceTree = "<group>"; };
 		B33FA5FDB8E984980BADDAB2 /* Pods-TinodiosUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TinodiosUITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-TinodiosUITests/Pods-TinodiosUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		B36DC000235D850000724348 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/LaunchScreen.strings"; sourceTree = "<group>"; };
@@ -449,6 +467,7 @@
 				B0DF0318227C2517000F9492 /* MessageView.swift */,
 				B0A612B0228C85C300569DFE /* MessageViewLayout.swift */,
 				0A8C8A4521E5E72D00D8751E /* MessageViewController.swift */,
+				B0F2F0C829DA295900100B24 /* MessageViewController+MessageDisplayLogic.swift */,
 				B091BA452808FE8500317CDC /* MessageViewController+MessageCellDelegate.swift */,
 				B0A612B62294288F00569DFE /* MessageViewController+SendMessageBarDelegate.swift */,
 				B0DF0322228051B4000F9492 /* MessageViewController+Keyboard.swift */,
@@ -467,6 +486,9 @@
 				B0BE302A27B8A3B600B04631 /* TopicSecurityViewController.swift */,
 				0AEE8BED226456080022EC3F /* UiUtils.swift */,
 				0A35BA9F2283A37500AA5E2F /* Utils.swift */,
+				0A1BA3EF2A0F382300990578 /* VCViewController.swift */,
+				0A8FF22F2A1DA927005A223A /* VCViewLayout.swift */,
+				0A8FF2312A1DA94F005A223A /* VCViewCell.swift */,
 				0A4BD27029568B8E00493A04 /* VideoPreviewController.swift */,
 				0A0380DB21B3CC8100A3FA0E /* Main.storyboard */,
 				B0BC2B5B235E0DB800BEEB4B /* Tinodios.entitlements */,
@@ -580,6 +602,7 @@
 				0AE7339B22C33FEF0089C8D8 /* ChatListViewCell.xib */,
 				B0125996229C982900688FCE /* ContactViewCell.swift */,
 				B0125997229C982900688FCE /* ContactViewCell.xib */,
+				B081B27E29D621380026089C /* DotSelectorImageView.swift */,
 				0A3AE3B4274CAD2500CB673E /* ForwardMessageBar.swift */,
 				0A3AE3B6274CAD5800CB673E /* ForwardMessageBar.xib */,
 				B02F5C8A22679BC80079A97E /* ImagePicker.swift */,
@@ -587,8 +610,12 @@
 				B0BE302927B831D400B04631 /* MultilineAlertView.xib */,
 				B0BE302227B771E100B04631 /* MultilineAlertView.swift */,
 				B0DF031E227C6898000F9492 /* PaddedLabel.swift */,
+				B081B28029D638850026089C /* PagerView.swift */,
+				B081B28229D6512E0026089C /* PagerViewCell.swift */,
 				0A6AC321229FAA130025A4EC /* PermissionsEditView.xib */,
 				0A6AC323229FB0ED0025A4EC /* PermissionsEditViewController.swift */,
+				B00CB5F529D7461B00BFE5C2 /* PinnedMessagesView.swift */,
+				B081B28429D73EE10026089C /* PinnedMessagesView.xib */,
 				B0DF03302283FFD8000F9492 /* PlaceholderTextView.swift */,
 				B026F242257C59CA003BA14B /* ProgressView.xib */,
 				B026F246257C5EFF003BA14B /* ProgressView.swift */,
@@ -736,6 +763,7 @@
 				B0CF83E0244E074A00E79D22 /* Localizable.strings in Resources */,
 				0AE7339C22C33FEF0089C8D8 /* ChatListViewCell.xib in Resources */,
 				B0BE301C27B3367E00B04631 /* InfoPlist.strings in Resources */,
+				B081B28529D73EE10026089C /* PinnedMessagesView.xib in Resources */,
 				0A3AE3B7274CAD5800CB673E /* ForwardMessageBar.xib in Resources */,
 				B0133AE323D1AADF00C813CA /* SendImageBar.xib in Resources */,
 				B0DF032D2282EE8A000F9492 /* SendMessageBar.xib in Resources */,
@@ -945,6 +973,7 @@
 				0A0380DA21B3CC8100A3FA0E /* ChatListViewController.swift in Sources */,
 				0A2F81C6229677DD007E562C /* AddByIDViewController.swift in Sources */,
 				0A68704029B5A10C00A6F126 /* QRScanner.swift in Sources */,
+				B00CB5F629D7461B00BFE5C2 /* PinnedMessagesView.swift in Sources */,
 				0AE50D4422156A250021F7B7 /* FindViewController.swift in Sources */,
 				B0BE302B27B8A3B600B04631 /* TopicSecurityViewController.swift in Sources */,
 				B01C693F22F87B5C003C0AA7 /* SignupViewController.swift in Sources */,
@@ -955,6 +984,7 @@
 				B027E5AE278901CA00A34C17 /* PreviewFormatter.swift in Sources */,
 				B0DF031D227C604C000F9492 /* MessageCell.swift in Sources */,
 				B0DF0323228051B4000F9492 /* MessageViewController+Keyboard.swift in Sources */,
+				B081B28329D6512E0026089C /* PagerViewCell.swift in Sources */,
 				B091BA542824916800317CDC /* WaveImage.swift in Sources */,
 				FA37AD24238B0D6F00301261 /* KeyboardInfo.swift in Sources */,
 				0AE50D4822156A5B0021F7B7 /* FindPresenter.swift in Sources */,
@@ -965,6 +995,7 @@
 				B0BE302D27BAC90E00B04631 /* TopicGeneralViewController.swift in Sources */,
 				B091BA5628272A2400317CDC /* WaveImageView.swift in Sources */,
 				B027E5B22789026200A34C17 /* SendReplyFormatter.swift in Sources */,
+				0A8FF2302A1DA927005A223A /* VCViewLayout.swift in Sources */,
 				0A35BA9E22836CCF00AA5E2F /* ContactsSynchronizer.swift in Sources */,
 				0A0D92D72840EFEF00B5B5B0 /* CallProviderDelegate.swift in Sources */,
 				B03066432805F2AA00497EF4 /* EntityTextAttachment.swift in Sources */,
@@ -975,6 +1006,7 @@
 				B0BE302327B771E100B04631 /* MultilineAlertView.swift in Sources */,
 				0A0016E721E7236900088188 /* MessageInteractor.swift in Sources */,
 				B027E5B02789020D00A34C17 /* QuoteFormatter.swift in Sources */,
+				B081B27F29D621380026089C /* DotSelectorImageView.swift in Sources */,
 				0A36776922B09C1900724873 /* EditMembersViewController.swift in Sources */,
 				B0125998229C982900688FCE /* ContactViewCell.swift in Sources */,
 				0A8EA5B029838E5900B116EA /* CredentialsChangeViewController.swift in Sources */,
@@ -1012,6 +1044,7 @@
 				B0DF03172279F027000F9492 /* RoundImageView.swift in Sources */,
 				B0A612B72294289000569DFE /* MessageViewController+SendMessageBarDelegate.swift in Sources */,
 				B0BA208523D5D8CF00C59BD4 /* FilePreviewController.swift in Sources */,
+				0A8FF2322A1DA94F005A223A /* VCViewCell.swift in Sources */,
 				0A35BAA02283A37500AA5E2F /* Utils.swift in Sources */,
 				B0A612B3228EDC7B00569DFE /* ButtonAttachment.swift in Sources */,
 				0ADDBC8B2249F617000BD00D /* ChatListViewCell.swift in Sources */,
@@ -1027,12 +1060,15 @@
 				B091BA58282DA01200317CDC /* SendForwardedFormatter.swift in Sources */,
 				B0133AE523D1ACBD00C813CA /* SendImageBar.swift in Sources */,
 				B091BA4C2820A98B00317CDC /* RecordedMediaPlayback.swift in Sources */,
+				B0F2F0C929DA295900100B24 /* MessageViewController+MessageDisplayLogic.swift in Sources */,
 				B01D2C712794E1E0009543F2 /* AbstractFormatter.swift in Sources */,
 				B012599C229CEBE600688FCE /* SelectedMemberViewCell.swift in Sources */,
 				0AEE8BEE226456080022EC3F /* UiUtils.swift in Sources */,
 				0AC33D032293C7A00060D263 /* NewGroupViewController.swift in Sources */,
 				0AE50D4622156A4B0021F7B7 /* FindInteractor.swift in Sources */,
+				B081B28129D638850026089C /* PagerView.swift in Sources */,
 				0A8C8A4621E5E72D00D8751E /* MessageViewController.swift in Sources */,
+				0A1BA3F02A0F382300990578 /* VCViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

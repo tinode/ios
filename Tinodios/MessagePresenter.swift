@@ -13,6 +13,8 @@ protocol MessagePresentationLogic {
     func updateTitleBar(pub: TheCard?, online: Bool?, deleted: Bool)
     func setOnline(online: Bool?)
     func runTypingAnimation()
+    func displayPinnedMessages(pins: [Int], selected: Int)
+    func reloadPinned(forSeq: Int)
     func presentMessages(messages: [StoredMessage], _ scrollToMostRecentMessage: Bool)
     func reloadMessages(fromSeqId loId: Int, toSeqId hiId: Int)
     func reloadAllMessages()
@@ -41,6 +43,16 @@ class MessagePresenter: MessagePresentationLogic {
     func setOnline(online: Bool?) {
         DispatchQueue.main.async {
             self.viewController?.setOnline(online: online)
+        }
+    }
+    func displayPinnedMessages(pins: [Int], selected: Int) {
+        DispatchQueue.main.async {
+            self.viewController?.displayPinnedMessages(pins: pins, selected: selected)
+        }
+    }
+    func reloadPinned(forSeq seq: Int) {
+        DispatchQueue.main.async {
+            self.viewController?.reloadPinned(forSeq: seq)
         }
     }
     func presentMessages(messages: [StoredMessage], _ scrollToMostRecentMessage: Bool) {

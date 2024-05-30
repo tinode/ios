@@ -2,7 +2,7 @@
 //  MessageDb.swift
 //  ios
 //
-//  Copyright © 2019-2022 Tinode. All rights reserved.
+//  Copyright © 2019-2023 Tinode. All rights reserved.
 //
 
 import Foundation
@@ -545,32 +545,81 @@ public class MessageDb {
         }
     }
 
-    /// Returns the newest message range (low + high seq ID values) not found in the cache.
-    func fetchNextMissingRange(topicId: Int64) -> MsgRange? {
-        let messages2 = self.table.alias("m2")
-        let hiQuery = self.table
-            .join(.leftOuter, messages2,
-                  on: self.table[self.seq] == (messages2[self.high] ?? messages2[self.seq] + 1) && messages2[self.topicId] == topicId)
-            .filter(self.table[self.topicId] == topicId &&
-                    self.table[self.seq] > 1 &&
-                    messages2[self.seq] == nil)
+    /// Using provided `ranges`, find those which are present in the database.
+    ///
+    /// - Parameters:
+    ///  - topicId Tinode topic ID (topics._id) to select from;
+    ///  - ranges ranges to search for presence in the DB.
+    /// - Returns ranges of missing IDs present in the database.
+    func getCachedRanges(topicId: Int64?, ranges: [MsgRange]) -> [MsgRange] {
+        var constr: Expression<Bool?> = Expression(value: false)
+        for r in ranges {
+            if r.hi != nil {
+                // Find deleted ranges.
+                constr = constr || (self.seq < r.hi! && self.high > r.low)
+                // Find normal entries.
+                constr = constr || (self.seq < r.hi! && self.seq >= r.low && self.high == nil)
+            } else {
+                // Find deleted ranges.
+                constr = constr || (self.seq <= r.low && self.high > r.low)
+                // Find normal entries.
+                constr = constr || (self.seq == r.low && self.high == nil)
+            }
+        }
 
-        guard let hi = try? db.scalar(hiQuery.select(self.table[self.seq].max)) else {
-            // No gap is found.
-            return nil
+        let query = self.table
+            .select(self.seq, self.high)
+            .filter(self.topicId == topicId && (constr))
+        print("getCachedRanges %s", query.asSQL())
+
+        do {
+            var found: [MsgRange] = []
+            for row in try db.prepare(query) {
+                found.append(MsgRange(low: row[self.seq]!, hi: row[self.high]))
+            }
+            found.sort()
+            return MsgRange.collapse(found)
+        } catch SQLite.Result.error(message: let errMsg, code: let code, statement: _) {
+            BaseDb.log.error("MessageDb[topicId = %lld] - getCachedRanges error: code = %d, error = %@", topicId ?? -1, code, errMsg)
+            return []
+        } catch {
+            BaseDb.log.error("MessageDb - getCachedRanges failed: topicId = %lld, error = %@", topicId ?? -1, error.localizedDescription)
+            return []
         }
-        // Find the first present message with ID less than the 'hi'.
-        let seqExpr = (self.high - 1) ?? self.seq
-        let lowQuery = self.table
-            .filter(self.topicId == topicId && self.seq < hi)
-        let low: Int
-        if let low2 = try? db.scalar(lowQuery.select(seqExpr.max)) {
-            // Low is inclusive thus +1.
-            low = low2 + 1
-        } else {
-            low = 1
+    }
+
+    /// Find the ranges of messages missing from the DB.
+    ///
+    /// - Parameters:
+    ///  - topicId Tinode topic ID (topics._id) to select from;
+    ///  - startFrom seq ID to search from (exclusive).
+    ///  - pageSize maximum number of messages to cover by the ranges.
+    ///  - newer if `true`, find newer messages, otherwise older.
+    /// - Returns: range of missing IDs if found, null if either all messages are present or no messages are found.
+    func getMissingRanges(topicId: Int64?, startFrom: Int, pageSize: Int, newer: Bool) -> [MsgRange] {
+        let constr = newer ? ((self.high ?? (self.seq + 1))>startFrom) : ((self.high ?? (self.seq + 1))<startFrom)
+        var query = self.table
+            .select(self.seq, self.high)
+            .filter(self.topicId == topicId && constr)
+        query = newer ? query.order(self.seq.asc) : query.order(self.seq.desc)
+        query = query.limit(pageSize)
+
+        print("getMissingRanges", query.asSQL())
+
+        do {
+            var found: [MsgRange] = []
+            for row in try db.prepare(query) {
+                found.append(MsgRange(low: row[self.seq]!, hi: row[self.high]))
+            }
+            found.sort()
+            return MsgRange.gaps(ranges: MsgRange.collapse(found))
+        } catch SQLite.Result.error(message: let errMsg, code: let code, statement: _) {
+            BaseDb.log.error("MessageDb[topicId = %lld] - getCachedRanges error: code = %d, error = %@", topicId ?? -1, code, errMsg)
+            return []
+        } catch {
+            BaseDb.log.error("MessageDb - getCachedRanges failed: topicId = %lld, error = %@", topicId ?? -1, error.localizedDescription)
+            return []
         }
-        return MsgRange(low: low, hi: hi)
     }
 
     func queryLatest() -> [StoredMessage]? {

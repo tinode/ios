@@ -349,9 +349,8 @@ public class SharedUtils {
 
     // Downloads an image.
     private static func downloadIcon(fromPath path: String, relativeTo baseUrl: URL, completion: @escaping ((UIImage?) -> Void)) {
-        print("Downloading icon: ", path, baseUrl)
         guard let url = URL(string: path, relativeTo: baseUrl) else {
-            print("Invalid icon url: ", path, baseUrl.absoluteString)
+            BaseDb.log.info("Invalid icon url: %@ %@", path, baseUrl.absoluteString)
             completion(nil)
             return
         }
@@ -369,20 +368,18 @@ public class SharedUtils {
         let device = UIDevice.current.userInterfaceIdiom == .phone ? "iphone" : UIDevice.current.userInterfaceIdiom == .pad ? "ipad" : ""
         let version = UIDevice.current.systemVersion
         let url = URL(string: "https://hosts.tinode.co/whoami?os=ios-\(version)&dev=\(device)")!
-        print("Self-identifying with the server. Endpoint: ", url.absoluteString)
         let task = URLSession.shared.dataTask(with: URLRequest(url: url)) { data, response, error in
             guard let data = data, error == nil else {
-                print("Branding config response error: " + (error?.localizedDescription ?? "Failed to self-identify"))
+                BaseDb.log.info("Branding config response error: %@", (error?.localizedDescription ?? "Failed to self-identify"))
                 return
             }
             let responseJSON = try? JSONSerialization.jsonObject(with: data, options: [])
             if let responseJSON = responseJSON as? [String: Any] {
-                print("Branding identity config: ", responseJSON)
 
                 if let code = responseJSON["code"] as? String {
                     SharedUtils.setUpBranding(withConfigurationCode: code)
                 } else {
-                    print("Branding config error: Missing configuration code in the response. Quitting.")
+                    BaseDb.log.info("Branding config error: Missing configuration code in the response. Quitting.")
                 }
             }
         }
@@ -392,15 +389,13 @@ public class SharedUtils {
     // Configures application branding and connection settings.
     public static func setUpBranding(withConfigurationCode configCode: String) {
         guard !configCode.isEmpty else {
-            print("Branding configuration code may not be empty. Skipping branding config.")
+            BaseDb.log.info("Branding configuration code may not be empty. Skipping branding config.")
             return
         }
-        print("Configuring branding with code '\(configCode)'")
         // Dummy url.
         // TODO: url should be based on the device fp (e.g. UIDevice.current.identifierForVendor).
         let url = URL(string: "https://hosts.tinode.co/id/\(configCode)")!
 
-        print("Configuring branding and app settings. Request url: ", url.absoluteString)
         let task = URLSession.shared.dataTask(with: URLRequest(url: url)) { data, response, error in
             guard let data = data, error == nil else {
                 print(error?.localizedDescription ?? "No data")
@@ -408,7 +403,6 @@ public class SharedUtils {
             }
             let responseJSON = try? JSONSerialization.jsonObject(with: data, options: [])
             if let responseJSON = responseJSON as? [String: Any] {
-                print("Branding configuration: ", responseJSON)
 
                 if let tosUrl = URL(string: responseJSON["tos_url"] as? String ?? "") {
                     SharedUtils.tosUrl = tosUrl.absoluteString

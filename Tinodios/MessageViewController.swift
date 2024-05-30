@@ -19,10 +19,20 @@ protocol MessageDisplayLogic: AnyObject {
     func reloadMessages(fromSeqId loId: Int, toSeqId hiId: Int)
     func updateProgress(forMsgId msgId: Int64, progress: Float)
     func applyTopicPermissions(withError: Error?)
+    func displayPinnedMessages(pins: [Int], selected: Int)
+    func reloadPinned(forSeq: Int)
     func endRefresh()
     func dismissVC()
     // Display or dismiss preview (e.g. reply preview) in the send message bar.
     func togglePreviewBar(with preview: NSAttributedString?, onAction action: PendingPreviewAction)
+}
+
+// Pending message is the one the user is either  replying to or forwarding.
+protocol PendingMessagePreviewDelegate: AnyObject {
+    // Calculates size for preview attributed string.
+    func pendingPreviewMessageSize(forMessage msg: NSAttributedString) -> CGSize
+    // Cancels preview.
+    func dismissPendingMessagePreview()
 }
 
 class MessageViewController: UIViewController {
@@ -30,7 +40,7 @@ class MessageViewController: UIViewController {
     public static let kNotificationSendAttachment = "SendAttachment"
 
     // MARK: static parameters
-    private enum Constants {
+    enum Constants {
         /// Size of the avatar in the nav bar in small state.
         static let kNavBarAvatarSmallState: CGFloat = 32
 
@@ -38,6 +48,7 @@ class MessageViewController: UIViewController {
         static let kAvatarSize: CGFloat = 30
 
         static let kProgressViewHeight: CGFloat = 30
+        static let kPinnedMessagesViewHeight: CGFloat = 50
 
         // Size of delivery marker (checkmarks etc)
         static let kDeliveryMarkerSize: CGFloat = 16
@@ -131,14 +142,14 @@ class MessageViewController: UIViewController {
 
     /// The `forwardMessageBar` is used as the `inputAccessoryView` in the view controller
     /// (for forwarded messages only).
-    private lazy var forwardMessageBar: ForwardMessageBar = {
+    lazy var forwardMessageBar: ForwardMessageBar = {
         let view = ForwardMessageBar()
         view.autoresizingMask = .flexibleHeight
         return view
     }()
 
     /// Avatar in the NavBar
-    private lazy var navBarAvatarView: AvatarWithOnlineIndicator = {
+    lazy var navBarAvatarView: AvatarWithOnlineIndicator = {
         let avatarIcon = AvatarWithOnlineIndicator()
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(navBarAvatarTapped(tapGestureRecognizer:)))
         avatarIcon.isUserInteractionEnabled = true
@@ -147,7 +158,7 @@ class MessageViewController: UIViewController {
     }()
 
     /// Call button in NavBar
-    private lazy var navBarCallBtn: UIBarButtonItem = {
+    lazy var navBarCallBtn: UIBarButtonItem = {
         return UIBarButtonItem(
             image: UIImage(systemName: "phone",
                            withConfiguration:UIImage.SymbolConfiguration(pointSize: 16, weight: .light)),
@@ -157,12 +168,13 @@ class MessageViewController: UIViewController {
     /// Pointer to the view holding messages.
     weak var collectionView: MessageView!
     private var collectionViewBottomAnchor: NSLayoutConstraint!
-    /// Pointer to the view holding messages.
-    weak var goToLatestButton: UIButton!
+    /// Button [GO to latest message].
+    private weak var goToLatestButton: UIButton!
     private var goToLatestButtonBottomAnchor: NSLayoutConstraint!
 
+
     var interactor: (MessageBusinessLogic & MessageDataStore)?
-    private let refreshControl = UIRefreshControl()
+    let refreshControl = UIRefreshControl()
 
     // MARK: properties
 
@@ -191,18 +203,19 @@ class MessageViewController: UIViewController {
     // * Database message id -> message offset.
     var messageDbIdIndex: [Int64: Int] = [:]
 
-    // Cache of message cell sizes. Calculation of cell sizes is heavy. Caching the result to improve scrolling performance.
-    // var cellSizeCache: [CGSize?] = []
+    // Pinned messages.
+    var pinnedMessageSeqs: [Int] = []
+    var pinnedSelectionIndex: Int = 0
 
     var isInitialLayout = true
 
-    // Highlight this cell when scroll finishes (after the user tapped on a quote).
+    // Highlight this cell when scroll finishes (after the user tapped on a quote or a pinned message).
     var highlightCellAtPathAfterScroll: IndexPath?
 
     // Size of the present update batch.
-    private var updateBatchSize = 0
+    var updateBatchSize = 0
     // Last message received timestamp - for tracking batches.
-    private var lastMessageReceived = Date.distantPast
+    var lastMessageReceived = Date.distantPast
 
     // The two below indicate whether to send typing notifications and read receipts.
     // Determined by the user specified account notifications settings.
@@ -341,7 +354,7 @@ class MessageViewController: UIViewController {
         view.addSubview(collectionView)
         self.collectionView = collectionView
 
-        collectionView.addSubview(refreshControl)
+        collectionView.refreshControl = refreshControl
         refreshControl.addTarget(self, action: #selector(self.loadPreviousPage), for: .valueChanged)
 
         // Setup UICollectionView constraints: fill the screen
@@ -569,6 +582,15 @@ class MessageViewController: UIViewController {
                 destinationVC.isAudioOnlyCall = (sender as? Int) == Constants.kAudioOnlyCall
             }
             destinationVC.topic = self.topic
+        case "Messages2VC":
+            let destinationVC = segue.destination as! VCViewController
+            if let req = sender as? VCJoinRequest {
+                destinationVC.callDirection = .incoming
+                destinationVC.callSeqId = req.seq
+            } else {
+                destinationVC.callDirection = .outgoing
+            }
+            destinationVC.topic = self.topic
         default:
             break
         }
@@ -590,251 +612,60 @@ class MessageViewController: UIViewController {
     }
 
     @objc func navBarCallTapped(sender: UIMenuController) {
-        let alert = UIAlertController(title: NSLocalizedString("Call", comment: "Menu title for selecting type of call"), message: nil, preferredStyle: .actionSheet)
-        alert.modalPresentationStyle = .popover
-        alert.addAction(UIAlertAction(title: NSLocalizedString("Audio-only", comment: "Menu item: audio-only call"), style: .default, handler: { audioCall in
-            self.performSegue(withIdentifier: "Messages2Call", sender: Constants.kAudioOnlyCall)
-        }))
-        alert.addAction(UIAlertAction(title: NSLocalizedString("Video", comment: "Menu item: video call"), style: .default, handler: { videoCall in
-            self.performSegue(withIdentifier: "Messages2Call", sender: Constants.kVideoCall)
-        }))
-        alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Alert action"), style: .cancel, handler: nil))
-        if let presentation = alert.popoverPresentationController {
-            presentation.barButtonItem = navBarCallBtn
-        }
-        self.present(alert, animated: true, completion: nil)
-    }
-}
-
-// Methods for updating title area and refreshing messages.
-extension MessageViewController: MessageDisplayLogic {
-    private func showInvitationDialog() {
-        guard self.presentedViewController == nil else { return }
-        let attrs = [ NSAttributedString.Key.font: UIFont.systemFont(ofSize: 20.0) ]
-        let title = NSAttributedString(string: NSLocalizedString("New Chat", comment: "View title"), attributes: attrs)
-        let alert = UIAlertController(
-            title: nil,
-            message: NSLocalizedString("You are invited to start a new chat. What would you like?", comment: "Call to action"),
-            preferredStyle: .actionSheet)
-        alert.setValue(title, forKey: "attributedTitle")
-        alert.addAction(UIAlertAction(
-            title: NSLocalizedString("Accept", comment: "Invite reaction button"), style: .default,
-            handler: { _ in
-                self.interactor?.acceptInvitation()
-        }))
-        alert.addAction(UIAlertAction(
-            title: NSLocalizedString("Ignore", comment: "Invite reaction button"), style: .default,
-            handler: { _ in
-                self.interactor?.ignoreInvitation()
-        }))
-        alert.addAction(UIAlertAction(
-            title: NSLocalizedString("Block", comment: "Invite reaction button"), style: .default,
-            handler: { _ in
-                self.interactor?.blockTopic()
-        }))
-        self.present(alert, animated: true)
-    }
-
-    func switchTopic(topic: String?) {
-        topicName = topic
-    }
-
-    func updateTitleBar(pub: TheCard?, online: Bool?, deleted: Bool) {
-        assert(Thread.isMainThread)
-        self.navigationItem.title = pub?.fn ?? NSLocalizedString("Undefined", comment: "Undefined chat name")
-
-        navBarAvatarView.set(pub: pub, id: topicName, online: online, deleted: deleted)
-        navBarAvatarView.bounds = CGRect(x: 0, y: 0, width: Constants.kNavBarAvatarSmallState, height: Constants.kNavBarAvatarSmallState)
-
-        navBarAvatarView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-                navBarAvatarView.heightAnchor.constraint(equalToConstant: Constants.kNavBarAvatarSmallState),
-                navBarAvatarView.widthAnchor.constraint(equalTo: navBarAvatarView.heightAnchor)
-            ])
-        var items = [UIBarButtonItem(customView: navBarAvatarView)]
-        let webrtc = Cache.tinode.getServerParam(for: "iceServers") != nil
-        if let t = self.topic, t.isP2PType, webrtc {
-            items.append(self.navBarCallBtn)
-        }
-        self.navigationItem.setRightBarButtonItems(items, animated: false)
-    }
-
-    func setOnline(online: Bool?) {
-        assert(Thread.isMainThread)
-        navBarAvatarView.online = online
-    }
-
-    func runTypingAnimation() {
-        assert(Thread.isMainThread)
-        navBarAvatarView.presentTypingAnimation(steps: 30)
-    }
-
-    func reloadAllMessages() {
-        assert(Thread.isMainThread)
-        collectionView.reloadSections(IndexSet(integer: 0))
-    }
-
-    func displayChatMessages(messages: [StoredMessage], _ scrollToMostRecentMessage: Bool) {
-        assert(Thread.isMainThread)
-        guard collectionView != nil else { return }
-        let oldData = self.messages
-        let newData: [StoredMessage] = messages
-
-        // Both empty: no change.
-        guard !oldData.isEmpty || !newData.isEmpty else { return }
-
-        self.messageSeqIdIndex = newData.enumerated().reduce([Int: Int]()) { (dict, item) -> [Int: Int] in
-            var dict = dict
-            dict[item.element.seqId] = item.offset
-            return dict
-        }
-        self.messageDbIdIndex = newData.enumerated().reduce([Int64: Int]()) { (dict, item) -> [Int64: Int] in
-            var dict = dict
-            dict[item.element.msgId] = item.offset
-            return dict
-        }
-
-        // Update batch stats.
-        let now = Date()
-        let delta = newData.count - oldData.count
-        if now.millisecondsSince1970 > self.lastMessageReceived.millisecondsSince1970 + Constants.kUpdateBatchTimeDeltaThresholdMs {
-            self.updateBatchSize = delta
-        } else {
-            self.updateBatchSize += delta
-        }
-        self.lastMessageReceived = now
-
-        if oldData.isEmpty || newData.isEmpty || self.updateBatchSize > Constants.kUpdateBatchFullRefreshThreshold {
-            self.messages = newData
-            collectionView.reloadSections(IndexSet(integer: 0))
-            collectionView.layoutIfNeeded()
-            if scrollToMostRecentMessage {
-                collectionView.scrollToBottom()
+        switch self.topicType {
+        case .p2p:
+            let alert = UIAlertController(title: NSLocalizedString("Call", comment: "Menu title for selecting type of call"), message: nil, preferredStyle: .actionSheet)
+            alert.modalPresentationStyle = .popover
+            alert.addAction(UIAlertAction(title: NSLocalizedString("Audio-only", comment: "Menu item: audio-only call"), style: .default, handler: { audioCall in
+                self.performSegue(withIdentifier: "Messages2Call", sender: Constants.kAudioOnlyCall)
+            }))
+            alert.addAction(UIAlertAction(title: NSLocalizedString("Video", comment: "Menu item: video call"), style: .default, handler: { videoCall in
+                self.performSegue(withIdentifier: "Messages2Call", sender: Constants.kVideoCall)
+            }))
+            alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Alert action"), style: .cancel, handler: nil))
+            if let presentation = alert.popoverPresentationController {
+                presentation.barButtonItem = navBarCallBtn
             }
-        } else {
-            // Get indexes of inserted and deleted items.
-            let diff = Utils.diffMessageArray(sortedOld: oldData, sortedNew: newData)
-
-            // Each insertion or deletion may change the appearance of the preceeding and following messages.
-            // Calculate indexes of all items which need to be updated.
-            var refresh: [Int] = []
-            for index in diff.mutated {
-                if index > 0 {
-                    // Refresh the preceeding item.
-                    refresh.append(index - 1)
-                }
-                if index < newData.count - 1 {
-                    // Refresh the following item.
-                    refresh.append(index + 1)
-                }
-                if index < newData.count {
-                    refresh.append(index)
-                }
-            }
-            // Ensure uniqueness of values. No need to reload newly inserted values.
-            // The app will crash if the same index is marked as removed and refreshed. Which seems
-            // to be an Apple bug because removed index is against the old array, refreshed against the new.
-            refresh = Array(Set(refresh).subtracting(Set(diff.inserted)))
-
-            if !diff.inserted.isEmpty || !diff.removed.isEmpty {
-                collectionView.performBatchUpdates({ () -> Void in
-                    self.messages = newData
-                    if diff.removed.count > 0 {
-                        collectionView.deleteItems(at: diff.removed.map { IndexPath(item: $0, section: 0) })
-                    }
-                    if diff.inserted.count > 0 {
-                        collectionView.insertItems(at: diff.inserted.map { IndexPath(item: $0, section: 0) })
-                    }
-                }, completion: nil)
-            }
-            if !refresh.isEmpty {
-                collectionView.performBatchUpdates({ () -> Void in
-                    self.messages = newData
-                    self.collectionView.reloadItems(at: refresh.map { IndexPath(item: $0, section: 0) })
-                    self.collectionView.layoutIfNeeded()
-                    if scrollToMostRecentMessage {
-                        self.collectionView.scrollToBottom()
-                    }
-                }, completion: nil)
-            }
+            self.present(alert, animated: true, completion: nil)
+        case .grp:
+            self.performSegue(withIdentifier: "Messages2VC", sender: nil)
+        default:
+            break
         }
-    }
-
-    func reloadMessages(fromSeqId loId: Int, toSeqId hiId: Int) {
-        assert(Thread.isMainThread)
-        guard self.collectionView != nil else { return }
-        let hiIdUpper = hiId + 1
-        let rowIds = (loId..<hiIdUpper).map { self.messageSeqIdIndex[$0] }.filter { $0 != nil }
-        self.collectionView.reloadItems(at: rowIds.map { IndexPath(item: $0!, section: 0) })
-    }
-
-    func updateProgress(forMsgId msgId: Int64, progress: Float) {
-        assert(Thread.isMainThread)
-        if let index = self.messageDbIdIndex[msgId],
-            let cell = self.collectionView.cellForItem(at: IndexPath(row: index, section: 0)) as? MessageCell {
-            cell.progressView.setProgress(progress)
-        }
-    }
-
-    func applyTopicPermissions(withError err: Error? = nil) {
-        assert(Thread.isMainThread)
-        // Make sure the view is visible.
-        guard self.isViewLoaded && ((self.view?.window) != nil) else { return }
-
-        if !(self.topic?.isReader ?? false) || err != nil {
-            self.collectionView.showNoAccessOverlay(withMessage: err?.localizedDescription)
-        } else {
-            self.collectionView.removeNoAccessOverlay()
-        }
-
-        let publishingForbidden = !(self.topic?.isWriter ?? false) || err != nil
-        // No "W" permission. Replace input field with a message "Not available".
-        self.sendMessageBar.toggleNotAvailableOverlay(visible: publishingForbidden)
-        if publishingForbidden {
-            // Dismiss all pending messages.
-            self.togglePreviewBar(with: nil)
-            self.interactor?.dismissPendingMessage()
-        }
-        // The peer is missing either "W" or "R" permissions. Show "Peer's messaging is disabled" message.
-        if let acs = self.topic?.peer?.acs, let missing = acs.missing {
-            self.sendMessageBar.togglePeerMessagingDisabled(visible: acs.isJoiner(for: .want) && (missing.isReader || missing.isWriter))
-        }
-        // We are offered to join a chat.
-        if let acs = self.topic?.accessMode, acs.isJoiner(for: Acs.Side.given) && (acs.excessive?.description.contains("RW") ?? false) {
-            self.showInvitationDialog()
-        }
-    }
-
-    func endRefresh() {
-        assert(Thread.isMainThread)
-        self.refreshControl.endRefreshing()
-    }
-
-    func dismissVC() {
-        assert(Thread.isMainThread)
-        self.navigationController?.popViewController(animated: true)
-        self.dismiss(animated: true)
-    }
-
-    func togglePreviewBar(with preview: NSAttributedString?, onAction action: PendingPreviewAction = .none) {
-        if preview == nil {
-            isForwardingMessage = false
-        }
-        if isForwardingMessage {
-            self.forwardMessageBar.togglePendingPreviewBar(with: preview)
-        } else {
-            self.sendMessageBar.togglePendingPreviewBar(withMessage: preview, onAction: action)
-        }
-        self.reloadInputViews()
     }
 }
 
 // Methods for filling message with content and layout out message subviews.
 extension MessageViewController: UICollectionViewDataSource {
 
+    func numberOfSections(in: UICollectionView) -> Int {
+        return 1
+    }
+
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         self.collectionView.toggleNoMessagesNote(on: messages.isEmpty)
         return messages.count
+    }
+
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        if kind == UICollectionView.elementKindSectionHeader {
+            let sectionHeader = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: String(describing: PinnedMessagesView.self), for: indexPath) as! PinnedMessagesView
+
+            // Configure header.
+            if self.pinnedMessageSeqs.isEmpty {
+                sectionHeader.isHidden = true
+            } else {
+                sectionHeader.delegate = self
+                sectionHeader.topicName = self.topicName
+                sectionHeader.pins = self.pinnedMessageSeqs
+                sectionHeader.selected = 0
+                sectionHeader.isHidden = false
+            }
+
+            return sectionHeader
+        }
+
+        return UICollectionReusableView()
     }
 
     // Configure message cell for the given index: fill data and lay out subviews.
@@ -1068,6 +899,19 @@ extension MessageViewController: MessageViewLayoutDelegate {
 
     // Claculate positions and sizes of all subviews in a cell.
     func collectionView(_ collectionView: UICollectionView, fillAttributes attr: MessageViewLayoutAttributes) {
+        if attr.representedElementCategory == .supplementaryView {
+            // Request for pinned area attributes (section header).
+            let height: CGFloat = self.pinnedMessageSeqs.isEmpty ? 0 : Constants.kPinnedMessagesViewHeight
+            attr.frame = CGRect(origin: CGPoint(), size: CGSize(width: collectionView.frame.width - collectionView.layoutMargins.left - collectionView.layoutMargins.right, height: height))
+            attr.zIndex = 1
+            return
+        } else if attr.representedElementCategory == .decorationView {
+            // This should not happen.
+            return
+        }
+
+        // Fill out attributes for a regular message bubble.
+
         let indexPath = attr.indexPath
 
         // Cell content
@@ -1173,7 +1017,6 @@ extension MessageViewController: MessageViewLayoutDelegate {
         let showProgress = shouldShowProgressBar(for: message)
         let containerHeight = calcContainerSize(for: message, avatarsVisible: hasAvatars, progressVisible: showProgress).height
         let size = CGSize(width: calcCellWidth(), height: calcCellHeightFromContent(for: message, at: indexPath, containerHeight: containerHeight, avatarsVisible: hasAvatars, progressVisible: showProgress))
-        // cellSizeCache[indexPath.item] = size
         return size
     }
 
@@ -1268,14 +1111,6 @@ extension MessageViewController: MessageViewLayoutDelegate {
                                         context: nil).integral.size :
             textSizeHelper.computeSize(for: attributedText, within: maxWidth)
     }
-}
-
-// Pending message is the one the user is either  replying to or forwarding.
-protocol PendingMessagePreviewDelegate: AnyObject {
-    // Calculates size for preview attributed string.
-    func pendingPreviewMessageSize(forMessage msg: NSAttributedString) -> CGSize
-    // Cancels preview.
-    func dismissPendingMessagePreview()
 }
 
 extension MessageViewController: PendingMessagePreviewDelegate {

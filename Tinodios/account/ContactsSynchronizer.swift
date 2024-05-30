@@ -2,7 +2,7 @@
 //  ContactsSynchronizer.swift
 //  Tinodios
 //
-//  Copyright © 2019 Tinode. All rights reserved.
+//  Copyright © 2019-2023 Tinode. All rights reserved.
 //
 
 import Foundation
@@ -151,9 +151,9 @@ class ContactsSynchronizer {
                 // Generic params don't matter.
                 _ = try tinode.subscribe(to: Tinode.kTopicFnd, set: MsgSetMeta<Int, Int>?(nil), get: nil).getResult()
                 let metaDesc: MetaSetDesc<Int, String> = MetaSetDesc(pub: nil, priv: contacts)
-                let setMeta: MsgSetMeta<Int, String> = MsgSetMeta<Int, String>(desc: metaDesc, sub: nil, tags: nil, cred: nil)
+                let setMeta: MsgSetMeta<Int, String> = MsgSetMeta<Int, String>(desc: metaDesc)
                 _ = try tinode.setMeta(for: Tinode.kTopicFnd, meta: setMeta).getResult()
-                let meta = MsgGetMeta(desc: nil, sub: MetaGetSub(user: nil, ims: lastSyncMarker, limit: nil), data: nil, del: nil, tags: false, cred: false)
+                let meta = MsgGetMeta(sub: MetaGetSub(user: nil, ims: lastSyncMarker, limit: nil))
                 let future = tinode.getMeta(topic: Tinode.kTopicFnd, query: meta)
                 if try future.waitResult() {
                     let pkt = try! future.getResult()

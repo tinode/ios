@@ -32,7 +32,6 @@ public protocol TopicProto: AnyObject {
     var lastSeen: LastSeen? { get set }
     var online: Bool { get set }
     var cachedMessageRange: MsgRange? { get }
-    var missingMessageRange: MsgRange? { get }
     var isArchived: Bool { get }
     var isJoiner: Bool { get }
     var isBlocked: Bool { get }
@@ -60,6 +59,7 @@ public protocol TopicProto: AnyObject {
     func expunge(hard: Bool)
     func setSeqAndFetch(newSeq: Int?)
     func getMessage(byEffectiveSeq seqId: Int) -> Message?
+    func missingMessageRanges(startFrom: Int, pageSize: Int, newer: Bool) -> [MsgRange]?
 
     func allMessagesReceived(count: Int?)
     func allSubsReceived()
@@ -122,6 +122,8 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
         open func onMetaDesc(desc: Description<DP, DR>) {}
         // {meta what="tags"} message received.
         open func onMetaTags(tags: [String]) {}
+        // {meta what="aux"} message received.
+        open func onMetaAux(aux: [String:JSONValue]) {}
         // {meta what="sub"} message received and all subs were processed.
         open func onSubsUpdated() {}
         // {pres} received.
@@ -145,9 +147,13 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
             meta.setData(since: since, before: before, limit: limit)
             return self
         }
+        public func withData(ranges: [MsgRange], limit: Int?) -> MetaGetBuilder {
+            meta.setData(ranges: ranges, limit: limit);
+            return self
+        }
         public func withEarlierData(limit: Int?) -> MetaGetBuilder {
-            if let r = topic.missingMessageRange, r.low >= 1 {
-                return withData(since: r.lower, before: r.upper, limit: limit)
+            if let r = topic.cachedMessageRange, r.low >= 1 {
+                return withData(since: nil, before: r.lower, limit: limit)
             }
             return withData(since: nil, before: nil, limit: limit)
         }
@@ -195,6 +201,10 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
         }
         public func withTags() -> MetaGetBuilder {
             meta.setTags()
+            return self
+        }
+        public func withAux() -> MetaGetBuilder {
+            meta.setAux()
             return self
         }
         public func build() -> MsgGetMeta {
@@ -313,6 +323,7 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
     // Cache of topic subscribers indexed by userID
     internal var subs: [String: Subscription<SP, SR>]?
     public var tags: [String]?
+    public var aux: [String: JSONValue]?
     private var lastKeyPress: Date = Date(timeIntervalSince1970: 0)
 
     public var online: Bool = false {
@@ -433,8 +444,8 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
         return store?.getCachedMessagesRange(topic: self)
     }
 
-    public var missingMessageRange: MsgRange? {
-        return store?.getNextMissingRange(topic: self)
+    public func missingMessageRanges(startFrom: Int, pageSize: Int, newer: Bool) -> [MsgRange]? {
+        return store?.getMissingRanges(topic: self, startFrom: startFrom, pageSize: pageSize, newer: newer)
     }
 
     // Tells how many topic subscribers have reported the message as read or received.
@@ -703,6 +714,16 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
         self.tags = tags
         store?.topicUpdate(topic: self)
     }
+
+    internal func update(aux: [String:JSONValue]) {
+        if self.aux == nil {
+            self.aux = aux
+        } else {
+            _ = self.aux!.merge(with: aux)
+        }
+        store?.topicUpdate(topic: self)
+    }
+
     internal func update(desc: MetaSetDesc<DP, DR>) {
         if self.description.merge(desc: desc) {
             self.store?.topicUpdate(topic: self)
@@ -729,6 +750,10 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
         if let tags = meta.tags {
             self.update(tags: tags)
             self.listener?.onMetaTags(tags: tags)
+        }
+        if let aux = meta.aux {
+            self.update(aux: aux)
+            self.listener?.onMetaAux(aux: aux)
         }
     }
     internal func update(acsMap: [String: String]?, sub: MetaSetSub) {
@@ -833,6 +858,11 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
         listener?.onMetaTags(tags: tags)
     }
 
+    private func routeMetaAux(aux: [String:JSONValue]) {
+        self.update(aux: aux)
+        listener?.onMetaAux(aux: aux)
+    }
+
     public func routeMeta(meta: MsgServerMeta) {
         if meta.desc != nil {
             routeMetaDesc(meta: meta)
@@ -848,6 +878,9 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
         }
         if meta.tags != nil {
             routeMetaTags(tags: meta.tags!)
+        }
+        if meta.aux != nil {
+            routeMetaAux(aux: meta.aux!)
         }
         // update listener
         listener?.onMeta(meta: meta)
@@ -1187,6 +1220,18 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
             if let s = sub {
                 processSub(newsub: s)
             }
+        case .kUpd:
+            // A topic subscriber has updated his description.
+            if (pres.src != nil && tinode!.getTopic(topicName: pres.src!) == nil) {
+                // Issue {get sub} only if the current user has no relationship with the updated user.
+                // Otherwise 'me' will issue a {get desc} request.
+                getMeta(query: metaGetBuilder().withSub(user: pres.src).build())
+            }
+        case .kAux:
+            getMeta(query: metaGetBuilder().withAux().build())
+        case .kMsg, .kRecv, .kRead:
+            // Explicitly ignored: handled by the 'me' topic.
+            break
         default:
             Tinode.log.error("pres message - unknown what: %@", String(describing: pres.what))
         }
@@ -1387,10 +1432,22 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
     }
 
     public func delMessages(ids: [Int], hard: Bool) -> PromisedReply<ServerMessage> {
-        guard let l = MsgRange.listToRanges(ids) else {
+        guard let l = MsgRange.toRanges(ids) else {
             return PromisedReply<ServerMessage>(error: TopicError.deleteFailure("No messages to delete"))
         }
         return delMessages(inRanges: l, hard: hard)
+    }
+
+    public func getAux(key: String) -> JSONValue? {
+        guard let aux = aux else { return nil }
+        return aux[key]
+    }
+
+    public func setAux(key: String, value: JSONValue?) {
+        if (aux == nil) {
+            aux = [:]
+        }
+        aux![key] = value
     }
 
     public func syncOne(msgId: Int64) -> PromisedReply<ServerMessage> {

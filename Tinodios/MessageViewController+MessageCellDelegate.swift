@@ -36,10 +36,10 @@ extension MessageViewController: MessageCellDelegate {
                 break
             case "/audio/toggle-play":
                 handleToggleAudioPlay(in: cell, draftyEntityKey: Int(url.extractQueryParam(named: "key") ?? ""))
-                break
             case "/video":
                 showVideoPreview(in: cell, draftyEntityKey: Int(url.extractQueryParam(named: "key") ?? ""))
-                break
+            case "/vc-join":
+                handleVCJoinTap(in: cell)
             default:
                 Cache.log.error("MessageVC - unknown tinode:// action: %@", url.description)
             }
@@ -141,6 +141,14 @@ extension MessageViewController: MessageCellDelegate {
                     menuItems.append(MessageMenuItem(title: NSLocalizedString("Edit", comment: "Menu item"), action: #selector(showEditPreview(sender:)), seqId: cell.seqId))
                 }
             }
+
+            if self.topic?.isAdmin ?? false {
+                if self.topic!.pinned.contains(where: { $0 == cell.seqId }) {
+                    menuItems.append(MessageMenuItem(title: NSLocalizedString("Unpin", comment: "Menu item for un-pinning message"), action: #selector(unpinMessage(sender:)), seqId: cell.seqId))
+                } else {
+                    menuItems.append(MessageMenuItem(title: NSLocalizedString("Pin", comment: "Menu item for pinning message"), action: #selector(pinMessage(sender:)), seqId: cell.seqId))
+                }
+            }
         }
 
         UIMenuController.shared.menuItems = menuItems
@@ -198,6 +206,16 @@ extension MessageViewController: MessageCellDelegate {
             self.sendMessageBar.inputField.text = original
             self.showInPreviewBar(content: quote, forwarded: false, onAction: .edit)
         }
+    }
+
+    @objc func pinMessage(sender: UIMenuController) {
+        guard let menuItem = sender.menuItems?.first as? MessageMenuItem, menuItem.seqId > 0 else { return }
+        _ = self.topic?.pinMessage(seq: menuItem.seqId , pin: true)
+    }
+
+    @objc func unpinMessage(sender: UIMenuController) {
+        guard let menuItem = sender.menuItems?.first as? MessageMenuItem, menuItem.seqId > 0 else { return }
+        _ = self.topic?.pinMessage(seq: menuItem.seqId , pin: false)
     }
 
     private func showQuotedPreview(sender: UIMenuController, isReply: Bool, completion: @escaping (PendingMessage?) -> Void) {
@@ -399,11 +417,21 @@ extension MessageViewController: MessageCellDelegate {
         performSegue(withIdentifier: "ShowVideoPreview", sender: content)
     }
 
+    private func handleVCJoinTap(in cell: MessageCell) {
+        guard let topicName = self.topicName else { return }
+        let req = VCJoinRequest(topic: topicName, seq: cell.seqId)
+        performSegue(withIdentifier: "Messages2VC", sender: req)
+    }
+
     func handleQuoteClick(in cell: MessageCell) {
         guard let index = messageSeqIdIndex[cell.seqId] else { return }
-        let msg = messages[index]
-        guard let seqId = Int(msg.head?["reply"]?.asString() ?? ""), let itemIdx = messageSeqIdIndex[seqId] else { return }
-        let path = IndexPath(item: itemIdx, section: 0)
+        guard let seqId = Int(messages[index].head?["reply"]?.asString() ?? "") else { return }
+        scrollToAndAnimate(seqId: seqId)
+    }
+
+    func scrollToAndAnimate(seqId: Int) {
+        guard let index = messageSeqIdIndex[seqId] else { return }
+        let path = IndexPath(item: index, section: 0)
         if let cell = collectionView.cellForItem(at: path) as? MessageCell {
             // If the cell is already visible.
             cell.highlightAnimated(withDuration: 4.0)
@@ -412,6 +440,18 @@ extension MessageViewController: MessageCellDelegate {
             // after the view scrolls the cell into the viewport.
             self.highlightCellAtPathAfterScroll = path
         }
-        self.collectionView.scrollToItem(at: path, at: .top, animated: true)
+        self.collectionView.scrollToItem(at: path, at: .centeredVertically, animated: true)
+    }
+}
+
+extension MessageViewController: PinnedMessagesDelegate {
+    /// Tap on Cancel button.
+    func didTapCancel(seq: Int) {
+        self.interactor?.pinMessage(seqId: seq, pin: false)
+    }
+
+    /// Tap on the message.
+    func didTapMessage(seq: Int) {
+        scrollToAndAnimate(seqId: seq)
     }
 }

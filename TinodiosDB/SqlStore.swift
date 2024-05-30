@@ -2,7 +2,7 @@
 //  SqlStore.swift
 //  msgr
 //
-//  Copyright © 2019 Tinode. All rights reserved.
+//  Copyright © 2019-2023 Tinode. All rights reserved.
 //
 
 import Foundation
@@ -103,16 +103,19 @@ public class SqlStore: Storage {
         }
     }
 
-    /// The min-max of message.seq found in the cache. There could be gaps between min and max.
+    public func msgIsCached(topic: TopicProto, ranges: [MsgRange]) -> [MsgRange] {
+        guard let st = topic.payload as? StoredTopic, let topicId = st.id else { return [] }
+        return self.dbh?.messageDb?.getCachedRanges(topicId: topicId, ranges: ranges) ?? []
+    }
+
     public func getCachedMessagesRange(topic: TopicProto) -> MsgRange? {
         guard let st = topic.payload as? StoredTopic else { return nil }
         return MsgRange(low: st.minLocalSeq ?? 0, hi: (st.maxLocalSeq ?? 0) + 1)
     }
 
-    /// Find the most recent range of messages not present in the cache.
-    public func getNextMissingRange(topic: TopicProto) -> MsgRange? {
-        guard let st = topic.payload as? StoredTopic, let topicId = st.id, topicId > 0 else { return nil }
-        return dbh?.messageDb?.fetchNextMissingRange(topicId: topicId)
+    public func getMissingRanges(topic: TopicProto, startFrom: Int, pageSize: Int, newer: Bool) -> [MsgRange] {
+        guard let st = topic.payload as? StoredTopic, let topicId = st.id else { return [] }
+        return self.dbh?.messageDb?.getMissingRanges(topicId: topicId, startFrom: startFrom, pageSize: pageSize, newer: newer) ?? []
     }
 
     public func setRead(topic: TopicProto, read: Int) -> Bool {

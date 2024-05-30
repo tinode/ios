@@ -320,6 +320,9 @@
 /* Label shown next to an inline image */
 "Picture" = "Fotografía";
 
+/* Menu item for pinning message */
+"Pin" = "Anclar";
+
 /* Error message */
 "Playback failed" = "Error en la reproducción";
 
@@ -424,6 +427,9 @@
 
 /* Displayed when the type of attachment cannot be determined */
 "Unknown type" = "Tipo desconocido";
+
+/* Menu item for un-pinning message */
+"Unpin" = "Desanclar\n";
 
 /* Label shown next to an unsupported Drafty format element
    Unsupported (unknown) Drafty tag */

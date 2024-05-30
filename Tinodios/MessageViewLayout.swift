@@ -2,7 +2,7 @@
 //  MessageViewLayout.swift
 //  Tinodios
 //
-//  Copyright © 2019-2022 Tinode LLC. All rights reserved.
+//  Copyright © 2019-2023 Tinode LLC. All rights reserved.
 //
 
 import UIKit
@@ -11,7 +11,7 @@ protocol MessageViewLayoutDelegate: AnyObject {
     func collectionView(_ collectionView: UICollectionView, fillAttributes: MessageViewLayoutAttributes)
 }
 
-class MessageViewLayout: UICollectionViewLayout {
+class MessageViewLayout: UICollectionViewFlowLayout {
 
     // MARK: private vars
 
@@ -19,7 +19,8 @@ class MessageViewLayout: UICollectionViewLayout {
 
     fileprivate var contentHeight: CGFloat = 0
 
-    fileprivate var attributeCache: [MessageViewLayoutAttributes] = []
+    fileprivate var attrCellCache: [MessageViewLayoutAttributes] = []
+    fileprivate var attrHeader: MessageViewLayoutAttributes!
 
     fileprivate var contentWidth: CGFloat {
         guard let collectionView = collectionView else {
@@ -45,33 +46,41 @@ class MessageViewLayout: UICollectionViewLayout {
         }
 
         let itemCount = collectionView.numberOfItems(inSection: 0)
-        if attributeCache.count == itemCount {
+        if attrCellCache.count == itemCount {
             // Item count did not change. Skip update
             return
         }
 
         // Calculate and cache cell attributes.
-        attributeCache.removeAll(keepingCapacity: true)
-        var yOffset: CGFloat = 0 // collectionView.layoutMargins.top
+        attrCellCache.removeAll(keepingCapacity: true)
         let leftMargin = collectionView.layoutMargins.left
+        self.attrHeader = MessageViewLayoutAttributes(forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, with: IndexPath(item: 0, section: 0))
+        delegate.collectionView(collectionView, fillAttributes: self.attrHeader)
+
+        var yOffset: CGFloat = self.attrHeader.frame.maxY
         for item in 0 ..< itemCount {
             let indexPath = IndexPath(item: item, section: 0)
-            let attr = MessageViewLayoutAttributes(forCellWith: indexPath)
-            delegate.collectionView(collectionView, fillAttributes: attr)
-
+            let cellAttr = MessageViewLayoutAttributes(forCellWith: indexPath)
+            delegate.collectionView(collectionView, fillAttributes: cellAttr)
             // Adjust frame origin: add margin and shift down.
-            attr.frame.origin.y += yOffset
-            attr.frame.origin.x += leftMargin
-            attributeCache.append(attr)
-            yOffset = attr.frame.maxY + attr.cellSpacing
-            contentHeight = attr.frame.maxY
+            cellAttr.frame.origin.y += yOffset
+            cellAttr.frame.origin.x += leftMargin
+            attrCellCache.append(cellAttr)
+            yOffset = cellAttr.frame.maxY + cellAttr.cellSpacing
+            contentHeight = cellAttr.frame.maxY
         }
     }
 
     override func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
         var visibleAttributes = [UICollectionViewLayoutAttributes]()
+        if attrCellCache.isEmpty {
+            return visibleAttributes
+        }
+
+        visibleAttributes.append(adjustHeaderAttributesIfNeeded(attrHeader))
+
         // Loop through the cache and look for items in the rect
-        for attr in attributeCache {
+        for attr in attrCellCache {
             if attr.frame.intersects(rect) {
                 visibleAttributes.append(attr)
             }
@@ -81,16 +90,36 @@ class MessageViewLayout: UICollectionViewLayout {
     }
 
     override func layoutAttributesForItem(at indexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
-        return attributeCache[indexPath.item]
+        guard attrCellCache.indices.contains(indexPath.item) else {
+            // FIXME: this shouldn't happen.
+            Cache.log.error("MessageViewLayout attributes cache missing index %d", indexPath.item)
+            return MessageViewLayoutAttributes(forCellWith: indexPath)
+        }
+        return attrCellCache[indexPath.item]
+    }
+
+    override func layoutAttributesForSupplementaryView(ofKind kind: String, at indexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
+        return adjustHeaderAttributesIfNeeded(attrHeader)
+    }
+
+    override func shouldInvalidateLayout(forBoundsChange newBounds: CGRect) -> Bool {
+        return true
     }
 
     override func invalidateLayout() {
         super.invalidateLayout()
 
-        attributeCache.removeAll(keepingCapacity: true)
+        attrCellCache.removeAll(keepingCapacity: true)
     }
 
     // MARK: helper methods
+    private func adjustHeaderAttributesIfNeeded(_ attr: UICollectionViewLayoutAttributes) -> UICollectionViewLayoutAttributes {
+        guard let collectionView = collectionView else { return attr }
+        guard attr.indexPath.section == 0 else { return attr }
+
+        attr.frame = CGRect(origin: CGPoint(x: 0, y: max(0, collectionView.contentOffset.y)), size: attr.size)
+        return attr
+    }
 }
 
 class MessageViewLayoutAttributes: UICollectionViewLayoutAttributes {

@@ -504,6 +504,11 @@
         <target>Картинка</target>
         <note>Label shown next to an inline image</note>
       </trans-unit>
+      <trans-unit id="Pin" xml:space="preserve">
+        <source>Pin</source>
+        <target>Закрепить</target>
+        <note>Menu item for pinning message</note>
+      </trans-unit>
       <trans-unit id="Playback failed" xml:space="preserve">
         <source>Playback failed</source>
         <target>Невозможно исполнить</target>
@@ -669,6 +674,11 @@
         <source>Unknown type</source>
         <target>Неизвестный тип</target>
         <note>Displayed when the type of attachment cannot be determined</note>
+      </trans-unit>
+      <trans-unit id="Unpin" xml:space="preserve">
+        <source>Unpin</source>
+        <target>Открепить</target>
+        <note>Menu item for un-pinning message</note>
       </trans-unit>
       <trans-unit id="Unsupported" xml:space="preserve">
         <source>Unsupported</source>
