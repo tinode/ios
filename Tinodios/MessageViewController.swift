@@ -120,6 +120,9 @@ class MessageViewController: UIViewController {
         // Call type identifiers.
         static let kAudioOnlyCall = 1
         static let kVideoCall = 2
+
+        // Maximum size of the video preview poster in bytes.
+        static let kMaxPosterSize = 1024 * 8
     }
 
     /// The `sendMessageBar` is used as the `inputAccessoryView` in the view controller.
@@ -504,7 +507,7 @@ class MessageViewController: UIViewController {
                                                    width: content.width != nil ? CGFloat(content.width!) : nil,
                                                    height: content.height != nil ? CGFloat(content.height!) : nil,
                                                    duration: content.duration, preview: preview, previewMime: previewMime,
-                                                   previewOutOfBand: previewSize > maxInbandSize / 4))
+                                                   previewOutOfBand: previewSize > Constants.kMaxPosterSize))
         } else {
             if let drafty = try? Drafty(plainText: " ").insertVideo(at: 0, mime: mime, bits: data, refurl: nil, duration: content.duration, width: content.width!, height: content.height!, fname: content.fileName, size: data.count, preMime: previewMime, preview: preview, previewRef: nil) {
                 if let caption = content.caption {
