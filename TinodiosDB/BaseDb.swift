@@ -265,6 +265,10 @@ extension SQLite.Connection {
 
     /// Releases a savepoint explicitly.
     public func releaseSavepoint(withName savepointName: String) {
-        try! self.execute("RELEASE '\(savepointName)'")
+        do {
+            try self.execute("RELEASE '\(savepointName)'")
+        } catch {
+            BaseDb.log.error("BaseDb - failed to release savepoint %@: %@", savepointName, error.localizedDescription)
+        }
     }
 }
