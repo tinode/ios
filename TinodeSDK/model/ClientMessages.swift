@@ -161,12 +161,14 @@ public class MetaGetDesc: Codable {
 }
 public class MetaGetSub: Codable {
     let user: String?
+    let topic: String?
     let ims: Date?
     let limit: Int?
-    public init(user: String?, ims: Date?, limit: Int?) {
+    public init(user: String?, ims: Date?, limit: Int?, topic: String?) {
         self.user = user
         self.ims = ims
         self.limit = limit
+        self.topic = topic
     }
 }
 public class MsgGetMeta: CustomStringConvertible, Codable {
@@ -269,9 +271,9 @@ public class MsgGetMeta: CustomStringConvertible, Codable {
         set |= MsgGetMeta.kDescSet
         buildWhat()
     }
-    func setSub(user: String?, ims: Date?, limit: Int?) {
-        if user != nil || ims != nil || limit != nil {
-            sub = MetaGetSub(user: user, ims: ims, limit: limit)
+    func setSub(user: String?, ims: Date?, limit: Int?, topic: String?) {
+        if user != nil || ims != nil || limit != nil || topic != nil {
+            sub = MetaGetSub(user: user, ims: ims, limit: limit, topic: topic)
         }
         set |= MsgGetMeta.kSubSet
         buildWhat()
