@@ -272,7 +272,7 @@ public class MsgGetMeta: CustomStringConvertible, Codable {
         buildWhat()
     }
     func setSub(user: String?, ims: Date?, limit: Int?, topic: String?) {
-        if user != nil || ims != nil || limit != nil || topic != nil{
+        if user != nil || ims != nil || limit != nil || topic != nil {
             sub = MetaGetSub(user: user, ims: ims, limit: limit, topic: topic)
         }
         set |= MsgGetMeta.kSubSet
