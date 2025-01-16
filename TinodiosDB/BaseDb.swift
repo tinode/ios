@@ -233,8 +233,8 @@ public class BaseDb {
     }
 
     public static func updateCounter(db: SQLite.Connection, table: Table,
-                                     usingIdColumn idColumn: Expression<Int64>, forId id: Int64,
-                                     in column: Expression<Int?>, with value: Int) -> Bool {
+                                     usingIdColumn idColumn: SQLite.Expression<Int64>, forId id: Int64,
+                                     in column: SQLite.Expression<Int?>, with value: Int) -> Bool {
         let record = table.filter(idColumn == id && column < value)
         do {
             return try db.run(record.update(column <- value)) > 0
