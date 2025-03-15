@@ -185,19 +185,22 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
             meta.setDesc(ims: ims)
             return self
         }
-        public func withSub(user: String?, ims: Date?, limit: Int?) -> MetaGetBuilder {
-            meta.setSub(user: user, ims: ims, limit: limit)
+        public func withSub(userOrTopic: String?, ims: Date?, limit: Int?) -> MetaGetBuilder {
+            if topic.topicType == .me {
+                meta.setSub(user: nil, ims: ims, limit: limit, topic: userOrTopic)
+            } else {
+                meta.setSub(user: userOrTopic, ims: ims, limit: limit, topic: nil)
+            }
             return self
         }
-        public func withSub(user: String?) -> MetaGetBuilder {
-            return withSub(user: user, ims: topic.subsUpdated, limit: nil)
+        public func withSub(userOrTopic: String?) -> MetaGetBuilder {
+            return withSub(userOrTopic: userOrTopic, ims: topic.subsUpdated, limit: nil)
         }
-
         public func withSub(ims: Date?, limit: Int?) -> MetaGetBuilder {
-            return withSub(user: nil, ims: ims, limit: limit)
+            return withSub(userOrTopic: nil, ims: ims, limit: limit)
         }
         public func withSub() -> MetaGetBuilder {
-            return withSub(user: nil, ims: topic.subsUpdated, limit: nil)
+            return withSub(userOrTopic: nil, ims: topic.subsUpdated, limit: nil)
         }
         public func withTags() -> MetaGetBuilder {
             meta.setTags()
@@ -1208,7 +1211,7 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
                     if let user: User<SP> = tinode!.getUser(with: userId) {
                         s.pub = user.pub
                     } else {
-                        getMeta(query: metaGetBuilder().withSub(user: pres.src).build())
+                        getMeta(query: metaGetBuilder().withSub(userOrTopic: pres.src).build())
                     }
                     sub = s
                 } else {

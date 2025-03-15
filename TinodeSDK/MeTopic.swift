@@ -208,9 +208,14 @@ open class MeTopic<DP: Codable & Mergeable>: Topic<DP, PrivateType, DP, PrivateT
             return
         }
 
-        if what == .kUpd && Tinode.kTopicMe == pres.src {
-            // Me's desc was updated, fetch the updated version.
-            getMeta(query: metaGetBuilder().withDesc().build())
+        if what == .kUpd {
+            if Tinode.kTopicMe == pres.src {
+                // Me's desc was updated, fetch the updated version.
+                getMeta(query: metaGetBuilder().withDesc().build())
+            } else {
+                // pub/priv updated: fetch subscription update.
+                getMeta(query: metaGetBuilder().withSub(userOrTopic: pres.src).build())
+            }
             return
         }
 
@@ -228,8 +233,6 @@ open class MeTopic<DP: Codable & Mergeable>: Topic<DP, PrivateType, DP, PrivateT
                     assignRead(to: topic, read: pres.seq)
                 }
                 topic.touched = Date()
-            case .kUpd: // pub/priv updated
-                getMeta(query: metaGetBuilder().withSub(user: pres.src).build())
             case .kAcs: // access mode changed
                 if pres.tgt == nil && topic.updateAccessMode(ac: pres.dacs) {
                     self.store?.topicUpdate(topic: topic)
@@ -263,7 +266,7 @@ open class MeTopic<DP: Codable & Mergeable>: Topic<DP, PrivateType, DP, PrivateT
                     let acs = Acs()
                     acs.update(from: pres.dacs)
                     if acs.isModeDefined {
-                        getMeta(query: metaGetBuilder().withSub(user: pres.src).build())
+                        getMeta(query: metaGetBuilder().withSub(userOrTopic: pres.src).build())
                     } else {
                         Tinode.log.error("ME.acs - unexpected access mode: %@", String(describing: pres.dacs))
                     }
