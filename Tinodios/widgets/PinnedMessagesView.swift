@@ -2,7 +2,7 @@
 //  PinnedMessagesView.swift
 //  Tinodios
 //
-//  Copyright © 2023 Tinode LLC. All rights reserved.
+//  Copyright © 2023-2025 Tinode LLC. All rights reserved.
 //
 
 import UIKit
@@ -66,8 +66,7 @@ class PinnedMessagesView: UICollectionReusableView {
             if !pins.isEmpty {
                 guard let topicName = topicName, let topic = Cache.tinode.getTopic(topicName: topicName) else { return }
                 pins.forEach { seq in
-                    guard let msg = topic.getMessage(byEffectiveSeq: seq) else { return }
-                    if let promise = self.preparePreview(msg) {
+                    if let promise = self.preparePreview(topic.getMessage(byEffectiveSeq: seq)) {
                         let tv = UITextView()
                         tv.delegate = self
                         tv.backgroundColor = .systemBackground
@@ -105,8 +104,18 @@ class PinnedMessagesView: UICollectionReusableView {
     }
 
     // Convert message into a quote ready for sending as a reply.
-    func preparePreview(_ msg: Message) -> PromisedReply<Drafty>? {
-        guard let content = msg.content else { return nil }
+    func preparePreview(_ msg: Message?) -> PromisedReply<Drafty>? {
+        let contentMissing = NSLocalizedString("not found", comment: "Content of a pinned message when the message is missing")
+        guard let msg = msg else {
+            return PromisedReply<Drafty>(value: Drafty.init(plainText: contentMissing))
+        }
+        guard let content = msg.content else {
+            if msg.isDeleted {
+                return PromisedReply<Drafty>(value: Drafty.init(plainText: NSLocalizedString("message deleted", comment: "Content of a pinned message when the message is deleted")))
+            }
+            return PromisedReply<Drafty>(value: Drafty.init(plainText: contentMissing))
+        }
+
         // Strip unneeded content and shorten.
         var reply = content.replyContent(length: UiUtils.kQuotedReplyLength, maxAttachments: 1)
         let createThumbnails = ThumbnailTransformer()

@@ -172,7 +172,7 @@ public class MetaGetSub: Codable {
     let topic: String?
     let ims: Date?
     let limit: Int?
-    public init(user: String?, ims: Date?, limit: Int?, topic: String?) {
+    public init(user: String? = nil, ims: Date? = nil, limit: Int? = nil, topic: String? = nil) {
         self.user = user
         self.ims = ims
         self.limit = limit

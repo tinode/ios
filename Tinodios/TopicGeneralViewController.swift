@@ -1,7 +1,7 @@
 //
 //  TopicGeneralViewController.swift
 //
-//  Copyright © 2022 Tinode LLC. All rights reserved.
+//  Copyright © 2022-2025 Tinode LLC. All rights reserved.
 //
 
 import UIKit
@@ -77,19 +77,29 @@ class TopicGeneralViewController: UITableViewController {
     }
 
     private func reloadData() {
-        topicTitleLabel.text = (topic.pub?.fn ?? "").isEmpty ? NSLocalizedString("Unknown", comment: "Placeholder for missing user name") : topic.pub?.fn
+        topicTitleLabel.text = !(topic.pub?.fn ?? "").isEmpty ?
+            topic.pub!.fn :
+            topic.isSlfType ? NSLocalizedString("Saved messages", comment: "Title of slf topic") : NSLocalizedString("Unknown", comment: "Placeholder for missing user name")
 
-        let isEmpty = topic?.pub?.note?.isEmpty ?? true
+        let isEmpty = topic.pub?.note?.isEmpty ?? true && !topic.isSlfType
         topicDescriptionLabel.textColor = isEmpty ? .placeholderText : .secondaryLabel
         if topic.isOwner || !isEmpty {
             topicDescriptionLabel.isHidden = false
-            topicDescriptionLabel.text = isEmpty ? NSLocalizedString("Add optional description", comment: "Placeholder for missing topic description") : topic.pub?.note
+            topicDescriptionLabel.text = isEmpty ?
+                NSLocalizedString("Add optional description", comment: "Placeholder for missing topic description") :
+                topic.isSlfType ? NSLocalizedString("Notes, messages, links, files saved for posterity", comment: "Explanation for Saved messages topic") :
+                topic.pub?.note
         } else {
             topicDescriptionLabel.isHidden = true
         }
 
-        topicPrivateLabel.textColor = topic?.comment?.isEmpty ?? true ? .placeholderText : .secondaryLabel
-        topicPrivateLabel.text = (topic.comment ?? "").isEmpty ? NSLocalizedString("Private info: not set", comment: "Placeholder text in editor") : topic.comment
+        if topic.isSlfType {
+            topicPrivateLabel.isHidden = true
+        } else {
+            topicPrivateLabel.textColor = topic?.comment?.isEmpty ?? true ? .placeholderText : .secondaryLabel
+            topicPrivateLabel.text = (topic.comment ?? "").isEmpty ? NSLocalizedString("Private info: not set", comment: "Placeholder text in editor") : topic.comment
+            topicPrivateLabel.isHidden = false
+        }
 
         avatarImage.set(pub: topic.pub, id: topic.name, deleted: topic.deleted)
         avatarImage.letterTileFont = self.avatarImage.letterTileFont.withSize(CGFloat(50))
@@ -168,13 +178,16 @@ extension TopicGeneralViewController: UIPopoverPresentationControllerDelegate {
 
 extension TopicGeneralViewController {
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        guard let tt = self.topic else {
+            return super.tableView(tableView, heightForRowAt: indexPath)
+        }
         if indexPath.section == TopicGeneralViewController.kSectionBasic {
-            if indexPath.row == TopicGeneralViewController.kSectionBasicDescription && !(topic?.isOwner ?? false) && (topic?.pub?.note?.isEmpty ?? true) {
+            if indexPath.row == TopicGeneralViewController.kSectionBasicDescription && !tt.isOwner && (tt.pub?.note?.isEmpty ?? true) {
                 // Hide impty uneditable Description row.
                 return CGFloat.leastNonzeroMagnitude
             }
         } else if indexPath.section == TopicGeneralViewController.kSectionActions {
-            if indexPath.row == TopicGeneralViewController.kSectionActionsManageTags && (!(topic?.isGrpType ?? false) || !(topic?.isOwner ?? false)) {
+            if indexPath.row == TopicGeneralViewController.kSectionActionsManageTags && (!tt.isGrpType || !tt.isOwner) {
                 // P2P topic has no owner, hide [Manage Tags]
                 return CGFloat.leastNonzeroMagnitude
             }

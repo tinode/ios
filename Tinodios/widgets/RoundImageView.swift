@@ -1,7 +1,7 @@
 //
 //  RoundImageView.swift
 //
-//  Copyright © 2019-2022 Tinode LLC. All rights reserved.
+//  Copyright © 2019-2025 Tinode LLC. All rights reserved.
 //
 
 // Circular image view with either an image or letters.
@@ -19,12 +19,13 @@ public class RoundImageView: UIImageView {
     }
 
     public enum IconType {
-        case p2p, grp, none
+        case p2p, grp, slf, none
 
         init(from: String) {
             switch from {
             case "p2p": self = .p2p
             case "grp": self = .grp
+            case "slf": self = .slf
             default: self = .none
             }
         }
@@ -38,7 +39,7 @@ public class RoundImageView: UIImageView {
         }
     }
 
-    /// Element to set default icon type when no other info is provided: "grp" or "p2p".
+    /// Element to set default icon type when no other info is provided: "slf", "grp" or "p2p".
     @IBInspectable public var defaultType: String? {
         didSet {
             guard let tp = defaultType else { return }
@@ -113,6 +114,7 @@ public class RoundImageView: UIImageView {
                 switch Tinode.topicTypeByName(name: id) {
                 case .p2p: iconType = .p2p
                 case .grp: iconType = .grp
+                case .slf: iconType = .slf
                 default: break
                 }
             }
@@ -238,6 +240,8 @@ public class RoundImageView: UIImageView {
             icon = UIImage(systemName: "person", withConfiguration: UIImage.SymbolConfiguration(pointSize: 32, weight: .medium, scale: .large))!
         case .grp:
             icon = UIImage(systemName: "person.2", withConfiguration: UIImage.SymbolConfiguration(pointSize: 32, weight: .medium, scale: .large))!
+        case .slf:
+            icon = UIImage(systemName: "bookmark", withConfiguration: UIImage.SymbolConfiguration(pointSize: 32, weight: .medium, scale: .large))!
         default:
             icon =  UIImage(systemName: "questionmark", withConfiguration: UIImage.SymbolConfiguration(pointSize: 32, weight: .medium, scale: .large))!
         }

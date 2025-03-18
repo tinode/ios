@@ -1,7 +1,7 @@
 //
 //  MessageViewController.swift
 //
-//  Copyright © 2019-2023 Tinode LLC. All rights reserved.
+//  Copyright © 2019-2025 Tinode LLC. All rights reserved.
 //
 
 import MobileVLCKit
@@ -162,10 +162,7 @@ class MessageViewController: UIViewController {
 
     /// Call button in NavBar
     lazy var navBarCallBtn: UIBarButtonItem = {
-        return UIBarButtonItem(
-            image: UIImage(systemName: "phone",
-                           withConfiguration:UIImage.SymbolConfiguration(pointSize: 16, weight: .light)),
-            style: .plain, target: self, action: #selector(navBarCallTapped(sender:)))
+        return UIBarButtonItem(image: UIImage(systemName: "phone", withConfiguration:UIImage.SymbolConfiguration(pointSize: 16, weight: .light)), style: .plain, target: self, action: #selector(navBarCallTapped(sender:)))
     }()
 
     /// Pointer to the view holding messages.
@@ -585,15 +582,6 @@ class MessageViewController: UIViewController {
                 destinationVC.isAudioOnlyCall = (sender as? Int) == Constants.kAudioOnlyCall
             }
             destinationVC.topic = self.topic
-        case "Messages2VC":
-            let destinationVC = segue.destination as! VCViewController
-            if let req = sender as? VCJoinRequest {
-                destinationVC.callDirection = .incoming
-                destinationVC.callSeqId = req.seq
-            } else {
-                destinationVC.callDirection = .outgoing
-            }
-            destinationVC.topic = self.topic
         default:
             break
         }
@@ -630,8 +618,6 @@ class MessageViewController: UIViewController {
                 presentation.barButtonItem = navBarCallBtn
             }
             self.present(alert, animated: true, completion: nil)
-        case .grp:
-            self.performSegue(withIdentifier: "Messages2VC", sender: nil)
         default:
             break
         }

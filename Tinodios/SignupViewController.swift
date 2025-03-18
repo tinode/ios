@@ -119,7 +119,7 @@ class SignupViewController: UITableViewController {
                     isError = true
                     return
                 }
-                let cred = telTextField.phoneNumberKit.format(telTextField.phoneNumber!, toType: .e164)
+                let cred = telTextField.utility.format(telTextField.phoneNumber!, toType: .e164)
                 creds.append(Credential(meth: method, val: cred))
             default:
                 break

@@ -1,7 +1,7 @@
 //
 //  TopicSecurityViewController.swift
 //
-//  Copyright © 2022 Tinode LLC. All rights reserved.
+//  Copyright © 2022-2025 Tinode LLC. All rights reserved.
 //
 
 import UIKit
@@ -74,6 +74,9 @@ class TopicSecurityViewController: UITableViewController {
 
         if self.topic.isGrpType {
             showDefaultPermissions = topic.isManager
+            showPeerPermissions = false
+        } else if self.topic.isSlfType {
+            showDefaultPermissions = false
             showPeerPermissions = false
         } else {
             showDefaultPermissions = false
@@ -315,40 +318,48 @@ extension TopicSecurityViewController {
     }
 
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        guard let tt = self.topic else {
+            return super.tableView(tableView, heightForRowAt: indexPath)
+        }
+
         if indexPath.section == TopicSecurityViewController.kSectionActions {
-            if indexPath.row == TopicSecurityViewController.kSectionActionsDelMessages && (topic?.isChannel ?? false) {
+            if indexPath.row == TopicSecurityViewController.kSectionActionsDelMessages && tt.isChannel {
                 // Channel readers cannot delete messages
                 return CGFloat.leastNonzeroMagnitude
             }
-            if indexPath.row == TopicSecurityViewController.kSectionActionsLeaveGroup && !(topic?.isGrpType ?? false) {
+            if indexPath.row == TopicSecurityViewController.kSectionActionsLeaveGroup && !tt.isGrpType && !tt.isSlfType {
                 // P2P topic, hide [Leave Group]
                 return CGFloat.leastNonzeroMagnitude
             }
-            if indexPath.row == TopicSecurityViewController.kSectionActionsLeaveConversation && topic?.isGrpType ?? false {
+            if indexPath.row == TopicSecurityViewController.kSectionActionsLeaveConversation && (tt.isGrpType || tt.isSlfType) {
                 // Group topic, hide [Leave Conversation]
                 return CGFloat.leastNonzeroMagnitude
             }
             // Hide either [Leave] or [Delete Topic] actions.
-            if indexPath.row == TopicSecurityViewController.kSectionActionsLeaveGroup && topic?.isOwner ?? false {
+            if indexPath.row == TopicSecurityViewController.kSectionActionsLeaveGroup && tt.isOwner {
                 // Owner, hide [Leave]
                 return CGFloat.leastNonzeroMagnitude
             }
-            if indexPath.row == TopicSecurityViewController.kSectionActionsDelTopic && !(topic?.isOwner ?? false) {
+            if indexPath.row == TopicSecurityViewController.kSectionActionsDelTopic && !tt.isOwner {
                 // Not an owner, hide [Delete Topic]
                 return CGFloat.leastNonzeroMagnitude
             }
-            if indexPath.row == TopicSecurityViewController.kSectionActionsBlock && topic?.isGrpType ?? false {
+            if indexPath.row == TopicSecurityViewController.kSectionActionsBlock && (tt.isGrpType || tt.isSlfType) {
                 // Group topic, hide [Block Contact]
                 return CGFloat.leastNonzeroMagnitude
             }
-            if indexPath.row == TopicSecurityViewController.kSectionActionsReport && topic?.isGrpType ?? false {
+            if indexPath.row == TopicSecurityViewController.kSectionActionsReport && (tt.isGrpType || tt.isSlfType) {
                 // Group topic, hide [Report Contact]
                 return CGFloat.leastNonzeroMagnitude
             }
-            if indexPath.row == TopicSecurityViewController.kSectionActionsReportGroup && (!(topic?.isGrpType ?? false) || (topic?.isOwner ?? false)) {
+            if indexPath.row == TopicSecurityViewController.kSectionActionsReportGroup && (!tt.isGrpType || tt.isOwner) {
                 // P2P topic or the owner, hide [Report Group]
                 return CGFloat.leastNonzeroMagnitude
             }
+        } else if indexPath.section == TopicSecurityViewController.kSectionPermissions && tt.isSlfType {
+            return CGFloat.leastNormalMagnitude
+        } else if indexPath.section == TopicSecurityViewController.kSectionDefaultPermissions && tt.isSlfType {
+            return CGFloat.leastNormalMagnitude
         }
 
         return super.tableView(tableView, heightForRowAt: indexPath)
@@ -356,6 +367,8 @@ extension TopicSecurityViewController {
 
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         if section == TopicSecurityViewController.kSectionDefaultPermissions && !showDefaultPermissions {
+            return nil
+        } else if section == TopicSecurityViewController.kSectionPermissions && !showPeerPermissions {
             return nil
         }
 
@@ -369,6 +382,8 @@ extension TopicSecurityViewController {
         }
 
         if section == TopicSecurityViewController.kSectionDefaultPermissions && !showDefaultPermissions {
+            return CGFloat.leastNormalMagnitude
+        } else if section == TopicSecurityViewController.kSectionPermissions && !showPeerPermissions {
             return CGFloat.leastNormalMagnitude
         }
 

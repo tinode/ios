@@ -136,7 +136,7 @@ class CredentialsChangeViewController: UITableViewController {
                 newTelField.markAsError()
                 return nil
             }
-            return newTelField.phoneNumberKit.format(newTelField.phoneNumber!, toType: .e164)
+            return newTelField.utility.format(newTelField.phoneNumber!, toType: .e164)
         default:
             Cache.log.error("Unknown cred method: %@", method)
             return nil

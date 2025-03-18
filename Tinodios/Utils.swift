@@ -2,7 +2,7 @@
 //  Utils.swift
 //  Tinodios
 //
-//  Copyright © 2019 Tinode. All rights reserved.
+//  Copyright © 2019-2025 Tinode. All rights reserved.
 //
 
 import Foundation
@@ -15,8 +15,8 @@ import TinodiosDB
 public class Utils {
     public static let kTopicUriPrefix = "tinode:topic/"
 
-    static var phoneNumberKit: PhoneNumberKit = {
-        return PhoneNumberKit()
+    static var phoneNumberKit: PhoneNumberUtility = {
+        return PhoneNumberUtility()
     }()
 
     // Calculate difference between two arrays of messages. Returns a tuple of insertion indexes and deletion indexes.
@@ -394,8 +394,8 @@ extension DefaultComTopic {
         // The user is allowed to post messages and
         // - for p2p topics, we have ice servers to establish communication via.
         // - for group topics, we have media server endpoint.
-        return self.isWriter && ((self.isP2PType && t.getServerParam(for: "iceServers") != nil)
-            || (self.isGrpType && t.getServerParam(for: "vcEndpoint") != nil))
+        return self.isWriter && (self.isP2PType && t.getServerParam(for: "iceServers") != nil)
+            // || (self.isGrpType && t.getServerParam(for: "vcEndpoint") != nil))
     }
 }
 

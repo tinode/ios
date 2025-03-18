@@ -1,7 +1,7 @@
 //
 //  Tinode.swift
 //
-//  Copyright © 2019-2022 Tinode LLC. All rights reserved.
+//  Copyright © 2019-2025 Tinode LLC. All rights reserved.
 //
 
 import Foundation
@@ -128,6 +128,7 @@ public class Tinode {
     public static let kTopicMe = "me"
     public static let kTopicFnd = "fnd"
     public static let kTopicSys = "sys"
+    public static let kTopicSlf = "slf"
 
     public static let kTopicGrpPrefix = "grp"
     public static let kTopicUsrPrefix = "usr"
@@ -789,6 +790,10 @@ public class Tinode {
                 r = .me
             case kTopicFnd:
                 r = .fnd
+            case kTopicSys:
+                r = .sys
+            case kTopicSlf:
+                r = .slf
             default:
                 if name.starts(with: kTopicGrpPrefix) || name.starts(with: kTopicNew) || name.starts(with: kTopicChnPrefix) || name.starts(with: kChannelNew) {
                     r = .grp

@@ -2,7 +2,7 @@
 //  SubscriberDb.swift
 //  ios
 //
-//  Copyright © 2019 Tinode. All rights reserved.
+//  Copyright © 2019-2025 Tinode. All rights reserved.
 //
 
 import Foundation
@@ -26,20 +26,20 @@ public class SubscriberDb {
 
     private var table: Table
 
-    public let id: Expression<Int64>
-    public var topicId: Expression<Int64?>
-    public let userId: Expression<Int64?>
-    public let status: Expression<Int?>
-    public let mode: Expression<String?>
-    public let updated: Expression<Date?>
+    public let id: SQLite.Expression<Int64>
+    public var topicId: SQLite.Expression<Int64?>
+    public let userId: SQLite.Expression<Int64?>
+    public let status: SQLite.Expression<Int?>
+    public let mode: SQLite.Expression<String?>
+    public let updated: SQLite.Expression<Date?>
 
-    public let read: Expression<Int?>
-    public let recv: Expression<Int?>
-    public let clear: Expression<Int?>
-    public let priv: Expression<String?>
-    public let lastSeen: Expression<Date?>
-    public let userAgent: Expression<String?>
-    public let subscriptionClass: Expression<String>
+    public let read: SQLite.Expression<Int?>
+    public let recv: SQLite.Expression<Int?>
+    public let clear: SQLite.Expression<Int?>
+    public let priv: SQLite.Expression<String?>
+    public let lastSeen: SQLite.Expression<Date?>
+    public let userAgent: SQLite.Expression<String?>
+    public let subscriptionClass: SQLite.Expression<String>
 
     private let baseDb: BaseDb!
 

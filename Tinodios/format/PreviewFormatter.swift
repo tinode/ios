@@ -2,7 +2,7 @@
 //  PreviewFormatter.swift
 //  Tinodios
 //
-//  Copyright © 2022 Tinode LLC. All rights reserved.
+//  Copyright © 2022-2025 Tinode LLC. All rights reserved.
 //
 
 import Foundation
@@ -131,9 +131,8 @@ class PreviewFormatter: AbstractFormatter {
         let state = data["state"]?.asString() ?? ""
         let incoming = data["incoming"]?.asBool() ?? false
         let duration = data["duration"]?.asInt() ?? 0
-        let isConferenceCall = data["vc"]?.asBool() ?? false
-        let annotation = duration > 0 ? AbstractFormatter.millisToTime(millis: duration) : AbstractFormatter.callStatusText(incoming: incoming, event: state, isConferenceCall: isConferenceCall)
-        return annotatedIcon(iconName: isConferenceCall ? "videoconf" : "phone", localizedAnnotation: annotation)
+        let annotation = duration > 0 ? AbstractFormatter.millisToTime(millis: duration) : AbstractFormatter.callStatusText(incoming: incoming, event: state)
+        return annotatedIcon(iconName: "phone", localizedAnnotation: annotation)
     }
 
     override func handleUnknown(content _: [FormatNode], using _: [String: JSONValue]?, draftyKey _: Int?) -> FormatNode {

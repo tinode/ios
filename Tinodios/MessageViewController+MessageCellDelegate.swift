@@ -2,7 +2,7 @@
 //  MessageViewController+MessageCellDelegate.swift
 //  Tinodios
 //
-//  Copyright © 2022 Tinode LLC. All rights reserved.
+//  Copyright © 2022-2025 Tinode LLC. All rights reserved.
 //
 
 import MobileVLCKit
@@ -38,8 +38,6 @@ extension MessageViewController: MessageCellDelegate {
                 handleToggleAudioPlay(in: cell, draftyEntityKey: Int(url.extractQueryParam(named: "key") ?? ""))
             case "/video":
                 showVideoPreview(in: cell, draftyEntityKey: Int(url.extractQueryParam(named: "key") ?? ""))
-            case "/vc-join":
-                handleVCJoinTap(in: cell)
             default:
                 Cache.log.error("MessageVC - unknown tinode:// action: %@", url.description)
             }
@@ -415,12 +413,6 @@ extension MessageViewController: MessageCellDelegate {
         )
 
         performSegue(withIdentifier: "ShowVideoPreview", sender: content)
-    }
-
-    private func handleVCJoinTap(in cell: MessageCell) {
-        guard let topicName = self.topicName else { return }
-        let req = VCJoinRequest(topic: topicName, seq: cell.seqId)
-        performSegue(withIdentifier: "Messages2VC", sender: req)
     }
 
     func handleQuoteClick(in cell: MessageCell) {

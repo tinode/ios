@@ -2,7 +2,7 @@
 //  DotSelectorImageView.swift
 //  Tinodios
 //
-//  Copyright © 2023 Tinode LLC. All rights reserved.
+//  Copyright © 2023-2025 Tinode LLC. All rights reserved.
 //
 
 import UIKit
@@ -76,7 +76,7 @@ public class DotSelectorImageView: UIImageView {
     }
 
     private func renderImage() -> UIImage? {
-        if dotCount <= 0 {
+        if dotCount <= 0 || frame.isEmpty {
             return nil
         }
 

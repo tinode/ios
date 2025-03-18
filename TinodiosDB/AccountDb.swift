@@ -2,7 +2,7 @@
 //  AccountDb.swift
 //  ios
 //
-//  Copyright © 2019 Tinode. All rights reserved.
+//  Copyright © 2019-2025 Tinode. All rights reserved.
 //
 
 import Foundation
@@ -25,11 +25,11 @@ public class AccountDb {
 
     public var table: Table
 
-    public let id: Expression<Int64>
-    public let uid: Expression<String?>
-    public let active: Expression<Int?>
-    public let credMethods: Expression<String?>
-    public let deviceId: Expression<String?>
+    public let id: SQLite.Expression<Int64>
+    public let uid: SQLite.Expression<String?>
+    public let active: SQLite.Expression<Int?>
+    public let credMethods: SQLite.Expression<String?>
+    public let deviceId: SQLite.Expression<String?>
 
     init(_ database: SQLite.Connection) {
         self.db = database

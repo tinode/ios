@@ -18,7 +18,7 @@ project 'TinodeSDK'
 
 def db_pods
   pod 'SQLite.swift', '~> 0.15'
-  pod 'SwiftKeychainWrapper', '~> 3.2'
+  pod 'SwiftKeychainWrapper', '~> 3'
 end
 
 target 'TinodeSDKTests' do
@@ -39,8 +39,8 @@ def app_pods
   pod 'FirebaseCrashlytics'
   pod 'Kingfisher', '~> 5'
   pod 'MobileVLCKit', '~> 3'
-  pod 'PhoneNumberKit', '~> 3'
-  pod 'LiveKitClient', '~> 1.0.8'
+  pod 'PhoneNumberKit', '~> 4'
+  pod 'WebRTC-lib', '~> 96.0.0'
 end
 
 # UI tests.

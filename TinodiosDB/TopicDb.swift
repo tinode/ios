@@ -2,7 +2,7 @@
 //  TopicDb.swift
 //  ios
 //
-//  Copyright © 2019-2022 Tinode. All rights reserved.
+//  Copyright © 2019-2025 Tinode. All rights reserved.
 //
 
 import Foundation
@@ -32,30 +32,30 @@ public class TopicDb {
 
     public var table: Table
 
-    public let id: Expression<Int64>
-    public let accountId: Expression<Int64?>
-    public let status: Expression<Int?>
-    public let topic: Expression<String?>
-    public let type: Expression<Int?>
-    public let visible: Expression<Int64?>
-    public let created: Expression<Date?>
-    public let updated: Expression<Date?>
-    public let read: Expression<Int?>
-    public let recv: Expression<Int?>
-    public let seq: Expression<Int?>
-    public let clear: Expression<Int?>
-    public let maxDel: Expression<Int?>
-    public let accessMode: Expression<String?>
-    public let defacs: Expression<String?>
-    public let lastUsed: Expression<Date?>
-    public let minLocalSeq: Expression<Int?>
-    public let maxLocalSeq: Expression<Int?>
-    public let nextUnsentSeq: Expression<Int?>
-    public let tags: Expression<String?>
-    public let creds: Expression<String?>
-    public let pub: Expression<String?>
-    public let priv: Expression<String?>
-    public let trusted: Expression<String?>
+    public let id: SQLite.Expression<Int64>
+    public let accountId: SQLite.Expression<Int64?>
+    public let status: SQLite.Expression<Int?>
+    public let topic: SQLite.Expression<String?>
+    public let type: SQLite.Expression<Int?>
+    public let visible: SQLite.Expression<Int64?>
+    public let created: SQLite.Expression<Date?>
+    public let updated: SQLite.Expression<Date?>
+    public let read: SQLite.Expression<Int?>
+    public let recv: SQLite.Expression<Int?>
+    public let seq: SQLite.Expression<Int?>
+    public let clear: SQLite.Expression<Int?>
+    public let maxDel: SQLite.Expression<Int?>
+    public let accessMode: SQLite.Expression<String?>
+    public let defacs: SQLite.Expression<String?>
+    public let lastUsed: SQLite.Expression<Date?>
+    public let minLocalSeq: SQLite.Expression<Int?>
+    public let maxLocalSeq: SQLite.Expression<Int?>
+    public let nextUnsentSeq: SQLite.Expression<Int?>
+    public let tags: SQLite.Expression<String?>
+    public let creds: SQLite.Expression<String?>
+    public let pub: SQLite.Expression<String?>
+    public let priv: SQLite.Expression<String?>
+    public let trusted: SQLite.Expression<String?>
 
     private let baseDb: BaseDb!
 

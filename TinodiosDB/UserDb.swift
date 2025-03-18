@@ -2,7 +2,7 @@
 //  UserDb.swift
 //  ios
 //
-//  Copyright © 2019 Tinode. All rights reserved.
+//  Copyright © 2019-2025 Tinode. All rights reserved.
 //
 
 import Foundation
@@ -23,12 +23,12 @@ public class UserDb {
 
     public let table: Table
 
-    public let id: Expression<Int64>
-    public let accountId: Expression<Int64?>
-    public let uid: Expression<String?>
-    public let updated: Expression<Date?>
+    public let id: SQLite.Expression<Int64>
+    public let accountId: SQLite.Expression<Int64?>
+    public let uid: SQLite.Expression<String?>
+    public let updated: SQLite.Expression<Date?>
     // public let deleted: Expression<Int?>
-    public let pub: Expression<String?>
+    public let pub: SQLite.Expression<String?>
 
     private let baseDb: BaseDb!
 

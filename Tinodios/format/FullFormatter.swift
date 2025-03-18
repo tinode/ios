@@ -2,7 +2,7 @@
 //  FullFormatter.swift
 //  Tinodios
 //
-//  Copyright © 2019-2022 Tinode LLC. All rights reserved.
+//  Copyright © 2019-2025 Tinode LLC. All rights reserved.
 //
 //  Converts Drafty instance into attributed text suitable for display in UITextView
 
@@ -214,8 +214,7 @@ class FullFormatter: AbstractFormatter {
         let state = data["state"]?.asString() ?? ""
         let duration = data["duration"]?.asInt() ?? 0
         let incoming = data["incoming"]?.asBool() ?? false
-        let vc = data["vc"]?.asBool() ?? false
-        let attachment = Attachment(content: .call(!incoming, state, duration, vc))
+        let attachment = Attachment(content: .call(!incoming, state, duration))
         let node = FormatNode()
         node.attachment(attachment)
         return node

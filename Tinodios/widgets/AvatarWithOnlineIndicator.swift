@@ -1,13 +1,16 @@
 //
 //  AvatarWithOnlineIndicator.swift
 //
-//  Copyright © 2019-2022 Tinode LLC. All rights reserved.
+//  Copyright © 2019-2025 Tinode LLC. All rights reserved.
 //
 
 import UIKit
 import TinodeSDK
 
 class AvatarWithOnlineIndicator: UIView {
+    static let kOnlineColor = UIColor.init(fromHexCode: 0xFF40C040)
+    static let kOfflineColor = UIColor.init(fromHexCode: 0xFFE0E0E0)
+
     @IBOutlet var contentView: UIView!
     @IBOutlet weak var avatar: RoundImageView!
     @IBOutlet weak var onlineIndicator: UIView!
@@ -44,8 +47,7 @@ class AvatarWithOnlineIndicator: UIView {
             }
             self.deletedIndicator.isHidden = true
             self.onlineIndicator.isHidden = false
-            self.onlineIndicator.backgroundColor = online ?
-                UIColor.init(fromHexCode: 0xFF40C040) : UIColor.init(fromHexCode: 0xFFE0E0E0)
+            self.onlineIndicator.backgroundColor = online ? AvatarWithOnlineIndicator.kOnlineColor : AvatarWithOnlineIndicator.kOfflineColor
         }
     }
 
@@ -64,7 +66,13 @@ class AvatarWithOnlineIndicator: UIView {
 
     public func set(pub: TheCard?, id: String?, online: Bool?, deleted: Bool) {
         self.avatar.set(pub: pub, id: id, deleted: deleted)
-        self.online = online
-        self.deleted = deleted
+        if online != nil {
+            self.onlineIndicator.isHidden = false
+            self.onlineIndicator.backgroundColor = online! ? AvatarWithOnlineIndicator.kOnlineColor : AvatarWithOnlineIndicator.kOfflineColor
+        } else {
+            self.onlineIndicator.isHidden = true
+        }
+
+        self.deletedIndicator.isHidden = !deleted
     }
 }

@@ -2,7 +2,7 @@
 //  Topic.swift
 //  ios
 //
-//  Copyright © 2019-2021 Tinode LLC. All rights reserved.
+//  Copyright © 2019-2025 Tinode LLC. All rights reserved.
 //
 
 import Foundation
@@ -74,10 +74,12 @@ public enum TopicType: Int {
     case fnd = 0x02
     case grp = 0x04
     case p2p = 0x08
-    case user = 0x0c // .grp | .p2p
-    case system = 0x03 // .me | .fnd
+    case sys = 0x10
+    case slf = 0x20
+    case hidden = 0x03 // .me | .fnd
+    case user = 0x2c // .grp | .p2p | .slf
     case unknown = 0x00
-    case any = 0x0f // .user | .system
+    case any = 0x2f // .user | .hidden
 
     public func matches(_ t2: TopicType) -> Bool {
         return (self.rawValue & t2.rawValue) != 0
@@ -377,6 +379,12 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
     }
     public var isGrpType: Bool {
         return topicType == .grp
+    }
+    public var isSlfType: Bool {
+        return topicType == .slf
+    }
+    public var isSysType: Bool {
+        return topicType == .sys
     }
     public var isChannelType: Bool {
         Tinode.isChannel(name: self.name)
@@ -1228,7 +1236,7 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
             if (pres.src != nil && tinode!.getTopic(topicName: pres.src!) == nil) {
                 // Issue {get sub} only if the current user has no relationship with the updated user.
                 // Otherwise 'me' will issue a {get desc} request.
-                getMeta(query: metaGetBuilder().withSub(user: pres.src).build())
+                getMeta(query: metaGetBuilder().withSub(userOrTopic: pres.src).build())
             }
         case .kAux:
             getMeta(query: metaGetBuilder().withAux().build())

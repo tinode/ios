@@ -1,7 +1,7 @@
 //
 //  ChatListTableViewCell.swift
 //
-//  Copyright © 2019-2022 Tinode LLC. All rights reserved.
+//  Copyright © 2019-2025 Tinode LLC. All rights reserved.
 //
 
 import UIKit
@@ -49,7 +49,8 @@ class ChatListViewCell: UITableViewCell {
     }
 
     public func fillFromTopic(topic: DefaultComTopic) {
-        title.text = topic.pub?.fn ?? "Unknown or unnamed"
+        title.text = topic.isSlfType ? NSLocalizedString("Saved messages", comment: "Title of the slf topic") :
+            topic.pub?.fn ?? NSLocalizedString("Unknown or unnamed", comment: "Topic title when it has no name")
         title.sizeToFit()
         if let msg = topic.latestMessage as? StoredMessage {
             // If we have a latestMessage and its up to date.
@@ -63,7 +64,9 @@ class ChatListViewCell: UITableViewCell {
                 setMessageStatusVisibility(hidden: true)
             }
         } else {
-            subtitle.text = topic.comment
+            subtitle.text = topic.isSlfType ?
+                NSLocalizedString("Notes, messages, links, files saved for posterity", comment: "Explanation for Saved messages topic") :
+                topic.comment
             setMessageStatusVisibility(hidden: true)
         }
         subtitle.sizeToFit()
@@ -110,9 +113,9 @@ class ChatListViewCell: UITableViewCell {
         iconBlocked.isHidden = !topic.isJoiner
         iconBlockedWidth.constant = topic.isJoiner ? .leastNonzeroMagnitude : ChatListViewCell.kIconWidth + ChatListViewCell.kIconSeparator * 2
 
-        iconMuted.isHidden = !topic.isMuted
+        iconMuted.isHidden = topic.isSlfType || !topic.isMuted
 
         // Avatar image
-        icon.set(pub: topic.pub, id: topic.name, online: topic.isChannel ? nil : topic.online, deleted: topic.deleted)
+        icon.set(pub: topic.pub, id: topic.name, online: (topic.isChannel || topic.isSlfType) ? nil : topic.online, deleted: topic.deleted)
     }
 }

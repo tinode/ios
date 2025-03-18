@@ -2,7 +2,7 @@
 //  ContactsSynchronizer.swift
 //  Tinodios
 //
-//  Copyright © 2019-2023 Tinode. All rights reserved.
+//  Copyright © 2019-2025 Tinode. All rights reserved.
 //
 
 import Foundation
@@ -153,7 +153,7 @@ class ContactsSynchronizer {
                 let metaDesc: MetaSetDesc<Int, String> = MetaSetDesc(pub: nil, priv: contacts)
                 let setMeta: MsgSetMeta<Int, String> = MsgSetMeta<Int, String>(desc: metaDesc)
                 _ = try tinode.setMeta(for: Tinode.kTopicFnd, meta: setMeta).getResult()
-                let meta = MsgGetMeta(sub: MetaGetSub(user: nil, ims: lastSyncMarker, limit: nil))
+                let meta = MsgGetMeta(sub: MetaGetSub(ims: lastSyncMarker))
                 let future = tinode.getMeta(topic: Tinode.kTopicFnd, query: meta)
                 if try future.waitResult() {
                     let pkt = try! future.getResult()

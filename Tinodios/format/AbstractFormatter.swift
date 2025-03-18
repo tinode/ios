@@ -2,7 +2,7 @@
 //  AbstractFormatter.swift
 //  Tinodios
 //
-//  Copyright © 2022 Tinode LLC. All rights reserved.
+//  Copyright © 2022-2025 Tinode LLC. All rights reserved.
 //
 
 import Foundation
@@ -204,8 +204,7 @@ class AbstractFormatter: DraftyFormatter {
         return result
     }
 
-    static func callStatusText(incoming: Bool, event: String, isConferenceCall: Bool) -> String {
-        let inProgress = NSLocalizedString("in progress", comment: "Label for call in progress")
+    static func callStatusText(incoming: Bool, event: String) -> String {
         var comment: String
         switch event {
         case MsgServerData.WebRTC.kBusy.rawValue:
@@ -217,9 +216,9 @@ class AbstractFormatter: DraftyFormatter {
                 NSLocalizedString(MsgServerData.WebRTC.kMissed.rawValue, comment: "Label for missed call") :
                 NSLocalizedString("cancelled", comment: "Label for cancelled call")
         case MsgServerData.WebRTC.kStarted.rawValue:
-            comment = isConferenceCall ? inProgress : NSLocalizedString("connecting", comment: "Label for initiated call")
+            comment = NSLocalizedString("connecting", comment: "Label for initiated call")
         case MsgServerData.WebRTC.kAccepted.rawValue:
-            comment = inProgress
+            comment = NSLocalizedString("in progress", comment: "Label for call in progress")
         default:
             comment = NSLocalizedString(MsgServerData.WebRTC.kDisconnected.rawValue, comment: "Label for disconnected call")
         }

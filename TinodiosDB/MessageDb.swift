@@ -2,7 +2,7 @@
 //  MessageDb.swift
 //  ios
 //
-//  Copyright © 2019-2023 Tinode. All rights reserved.
+//  Copyright © 2019-2025 Tinode. All rights reserved.
 //
 
 import Foundation
@@ -24,27 +24,27 @@ public class MessageDb {
 
     public var table: Table
 
-    public let id: Expression<Int64>
+    public let id: SQLite.Expression<Int64>
     // Topic ID, references topics.id
-    public let topicId: Expression<Int64?>
+    public let topicId: SQLite.Expression<Int64?>
     // Id of the originator of the message, references users.id
-    public let userId: Expression<Int64?>
-    public let status: Expression<Int?>
-    public let sender: Expression<String?>
-    public let ts: Expression<Date?>
-    public let seq: Expression<Int?>
-    public let high: Expression<Int?>
-    public let delId: Expression<Int?>
+    public let userId: SQLite.Expression<Int64?>
+    public let status: SQLite.Expression<Int?>
+    public let sender: SQLite.Expression<String?>
+    public let ts: SQLite.Expression<Date?>
+    public let seq: SQLite.Expression<Int?>
+    public let high: SQLite.Expression<Int?>
+    public let delId: SQLite.Expression<Int?>
     // Seq this message replaces (from message head).
-    public let replSeq: Expression<Int?>
+    public let replSeq: SQLite.Expression<Int?>
     // Effective seq id this message represents (latest message version in edit history).
-    public let effectiveSeq: Expression<Int?>
+    public let effectiveSeq: SQLite.Expression<Int?>
     // Timestamp of the original message this message has replaced
     // (could be the same as ts, if it does not replace anything).
-    public let effectiveTs: Expression<Date?>
+    public let effectiveTs: SQLite.Expression<Date?>
 
-    public let head: Expression<String?>
-    public let content: Expression<String?>
+    public let head: SQLite.Expression<String?>
+    public let content: SQLite.Expression<String?>
 
     private let baseDb: BaseDb!
 
@@ -552,7 +552,7 @@ public class MessageDb {
     ///  - ranges ranges to search for presence in the DB.
     /// - Returns ranges of missing IDs present in the database.
     func getCachedRanges(topicId: Int64?, ranges: [MsgRange]) -> [MsgRange] {
-        var constr: Expression<Bool?> = Expression(value: false)
+        var constr: SQLite.Expression<Bool?> = Expression(value: false)
         for r in ranges {
             if r.hi != nil {
                 // Find deleted ranges.
@@ -570,7 +570,6 @@ public class MessageDb {
         let query = self.table
             .select(self.seq, self.high)
             .filter(self.topicId == topicId && (constr))
-        print("getCachedRanges %s", query.asSQL())
 
         do {
             var found: [MsgRange] = []
@@ -604,8 +603,6 @@ public class MessageDb {
         query = newer ? query.order(self.seq.asc) : query.order(self.seq.desc)
         query = query.limit(pageSize)
 
-        print("getMissingRanges", query.asSQL())
-
         do {
             var found: [MsgRange] = []
             for row in try db.prepare(query) {
@@ -627,7 +624,7 @@ public class MessageDb {
         guard let topicDb = baseDb.topicDb else { return nil }
         let topics = topicDb.table
 
-        let m2Id = Expression<Int64?>("id")
+        let m2Id = SQLite.Expression<Int64?>("id")
         let joinedTable = self.table.select(
                 self.table[*],
                 topics[topicDb.topic])

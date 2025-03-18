@@ -2,7 +2,7 @@
 //  ResetPasswordViewController.swift
 //  Tinodios
 //
-//  Copyright © 2019-2023 Tinode. All rights reserved.
+//  Copyright © 2019-2025 Tinode. All rights reserved.
 //
 
 import PhoneNumberKit
@@ -160,7 +160,7 @@ class ResetPasswordViewController: UITableViewController {
                 telTextField.markAsError()
                 return nil
             }
-            return telTextField.phoneNumberKit.format(telTextField.phoneNumber!, toType: .e164)
+            return telTextField.utility.format(telTextField.phoneNumber!, toType: .e164)
         default:
             Cache.log.error("Unknown cred method: %@", method)
             return nil

@@ -2,7 +2,7 @@
 //  MessageViewController+MessageDisplayLogic.swift
 //  Tinodios
 //
-//  Copyright © 2023 Tinode LLC. All rights reserved.
+//  Copyright © 2023-2025 Tinode LLC. All rights reserved.
 //
 
 import UIKit
@@ -44,8 +44,11 @@ extension MessageViewController: MessageDisplayLogic {
 
     func updateTitleBar(pub: TheCard?, online: Bool?, deleted: Bool) {
         assert(Thread.isMainThread)
-        self.navigationItem.title = pub?.fn ?? NSLocalizedString("Undefined", comment: "Undefined chat name")
-        navBarAvatarView.set(pub: pub, id: topicName, online: online, deleted: deleted)
+        let isSlf = self.topic?.isSlfType ?? false
+        self.navigationItem.title = isSlf ?
+            NSLocalizedString("Saved messages", comment: "Title of the slf topic") :
+            pub?.fn ?? NSLocalizedString("Undefined", comment: "Undefined chat name")
+        navBarAvatarView.set(pub: pub, id: topicName, online: isSlf ? nil : online, deleted: deleted)
         navBarAvatarView.bounds = CGRect(x: 0, y: 0, width: Constants.kNavBarAvatarSmallState, height: Constants.kNavBarAvatarSmallState)
 
         navBarAvatarView.translatesAutoresizingMaskIntoConstraints = false
@@ -54,7 +57,7 @@ extension MessageViewController: MessageDisplayLogic {
                 navBarAvatarView.widthAnchor.constraint(equalTo: navBarAvatarView.heightAnchor)
             ])
         var items = [UIBarButtonItem(customView: navBarAvatarView)]
-        if let t = self.topic, t.callsAllowed || true {
+        if let t = self.topic, t.callsAllowed {
             items.append(self.navBarCallBtn)
         }
         self.navigationItem.setRightBarButtonItems(items, animated: false)

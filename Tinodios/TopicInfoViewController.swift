@@ -1,7 +1,7 @@
 //
 //  TopicInfoViewController.swift
 //
-//  Copyright © 2019-2022 Tinode LLC. All rights reserved.
+//  Copyright © 2019-2025 Tinode LLC. All rights reserved.
 //
 
 import UIKit
@@ -11,6 +11,7 @@ import TinodiosDB
 class TopicInfoViewController: UITableViewController {
 
     private static let kSectionBasic = 0
+    private static let kSectionBasicAddress = 1
     private static let kSectionBasicLastSeen = 2
     private static let kSectionBasicVerified = 3
     private static let kSectionBasicStaff = 4
@@ -72,23 +73,38 @@ class TopicInfoViewController: UITableViewController {
     }
 
     private func reloadData() {
-        topicTitleTextView.text = topic.pub?.fn ?? NSLocalizedString("Unknown", comment: "Placeholder for missing user name")
+        let isSlf = topic.isSlfType
+
+        topicTitleTextView.text = isSlf ? NSLocalizedString("Saved messages", comment: "Title for slf topic") : topic.pub?.fn ?? NSLocalizedString("Unknown", comment: "Placeholder for missing user name")
         topicTitleTextView.sizeToFit()
 
         let descPlaceholder: String? = topic.isOwner ? NSLocalizedString("Add optional description", comment: "Placeholder for missing topic description") : nil
-        topicDescriptionTextView.textColor = (topic.pub?.note ?? "").isEmpty ? .placeholderText : .secondaryLabel
-        topicDescriptionTextView.text = (topic.pub?.note ?? "").isEmpty ? descPlaceholder : topic.pub?.note
+        let isEmpty = (topic.pub?.note?.isEmpty ?? true) && !isSlf
+        topicDescriptionTextView.textColor = isEmpty ? .placeholderText : .secondaryLabel
+        topicDescriptionTextView.text = isEmpty ?
+            descPlaceholder :
+                isSlf ?
+                NSLocalizedString("Notes, messages, links, files saved for posterity", comment: "Explanation for Saved messages topic") :
+                topic.pub?.note
+        topicDescriptionTextView.textContainer.maximumNumberOfLines = 2
+        topicDescriptionTextView.textContainer.lineBreakMode = .byTruncatingTail
         topicDescriptionTextView.sizeToFit()
 
-        topicPrivateTextView.textColor = (topic.comment ?? "").isEmpty ? .placeholderText : .secondaryLabel
-        topicPrivateTextView.text = (topic.comment ?? "").isEmpty ? NSLocalizedString("Private info: not set", comment: "Placeholder text in editor") : topic.comment
-        topicPrivateTextView.sizeToFit()
+        if isSlf {
+            topicPrivateTextView.isHidden = true
+        } else {
+            topicPrivateTextView.isHidden = false
+            topicPrivateTextView.textColor = (topic.comment ?? "").isEmpty ? .placeholderText : .secondaryLabel
+            topicPrivateTextView.text = (topic.comment ?? "").isEmpty ? NSLocalizedString("Private info: not set", comment: "Placeholder text in editor") : topic.comment
+            topicPrivateTextView.sizeToFit()
+        }
 
         topicIDLabel.text = topic.name
         topicIDLabel.sizeToFit()
 
         avatarImage.set(pub: topic.pub, id: topic.name, deleted: topic.deleted)
         avatarImage.letterTileFont = self.avatarImage.letterTileFont.withSize(CGFloat(50))
+
         mutedSwitch.isOn = topic.isMuted
         archivedSwitch.isOn = topic.isArchived
 
@@ -205,10 +221,15 @@ extension TopicInfoViewController {
         if indexPath.section == TopicInfoViewController.kSectionMembers && indexPath.row != 0 {
             return 60
         } else if indexPath.section == TopicInfoViewController.kSectionBasic {
-            if (indexPath.row == TopicInfoViewController.kSectionBasicLastSeen && topic?.lastSeen == nil) ||
+            if (indexPath.row == TopicInfoViewController.kSectionBasicAddress && topic.isSlfType) ||
+                (indexPath.row == TopicInfoViewController.kSectionBasicLastSeen && topic?.lastSeen == nil) ||
                 (indexPath.row == TopicInfoViewController.kSectionBasicVerified && !(topic?.isVerified ?? false)) ||
                 (indexPath.row == TopicInfoViewController.kSectionBasicStaff && !(topic?.isStaffManaged ?? false)) ||
                 (indexPath.row == TopicInfoViewController.kSectionBasicDanger && !(topic?.isDangerous ?? false)) {
+                return CGFloat.leastNonzeroMagnitude
+            }
+        } else if indexPath.section == TopicInfoViewController.kSectionQuickAction {
+            if (indexPath.row == TopicInfoViewController.kSectionQuickActionMute && topic.isSlfType) {
                 return CGFloat.leastNonzeroMagnitude
             }
         }
@@ -225,7 +246,6 @@ extension TopicInfoViewController {
     }
 
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-
         // Hide empty header in the first section.
         if section == TopicInfoViewController.kSectionBasic {
             return CGFloat.leastNormalMagnitude
@@ -284,6 +304,14 @@ extension TopicInfoViewController {
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        if topic.isSlfType {
+            if indexPath.section == TopicInfoViewController.kSectionBasic && indexPath.row == 0 {
+                let cell = super.tableView(tableView, cellForRowAt: indexPath)
+                cell.accessoryType = .none
+                return cell
+            }
+        }
+
         if indexPath.section != TopicInfoViewController.kSectionMembers {
             return super.tableView(tableView, cellForRowAt: indexPath)
         }
