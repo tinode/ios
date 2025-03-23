@@ -96,6 +96,7 @@ extension MessageViewController: MessageCellDelegate {
 
     func createPopupMenu(in cell: MessageCell) {
         guard !cell.isDeleted else { return }
+        guard let topic = topic else { return }
 
         // Make cell the first responder otherwise menu will show wrong items.
         if sendMessageBar.inputField.isFirstResponder {
@@ -107,15 +108,27 @@ extension MessageViewController: MessageCellDelegate {
         // Set up the shared UIMenuController
         var menuItems: [MessageMenuItem] = []
         menuItems.append(MessageMenuItem(title: NSLocalizedString("Copy", comment: "Menu item"), action: #selector(copyMessageContent(sender:)), seqId: cell.seqId))
-        if !(topic?.isChannel ?? true) {
-            // Channel users cannot delete messages.
-            menuItems.append(MessageMenuItem(title: NSLocalizedString("Delete", comment: "Menu item"), action: #selector(deleteMessage(sender:)), seqId: cell.seqId))
+        if topic.isSlfType {
+            // Self-type: always hard-delete.
+            menuItems.append(MessageMenuItem(title: NSLocalizedString("Delete", comment: "Menu item"), action: #selector(deleteMessageHard(sender:)), seqId: cell.seqId))
+        } else if !topic.isChannel {
+            // Channel users cannot delete messages at all.
+            // Non-channel can delete at least for self.
+            menuItems.append(MessageMenuItem(title: NSLocalizedString("Delete for me", comment: "Menu item"), action: #selector(deleteMessageSoft(sender:)), seqId: cell.seqId))
+
+            if topic.isDeleter {
+                let maxDelAge = Cache.tinode.getServerLimit(for: Tinode.kMessageDeleteAge, withDefault: 0)
+                let canDelete = topic.isOwner || maxDelAge == 0 || (maxDelAge > 0 && (cell.timeStamp?.timeIntervalSince1970 ?? -1) > (Date().timeIntervalSince1970 - Double(maxDelAge)))
+                if canDelete {
+                    menuItems.append(MessageMenuItem(title: NSLocalizedString("Delete for all", comment: "Menu item"), action: #selector(deleteMessageHard(sender:)), seqId: cell.seqId))
+                }
+            }
         }
 
         if !cell.isDeleted, let msgIndex = messageSeqIdIndex[cell.seqId], messages[msgIndex].isSynced {
+            let msg = messages[msgIndex]
             menuItems.append(MessageMenuItem(title: NSLocalizedString("Reply", comment: "Menu item"), action: #selector(showReplyPreview(sender:)), seqId: cell.seqId))
             menuItems.append(MessageMenuItem(title: NSLocalizedString("Forward", comment: "Menu item"), action: #selector(showForwardSelector(sender:)), seqId: cell.seqId))
-            let msg = messages[msgIndex]
             if isFromCurrentSender(message: msg), let content = msg.content {
                 // Only allow editing messages which don't contain certain entity types.
                 var canEdit = true
@@ -140,7 +153,7 @@ extension MessageViewController: MessageCellDelegate {
                 }
             }
 
-            if self.topic?.isAdmin ?? false {
+            if topic.isAdmin {
                 if self.topic!.pinned.contains(where: { $0 == cell.seqId }) {
                     menuItems.append(MessageMenuItem(title: NSLocalizedString("Unpin", comment: "Menu item for un-pinning message"), action: #selector(unpinMessage(sender:)), seqId: cell.seqId))
                 } else {
@@ -257,10 +270,18 @@ extension MessageViewController: MessageCellDelegate {
         return
     }
 
-    @objc func deleteMessage(sender: UIMenuController) {
+    @objc func deleteMessageSoft(sender: UIMenuController) {
+        self.deleteMessage(sender: sender, hard: false)
+    }
+
+    @objc func deleteMessageHard(sender: UIMenuController) {
+        self.deleteMessage(sender: sender, hard: true)
+    }
+
+    private func deleteMessage(sender: UIMenuController, hard: Bool) {
         guard let menuItem = sender.menuItems?.first as? MessageMenuItem, menuItem.seqId > 0, let index = messageSeqIdIndex[menuItem.seqId] else { return }
         let msg = messages[index]
-        interactor?.deleteMessage(msg)
+        interactor?.deleteMessage(msg, hard: hard)
     }
 
     private func handleButtonPost(in cell: MessageCell, using url: URL) {

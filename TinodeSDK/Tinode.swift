@@ -141,6 +141,8 @@ public class Tinode {
     public static let kMinTagLength = "minTagLength"
     public static let kMaxTagCount = "maxTagCount"
     public static let kMaxFileUploadSize = "maxFileUploadSize"
+    public static let kCredValidatorsRequired = "reqCred"
+    public static let kMessageDeleteAge = "msgDelAge"
 
     public static let kNoteKp = "kp"
     public static let kNoteKpA = "kpa"

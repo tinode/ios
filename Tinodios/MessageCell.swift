@@ -1,7 +1,7 @@
 //
 //  MessageCell.swift
 //
-//  Copyright © 2019-2022 Tinode. All rights reserved.
+//  Copyright © 2019-2025 Tinode. All rights reserved.
 //
 
 import MobileVLCKit
@@ -37,6 +37,7 @@ class MessageCell: UICollectionViewCell {
 
     var seqId: Int = 0
     var isDeleted: Bool = false
+    var timeStamp: Date? = nil
 
     // Player for audio messages.
     var audioPlayer: VLCMediaPlayer?
@@ -176,6 +177,8 @@ class MessageCell: UICollectionViewCell {
         audioPlayer = nil
         seqId = 0
         mediaEntityKey = nil
+
+        timeStamp = nil
     }
 
     /// Handle tap gesture on contentView and its subviews.

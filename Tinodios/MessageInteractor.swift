@@ -1,7 +1,7 @@
 //
 //  MessageInteractor.swift
 //
-//  Copyright © 2019-2022 Tinode LLC. All rights reserved.
+//  Copyright © 2019-2025 Tinode LLC. All rights reserved.
 //
 
 import Foundation
@@ -54,7 +54,7 @@ protocol MessageDataStore {
     var topic: DefaultComTopic? { get set }
     func loadMessagesFromCache(scrollToMostRecentMessage: Bool)
     func loadPreviousPage()
-    func deleteMessage(_ message: Message)
+    func deleteMessage(_ message: Message, hard: Bool)
     func deleteFailedMessages()
 }
 
@@ -463,7 +463,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         }
     }
 
-    func deleteMessage(_ message: Message) {
+    func deleteMessage(_ message: Message, hard: Bool) {
         guard let topic = topic, let store = topic.store else {
             return
         }
@@ -482,7 +482,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         } else {
             store.msgDiscard(topic: topic, dbMessageId: message.msgId)
         }
-        topic.delMessages(ids: seqIds, hard: false).then(
+        topic.delMessages(ids: seqIds, hard: hard).then(
             onSuccess: { [weak self] _ in
                 self?.loadMessagesFromCache()
                 return nil

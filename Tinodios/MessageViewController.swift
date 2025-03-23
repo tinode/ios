@@ -711,6 +711,7 @@ extension MessageViewController: UICollectionViewDataSource {
 
         cell.seqId = message.seqId
         cell.isDeleted = message.isDeleted
+        cell.timeStamp = message.ts
 
         cell.content.backgroundColor = nil
         if message.isDeleted {
