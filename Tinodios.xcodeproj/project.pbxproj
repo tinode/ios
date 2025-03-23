@@ -78,6 +78,7 @@
 		B01D2C6D27910B1E009543F2 /* ThumbnailTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B01D2C6C27910B1E009543F2 /* ThumbnailTransformer.swift */; };
 		B01D2C6F2793915D009543F2 /* FormatNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = B01D2C6E2793915D009543F2 /* FormatNode.swift */; };
 		B01D2C712794E1E0009543F2 /* AbstractFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B01D2C702794E1E0009543F2 /* AbstractFormatter.swift */; };
+		B02598432D8AD8FC00965CEA /* NoContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B02598422D8AD8EC00965CEA /* NoContentView.swift */; };
 		B026F243257C59CA003BA14B /* ProgressView.xib in Resources */ = {isa = PBXBuildFile; fileRef = B026F242257C59CA003BA14B /* ProgressView.xib */; };
 		B026F247257C5EFF003BA14B /* ProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B026F246257C5EFF003BA14B /* ProgressView.swift */; };
 		B02725FC283DB3BB0055D446 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = B02725FA283DB3BB0055D446 /* Localizable.strings */; };
@@ -264,6 +265,7 @@
 		B01D2C6C27910B1E009543F2 /* ThumbnailTransformer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThumbnailTransformer.swift; sourceTree = "<group>"; };
 		B01D2C6E2793915D009543F2 /* FormatNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormatNode.swift; sourceTree = "<group>"; };
 		B01D2C702794E1E0009543F2 /* AbstractFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AbstractFormatter.swift; sourceTree = "<group>"; };
+		B02598422D8AD8EC00965CEA /* NoContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoContentView.swift; sourceTree = "<group>"; };
 		B026F242257C59CA003BA14B /* ProgressView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ProgressView.xib; sourceTree = "<group>"; };
 		B026F246257C5EFF003BA14B /* ProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressView.swift; sourceTree = "<group>"; };
 		B02725FB283DB3BB0055D446 /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/Localizable.strings"; sourceTree = "<group>"; };
@@ -600,6 +602,7 @@
 				B0F98C8222E381C300444121 /* MessageMenuItem.swift */,
 				B0BE302927B831D400B04631 /* MultilineAlertView.xib */,
 				B0BE302227B771E100B04631 /* MultilineAlertView.swift */,
+				B02598422D8AD8EC00965CEA /* NoContentView.swift */,
 				B0DF031E227C6898000F9492 /* PaddedLabel.swift */,
 				B081B28029D638850026089C /* PagerView.swift */,
 				B081B28229D6512E0026089C /* PagerViewCell.swift */,
@@ -981,6 +984,7 @@
 				0AE50D4822156A5B0021F7B7 /* FindPresenter.swift in Sources */,
 				B09C5652246C0E6B00D6615D /* BlockedContactsTableViewController.swift in Sources */,
 				B09C564E246975F700D6615D /* SettingsHelpViewController.swift in Sources */,
+				B02598432D8AD8FC00965CEA /* NoContentView.swift in Sources */,
 				0A4BD27129568B8E00493A04 /* VideoPreviewController.swift in Sources */,
 				B0DF03312283FFD8000F9492 /* PlaceholderTextView.swift in Sources */,
 				B0BE302D27BAC90E00B04631 /* TopicGeneralViewController.swift in Sources */,

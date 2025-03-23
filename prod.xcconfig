@@ -15,4 +15,4 @@ APP_NAME = Tinode
 
 // Versioning. The values are automatically updated by a build script.
 GIT_TAG = 1.23.1
-GIT_COMMIT_COUNT = 1787
+GIT_COMMIT_COUNT = 1791

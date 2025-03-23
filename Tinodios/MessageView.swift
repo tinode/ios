@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SwiftUI
 
 class MessageView: UICollectionView {
 
@@ -92,6 +93,7 @@ extension MessageView {
     /// Show notification that the conversation is empty
     public func toggleNoMessagesNote(on show: Bool) {
         if show {
+            /*
             let messageLabel = UILabel(frame: CGRect(x: 0, y: 0, width: self.bounds.size.width, height: self.bounds.size.height))
             messageLabel.text = NSLocalizedString("No messages in the conversation", comment: "Placeholder in empty chat")
             messageLabel.textColor = .darkGray
@@ -101,6 +103,9 @@ extension MessageView {
             messageLabel.sizeToFit()
 
             self.backgroundView = messageLabel
+             */
+            let host = UIHostingController(rootView: NoContentView(.messages))
+            self.backgroundView = host.view!
         } else {
             self.backgroundView = nil
         }

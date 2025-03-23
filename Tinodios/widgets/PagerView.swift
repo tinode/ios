@@ -2,7 +2,7 @@
 //  ViewPager.swift
 //  Tinodios
 //
-//  Copyright © 2023 Tinode LLC. All rights reserved.
+//  Copyright © 2023-2025 Tinode LLC. All rights reserved.
 //
 
 
@@ -14,7 +14,7 @@ public protocol PagerViewDelegate: AnyObject {
 
 @IBDesignable
 public class PagerView: UIView, UICollectionViewDelegateFlowLayout, UICollectionViewDataSource {
-    private static let kCornerRadius:CGFloat = 10
+    private static let kCornerRadius: CGFloat = 10
 
     // MARK: - Properties
     public weak var delegate: PagerViewDelegate?
@@ -41,7 +41,6 @@ public class PagerView: UIView, UICollectionViewDelegateFlowLayout, UICollection
         self.translatesAutoresizingMaskIntoConstraints = false
 
         self.addSubview(collectionView)
-        collectionView.backgroundColor = .secondarySystemBackground
         // Make right-side corners round.
         collectionView.layer.cornerRadius = PagerView.kCornerRadius
         collectionView.layer.maskedCorners = [.layerMaxXMinYCorner, .layerMaxXMaxYCorner]
