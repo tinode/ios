@@ -77,7 +77,7 @@ public class ComTopic: Topic<TheCard, PrivateType, TheCard, PrivateType> {
 
     /// Send message to server that the topic is archived or un-archived.
     /// - Parameters:
-    ///   - param: archived `true` to archive the topic, `false` to un-archive.
+    ///  - archived: `true` to archive the topic, `false` to un-archive.
     /// - Returns: PromisedReply of the reply ctrl message
     public func updateArchived(archived: Bool) -> PromisedReply<ServerMessage>? {
         var priv = PrivateType()
@@ -137,6 +137,10 @@ public class ComTopic: Topic<TheCard, PrivateType, TheCard, PrivateType> {
     public var pinnedCount: Int {
         guard let pinned = getAux(key: "pins")?.asArray() else { return 0 }
         return pinned.count
+    }
+
+    public var pinHash: Int {
+        pinned.hashValue
     }
 
     /// First read messages from the local cache. If cache does not contain enough messages, fetch more from the server.
