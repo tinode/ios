@@ -583,7 +583,7 @@ class UiUtils {
                 // Image is small enough to be sent in-band.
                 let pub = topic.pub?.copy() ?? TheCard(fn: nil)
                 pub.photo = Photo(data: avatar.pixelData(forMimeType: Photo.kDefaultType), ref: nil, width: Int(avatar.size.width), height: Int(avatar.size.height))
-                return UiUtils.setTopicData(forTopic: topic, pub: pub, priv: nil)
+                return UiUtils.setTopicDesc(forTopic: topic, pub: pub, priv: nil)
             }
         } else {
             try? result.reject(error: ImageProcessingError.invalidImage)
@@ -595,13 +595,13 @@ class UiUtils {
             let thumbnail = avatar.resize(width: kAvatarPreviewDimensions, height: kAvatarPreviewDimensions, clip: true)
             let url = srvmsg?.ctrl?.getStringParam(for: "url")
             pub.photo = Photo(data: thumbnail?.pixelData(forMimeType: Photo.kDefaultType), ref: url, width: Int(avatar.size.width), height: Int(avatar.size.height))
-            return UiUtils.setTopicData(forTopic: topic, pub: pub, priv: nil)
+            return UiUtils.setTopicDesc(forTopic: topic, pub: pub, priv: nil)
         }
     }
 
     @discardableResult
-    public static func setTopicData(forTopic topic: DefaultTopic, pub: TheCard?, priv: PrivateType?) -> PromisedReply<ServerMessage> {
-        return topic.setDescription(pub: pub, priv: priv).then(onSuccess: UiUtils.ToastSuccessHandler, onFailure: UiUtils.ToastFailureHandler)
+    public static func setTopicDesc(forTopic topic: DefaultTopic, pub: TheCard?, priv: PrivateType?) -> PromisedReply<ServerMessage> {
+        return topic.setMeta(pub: pub, priv: priv).then(onSuccess: UiUtils.ToastSuccessHandler, onFailure: UiUtils.ToastFailureHandler)
     }
 
     public static func topViewController(rootViewController: UIViewController?) -> UIViewController? {
@@ -657,7 +657,7 @@ class UiUtils {
         }
         let alert = TagsEditDialogViewController(with: tags)
         alert.completionHandler = { newTags in
-            topic.setMeta(meta: MsgSetMeta(desc: nil, sub: nil, tags: newTags, cred: nil))
+            topic.setMeta(tags: newTags)
                 .thenCatch(UiUtils.ToastFailureHandler)
         }
         alert.show(over: viewController)
@@ -692,14 +692,10 @@ class UiUtils {
     /// for scaling image down to fit under a certain size.
     ///
     /// - Parameters:
-    ///     - width: width of the original image
-    ///     - height: height of the original image
-    ///     - maxWidth: maximum width of the image
-    ///     - maxHeight: maximum height of the image
-    ///     - scale: image scaling factor
-    ///     - clip: first crops the image to the new aspect ratio then shrinks it; otherwise the
-    ///       image keeps the original aspect ratio but is shrunk to be under the
-    ///       maxWidth/maxHeight
+    ///    - original: size of the original image
+    ///    - fitUnder: maximum size of the resized image
+    ///    - scale: image scaling factor
+    ///    - clip: first crops the image to the new aspect ratio then shrinks it; otherwise the image keeps the original aspect ratio but is shrunk to be under the fitUnder
     /// - Returns:
     ///     a tuple which contains destination image sizes, source sizes and offsets
     ///     into source (when 'clip' is true), an indicator that the new dimensions are different
@@ -877,9 +873,8 @@ extension UIImage {
     /// for scaling image down to fit under a certain size.
     ///
     /// - Parameters:
-    ///     - maxWidth: maximum width of the image
-    ///     - maxHeight: maximum height of the image
-    ///     - clip: first crops the image to the new aspect ratio then shrinks it; otherwise the
+    ///    - size: image size
+    ///    - clip: first crops the image to the new aspect ratio then shrinks it; otherwise the
     ///       image keeps the original aspect ratio but is shrunk to be under the
     ///       maxWidth/maxHeight
     /// - Returns:

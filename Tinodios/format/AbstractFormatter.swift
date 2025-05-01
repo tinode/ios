@@ -177,7 +177,7 @@ class AbstractFormatter: DraftyFormatter {
     /// Convert drafty object into NSAttributedString
     /// - Parameters:
     ///    - content: Drafty object to convert
-    ///    - fitIn: maximum size of attached images.
+    ///    - maxSize: maximum size of attached images.
     public func toAttributed(_ content: Drafty, fitIn maxSize: CGSize) -> NSAttributedString {
         if content.isPlain {
             return NSMutableAttributedString(string: content.string, attributes: self.defaultAttrs)
