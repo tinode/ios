@@ -150,7 +150,7 @@ class CredentialsChangeViewController: UITableViewController {
 
         self.showRequestProgressOverlay()
         let newCred = Credential(meth: method, val: value)
-        me.setMeta(meta: MsgSetMeta(desc: nil, sub: nil, tags: nil, cred: newCred))
+        me.setMeta(cred: newCred)
             .then(onSuccess: { msg in
                 if let ctrl = msg?.ctrl, 200 <= ctrl.code && ctrl.code < 300 {
                     self.confirmationSectionVisible = true

@@ -132,6 +132,10 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
     // Only if the user is replying to a message or forwarding a message.
     public var pendingMessage: PendingMessage?
 
+    // Hash value to ensure that pinned messages do not endless loop of loading
+    // - getting nothing.
+    private var pinHash = -1
+
     @discardableResult
     func setup(topicName: String?, sendReadReceipts: Bool) -> Bool {
         guard let topicName = topicName else { return false }
@@ -505,22 +509,18 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         guard am.given?.update(from: "+RW") ?? false else {
             return
         }
-        topic?.setMeta(meta: MsgSetMeta(desc: nil, sub: MetaSetSub(user: topic?.name, mode: am.givenString), tags: nil, cred: nil)).thenCatch(UiUtils.ToastFailureHandler)
+        topic?.setMeta(sub: MetaSetSub(user: topic?.name, mode: am.givenString)).thenCatch(UiUtils.ToastFailureHandler)
     }
 
     func acceptInvitation() {
         guard let topic = self.topic, let mode = self.topic?.accessMode?.givenString else { return }
-        var response = topic.setMeta(meta: MsgSetMeta(desc: nil, sub: MetaSetSub(mode: mode), tags: nil, cred: nil))
+        var response = topic.setMeta(sub: MetaSetSub(mode: mode))
         if topic.isP2PType {
             // For P2P topics change 'given' permission of the peer too.
             // In p2p topics the other user has the same name as the topic.
             response = response.then(
                 onSuccess: { _ in
-                    _ = topic.setMeta(meta: MsgSetMeta(
-                        desc: nil,
-                        sub: MetaSetSub(user: topic.name, mode: mode),
-                        tags: nil,
-                        cred: nil))
+                    _ = topic.setMeta(sub: MetaSetSub(user: topic.name, mode: mode))
                     return nil
                 },
                 onFailure: UiUtils.ToastFailureHandler
@@ -542,7 +542,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
         guard let origAm = self.topic?.accessMode else { return }
         let am = Acs(from: origAm)
         guard am.want?.update(from: "-JP") ?? false else { return }
-        self.topic?.setMeta(meta: MsgSetMeta(desc: nil, sub: MetaSetSub(mode: am.wantString), tags: nil, cred: nil))
+        self.topic?.setMeta(sub: MetaSetSub(mode: am.wantString))
             .thenCatch(UiUtils.ToastFailureHandler)
             .thenFinally({
                 self.presenter?.dismiss()
@@ -881,6 +881,12 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
 
     override func onAllMessagesReceived(count: Int) {
         guard let topic = topic else { return }
+
+        let currentPinHash = topic.pinHash
+        if self.pinHash == currentPinHash {
+            return
+        }
+        self.pinHash = currentPinHash
 
         // Make sure all pinned messages are cached.
         guard let pinsArray = MsgRange.toRanges(topic.pinned) else { return }

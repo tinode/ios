@@ -121,7 +121,7 @@ class SettingsPersonalViewController: UITableViewController {
         if pub.fn != userName {
             pub.fn = String(userName.prefix(UiUtils.kMaxTitleLength))
         }
-        UiUtils.setTopicData(forTopic: self.me, pub: pub, priv: nil).then(
+        UiUtils.setTopicDesc(forTopic: self.me, pub: pub, priv: nil).then(
             onSuccess: { _ in
                 DispatchQueue.main.async { self.reloadData() }
                 return nil
@@ -135,7 +135,7 @@ class SettingsPersonalViewController: UITableViewController {
         if pub.note != upd {
             pub.note = String(upd!.prefix(UiUtils.kMaxTopicDdescriptionLength))
         }
-        UiUtils.setTopicData(forTopic: self.me, pub: pub, priv: nil).then(
+        UiUtils.setTopicDesc(forTopic: self.me, pub: pub, priv: nil).then(
             onSuccess: { _ in
                 DispatchQueue.main.async { self.reloadData() }
                 return nil
