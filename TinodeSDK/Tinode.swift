@@ -151,14 +151,19 @@ public class Tinode {
     public static let kNoteRecv = "recv"
     public static let kNoteCall = "call"
     public static let kNullValue = "\u{2421}"
+
     internal static let log = Log(subsystem: "co.tinode.tinodesdk")
 
     public static let kMaxPinnedCount = 5
+    public static let kTagAlias = "alias:"
+
+    private static let kAliasRegex = "^[a-z0-9_\\-]{4,24}$"
 
     let kProtocolVersion = "0"
     let kVersion = "0.23"
     let kLibVersion = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as! String
     let kLocale = Locale.current.languageCode!
+
     public var OsVersion: String = ""
 
     private class ConcurrentFuturesMap {
@@ -1380,8 +1385,8 @@ public class Tinode {
     }
 
     /// Request to delete account of the current user.
-    /// - Parameters
-    ///  - hard hard-delete user
+    /// - Parameters:
+    ///   - hard: hard-delete user
     /// - Returns: PromisedReply of the reply ctrl message
     public func delCurrentUser(hard: Bool) -> PromisedReply<ServerMessage> {
         let msgId = getNextMsgId()
@@ -1428,5 +1433,73 @@ public class Tinode {
     public static func isNull(obj: Any?) -> Bool {
         guard let str = obj as? String else { return false }
         return str == Tinode.kNullValue
+    }
+
+    /// Split fully-qualified tag into prefix and value.
+    ///
+    /// - Parameters:
+    ///    - tag: tag to split
+    /// - Returns: tuple with the prefix (namespace) and value.
+    public static func tagSplit(_ tag: String?) -> (String, String)? {
+        guard let tag = tag?.trimmingCharacters(in: .whitespaces) else { return nil }
+
+        guard let splitAt = tag.firstIndex(of: ":") else { return nil }
+
+        let value = tag.suffix(from: tag.index(after: splitAt))
+        if value.isEmpty {
+            return nil
+        }
+        return (String(tag.prefix(upTo: splitAt)), String(value))
+    }
+
+    /// Set a unique namespace tag. If the tag with this namespace is already present then it's replaced with the new tag.
+    ///
+    /// - Parameters:
+    ///    - uniqueTag: tag to add, must be fully-qualified; if nil or empty, no action is taken.
+    /// - Returns: array of tags with the given namespace tag replaced.
+    public static func setUniqueTag(tags: [String]?, uniqueTag: String) -> [String]? {
+        guard let parts = Tinode.tagSplit(uniqueTag) else { return nil }
+
+        guard let tags = tags, !tags.isEmpty else {
+            // No tags, just add the new one.
+            return [uniqueTag]
+        }
+
+        // Remove the old tag with the same prefix.
+        var tt = tags.filter { !$0.starts(with: parts.0) }
+        // Add the new tag and convert to array.
+        tt.append(uniqueTag)
+        return tt
+    }
+
+    /// Remove tags with the given prefix.
+    ///
+    /// - Parameters:
+    ///   - prefix: prefix to remove
+    /// - Returns: array of tags with the tags of the given prefix removed.
+    public static func clearTagPrefix(tags: [String]?, prefix: String) -> [String]? {
+        return tags?.filter { !$0.starts(with: prefix) }
+    }
+
+    /// Check if the given tag value is syntactically valid.
+    ///
+    /// - Parameters:
+    ///   - tag: value to check.
+    /// - Returns: true if the tag value is valid, false otherwise.
+    public static func isValidTagValueFormat(tag: String?) -> Bool {
+        guard let tag = tag, !tag.isEmpty else {
+            return true
+        }
+
+        return tag.range(of: kAliasRegex, options: [.regularExpression, .caseInsensitive]) != nil
+    }
+
+    /// Find the first tag with the given prefix.
+    ///
+    /// - Parameters:
+    ///   - prefix: prefix to search for.
+    /// - Returns: tag if found or nil
+    public static func tagByPrefix(tags: [String]?, prefix: String) -> String? {
+        return tags?.first(where: { $0.starts(with: prefix) })
     }
 }

@@ -817,6 +817,35 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
         subs![user] = sub
     }
 
+    /// Find the first tag with the given prefix.
+    /// - Parameters:
+    ///  - prefix: prefix to search for.
+    /// - Returns: tag if found or nil.
+    public func tagByPrefix(_ prefix: String) -> String? {
+        return Tinode.tagByPrefix(tags: self.tags, prefix: prefix)
+    }
+
+    /// Find the first tag with the given prefix and return tag value, i.e. in 'prefix:value' return the 'value'.
+    /// - Parameters:
+    ///  - prefix: prefix to search for.
+    /// - Returns: tag value if found or nil.
+    public func tagValueByPrefix(_ prefix: String) -> String? {
+        let tag = Tinode.tagSplit(Tinode.tagByPrefix(tags: self.tags, prefix: prefix))
+        return tag?.1
+    }
+
+    public var alias: String? {
+        return tagValueByPrefix(Tinode.kTagAlias)
+    }
+
+    public func setTag(unique: String) {
+        self.tags = Tinode.setUniqueTag(tags: self.tags, uniqueTag: unique)
+    }
+
+    public func clearTag(prefix: String) {
+        self.tags = Tinode.clearTagPrefix(tags: self.tags, prefix: prefix)
+    }
+
     private func processSub(newsub: Subscription<SP, SR>) {
         var sub: Subscription<SP, SR>?
         if newsub.deleted != nil {
@@ -1043,12 +1072,12 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
         })
     }
 
-    public func setDescription(desc: MetaSetDesc<DP, DR>) -> PromisedReply<ServerMessage> {
+    public func setMeta(desc: MetaSetDesc<DP, DR>) -> PromisedReply<ServerMessage> {
         return setMeta(meta: MsgSetMeta<DP, DR>(desc: desc, sub: nil, tags: nil, cred: nil))
     }
 
-    public func setDescription(pub: DP?, priv: DR?) -> PromisedReply<ServerMessage> {
-        return setDescription(desc: MetaSetDesc<DP, DR>(pub: pub, priv: priv))
+    public func setMeta(pub: DP?, priv: DR?) -> PromisedReply<ServerMessage> {
+        return setMeta(desc: MetaSetDesc<DP, DR>(pub: pub, priv: priv))
     }
 
     public func updateDefacs(auth: String?, anon: String?) -> PromisedReply<ServerMessage> {
@@ -1059,7 +1088,7 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
         } else {
             newdacs = Defacs(auth: auth, anon: anon)
         }
-        return setDescription(desc: MetaSetDesc<DP, DR>(da: newdacs))
+        return setMeta(desc: MetaSetDesc<DP, DR>(da: newdacs))
     }
 
     public func updateAccessMode(ac: AccessChange?) -> Bool {
@@ -1068,7 +1097,16 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
         }
         return description.acs!.update(from: ac)
     }
-    public func setSubscription(sub: MetaSetSub) -> PromisedReply<ServerMessage> {
+
+    public func setMeta(tags: [String]) -> PromisedReply<ServerMessage> {
+        return setMeta(meta: MsgSetMeta(desc: nil, sub: nil, tags: tags, cred: nil))
+    }
+
+    public func setMeta(cred: Credential) -> PromisedReply<ServerMessage> {
+        return setMeta(meta: MsgSetMeta(desc: nil, sub: nil, tags: nil, cred: cred))
+    }
+
+    public func setMeta(sub: MetaSetSub) -> PromisedReply<ServerMessage> {
         return setMeta(meta: MsgSetMeta(desc: nil, sub: sub, tags: nil, cred: nil))
     }
 
@@ -1088,7 +1126,7 @@ open class Topic<DP: Codable & Mergeable, DR: Codable & Mergeable, SP: Codable, 
         }
         let mode = AcsHelper(ah: uidIsSelf ? description.acs!.want : sub!.acs!.given)
         if mode.update(from: update) {
-            return setSubscription(sub: MetaSetSub(user: uid, mode: mode.description))
+            return setMeta(sub: MetaSetSub(user: uid, mode: mode.description))
         }
         return PromisedReply<ServerMessage>(value: ServerMessage())
     }
