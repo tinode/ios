@@ -1,7 +1,7 @@
 //
 //  AccountSettingsViewController.swift
 //
-//  Copyright © 2019-2022 Tinode LLC. All rights reserved.
+//  Copyright © 2019-2025 Tinode LLC. All rights reserved.
 //
 
 import TinodeSDK
@@ -9,14 +9,16 @@ import UIKit
 
 class AccountSettingsViewController: UITableViewController {
     private static let kSectionPersonal = 0
-    private static let kPersonalVerified = 2
-    private static let kPersonalStaff = 3
-    private static let kPersonalDanger = 4
+    private static let kPersonalAlias = 2
+    private static let kPersonalVerified = 3
+    private static let kPersonalStaff = 4
+    private static let kPersonalDanger = 5
 
     @IBOutlet weak var avatarImageView: RoundImageView!
     @IBOutlet weak var userNameLabel: UILabel!
     @IBOutlet weak var subtitleLabel: UILabel!
     @IBOutlet weak var myUIDLabel: UILabel!
+    @IBOutlet weak var aliasLabel: UILabel!
 
     weak var tinode: Tinode!
     weak var me: DefaultMeTopic!
@@ -50,6 +52,9 @@ class AccountSettingsViewController: UITableViewController {
         // My UID/Address label.
         self.myUIDLabel.text = self.tinode.myUid
         self.myUIDLabel.sizeToFit()
+
+        self.aliasLabel.text = me.alias
+        self.aliasLabel.sizeToFit()
     }
 
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {

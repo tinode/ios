@@ -30,6 +30,8 @@ class TopicGeneralViewController: UITableViewController {
     @IBOutlet weak var avatarImage: RoundImageView!
     @IBOutlet weak var loadAvatarButton: UIButton!
 
+    @IBOutlet weak var aliasLabel: UILabel!
+
     override func viewDidLoad() {
         super.viewDidLoad()
         setup()
@@ -71,6 +73,10 @@ class TopicGeneralViewController: UITableViewController {
                 forView: topicDescriptionLabel,
                 action: #selector(TopicGeneralViewController.topicDescriptionTapped),
                 actionTarget: self)
+            UiUtils.setupTapRecognizer(
+                forView: aliasLabel,
+                action: #selector(TopicGeneralViewController.aliasTapped),
+                actionTarget: self)
         }
         self.imagePicker = ImagePicker(
             presentationController: self, delegate: self, editable: true)
@@ -91,6 +97,14 @@ class TopicGeneralViewController: UITableViewController {
                 topic.pub?.note
         } else {
             topicDescriptionLabel.isHidden = true
+        }
+
+        let alias = topic.alias
+        if topic.isOwner && !topic.isSlfType {
+            aliasLabel.isHidden = false
+            aliasLabel.text = alias
+        } else {
+            aliasLabel.isHidden = true
         }
 
         if topic.isSlfType {
@@ -115,7 +129,7 @@ class TopicGeneralViewController: UITableViewController {
             if let nt = text, !nt.isEmpty {
                 if let oldPub = self.topic.pub, oldPub.fn != nt {
                     let pub = TheCard(fn: String(nt.prefix(UiUtils.kMaxTitleLength)))
-                    UiUtils.setTopicData(forTopic: self.topic, pub: pub, priv: nil).thenFinally {
+                    UiUtils.setTopicDesc(forTopic: self.topic, pub: pub, priv: nil).thenFinally {
                         DispatchQueue.main.async { self.reloadData() }
                     }
                 }
@@ -136,7 +150,7 @@ class TopicGeneralViewController: UITableViewController {
             } else {
                 pub.note = Tinode.kNullValue
             }
-            UiUtils.setTopicData(forTopic: self.topic, pub: pub, priv: nil).thenFinally {
+            UiUtils.setTopicDesc(forTopic: self.topic, pub: pub, priv: nil).thenFinally {
                 DispatchQueue.main.async { self.reloadData() }
             }
         }
@@ -154,8 +168,26 @@ class TopicGeneralViewController: UITableViewController {
             } else {
                 priv.comment = Tinode.kNullValue
             }
-            UiUtils.setTopicData(forTopic: self.topic, pub: nil, priv: priv).thenFinally {
+            UiUtils.setTopicDesc(forTopic: self.topic, pub: nil, priv: priv).thenFinally {
                 DispatchQueue.main.async { self.reloadData() }
+            }
+        })
+    }
+
+    @objc
+    func aliasTapped(sender: UITapGestureRecognizer) {
+        UiUtils.alertLabelEditor(over: self, self.topic?.alias, placeholder: NSLocalizedString("uniquealias", comment: "Alert placeholder"), title: NSLocalizedString("Alias", comment: "Alert title"), done: { alias in
+            var tags: [String]?
+            if let alias = alias, !alias.isEmpty {
+                tags = Tinode.setUniqueTag(tags: self.topic.tags, uniqueTag: "alias:\(alias)")
+            } else {
+                tags = Tinode.clearTagPrefix(tags: self.topic.tags, prefix: Tinode.kTagAlias)
+            }
+            self.topic.setMeta(tags: tags ?? [])
+                .then(onSuccess: UiUtils.ToastSuccessHandler, onFailure: UiUtils.ToastFailureHandler)
+                .thenFinally {
+                    DispatchQueue.main.async { self.reloadData()
+                }
             }
         })
     }
