@@ -99,7 +99,7 @@ open class MeTopic<DP: Codable & Mergeable>: Topic<DP, PrivateType, DP, PrivateT
 
     public func confirmCred(meth: String, response: String) ->PromisedReply<ServerMessage> {
         let cred = Credential(meth: meth, val: nil, resp: response, params: nil)
-        return setMeta(meta: MsgSetMeta(desc: nil, sub: nil, tags: nil, cred: cred))
+        return setMeta(cred: cred)
     }
 
     private func findCredIndex(cred other: Credential, anyUnconfirmed: Bool) -> Int {
@@ -126,7 +126,7 @@ open class MeTopic<DP: Codable & Mergeable>: Topic<DP, PrivateType, DP, PrivateT
 
         let mode = AcsHelper(ah: acs!.want)
         if mode.update(from: update) {
-            return setSubscription(sub: MetaSetSub(user: nil, mode: mode.description))
+            return setMeta(sub: MetaSetSub(user: nil, mode: mode.description))
         }
 
         // The state is unchanged, return resolved promise.
