@@ -13,9 +13,10 @@ class TopicInfoViewController: UITableViewController {
     private static let kSectionBasic = 0
     private static let kSectionBasicAddress = 1
     private static let kSectionBasicLastSeen = 2
-    private static let kSectionBasicVerified = 3
-    private static let kSectionBasicStaff = 4
-    private static let kSectionBasicDanger = 5
+    private static let kSectionBasicAlias = 3
+    private static let kSectionBasicVerified = 4
+    private static let kSectionBasicStaff = 5
+    private static let kSectionBasicDanger = 6
 
     private static let kSectionQuickAction = 1
     private static let kSectionQuickActionMute = 0
@@ -35,6 +36,7 @@ class TopicInfoViewController: UITableViewController {
     @IBOutlet weak var archivedSwitch: UISwitch!
     @IBOutlet weak var topicIDLabel: UILabel!
     @IBOutlet weak var lastSeenTimestampLabel: UILabel!
+    @IBOutlet weak var aliasLabel: UILabel!
 
     var topicName = ""
     private var topic: DefaultComTopic!
@@ -101,6 +103,9 @@ class TopicInfoViewController: UITableViewController {
 
         topicIDLabel.text = topic.name
         topicIDLabel.sizeToFit()
+
+        aliasLabel.text = topic.tagByPrefix(Tinode.kTagAlias)
+        aliasLabel.sizeToFit()
 
         avatarImage.set(pub: topic.pub, id: topic.name, deleted: topic.deleted)
         avatarImage.letterTileFont = self.avatarImage.letterTileFont.withSize(CGFloat(50))
