@@ -11,7 +11,11 @@ import TinodiosDB
 class TopicGeneralViewController: UITableViewController {
 
     private static let kSectionBasic = 0
-    private static let kSectionBasicDescription = 2
+    // Avatar = 0
+    private static let kSectionBasicTitle = 1
+    private static let kSectionBasicAlias = 2
+    private static let kSectionBasicPrivate = 3
+    private static let kSectionBasicDescription = 4
 
     private static let kSectionActions = 1
     private static let kSectionActionsManageTags = 0
@@ -23,14 +27,13 @@ class TopicGeneralViewController: UITableViewController {
 
     @IBOutlet weak var actionManageTags: UITableViewCell!
 
-    @IBOutlet weak var topicTitleLabel: UILabel!
-    @IBOutlet weak var topicDescriptionLabel: UILabel!
-    @IBOutlet weak var topicPrivateLabel: UILabel!
+    @IBOutlet weak var topicTitleTextField: UITextField!
+    @IBOutlet weak var aliasTextField: UITextField!
+    @IBOutlet weak var topicDescriptTextView: UITextView!
+    @IBOutlet weak var topicPrivateTextField: UITextField!
 
     @IBOutlet weak var avatarImage: RoundImageView!
     @IBOutlet weak var loadAvatarButton: UIButton!
-
-    @IBOutlet weak var aliasLabel: UILabel!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -56,63 +59,55 @@ class TopicGeneralViewController: UITableViewController {
             loadAvatarButton.isHidden = true
         }
 
+        self.imagePicker = ImagePicker(presentationController: self, delegate: self, editable: true)
+
+        topicTitleTextField.delegate = self
+        topicTitleTextField.tag = TopicGeneralViewController.kSectionBasicTitle
+        aliasTextField.delegate = self
+        aliasTextField.tag = TopicGeneralViewController.kSectionBasicAlias
+        topicPrivateTextField.delegate = self
+        topicPrivateTextField.tag = TopicGeneralViewController.kSectionBasicPrivate
+        topicDescriptTextView.delegate = self
+        topicDescriptTextView.tag = TopicGeneralViewController.kSectionBasicDescription
+
+        topicPrivateTextField.isEnabled = true
+        if topic.isOwner {
+            topicTitleTextField.isEnabled = true
+            aliasTextField.isEnabled = true
+            topicDescriptTextView.isUserInteractionEnabled = true
+        } else {
+            topicTitleTextField.isEnabled = false
+            aliasTextField.isEnabled = false
+            topicDescriptTextView.isUserInteractionEnabled = false
+        }
         UiUtils.setupTapRecognizer(
             forView: actionManageTags,
             action: #selector(TopicGeneralViewController.manageTagsClicked),
             actionTarget: self)
-        UiUtils.setupTapRecognizer(
-            forView: topicPrivateLabel,
-            action: #selector(TopicGeneralViewController.topicPrivateTapped),
-            actionTarget: self)
-        if topic.isOwner {
-            UiUtils.setupTapRecognizer(
-                forView: topicTitleLabel,
-                action: #selector(TopicGeneralViewController.topicTitleTapped),
-                actionTarget: self)
-            UiUtils.setupTapRecognizer(
-                forView: topicDescriptionLabel,
-                action: #selector(TopicGeneralViewController.topicDescriptionTapped),
-                actionTarget: self)
-            UiUtils.setupTapRecognizer(
-                forView: aliasLabel,
-                action: #selector(TopicGeneralViewController.aliasTapped),
-                actionTarget: self)
-        }
-        self.imagePicker = ImagePicker(
-            presentationController: self, delegate: self, editable: true)
     }
 
     private func reloadData() {
-        topicTitleLabel.text = !(topic.pub?.fn ?? "").isEmpty ?
+        topicTitleTextField.text = !(topic.pub?.fn ?? "").isEmpty ?
             topic.pub!.fn :
             topic.isSlfType ? NSLocalizedString("Saved messages", comment: "Title of slf topic") : NSLocalizedString("Unknown", comment: "Placeholder for missing user name")
 
         let isEmpty = topic.pub?.note?.isEmpty ?? true && !topic.isSlfType
-        topicDescriptionLabel.textColor = isEmpty ? .placeholderText : .secondaryLabel
+        topicDescriptTextView.textColor = isEmpty ? .placeholderText : .secondaryLabel
         if topic.isOwner || !isEmpty {
-            topicDescriptionLabel.isHidden = false
-            topicDescriptionLabel.text = isEmpty ?
+            topicDescriptTextView.text = isEmpty ?
                 NSLocalizedString("Add optional description", comment: "Placeholder for missing topic description") :
                 topic.isSlfType ? NSLocalizedString("Notes, messages, links, files saved for posterity", comment: "Explanation for Saved messages topic") :
                 topic.pub?.note
-        } else {
-            topicDescriptionLabel.isHidden = true
         }
 
         let alias = topic.alias
         if topic.isOwner && !topic.isSlfType {
-            aliasLabel.isHidden = false
-            aliasLabel.text = alias
-        } else {
-            aliasLabel.isHidden = true
+            aliasTextField.text = alias
         }
 
-        if topic.isSlfType {
-            topicPrivateLabel.isHidden = true
-        } else {
-            topicPrivateLabel.textColor = topic?.comment?.isEmpty ?? true ? .placeholderText : .secondaryLabel
-            topicPrivateLabel.text = (topic.comment ?? "").isEmpty ? NSLocalizedString("Private info: not set", comment: "Placeholder text in editor") : topic.comment
-            topicPrivateLabel.isHidden = false
+        if !topic.isSlfType {
+            topicPrivateTextField.textColor = topic?.comment?.isEmpty ?? true ? .placeholderText : .secondaryLabel
+            topicPrivateTextField.text = (topic.comment ?? "").isEmpty ? NSLocalizedString("Private info: not set", comment: "Placeholder text in editor") : topic.comment
         }
 
         avatarImage.set(pub: topic.pub, id: topic.name, deleted: topic.deleted)
@@ -123,8 +118,16 @@ class TopicGeneralViewController: UITableViewController {
         imagePicker.present(from: self.view)
     }
 
+    @IBAction func doneEditingClicked(_ sender: Any) {
+    }
+    
     @objc
     func topicTitleTapped(sender: UITapGestureRecognizer) {
+        print("topicTitleTapped")
+        topicTitleTextField.isEnabled = true
+        topicTitleTextField.becomeFirstResponder()
+
+        /*
         UiUtils.alertLabelEditor(over: self, self.topic?.pub?.fn, placeholder: NSLocalizedString("Name of the group", comment: "Alert placeholder"), title: NSLocalizedString("Edit Title", comment: "Alert title"), done: { text in
             if let nt = text, !nt.isEmpty {
                 if let oldPub = self.topic.pub, oldPub.fn != nt {
@@ -135,6 +138,7 @@ class TopicGeneralViewController: UITableViewController {
                 }
             }
         })
+         */
     }
 
     @objc
@@ -202,20 +206,17 @@ class TopicGeneralViewController: UITableViewController {
     }
 }
 
-extension TopicGeneralViewController: UIPopoverPresentationControllerDelegate {
-    func adaptivePresentationStyle(for controller: UIPresentationController) -> UIModalPresentationStyle {
-        return UIModalPresentationStyle.none
-    }
-}
-
+// UITableViewController
 extension TopicGeneralViewController {
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         guard let tt = self.topic else {
             return super.tableView(tableView, heightForRowAt: indexPath)
         }
         if indexPath.section == TopicGeneralViewController.kSectionBasic {
-            if indexPath.row == TopicGeneralViewController.kSectionBasicDescription && !tt.isOwner && (tt.pub?.note?.isEmpty ?? true) {
-                // Hide impty uneditable Description row.
+            // Hide empty uneditable rows.
+            if (indexPath.row == TopicGeneralViewController.kSectionBasicAlias && !tt.isOwner && (tt.alias?.isEmpty ?? true)) ||
+                (indexPath.row == TopicGeneralViewController.kSectionBasicPrivate && tt.isSlfType) ||
+                (indexPath.row == TopicGeneralViewController.kSectionBasicDescription && !tt.isOwner && (tt.pub?.note?.isEmpty ?? true)) {
                 return CGFloat.leastNonzeroMagnitude
             }
         } else if indexPath.section == TopicGeneralViewController.kSectionActions {
@@ -242,10 +243,28 @@ extension TopicGeneralViewController {
     }
 }
 
+extension TopicGeneralViewController: UIPopoverPresentationControllerDelegate {
+    func adaptivePresentationStyle(for controller: UIPresentationController) -> UIModalPresentationStyle {
+        return UIModalPresentationStyle.none
+    }
+}
+
 extension TopicGeneralViewController: ImagePickerDelegate {
     func didSelect(media: ImagePickerMediaType?) {
         guard case .image(let image, _, _) = media else { return }
         UiUtils.updateAvatar(forTopic: self.topic, image: image)
             .thenApply(self.promiseSuccessHandler)
+    }
+}
+
+extension TopicGeneralViewController: UITextFieldDelegate {
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        print("textFieldDidEndEditing \(textField.text ?? "")")
+    }
+}
+
+extension TopicGeneralViewController: UITextViewDelegate {
+    func textViewDidEndEditing(_ textView: UITextView) {
+        print("textViewDidEndEditing \(textView.text ?? "")")
     }
 }

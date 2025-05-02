@@ -34,15 +34,19 @@ class TopicInfoViewController: UITableViewController {
     private static let kSectionMembers = 4
 
     @IBOutlet weak var topicTitleLabel: UILabel!
-    @IBOutlet weak var topicDescriptionTextView: UITextView!
+    @IBOutlet weak var topicIDLabel: UILabel!
+    @IBOutlet weak var lastSeenTimestampLabel: UILabel!
+    @IBOutlet weak var aliasLabel: UILabel!
     @IBOutlet weak var topicPrivateTextView: UITextView!
+    @IBOutlet weak var topicDescriptionTextView: UITextView!
+
     @IBOutlet weak var avatarImage: RoundImageView!
 
     @IBOutlet weak var mutedSwitch: UISwitch!
     @IBOutlet weak var archivedSwitch: UISwitch!
-    @IBOutlet weak var topicIDLabel: UILabel!
-    @IBOutlet weak var lastSeenTimestampLabel: UILabel!
-    @IBOutlet weak var aliasLabel: UILabel!
+
+
+
 
     var topicName = ""
     private var topic: DefaultComTopic!
