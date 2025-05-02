@@ -11,23 +11,29 @@ import TinodiosDB
 class TopicInfoViewController: UITableViewController {
 
     private static let kSectionBasic = 0
-    private static let kSectionBasicAddress = 1
+    private static let kSectionBasicAvatar = 0
+    private static let kSectionBasicTitle = 1
     private static let kSectionBasicLastSeen = 2
-    private static let kSectionBasicAlias = 3
-    private static let kSectionBasicVerified = 4
-    private static let kSectionBasicStaff = 5
-    private static let kSectionBasicDanger = 6
 
-    private static let kSectionQuickAction = 1
+    private static let kSectionExtended = 1
+    private static let kSectionExtendedAddress = 0
+    private static let kSectionExtendedAlias = 1
+    private static let kSectionExtendedVerified = 2
+    private static let kSectionExtendedStaff = 3
+    private static let kSectionExtendedDanger = 4
+    private static let kSectionExtendedPrivate = 5
+    private static let kSectionExtendedDescription = 6
+
+    private static let kSectionQuickAction = 2
     private static let kSectionQuickActionMute = 0
     private static let kSectionQuickActionArchive = 1
 
-    private static let kSectionActions = 2
+    private static let kSectionActions = 3
     private static let kSectionActionsAdminSecurity = 0
 
-    private static let kSectionMembers = 3
+    private static let kSectionMembers = 4
 
-    @IBOutlet weak var topicTitleTextView: UITextView!
+    @IBOutlet weak var topicTitleLabel: UILabel!
     @IBOutlet weak var topicDescriptionTextView: UITextView!
     @IBOutlet weak var topicPrivateTextView: UITextView!
     @IBOutlet weak var avatarImage: RoundImageView!
@@ -77,10 +83,16 @@ class TopicInfoViewController: UITableViewController {
     private func reloadData() {
         let isSlf = topic.isSlfType
 
-        topicTitleTextView.text = isSlf ? NSLocalizedString("Saved messages", comment: "Title for slf topic") : topic.pub?.fn ?? NSLocalizedString("Unknown", comment: "Placeholder for missing user name")
-        topicTitleTextView.sizeToFit()
+        // Disable and hide EDIT buttin for SLF topic.
+        if isSlf, let editButton = self.navigationItem.rightBarButtonItem {
+            editButton.isEnabled = false
+            editButton.tintColor = UIColor.clear
+        }
 
-        let descPlaceholder: String? = topic.isOwner ? NSLocalizedString("Add optional description", comment: "Placeholder for missing topic description") : nil
+        topicTitleLabel.text = isSlf ? NSLocalizedString("Saved messages", comment: "Title for slf topic") : topic.pub?.fn ?? NSLocalizedString("Unknown", comment: "Placeholder for missing user name")
+        topicTitleLabel.textAlignment = .center
+
+        let descPlaceholder: String? = topic.isOwner ? NSLocalizedString("Оptional description", comment: "Placeholder for missing topic description") : nil
         let isEmpty = (topic.pub?.note?.isEmpty ?? true) && !isSlf
         topicDescriptionTextView.textColor = isEmpty ? .placeholderText : .secondaryLabel
         topicDescriptionTextView.text = isEmpty ?
@@ -165,10 +177,13 @@ class TopicInfoViewController: UITableViewController {
             })
     }
 
-    @IBAction func copyTopicID(_ sender: Any) {
-        let pasteboard = UIPasteboard.general
-        pasteboard.string = topic.name
-        UiUtils.showToast(message: NSLocalizedString("Address copied", comment: "Toast notification"), level: .info)
+    /// Copy topic ID or Alias.
+    @IBAction func copyTopicValue(_ sender: UIButton) {
+        UIPasteboard.general.string = sender.tag == 0 ? topic.name : topic.alias
+        UiUtils.showToast(message: sender.tag == 0 ?
+                            NSLocalizedString("Address copied", comment: "Toast notification") :
+                            NSLocalizedString("Alias copied", comment: "Toast notification"),
+                          level: .info)
     }
 
 
@@ -226,11 +241,17 @@ extension TopicInfoViewController {
         if indexPath.section == TopicInfoViewController.kSectionMembers && indexPath.row != 0 {
             return 60
         } else if indexPath.section == TopicInfoViewController.kSectionBasic {
-            if (indexPath.row == TopicInfoViewController.kSectionBasicAddress && topic.isSlfType) ||
-                (indexPath.row == TopicInfoViewController.kSectionBasicLastSeen && topic?.lastSeen == nil) ||
-                (indexPath.row == TopicInfoViewController.kSectionBasicVerified && !(topic?.isVerified ?? false)) ||
-                (indexPath.row == TopicInfoViewController.kSectionBasicStaff && !(topic?.isStaffManaged ?? false)) ||
-                (indexPath.row == TopicInfoViewController.kSectionBasicDanger && !(topic?.isDangerous ?? false)) {
+            if indexPath.row == TopicInfoViewController.kSectionBasicLastSeen && topic?.lastSeen == nil {
+                return CGFloat.leastNonzeroMagnitude
+            }
+        } else if indexPath.section == TopicInfoViewController.kSectionExtended {
+            if (indexPath.row == TopicInfoViewController.kSectionExtendedPrivate && (topic.comment ?? "").isEmpty) ||
+                (indexPath.row == TopicInfoViewController.kSectionExtendedDescription && (topic.pub?.note?.isEmpty ?? true)) ||
+                (indexPath.row == TopicInfoViewController.kSectionExtendedAddress && topic.isSlfType) ||
+                (indexPath.row == TopicInfoViewController.kSectionExtendedAlias && (topic.alias ?? "").isEmpty) ||
+                (indexPath.row == TopicInfoViewController.kSectionExtendedVerified && !(topic?.isVerified ?? false)) ||
+                (indexPath.row == TopicInfoViewController.kSectionExtendedStaff && !(topic?.isStaffManaged ?? false)) ||
+                (indexPath.row == TopicInfoViewController.kSectionExtendedDanger && !(topic?.isDangerous ?? false)) {
                 return CGFloat.leastNonzeroMagnitude
             }
         } else if indexPath.section == TopicInfoViewController.kSectionQuickAction {
@@ -309,50 +330,49 @@ extension TopicInfoViewController {
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if topic.isSlfType {
-            if indexPath.section == TopicInfoViewController.kSectionBasic && indexPath.row == 0 {
-                let cell = super.tableView(tableView, cellForRowAt: indexPath)
-                cell.accessoryType = .none
-                return cell
+        var cell: UITableViewCell!
+        defer {
+            if indexPath.section == TopicInfoViewController.kSectionBasic {
+                cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: UIScreen.main.bounds.width)
             }
         }
 
         if indexPath.section != TopicInfoViewController.kSectionMembers {
-            return super.tableView(tableView, cellForRowAt: indexPath)
-        }
-
-        if indexPath.row == 0 {
+            cell = super.tableView(tableView, cellForRowAt: indexPath)
+        } else if indexPath.row == 0 {
             // Row with [Add members] and [Leave] buttons.
-            return super.tableView(tableView, cellForRowAt: indexPath)
-        }
+            cell = super.tableView(tableView, cellForRowAt: indexPath)
+        } else {
+            let cell = tableView.dequeueReusableCell(withIdentifier: "ContactViewCell", for: indexPath) as! ContactViewCell
 
-        let cell = tableView.dequeueReusableCell(withIdentifier: "ContactViewCell", for: indexPath) as! ContactViewCell
+            // Configure the cell...
+            let sub = subscriptions![indexPath.row - 1]
+            let uid = sub.user
+            let isMe = self.tinode.isMe(uid: uid)
+            let pub = sub.pub
 
-        // Configure the cell...
-        let sub = subscriptions![indexPath.row - 1]
-        let uid = sub.user
-        let isMe = self.tinode.isMe(uid: uid)
-        let pub = sub.pub
-
-        cell.avatar.set(pub: pub, id: uid, deleted: false)
-        cell.title.text = isMe ? NSLocalizedString("You", comment: "This is 'you'") : (pub?.fn ?? NSLocalizedString("Unknown", comment: "Placeholder for missing user name"))
-        cell.title.sizeToFit()
-        cell.subtitle.text = sub.acs?.givenString
-        for l in cell.statusLabels {
-            l.isHidden = true
-        }
-        if let accessLabels = TopicInfoViewController.getAccessModeLabels(acs: sub.acs, status: (sub.payload as? StoredSubscription)?.status) {
-            for i in 0..<accessLabels.count {
-                cell.statusLabels[i].isHidden = false
-                cell.statusLabels[i].text = accessLabels[i].text
-                cell.statusLabels[i].sizeToFit()
-                cell.statusLabels[i].textInsets = UIEdgeInsets(top: CGFloat(7), left: CGFloat(7), bottom: CGFloat(5), right: CGFloat(5))
-                cell.statusLabels[i].textColor = accessLabels[i].color
-                cell.statusLabels[i].layer.borderWidth = 1
-                cell.statusLabels[i].layer.borderColor = accessLabels[i].color.cgColor
+            cell.avatar.set(pub: pub, id: uid, deleted: false)
+            cell.title.text = isMe ? NSLocalizedString("You", comment: "This is 'you'") : (pub?.fn ?? NSLocalizedString("Unknown", comment: "Placeholder for missing user name"))
+            cell.title.sizeToFit()
+            cell.subtitle.text = sub.acs?.givenString
+            for l in cell.statusLabels {
+                l.isHidden = true
             }
+            if let accessLabels = TopicInfoViewController.getAccessModeLabels(acs: sub.acs, status: (sub.payload as? StoredSubscription)?.status) {
+                for i in 0..<accessLabels.count {
+                    cell.statusLabels[i].isHidden = false
+                    cell.statusLabels[i].text = accessLabels[i].text
+                    cell.statusLabels[i].textInsets = UIEdgeInsets(top: 3.0, left: 3.0, bottom: 1.5, right: 1.5)
+                    cell.statusLabels[i].textColor = accessLabels[i].color
+                    cell.statusLabels[i].layer.borderWidth = 1
+                    cell.statusLabels[i].layer.borderColor = accessLabels[i].color.cgColor
+                    cell.statusLabels[i].sizeToFit()
+                }
+            }
+            cell.accessoryType = isMe ? .none : .disclosureIndicator
+
+            return cell
         }
-        cell.accessoryType = isMe ? .none : .disclosureIndicator
 
         return cell
     }

@@ -458,8 +458,9 @@ class UiUtils {
             })
         })
     }
-    public static func setupTapRecognizer(forView view: UIView, action: Selector?, actionTarget: Any) {
+    public static func setupTapRecognizer(forView view: UIView, action: Selector?, actionTarget: Any, name: String? = nil) {
         let tap = UITapGestureRecognizer(target: actionTarget, action: action)
+        tap.name = name
         view.isUserInteractionEnabled = true
         view.addGestureRecognizer(tap)
     }
@@ -684,7 +685,7 @@ class UiUtils {
 
             // Draw icon.
             UIColor.secondaryLabel.setFill()
-            icon.draw(in: CGRect(x: dx, y: dy, width: iconSize.width, height: iconSize.height))
+            icon.draw(in: CGRect(x: dx, y: dy, width: iconSize.width, height: iconSize.height), blendMode: .normal, alpha: 0.5)
         }
     }
 

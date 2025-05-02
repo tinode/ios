@@ -14,9 +14,10 @@ class TopicSecurityViewController: UITableViewController {
     private static let kSectionActionsLeaveGroup = 1
     private static let kSectionActionsLeaveConversation = 2
     private static let kSectionActionsDelTopic = 3
-    private static let kSectionActionsBlock = 4
-    private static let kSectionActionsReport = 5
-    private static let kSectionActionsReportGroup = 6
+    private static let kSectionActionsDelSavedMessages = 4
+    private static let kSectionActionsBlock = 5
+    private static let kSectionActionsReport = 6
+    private static let kSectionActionsReportGroup = 7
 
     private static let kSectionPermissions = 1
     private static let kSectionPermissionsMine = 0
@@ -39,6 +40,7 @@ class TopicSecurityViewController: UITableViewController {
 
     @IBOutlet weak var actionDeleteMessages: UITableViewCell!
     @IBOutlet weak var actionDeleteGroup: UITableViewCell!
+    @IBOutlet weak var actionDeleteAll: UITableViewCell!
     @IBOutlet weak var actionLeaveGroup: UITableViewCell!
     @IBOutlet weak var actionLeaveConversation: UITableViewCell!
     @IBOutlet weak var actionBlockContact: UITableViewCell!
@@ -90,7 +92,11 @@ class TopicSecurityViewController: UITableViewController {
         UiUtils.setupTapRecognizer(
             forView: actionDeleteGroup,
             action: #selector(TopicSecurityViewController.deleteGroupClicked),
-            actionTarget: self)
+            actionTarget: self, name: "deleteGroup")
+        UiUtils.setupTapRecognizer(
+            forView: actionDeleteAll,
+            action: #selector(TopicSecurityViewController.deleteGroupClicked),
+            actionTarget: self, name: "deleteSavedMessages")
         UiUtils.setupTapRecognizer(
             forView: actionLeaveGroup,
             action: #selector(TopicSecurityViewController.leaveGroupClicked),
@@ -222,7 +228,7 @@ class TopicSecurityViewController: UITableViewController {
             UiUtils.showToast(message: NSLocalizedString("Only Owner can delete group", comment: "Toast notification"))
             return
         }
-        let alert = UIAlertController(title: NSLocalizedString("Delete the group?", comment: "Alert title"), message: nil, preferredStyle: .alert)
+        let alert = UIAlertController(title: sender.name ?? "" == "deleteGroup" ? NSLocalizedString("Delete the group?", comment: "Alert title") : NSLocalizedString("Delete Saved messages?", comment: "Alert title"), message: nil, preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: NSLocalizedString("Cancel", comment: "Alert action"), style: .cancel, handler: nil))
         alert.addAction(UIAlertAction(
             title: NSLocalizedString("Delete", comment: "Alert action"), style: .destructive,
@@ -340,8 +346,12 @@ extension TopicSecurityViewController {
                 // Owner, hide [Leave]
                 return CGFloat.leastNonzeroMagnitude
             }
-            if indexPath.row == TopicSecurityViewController.kSectionActionsDelTopic && !tt.isOwner {
-                // Not an owner, hide [Delete Topic]
+            if indexPath.row == TopicSecurityViewController.kSectionActionsDelTopic && (!tt.isOwner || tt.isSlfType) {
+                // Not an owner or SLF, hide [Delete Group]
+                return CGFloat.leastNonzeroMagnitude
+            }
+            if indexPath.row == TopicSecurityViewController.kSectionActionsDelSavedMessages && !tt.isSlfType {
+                // SLF-specific delete topic.
                 return CGFloat.leastNonzeroMagnitude
             }
             if indexPath.row == TopicSecurityViewController.kSectionActionsBlock && (tt.isGrpType || tt.isSlfType) {
