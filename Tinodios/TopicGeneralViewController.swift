@@ -20,10 +20,19 @@ class TopicGeneralViewController: UITableViewController {
     private static let kSectionActions = 1
     private static let kSectionActionsManageTags = 0
 
+    /// Maximum length of user name, topic title, and private comment.
+    private static let kMaxTitleLength = 60
+    /// Maximum length of topic description.
+    private static let kMaxDescriptionLength = 360
+
     var topicName = ""
     private var topic: DefaultComTopic!
     private var tinode: Tinode!
     private var imagePicker: ImagePicker!
+
+    private var aliasTesterTimer: Timer?
+
+    private static let kDescriptionPlaceholder = NSLocalizedString("Optional description", comment: "Placeholder for missing topic description")
 
     @IBOutlet weak var actionManageTags: UITableViewCell!
 
@@ -63,10 +72,14 @@ class TopicGeneralViewController: UITableViewController {
 
         topicTitleTextField.delegate = self
         topicTitleTextField.tag = TopicGeneralViewController.kSectionBasicTitle
+
         aliasTextField.delegate = self
         aliasTextField.tag = TopicGeneralViewController.kSectionBasicAlias
+        aliasTextField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
+
         topicPrivateTextField.delegate = self
         topicPrivateTextField.tag = TopicGeneralViewController.kSectionBasicPrivate
+
         topicDescriptTextView.delegate = self
         topicDescriptTextView.tag = TopicGeneralViewController.kSectionBasicDescription
 
@@ -87,27 +100,36 @@ class TopicGeneralViewController: UITableViewController {
     }
 
     private func reloadData() {
-        topicTitleTextField.text = !(topic.pub?.fn ?? "").isEmpty ?
-            topic.pub!.fn :
-            topic.isSlfType ? NSLocalizedString("Saved messages", comment: "Title of slf topic") : NSLocalizedString("Unknown", comment: "Placeholder for missing user name")
-
-        let isEmpty = topic.pub?.note?.isEmpty ?? true && !topic.isSlfType
-        topicDescriptTextView.textColor = isEmpty ? .placeholderText : .secondaryLabel
-        if topic.isOwner || !isEmpty {
-            topicDescriptTextView.text = isEmpty ?
-                NSLocalizedString("Add optional description", comment: "Placeholder for missing topic description") :
-                topic.isSlfType ? NSLocalizedString("Notes, messages, links, files saved for posterity", comment: "Explanation for Saved messages topic") :
-                topic.pub?.note
+        // Title
+        if topic.isSlfType {
+            topicTitleTextField.text = NSLocalizedString("Saved messages", comment: "Title of slf topic")
+        } else if (topic.pub?.fn ?? "").isEmpty {
+            topicTitleTextField.text = NSLocalizedString("Unknown", comment: "Placeholder for missing user name")
+        } else {
+            topicTitleTextField.text = topic.pub!.fn
         }
 
-        let alias = topic.alias
-        if topic.isOwner && !topic.isSlfType {
-            aliasTextField.text = alias
+        // Private comment
+        if !topic.isSlfType {
+            topicPrivateTextField.text = topic.comment
+        }
+
+        // Description
+        if topic.isSlfType {
+            topicDescriptTextView.text = NSLocalizedString("Notes, messages, links, files saved for posterity", comment: "Explanation for Saved messages topic")
+        } else if (topic.pub?.note ?? "").isEmpty {
+            if topic.isOwner {
+                topicDescriptTextView.textColor = .placeholderText
+                topicDescriptTextView.text = TopicGeneralViewController.kDescriptionPlaceholder
+            }
+        } else {
+            topicDescriptTextView.text = topic.pub!.note
         }
 
         if !topic.isSlfType {
-            topicPrivateTextField.textColor = topic?.comment?.isEmpty ?? true ? .placeholderText : .secondaryLabel
-            topicPrivateTextField.text = (topic.comment ?? "").isEmpty ? NSLocalizedString("Private info: not set", comment: "Placeholder text in editor") : topic.comment
+            aliasTextField.leftView = UIImageView(image: UIImage(systemName: "at"))
+            aliasTextField.leftViewMode = .always
+            aliasTextField.text = topic.alias
         }
 
         avatarImage.set(pub: topic.pub, id: topic.name, deleted: topic.deleted)
@@ -119,90 +141,87 @@ class TopicGeneralViewController: UITableViewController {
     }
 
     @IBAction func doneEditingClicked(_ sender: Any) {
-    }
-    
-    @objc
-    func topicTitleTapped(sender: UITapGestureRecognizer) {
-        print("topicTitleTapped")
-        topicTitleTextField.isEnabled = true
-        topicTitleTextField.becomeFirstResponder()
-
-        /*
-        UiUtils.alertLabelEditor(over: self, self.topic?.pub?.fn, placeholder: NSLocalizedString("Name of the group", comment: "Alert placeholder"), title: NSLocalizedString("Edit Title", comment: "Alert title"), done: { text in
-            if let nt = text, !nt.isEmpty {
-                if let oldPub = self.topic.pub, oldPub.fn != nt {
-                    let pub = TheCard(fn: String(nt.prefix(UiUtils.kMaxTitleLength)))
-                    UiUtils.setTopicDesc(forTopic: self.topic, pub: pub, priv: nil).thenFinally {
-                        DispatchQueue.main.async { self.reloadData() }
-                    }
-                }
-            }
-        })
-         */
-    }
-
-    @objc
-    func topicDescriptionTapped(sender: UITapGestureRecognizer) {
-        let alert = MultilineAlertViewController(with: self.topic?.pub?.note)
-        alert.title = NSLocalizedString("Edit Description", comment: "Alert title")
-        alert.completionHandler = { text in
-            let pub = TheCard()
-            if let nd = text, !nd.isEmpty {
-                if let oldPub = self.topic.pub, oldPub.note != nd {
-                    pub.note = String(nd.prefix(UiUtils.kMaxTitleLength))
-                }
+        var pub: TheCard? = nil
+        if let title = topicTitleTextField.text, title != topic.pub?.fn {
+            pub = TheCard(fn: title)
+        }
+        if let desc = topicDescriptTextView.text, desc != self.topic.pub?.note {
+            pub = pub ?? TheCard()
+            if desc.isEmpty {
+                pub!.note = Tinode.kNullValue
             } else {
-                pub.note = Tinode.kNullValue
-            }
-            UiUtils.setTopicDesc(forTopic: self.topic, pub: pub, priv: nil).thenFinally {
-                DispatchQueue.main.async { self.reloadData() }
+                pub!.note = desc
             }
         }
-        alert.show(over: self)
-    }
+        var priv: PrivateType? = nil
+        if let comment = topicPrivateTextField.text, self.topic.comment! != comment {
+            priv = PrivateType()
+            priv!.comment = comment.isEmpty ? Tinode.kNullValue : comment
+        }
+        var tags: [String]? = nil
+        if let alias = self.aliasTextField.text, !alias.isEmpty {
+            tags = Tinode.setUniqueTag(tags: self.topic.tags, uniqueTag: "\(Tinode.kTagAlias)\(alias)")
+        } else {
+            tags = Tinode.clearTagPrefix(tags: self.topic.tags, prefix: Tinode.kTagAlias)
+        }
 
-    @objc
-    func topicPrivateTapped(sender: UITapGestureRecognizer) {
-        UiUtils.alertLabelEditor(over: self, self.topic?.comment, placeholder: NSLocalizedString("Additional info (private)", comment: "Alert placeholder"), title: NSLocalizedString("Private Comment", comment: "Alert title"), done: { text in
-            var priv = PrivateType()
-            if let ns = text, !ns.isEmpty {
-                if self.topic.comment == nil || (self.topic.comment! != ns) {
-                    priv.comment = String(ns.prefix(UiUtils.kMaxTitleLength))
-                }
-            } else {
-                priv.comment = Tinode.kNullValue
-            }
-            UiUtils.setTopicDesc(forTopic: self.topic, pub: nil, priv: priv).thenFinally {
+        if pub == nil && priv == nil && tags == nil {
+            // Unchanged
+            return
+        }
+
+        self.topic.setMeta(meta: MsgSetMeta(desc: MetaSetDesc(pub: pub, priv: priv), tags: tags))
+            .then(onSuccess: UiUtils.ToastSuccessHandler, onFailure: UiUtils.ToastFailureHandler)
+            .thenFinally {
                 DispatchQueue.main.async { self.reloadData() }
             }
-        })
     }
 
     @objc
-    func aliasTapped(sender: UITapGestureRecognizer) {
-        UiUtils.alertLabelEditor(over: self, self.topic?.alias, placeholder: NSLocalizedString("uniquealias", comment: "Alert placeholder"), title: NSLocalizedString("Alias", comment: "Alert title"), done: { alias in
-            var tags: [String]?
-            if let alias = alias, !alias.isEmpty {
-                tags = Tinode.setUniqueTag(tags: self.topic.tags, uniqueTag: "alias:\(alias)")
-            } else {
-                tags = Tinode.clearTagPrefix(tags: self.topic.tags, prefix: Tinode.kTagAlias)
-            }
-            self.topic.setMeta(tags: tags ?? [])
-                .then(onSuccess: UiUtils.ToastSuccessHandler, onFailure: UiUtils.ToastFailureHandler)
-                .thenFinally {
-                    DispatchQueue.main.async { self.reloadData()
+    func textFieldDidChange(_ textField: UITextField) {
+        let text = textField.text ?? ""
+        if Tinode.isValidTagValueFormat(tag: text) {
+            textField.clearErrorSign()
+            if !text.isEmpty {
+                if let timer = aliasTesterTimer {
+                    timer.invalidate()
                 }
+                aliasTesterTimer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(checkAliasValidity), userInfo: nil, repeats: false)
             }
-        })
+        } else {
+            textField.markAsError()
+        }
     }
 
-    @objc func manageTagsClicked(sender: UITapGestureRecognizer) {
+    @objc
+    func manageTagsClicked(sender: UITapGestureRecognizer) {
         UiUtils.presentManageTagsEditDialog(over: self, forTopic: self.topic)
     }
 
-    private func promiseSuccessHandler(msg: ServerMessage?) throws -> PromisedReply<ServerMessage>? {
-        DispatchQueue.main.async { self.reloadData() }
-        return nil
+    // This method is called for every keystroke, but validity is checked 1 second after the typing has stopped.
+    @objc
+    func checkAliasValidity() {
+        guard let topic = self.topic, let alias = self.aliasTextField.text else {
+            return
+        }
+        // Check if alias is already taken.
+        topic.checkTagUniqueness(tag: "\(Tinode.kTagAlias)\(alias)", caller: topic.name)
+            .thenApply { ok in
+                DispatchQueue.main.async { [weak self] in
+                    if ok ?? false {
+                        self?.aliasTextField.clearErrorSign()
+                    } else {
+                        self?.aliasTextField.markAsError()
+                    }
+                }
+                return nil
+            }
+            .thenCatch { err in
+                DispatchQueue.main.async { [weak self] in
+                    self?.aliasTextField.markAsError()
+                }
+                return nil
+            }
     }
 }
 
@@ -253,7 +272,10 @@ extension TopicGeneralViewController: ImagePickerDelegate {
     func didSelect(media: ImagePickerMediaType?) {
         guard case .image(let image, _, _) = media else { return }
         UiUtils.updateAvatar(forTopic: self.topic, image: image)
-            .thenApply(self.promiseSuccessHandler)
+            .thenApply {_ in
+                DispatchQueue.main.async { self.reloadData() }
+                return nil
+            }
     }
 }
 
@@ -261,10 +283,35 @@ extension TopicGeneralViewController: UITextFieldDelegate {
     func textFieldDidEndEditing(_ textField: UITextField) {
         print("textFieldDidEndEditing \(textField.text ?? "")")
     }
+
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        let newLength = (textField.text ?? "").count + (string.count - range.length)
+        if textField.tag == TopicGeneralViewController.kSectionBasicAlias {
+            // Alias length.
+            return newLength <= UiUtils.kMaxAliasLength
+        }
+        // Limit max length of the non-alias input.
+        return newLength <= UiUtils.kMaxTitleLength
+    }
 }
 
 extension TopicGeneralViewController: UITextViewDelegate {
+    func textViewDidBeginEditing(_ textView: UITextView) {
+        if textView.textColor == .placeholderText {
+            textView.text = nil
+            textView.textColor = .secondaryLabel
+        }
+    }
+
     func textViewDidEndEditing(_ textView: UITextView) {
-        print("textViewDidEndEditing \(textView.text ?? "")")
+        if textView.text.isEmpty {
+            textView.text = TopicGeneralViewController.kDescriptionPlaceholder
+            textView.textColor = .placeholderText
+        }
+    }
+
+    // Limit max length of the input.
+    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+        return textView.text.count + (text.count - range.length) <= UiUtils.kMaxTopicDescriptionLength
     }
 }

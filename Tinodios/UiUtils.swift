@@ -93,10 +93,12 @@ class UiUtils {
     static let kDefaultBitmapSize: CGFloat = 256
     // Maximum linear dimensions of video poster.
     static let kMaxPosterSize: CGFloat = 640
+    // Maximum length of alias
+    static let kMaxAliasLength = 24
     // Maximum length of topic title or user name.
     static let kMaxTitleLength = 60
     // Maximum length of topic description.
-    static let kMaxTopicDdescriptionLength = 360
+    static let kMaxTopicDescriptionLength = 360
 
     // Color of "read" delivery marker.
     static let kDeliveryMarkerTint = UIColor(red: 19/255, green: 144/255, blue: 255/255, alpha: 0.8)
@@ -486,7 +488,7 @@ class UiUtils {
     public static func ToastSuccessHandler(msg: ServerMessage?) -> PromisedReply<ServerMessage>? {
         if let ctrl = msg?.ctrl, ctrl.code >= 300 {
             DispatchQueue.main.async {
-                UiUtils.showToast(message: String(format: NSLocalizedString("Something went wrong: %d (%s)", comment: "Toast notification"), ctrl.code, ctrl.text), level: .warning)
+                UiUtils.showToast(message: String(format: NSLocalizedString("Something went wrong: (%d) %@", comment: "Toast notification"), ctrl.code, ctrl.text), level: .warning)
             }
         }
         return nil

@@ -403,6 +403,7 @@ class MessageInteractor: DefaultComTopic.Listener, MessageBusinessLogic, Message
             self?.maxReadNoteSeqIdInFlight = -1
         }
     }
+
     func sendTypingNotification() {
         topic?.noteKeyPress()
     }

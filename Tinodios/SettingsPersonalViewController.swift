@@ -133,7 +133,7 @@ class SettingsPersonalViewController: UITableViewController {
         let pub = me.pub == nil ? TheCard(fn: nil) : me.pub!.copy()
         let upd = (note == nil || note!.isEmpty) ? Tinode.kNullValue : note
         if pub.note != upd {
-            pub.note = String(upd!.prefix(UiUtils.kMaxTopicDdescriptionLength))
+            pub.note = String(upd!.prefix(UiUtils.kMaxTopicDescriptionLength))
         }
         UiUtils.setTopicDesc(forTopic: self.me, pub: pub, priv: nil).then(
             onSuccess: { _ in

@@ -187,7 +187,7 @@ class SignupViewController: UITableViewController {
 
         var description: String?
         if let desc = self.descriptionTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines) {
-            description = String(desc.prefix(UiUtils.kMaxTopicDdescriptionLength))
+            description = String(desc.prefix(UiUtils.kMaxTopicDescriptionLength))
         }
         if let imageBits = avatar?.pixelData(forMimeType: Photo.kDefaultType) {
             if imageBits.count > UiUtils.kMaxInbandAvatarBytes {

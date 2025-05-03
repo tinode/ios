@@ -120,8 +120,10 @@ class TopicInfoViewController: UITableViewController {
         topicIDLabel.text = topic.name
         topicIDLabel.sizeToFit()
 
-        aliasLabel.text = topic.tagByPrefix(Tinode.kTagAlias)
-        aliasLabel.sizeToFit()
+        if let alias = topic.alias {
+            aliasLabel.text = "@\(alias)"
+            aliasLabel.sizeToFit()
+        }
 
         avatarImage.set(pub: topic.pub, id: topic.name, deleted: topic.deleted)
         avatarImage.letterTileFont = self.avatarImage.letterTileFont.withSize(CGFloat(50))
