@@ -426,3 +426,13 @@ extension CGRect {
         return (first: slices.slice, second: slices.remainder)
     }
 }
+
+extension Array where Element: Comparable {
+    // Compare arrays without regard for element order.
+    func equals(_ other: [Element]?) -> Bool {
+        guard let other = other else {
+            return false
+        }
+        return self.count == other.count && self.sorted() == other.sorted()
+    }
+}

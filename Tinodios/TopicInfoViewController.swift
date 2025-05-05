@@ -45,9 +45,6 @@ class TopicInfoViewController: UITableViewController {
     @IBOutlet weak var mutedSwitch: UISwitch!
     @IBOutlet weak var archivedSwitch: UISwitch!
 
-
-
-
     var topicName = ""
     private var topic: DefaultComTopic!
     private var tinode: Tinode!
@@ -148,7 +145,7 @@ class TopicInfoViewController: UITableViewController {
             tableView.reloadData()
         }
     }
-
+    
     @IBAction func mutedSwitched(_ sender: Any) {
         let isChecked = mutedSwitch.isOn
         topic.updateMuted(muted: isChecked).then(
@@ -338,6 +335,7 @@ extension TopicInfoViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         var cell: UITableViewCell!
         defer {
+            // Hide separator lines in the top sections.
             if indexPath.section == TopicInfoViewController.kSectionBasic {
                 cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: UIScreen.main.bounds.width)
             }

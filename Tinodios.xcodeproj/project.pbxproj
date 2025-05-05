@@ -107,7 +107,7 @@
 		B091BA542824916800317CDC /* WaveImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B091BA532824916800317CDC /* WaveImage.swift */; };
 		B091BA5628272A2400317CDC /* WaveImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B091BA5528272A2400317CDC /* WaveImageView.swift */; };
 		B091BA58282DA01200317CDC /* SendForwardedFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B091BA57282DA01200317CDC /* SendForwardedFormatter.swift */; };
-		B09C564A2469362A00D6615D /* SettingsPersonalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B09C56492469362A00D6615D /* SettingsPersonalViewController.swift */; };
+		B09C564A2469362A00D6615D /* AccountGeneralSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B09C56492469362A00D6615D /* AccountGeneralSettingsViewController.swift */; };
 		B09C564C2469756B00D6615D /* SettingsNotificationsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B09C564B2469756B00D6615D /* SettingsNotificationsViewController.swift */; };
 		B09C564E246975F700D6615D /* SettingsHelpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B09C564D246975F700D6615D /* SettingsHelpViewController.swift */; };
 		B09C5650246976AC00D6615D /* SettingsSecurityViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B09C564F246976AC00D6615D /* SettingsSecurityViewController.swift */; };
@@ -318,7 +318,7 @@
 		B0979FD027BD9A2A0045FC73 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/TagsEditDialogView.strings"; sourceTree = "<group>"; };
 		B0979FD127BD9A3B0045FC73 /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/MultilineAlertView.strings"; sourceTree = "<group>"; };
 		B0979FD227BD9A3B0045FC73 /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/TagsEditDialogView.strings"; sourceTree = "<group>"; };
-		B09C56492469362A00D6615D /* SettingsPersonalViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsPersonalViewController.swift; sourceTree = "<group>"; };
+		B09C56492469362A00D6615D /* AccountGeneralSettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountGeneralSettingsViewController.swift; sourceTree = "<group>"; };
 		B09C564B2469756B00D6615D /* SettingsNotificationsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsNotificationsViewController.swift; sourceTree = "<group>"; };
 		B09C564D246975F700D6615D /* SettingsHelpViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsHelpViewController.swift; sourceTree = "<group>"; };
 		B09C564F246976AC00D6615D /* SettingsSecurityViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsSecurityViewController.swift; sourceTree = "<group>"; };
@@ -428,6 +428,7 @@
 				0A4E1D3122829C52006C0912 /* account */,
 				B027E5AC2789010C00A34C17 /* format */,
 				B0C496B022787C020084FA0D /* widgets */,
+				B09C56492469362A00D6615D /* AccountGeneralSettingsViewController.swift */,
 				0A95F4D3229BD95900AEF7D3 /* AccountSettingsViewController.swift */,
 				0A2F81C5229677DD007E562C /* AddByIDViewController.swift */,
 				0A0380D721B3CC8100A3FA0E /* AppDelegate.swift */,
@@ -474,7 +475,6 @@
 				B05ACEB222FDAB5200276713 /* ResetPasswordViewController.swift */,
 				B09C564D246975F700D6615D /* SettingsHelpViewController.swift */,
 				B09C564B2469756B00D6615D /* SettingsNotificationsViewController.swift */,
-				B09C56492469362A00D6615D /* SettingsPersonalViewController.swift */,
 				B09C564F246976AC00D6615D /* SettingsSecurityViewController.swift */,
 				B01C693E22F87B5C003C0AA7 /* SignupViewController.swift */,
 				B0BE302C27BAC90E00B04631 /* TopicGeneralViewController.swift */,
@@ -993,7 +993,7 @@
 				0A35BA9E22836CCF00AA5E2F /* ContactsSynchronizer.swift in Sources */,
 				0A0D92D72840EFEF00B5B5B0 /* CallProviderDelegate.swift in Sources */,
 				B03066432805F2AA00497EF4 /* EntityTextAttachment.swift in Sources */,
-				B09C564A2469362A00D6615D /* SettingsPersonalViewController.swift in Sources */,
+				B09C564A2469362A00D6615D /* AccountGeneralSettingsViewController.swift in Sources */,
 				0A11912D22F03E3100A1BBA1 /* TagsEditView.swift in Sources */,
 				B0BB53C3256DD5C9000FE949 /* LargeFileHelper.swift in Sources */,
 				0A8D945A22BEF08100DC154E /* AvatarWithOnlineIndicator.swift in Sources */,

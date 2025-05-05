@@ -103,8 +103,6 @@ class TopicGeneralViewController: UITableViewController {
         // Title
         if topic.isSlfType {
             topicTitleTextField.text = NSLocalizedString("Saved messages", comment: "Title of slf topic")
-        } else if (topic.pub?.fn ?? "").isEmpty {
-            topicTitleTextField.text = NSLocalizedString("Unknown", comment: "Placeholder for missing user name")
         } else {
             topicTitleTextField.text = topic.pub!.fn
         }
@@ -145,9 +143,10 @@ class TopicGeneralViewController: UITableViewController {
         if let title = topicTitleTextField.text, title != topic.pub?.fn {
             pub = TheCard(fn: title)
         }
-        if let desc = topicDescriptTextView.text, desc != self.topic.pub?.note {
+        let desc = topicDescriptTextView.text
+        if desc != self.topic.pub?.note {
             pub = pub ?? TheCard()
-            if desc.isEmpty {
+            if (desc ?? "").isEmpty || desc == TopicGeneralViewController.kDescriptionPlaceholder {
                 pub!.note = Tinode.kNullValue
             } else {
                 pub!.note = desc
@@ -164,17 +163,23 @@ class TopicGeneralViewController: UITableViewController {
         } else {
             tags = Tinode.clearTagPrefix(tags: self.topic.tags, prefix: Tinode.kTagAlias)
         }
+        if tags != nil && tags!.equals(topic.tags) {
+            tags = nil
+        }
 
         if pub == nil && priv == nil && tags == nil {
             // Unchanged
+            _ = self.navigationController?.popViewController(animated: true)
             return
         }
 
-        self.topic.setMeta(meta: MsgSetMeta(desc: MetaSetDesc(pub: pub, priv: priv), tags: tags))
-            .then(onSuccess: UiUtils.ToastSuccessHandler, onFailure: UiUtils.ToastFailureHandler)
-            .thenFinally {
-                DispatchQueue.main.async { self.reloadData() }
-            }
+        self.topic.setMeta(meta: MsgSetMeta(desc: pub != nil || priv != nil ? MetaSetDesc(pub: pub, priv: nil) : nil, tags: tags))
+            .then(onSuccess: { _ in
+                DispatchQueue.main.async {
+                    _ = self.navigationController?.popViewController(animated: true)
+                }
+                return nil
+            }, onFailure: UiUtils.ToastFailureHandler)
     }
 
     @objc

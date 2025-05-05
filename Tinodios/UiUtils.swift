@@ -1,7 +1,7 @@
 //
 //  UiUtils.swift
 //
-//  Copyright © 2019-2022 Tinode LLC. All rights reserved.
+//  Copyright © 2019-2025 Tinode LLC. All rights reserved.
 //
 
 import Firebase
