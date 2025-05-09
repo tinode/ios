@@ -147,6 +147,28 @@ public class Utils {
         UIImage(ciImage: qrcode).draw(in: CGRect(origin: .zero, size: scaledImageSize))
         return UIGraphicsGetImageFromCurrentImageContext()!
     }
+
+    private static let kTelRegex = try! NSRegularExpression(pattern: #"^(?:\+?(\d{1,3}))?[- (.]*(\d{3})[- ).]*(\d{3})[- .]*(\d{2})[- .]*(\d{2})?$"#)
+    private static let kTelReplacementRegex = try! NSRegularExpression(pattern: "[- ().]*")
+    /// Checks (loosely) if the given string is a phone. If so, returns the phone number in a format
+    /// as close to E.164 as possible.
+    public static func asPhone(_ val: String) -> String? {
+        var val = val.trimmingCharacters(in: .whitespacesAndNewlines)
+        if kTelRegex.firstMatch(in: val, options: [], range: NSRange(location: 0, length: val.utf16.count)) != nil {
+            return kTelReplacementRegex.stringByReplacingMatches(in: val, range: NSRange(location: 0, length: val.utf16.count), withTemplate: "")
+        }
+        return nil
+    }
+
+    private static let kEmailRegex = try! NSRegularExpression(pattern: #"^[a-z0-9_.+-]+@[a-z0-9-]+(\\.[a-z0-9-]+)+$"#)
+     /// Checks (loosely) if the given string is an email. If so returns the email.
+    public static func asEmail(_ val: String) -> String? {
+        var val = val.trimmingCharacters(in: .whitespacesAndNewlines)
+        if kEmailRegex.firstMatch(in: val, options: [], range: NSRange(location: 0, length: val.utf16.count)) != nil {
+            return val
+        }
+        return nil
+    }
 }
 
 // Per

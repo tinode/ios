@@ -210,7 +210,13 @@ class TopicGeneralViewController: UITableViewController {
             return
         }
         // Check if alias is already taken.
-        topic.checkTagUniqueness(tag: "\(Tinode.kTagAlias)\(alias)", caller: topic.name)
+        guard let fnd = self.tinode?.getOrCreateFndTopic() else {
+            // Unable to check: say "all is fine".
+            return
+        }
+
+        // Check if alias is already taken.
+        fnd.checkTagUniqueness(tag: "\(Tinode.kTagAlias)\(alias)", caller: topic.name)
             .thenApply { ok in
                 DispatchQueue.main.async { [weak self] in
                     if ok ?? false {

@@ -155,6 +155,9 @@ public class Tinode {
     internal static let log = Log(subsystem: "co.tinode.tinodesdk")
 
     public static let kMaxPinnedCount = 5
+
+    public static let kTagEmail = "email:"
+    public static let kTagPhone = "tel:"
     public static let kTagAlias = "alias:"
 
     private static let kAliasRegex = "^[a-z0-9][a-z0-9_\\-]{3,23}$"

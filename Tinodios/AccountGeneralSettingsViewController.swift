@@ -134,7 +134,11 @@ class AccountGeneralSettingsViewController: UITableViewController {
             return
         }
         // Check if alias is already taken.
-        me.checkTagUniqueness(tag: "\(Tinode.kTagAlias)\(alias)", caller: caller)
+        guard let fnd = self.tinode?.getOrCreateFndTopic() else {
+            // Unable to check: say "all is fine".
+            return
+        }
+        fnd.checkTagUniqueness(tag: "\(Tinode.kTagAlias)\(alias)", caller: caller)
             .thenApply { ok in
                 DispatchQueue.main.async { [weak self] in
                     if ok ?? false {

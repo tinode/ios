@@ -52,4 +52,39 @@ public class FndTopic<SP: Codable>: Topic<String, String, SP, [String]> {
         }
         subs![unique] = sub
     }
+
+    public func checkTagUniqueness(tag: String, caller: String) -> PromisedReply<Bool> {
+        let result = PromisedReply<Bool>()
+
+        self.subscribe(set: nil, get: nil)
+            .thenApply { _ in
+                return self.setMeta(pub: tag, priv: nil)
+            }
+            .thenApply { _ in
+                return self.getMeta(query: self.metaGetBuilder().withTags().build())
+            }
+            .thenApply { response in
+                guard let tags = response?.meta?.tags else {
+                    // Unable to interpret server response, ignore the test.
+                    try? result.resolve(result: true)
+                    return nil
+                }
+
+                for t in tags {
+                    if t != caller {
+                        // Test failed
+                        try? result.resolve(result: false)
+                        return nil
+                    }
+                }
+                // The gats is really unique.
+                try? result.resolve(result: true)
+                return nil
+            }
+            .thenCatch { err in
+                try? result.reject(error: err)
+                return nil
+            }
+        return result
+    }
 }

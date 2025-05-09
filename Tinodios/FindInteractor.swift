@@ -2,7 +2,7 @@
 //  FindInteractor.swift
 //  Tinodios
 //
-//  Copyright © 2019 Tinode. All rights reserved.
+//  Copyright © 2019-2025 Tinode. All rights reserved.
 //
 
 import Foundation
@@ -88,6 +88,7 @@ class FindInteractor: FindBusinessLogic {
         return self.contactsManager.fetchContacts() ?? []
     }
 
+    static let kSingleTagTest = try! NSRegularExpression(pattern: #"[\s,:]"#)
     func loadAndPresentContacts(searchQuery: String? = nil) {
         let changed = self.searchQuery != searchQuery
         self.searchQuery = searchQuery
@@ -98,6 +99,7 @@ class FindInteractor: FindBusinessLogic {
             if self.remoteContacts == nil {
                self.remoteContacts = []
             }
+
             let contacts: [ContactHolder] =
                 self.searchQuery != nil ?
                     self.localContacts!.filter { u in
@@ -107,10 +109,27 @@ class FindInteractor: FindBusinessLogic {
                     } :
                     self.localContacts!
             if changed {
-                self.fndTopic?.setMeta(desc: MetaSetDesc(pub: searchQuery != nil ? searchQuery! : Tinode.kNullValue, priv: nil))
+                var searchStr: String? = searchQuery
+                if let query = searchQuery, !query.isEmpty {
+                    if FindInteractor.kSingleTagTest.firstMatch(in: query, range: NSRange(location: 0, length: query.count)) == nil {
+                        // No colons, spaces or commas. Try as email, phone, or alias.
+                        if let email = Utils.asEmail(query) {
+                            searchStr = "\(Tinode.kTagEmail)\(email)"
+                        } else if let tel = Utils.asPhone(query) {
+                            searchStr = "\(Tinode.kTagPhone)\(tel)"
+                        } else {
+                            if query.first == "@" {
+                                searchStr = String(query.suffix(from: query.index(query.startIndex, offsetBy: 1)))
+                            }
+                            searchStr = "\(Tinode.kTagAlias)\(searchStr!)"
+                        }
+                    }
+                }
+                _ = self.fndTopic?.setMeta(desc: MetaSetDesc(pub: searchStr ?? Tinode.kNullValue, priv: nil))
             }
+
             self.remoteContacts?.removeAll()
-            if let queryString = searchQuery, queryString.count >= UiUtils.kMinTagLength {
+            if let searchQuery = searchQuery, searchQuery.count >= UiUtils.kMinTagLength {
                 self.fndTopic?.getMeta(query: MsgGetMeta.sub())
             } else {
                 // Clear remoteContacts.
