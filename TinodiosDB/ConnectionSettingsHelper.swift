@@ -2,7 +2,7 @@
 //  SettingsHelper.swift
 //  TinodiosDB
 //
-//  Copyright © 2019 Tinode. All rights reserved.
+//  Copyright © 2019-2025 Tinode. All rights reserved.
 //
 
 import Foundation
@@ -15,8 +15,8 @@ public class ConnectionSettingsHelper {
         static let wireTransport = "wire_transport_preference"
     }
 
-    class func getConnectionSettings() -> (hostName: String?, useTLS: Bool?, wireTransport: String?) {
-        return (hostName: SharedUtils.kAppDefaults.string(forKey: SettingsBundleKeys.hostName), useTLS: SharedUtils.kAppDefaults.bool(forKey: SettingsBundleKeys.useTLS), wireTransport: SharedUtils.kAppDefaults.string(forKey: SettingsBundleKeys.wireTransport))
+    class func getConnectionSettings() -> (hostName: String?, useTLS: Bool?) {
+        return (hostName: SharedUtils.kAppDefaults.string(forKey: SettingsBundleKeys.hostName), useTLS: SharedUtils.kAppDefaults.bool(forKey: SettingsBundleKeys.useTLS))
     }
 
     class func setHostName(_ hostName: String?) {

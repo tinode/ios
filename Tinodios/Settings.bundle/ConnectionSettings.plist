@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>StringsTable</key>
-	<string>Root</string>
+	<string>ConnectionSettings</string>
 	<key>PreferenceSpecifiers</key>
 	<array>
 		<dict>
@@ -33,22 +33,6 @@
 			<string>use_tls_preference</string>
 			<key>DefaultValue</key>
 			<false/>
-		</dict>
-		<dict>
-			<key>Type</key>
-			<string>PSMultiValueSpecifier</string>
-			<key>Title</key>
-			<string>Wire transport</string>
-			<key>Key</key>
-			<string>wire_transport_preference</string>
-			<key>DefaultValue</key>
-			<string>default</string>
-			<key>Titles</key>
-			<array>
-				<string>long polling</string>
-				<string>websocket</string>
-				<string>default</string>
-			</array>
 		</dict>
 	</array>
 </dict>

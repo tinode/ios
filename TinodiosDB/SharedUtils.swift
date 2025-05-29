@@ -197,7 +197,7 @@ public class SharedUtils {
             SharedUtils.kTinodePrefTypingNotifications: true
         ])
 
-        let (hostName, _, _) = ConnectionSettingsHelper.getConnectionSettings()
+        let (hostName, _) = ConnectionSettingsHelper.getConnectionSettings()
         if hostName == nil {
             // If hostname is nil, sync values to defaults
             ConnectionSettingsHelper.setHostName(Bundle.main.object(forInfoDictionaryKey: "HOST_NAME") as? String)
@@ -455,7 +455,7 @@ public class SharedUtils {
 
 extension Tinode {
     public static func getConnectionParams() -> (String, Bool) {
-        let (hostName, useTLS, _) = ConnectionSettingsHelper.getConnectionSettings()
+        let (hostName, useTLS) = ConnectionSettingsHelper.getConnectionSettings()
         return (hostName ?? SharedUtils.kHostName, useTLS ?? SharedUtils.kUseTLS)
     }
 
