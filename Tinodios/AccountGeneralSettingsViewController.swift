@@ -22,7 +22,6 @@ class AccountGeneralSettingsViewController: UITableViewController {
     private static let kPersonalDescription = 3
 
     private static let kSectionContacts = 1
-    private static let kSectionTags = 2
 
     private static let kDescriptionPlaceholder = NSLocalizedString("Optional description", comment: "Placeholder for missing user self-description")
     
@@ -31,8 +30,6 @@ class AccountGeneralSettingsViewController: UITableViewController {
     @IBOutlet weak var descriptionTextView: UITextView!
     @IBOutlet weak var avatarImage: RoundImageView!
     @IBOutlet weak var loadAvatarButton: UIButton!
-
-    @IBOutlet weak var manageTags: UITableViewCell!
 
     private var aliasTesterTimer: Timer?
 
@@ -65,11 +62,6 @@ class AccountGeneralSettingsViewController: UITableViewController {
         descriptionTextView.delegate = self
         descriptionTextView.tag = AccountGeneralSettingsViewController.kPersonalDescription
 
-        UiUtils.setupTapRecognizer(
-            forView: manageTags,
-            action: #selector(AccountGeneralSettingsViewController.manageTagsClicked),
-            actionTarget: self)
-
         self.imagePicker = ImagePicker(presentationController: self, delegate: self, editable: true)
     }
 
@@ -94,7 +86,6 @@ class AccountGeneralSettingsViewController: UITableViewController {
         // Avatar.
         self.avatarImage.set(pub: me.pub, id: self.tinode.myUid, deleted: false)
         self.avatarImage.letterTileFont = self.avatarImage.letterTileFont.withSize(CGFloat(50))
-        self.manageTags.detailTextLabel?.text = me.tags?.joined(separator: ", ")
 
         // Note: tableView.reloadSections() would be better but
         // it makes the [Add another] contact button disappear.
@@ -121,10 +112,6 @@ class AccountGeneralSettingsViewController: UITableViewController {
         } else {
             textField.markAsError()
         }
-    }
-
-    @objc func manageTagsClicked(sender: UITapGestureRecognizer) {
-        UiUtils.presentManageTagsEditDialog(over: self, forTopic: self.me)
     }
 
     // This method is called for every keystroke, but validity is checked 1 second after the typing has stopped.
