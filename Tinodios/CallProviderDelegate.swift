@@ -2,7 +2,7 @@
 //  CallProviderDelegate.swift
 //  Tinodios
 //
-//  Copyright © 2022 Tinode LLC. All rights reserved.
+//  Copyright © 2022-2025 Tinode LLC. All rights reserved.
 //
 
 import CallKit
@@ -14,7 +14,7 @@ protocol CallManagerImpl: AnyObject {
 
 class CallProviderDelegate: NSObject, CXProviderDelegate {
     static let kProviderConfiguration: CXProviderConfiguration = {
-        let providerConfiguration = CXProviderConfiguration(localizedName: "Tinode")  // TODO: change
+        let providerConfiguration = CXProviderConfiguration()
 
         providerConfiguration.supportsVideo = true
         providerConfiguration.maximumCallsPerCallGroup = 1

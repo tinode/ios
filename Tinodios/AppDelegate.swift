@@ -2,7 +2,7 @@
 //  AppDelegate.swift
 //  ios
 //
-//  Copyright © 2019-2022 Tinode LLC. All rights reserved.
+//  Copyright © 2019-2025 Tinode LLC. All rights reserved.
 //
 
 import Firebase
@@ -249,7 +249,7 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
             }
             // If the push notification is either silent or a video call related, do not present the alert.
             let suppressNotification = userInfo["silent"] as? String == "true" || userInfo["webrtc"] != nil
-            completionHandler(!suppressNotification ? [.alert, .badge, .sound] : [])
+            completionHandler(suppressNotification ? [] : [.badge, .banner, .list, .sound])
         }
     }
 

@@ -2,7 +2,7 @@
 //  MessageViewController+SendMessageBarDelegate.swift
 //  Tinodios
 //
-//  Copyright © 2019-2022 Tinode. All rights reserved.
+//  Copyright © 2019-2025 Tinode. All rights reserved.
 //
 
 import AVFoundation
@@ -29,8 +29,7 @@ extension MessageViewController: SendMessageBarDelegate {
         }
     }
     private func attachFile() {
-        let types: [String] = [kUTTypeItem, kUTTypeImage] as [String]
-        let documentPicker = UIDocumentPickerViewController(documentTypes: types, in: .import)
+        let documentPicker = UIDocumentPickerViewController(forOpeningContentTypes: [.item, .image])
         documentPicker.delegate = self
         documentPicker.modalPresentationStyle = .formSheet
         self.present(documentPicker, animated: true, completion: nil)
