@@ -153,7 +153,7 @@ public class Utils {
     /// Checks (loosely) if the given string is a phone. If so, returns the phone number in a format
     /// as close to E.164 as possible.
     public static func asPhone(_ val: String) -> String? {
-        var val = val.trimmingCharacters(in: .whitespacesAndNewlines)
+        let val = val.trimmingCharacters(in: .whitespacesAndNewlines)
         if kTelRegex.firstMatch(in: val, options: [], range: NSRange(location: 0, length: val.utf16.count)) != nil {
             return kTelReplacementRegex.stringByReplacingMatches(in: val, range: NSRange(location: 0, length: val.utf16.count), withTemplate: "")
         }
@@ -163,7 +163,7 @@ public class Utils {
     private static let kEmailRegex = try! NSRegularExpression(pattern: #"^[a-z0-9_.+-]+@[a-z0-9-]+(\\.[a-z0-9-]+)+$"#)
      /// Checks (loosely) if the given string is an email. If so returns the email.
     public static func asEmail(_ val: String) -> String? {
-        var val = val.trimmingCharacters(in: .whitespacesAndNewlines)
+        let val = val.trimmingCharacters(in: .whitespacesAndNewlines)
         if kEmailRegex.firstMatch(in: val, options: [], range: NSRange(location: 0, length: val.utf16.count)) != nil {
             return val
         }
