@@ -1,5 +1,5 @@
 # Uncomment the next line to define a global platform for your project
-platform :ios, '13.0'
+platform :ios, '14.0'
 
 # https://stackoverflow.com/a/58067562/6692196 !use_frameworks is no longer needed.
 # use_frameworks!

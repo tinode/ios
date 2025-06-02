@@ -121,7 +121,8 @@ class FindInteractor: FindBusinessLogic {
                             if query.first == "@" {
                                 searchStr = String(query.suffix(from: query.index(query.startIndex, offsetBy: 1)))
                             }
-                            searchStr = "\(Tinode.kTagAlias)\(searchStr!)"
+                            // Convert 'alice' -> 'alias:alice,alice'
+                            searchStr = "\(Tinode.kTagAlias)\(searchStr!),\(searchStr!)"
                         }
                     }
                 }
