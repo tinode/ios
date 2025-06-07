@@ -93,7 +93,7 @@ class TopicInfoViewController: UITableViewController {
         topicTitleLabel.text = isSlf ? NSLocalizedString("Saved messages", comment: "Title for slf topic") : topic.pub?.fn ?? NSLocalizedString("Unknown", comment: "Placeholder for missing user name")
         topicTitleLabel.textAlignment = .center
 
-        let descPlaceholder: String? = topic.isOwner ? NSLocalizedString("Оptional description", comment: "Placeholder for missing topic description") : nil
+        let descPlaceholder: String? = topic.isOwner ? NSLocalizedString("Optional description", comment: "Placeholder for missing topic description") : nil
         let isEmpty = (topic.pub?.note?.isEmpty ?? true) && !isSlf
         topicDescriptionTextView.textColor = isEmpty ? .placeholderText : .secondaryLabel
         topicDescriptionTextView.text = isEmpty ?

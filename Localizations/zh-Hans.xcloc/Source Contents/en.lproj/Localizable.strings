@@ -1,5 +1,5 @@
 /* Replacement for chat message with no content */
-"  Content deleted" = "  Content deleted";
+"Content deleted" = "Content deleted";
 
 /* Invite reaction button */
 "Accept" = "Accept";

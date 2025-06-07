@@ -10,11 +10,17 @@
 /* Class = "UILabel"; text = "placeholder_file_name"; ObjectID = "3lo-iH-I5e"; */
 "3lo-iH-I5e.text" = "ім'я файлу";
 
+/* Class = "UILabel"; text = "Address"; ObjectID = "3M8-Rp-TYP"; */
+"3M8-Rp-TYP.text" = "Адреса";
+
 /* Class = "UIBarButtonItem"; title = "Invite"; ObjectID = "3zN-CC-6bS"; */
 "3zN-CC-6bS.title" = "Запросити";
 
 /* Class = "UITableViewController"; title = "General Settings"; ObjectID = "4dd-0I-UFm"; */
 "4dd-0I-UFm.title" = "Загальні налаштування";
+
+/* Class = "UILabel"; text = "https://tinode.co"; ObjectID = "4hf-MD-NbA"; */
+"4hf-MD-NbA.text" = "https://tinode.co";
 
 /* Class = "UILabel"; text = "Send typing notifications"; ObjectID = "4ll-eW-b8Z"; */
 "4ll-eW-b8Z.text" = "Індикатор друку";
@@ -22,8 +28,8 @@
 /* Class = "UITableViewController"; title = "Credentials Change"; ObjectID = "4ur-p6-jff"; */
 "4ur-p6-jff.title" = "Зміна облікових даних";
 
-/* Class = "UILabel"; text = "Optional comment (private)"; ObjectID = "6Nd-3S-JBo"; */
-"6Nd-3S-JBo.text" = "Коментар (тільки для себе)";
+/* Class = "UILabel"; text = "image/jpeg"; ObjectID = "5CT-4e-SGR"; */
+"5CT-4e-SGR.text" = "image/jpeg";
 
 /* Class = "UILabel"; text = "John Doe"; ObjectID = "6ON-kt-aM9"; */
 "6ON-kt-aM9.text" = "Дмитро Соколов";
@@ -31,8 +37,14 @@
 /* Class = "UILabel"; text = "placeholder_file_name"; ObjectID = "6rW-B5-NCp"; */
 "6rW-B5-NCp.text" = "ім'я файлу";
 
+/* Class = "UILabel"; text = "MyUID"; ObjectID = "6V8-mQ-RXX"; */
+"6V8-mQ-RXX.text" = "МійUID";
+
 /* Class = "UIButton"; normalTitle = "Configure Connection"; ObjectID = "6zX-Sq-TK6"; */
 "6zX-Sq-TK6.normalTitle" = "Налаштування зв'язку";
+
+/* Class = "UITextView"; text = "Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu."; ObjectID = "8AD-ew-qYf"; */
+"8AD-ew-qYf.text" = "Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu.";
 
 /* Class = "UILabel"; text = "Report Contact"; ObjectID = "8eC-OS-Net"; */
 "8eC-OS-Net.text" = "Поскаржитись";
@@ -45,6 +57,9 @@
 
 /* Class = "UITextField"; placeholder = "Phone number"; ObjectID = "9Co-1p-ugz"; */
 "9Co-1p-ugz.placeholder" = "Номер телефону";
+
+/* Class = "UITextField"; placeholder = "Title"; ObjectID = "9cv-Dp-MKy"; */
+"9cv-Dp-MKy.placeholder" = "Заголовок";
 
 /* Class = "UILabel"; text = "Terms of use"; ObjectID = "9dk-JW-5z0"; */
 "9dk-JW-5z0.text" = "Умови використання";
@@ -76,6 +91,9 @@
 /* Class = "UILabel"; text = "1.0.0 (222)"; ObjectID = "71p-KF-hSv"; */
 "71p-KF-hSv.text" = "1.0.0 (222)";
 
+/* Class = "UILabel"; text = "Description"; ObjectID = "73A-kJ-aFf"; */
+"73A-kJ-aFf.text" = "Опис";
+
 /* Class = "UITextField"; placeholder = "Enter Confirmation Code"; ObjectID = "82W-36-na3"; */
 "82W-36-na3.placeholder" = "Введіть код підтвердження";
 
@@ -94,8 +112,14 @@
 /* Class = "UIButton"; normalTitle = "I Have Code"; ObjectID = "ab5-J1-Lx7"; */
 "ab5-J1-Lx7.normalTitle" = "У мене є код";
 
+/* Class = "UITextField"; placeholder = "alias"; ObjectID = "ACb-21-0xr"; */
+"ACb-21-0xr.placeholder" = "псевдонім";
+
 /* Class = "UILabel"; text = "Notifications"; ObjectID = "aCk-Z4-8m7"; */
 "aCk-Z4-8m7.text" = "Сповіщення";
+
+/* Class = "UITableViewController"; title = "ForwardTo"; ObjectID = "af7-97-1pu"; */
+"af7-97-1pu.title" = "Переслати";
 
 /* Class = "UIButton"; normalTitle = "Confirm"; ObjectID = "aFc-MO-QyO"; */
 "aFc-MO-QyO.normalTitle" = "Підтвердити";
@@ -118,14 +142,20 @@
 /* Class = "UILabel"; text = "Verified"; ObjectID = "axr-PN-Xcr"; */
 "axr-PN-Xcr.text" = "Перевірений";
 
+/* Class = "UILabel"; text = "grpAbCd21345"; ObjectID = "AyV-WL-p4N"; */
+"AyV-WL-p4N.text" = "grpAbCd21345";
+
+/* Class = "UILabel"; text = "00:00C"; ObjectID = "aza-Xk-MXu"; */
+"aza-Xk-MXu.text" = "00:00C";
+
 /* Class = "UITextField"; placeholder = "Description (optional)"; ObjectID = "bca-bT-6Tn"; */
 "bca-bT-6Tn.placeholder" = "Опис (не обов'язково)";
 
-/* Class = "UILabel"; text = "Last active"; ObjectID = "bEA-WA-uoH"; */
-"bEA-WA-uoH.text" = "Був онлайн";
-
 /* Class = "UILabel"; text = "We will send a message with confirmation code to address above"; ObjectID = "bfU-AG-oM0"; */
 "bfU-AG-oM0.text" = "Ми надішлемо повідомлення з кодом підтвердження на вказану адресу";
+
+/* Class = "UILabel"; text = "Alias"; ObjectID = "BjO-YX-L6x"; */
+"BjO-YX-L6x.text" = "Псевдонім";
 
 /* Class = "UILabel"; text = "Configuration Code"; ObjectID = "BJV-dk-s3m"; */
 "BJV-dk-s3m.text" = "Код конфігурації";
@@ -139,9 +169,6 @@
 /* Class = "UITableViewSection"; headerTitle = "Contacts"; ObjectID = "bvE-OV-sy1"; */
 "bvE-OV-sy1.headerTitle" = "Контакти";
 
-/* Class = "UILabel"; text = " MyUID"; ObjectID = "bvN-my-ZPi"; */
-"bvN-my-ZPi.text" = " MyUID";
-
 /* Class = "UILabel"; text = "No results"; ObjectID = "bYc-bz-7iK"; */
 "bYc-bz-7iK.text" = "Немає результатів";
 
@@ -151,11 +178,11 @@
 /* Class = "UILabel"; text = "image/jpeg"; ObjectID = "C6Z-tO-4g8"; */
 "C6Z-tO-4g8.text" = "image/jpeg";
 
-/* Class = "UILabel"; text = "Add optional description"; ObjectID = "cD6-Om-VgZ"; */
-"cD6-Om-VgZ.text" = "Додайте опис (не обов'язково)";
-
 /* Class = "UIViewController"; title = "Video Call"; ObjectID = "Cib-aE-hH5"; */
 "Cib-aE-hH5.title" = "Відеодзвінок";
+
+/* Class = "UIButton"; normalTitle = " OK "; ObjectID = "cNq-5G-f58"; */
+"cNq-5G-f58.normalTitle" = " OK ";
 
 /* Class = "UIButton"; normalTitle = "Change"; ObjectID = "cOw-88-WKy"; */
 "cOw-88-WKy.normalTitle" = "Змінити";
@@ -172,17 +199,32 @@
 /* Class = "UILabel"; text = "Archived"; ObjectID = "DEM-ia-TIj"; */
 "DEM-ia-TIj.text" = "Архівований";
 
+/* Class = "UITextField"; ibShadowedToolTip = "Alias can be used to find this topic"; ObjectID = "DFU-9e-dLm"; */
+"DFU-9e-dLm.ibShadowedToolTip" = "Псевдонім можна використовувати для пошуку цієї теми";
+
+/* Class = "UITextField"; placeholder = "alias"; ObjectID = "DFU-9e-dLm"; */
+"DFU-9e-dLm.placeholder" = "псевдонім";
+
+/* Class = "UILabel"; text = "Alice Hatter"; ObjectID = "dLA-fr-G0I"; */
+"dLA-fr-G0I.text" = "Alice Hatter";
+
 /* Class = "UIButton"; normalTitle = "OK"; ObjectID = "DMQ-om-04T"; */
 "DMQ-om-04T.normalTitle" = "OK";
 
 /* Class = "UITextField"; placeholder = "Additional info (private)"; ObjectID = "Do2-Ue-UdA"; */
 "Do2-Ue-UdA.placeholder" = "Пояснення (тільки для себе)";
 
+/* Class = "UILabel"; text = "Address"; ObjectID = "Drz-OH-b0d"; */
+"Drz-OH-b0d.text" = "Адреса";
+
 /* Class = "UILabel"; text = "Delete Group"; ObjectID = "dT7-dW-WFv"; */
 "dT7-dW-WFv.text" = "Видалити групу";
 
-/* Class = "UILabel"; text = "Manage tags"; ObjectID = "eHa-mE-ZbY"; */
-"eHa-mE-ZbY.text" = "Керування тегами";
+/* Class = "UILabel"; text = "00:00D"; ObjectID = "DtN-H7-Ovv"; */
+"DtN-H7-Ovv.text" = "00:00D";
+
+/* Class = "UILabel"; text = "Delete Saved Messages"; ObjectID = "e6Y-GD-igB"; */
+"e6Y-GD-igB.text" = "Видалити збережені повідомлення";
 
 /* Class = "UILabel"; text = "128x365; 35KB"; ObjectID = "eVu-vx-CU8"; */
 "eVu-vx-CU8.text" = "128x365; 35KB";
@@ -226,11 +268,17 @@
 /* Class = "UINavigationController"; title = "FowardTo Navigation"; ObjectID = "goO-Va-Eyu"; */
 "goO-Va-Eyu.title" = "Навігація вперед";
 
+/* Class = "UITextField"; placeholder = "Your name"; ObjectID = "gQG-WO-eaD"; */
+"gQG-WO-eaD.placeholder" = "Ваше ім'я";
+
 /* Class = "UITableViewSection"; headerTitle = "Default Permissions"; ObjectID = "H78-sG-L0j"; */
 "H78-sG-L0j.headerTitle" = "Дозвіл по замовчуванню";
 
 /* Class = "UINavigationItem"; title = "Video Preview"; ObjectID = "Hah-A8-0yd"; */
 "Hah-A8-0yd.title" = "Прев'ю відео";
+
+/* Class = "UILabel"; text = "Tinode"; ObjectID = "HCG-mB-BeX"; */
+"HCG-mB-BeX.text" = "Tinode";
 
 /* Class = "UITextField"; placeholder = "Configuration Code"; ObjectID = "hDW-u7-vzK"; */
 "hDW-u7-vzK.placeholder" = "Код конфігурації";
@@ -250,9 +298,6 @@
 /* Class = "UINavigationItem"; title = "New Chat"; ObjectID = "hZA-k4-xku"; */
 "hZA-k4-xku.title" = "Новий чат";
 
-/* Class = "UILabel"; text = "Add optional description"; ObjectID = "IbJ-of-vl0"; */
-"IbJ-of-vl0.text" = "Додайте опис (не обов'язково)";
-
 /* Class = "UIButton"; configuration.title = "Scan Code"; ObjectID = "ImI-af-TFh"; */
 "ImI-af-TFh.configuration.title" = "Сканувати код";
 
@@ -265,17 +310,11 @@
 /* Class = "UIButton"; configuration.title = "Show Code"; ObjectID = "IP5-9X-LlM"; */
 "IP5-9X-LlM.configuration.title" = "Показати код";
 
-/* Class = "UITextView"; text = "Title"; ObjectID = "ity-bg-zqr"; */
-"ity-bg-zqr.text" = "Назва групи";
-
 /* Class = "UITableViewSection"; headerTitle = "General"; ObjectID = "iYo-Ip-40L"; */
 "iYo-Ip-40L.headerTitle" = "Загальний";
 
 /* Class = "UILabel"; text = "Verified"; ObjectID = "IzY-DL-wiS"; */
 "IzY-DL-wiS.text" = "Перевірений";
-
-/* Class = "UITableViewSection"; headerTitle = "Tags (Content Discovery)"; ObjectID = "jal-tR-OpF"; */
-"jal-tR-OpF.headerTitle" = "Теги (пошук груп та контактів)";
 
 /* Class = "UITableViewSection"; headerTitle = "Confirmation"; ObjectID = "jjO-7B-XRZ"; */
 "jjO-7B-XRZ.headerTitle" = "Підтвердження";
@@ -286,11 +325,17 @@
 /* Class = "UINavigationItem"; title = "Image Preview"; ObjectID = "JpP-JB-AWY"; */
 "JpP-JB-AWY.title" = "Предпросмотр";
 
+/* Class = "UILabel"; text = "Alice Hatter"; ObjectID = "jrt-hR-wyQ"; */
+"jrt-hR-wyQ.text" = "Alice Hatter";
+
 /* Class = "UILabel"; text = "Add Members"; ObjectID = "jZE-Vv-ggf"; */
 "jZE-Vv-ggf.text" = "Додайте учасників";
 
-/* Class = "UILabel"; text = "Subtitle"; ObjectID = "K7L-Uc-b68"; */
-"K7L-Uc-b68.text" = "Підзаголовок";
+/* Class = "UITextField"; ibShadowedToolTip = "This comment is visible to you only"; ObjectID = "K4E-ne-sW4"; */
+"K4E-ne-sW4.ibShadowedToolTip" = "Цей коментар видно лише вам";
+
+/* Class = "UITextField"; placeholder = "Optional comment (private)"; ObjectID = "K4E-ne-sW4"; */
+"K4E-ne-sW4.placeholder" = "Необов'язковий коментар (приватний)";
 
 /* Class = "UITextField"; placeholder = "Name of the group"; ObjectID = "kDN-bf-JDL"; */
 "kDN-bf-JDL.placeholder" = "Назва групи";
@@ -322,6 +367,9 @@
 /* Class = "UILabel"; text = "File name:"; ObjectID = "lRE-RJ-Qgv"; */
 "lRE-RJ-Qgv.text" = "Ім'я файлу:";
 
+/* Class = "UILabel"; text = "Last active"; ObjectID = "LrU-8Q-1FQ"; */
+"LrU-8Q-1FQ.text" = "Остання активність";
+
 /* Class = "UINavigationItem"; title = "Edit Members"; ObjectID = "LRu-ae-drd"; */
 "LRu-ae-drd.title" = "Редагувати учасників";
 
@@ -343,6 +391,9 @@
 /* Class = "UIViewController"; title = "Chats"; ObjectID = "n9d-hv-55K"; */
 "n9d-hv-55K.title" = "Чати";
 
+/* Class = "UILabel"; text = "Title Lorem Ipsum"; ObjectID = "NB2-85-kNv"; */
+"NB2-85-kNv.text" = "Заголовок Lorem Ipsum";
+
 /* Class = "UITextField"; placeholder = "Login"; ObjectID = "nho-5Y-Mt8"; */
 "nho-5Y-Mt8.placeholder" = "Логін";
 
@@ -351,6 +402,9 @@
 
 /* Class = "UILabel"; text = "No results"; ObjectID = "ntt-8z-Ay2"; */
 "ntt-8z-Ay2.text" = "Не знайдено";
+
+/* Class = "UIView"; accessibilityLabel = "LocalView"; ObjectID = "o1j-Ss-Jhj"; */
+"o1j-Ss-Jhj.accessibilityLabel" = "ЛокальнийВигляд";
 
 /* Class = "UINavigationItem"; title = "Notifications"; ObjectID = "O9h-LB-2lW"; */
 "O9h-LB-2lW.title" = "Сповіщення";
@@ -367,14 +421,11 @@
 /* Class = "UINavigationController"; title = "StartNavigationController"; ObjectID = "oPa-Qr-HlP"; */
 "oPa-Qr-HlP.title" = "StartNavigationController";
 
-/* Class = "UILabel"; text = "Address"; ObjectID = "OwU-2N-QQV"; */
-"OwU-2N-QQV.text" = "Адреса";
+/* Class = "UILabel"; text = "https://127.0.0.1:6060"; ObjectID = "P9L-Ga-c1q"; */
+"P9L-Ga-c1q.text" = "https://127.0.0.1:6060";
 
 /* Class = "UITableViewController"; title = "Account Settings"; ObjectID = "Pnk-9m-ZVg"; */
 "Pnk-9m-ZVg.title" = "Налаштування акаунта";
-
-/* Class = "UILabel"; text = "First and Last Name"; ObjectID = "PuQ-zO-4Of"; */
-"PuQ-zO-4Of.text" = "Ім'я та Прізвище";
 
 /* Class = "UIButton"; normalTitle = "Forgot password?"; ObjectID = "q6T-TC-n42"; */
 "q6T-TC-n42.normalTitle" = "Забули пароль?";
@@ -430,6 +481,12 @@
 /* Class = "UILabel"; text = "N"; ObjectID = "s6S-ku-F63"; */
 "s6S-ku-F63.text" = "N";
 
+/* Class = "UILabel"; text = "@aliassss"; ObjectID = "s7j-0b-iei"; */
+"s7j-0b-iei.text" = "@aliassss";
+
+/* Class = "UILabel"; text = "Alias"; ObjectID = "sH2-lo-2DQ"; */
+"sH2-lo-2DQ.text" = "Псевдонім";
+
 /* Class = "UILabel"; text = "This is a channel"; ObjectID = "skU-B7-Zed"; Note = "Label for channel switch"; */
 "skU-B7-Zed.text" = "Це канал";
 
@@ -463,6 +520,9 @@
 /* Class = "UILabel"; text = "N"; ObjectID = "Un9-ds-iQd"; */
 "Un9-ds-iQd.text" = "N";
 
+/* Class = "UIViewController"; title = "BrandingViewController"; ObjectID = "Uy7-tG-NGm"; */
+"Uy7-tG-NGm.title" = "BrandingViewController";
+
 /* Class = "UITableViewSection"; headerTitle = "Current Credential"; ObjectID = "VLd-3M-5wj"; */
 "VLd-3M-5wj.headerTitle" = "Поточний запис";
 
@@ -484,17 +544,17 @@
 /* Class = "UITextField"; placeholder = "New password"; ObjectID = "WTE-Mf-oSE"; */
 "WTE-Mf-oSE.placeholder" = "Новий пароль";
 
-/* Class = "UILabel"; text = "The name of the group"; ObjectID = "WVu-hr-VVU"; */
-"WVu-hr-VVU.text" = "Назва групи";
-
 /* Class = "UITextField"; placeholder = "Email"; ObjectID = "Wyn-hP-c2H"; */
 "Wyn-hP-c2H.placeholder" = "Емейл";
 
+/* Class = "UILabel"; text = "128x365; 35KB"; ObjectID = "x1J-Xq-2H1"; */
+"x1J-Xq-2H1.text" = "128x365; 35KB";
+
+/* Class = "UILabel"; text = "timestamp"; ObjectID = "x8E-eZ-ZOa"; */
+"x8E-eZ-ZOa.text" = "мітка часу";
+
 /* Class = "UIView"; accessibilityLabel = "Footer"; ObjectID = "xIw-r0-6Pv"; */
 "xIw-r0-6Pv.accessibilityLabel" = "Нижній";
-
-/* Class = "UILabel"; text = "Subtitle"; ObjectID = "xMh-7W-PhM"; */
-"xMh-7W-PhM.text" = "Підзаголовок";
 
 /* Class = "UITextField"; placeholder = "usr123aBcDef"; ObjectID = "xmn-wq-Hpr"; */
 "xmn-wq-Hpr.placeholder" = "usr123aBcDef";
@@ -520,6 +580,9 @@
 /* Class = "UILabel"; text = "Account and Security"; ObjectID = "z08-iK-CeG"; */
 "z08-iK-CeG.text" = "Акаунт та безпека";
 
+/* Class = "UILabel"; text = "Tinode"; ObjectID = "zCU-jx-lsJ"; */
+"zCU-jx-lsJ.text" = "Tinode";
+
 /* Class = "UILabel"; text = "Others can find group by these tags"; ObjectID = "Zdw-nR-1tB"; */
 "Zdw-nR-1tB.text" = "Теги для пошуку";
 
@@ -531,6 +594,9 @@
 
 /* Class = "UILabel"; text = "Privacy policy"; ObjectID = "Zn8-7V-BcX"; */
 "Zn8-7V-BcX.text" = "Політика конфіденційності";
+
+/* Class = "UILabel"; text = "Tinode"; ObjectID = "ZQJ-Ja-aBa"; */
+"ZQJ-Ja-aBa.text" = "Tinode";
 
 /* Class = "UITextField"; placeholder = "Password"; ObjectID = "ZQy-2N-acy"; */
 "ZQy-2N-acy.placeholder" = "Пароль";
@@ -553,7 +619,7 @@
 /* Class = "UITableViewSection"; headerTitle = "Default Permissions"; ObjectID = "zW8-KF-N8J"; */
 "zW8-KF-N8J.headerTitle" = "Права доступу по замовчуванню";
 
-/* Class = "UINavigationItem"; title = "Settings"; ObjectID = "zww-h7-9s0"; */
+/* Class = "UINavigationItem"; title = "Editing"; ObjectID = "zww-h7-9s0"; */
 "zww-h7-9s0.title" = "Налаштування";
 
 /* Class = "UILabel"; text = "Permissions, block or report chat"; ObjectID = "zz2-fg-2IG"; */

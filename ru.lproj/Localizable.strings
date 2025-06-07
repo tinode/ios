@@ -1,6 +1,3 @@
-/* Replacement for chat message with no content */
-"  Content deleted" = "  Контент удален";
-
 /* Invite reaction button */
 "Accept" = "Принять";
 
@@ -10,14 +7,14 @@
 /* Alert title */
 "Add contact" = "Добавить контакт";
 
-/* Placeholder for missing topic description */
-"Add optional description" = "Описание (не обязательно)";
-
 /* Alert placeholder */
 "Additional info (private)" = "Дополнительно (только для себя)";
 
 /* Toast notification */
 "Address copied" = "Адрес скопирован";
+
+/* Toast notification */
+"Alias copied" = "Псевдоним скопирован";
 
 /* Alert explanation */
 "Also block and remove all messages" = "Заблокировать и удалить все сообщения";
@@ -113,6 +110,9 @@
 /* Toast notification */
 "Connection to server lost." = "Свясь с сервером потеряна.";
 
+/* Replacement for chat message with no content */
+"Content deleted" = "Контент удален";
+
 /* Menu item */
 "Copy" = "Скопировать";
 
@@ -133,6 +133,15 @@
    Swipe action */
 "Delete" = "Удалить";
 
+/* Menu item */
+"Delete for all" = "Удалить для всех";
+
+/* Menu item */
+"Delete for me" = "Удалить для меня";
+
+/* Alert title */
+"Delete Saved messages?" = "Удалить сохраненные сообщения?";
+
 /* Alert title */
 "Delete the group?" = "Удалить группу?";
 
@@ -146,13 +155,7 @@
 "Edit account name" = "Редактировать аккаунт";
 
 /* Alert title */
-"Edit Description" = "Описание";
-
-/* Alert title */
 "Edit Group" = "Редактировать группу";
-
-/* Alert title */
-"Edit Title" = "Название";
 
 /* `Edited` message marker */
 "edited" = "изменено";
@@ -229,6 +232,9 @@
 /* Dialog title: call to action */
 "Invite" = "Пригласить";
 
+/* Label for join conference link */
+"Join" = "Присоединиться";
+
 /* Alert action */
 "Leave" = "Выйти";
 
@@ -252,6 +258,12 @@
 
 /* View title */
 "Manage members" = "Управление участниками";
+
+/* Content of a pinned message when the message is deleted */
+"message deleted" = "сообщение удалено";
+
+/* Content of a pinned message when the message is missing */
+"message not found" = "сообщение не найдено";
 
 /* Toast notification */
 "Message not sent." = "Сообщение не отправлено.";
@@ -293,6 +305,9 @@
 /* Error message when call cannot be started due to missing microphone permission */
 "No permission to access microphone" = "Нет доступа к микрофону";
 
+/* Explanation for Saved messages topic */
+"Notes, messages, links, files saved for posterity" = "Заметки, сообщения, ссылки, файлы, сохраненные на память";
+
 /* Alert action */
 "OK" = "OK";
 
@@ -301,6 +316,10 @@
 
 /* Toast notification */
 "Only Owner can delete group" = "Только владелец может удалить группу";
+
+/* Placeholder for missing topic description
+Placeholder for missing user self-description */
+"Optional description" = "Необязательное описание";
 
 /* Label for outgoing video/audio calls */
 "Outgoing call" = "Исходящий звонок";
@@ -328,9 +347,6 @@
 
 /* Progress overlay */
 "Please wait..." = "Подождите...";
-
-/* Alert title */
-"Private Comment" = "Комментарий";
 
 /* Placeholder text in editor */
 "Private info: not set" = "Только для себя: отсутствует";
@@ -371,6 +387,11 @@
 /* Progress overlay */
 "Requesting..." = "Запрос...";
 
+/* Title for slf topic
+Title of slf topic
+Title of the slf topic */
+"Saved messages" = "Сохраненные сообщения";
+
 /* Title for camera preview when scanning a QR code */
 "Scan Code" = "Сканировать код";
 
@@ -388,6 +409,9 @@
 
 /* Service unavailable */
 "Service unavailable at this time. Please try again later." = "Сейчас недоступно. Попробуйте позже";
+
+/* Toast notification */
+"Something went wrong: (%d) %@" = "Что-то пошло не так: (%1$d) %2$@";
 
 /* Toast notification */
 "Something went wrong: %d (%s)" = "Что-то пошло не так: %1$d (%2$s)";
@@ -425,6 +449,9 @@
 /* Sender with missing name */
 "Unknown %@" = "Неизвестый %@";
 
+/* Topic title when it has no name */
+"Unknown or unnamed" = "Неизвестный или без имени";
+
 /* Displayed when the type of attachment cannot be determined */
 "Unknown type" = "Неизвестный тип";
 
@@ -432,7 +459,7 @@
 "Unpin" = "Открепить";
 
 /* Label shown next to an unsupported Drafty format element
-   Unsupported (unknown) Drafty tag */
+Unsupported (unknown) Drafty tag */
 "Unsupported" = "Не поддерживается";
 
 /* Progress overlay */
@@ -451,7 +478,7 @@
 "Verification failure: %d %@" = "Ошибка верификации: %1$d %2$@";
 
 /* Label shown next to an inline video
-   Menu item: video call */
+Menu item: video call */
 "Video" = "Видео";
 
 /* Telephone password reset prompt */

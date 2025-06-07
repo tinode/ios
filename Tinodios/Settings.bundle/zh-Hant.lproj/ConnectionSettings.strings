@@ -1,4 +1,4 @@
-/* (No Comment) */
+/* A single strings file, whose title is specified in your preferences schema. The strings files provide the localized content to display to the user for each of your preferences. */
 "Host name" = "主機名稱";
 
 /* (No Comment) */

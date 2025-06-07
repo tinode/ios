@@ -1,6 +1,3 @@
-/* Replacement for chat message with no content */
-"  Content deleted" = "  Контент видалено";
-
 /* Invite reaction button */
 "Accept" = "Прийняти";
 
@@ -10,14 +7,14 @@
 /* Alert title */
 "Add contact" = "Додати контакт";
 
-/* Placeholder for missing topic description */
-"Add optional description" = "Опис (не обов'язково)";
-
 /* Alert placeholder */
 "Additional info (private)" = "Додатково (тільки для себе)";
 
 /* Toast notification */
 "Address copied" = "Адресу скопійовано";
+
+/* Toast notification */
+"Alias copied" = "Псевдонім скопійовано";
 
 /* Alert explanation */
 "Also block and remove all messages" = "Заблокувати та видалити всі повідомлення";
@@ -113,6 +110,9 @@
 /* Toast notification */
 "Connection to server lost." = "Зв'язок із сервером втрачено.";
 
+/* Replacement for chat message with no content */
+"Content deleted" = "Контент видалено";
+
 /* Menu item */
 "Copy" = "Копіювати";
 
@@ -133,6 +133,15 @@
    Swipe action */
 "Delete" = "Видалити";
 
+/* Menu item */
+"Delete for all" = "Видалити для всіх";
+
+/* Menu item */
+"Delete for me" = "Видалити для мене";
+
+/* Alert title */
+"Delete Saved messages?" = "Видалити збережені повідомлення?";
+
 /* Alert title */
 "Delete the group?" = "Видалити групу?";
 
@@ -146,13 +155,7 @@
 "Edit account name" = "Редагувати акаунт";
 
 /* Alert title */
-"Edit Description" = "Опис";
-
-/* Alert title */
 "Edit Group" = "Редагувати групу";
-
-/* Alert title */
-"Edit Title" = "Назва";
 
 /* `Edited` message marker */
 "edited" = "змінено";
@@ -229,6 +232,9 @@
 /* Dialog title: call to action */
 "Invite" = "Запросити";
 
+/* Label for join conference link */
+"Join" = "Приєднатися";
+
 /* Alert action */
 "Leave" = "Вийти";
 
@@ -252,6 +258,12 @@
 
 /* View title */
 "Manage members" = "Управління учасниками";
+
+/* Content of a pinned message when the message is deleted */
+"message deleted" = "повідомлення видалено";
+
+/* Content of a pinned message when the message is missing */
+"message not found" = "повідомлення не знайдено";
 
 /* Toast notification */
 "Message not sent." = "Повідомлення не надіслано.";
@@ -293,6 +305,9 @@
 /* Error message when call cannot be started due to missing microphone permission */
 "No permission to access microphone" = "Немає доступу до мікрофону";
 
+/* Explanation for Saved messages topic */
+"Notes, messages, links, files saved for posterity" = "Нотатки, повідомлення, посилання, файли, збережені для нащадків";
+
 /* Alert action */
 "OK" = "OK";
 
@@ -301,6 +316,10 @@
 
 /* Toast notification */
 "Only Owner can delete group" = "Тільки власник може видалити групу";
+
+/* Placeholder for missing topic description
+Placeholder for missing user self-description */
+"Optional description" = "Необов'язковий опис";
 
 /* Label for outgoing video/audio calls */
 "Outgoing call" = "Вихідний дзвінок";
@@ -320,14 +339,14 @@
 /* Label shown next to an inline image */
 "Picture" = "Картинка";
 
+/* Menu item for pinning message */
+"Pin" = "Закріпити";
+
 /* Error message */
 "Playback failed" = "Помилка при запуску";
 
 /* Progress overlay */
 "Please wait..." = "Зачекайте...";
-
-/* Alert title */
-"Private Comment" = "Приватний коментар";
 
 /* Placeholder text in editor */
 "Private info: not set" = "Приватна інформація: не налаштована";
@@ -368,6 +387,11 @@
 /* Progress overlay */
 "Requesting..." = "Запит...";
 
+/* Title for slf topic
+Title of slf topic
+Title of the slf topic */
+"Saved messages" = "Збережені повідомлення";
+
 /* Title for camera preview when scanning a QR code */
 "Scan Code" = "Сканувати код";
 
@@ -385,6 +409,9 @@
 
 /* Service unavailable */
 "Service unavailable at this time. Please try again later." = "Служба наразі недоступна. Будь ласка, спробуйте пізніше.";
+
+/* Toast notification */
+"Something went wrong: (%d) %@" = "Щось пішло не так: (%1$d) %2$@";
 
 /* Toast notification */
 "Something went wrong: %d (%s)" = "Щось пішло не так: %1$d (%2$s)";
@@ -422,11 +449,17 @@
 /* Sender with missing name */
 "Unknown %@" = "Невідомий %@";
 
+/* Topic title when it has no name */
+"Unknown or unnamed" = "Невідомо або без назви";
+
 /* Displayed when the type of attachment cannot be determined */
 "Unknown type" = "Невідомий тип";
 
+/* Menu item for un-pinning message */
+"Unpin" = "Відкріпити";
+
 /* Label shown next to an unsupported Drafty format element
-   Unsupported (unknown) Drafty tag */
+Unsupported (unknown) Drafty tag */
 "Unsupported" = "Не підтримується";
 
 /* Progress overlay */
@@ -445,7 +478,7 @@
 "Verification failure: %d %@" = "Помилка верифікації: %1$d %2$@";
 
 /* Label shown next to an inline video
-   Menu item: video call */
+Menu item: video call */
 "Video" = "Відео";
 
 /* Telephone password reset prompt */

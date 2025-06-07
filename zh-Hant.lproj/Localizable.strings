@@ -1,6 +1,3 @@
-/* Replacement for chat message with no content */
-"  Content deleted" = "內容已刪除";
-
 /* Invite reaction button */
 "Accept" = "接受";
 
@@ -10,14 +7,14 @@
 /* Alert title */
 "Add contact" = "新增聯絡人";
 
-/* Placeholder for missing topic description */
-"Add optional description" = "添加可选描述";
-
 /* Alert placeholder */
 "Additional info (private)" = "額外資訊 (私人)";
 
 /* Toast notification */
 "Address copied" = "地址已複製";
+
+/* Toast notification */
+"Alias copied" = "別名已複製";
 
 /* Alert explanation */
 "Also block and remove all messages" = "同時封鎖並移除所有訊息";
@@ -113,6 +110,9 @@
 /* Toast notification */
 "Connection to server lost." = "失去與伺服器的連線。";
 
+/* Replacement for chat message with no content */
+"Content deleted" = "內容已刪除";
+
 /* Menu item */
 "Copy" = "複製";
 
@@ -133,6 +133,15 @@
    Swipe action */
 "Delete" = "刪除";
 
+/* Menu item */
+"Delete for all" = "為所有人刪除";
+
+/* Menu item */
+"Delete for me" = "為我刪除";
+
+/* Alert title */
+"Delete Saved messages?" = "刪除已儲存的訊息？";
+
 /* Alert title */
 "Delete the group?" = "要刪除群組嗎？";
 
@@ -146,13 +155,7 @@
 "Edit account name" = "編輯帳號名稱";
 
 /* Alert title */
-"Edit Description" = "编辑描述";
-
-/* Alert title */
 "Edit Group" = "編輯群組";
-
-/* Alert title */
-"Edit Title" = "编辑标题";
 
 /* `Edited` message marker */
 "edited" = "編輯";
@@ -229,6 +232,9 @@
 /* Dialog title: call to action */
 "Invite" = "邀請";
 
+/* Label for join conference link */
+"Join" = "加入";
+
 /* Alert action */
 "Leave" = "離開";
 
@@ -252,6 +258,12 @@
 
 /* View title */
 "Manage members" = "管理成員";
+
+/* Content of a pinned message when the message is deleted */
+"message deleted" = "訊息已刪除";
+
+/* Content of a pinned message when the message is missing */
+"message not found" = "找不到訊息";
 
 /* Toast notification */
 "Message not sent." = "未傳送訊息。";
@@ -293,6 +305,9 @@
 /* Error message when call cannot be started due to missing microphone permission */
 "No permission to access microphone" = "無權訪問麥克風";
 
+/* Explanation for Saved messages topic */
+"Notes, messages, links, files saved for posterity" = "永久儲存的筆記、訊息、連結、檔案";
+
 /* Alert action */
 "OK" = "好的";
 
@@ -301,6 +316,10 @@
 
 /* Toast notification */
 "Only Owner can delete group" = "只有擁有者能夠刪除群組";
+
+/* Placeholder for missing topic description
+Placeholder for missing user self-description */
+"Optional description" = "可選描述";
 
 /* Label for outgoing video/audio calls */
 "Outgoing call" = "撥出電話";
@@ -328,9 +347,6 @@
 
 /* Progress overlay */
 "Please wait..." = "請稍候...";
-
-/* Alert title */
-"Private Comment" = "私人评论";
 
 /* Placeholder text in editor */
 "Private info: not set" = "私人資訊：未設定";
@@ -371,6 +387,11 @@
 /* Progress overlay */
 "Requesting..." = "正在請求...";
 
+/* Title for slf topic
+Title of slf topic
+Title of the slf topic */
+"Saved messages" = "已儲存的訊息";
+
 /* Title for camera preview when scanning a QR code */
 "Scan Code" = "掃描程式";
 
@@ -388,6 +409,9 @@
 
 /* Service unavailable */
 "Service unavailable at this time. Please try again later." = "此時無法提供服務。 請稍後再試。";
+
+/* Toast notification */
+"Something went wrong: (%d) %@" = "發生錯誤: (%1$d) %2$@";
 
 /* Toast notification */
 "Something went wrong: %d (%s)" = "有東西出錯了：%1$d (%2$s)";
@@ -425,6 +449,9 @@
 /* Sender with missing name */
 "Unknown %@" = "未知 %@";
 
+/* Topic title when it has no name */
+"Unknown or unnamed" = "未知或未命名";
+
 /* Displayed when the type of attachment cannot be determined */
 "Unknown type" = "未知型別";
 
@@ -432,7 +459,7 @@
 "Unpin" = "取消固定";
 
 /* Label shown next to an unsupported Drafty format element
-   Unsupported (unknown) Drafty tag */
+Unsupported (unknown) Drafty tag */
 "Unsupported" = "不受支援";
 
 /* Progress overlay */
@@ -451,7 +478,7 @@
 "Verification failure: %d %@" = "驗證失敗：%1$d %2$@";
 
 /* Label shown next to an inline video
-   Menu item: video call */
+Menu item: video call */
 "Video" = "影片";
 
 /* Telephone password reset prompt */

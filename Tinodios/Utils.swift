@@ -358,7 +358,8 @@ extension StoredMessage {
         var newAttr: [NSAttributedString.Key: Any] = attr ?? [:]
         newAttr[.baselineOffset] = (icon.bounds.height - textFont.pointSize) / 2 - textFont.descender / 2
         newAttr[.font] = textFont
-        second.append(NSAttributedString(string: NSLocalizedString("  Content deleted", comment: "Replacement for chat message with no content"), attributes: newAttr))
+        second.append(NSAttributedString(string: "  ", attributes: newAttr))
+        second.append(NSAttributedString(string: NSLocalizedString("Content deleted", comment: "Replacement for chat message with no content"), attributes: newAttr))
         second.endEditing()
         return second
     }

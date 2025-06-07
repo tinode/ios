@@ -1,6 +1,3 @@
-/* Replacement for chat message with no content */
-"  Content deleted" = "  Este mensaje fue eliminado";
-
 /* Invite reaction button */
 "Accept" = "Aceptar";
 
@@ -10,14 +7,14 @@
 /* Alert title */
 "Add contact" = "Añadir contacto";
 
-/* Placeholder for missing topic description */
-"Add optional description" = "Añadir descripción opcional";
-
 /* Alert placeholder */
 "Additional info (private)" = "Información adicional (sólo visible para tí)";
 
 /* Toast notification */
 "Address copied" = "Dirección copiada";
+
+/* Toast notification */
+"Alias copied" = "Alias copiado";
 
 /* Alert explanation */
 "Also block and remove all messages" = "También bloquear y eliminar todos los mensajes";
@@ -113,6 +110,9 @@
 /* Toast notification */
 "Connection to server lost." = "Se perdió la conexión al servidor.";
 
+/* Replacement for chat message with no content */
+"Content deleted" = "Este mensaje fue eliminado";
+
 /* Menu item */
 "Copy" = "Copiar";
 
@@ -133,6 +133,15 @@
    Swipe action */
 "Delete" = "Eliminar";
 
+/* Menu item */
+"Delete for all" = "Eliminar para todos";
+
+/* Menu item */
+"Delete for me" = "Eliminar para mí";
+
+/* Alert title */
+"Delete Saved messages?" = "¿Eliminar mensajes guardados?";
+
 /* Alert title */
 "Delete the group?" = "¿Eliminar el grupo?";
 
@@ -146,13 +155,7 @@
 "Edit account name" = "Editar nombre de la cuenta";
 
 /* Alert title */
-"Edit Description" = "Editar descripción";
-
-/* Alert title */
 "Edit Group" = "Editar grupo";
-
-/* Alert title */
-"Edit Title" = "Editar título";
 
 /* `Edited` message marker */
 "edited" = "editado";
@@ -229,6 +232,9 @@
 /* Dialog title: call to action */
 "Invite" = "Invitar";
 
+/* Label for join conference link */
+"Join" = "Unirse";
+
 /* Alert action */
 "Leave" = "Dejar";
 
@@ -252,6 +258,12 @@
 
 /* View title */
 "Manage members" = "Gestionar miembros";
+
+/* Content of a pinned message when the message is deleted */
+"message deleted" = "mensaje eliminado";
+
+/* Content of a pinned message when the message is missing */
+"message not found" = "mensaje no encontrado";
 
 /* Toast notification */
 "Message not sent." = "No se pudo enviar mensaje.";
@@ -293,6 +305,9 @@
 /* Error message when call cannot be started due to missing microphone permission */
 "No permission to access microphone" = "No hay permiso para acceder al micrófono";
 
+/* Explanation for Saved messages topic */
+"Notes, messages, links, files saved for posterity" = "Notas, mensajes, enlaces, archivos guardados para la posteridad";
+
 /* Alert action */
 "OK" = "OK";
 
@@ -301,6 +316,10 @@
 
 /* Toast notification */
 "Only Owner can delete group" = "Sólo el propietario puede eliminar el grupo";
+
+/* Placeholder for missing topic description
+Placeholder for missing user self-description */
+"Optional description" = "Descripción opcional";
 
 /* Label for outgoing video/audio calls */
 "Outgoing call" = "Llamada saliente";
@@ -328,9 +347,6 @@
 
 /* Progress overlay */
 "Please wait..." = "Por favor, espera...";
-
-/* Alert title */
-"Private Comment" = "Comentario privado";
 
 /* Placeholder text in editor */
 "Private info: not set" = "Información privada: no establecida";
@@ -371,6 +387,11 @@
 /* Progress overlay */
 "Requesting..." = "Solicitando...";
 
+/* Title for slf topic
+Title of slf topic
+Title of the slf topic */
+"Saved messages" = "Mensajes guardados";
+
 /* Title for camera preview when scanning a QR code */
 "Scan Code" = "Código de escaneo";
 
@@ -388,6 +409,9 @@
 
 /* Service unavailable */
 "Service unavailable at this time. Please try again later." = "El servicio no está disponible en este momento. Por favor, inténtelo de nuevo más tarde.";
+
+/* Toast notification */
+"Something went wrong: (%d) %@" = "Algo salió mal: (%1$d) %2$@";
 
 /* Toast notification */
 "Something went wrong: %d (%s)" = "Algo salió mal: %1$d (%2$s)";
@@ -425,6 +449,9 @@
 /* Sender with missing name */
 "Unknown %@" = "Desconocido %@";
 
+/* Topic title when it has no name */
+"Unknown or unnamed" = "Desconocido o sin nombre";
+
 /* Displayed when the type of attachment cannot be determined */
 "Unknown type" = "Tipo desconocido";
 
@@ -432,7 +459,7 @@
 "Unpin" = "Desanclar\n";
 
 /* Label shown next to an unsupported Drafty format element
-   Unsupported (unknown) Drafty tag */
+Unsupported (unknown) Drafty tag */
 "Unsupported" = "Sin base";
 
 /* Progress overlay */
@@ -451,7 +478,7 @@
 "Verification failure: %d %@" = "Error de verificación: %1$d %2$@";
 
 /* Label shown next to an inline video
-   Menu item: video call */
+Menu item: video call */
 "Video" = "Vídeo";
 
 /* Telephone password reset prompt */
