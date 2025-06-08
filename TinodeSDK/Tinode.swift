@@ -165,7 +165,6 @@ public class Tinode {
     let kProtocolVersion = "0"
     let kVersion = "0.23"
     let kLibVersion = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as! String
-    let kLocale = Locale.current.languageCode!
 
     public var OsVersion: String = ""
 
@@ -494,7 +493,7 @@ public class Tinode {
     }
 
     public var userAgent: String {
-        return "\(appName) (iOS \(OsVersion); \(kLocale)); tinode-swift/\(kLibVersion)"
+        return "\(appName) (iOS \(OsVersion); \(Locale.current.identifier)); tinode-swift/\(kLibVersion)"
     }
 
     public func getServerLimit(for key: String, withDefault defVal: Int64) -> Int64 {
@@ -689,7 +688,7 @@ public class Tinode {
 
     private func hello(inBackground bkg: Bool) -> PromisedReply<ServerMessage> {
         let msgId = getNextMsgId()
-        let msg = ClientMessage<Int, Int>(hi: MsgClientHi(id: msgId, ver: kVersion, ua: userAgent, dev: deviceToken, lang: kLocale, background: bkg))
+        let msg = ClientMessage<Int, Int>(hi: MsgClientHi(id: msgId, ver: kVersion, ua: userAgent, dev: deviceToken, lang: Locale.current.identifier, background: bkg))
         return sendWithPromise(payload: msg, with: msgId)
             .thenApply({ [weak self] pkt in
                 guard let ctrl = pkt?.ctrl else {
