@@ -117,7 +117,7 @@ class FullFormatter: AbstractFormatter {
             let mimeType =  attr["mime"]?.asString()
 
             // Skip json attachments. They are not meant to be user-visible.
-            if mimeType == "application/json" {
+            if FullFormatter.isSkippableJson(mimeType) {
                 return node
             }
 

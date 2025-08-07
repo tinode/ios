@@ -30,7 +30,8 @@ public protocol DraftyTransformer {
 /// Class representing formatted text with optional attachments.
 open class Drafty: Codable, CustomStringConvertible, Equatable {
     public static let kMimeType = "text/x-drafty"
-    public static let kJSONMimeType = "application/json"
+    public static let kJSONMimeType = "application/json+drafty"
+    public static let kJSONMimeType_LEGACY = "application/json" // Remove in 2026.
 
     private static let kMaxFormElements = 8
     private static let kMaxPreviewDataSize = 64

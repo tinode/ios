@@ -86,7 +86,7 @@ class PreviewFormatter: AbstractFormatter {
             return FormatNode()
         }
 
-        if let mime = attr["mime"]?.asString(), mime == "application/json" {
+        if PreviewFormatter.isSkippableJson(attr["mime"]?.asString()) {
             // Skip JSON attachments. They are not meant to be user-visible.
             return FormatNode()
         }
