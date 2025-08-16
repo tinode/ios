@@ -31,7 +31,7 @@ public protocol DraftyTransformer {
 open class Drafty: Codable, CustomStringConvertible, Equatable {
     public static let kMimeType = "text/x-drafty"
     /// Mime type for Drafty form-response.
-    private static let kJSONMimeType = "text/x-drafty-fr"
+    public static let kJSONMimeType = "text/x-drafty-fr"
     private static let kJSONMimeType_LEGACY = "application/json" // Remove in 2026.
 
     private static let kMaxFormElements = 8
