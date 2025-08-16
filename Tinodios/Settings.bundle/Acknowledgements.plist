@@ -2023,6 +2023,16 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 		</dict>
 		<dict>
 			<key>FooterText</key>
+			<string>Copyright 2024 Google</string>
+			<key>License</key>
+			<string>Copyright</string>
+			<key>Title</key>
+			<string>GoogleAdsOnDeviceConversion</string>
+			<key>Type</key>
+			<string>PSGroupSpecifier</string>
+		</dict>
+		<dict>
+			<key>FooterText</key>
 			<string>Copyright 2022 Google</string>
 			<key>License</key>
 			<string>Copyright</string>
