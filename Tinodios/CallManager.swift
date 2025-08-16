@@ -67,8 +67,8 @@ class CallManager {
 
     public static func activateAudioSession(withSpeaker speaker: Bool) {
         self.audioSessionChange { audioSession in
-            try audioSession.setCategory(AVAudioSession.Category.playAndRecord.rawValue)
-            try audioSession.setMode(AVAudioSession.Mode.voiceChat.rawValue)
+            try audioSession.setCategory(AVAudioSession.Category(rawValue: AVAudioSession.Category.playAndRecord.rawValue))
+            try audioSession.setMode(AVAudioSession.Mode(rawValue: AVAudioSession.Mode.voiceChat.rawValue))
             try audioSession.overrideOutputAudioPort(speaker ? .speaker : .none)
             try audioSession.setActive(true)
         }
