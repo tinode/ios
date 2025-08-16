@@ -40,7 +40,7 @@ def app_pods
   pod 'Kingfisher', '~> 5'
   pod 'MobileVLCKit', '~> 3'
   pod 'PhoneNumberKit', '~> 4'
-  pod 'WebRTC-lib', '~> 96.0.0'
+  pod 'WebRTC-lib', '~> 139.0.0'
 end
 
 # UI tests.
