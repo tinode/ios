@@ -12,9 +12,6 @@ import TinodeSDK
 /// DraftyFormatter implementation to break out individual format handlers.
 /// Implemented as a class instead of a protocol because of this bug: https://bugs.swift.org/browse/SR-103
 class AbstractFormatter: DraftyFormatter {
-    private static let kJSONMimeType = "application/json+drafty"
-    private static let kJSONMimeType_LEGACY = "application/json" // Remove in 2026.
-
     var defaultAttrs: [NSAttributedString.Key: Any]
 
     init(defaultAttributes attrs: [NSAttributedString.Key: Any], defaultFont: UIFont) {
@@ -233,6 +230,6 @@ class AbstractFormatter: DraftyFormatter {
     }
 
     static func isSkippableJson(_ mime: String?) -> Bool {
-        return AbstractFormatter.kJSONMimeType == mime || AbstractFormatter.kJSONMimeType_LEGACY == mime
+        return Drafty.isFormResponseType(mime)
     }
 }

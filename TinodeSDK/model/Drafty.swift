@@ -30,8 +30,9 @@ public protocol DraftyTransformer {
 /// Class representing formatted text with optional attachments.
 open class Drafty: Codable, CustomStringConvertible, Equatable {
     public static let kMimeType = "text/x-drafty"
-    public static let kJSONMimeType = "application/json+drafty"
-    public static let kJSONMimeType_LEGACY = "application/json" // Remove in 2026.
+    /// Mime type for Drafty form-response.
+    private static let kJSONMimeType = "text/x-drafty-fr"
+    private static let kJSONMimeType_LEGACY = "application/json" // Remove in 2026.
 
     private static let kMaxFormElements = 8
     private static let kMaxPreviewDataSize = 64
@@ -105,7 +106,7 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
 
     /// Initializer to comply with Decodable protocol:
     /// First tries to decode Drafty from plain text, then
-    /// from from JSON.
+    /// from JSON.
     required public init(from decoder: Decoder) throws {
         // First try optional decoding of 'txt' from a primitive string.
         // Most content is sent as primitive strings.
@@ -178,6 +179,10 @@ open class Drafty: Codable, CustomStringConvertible, Equatable {
 
     public static func isVoid(type: String?) -> Bool {
         return kVoidStyles.contains(type ?? "-")
+    }
+
+    public static func isFormResponseType(_ type: String?) -> Bool {
+        return type == kJSONMimeType || type == kJSONMimeType_LEGACY
     }
 
     // Polifill brain-damaged Swift.
