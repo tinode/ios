@@ -14,5 +14,5 @@ USE_TLS = YES
 APP_NAME = Tinode
 
 // Versioning. The values are automatically updated by a build script.
-GIT_TAG = 1.24.0
-GIT_COMMIT_COUNT = 1819
+GIT_TAG = 1.24.3
+GIT_COMMIT_COUNT = 1827
