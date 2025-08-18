@@ -93,6 +93,7 @@ The app is currently available in the following languages:
 * English (default)
 * Chinese (simplified)
 * Chinese (traditional)
+* Italian
 * Russian
 * Spanish
 * Ukrainian
