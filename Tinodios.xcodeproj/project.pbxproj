@@ -262,6 +262,11 @@
 		B012599B229CEBE600688FCE /* SelectedMemberViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SelectedMemberViewCell.xib; sourceTree = "<group>"; };
 		B0133AE223D1AADF00C813CA /* SendImageBar.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SendImageBar.xib; sourceTree = "<group>"; };
 		B0133AE423D1ACBC00C813CA /* SendImageBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendImageBar.swift; sourceTree = "<group>"; };
+		B013E9D72E538C5E007519DA /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/MultilineAlertView.strings; sourceTree = "<group>"; };
+		B013E9D82E538C5F007519DA /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/TagsEditDialogView.strings; sourceTree = "<group>"; };
+		B013E9D92E538C60007519DA /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/Main.strings; sourceTree = "<group>"; };
+		B013E9DA2E538C61007519DA /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
+		B013E9DB2E538C63007519DA /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/Localizable.strings; sourceTree = "<group>"; };
 		B01C693E22F87B5C003C0AA7 /* SignupViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignupViewController.swift; sourceTree = "<group>"; };
 		B01D2C6C27910B1E009543F2 /* ThumbnailTransformer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThumbnailTransformer.swift; sourceTree = "<group>"; };
 		B01D2C6E2793915D009543F2 /* FormatNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormatNode.swift; sourceTree = "<group>"; };
@@ -740,6 +745,7 @@
 				"zh-Hant",
 				ru,
 				uk,
+				it,
 			);
 			mainGroup = 0A0380CB21B3CC8100A3FA0E;
 			productRefGroup = 0A0380D521B3CC8100A3FA0E /* Products */;
@@ -1131,6 +1137,7 @@
 				B0CEF8D926B603E3000028C2 /* ru */,
 				B093F50426C5BD4200FAA4E8 /* en */,
 				B04D95592A8A79D900558612 /* uk */,
+				B013E9D92E538C60007519DA /* it */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";
@@ -1144,6 +1151,7 @@
 				B0CEF8D826B5EC5D000028C2 /* zh-Hant */,
 				B0CEF8DA26B603E3000028C2 /* ru */,
 				B04D955A2A8A79D900558612 /* uk */,
+				B013E9DA2E538C61007519DA /* it */,
 			);
 			name = LaunchScreen.storyboard;
 			sourceTree = "<group>";
@@ -1181,6 +1189,7 @@
 				B0979FD027BD9A2A0045FC73 /* zh-Hans */,
 				B0979FD227BD9A3B0045FC73 /* zh-Hant */,
 				B04D95582A8A79D900558612 /* uk */,
+				B013E9D82E538C5F007519DA /* it */,
 			);
 			name = TagsEditDialogView.xib;
 			sourceTree = "<group>";
@@ -1194,6 +1203,7 @@
 				B0979FCF27BD9A2A0045FC73 /* zh-Hans */,
 				B0979FD127BD9A3B0045FC73 /* zh-Hant */,
 				B04D95572A8A79D800558612 /* uk */,
+				B013E9D72E538C5E007519DA /* it */,
 			);
 			name = MultilineAlertView.xib;
 			sourceTree = "<group>";
@@ -1207,6 +1217,7 @@
 				B093F50126C5BBF300FAA4E8 /* zh-Hant */,
 				B093F50526C5BD8800FAA4E8 /* en */,
 				B04D955B2A8A79D900558612 /* uk */,
+				B013E9DB2E538C63007519DA /* it */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
