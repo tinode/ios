@@ -267,6 +267,9 @@
 		B013E9D92E538C60007519DA /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/Main.strings; sourceTree = "<group>"; };
 		B013E9DA2E538C61007519DA /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
 		B013E9DB2E538C63007519DA /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/Localizable.strings; sourceTree = "<group>"; };
+		B013E9E32E5396A2007519DA /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		B013E9E42E5396A2007519DA /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		B013E9E52E5396A2007519DA /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/Localizable.strings; sourceTree = "<group>"; };
 		B01C693E22F87B5C003C0AA7 /* SignupViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignupViewController.swift; sourceTree = "<group>"; };
 		B01D2C6C27910B1E009543F2 /* ThumbnailTransformer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThumbnailTransformer.swift; sourceTree = "<group>"; };
 		B01D2C6E2793915D009543F2 /* FormatNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormatNode.swift; sourceTree = "<group>"; };
@@ -1164,6 +1167,7 @@
 				B02725FE283DB3D10055D446 /* ru */,
 				B02725FF283DB3DB0055D446 /* es */,
 				B04D95602A8A7D2000558612 /* uk */,
+				B013E9E52E5396A2007519DA /* it */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
@@ -1176,6 +1180,7 @@
 				B0BE301E27B3388700B04631 /* zh-Hans */,
 				B0BE301F27B3389100B04631 /* zh-Hant */,
 				B04D955F2A8A7D2000558612 /* uk */,
+				B013E9E32E5396A2007519DA /* it */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
@@ -1230,6 +1235,7 @@
 				B0E6F5F42DF44E3C00A8B1FF /* uk */,
 				B0E6F5F62DF44E4800A8B1FF /* zh-Hans */,
 				B0E6F5F82DF44E5700A8B1FF /* zh-Hant */,
+				B013E9E42E5396A2007519DA /* it */,
 			);
 			name = InfoPlist.strings;
 			path = TinodiosNSExtension;

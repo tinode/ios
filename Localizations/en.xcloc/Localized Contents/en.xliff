@@ -836,11 +836,6 @@ Menu item: video call</note>
    Placeholder for missing file name
    Placeholder for missing file type</note>
       </trans-unit>
-      <trans-unit id="Оptional description" xml:space="preserve">
-        <source>Оptional description</source>
-        <target>Оptional description</target>
-        <note>Placeholder for missing topic description</note>
-      </trans-unit>
     </body>
   </file>
   <file original="Pods/en.lproj/Localizable.strings" source-language="en" target-language="en" datatype="plaintext">
@@ -848,9 +843,9 @@ Menu item: video call</note>
       <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="16.4" build-num="16F6"/>
     </header>
     <body>
-      <trans-unit id="An error occured while validating the phone number." xml:space="preserve">
-        <source>An error occured while validating the phone number.</source>
-        <target>An error occured while validating the phone number.</target>
+      <trans-unit id="An error occurred while validating the phone number." xml:space="preserve">
+        <source>An error occurred while validating the phone number.</source>
+        <target>An error occurred while validating the phone number.</target>
         <note>No comment provided by engineer.</note>
       </trans-unit>
       <trans-unit id="Phone number is ambiguous." xml:space="preserve">

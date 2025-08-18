@@ -837,11 +837,6 @@ Menu item: video call</note>
    Placeholder for missing file name
    Placeholder for missing file type</note>
       </trans-unit>
-      <trans-unit id="Оptional description" xml:space="preserve">
-        <source>Оptional description</source>
-        <target>Descripción opcional</target>
-        <note>Placeholder for missing topic description</note>
-      </trans-unit>
     </body>
   </file>
   <file original="Pods/en.lproj/Localizable.strings" datatype="plaintext" source-language="en" target-language="es">
@@ -849,74 +844,60 @@ Menu item: video call</note>
       <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="16.4" build-num="16F6"/>
     </header>
     <body>
-      <trans-unit id="An error occured while validating the phone number." xml:space="preserve">
-        <source>An error occured while validating the phone number.</source>
-        <target>Ocurrió un error al validar el número de teléfono.</target>
+      <trans-unit id="An error occurred while validating the phone number." xml:space="preserve">
+        <source>An error occurred while validating the phone number.</source>
         <note>No comment provided by engineer.</note>
       </trans-unit>
       <trans-unit id="Phone number is ambiguous." xml:space="preserve">
         <source>Phone number is ambiguous.</source>
-        <target>El número de teléfono es ambiguo.</target>
         <note>No comment provided by engineer.</note>
       </trans-unit>
       <trans-unit id="PhoneNumberKit.CountryCodePicker.Common" xml:space="preserve">
         <source>Common</source>
-        <target>Común</target>
         <note>Name of "Common" section</note>
       </trans-unit>
       <trans-unit id="PhoneNumberKit.CountryCodePicker.Current" xml:space="preserve">
         <source>Current</source>
-        <target>Actual</target>
         <note>Name of "Current" section</note>
       </trans-unit>
       <trans-unit id="PhoneNumberKit.CountryCodePicker.SearchBarPlaceholder" xml:space="preserve">
         <source>Search Country Codes</source>
-        <target>Buscar prefijos de país</target>
         <note>Placeholder for country code search field</note>
       </trans-unit>
       <trans-unit id="PhoneNumberKit.CountryCodePicker.Title" xml:space="preserve">
         <source>Choose your country</source>
-        <target>Elige tu país</target>
         <note>Title of CountryCodePicker ViewController</note>
       </trans-unit>
       <trans-unit id="PhoneNumberKit.CountryCodePickerEntryButton.AccessibilityHint" xml:space="preserve">
         <source>%@ selected</source>
-        <target>%@ seleccionado</target>
         <note>Accessiblity hint for currently selected country code</note>
       </trans-unit>
       <trans-unit id="PhoneNumberKit.CountryCodePickerEntryButton.AccessibilityLabel" xml:space="preserve">
         <source>Select your country code</source>
-        <target>Selecciona el prefijo de tu país</target>
         <note>Accessibility Label for Country Code Picker button</note>
       </trans-unit>
       <trans-unit id="The country code is invalid." xml:space="preserve">
         <source>The country code is invalid.</source>
-        <target>El prefijo del país no es válido.</target>
         <note>No comment provided by engineer.</note>
       </trans-unit>
       <trans-unit id="The number provided is invalid." xml:space="preserve">
         <source>The number provided is invalid.</source>
-        <target>El número proporcionado no es válido.</target>
         <note>No comment provided by engineer.</note>
       </trans-unit>
       <trans-unit id="The number provided is too long." xml:space="preserve">
         <source>The number provided is too long.</source>
-        <target>El número proporcionado es demasiado largo.</target>
         <note>No comment provided by engineer.</note>
       </trans-unit>
       <trans-unit id="The number provided is too short." xml:space="preserve">
         <source>The number provided is too short.</source>
-        <target>El número proporcionado es demasiado corto.</target>
         <note>No comment provided by engineer.</note>
       </trans-unit>
       <trans-unit id="This function is deprecated." xml:space="preserve">
         <source>This function is deprecated.</source>
-        <target>Esta función está obsoleta.</target>
         <note>No comment provided by engineer.</note>
       </trans-unit>
       <trans-unit id="Valid metadata is missing." xml:space="preserve">
         <source>Valid metadata is missing.</source>
-        <target>Faltan metadatos válidos.</target>
         <note>No comment provided by engineer.</note>
       </trans-unit>
     </body>
@@ -926,9 +907,8 @@ Menu item: video call</note>
       <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="16.4" build-num="16F6"/>
     </header>
     <body>
-      <trans-unit id="CFBundleName" xml:space="preserve">
-        <source>TinodiosNSExtension</source>
-        <target>TinodiosNSExtension</target>
+      <trans-unit id="CFBundleName" translate="no" xml:space="preserve">
+        <source>TinodeSDK</source>
         <note>Bundle name</note>
       </trans-unit>
     </body>
@@ -1991,13 +1971,11 @@ Menu item: video call</note>
     </header>
     <body>
       <trans-unit id="CFBundleDisplayName" xml:space="preserve">
-        <source>TinodiosNSExtension</source>
-        <target>TinodiosNSExtension</target>
+        <source>Tinode</source>
         <note>Bundle display name</note>
       </trans-unit>
       <trans-unit id="CFBundleName" xml:space="preserve">
-        <source>TinodiosNSExtension</source>
-        <target>TinodiosNSExtension</target>
+        <source>Tinodios</source>
         <note>Bundle name</note>
       </trans-unit>
       <trans-unit id="NSCameraUsageDescription" xml:space="preserve">
@@ -2085,7 +2063,7 @@ Menu item: video call</note>
     <body>
       <trans-unit id="PJ7-dH-ATp.normalTitle" xml:space="preserve">
         <source>OK</source>
-        <target state="translated">OK</target>
+        <target>OK</target>
         <note>Class = "UIButton"; normalTitle = "OK"; ObjectID = "PJ7-dH-ATp";</note>
       </trans-unit>
       <trans-unit id="eeW-SH-URg.text" xml:space="preserve">
@@ -2105,14 +2083,13 @@ Menu item: video call</note>
       <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="16.4" build-num="16F6"/>
     </header>
     <body>
-      <trans-unit id="CFBundleName" xml:space="preserve">
-        <source>TinodiosNSExtension</source>
-        <target>TinodiosNSExtension</target>
+      <trans-unit id="CFBundleName" translate="no" xml:space="preserve">
+        <source>TinodiosDB</source>
         <note>Bundle name</note>
       </trans-unit>
     </body>
   </file>
-  <file original="TinodiosNSExtension/en.lproj/InfoPlist.strings" datatype="plaintext" source-language="en" target-language="es">
+  <file original="TinodiosNSExtension/en.lproj/InfoPlist.strings" source-language="en" target-language="es" datatype="plaintext">
     <header>
       <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="16.4" build-num="16F6"/>
     </header>

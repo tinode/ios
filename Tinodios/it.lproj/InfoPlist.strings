@@ -1,0 +1,21 @@
+/* Bundle display name */
+"CFBundleDisplayName" = "Tinode";
+
+/* Bundle name */
+"CFBundleName" = "Tinodios";
+
+/* Privacy - Camera Usage Description */
+"NSCameraUsageDescription" = "Tinode scatta foto con la fotocamera da usare come avatar o da inviare ai tuoi contatti";
+
+/* Privacy - Contacts Usage Description */
+"NSContactsUsageDescription" = "Tinode invia solo e-mail e numeri di telefono al server Tinode per aiutarti a connetterti con altri utenti";
+
+/* Privacy - Microphone Usage Description */
+"NSMicrophoneUsageDescription" = "Tinode utilizza il microfono per registrare i messaggi audio che invii ai tuoi contatti";
+
+/* Privacy - Photo Library Additions Usage Description */
+"NSPhotoLibraryAddUsageDescription" = "Le immagini e le foto di Tinode possono essere salvate nella libreria fotografica";
+
+/* Privacy - Photo Library Usage Description */
+"NSPhotoLibraryUsageDescription" = "Tinode ha bisogno di accedere alle tue foto per consentirti di inviarle ai tuoi contatti";
+

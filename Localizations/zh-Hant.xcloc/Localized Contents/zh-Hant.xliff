@@ -1,8 +1,8 @@
-<?xml version='1.0' encoding='UTF-8'?>
+<?xml version="1.0" encoding="UTF-8"?>
 <xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 http://docs.oasis-open.org/xliff/v1.2/os/xliff-core-1.2-strict.xsd">
   <file original="en.lproj/Localizable.strings" source-language="en" target-language="zh-Hant" datatype="plaintext">
     <header>
-      <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="16.4" build-num="16F6" />
+      <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="16.4" build-num="16F6"/>
     </header>
     <body>
       <trans-unit id="Accept" xml:space="preserve">
@@ -836,105 +836,85 @@ Menu item: video call</note>
    Placeholder for missing file name
    Placeholder for missing file type</note>
       </trans-unit>
-      <trans-unit id="Оptional description" xml:space="preserve">
-        <source>Оptional description</source>
-        <target>可選描述</target>
-        <note>Placeholder for missing topic description</note>
-      </trans-unit>
     </body>
   </file>
   <file original="Pods/en.lproj/Localizable.strings" datatype="plaintext" source-language="en" target-language="zh-Hant">
     <header>
-      <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="16.4" build-num="16F6" />
+      <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="16.4" build-num="16F6"/>
     </header>
     <body>
-      <trans-unit id="An error occured while validating the phone number." xml:space="preserve">
-        <source>An error occured while validating the phone number.</source>
-        <target>驗證電話號碼時發生錯誤。</target>
+      <trans-unit id="An error occurred while validating the phone number." xml:space="preserve">
+        <source>An error occurred while validating the phone number.</source>
         <note>No comment provided by engineer.</note>
       </trans-unit>
       <trans-unit id="Phone number is ambiguous." xml:space="preserve">
         <source>Phone number is ambiguous.</source>
-        <target>電話號碼不明確。</target>
         <note>No comment provided by engineer.</note>
       </trans-unit>
       <trans-unit id="PhoneNumberKit.CountryCodePicker.Common" xml:space="preserve">
         <source>Common</source>
-        <target>常用</target>
         <note>Name of "Common" section</note>
       </trans-unit>
       <trans-unit id="PhoneNumberKit.CountryCodePicker.Current" xml:space="preserve">
         <source>Current</source>
-        <target>目前</target>
         <note>Name of "Current" section</note>
       </trans-unit>
       <trans-unit id="PhoneNumberKit.CountryCodePicker.SearchBarPlaceholder" xml:space="preserve">
         <source>Search Country Codes</source>
-        <target>搜尋國家代碼</target>
         <note>Placeholder for country code search field</note>
       </trans-unit>
       <trans-unit id="PhoneNumberKit.CountryCodePicker.Title" xml:space="preserve">
         <source>Choose your country</source>
-        <target>選擇您的國家</target>
         <note>Title of CountryCodePicker ViewController</note>
       </trans-unit>
       <trans-unit id="PhoneNumberKit.CountryCodePickerEntryButton.AccessibilityHint" xml:space="preserve">
         <source>%@ selected</source>
-        <target>已選擇 %@</target>
         <note>Accessiblity hint for currently selected country code</note>
       </trans-unit>
       <trans-unit id="PhoneNumberKit.CountryCodePickerEntryButton.AccessibilityLabel" xml:space="preserve">
         <source>Select your country code</source>
-        <target>選擇您的國家代碼</target>
         <note>Accessibility Label for Country Code Picker button</note>
       </trans-unit>
       <trans-unit id="The country code is invalid." xml:space="preserve">
         <source>The country code is invalid.</source>
-        <target>國家代碼無效。</target>
         <note>No comment provided by engineer.</note>
       </trans-unit>
       <trans-unit id="The number provided is invalid." xml:space="preserve">
         <source>The number provided is invalid.</source>
-        <target>提供的號碼無效。</target>
         <note>No comment provided by engineer.</note>
       </trans-unit>
       <trans-unit id="The number provided is too long." xml:space="preserve">
         <source>The number provided is too long.</source>
-        <target>提供的號碼太長。</target>
         <note>No comment provided by engineer.</note>
       </trans-unit>
       <trans-unit id="The number provided is too short." xml:space="preserve">
         <source>The number provided is too short.</source>
-        <target>提供的號碼太短。</target>
         <note>No comment provided by engineer.</note>
       </trans-unit>
       <trans-unit id="This function is deprecated." xml:space="preserve">
         <source>This function is deprecated.</source>
-        <target>此功能已棄用。</target>
         <note>No comment provided by engineer.</note>
       </trans-unit>
       <trans-unit id="Valid metadata is missing." xml:space="preserve">
         <source>Valid metadata is missing.</source>
-        <target>缺少有效的元數據。</target>
         <note>No comment provided by engineer.</note>
       </trans-unit>
     </body>
   </file>
   <file original="TinodeSDK/en.lproj/InfoPlist.strings" datatype="plaintext" source-language="en" target-language="zh-Hant">
     <header>
-      <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="16.4" build-num="16F6" />
+      <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="16.4" build-num="16F6"/>
     </header>
     <body>
-      <trans-unit id="CFBundleName" xml:space="preserve">
-        <source>TinodiosNSExtension</source>
-        <target>TinodiosNSExtension</target>
+      <trans-unit id="CFBundleName" translate="no" xml:space="preserve">
+        <source>TinodeSDK</source>
         <note>Bundle name</note>
       </trans-unit>
     </body>
   </file>
   <file original="Tinodios/Base.lproj/Main.storyboard" source-language="en" target-language="zh-Hant" datatype="plaintext">
     <header>
-      <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="16.4" build-num="16F6" />
+      <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="16.4" build-num="16F6"/>
     </header>
     <body>
       <trans-unit id="0Fx-rq-hiS.title" xml:space="preserve">
@@ -1952,7 +1932,7 @@ Menu item: video call</note>
         <target>Tinode</target>
         <note>Class = "UILabel"; text = "Tinode"; ObjectID = "zCU-jx-lsJ";</note>
       </trans-unit>
-    <trans-unit id="zW8-KF-N8J.headerTitle" xml:space="preserve">
+      <trans-unit id="zW8-KF-N8J.headerTitle" xml:space="preserve">
         <source>Default Permissions</source>
         <target>預設權限</target>
         <note>Class = "UITableViewSection"; headerTitle = "Default Permissions"; ObjectID = "zW8-KF-N8J";</note>
@@ -1986,20 +1966,18 @@ Menu item: video call</note>
   </file>
   <file original="Tinodios/en.lproj/InfoPlist.strings" source-language="en" target-language="zh-Hant" datatype="plaintext">
     <header>
-      <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="16.4" build-num="16F6" />
+      <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="16.4" build-num="16F6"/>
     </header>
     <body>
       <trans-unit id="CFBundleDisplayName" xml:space="preserve">
-        <source>TinodiosNSExtension</source>
-        <target>TinodiosNSExtension</target>
+        <source>Tinode</source>
         <note>Bundle display name</note>
       </trans-unit>
       <trans-unit id="CFBundleName" xml:space="preserve">
-        <source>TinodiosNSExtension</source>
-        <target>TinodiosNSExtension</target>
+        <source>Tinodios</source>
         <note>Bundle name</note>
       </trans-unit>
-    <trans-unit id="NSCameraUsageDescription" xml:space="preserve">
+      <trans-unit id="NSCameraUsageDescription" xml:space="preserve">
         <source>Tinode takes photos with the camera to use as avatar or to send them to your contacts</source>
         <target>Tinode用相機拍照，用作頭像或傳送給您的聯絡人</target>
         <note>Privacy - Camera Usage Description</note>
@@ -2028,7 +2006,7 @@ Menu item: video call</note>
   </file>
   <file original="Tinodios/Settings.bundle/en.lproj/ConnectionSettings.strings" source-language="en" target-language="zh-Hant" datatype="plaintext">
     <header>
-      <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="16.4" build-num="16F6" />
+      <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="16.4" build-num="16F6"/>
     </header>
     <body>
       <trans-unit id="Host name" xml:space="preserve">
@@ -2039,13 +2017,13 @@ Menu item: video call</note>
       <trans-unit id="Use TLS" xml:space="preserve">
         <source>Use TLS</source>
         <target>使用TLS</target>
-        <note />
+        <note/>
       </trans-unit>
     </body>
   </file>
   <file original="Tinodios/Settings.bundle/en.lproj/Root.strings" source-language="en" target-language="zh-Hant" datatype="plaintext">
     <header>
-      <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="16.4" build-num="16F6" />
+      <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="16.4" build-num="16F6"/>
     </header>
     <body>
       <trans-unit id="Connection settings" xml:space="preserve">
@@ -2057,7 +2035,7 @@ Menu item: video call</note>
   </file>
   <file original="Tinodios/widgets/Base.lproj/MultilineAlertView.xib" source-language="en" target-language="zh-Hant" datatype="plaintext">
     <header>
-      <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="16.4" build-num="16F6" />
+      <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="16.4" build-num="16F6"/>
     </header>
     <body>
       <trans-unit id="A57-2v-ao9.normalTitle" xml:space="preserve">
@@ -2079,7 +2057,7 @@ Menu item: video call</note>
   </file>
   <file original="Tinodios/widgets/Base.lproj/TagsEditDialogView.xib" source-language="en" target-language="zh-Hant" datatype="plaintext">
     <header>
-      <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="16.4" build-num="16F6" />
+      <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="16.4" build-num="16F6"/>
     </header>
     <body>
       <trans-unit id="PJ7-dH-ATp.normalTitle" xml:space="preserve">
@@ -2101,19 +2079,18 @@ Menu item: video call</note>
   </file>
   <file original="TinodiosDB/en.lproj/InfoPlist.strings" datatype="plaintext" source-language="en" target-language="zh-Hant">
     <header>
-      <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="16.4" build-num="16F6" />
+      <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="16.4" build-num="16F6"/>
     </header>
     <body>
-      <trans-unit id="CFBundleName" xml:space="preserve">
-        <source>TinodiosNSExtension</source>
-        <target>TinodiosNSExtension</target>
+      <trans-unit id="CFBundleName" translate="no" xml:space="preserve">
+        <source>TinodiosDB</source>
         <note>Bundle name</note>
       </trans-unit>
     </body>
   </file>
-  <file original="TinodiosNSExtension/en.lproj/InfoPlist.strings" datatype="plaintext" source-language="en" target-language="zh-Hant">
+  <file original="TinodiosNSExtension/en.lproj/InfoPlist.strings" source-language="en" target-language="zh-Hant" datatype="plaintext">
     <header>
-      <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="16.4" build-num="16F6" />
+      <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="16.4" build-num="16F6"/>
     </header>
     <body>
       <trans-unit id="CFBundleDisplayName" xml:space="preserve">
@@ -2130,7 +2107,7 @@ Menu item: video call</note>
   </file>
   <file original="TinodiosNSExtension/en.lproj/Localizable.strings" source-language="en" target-language="zh-Hant" datatype="plaintext">
     <header>
-      <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="16.4" build-num="16F6" />
+      <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="16.4" build-num="16F6"/>
     </header>
     <body>
       <trans-unit id="New chat" xml:space="preserve">
