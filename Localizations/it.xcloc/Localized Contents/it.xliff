@@ -83,7 +83,8 @@
       <trans-unit id="Block" xml:space="preserve">
         <source>Block</source>
         <target>Blocca</target>
-        <note>Alert action Invite reaction button</note>
+        <note>Alert action
+   Invite reaction button</note>
       </trans-unit>
       <trans-unit id="Block contact?" xml:space="preserve">
         <source>Block contact?</source>
@@ -830,15 +831,10 @@ Menu item: video call</note>
       </trans-unit>
       <trans-unit id="undefined" xml:space="preserve">
         <source>undefined</source>
-        <target>Non definito</target>
+        <target state="translated">non definito</target>
         <note>Button with missing text
    Placeholder for missing file name
    Placeholder for missing file type</note>
-      </trans-unit>
-      <trans-unit id="Оptional description" xml:space="preserve">
-        <source>Оptional description</source>
-        <target>Descrizione facoltativa</target>
-        <note>Placeholder for missing topic description</note>
       </trans-unit>
     </body>
   </file>
@@ -847,9 +843,9 @@ Menu item: video call</note>
       <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="16.4" build-num="16F6"/>
     </header>
     <body>
-      <trans-unit id="An error occured while validating the phone number." xml:space="preserve">
-        <source>An error occured while validating the phone number.</source>
-        <target>Si è verificato un errore durante la convalida del numero di telefono.</target>
+      <trans-unit id="An error occurred while validating the phone number." xml:space="preserve">
+        <source>An error occurred while validating the phone number.</source>
+        <target state="translated">Si è verificato un errore durante la convalida del numero di telefono.</target>
         <note>No comment provided by engineer.</note>
       </trans-unit>
       <trans-unit id="Phone number is ambiguous." xml:space="preserve">
@@ -919,14 +915,13 @@ Menu item: video call</note>
       </trans-unit>
     </body>
   </file>
-  <file original="TinodeSDK/en.lproj/InfoPlist.strings" source-language="en" target-language="it" datatype="plaintext">
+  <file original="TinodeSDK/en.lproj/InfoPlist.strings" datatype="plaintext" source-language="en" target-language="it">
     <header>
       <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="16.4" build-num="16F6"/>
     </header>
     <body>
       <trans-unit id="CFBundleName" translate="no" xml:space="preserve">
         <source>TinodeSDK</source>
-        <target>TinodeSDK</target>
         <note>Bundle name</note>
       </trans-unit>
     </body>
@@ -2098,14 +2093,13 @@ Menu item: video call</note>
       </trans-unit>
     </body>
   </file>
-  <file original="TinodiosDB/en.lproj/InfoPlist.strings" source-language="en" target-language="it" datatype="plaintext">
+  <file original="TinodiosDB/en.lproj/InfoPlist.strings" datatype="plaintext" source-language="en" target-language="it">
     <header>
       <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="16.4" build-num="16F6"/>
     </header>
     <body>
       <trans-unit id="CFBundleName" translate="no" xml:space="preserve">
         <source>TinodiosDB</source>
-        <target>TinodiosDB</target>
         <note>Bundle name</note>
       </trans-unit>
     </body>
