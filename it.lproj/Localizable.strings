@@ -437,7 +437,7 @@ Title of the slf topic */
 /* Button with missing text
    Placeholder for missing file name
    Placeholder for missing file type */
-"undefined" = "Non definito";
+"undefined" = "non definito";
 
 /* Undefined chat name */
 "Undefined" = "Non definito";
