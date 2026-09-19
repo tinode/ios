@@ -1,0 +1,2177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.2" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 http://docs.oasis-open.org/xliff/v1.2/os/xliff-core-1.2-strict.xsd">
+  <file original="en.lproj/Localizable.strings" source-language="en" target-language="id" datatype="plaintext">
+    <header>
+      <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="16.4" build-num="16F6"/>
+    </header>
+    <body>
+      <trans-unit id="Accept" xml:space="preserve">
+        <source>Accept</source>
+        <target>Terima</target>
+        <note>Invite reaction button</note>
+      </trans-unit>
+      <trans-unit id="Action failed: %@" xml:space="preserve">
+        <source>Action failed: %@</source>
+        <target>Tindakan gagal: %@</target>
+        <note>Toast notification</note>
+      </trans-unit>
+      <trans-unit id="Add contact" xml:space="preserve">
+        <source>Add contact</source>
+        <target>Tambah kontak</target>
+        <note>Alert title</note>
+      </trans-unit>
+      <trans-unit id="Additional info (private)" xml:space="preserve">
+        <source>Additional info (private)</source>
+        <target>Info tambahan (pribadi)</target>
+        <note>Alert placeholder</note>
+      </trans-unit>
+      <trans-unit id="Address copied" xml:space="preserve">
+        <source>Address copied</source>
+        <target>Alamat disalin</target>
+        <note>Toast notification</note>
+      </trans-unit>
+      <trans-unit id="Alias copied" xml:space="preserve">
+        <source>Alias copied</source>
+        <target>Alias disalin</target>
+        <note>Toast notification</note>
+      </trans-unit>
+      <trans-unit id="Also block and remove all messages" xml:space="preserve">
+        <source>Also block and remove all messages</source>
+        <target>Blokir juga dan hapus semua pesan</target>
+        <note>Alert explanation</note>
+      </trans-unit>
+      <trans-unit id="Archive" xml:space="preserve">
+        <source>Archive</source>
+        <target>Arsipkan</target>
+        <note>Swipe action</note>
+      </trans-unit>
+      <trans-unit id="Archived Chats" xml:space="preserve">
+        <source>Archived Chats</source>
+        <target>Chat yang Diarsipkan</target>
+        <note>View title</note>
+      </trans-unit>
+      <trans-unit id="Archived Chats (%@)" xml:space="preserve">
+        <source>Archived Chats (%@)</source>
+        <target>Chat yang Diarsipkan (%@)</target>
+        <note>Button to open chat archive</note>
+      </trans-unit>
+      <trans-unit id="Are you sure you want to delete your account? It cannot be undone." xml:space="preserve">
+        <source>Are you sure you want to delete your account? It cannot be undone.</source>
+        <target>Yakin ingin menghapus akun Anda? Tindakan ini tidak dapat dibatalkan.</target>
+        <note>Warning in delete account alert</note>
+      </trans-unit>
+      <trans-unit id="Are you sure you want to log out?" xml:space="preserve">
+        <source>Are you sure you want to log out?</source>
+        <target>Yakin ingin keluar?</target>
+        <note>Warning in logout alert</note>
+      </trans-unit>
+      <trans-unit id="Attachment" xml:space="preserve">
+        <source>Attachment</source>
+        <target>Lampiran</target>
+        <note>Label shown next to an attachment</note>
+      </trans-unit>
+      <trans-unit id="Attachment exceeds maximum size" xml:space="preserve">
+        <source>Attachment exceeds maximum size</source>
+        <target>Lampiran melebihi ukuran maksimum</target>
+        <note>Error message: attachment too large</note>
+      </trans-unit>
+      <trans-unit id="Audio-only" xml:space="preserve">
+        <source>Audio-only</source>
+        <target>Hanya audio</target>
+        <note>Menu item: audio-only call</note>
+      </trans-unit>
+      <trans-unit id="Block" xml:space="preserve">
+        <source>Block</source>
+        <target>Blokir</target>
+        <note>Alert action
+   Invite reaction button</note>
+      </trans-unit>
+      <trans-unit id="Block contact?" xml:space="preserve">
+        <source>Block contact?</source>
+        <target>Blokir kontak?</target>
+        <note>Alert action</note>
+      </trans-unit>
+      <trans-unit id="Call" xml:space="preserve">
+        <source>Call</source>
+        <target>Panggilan</target>
+        <note>Menu title for selecting type of call</note>
+      </trans-unit>
+      <trans-unit id="Can't change permissions for this user." xml:space="preserve">
+        <source>Can't change permissions for this user.</source>
+        <target>Tidak dapat mengubah izin untuk pengguna ini.</target>
+        <note>Toast notification</note>
+      </trans-unit>
+      <trans-unit id="Can't make this user owner." xml:space="preserve">
+        <source>Can't make this user owner.</source>
+        <target>Tidak dapat menjadikan pengguna ini sebagai pemilik.</target>
+        <note>Toast notification</note>
+      </trans-unit>
+      <trans-unit id="Cancel" xml:space="preserve">
+        <source>Cancel</source>
+        <target>Batal</target>
+        <note>Alert action</note>
+      </trans-unit>
+      <trans-unit id="Cannot send email: functionality not accessible." xml:space="preserve">
+        <source>Cannot send email: functionality not accessible.</source>
+        <target>Tidak dapat mengirim email: fitur tidak tersedia.</target>
+        <note>Error message</note>
+      </trans-unit>
+      <trans-unit id="Change Password" xml:space="preserve">
+        <source>Change Password</source>
+        <target>Ubah Kata Sandi</target>
+        <note>Alert title</note>
+      </trans-unit>
+      <trans-unit id="Change permissions" xml:space="preserve">
+        <source>Change permissions</source>
+        <target>Ubah izin</target>
+        <note>Alert action</note>
+      </trans-unit>
+      <trans-unit id="Check out Tinode Messenger" xml:space="preserve">
+        <source>Check out Tinode Messenger</source>
+        <target>Coba Tinode Messenger</target>
+        <note>Invitation subject</note>
+      </trans-unit>
+      <trans-unit id="Check out Tinode Messenger: https://tinode.co/" xml:space="preserve">
+        <source>Check out Tinode Messenger: https://tinode.co/</source>
+        <target>Coba Tinode Messenger: https://tinode.co/</target>
+        <note>Invitation body</note>
+      </trans-unit>
+      <trans-unit id="Clear all messages?" xml:space="preserve">
+        <source>Clear all messages?</source>
+        <target>Hapus semua pesan?</target>
+        <note>Alert title</note>
+      </trans-unit>
+      <trans-unit id="Confirm contact" xml:space="preserve">
+        <source>Confirm contact</source>
+        <target>Konfirmasi kontak</target>
+        <note>Alert title</note>
+      </trans-unit>
+      <trans-unit id="Confirmaition message sent to %@" xml:space="preserve">
+        <source>Confirmaition message sent to %@</source>
+        <target>Pesan konfirmasi dikirim ke %@</target>
+        <note>Info message</note>
+      </trans-unit>
+      <trans-unit id="Confirmation code sent" xml:space="preserve">
+        <source>Confirmation code sent</source>
+        <target>Kode konfirmasi telah dikirim</target>
+        <note>Confirmation code sent</note>
+      </trans-unit>
+      <trans-unit id="Confirmed successfully" xml:space="preserve">
+        <source>Confirmed successfully</source>
+        <target>Berhasil dikonfirmasi</target>
+        <note>Toast info message</note>
+      </trans-unit>
+      <trans-unit id="Confirming..." xml:space="preserve">
+        <source>Confirming...</source>
+        <target>Mengonfirmasi...</target>
+        <note>Progress overlay</note>
+      </trans-unit>
+      <trans-unit id="Connection to server lost." xml:space="preserve">
+        <source>Connection to server lost.</source>
+        <target>Koneksi ke server terputus.</target>
+        <note>Toast notification</note>
+      </trans-unit>
+      <trans-unit id="Content deleted" xml:space="preserve">
+        <source>Content deleted</source>
+        <target>Konten dihapus</target>
+        <note>Replacement for chat message with no content</note>
+      </trans-unit>
+      <trans-unit id="Copy" xml:space="preserve">
+        <source>Copy</source>
+        <target>Salin</target>
+        <note>Menu item</note>
+      </trans-unit>
+      <trans-unit id="Copy to clipboard" xml:space="preserve">
+        <source>Copy to clipboard</source>
+        <target>Salin ke papan klip</target>
+        <note>Alert action</note>
+      </trans-unit>
+      <trans-unit id="Could not change password: %@" xml:space="preserve">
+        <source>Could not change password: %@</source>
+        <target>Tidak dapat mengubah kata sandi: %@</target>
+        <note>Error message</note>
+      </trans-unit>
+      <trans-unit id="Couldn't connect to server at %@: %@" xml:space="preserve">
+        <source>Couldn't connect to server at %@: %@</source>
+        <target>Tidak dapat terhubung ke server di %@: %@</target>
+        <note>Error message</note>
+      </trans-unit>
+      <trans-unit id="Current credential" xml:space="preserve">
+        <source>Current credential</source>
+        <target>Kredensial saat ini</target>
+        <note>Label for email or phone number entering</note>
+      </trans-unit>
+      <trans-unit id="Delete" xml:space="preserve">
+        <source>Delete</source>
+        <target>Hapus</target>
+        <note>Alert action
+   Menu item
+   Swipe action</note>
+      </trans-unit>
+      <trans-unit id="Delete Saved messages?" xml:space="preserve">
+        <source>Delete Saved messages?</source>
+        <target>Hapus pesan tersimpan?</target>
+        <note>Alert title</note>
+      </trans-unit>
+      <trans-unit id="Delete for all" xml:space="preserve">
+        <source>Delete for all</source>
+        <target>Hapus untuk semua</target>
+        <note>Menu item</note>
+      </trans-unit>
+      <trans-unit id="Delete for me" xml:space="preserve">
+        <source>Delete for me</source>
+        <target>Hapus untuk saya</target>
+        <note>Menu item</note>
+      </trans-unit>
+      <trans-unit id="Delete the group?" xml:space="preserve">
+        <source>Delete the group?</source>
+        <target>Hapus grup?</target>
+        <note>Alert title</note>
+      </trans-unit>
+      <trans-unit id="Directory" xml:space="preserve">
+        <source>Directory</source>
+        <target>Direktori</target>
+        <note>Section title</note>
+      </trans-unit>
+      <trans-unit id="Edit" xml:space="preserve">
+        <source>Edit</source>
+        <target>Edit</target>
+        <note>Menu item</note>
+      </trans-unit>
+      <trans-unit id="Edit Group" xml:space="preserve">
+        <source>Edit Group</source>
+        <target>Edit Grup</target>
+        <note>Alert title</note>
+      </trans-unit>
+      <trans-unit id="Edit account name" xml:space="preserve">
+        <source>Edit account name</source>
+        <target>Edit nama akun</target>
+        <note>Alert title</note>
+      </trans-unit>
+      <trans-unit id="Email" xml:space="preserve">
+        <source>Email</source>
+        <target>Email</target>
+        <note>Alert action</note>
+      </trans-unit>
+      <trans-unit id="Enter a valid credential (phone or email)." xml:space="preserve">
+        <source>Enter a valid credential (phone or email).</source>
+        <target>Masukkan kredensial yang valid (nomor telepon atau email).</target>
+        <note>Toast error message</note>
+      </trans-unit>
+      <trans-unit id="Enter confirmation code sent to you by %@" xml:space="preserve">
+        <source>Enter confirmation code sent to you by %@</source>
+        <target>Masukkan kode konfirmasi yang dikirim kepada Anda melalui %@</target>
+        <note>Alert prompt</note>
+      </trans-unit>
+      <trans-unit id="Enter email or phone number" xml:space="preserve">
+        <source>Enter email or phone number</source>
+        <target>Masukkan email atau nomor telepon</target>
+        <note>Alert message</note>
+      </trans-unit>
+      <trans-unit id="Enter new password" xml:space="preserve">
+        <source>Enter new password</source>
+        <target>Masukkan kata sandi baru</target>
+        <note>Alert prompt</note>
+      </trans-unit>
+      <trans-unit id="Entered text is neither email nor phone number." xml:space="preserve">
+        <source>Entered text is neither email nor phone number.</source>
+        <target>Teks yang dimasukkan bukan email maupun nomor telepon.</target>
+        <note>Error message</note>
+      </trans-unit>
+      <trans-unit id="Error changing permissions: %@" xml:space="preserve">
+        <source>Error changing permissions: %@</source>
+        <target>Gagal mengubah izin: %@</target>
+        <note>Toast notification</note>
+      </trans-unit>
+      <trans-unit id="Failed to create URL string for file: %@" xml:space="preserve">
+        <source>Failed to create URL string for file: %@</source>
+        <target>Gagal membuat string URL untuk file: %@</target>
+        <note>Error message: malformed URL string</note>
+      </trans-unit>
+      <trans-unit id="Failed to create account: %@" xml:space="preserve">
+        <source>Failed to create account: %@</source>
+        <target>Gagal membuat akun: %@</target>
+        <note>Error message</note>
+      </trans-unit>
+      <trans-unit id="Failed to save group and contact info." xml:space="preserve">
+        <source>Failed to save group and contact info.</source>
+        <target>Gagal menyimpan info grup dan kontak.</target>
+        <note>Error message</note>
+      </trans-unit>
+      <trans-unit id="Failed to send email: %@" xml:space="preserve">
+        <source>Failed to send email: %@</source>
+        <target>Gagal mengirim email: %@</target>
+        <note>Error message</note>
+      </trans-unit>
+      <trans-unit id="Failed to subscribe to topic: %@" xml:space="preserve">
+        <source>Failed to subscribe to topic: %@</source>
+        <target>Gagal bergabung ke topik: %@</target>
+        <note>Error message</note>
+      </trans-unit>
+      <trans-unit id="For all" xml:space="preserve">
+        <source>For all</source>
+        <target>Untuk semua</target>
+        <note>Alert action qualifier as in 'Delete for all'</note>
+      </trans-unit>
+      <trans-unit id="For me" xml:space="preserve">
+        <source>For me</source>
+        <target>Untuk saya</target>
+        <note>Alert action 'Delete for me'</note>
+      </trans-unit>
+      <trans-unit id="Form" xml:space="preserve">
+        <source>Form</source>
+        <target>Formulir</target>
+        <note>Label shown next to a form in preview</note>
+      </trans-unit>
+      <trans-unit id="Forward" xml:space="preserve">
+        <source>Forward</source>
+        <target>Teruskan</target>
+        <note>Menu item</note>
+      </trans-unit>
+      <trans-unit id="Full name, e.g. John Doe" xml:space="preserve">
+        <source>Full name, e.g. John Doe</source>
+        <target>Nama lengkap, mis. John Doe</target>
+        <note>User name prompt</note>
+      </trans-unit>
+      <trans-unit id="Ignore" xml:space="preserve">
+        <source>Ignore</source>
+        <target>Abaikan</target>
+        <note>Invite reaction button</note>
+      </trans-unit>
+      <trans-unit id="Incoming call" xml:space="preserve">
+        <source>Incoming call</source>
+        <target>Panggilan masuk</target>
+        <note>Label for incoming video/audio calls</note>
+      </trans-unit>
+      <trans-unit id="Invalid group ID: %d (%@)" xml:space="preserve">
+        <source>Invalid group ID: %1$d (%2$@)</source>
+        <target>ID grup tidak valid: %1$d (%2$@)</target>
+        <note>Error message</note>
+      </trans-unit>
+      <trans-unit id="Invalid image" xml:space="preserve">
+        <source>Invalid image</source>
+        <target>Gambar tidak valid</target>
+        <note>Error message when the image cannot be processed</note>
+      </trans-unit>
+      <trans-unit id="Invalid or unknown address" xml:space="preserve">
+        <source>Invalid or unknown address</source>
+        <target>Alamat tidak valid atau tidak dikenal</target>
+        <note>Password reset error</note>
+      </trans-unit>
+      <trans-unit id="Invite" xml:space="preserve">
+        <source>Invite</source>
+        <target>Undang</target>
+        <note>Dialog title: call to action</note>
+      </trans-unit>
+      <trans-unit id="Join" xml:space="preserve">
+        <source>Join</source>
+        <target>Gabung</target>
+        <note>Label for join conference link</note>
+      </trans-unit>
+      <trans-unit id="Leave" xml:space="preserve">
+        <source>Leave</source>
+        <target>Keluar</target>
+        <note>Alert action</note>
+      </trans-unit>
+      <trans-unit id="Leave the conversation?" xml:space="preserve">
+        <source>Leave the conversation?</source>
+        <target>Keluar dari percakapan?</target>
+        <note>Alert title</note>
+      </trans-unit>
+      <trans-unit id="Leave the group?" xml:space="preserve">
+        <source>Leave the group?</source>
+        <target>Keluar dari grup?</target>
+        <note>Alert title</note>
+      </trans-unit>
+      <trans-unit id="Local Contacts" xml:space="preserve">
+        <source>Local Contacts</source>
+        <target>Kontak Lokal</target>
+        <note>Section title</note>
+      </trans-unit>
+      <trans-unit id="Logging in..." xml:space="preserve">
+        <source>Logging in...</source>
+        <target>Sedang masuk...</target>
+        <note>Login progress text</note>
+      </trans-unit>
+      <trans-unit id="Login info missing..." xml:space="preserve">
+        <source>Login info missing...</source>
+        <target>Info login tidak tersedia...</target>
+        <note>Error message</note>
+      </trans-unit>
+      <trans-unit id="Make owner" xml:space="preserve">
+        <source>Make owner</source>
+        <target>Jadikan pemilik</target>
+        <note>Alert action</note>
+      </trans-unit>
+      <trans-unit id="Manage members" xml:space="preserve">
+        <source>Manage members</source>
+        <target>Kelola anggota</target>
+        <note>View title</note>
+      </trans-unit>
+      <trans-unit id="Message not sent." xml:space="preserve">
+        <source>Message not sent.</source>
+        <target>Pesan tidak terkirim.</target>
+        <note>Toast notification</note>
+      </trans-unit>
+      <trans-unit id="Message with instructions sent to the provided address." xml:space="preserve">
+        <source>Message with instructions sent to the provided address.</source>
+        <target>Pesan berisi petunjuk telah dikirim ke alamat yang diberikan.</target>
+        <note>Toast info</note>
+      </trans-unit>
+      <trans-unit id="Messages" xml:space="preserve">
+        <source>Messages</source>
+        <target>Pesan</target>
+        <note>Alert action</note>
+      </trans-unit>
+      <trans-unit id="My Code" xml:space="preserve">
+        <source>My Code</source>
+        <target>Kode Saya</target>
+        <note>Title for displaying a QR Code</note>
+      </trans-unit>
+      <trans-unit id="Name of the group" xml:space="preserve">
+        <source>Name of the group</source>
+        <target>Nama grup</target>
+        <note>Alert placeholder</note>
+      </trans-unit>
+      <trans-unit id="Never ??:??" xml:space="preserve">
+        <source>Never ??:??</source>
+        <target>Tidak pernah ??:??</target>
+        <note>Invalid date</note>
+      </trans-unit>
+      <trans-unit id="New Chat" xml:space="preserve">
+        <source>New Chat</source>
+        <target>Chat Baru</target>
+        <note>View title</note>
+      </trans-unit>
+      <trans-unit id="No access to email" xml:space="preserve">
+        <source>No access to email</source>
+        <target>Tidak dapat mengakses email</target>
+        <note>Error message</note>
+      </trans-unit>
+      <trans-unit id="No access to messages" xml:space="preserve">
+        <source>No access to messages</source>
+        <target>Tidak dapat mengakses pesan</target>
+        <note>No read access in chat
+   Toast error message</note>
+      </trans-unit>
+      <trans-unit id="No members selected" xml:space="preserve">
+        <source>No members selected</source>
+        <target>Tidak ada anggota yang dipilih</target>
+        <note>Placeholder when no members are selected</note>
+      </trans-unit>
+      <trans-unit id="No messages in the conversation" xml:space="preserve">
+        <source>No messages in the conversation</source>
+        <target>Belum ada pesan dalam percakapan</target>
+        <note>Placeholder in empty chat</note>
+      </trans-unit>
+      <trans-unit id="No permission to access camera" xml:space="preserve">
+        <source>No permission to access camera</source>
+        <target>Izin akses kamera tidak diberikan</target>
+        <note>Error message when call cannot be started due to missing camera permission</note>
+      </trans-unit>
+      <trans-unit id="No permission to access microphone" xml:space="preserve">
+        <source>No permission to access microphone</source>
+        <target>Izin akses mikrofon tidak diberikan</target>
+        <note>Error message when call cannot be started due to missing microphone permission</note>
+      </trans-unit>
+      <trans-unit id="Notes, messages, links, files saved for posterity" xml:space="preserve">
+        <source>Notes, messages, links, files saved for posterity</source>
+        <target>Catatan, pesan, tautan, dan file yang disimpan untuk nanti</target>
+        <note>Explanation for Saved messages topic</note>
+      </trans-unit>
+      <trans-unit id="OK" xml:space="preserve">
+        <source>OK</source>
+        <target>OK</target>
+        <note>Alert action</note>
+      </trans-unit>
+      <trans-unit id="Only Owner can delete group" xml:space="preserve">
+        <source>Only Owner can delete group</source>
+        <target>Hanya pemilik yang dapat menghapus grup</target>
+        <note>Toast notification</note>
+      </trans-unit>
+      <trans-unit id="Optional description" xml:space="preserve">
+        <source>Optional description</source>
+        <target>Deskripsi opsional</target>
+        <note>Placeholder for missing topic description
+Placeholder for missing user self-description</note>
+      </trans-unit>
+      <trans-unit id="Outgoing call" xml:space="preserve">
+        <source>Outgoing call</source>
+        <target>Panggilan keluar</target>
+
+        <note>Label for outgoing video/audio calls</note>
+      </trans-unit>
+      <trans-unit id="Owner cannot leave the group" xml:space="preserve">
+        <source>Owner cannot leave the group</source>
+        <target>Pemilik tidak dapat keluar dari grup</target>
+        <note>Toast notification</note>
+      </trans-unit>
+      <trans-unit id="Password too short" xml:space="preserve">
+        <source>Password too short</source>
+        <target>Kata sandi terlalu pendek</target>
+        <note>Error message</note>
+      </trans-unit>
+      <trans-unit id="Password updated" xml:space="preserve">
+        <source>Password updated</source>
+        <target>Kata sandi diperbarui</target>
+        <note>Success message</note>
+      </trans-unit>
+      <trans-unit id="Permissions not modified: %d (%s)" xml:space="preserve">
+        <source>Permissions not modified: %1$d (%2$s)</source>
+        <target>Izin gagal diubah: %1$d (%2$s)</target>
+        <note>Toast notification</note>
+      </trans-unit>
+      <trans-unit id="Picture" xml:space="preserve">
+        <source>Picture</source>
+        <target>Gambar</target>
+        <note>Label shown next to an inline image</note>
+      </trans-unit>
+      <trans-unit id="Pin" xml:space="preserve">
+        <source>Pin</source>
+        <target>Sematkan</target>
+        <note>Menu item for pinning message</note>
+      </trans-unit>
+      <trans-unit id="Playback failed" xml:space="preserve">
+        <source>Playback failed</source>
+        <target>Pemutaran gagal</target>
+        <note>Error message</note>
+      </trans-unit>
+      <trans-unit id="Please wait..." xml:space="preserve">
+        <source>Please wait...</source>
+        <target>Harap tunggu...</target>
+        <note>Progress overlay</note>
+      </trans-unit>
+      <trans-unit id="Private info: not set" xml:space="preserve">
+        <source>Private info: not set</source>
+        <target>Info pribadi: belum diisi</target>
+        <note>Placeholder text in editor</note>
+      </trans-unit>
+      <trans-unit id="QRCode scanner failed to initialize" xml:space="preserve">
+        <source>QRCode scanner failed to initialize</source>
+        <target>Pemindai kode QR gagal dimulai</target>
+        <note>Error message when QR code scanner failed to init</note>
+      </trans-unit>
+      <trans-unit id="Recording failed" xml:space="preserve">
+        <source>Recording failed</source>
+        <target>Perekaman gagal</target>
+        <note>Error message</note>
+      </trans-unit>
+      <trans-unit id="Registering..." xml:space="preserve">
+        <source>Registering...</source>
+        <target>Mendaftar...</target>
+        <note>Progress overlay</note>
+      </trans-unit>
+      <trans-unit id="Remove" xml:space="preserve">
+        <source>Remove</source>
+        <target>Keluarkan</target>
+        <note>Alert action</note>
+      </trans-unit>
+      <trans-unit id="Remove %@ from %@?" xml:space="preserve">
+        <source>Remove %1$@ from %2$@?</source>
+        <target>Keluarkan %1$@ dari %2$@?</target>
+        <note>Confirmation</note>
+      </trans-unit>
+      <trans-unit id="Remove and ban %@ from %@?" xml:space="preserve">
+        <source>Remove and ban %1$@ from %2$@?</source>
+        <target>Keluarkan dan blokir %1$@ dari %2$@?</target>
+        <note>Confirmation</note>
+      </trans-unit>
+      <trans-unit id="Reply" xml:space="preserve">
+        <source>Reply</source>
+        <target>Balas</target>
+        <note>Menu item</note>
+      </trans-unit>
+      <trans-unit id="Report" xml:space="preserve">
+        <source>Report</source>
+        <target>Laporkan</target>
+        <note>Alert action</note>
+      </trans-unit>
+      <trans-unit id="Report Group?" xml:space="preserve">
+        <source>Report Group?</source>
+        <target>Laporkan grup?</target>
+        <note>Alert title</note>
+      </trans-unit>
+      <trans-unit id="Report contact?" xml:space="preserve">
+        <source>Report contact?</source>
+        <target>Laporkan kontak?</target>
+        <note>Alert title</note>
+      </trans-unit>
+      <trans-unit id="Request failed: %@" xml:space="preserve">
+        <source>Request failed: %@</source>
+        <target>Permintaan gagal: %@</target>
+        <note>Error message</note>
+      </trans-unit>
+      <trans-unit id="Requesting..." xml:space="preserve">
+        <source>Requesting...</source>
+        <target>Mengirim permintaan...</target>
+        <note>Progress overlay</note>
+      </trans-unit>
+      <trans-unit id="Saved messages" xml:space="preserve">
+        <source>Saved messages</source>
+        <target>Pesan tersimpan</target>
+        <note>Title for slf topic
+Title of slf topic
+Title of the slf topic</note>
+      </trans-unit>
+      <trans-unit id="Scan Code" xml:space="preserve">
+        <source>Scan Code</source>
+        <target>Pindai Kode</target>
+        <note>Title for camera preview when scanning a QR code</note>
+      </trans-unit>
+      <trans-unit id="Search by tags" xml:space="preserve">
+        <source>Search by tags</source>
+        <target>Cari berdasarkan tag</target>
+        <note>Placeholder prompt</note>
+      </trans-unit>
+      <trans-unit id="Search functionality limited. Grant Contacts permission." xml:space="preserve">
+        <source>Search functionality limited. Grant Contacts permission.</source>
+        <target>Pencarian terbatas. Izinkan akses ke Kontak.</target>
+        <note>Error message when permissions are missing</note>
+      </trans-unit>
+      <trans-unit id="Select at least one group member" xml:space="preserve">
+        <source>Select at least one group member</source>
+        <target>Pilih setidaknya satu anggota grup</target>
+        <note>Error message</note>
+      </trans-unit>
+      <trans-unit id="Send message" xml:space="preserve">
+        <source>Send message</source>
+        <target>Kirim pesan</target>
+        <note>Alert action</note>
+      </trans-unit>
+      <trans-unit id="Service unavailable at this time. Please try again later." xml:space="preserve">
+        <source>Service unavailable at this time. Please try again later.</source>
+        <target>Layanan tidak tersedia saat ini. Coba lagi nanti.</target>
+        <note>Service unavailable</note>
+      </trans-unit>
+      <trans-unit id="Something went wrong: %d (%s)" xml:space="preserve">
+        <source>Something went wrong: %1$d (%2$s)</source>
+        <target>Terjadi kesalahan: %1$d (%2$s)</target>
+        <note>Toast notification</note>
+      </trans-unit>
+      <trans-unit id="Something went wrong: (%d) %@" xml:space="preserve">
+        <source>Something went wrong: (%1$d) %2$@</source>
+        <target>Terjadi kesalahan: (%1$d) %2$@</target>
+        <note>Toast notification</note>
+      </trans-unit>
+      <trans-unit id="Tags missing." xml:space="preserve">
+        <source>Tags missing.</source>
+        <target>Tag belum diisi.</target>
+        <note>Toast notification</note>
+      </trans-unit>
+      <trans-unit id="The avatar is too small." xml:space="preserve">
+        <source>The avatar is too small.</source>
+        <target>Avatar terlalu kecil.</target>
+        <note>Toast notification</note>
+      </trans-unit>
+      <trans-unit id="The file size exceeds the limit %@" xml:space="preserve">
+        <source>The file size exceeds the limit %@</source>
+        <target>Ukuran file melebihi batas %@</target>
+        <note>Error message</note>
+      </trans-unit>
+      <trans-unit id="Topic name missing" xml:space="preserve">
+        <source>Topic name missing</source>
+        <target>Nama topik belum diisi</target>
+        <note>Toast notification</note>
+      </trans-unit>
+      <trans-unit id="Unarchive" xml:space="preserve">
+        <source>Unarchive</source>
+        <target>Keluarkan dari arsip</target>
+        <note>Swipe action</note>
+      </trans-unit>
+      <trans-unit id="Unblock" xml:space="preserve">
+        <source>Unblock</source>
+        <target>Buka blokir</target>
+        <note>Swipe action</note>
+      </trans-unit>
+      <trans-unit id="Undefined" xml:space="preserve">
+        <source>Undefined</source>
+        <target>Belum ditentukan</target>
+        <note>Undefined chat name</note>
+      </trans-unit>
+      <trans-unit id="Unknown" xml:space="preserve">
+        <source>Unknown</source>
+        <target>Tidak diketahui</target>
+        <note>Placeholder for missing topic name
+   Placeholder for missing user name</note>
+      </trans-unit>
+      <trans-unit id="Unknown %@" xml:space="preserve">
+        <source>Unknown %@</source>
+        <target>Tidak diketahui %@</target>
+        <note>Sender with missing name</note>
+      </trans-unit>
+      <trans-unit id="Unknown or unnamed" xml:space="preserve">
+        <source>Unknown or unnamed</source>
+        <target>Tidak diketahui atau tanpa nama</target>
+        <note>Topic title when it has no name</note>
+      </trans-unit>
+      <trans-unit id="Unknown type" xml:space="preserve">
+        <source>Unknown type</source>
+        <target>Jenis tidak diketahui</target>
+        <note>Displayed when the type of attachment cannot be determined</note>
+      </trans-unit>
+      <trans-unit id="Unpin" xml:space="preserve">
+        <source>Unpin</source>
+        <target>Lepas sematan</target>
+        <note>Menu item for un-pinning message</note>
+      </trans-unit>
+      <trans-unit id="Unsupported" xml:space="preserve">
+        <source>Unsupported</source>
+        <target>Tidak didukung</target>
+        <note>Label shown next to an unsupported Drafty format element
+Unsupported (unknown) Drafty tag</note>
+      </trans-unit>
+      <trans-unit id="Updating password..." xml:space="preserve">
+        <source>Updating password...</source>
+        <target>Memperbarui kata sandi...</target>
+        <note>Progress overlay</note>
+      </trans-unit>
+      <trans-unit id="Upload failed (%@). No server response." xml:space="preserve">
+        <source>Upload failed (%@). No server response.</source>
+        <target>Unggahan gagal (%@). Tidak ada respons dari server.</target>
+        <note>Error message</note>
+      </trans-unit>
+      <trans-unit id="Upload failed (%@): empty response body." xml:space="preserve">
+        <source>Upload failed (%@): empty response body.</source>
+        <target>Unggahan gagal (%@): isi respons kosong.</target>
+        <note>Error message</note>
+      </trans-unit>
+      <trans-unit id="Upload failed (%@): response code %d." xml:space="preserve">
+        <source>Upload failed (%1$@): response code %2$d.</source>
+        <target>Unggahan gagal (%1$@): kode respons %2$d.</target>
+        <note>Error message</note>
+      </trans-unit>
+      <trans-unit id="Verification failure: %d %@" xml:space="preserve">
+        <source>Verification failure: %1$d %2$@</source>
+        <target>Verifikasi gagal: %1$d %2$@</target>
+        <note>Error message</note>
+      </trans-unit>
+      <trans-unit id="Video" xml:space="preserve">
+        <source>Video</source>
+        <target>Video</target>
+        <note>Label shown next to an inline video
+Menu item: video call</note>
+      </trans-unit>
+      <trans-unit id="We will send a SMS with confirmation code to the number below" xml:space="preserve">
+        <source>We will send a SMS with confirmation code to the number below</source>
+        <target>Kami akan mengirim SMS berisi kode konfirmasi ke nomor di bawah ini</target>
+        <note>Telephone password reset prompt</note>
+      </trans-unit>
+      <trans-unit id="We will send an email with confirmation code to the address below" xml:space="preserve">
+        <source>We will send an email with confirmation code to the address below</source>
+        <target>Kami akan mengirim email berisi kode konfirmasi ke alamat di bawah ini</target>
+        <note>Email password reset prompt</note>
+      </trans-unit>
+      <trans-unit id="You" xml:space="preserve">
+        <source>You</source>
+        <target>Anda</target>
+        <note>This is 'you'</note>
+      </trans-unit>
+      <trans-unit id="You are invited to start a new chat. What would you like?" xml:space="preserve">
+        <source>You are invited to start a new chat. What would you like?</source>
+        <target>Anda diundang untuk memulai chat baru. Apa yang ingin Anda lakukan?</target>
+        <note>Call to action</note>
+      </trans-unit>
+      <trans-unit id="You are offline." xml:space="preserve">
+        <source>You are offline.</source>
+        <target>Anda sedang offline.</target>
+        <note>Toast notification</note>
+      </trans-unit>
+      <trans-unit id="You have no chats&#10;&#10;¯\_(ツ)_/¯" xml:space="preserve">
+        <source>You have no chats
+
+¯\_(ツ)_/¯</source>
+        <target>Anda belum memiliki chat
+
+¯\_(ツ)_/¯</target>
+        <note>Placeholder when no chats found</note>
+      </trans-unit>
+      <trans-unit id="button" xml:space="preserve">
+        <source>button</source>
+        <target>tombol</target>
+        <note>Text written on button face when all else fails.</note>
+      </trans-unit>
+      <trans-unit id="cancelled" xml:space="preserve">
+        <source>cancelled</source>
+        <target>dibatalkan</target>
+        <note>Label for cancelled call</note>
+      </trans-unit>
+      <trans-unit id="confirm" xml:space="preserve">
+        <source>confirm</source>
+        <target>konfirmasi</target>
+        <note>Button text</note>
+      </trans-unit>
+      <trans-unit id="connecting" xml:space="preserve">
+        <source>connecting</source>
+        <target>menghubungkan</target>
+        <note>Label for initiated call</note>
+      </trans-unit>
+      <trans-unit id="edited" xml:space="preserve">
+        <source>edited</source>
+        <target>diedit</target>
+        <note>`Edited` message marker</note>
+      </trans-unit>
+      <trans-unit id="in progress" xml:space="preserve">
+        <source>in progress</source>
+        <target>berlangsung</target>
+        <note>Label for call in progress</note>
+      </trans-unit>
+      <trans-unit id="message deleted" xml:space="preserve">
+        <source>message deleted</source>
+        <target>pesan dihapus</target>
+        <note>Content of a pinned message when the message is deleted</note>
+      </trans-unit>
+      <trans-unit id="message not found" xml:space="preserve">
+        <source>message not found</source>
+        <target>pesan tidak ditemukan</target>
+        <note>Content of a pinned message when the message is missing</note>
+      </trans-unit>
+      <trans-unit id="online now" xml:space="preserve">
+        <source>online now</source>
+        <target>sedang online</target>
+        <note>The topic or user is currently online</note>
+      </trans-unit>
+      <trans-unit id="undefined" xml:space="preserve">
+        <source>undefined</source>
+        <target>belum ditentukan</target>
+        <note>Button with missing text
+   Placeholder for missing file name
+   Placeholder for missing file type</note>
+      </trans-unit>
+    </body>
+  </file>
+  <file original="Pods/en.lproj/Localizable.strings" source-language="en" target-language="id" datatype="plaintext">
+    <header>
+      <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="16.4" build-num="16F6"/>
+    </header>
+    <body>
+      <trans-unit id="An error occurred while validating the phone number." xml:space="preserve">
+        <source>An error occurred while validating the phone number.</source>
+        <target>Terjadi kesalahan saat memvalidasi nomor telepon.</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Phone number is ambiguous." xml:space="preserve">
+        <source>Phone number is ambiguous.</source>
+        <target>Nomor telepon tidak dapat dikenali dengan pasti.</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="PhoneNumberKit.CountryCodePicker.Common" xml:space="preserve">
+        <source>Common</source>
+        <target>Umum</target>
+        <note>Name of "Common" section</note>
+      </trans-unit>
+      <trans-unit id="PhoneNumberKit.CountryCodePicker.Current" xml:space="preserve">
+        <source>Current</source>
+        <target>Saat Ini</target>
+        <note>Name of "Current" section</note>
+      </trans-unit>
+      <trans-unit id="PhoneNumberKit.CountryCodePicker.SearchBarPlaceholder" xml:space="preserve">
+        <source>Search Country Codes</source>
+        <target>Cari Kode Negara</target>
+        <note>Placeholder for country code search field</note>
+      </trans-unit>
+      <trans-unit id="PhoneNumberKit.CountryCodePicker.Title" xml:space="preserve">
+        <source>Choose your country</source>
+        <target>Pilih negara Anda</target>
+        <note>Title of CountryCodePicker ViewController</note>
+      </trans-unit>
+      <trans-unit id="PhoneNumberKit.CountryCodePickerEntryButton.AccessibilityHint" xml:space="preserve">
+        <source>%@ selected</source>
+        <target>%@ dipilih</target>
+        <note>Accessiblity hint for currently selected country code</note>
+      </trans-unit>
+      <trans-unit id="PhoneNumberKit.CountryCodePickerEntryButton.AccessibilityLabel" xml:space="preserve">
+        <source>Select your country code</source>
+        <target>Pilih kode negara Anda</target>
+        <note>Accessibility Label for Country Code Picker button</note>
+      </trans-unit>
+      <trans-unit id="The country code is invalid." xml:space="preserve">
+        <source>The country code is invalid.</source>
+        <target>Kode negara tidak valid.</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="The number provided is invalid." xml:space="preserve">
+        <source>The number provided is invalid.</source>
+        <target>Nomor yang diberikan tidak valid.</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="The number provided is too long." xml:space="preserve">
+        <source>The number provided is too long.</source>
+        <target>Nomor yang diberikan terlalu panjang.</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="The number provided is too short." xml:space="preserve">
+        <source>The number provided is too short.</source>
+        <target>Nomor yang diberikan terlalu pendek.</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="This function is deprecated." xml:space="preserve">
+        <source>This function is deprecated.</source>
+        <target>Fungsi ini tidak lagi direkomendasikan.</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+      <trans-unit id="Valid metadata is missing." xml:space="preserve">
+        <source>Valid metadata is missing.</source>
+        <target>Metadata valid tidak ditemukan.</target>
+        <note>No comment provided by engineer.</note>
+      </trans-unit>
+    </body>
+  </file>
+  <file original="TinodeSDK/en.lproj/InfoPlist.strings" source-language="en" target-language="id" datatype="plaintext">
+    <header>
+      <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="16.4" build-num="16F6"/>
+    </header>
+    <body>
+      <trans-unit id="CFBundleName" translate="no" xml:space="preserve">
+        <source>TinodeSDK</source>
+        <target>TinodeSDK</target>
+        <note>Bundle name</note>
+      </trans-unit>
+    </body>
+  </file>
+  <file original="Tinodios/Base.lproj/Main.storyboard" source-language="en" target-language="id" datatype="plaintext">
+    <header>
+      <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="16.4" build-num="16F6"/>
+    </header>
+    <body>
+      <trans-unit id="0Fx-rq-hiS.title" xml:space="preserve">
+        <source>New Group</source>
+        <target>Grup Baru</target>
+        <note>Class = "UITabBarItem"; title = "New Group"; ObjectID = "0Fx-rq-hiS";</note>
+      </trans-unit>
+      <trans-unit id="1tv-os-KfJ.normalTitle" xml:space="preserve">
+        <source>Sign Up</source>
+        <target>Daftar</target>
+        <note>Class = "UIButton"; normalTitle = "Sign Up"; ObjectID = "1tv-os-KfJ";</note>
+      </trans-unit>
+      <trans-unit id="3M8-Rp-TYP.text" xml:space="preserve">
+        <source>Address</source>
+        <target>Alamat</target>
+        <note>Class = "UILabel"; text = "Address"; ObjectID = "3M8-Rp-TYP";</note>
+      </trans-unit>
+      <trans-unit id="3hX-RM-7Ha.text" xml:space="preserve">
+        <source>Administration and Security</source>
+        <target>Administrasi dan Keamanan</target>
+        <note>Class = "UILabel"; text = "Administration and Security"; ObjectID = "3hX-RM-7Ha";</note>
+      </trans-unit>
+      <trans-unit id="3lo-iH-I5e.text" xml:space="preserve">
+        <source>placeholder_file_name</source>
+        <target>placeholder_file_name</target>
+        <note>Class = "UILabel"; text = "placeholder_file_name"; ObjectID = "3lo-iH-I5e";</note>
+      </trans-unit>
+      <trans-unit id="3zN-CC-6bS.title" xml:space="preserve">
+        <source>Invite</source>
+        <target>Undang</target>
+        <note>Class = "UIBarButtonItem"; title = "Invite"; ObjectID = "3zN-CC-6bS";</note>
+      </trans-unit>
+      <trans-unit id="4dd-0I-UFm.title" xml:space="preserve">
+        <source>General Settings</source>
+        <target>Pengaturan Umum</target>
+        <note>Class = "UITableViewController"; title = "General Settings"; ObjectID = "4dd-0I-UFm";</note>
+      </trans-unit>
+      <trans-unit id="4hf-MD-NbA.text" xml:space="preserve">
+        <source>https://tinode.co</source>
+        <target>https://tinode.co</target>
+        <note>Class = "UILabel"; text = "https://tinode.co"; ObjectID = "4hf-MD-NbA";</note>
+      </trans-unit>
+      <trans-unit id="4ll-eW-b8Z.text" xml:space="preserve">
+        <source>Send typing notifications</source>
+        <target>Kirim notifikasi saat mengetik</target>
+        <note>Class = "UILabel"; text = "Send typing notifications"; ObjectID = "4ll-eW-b8Z";</note>
+      </trans-unit>
+      <trans-unit id="4ur-p6-jff.title" xml:space="preserve">
+        <source>Credentials Change</source>
+        <target>Ubah Kredensial</target>
+        <note>Class = "UITableViewController"; title = "Credentials Change"; ObjectID = "4ur-p6-jff";</note>
+      </trans-unit>
+      <trans-unit id="5CT-4e-SGR.text" xml:space="preserve">
+        <source>image/jpeg</source>
+        <target>image/jpeg</target>
+        <note>Class = "UILabel"; text = "image/jpeg"; ObjectID = "5CT-4e-SGR";</note>
+      </trans-unit>
+      <trans-unit id="6ON-kt-aM9.text" xml:space="preserve">
+        <source>John Doe</source>
+        <target>John Doe</target>
+        <note>Class = "UILabel"; text = "John Doe"; ObjectID = "6ON-kt-aM9";</note>
+      </trans-unit>
+      <trans-unit id="6V8-mQ-RXX.text" xml:space="preserve">
+        <source>MyUID</source>
+        <target>MyUID</target>
+        <note>Class = "UILabel"; text = "MyUID"; ObjectID = "6V8-mQ-RXX";</note>
+      </trans-unit>
+      <trans-unit id="6rW-B5-NCp.text" xml:space="preserve">
+        <source>placeholder_file_name</source>
+        <target>placeholder_file_name</target>
+        <note>Class = "UILabel"; text = "placeholder_file_name"; ObjectID = "6rW-B5-NCp";</note>
+      </trans-unit>
+      <trans-unit id="6zX-Sq-TK6.normalTitle" xml:space="preserve">
+        <source>Configure Connection</source>
+        <target>Atur Koneksi</target>
+        <note>Class = "UIButton"; normalTitle = "Configure Connection"; ObjectID = "6zX-Sq-TK6";</note>
+      </trans-unit>
+      <trans-unit id="8AD-ew-qYf.text" xml:space="preserve">
+        <source>Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu.</source>
+        <target>Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu.</target>
+        <note>Class = "UITextView"; text = "Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu."; ObjectID = "8AD-ew-qYf";</note>
+      </trans-unit>
+      <trans-unit id="8RW-nB-5t3.text" xml:space="preserve">
+        <source>Log out</source>
+        <target>Keluar</target>
+        <note>Class = "UILabel"; text = "Log out"; ObjectID = "8RW-nB-5t3";</note>
+      </trans-unit>
+      <trans-unit id="8eC-OS-Net.text" xml:space="preserve">
+        <source>Report Contact</source>
+        <target>Laporkan Kontak</target>
+        <note>Class = "UILabel"; text = "Report Contact"; ObjectID = "8eC-OS-Net";</note>
+      </trans-unit>
+      <trans-unit id="8wo-Rg-iTZ.text" xml:space="preserve">
+        <source>Anonymous users</source>
+        <target>Pengguna anonim</target>
+        <note>Class = "UILabel"; text = "Anonymous users"; ObjectID = "8wo-Rg-iTZ";</note>
+      </trans-unit>
+      <trans-unit id="9Co-1p-ugz.placeholder" xml:space="preserve">
+        <source>Phone number</source>
+        <target>Nomor telepon</target>
+        <note>Class = "UITextField"; placeholder = "Phone number"; ObjectID = "9Co-1p-ugz";</note>
+      </trans-unit>
+      <trans-unit id="9Lj-hp-MkL.text" xml:space="preserve">
+        <source>Contact us</source>
+        <target>Hubungi kami</target>
+        <note>Class = "UILabel"; text = "Contact us"; ObjectID = "9Lj-hp-MkL";</note>
+      </trans-unit>
+      <trans-unit id="9SI-IJ-VTf.text" xml:space="preserve">
+        <source>We will send confirmation code to the address below</source>
+        <target>Kami akan mengirim kode konfirmasi ke alamat di bawah ini</target>
+        <note>Class = "UILabel"; text = "We will send confirmation code to the address below"; ObjectID = "9SI-IJ-VTf";</note>
+      </trans-unit>
+      <trans-unit id="9Zn-Sl-aQb.headerTitle" xml:space="preserve">
+        <source>New Credential</source>
+        <target>Kredensial Baru</target>
+        <note>Class = "UITableViewSection"; headerTitle = "New Credential"; ObjectID = "9Zn-Sl-aQb";</note>
+      </trans-unit>
+      <trans-unit id="9cv-Dp-MKy.placeholder" xml:space="preserve">
+        <source>Title</source>
+        <target>Judul</target>
+        <note>Class = "UITextField"; placeholder = "Title"; ObjectID = "9cv-Dp-MKy";</note>
+      </trans-unit>
+      <trans-unit id="9dk-JW-5z0.text" xml:space="preserve">
+        <source>Terms of use</source>
+        <target>Ketentuan penggunaan</target>
+        <note>Class = "UILabel"; text = "Terms of use"; ObjectID = "9dk-JW-5z0";</note>
+      </trans-unit>
+      <trans-unit id="9gO-eS-keH.text" xml:space="preserve">
+        <source>Authenticated users</source>
+        <target>Pengguna terautentikasi</target>
+        <note>Class = "UILabel"; text = "Authenticated users"; ObjectID = "9gO-eS-keH";</note>
+      </trans-unit>
+      <trans-unit id="9mf-og-8Hl.title" xml:space="preserve">
+        <source>Settings</source>
+        <target>Pengaturan</target>
+        <note>Class = "UINavigationItem"; title = "Settings"; ObjectID = "9mf-og-8Hl";</note>
+      </trans-unit>
+      <trans-unit id="9rO-zX-bOn.text" xml:space="preserve">
+        <source>N</source>
+        <target>N</target>
+        <note>Class = "UILabel"; text = "N"; ObjectID = "9rO-zX-bOn";</note>
+      </trans-unit>
+      <trans-unit id="12g-Mq-Ht6.text" xml:space="preserve">
+        <source>Size:</source>
+        <target>Ukuran:</target>
+        <note>Class = "UILabel"; text = "Size:"; ObjectID = "12g-Mq-Ht6";</note>
+      </trans-unit>
+      <trans-unit id="26s-2T-nI0.headerTitle" xml:space="preserve">
+        <source>Group Members</source>
+        <target>Anggota Grup</target>
+        <note>Class = "UITableViewSection"; headerTitle = "Group Members"; ObjectID = "26s-2T-nI0";</note>
+      </trans-unit>
+      <trans-unit id="71p-KF-hSv.text" xml:space="preserve">
+        <source>1.0.0 (222)</source>
+        <target>1.0.0 (222)</target>
+        <note>Class = "UILabel"; text = "1.0.0 (222)"; ObjectID = "71p-KF-hSv";</note>
+      </trans-unit>
+      <trans-unit id="73A-kJ-aFf.text" xml:space="preserve">
+        <source>Description</source>
+        <target>Deskripsi</target>
+        <note>Class = "UILabel"; text = "Description"; ObjectID = "73A-kJ-aFf";</note>
+      </trans-unit>
+      <trans-unit id="82W-36-na3.placeholder" xml:space="preserve">
+        <source>Enter Confirmation Code</source>
+        <target>Masukkan Kode Konfirmasi</target>
+        <note>Class = "UITextField"; placeholder = "Enter Confirmation Code"; ObjectID = "82W-36-na3";</note>
+      </trans-unit>
+      <trans-unit id="ACb-21-0xr.placeholder" xml:space="preserve">
+        <source>alias</source>
+        <target>alias</target>
+        <note>Class = "UITextField"; placeholder = "alias"; ObjectID = "ACb-21-0xr";</note>
+      </trans-unit>
+      <trans-unit id="AXP-O2-x5k.text" xml:space="preserve">
+        <source>App Version</source>
+        <target>Versi Aplikasi</target>
+        <note>Class = "UILabel"; text = "App Version"; ObjectID = "AXP-O2-x5k";</note>
+      </trans-unit>
+      <trans-unit id="Akq-Gr-LNH.text" xml:space="preserve">
+        <source>Private comment</source>
+        <target>Komentar pribadi</target>
+        <note>Class = "UITextView"; text = "Private comment"; ObjectID = "Akq-Gr-LNH";</note>
+      </trans-unit>
+      <trans-unit id="AoI-xo-VbS.text" xml:space="preserve">
+        <source>Muted</source>
+        <target>Dibisukan</target>
+        <note>Class = "UILabel"; text = "Muted"; ObjectID = "AoI-xo-VbS";</note>
+      </trans-unit>
+      <trans-unit id="AyV-WL-p4N.text" xml:space="preserve">
+        <source>grpAbCd21345</source>
+        <target>grpAbCd21345</target>
+        <note>Class = "UILabel"; text = "grpAbCd21345"; ObjectID = "AyV-WL-p4N";</note>
+      </trans-unit>
+      <trans-unit id="BJV-dk-s3m.text" xml:space="preserve">
+        <source>Configuration Code</source>
+        <target>Kode Konfigurasi</target>
+        <note>Class = "UILabel"; text = "Configuration Code"; ObjectID = "BJV-dk-s3m";</note>
+      </trans-unit>
+      <trans-unit id="BRf-xV-zvt.headerTitle" xml:space="preserve">
+        <source>Password reset</source>
+        <target>Atur ulang kata sandi</target>
+        <note>Class = "UITableViewSection"; headerTitle = "Password reset"; ObjectID = "BRf-xV-zvt";</note>
+      </trans-unit>
+      <trans-unit id="BS4-zj-4bf.text" xml:space="preserve">
+        <source>Tinode</source>
+        <target>Tinode</target>
+        <note>Class = "UILabel"; text = "Tinode"; ObjectID = "BS4-zj-4bf";</note>
+      </trans-unit>
+      <trans-unit id="BjO-YX-L6x.text" xml:space="preserve">
+        <source>Alias</source>
+        <target>Alias</target>
+        <note>Class = "UILabel"; text = "Alias"; ObjectID = "BjO-YX-L6x";</note>
+      </trans-unit>
+      <trans-unit id="C6Z-tO-4g8.text" xml:space="preserve">
+        <source>image/jpeg</source>
+        <target>image/jpeg</target>
+        <note>Class = "UILabel"; text = "image/jpeg"; ObjectID = "C6Z-tO-4g8";</note>
+      </trans-unit>
+      <trans-unit id="Cib-aE-hH5.title" xml:space="preserve">
+        <source>Video Call</source>
+        <target>Panggilan Video</target>
+        <note>Class = "UIViewController"; title = "Video Call"; ObjectID = "Cib-aE-hH5";</note>
+      </trans-unit>
+      <trans-unit id="Cy6-Bq-QCi.placeholder" xml:space="preserve">
+        <source>Optional description</source>
+        <target>Deskripsi opsional</target>
+        <note>Class = "UITextField"; placeholder = "Optional description"; ObjectID = "Cy6-Bq-QCi";</note>
+      </trans-unit>
+      <trans-unit id="D3z-yf-zJA.text" xml:space="preserve">
+        <source>Description</source>
+        <target>Subjudul topik (pribadi)</target>
+        <note>Class = "UITextView"; text = "Description"; ObjectID = "D3z-yf-zJA";</note>
+      </trans-unit>
+      <trans-unit id="DEM-ia-TIj.text" xml:space="preserve">
+        <source>Archived</source>
+        <target>Diarsipkan</target>
+        <note>Class = "UILabel"; text = "Archived"; ObjectID = "DEM-ia-TIj";</note>
+      </trans-unit>
+      <trans-unit id="DFU-9e-dLm.ibShadowedToolTip" xml:space="preserve">
+        <source>Alias can be used to find this topic</source>
+        <target>Alias dapat digunakan untuk menemukan topik ini</target>
+        <note>Class = "UITextField"; ibShadowedToolTip = "Alias can be used to find this topic"; ObjectID = "DFU-9e-dLm";</note>
+      </trans-unit>
+      <trans-unit id="DFU-9e-dLm.placeholder" xml:space="preserve">
+        <source>alias</source>
+        <target>alias</target>
+        <note>Class = "UITextField"; placeholder = "alias"; ObjectID = "DFU-9e-dLm";</note>
+      </trans-unit>
+      <trans-unit id="DMQ-om-04T.normalTitle" xml:space="preserve">
+        <source>OK</source>
+        <target>OK</target>
+        <note>Class = "UIButton"; normalTitle = "OK"; ObjectID = "DMQ-om-04T";</note>
+      </trans-unit>
+      <trans-unit id="Do2-Ue-UdA.placeholder" xml:space="preserve">
+        <source>Additional info (private)</source>
+        <target>Info tambahan (pribadi)</target>
+        <note>Class = "UITextField"; placeholder = "Additional info (private)"; ObjectID = "Do2-Ue-UdA";</note>
+      </trans-unit>
+      <trans-unit id="Drz-OH-b0d.text" xml:space="preserve">
+        <source>Address</source>
+        <target>Alamat</target>
+        <note>Class = "UILabel"; text = "Address"; ObjectID = "Drz-OH-b0d";</note>
+      </trans-unit>
+      <trans-unit id="DtN-H7-Ovv.text" xml:space="preserve">
+        <source>00:00D</source>
+        <target>00:00D</target>
+        <note>Class = "UILabel"; text = "00:00D"; ObjectID = "DtN-H7-Ovv";</note>
+      </trans-unit>
+      <trans-unit id="FKi-Zf-cyS.text" xml:space="preserve">
+        <source>Server</source>
+        <target>Server</target>
+        <note>Class = "UILabel"; text = "Server"; ObjectID = "FKi-Zf-cyS";</note>
+      </trans-unit>
+      <trans-unit id="FeF-3T-sWp.text" xml:space="preserve">
+        <source>Add members</source>
+        <target>Tambah anggota</target>
+        <note>Class = "UILabel"; text = "Add members"; ObjectID = "FeF-3T-sWp";</note>
+      </trans-unit>
+      <trans-unit id="Fjs-5K-JCI.text" xml:space="preserve">
+        <source>Delete account</source>
+        <target>Hapus akun</target>
+        <note>Class = "UILabel"; text = "Delete account"; ObjectID = "Fjs-5K-JCI";</note>
+      </trans-unit>
+      <trans-unit id="H78-sG-L0j.headerTitle" xml:space="preserve">
+        <source>Default Permissions</source>
+        <target>Izin Bawaan</target>
+        <note>Class = "UITableViewSection"; headerTitle = "Default Permissions"; ObjectID = "H78-sG-L0j";</note>
+      </trans-unit>
+      <trans-unit id="HCG-mB-BeX.text" xml:space="preserve">
+        <source>Tinode</source>
+        <target>Tinode</target>
+        <note>Class = "UILabel"; text = "Tinode"; ObjectID = "HCG-mB-BeX";</note>
+      </trans-unit>
+      <trans-unit id="HIs-n4-sFa.text" xml:space="preserve">
+        <source>placeholder_file_name</source>
+        <target>placeholder_file_name</target>
+        <note>Class = "UILabel"; text = "placeholder_file_name"; ObjectID = "HIs-n4-sFa";</note>
+      </trans-unit>
+      <trans-unit id="Hah-A8-0yd.title" xml:space="preserve">
+        <source>Video Preview</source>
+        <target>Pratinjau Video</target>
+        <note>Class = "UINavigationItem"; title = "Video Preview"; ObjectID = "Hah-A8-0yd";</note>
+      </trans-unit>
+      <trans-unit id="IMk-1F-WiZ.title" xml:space="preserve">
+        <source>Reset Password</source>
+        <target>Atur Ulang Kata Sandi</target>
+        <note>Class = "UITableViewController"; title = "Reset Password"; ObjectID = "IMk-1F-WiZ";</note>
+      </trans-unit>
+      <trans-unit id="IP5-9X-LlM.configuration.title" xml:space="preserve">
+        <source>Show Code</source>
+        <target>Tampilkan Kode</target>
+        <note>Class = "UIButton"; configuration.title = "Show Code"; ObjectID = "IP5-9X-LlM";</note>
+      </trans-unit>
+      <trans-unit id="ImI-af-TFh.configuration.title" xml:space="preserve">
+        <source>Scan Code</source>
+        <target>Pindai Kode</target>
+        <note>Class = "UIButton"; configuration.title = "Scan Code"; ObjectID = "ImI-af-TFh";</note>
+      </trans-unit>
+      <trans-unit id="ImI-af-TFh.normalTitle" xml:space="preserve">
+        <source>Button</source>
+        <target>Tombol</target>
+        <note>Class = "UIButton"; normalTitle = "Button"; ObjectID = "ImI-af-TFh";</note>
+      </trans-unit>
+      <trans-unit id="IzY-DL-wiS.text" xml:space="preserve">
+        <source>Verified</source>
+        <target>Terverifikasi</target>
+        <note>Class = "UILabel"; text = "Verified"; ObjectID = "IzY-DL-wiS";</note>
+      </trans-unit>
+      <trans-unit id="JlG-TH-asZ.text" xml:space="preserve">
+        <source>Confirmation code</source>
+        <target>Kode konfirmasi</target>
+        <note>Class = "UILabel"; text = "Confirmation code"; ObjectID = "JlG-TH-asZ";</note>
+      </trans-unit>
+      <trans-unit id="JpP-JB-AWY.title" xml:space="preserve">
+        <source>Image Preview</source>
+        <target>Pratinjau Gambar</target>
+        <note>Class = "UINavigationItem"; title = "Image Preview"; ObjectID = "JpP-JB-AWY";</note>
+      </trans-unit>
+      <trans-unit id="K4E-ne-sW4.ibShadowedToolTip" xml:space="preserve">
+        <source>This comment is visible to you only</source>
+        <target>Komentar ini hanya dapat dilihat oleh Anda</target>
+        <note>Class = "UITextField"; ibShadowedToolTip = "This comment is visible to you only"; ObjectID = "K4E-ne-sW4";</note>
+      </trans-unit>
+      <trans-unit id="K4E-ne-sW4.placeholder" xml:space="preserve">
+        <source>Optional comment (private)</source>
+        <target>Komentar opsional (pribadi)</target>
+        <note>Class = "UITextField"; placeholder = "Optional comment (private)"; ObjectID = "K4E-ne-sW4";</note>
+      </trans-unit>
+      <trans-unit id="KL3-O0-A0I.text" xml:space="preserve">
+        <source>Untrustworthy</source>
+        <target>Tidak tepercaya</target>
+        <note>Class = "UILabel"; text = "Untrustworthy"; ObjectID = "KL3-O0-A0I";</note>
+      </trans-unit>
+      <trans-unit id="KSy-US-Bkx.text" xml:space="preserve">
+        <source>Block Contact</source>
+        <target>Blokir Kontak</target>
+        <note>Class = "UILabel"; text = "Block Contact"; ObjectID = "KSy-US-Bkx";</note>
+      </trans-unit>
+      <trans-unit id="LRu-ae-drd.title" xml:space="preserve">
+        <source>Edit Members</source>
+        <target>Edit Anggota</target>
+        <note>Class = "UINavigationItem"; title = "Edit Members"; ObjectID = "LRu-ae-drd";</note>
+      </trans-unit>
+      <trans-unit id="LVG-dB-flA.title" xml:space="preserve">
+        <source>New Chat</source>
+        <target>Chat Baru</target>
+        <note>Class = "UIBarButtonItem"; title = "New Chat"; ObjectID = "LVG-dB-flA";</note>
+      </trans-unit>
+      <trans-unit id="LVW-qL-KG8.text" xml:space="preserve">
+        <source>Untrusworthy</source>
+        <target>Tidak tepercaya</target>
+        <note>Class = "UILabel"; text = "Untrusworthy"; ObjectID = "LVW-qL-KG8";</note>
+      </trans-unit>
+      <trans-unit id="Lh9-1X-ez1.text" xml:space="preserve">
+        <source>Blocked contacts</source>
+        <target>Kontak diblokir</target>
+        <note>Class = "UILabel"; text = "Blocked contacts"; ObjectID = "Lh9-1X-ez1";</note>
+      </trans-unit>
+      <trans-unit id="LoW-9v-9fd.text" xml:space="preserve">
+        <source>Scan Code</source>
+        <target>Pindai Kode</target>
+        <note>Class = "UILabel"; text = "Scan Code"; ObjectID = "LoW-9v-9fd";</note>
+      </trans-unit>
+      <trans-unit id="LrU-8Q-1FQ.text" xml:space="preserve">
+        <source>Last active</source>
+        <target>Terakhir aktif</target>
+        <note>Class = "UILabel"; text = "Last active"; ObjectID = "LrU-8Q-1FQ";</note>
+      </trans-unit>
+      <trans-unit id="NB2-85-kNv.text" xml:space="preserve">
+        <source>Title Lorem Ipsum</source>
+        <target>Title Lorem Ipsum</target>
+        <note>Class = "UILabel"; text = "Title Lorem Ipsum"; ObjectID = "NB2-85-kNv";</note>
+      </trans-unit>
+      <trans-unit id="NNn-m0-IQE.placeholder" xml:space="preserve">
+        <source>New Email Address</source>
+        <target>Alamat Email Baru</target>
+        <note>Class = "UITextField"; placeholder = "New Email Address"; ObjectID = "NNn-m0-IQE";</note>
+      </trans-unit>
+      <trans-unit id="O9h-LB-2lW.title" xml:space="preserve">
+        <source>Notifications</source>
+        <target>Notifikasi</target>
+        <note>Class = "UINavigationItem"; title = "Notifications"; ObjectID = "O9h-LB-2lW";</note>
+      </trans-unit>
+      <trans-unit id="OeG-Kx-gwG.text" xml:space="preserve">
+        <source>Content type:</source>
+        <target>Jenis konten:</target>
+        <note>Class = "UILabel"; text = "Content type:"; ObjectID = "OeG-Kx-gwG";</note>
+      </trans-unit>
+      <trans-unit id="P9L-Ga-c1q.text" xml:space="preserve">
+        <source>https://127.0.0.1:6060</source>
+        <target>https://127.0.0.1:6060</target>
+        <note>Class = "UILabel"; text = "https://127.0.0.1:6060"; ObjectID = "P9L-Ga-c1q";</note>
+      </trans-unit>
+      <trans-unit id="Pnk-9m-ZVg.title" xml:space="preserve">
+        <source>Account Settings</source>
+        <target>Pengaturan Akun</target>
+        <note>Class = "UITableViewController"; title = "Account Settings"; ObjectID = "Pnk-9m-ZVg";</note>
+      </trans-unit>
+      <trans-unit id="QwO-fs-VYW.headerTitle" xml:space="preserve">
+        <source>Security</source>
+        <target>Keamanan</target>
+        <note>Class = "UITableViewSection"; headerTitle = "Security"; ObjectID = "QwO-fs-VYW";</note>
+      </trans-unit>
+      <trans-unit id="R6w-cr-96Z.normalTitle" xml:space="preserve">
+        <source>Request</source>
+        <target>Minta</target>
+        <note>Class = "UIButton"; normalTitle = "Request"; ObjectID = "R6w-cr-96Z";</note>
+      </trans-unit>
+      <trans-unit id="RA0-dx-dSp.text" xml:space="preserve">
+        <source>Group or user ID</source>
+        <target>ID topik atau pengguna</target>
+        <note>Class = "UILabel"; text = "Group or user ID"; ObjectID = "RA0-dx-dSp";</note>
+      </trans-unit>
+      <trans-unit id="ROK-aW-Tlk.text" xml:space="preserve">
+        <source>Staff-managed</source>
+        <target>Dikelola staf</target>
+        <note>Class = "UILabel"; text = "Staff-managed"; ObjectID = "ROK-aW-Tlk";</note>
+      </trans-unit>
+      <trans-unit id="Rgo-YL-uPZ.title" xml:space="preserve">
+        <source>Tinode</source>
+        <target>Tinode</target>
+        <note>Class = "UINavigationItem"; title = "Tinode"; ObjectID = "Rgo-YL-uPZ";</note>
+      </trans-unit>
+      <trans-unit id="Rv6-qQ-FqW.normalTitle" xml:space="preserve">
+        <source>Sign up</source>
+        <target>Daftar</target>
+        <note>Class = "UIButton"; normalTitle = "Sign up"; ObjectID = "Rv6-qQ-FqW";</note>
+      </trans-unit>
+      <trans-unit id="RvM-se-Nch.text" xml:space="preserve">
+        <source>Content type:</source>
+        <target>Jenis konten:</target>
+        <note>Class = "UILabel"; text = "Content type:"; ObjectID = "RvM-se-Nch";</note>
+      </trans-unit>
+      <trans-unit id="SQN-GC-qEL.placeholder" xml:space="preserve">
+        <source>Email</source>
+        <target>Email</target>
+        <note>Class = "UITextField"; placeholder = "Email"; ObjectID = "SQN-GC-qEL";</note>
+      </trans-unit>
+      <trans-unit id="T7l-iC-Rs6.title" xml:space="preserve">
+        <source>By ID</source>
+        <target>Dengan ID</target>
+        <note>Class = "UITabBarItem"; title = "By ID"; ObjectID = "T7l-iC-Rs6";</note>
+      </trans-unit>
+      <trans-unit id="TQV-dP-vL9.headerTitle" xml:space="preserve">
+        <source>Contacts</source>
+        <target>Kontak</target>
+        <note>Class = "UITableViewSection"; headerTitle = "Contacts"; ObjectID = "TQV-dP-vL9";</note>
+      </trans-unit>
+      <trans-unit id="TvF-F9-blO.normalTitle" xml:space="preserve">
+        <source>Sign In</source>
+        <target>Masuk</target>
+        <note>Class = "UIButton"; normalTitle = "Sign In"; ObjectID = "TvF-F9-blO";</note>
+      </trans-unit>
+      <trans-unit id="U5T-k4-DgP.headerTitle" xml:space="preserve">
+        <source>Actions</source>
+        <target>Tindakan</target>
+        <note>Class = "UITableViewSection"; headerTitle = "Actions"; ObjectID = "U5T-k4-DgP";</note>
+      </trans-unit>
+      <trans-unit id="UgX-En-K1m.title" xml:space="preserve">
+        <source>Find Controller</source>
+        <target>Find Controller</target>
+        <note>Class = "UITableViewController"; title = "Find Controller"; ObjectID = "UgX-En-K1m";</note>
+      </trans-unit>
+      <trans-unit id="Ukl-EW-zMS.text" xml:space="preserve">
+        <source>Anonymous users</source>
+        <target>Pengguna anonim</target>
+        <note>Class = "UILabel"; text = "Anonymous users"; ObjectID = "Ukl-EW-zMS";</note>
+      </trans-unit>
+      <trans-unit id="Un9-ds-iQd.text" xml:space="preserve">
+        <source>N</source>
+        <target>N</target>
+        <note>Class = "UILabel"; text = "N"; ObjectID = "Un9-ds-iQd";</note>
+      </trans-unit>
+      <trans-unit id="Uy7-tG-NGm.title" xml:space="preserve">
+        <source>BrandingViewController</source>
+        <target>BrandingViewController</target>
+        <note>Class = "UIViewController"; title = "BrandingViewController"; ObjectID = "Uy7-tG-NGm";</note>
+      </trans-unit>
+      <trans-unit id="VLd-3M-5wj.headerTitle" xml:space="preserve">
+        <source>Current Credential</source>
+        <target>Kredensial Saat Ini</target>
+        <note>Class = "UITableViewSection"; headerTitle = "Current Credential"; ObjectID = "VLd-3M-5wj";</note>
+      </trans-unit>
+      <trans-unit id="WTE-Mf-oSE.placeholder" xml:space="preserve">
+        <source>New password</source>
+        <target>Kata sandi baru</target>
+        <note>Class = "UITextField"; placeholder = "New password"; ObjectID = "WTE-Mf-oSE";</note>
+      </trans-unit>
+      <trans-unit id="Wyn-hP-c2H.placeholder" xml:space="preserve">
+        <source>Email</source>
+        <target>Email</target>
+        <note>Class = "UITextField"; placeholder = "Email"; ObjectID = "Wyn-hP-c2H";</note>
+      </trans-unit>
+      <trans-unit id="YLX-fZ-c26.text" xml:space="preserve">
+        <source>image/jpeg</source>
+        <target>image/jpeg</target>
+        <note>Class = "UILabel"; text = "image/jpeg"; ObjectID = "YLX-fZ-c26";</note>
+      </trans-unit>
+      <trans-unit id="YmQ-cB-rjH.title" xml:space="preserve">
+        <source>SignUp</source>
+        <target>SignUp</target>
+        <note>Class = "UITableViewController"; title = "SignUp"; ObjectID = "YmQ-cB-rjH";</note>
+      </trans-unit>
+      <trans-unit id="ZQJ-Ja-aBa.text" xml:space="preserve">
+        <source>Tinode</source>
+        <target>Tinode</target>
+        <note>Class = "UILabel"; text = "Tinode"; ObjectID = "ZQJ-Ja-aBa";</note>
+      </trans-unit>
+      <trans-unit id="ZQy-2N-acy.placeholder" xml:space="preserve">
+        <source>Password</source>
+        <target>Kata sandi</target>
+        <note>Class = "UITextField"; placeholder = "Password"; ObjectID = "ZQy-2N-acy";</note>
+      </trans-unit>
+      <trans-unit id="ZTD-e7-fNF.accessibilityHint" xml:space="preserve">
+        <source>Login</source>
+        <target>Login</target>
+        <note>Class = "UITextField"; accessibilityHint = "Login"; ObjectID = "ZTD-e7-fNF";</note>
+      </trans-unit>
+      <trans-unit id="ZTD-e7-fNF.accessibilityLabel" xml:space="preserve">
+        <source>Login</source>
+        <target>Login</target>
+        <note>Class = "UITextField"; accessibilityLabel = "Login"; ObjectID = "ZTD-e7-fNF";</note>
+      </trans-unit>
+      <trans-unit id="ZTD-e7-fNF.placeholder" xml:space="preserve">
+        <source>User name</source>
+        <target>Nama pengguna</target>
+        <note>Class = "UITextField"; placeholder = "User name"; ObjectID = "ZTD-e7-fNF";</note>
+      </trans-unit>
+      <trans-unit id="ZTN-Oj-COh.title" xml:space="preserve">
+        <source>File Preview</source>
+        <target>Pratinjau File</target>
+        <note>Class = "UIViewController"; title = "File Preview"; ObjectID = "ZTN-Oj-COh";</note>
+      </trans-unit>
+      <trans-unit id="Zdw-nR-1tB.text" xml:space="preserve">
+        <source>Others can find group by these tags</source>
+        <target>Orang lain dapat menemukan grup melalui tag ini</target>
+        <note>Class = "UILabel"; text = "Others can find group by these tags"; ObjectID = "Zdw-nR-1tB";</note>
+      </trans-unit>
+      <trans-unit id="Zn8-7V-BcX.text" xml:space="preserve">
+        <source>Privacy policy</source>
+        <target>Kebijakan privasi</target>
+        <note>Class = "UILabel"; text = "Privacy policy"; ObjectID = "Zn8-7V-BcX";</note>
+      </trans-unit>
+      <trans-unit id="a2m-CR-0Zc.title" xml:space="preserve">
+        <source>Image Preview</source>
+        <target>Pratinjau Gambar</target>
+        <note>Class = "UIViewController"; title = "Image Preview"; ObjectID = "a2m-CR-0Zc";</note>
+      </trans-unit>
+      <trans-unit id="a4o-bz-GPx.text" xml:space="preserve">
+        <source>Report Group</source>
+        <target>Laporkan Grup</target>
+        <note>Class = "UILabel"; text = "Report Group"; ObjectID = "a4o-bz-GPx";</note>
+      </trans-unit>
+      <trans-unit id="a45-p0-44d.text" xml:space="preserve">
+        <source>GROUP MEMBERS</source>
+        <target>ANGGOTA GRUP</target>
+        <note>Class = "UILabel"; text = "GROUP MEMBERS"; ObjectID = "a45-p0-44d";</note>
+      </trans-unit>
+      <trans-unit id="aA7-FA-fcf.text" xml:space="preserve">
+        <source>File name:</source>
+        <target>Nama file:</target>
+        <note>Class = "UILabel"; text = "File name:"; ObjectID = "aA7-FA-fcf";</note>
+      </trans-unit>
+      <trans-unit id="aCk-Z4-8m7.text" xml:space="preserve">
+        <source>Notifications</source>
+        <target>Notifikasi</target>
+        <note>Class = "UILabel"; text = "Notifications"; ObjectID = "aCk-Z4-8m7";</note>
+      </trans-unit>
+      <trans-unit id="aFc-MO-QyO.normalTitle" xml:space="preserve">
+        <source>Confirm</source>
+        <target>Konfirmasi</target>
+        <note>Class = "UIButton"; normalTitle = "Confirm"; ObjectID = "aFc-MO-QyO";</note>
+      </trans-unit>
+      <trans-unit id="aMv-to-Vu2.text" xml:space="preserve">
+        <source>N</source>
+        <target>N</target>
+        <note>Class = "UILabel"; text = "N"; ObjectID = "aMv-to-Vu2";</note>
+      </trans-unit>
+      <trans-unit id="ab5-J1-Lx7.normalTitle" xml:space="preserve">
+        <source>I Have Code</source>
+        <target>Saya Punya Kode</target>
+        <note>Class = "UIButton"; normalTitle = "I Have Code"; ObjectID = "ab5-J1-Lx7";</note>
+      </trans-unit>
+      <trans-unit id="af7-97-1pu.title" xml:space="preserve">
+        <source>ForwardTo</source>
+        <target>ForwardTo</target>
+        <note>Class = "UITableViewController"; title = "ForwardTo"; ObjectID = "af7-97-1pu";</note>
+      </trans-unit>
+      <trans-unit id="awR-up-0dD.title" xml:space="preserve">
+        <source>General Settings</source>
+        <target>Pengaturan Umum</target>
+        <note>Class = "UITableViewController"; title = "General Settings"; ObjectID = "awR-up-0dD";</note>
+      </trans-unit>
+      <trans-unit id="axr-PN-Xcr.text" xml:space="preserve">
+        <source>Verified</source>
+        <target>Terverifikasi</target>
+        <note>Class = "UILabel"; text = "Verified"; ObjectID = "axr-PN-Xcr";</note>
+      </trans-unit>
+      <trans-unit id="aza-Xk-MXu.text" xml:space="preserve">
+        <source>00:00C</source>
+        <target>00:00C</target>
+        <note>Class = "UILabel"; text = "00:00C"; ObjectID = "aza-Xk-MXu";</note>
+      </trans-unit>
+      <trans-unit id="bYc-bz-7iK.text" xml:space="preserve">
+        <source>No results</source>
+        <target>Tidak ada hasil</target>
+        <note>Class = "UILabel"; text = "No results"; ObjectID = "bYc-bz-7iK";</note>
+      </trans-unit>
+      <trans-unit id="bZv-2Q-BI9.text" xml:space="preserve">
+        <source>N</source>
+        <target>N</target>
+        <note>Class = "UILabel"; text = "N"; ObjectID = "bZv-2Q-BI9";</note>
+      </trans-unit>
+      <trans-unit id="bca-bT-6Tn.placeholder" xml:space="preserve">
+        <source>Description (optional)</source>
+        <target>Deskripsi (opsional)</target>
+        <note>Class = "UITextField"; placeholder = "Description (optional)"; ObjectID = "bca-bT-6Tn";</note>
+      </trans-unit>
+      <trans-unit id="bfU-AG-oM0.text" xml:space="preserve">
+        <source>We will send a message with confirmation code to address above</source>
+        <target>Kami akan mengirim pesan berisi kode konfirmasi ke alamat di atas</target>
+        <note>Class = "UILabel"; text = "We will send a message with confirmation code to address above"; ObjectID = "bfU-AG-oM0";</note>
+      </trans-unit>
+      <trans-unit id="bvE-OV-sy1.headerTitle" xml:space="preserve">
+        <source>Contacts</source>
+        <target>Kontak</target>
+        <note>Class = "UITableViewSection"; headerTitle = "Contacts"; ObjectID = "bvE-OV-sy1";</note>
+      </trans-unit>
+      <trans-unit id="cNq-5G-f58.normalTitle" xml:space="preserve">
+        <source> OK </source>
+        <target> OK </target>
+        <note>Class = "UIButton"; normalTitle = " OK "; ObjectID = "cNq-5G-f58";</note>
+      </trans-unit>
+      <trans-unit id="cOw-88-WKy.normalTitle" xml:space="preserve">
+        <source>Change</source>
+        <target>Ubah</target>
+        <note>Class = "UIButton"; normalTitle = "Change"; ObjectID = "cOw-88-WKy";</note>
+      </trans-unit>
+      <trans-unit id="d7l-9Y-8mk.title" xml:space="preserve">
+        <source>Help and About</source>
+        <target>Bantuan dan Tentang</target>
+        <note>Class = "UINavigationItem"; title = "Help and About"; ObjectID = "d7l-9Y-8mk";</note>
+      </trans-unit>
+      <trans-unit id="dLA-fr-G0I.text" xml:space="preserve">
+        <source>Alice Hatter</source>
+        <target>Alice Hatter</target>
+        <note>Class = "UILabel"; text = "Alice Hatter"; ObjectID = "dLA-fr-G0I";</note>
+      </trans-unit>
+      <trans-unit id="dT7-dW-WFv.text" xml:space="preserve">
+        <source>Delete Group</source>
+        <target>Hapus Grup</target>
+        <note>Class = "UILabel"; text = "Delete Group"; ObjectID = "dT7-dW-WFv";</note>
+      </trans-unit>
+      <trans-unit id="e6Y-GD-igB.text" xml:space="preserve">
+        <source>Delete Saved Messages</source>
+        <target>Hapus Pesan Tersimpan</target>
+        <note>Class = "UILabel"; text = "Delete Saved Messages"; ObjectID = "e6Y-GD-igB";</note>
+      </trans-unit>
+      <trans-unit id="eVu-vx-CU8.text" xml:space="preserve">
+        <source>128x365; 35KB</source>
+        <target>128x365; 35KB</target>
+        <note>Class = "UILabel"; text = "128x365; 35KB"; ObjectID = "eVu-vx-CU8";</note>
+      </trans-unit>
+      <trans-unit id="fO5-2o-Zk6.title" xml:space="preserve">
+        <source>Forward To</source>
+        <target>Teruskan ke</target>
+        <note>Class = "UINavigationItem"; title = "Forward To"; ObjectID = "fO5-2o-Zk6";</note>
+      </trans-unit>
+      <trans-unit id="fP4-sa-3Wz.title" xml:space="preserve">
+        <source>Archived chats</source>
+        <target>Chat yang diarsipkan</target>
+        <note>Class = "UINavigationItem"; title = "Archived chats"; ObjectID = "fP4-sa-3Wz";</note>
+      </trans-unit>
+      <trans-unit id="fPM-Ht-gZz.text" xml:space="preserve">
+        <source>Help and About</source>
+        <target>Bantuan dan Tentang</target>
+        <note>Class = "UILabel"; text = "Help and About"; ObjectID = "fPM-Ht-gZz";</note>
+      </trans-unit>
+      <trans-unit id="ftJ-J6-tqx.text" xml:space="preserve">
+        <source>ALL USERS</source>
+        <target>SEMUA PENGGUNA</target>
+        <note>Class = "UILabel"; text = "ALL USERS"; ObjectID = "ftJ-J6-tqx";</note>
+      </trans-unit>
+      <trans-unit id="gLF-JR-ZfF.accessibilityHint" xml:space="preserve">
+        <source>Password</source>
+        <target>Kata sandi</target>
+        <note>Class = "UITextField"; accessibilityHint = "Password"; ObjectID = "gLF-JR-ZfF";</note>
+      </trans-unit>
+      <trans-unit id="gLF-JR-ZfF.accessibilityLabel" xml:space="preserve">
+        <source>Password</source>
+        <target>Kata sandi</target>
+        <note>Class = "UITextField"; accessibilityLabel = "Password"; ObjectID = "gLF-JR-ZfF";</note>
+      </trans-unit>
+      <trans-unit id="gLF-JR-ZfF.placeholder" xml:space="preserve">
+        <source>Password</source>
+        <target>Kata sandi</target>
+        <note>Class = "UITextField"; placeholder = "Password"; ObjectID = "gLF-JR-ZfF";</note>
+      </trans-unit>
+      <trans-unit id="gQG-WO-eaD.placeholder" xml:space="preserve">
+        <source>Your name</source>
+        <target>Nama Anda</target>
+        <note>Class = "UITextField"; placeholder = "Your name"; ObjectID = "gQG-WO-eaD";</note>
+      </trans-unit>
+      <trans-unit id="geh-gC-6qO.text" xml:space="preserve">
+        <source>Send read receipts</source>
+        <target>Kirim tanda dibaca</target>
+        <note>Class = "UILabel"; text = "Send read receipts"; ObjectID = "geh-gC-6qO";</note>
+      </trans-unit>
+      <trans-unit id="gfT-SI-43h.title" xml:space="preserve">
+        <source>Video Preview</source>
+        <target>Pratinjau Video</target>
+        <note>Class = "UIViewController"; title = "Video Preview"; ObjectID = "gfT-SI-43h";</note>
+      </trans-unit>
+      <trans-unit id="goO-Va-Eyu.title" xml:space="preserve">
+        <source>FowardTo Navigation</source>
+        <target>FowardTo Navigation</target>
+        <note>Class = "UINavigationController"; title = "FowardTo Navigation"; ObjectID = "goO-Va-Eyu";</note>
+      </trans-unit>
+      <trans-unit id="hDW-u7-vzK.placeholder" xml:space="preserve">
+        <source>Configuration Code</source>
+        <target>Kode Konfigurasi</target>
+        <note>Class = "UITextField"; placeholder = "Configuration Code"; ObjectID = "hDW-u7-vzK";</note>
+      </trans-unit>
+      <trans-unit id="hTR-e8-PeX.title" xml:space="preserve">
+        <source>Blocked Contacts</source>
+        <target>Kontak Diblokir</target>
+        <note>Class = "UINavigationItem"; title = "Blocked Contacts"; ObjectID = "hTR-e8-PeX";</note>
+      </trans-unit>
+      <trans-unit id="hUo-8f-ZiA.title" xml:space="preserve">
+        <source>Personal</source>
+        <target>Pribadi</target>
+        <note>Class = "UINavigationItem"; title = "Personal"; ObjectID = "hUo-8f-ZiA";</note>
+      </trans-unit>
+      <trans-unit id="hZA-k4-xku.title" xml:space="preserve">
+        <source>New Chat</source>
+        <target>Chat Baru</target>
+        <note>Class = "UINavigationItem"; title = "New Chat"; ObjectID = "hZA-k4-xku";</note>
+      </trans-unit>
+      <trans-unit id="hoE-gS-bIw.normalTitle" xml:space="preserve">
+        <source>Request</source>
+        <target>Minta</target>
+        <note>Class = "UIButton"; normalTitle = "Request"; ObjectID = "hoE-gS-bIw";</note>
+      </trans-unit>
+      <trans-unit id="iYo-Ip-40L.headerTitle" xml:space="preserve">
+        <source>General</source>
+        <target>Umum</target>
+        <note>Class = "UITableViewSection"; headerTitle = "General"; ObjectID = "iYo-Ip-40L";</note>
+      </trans-unit>
+      <trans-unit id="jZE-Vv-ggf.text" xml:space="preserve">
+        <source>Add Members</source>
+        <target>Tambah Anggota</target>
+        <note>Class = "UILabel"; text = "Add Members"; ObjectID = "jZE-Vv-ggf";</note>
+      </trans-unit>
+      <trans-unit id="jjO-7B-XRZ.headerTitle" xml:space="preserve">
+        <source>Confirmation</source>
+        <target>Konfirmasi</target>
+        <note>Class = "UITableViewSection"; headerTitle = "Confirmation"; ObjectID = "jjO-7B-XRZ";</note>
+      </trans-unit>
+      <trans-unit id="jrt-hR-wyQ.text" xml:space="preserve">
+        <source>Alice Hatter</source>
+        <target>Alice Hatter</target>
+        <note>Class = "UILabel"; text = "Alice Hatter"; ObjectID = "jrt-hR-wyQ";</note>
+      </trans-unit>
+      <trans-unit id="kDN-bf-JDL.placeholder" xml:space="preserve">
+        <source>Name of the group</source>
+        <target>Nama grup</target>
+        <note>Class = "UITextField"; placeholder = "Name of the group"; ObjectID = "kDN-bf-JDL";</note>
+      </trans-unit>
+      <trans-unit id="kJw-Pr-jNc.headerTitle" xml:space="preserve">
+        <source>Permissions</source>
+        <target>Izin</target>
+        <note>Class = "UITableViewSection"; headerTitle = "Permissions"; ObjectID = "kJw-Pr-jNc";</note>
+      </trans-unit>
+      <trans-unit id="kSc-xN-hqx.text" xml:space="preserve">
+        <source>File name:</source>
+        <target>Nama file:</target>
+        <note>Class = "UILabel"; text = "File name:"; ObjectID = "kSc-xN-hqx";</note>
+      </trans-unit>
+      <trans-unit id="kiu-a5-pT6.text" xml:space="preserve">
+        <source>Content type:</source>
+        <target>Jenis konten:</target>
+        <note>Class = "UILabel"; text = "Content type:"; ObjectID = "kiu-a5-pT6";</note>
+      </trans-unit>
+      <trans-unit id="lJB-qW-1zX.headerTitle" xml:space="preserve">
+        <source>Group Members</source>
+        <target>Anggota Grup</target>
+        <note>Class = "UITableViewSection"; headerTitle = "Group Members"; ObjectID = "lJB-qW-1zX";</note>
+      </trans-unit>
+      <trans-unit id="lRE-RJ-Qgv.text" xml:space="preserve">
+        <source>File name:</source>
+        <target>Nama file:</target>
+        <note>Class = "UILabel"; text = "File name:"; ObjectID = "lRE-RJ-Qgv";</note>
+      </trans-unit>
+      <trans-unit id="mTa-Ke-dom.text" xml:space="preserve">
+        <source>N</source>
+        <target>N</target>
+        <note>Class = "UILabel"; text = "N"; ObjectID = "mTa-Ke-dom";</note>
+      </trans-unit>
+      <trans-unit id="mV4-Fq-kmc.title" xml:space="preserve">
+        <source>Account and Security</source>
+        <target>Akun dan Keamanan</target>
+        <note>Class = "UINavigationItem"; title = "Account and Security"; ObjectID = "mV4-Fq-kmc";</note>
+      </trans-unit>
+      <trans-unit id="moa-6V-LhX.text" xml:space="preserve">
+        <source>Size: </source>
+        <target>Ukuran: </target>
+        <note>Class = "UILabel"; text = "Size: "; ObjectID = "moa-6V-LhX";</note>
+      </trans-unit>
+      <trans-unit id="n9d-hv-55K.title" xml:space="preserve">
+        <source>Chats</source>
+        <target>Chat</target>
+        <note>Class = "UIViewController"; title = "Chats"; ObjectID = "n9d-hv-55K";</note>
+      </trans-unit>
+      <trans-unit id="nho-5Y-Mt8.placeholder" xml:space="preserve">
+        <source>Login</source>
+        <target>Login</target>
+        <note>Class = "UITextField"; placeholder = "Login"; ObjectID = "nho-5Y-Mt8";</note>
+      </trans-unit>
+      <trans-unit id="ntt-8z-Ay2.text" xml:space="preserve">
+        <source>No results</source>
+        <target>Tidak ada hasil</target>
+        <note>Class = "UILabel"; text = "No results"; ObjectID = "ntt-8z-Ay2";</note>
+      </trans-unit>
+      <trans-unit id="o1j-Ss-Jhj.accessibilityLabel" xml:space="preserve">
+        <source>LocalView</source>
+        <target>LocalView</target>
+        <note>Class = "UIView"; accessibilityLabel = "LocalView"; ObjectID = "o1j-Ss-Jhj";</note>
+      </trans-unit>
+      <trans-unit id="oDj-ht-EO8.title" xml:space="preserve">
+        <source>ChatsNavigationController</source>
+        <target>ChatsNavigationController</target>
+        <note>Class = "UINavigationController"; title = "ChatsNavigationController"; ObjectID = "oDj-ht-EO8";</note>
+      </trans-unit>
+      <trans-unit id="oER-Xi-WOZ.title" xml:space="preserve">
+        <source>Confirm credentials</source>
+        <target>Konfirmasi kredensial</target>
+        <note>Class = "UINavigationItem"; title = "Confirm credentials"; ObjectID = "oER-Xi-WOZ";</note>
+      </trans-unit>
+      <trans-unit id="oPa-Qr-HlP.title" xml:space="preserve">
+        <source>StartNavigationController</source>
+        <target>StartNavigationController</target>
+        <note>Class = "UINavigationController"; title = "StartNavigationController"; ObjectID = "oPa-Qr-HlP";</note>
+      </trans-unit>
+      <trans-unit id="q6T-TC-n42.normalTitle" xml:space="preserve">
+        <source>Forgot password?</source>
+        <target>Lupa kata sandi?</target>
+        <note>Class = "UIButton"; normalTitle = "Forgot password?"; ObjectID = "q6T-TC-n42";</note>
+      </trans-unit>
+      <trans-unit id="qBo-ye-avT.title" xml:space="preserve">
+        <source>New chat</source>
+        <target>Chat baru</target>
+        <note>Class = "UITabBarController"; title = "New chat"; ObjectID = "qBo-ye-avT";</note>
+      </trans-unit>
+      <trans-unit id="qY7-Dy-tZI.text" xml:space="preserve">
+        <source>Size:</source>
+        <target>Ukuran:</target>
+        <note>Class = "UILabel"; text = "Size:"; ObjectID = "qY7-Dy-tZI";</note>
+      </trans-unit>
+      <trans-unit id="qeU-hX-VEM.title" xml:space="preserve">
+        <source>Administrative and Security</source>
+        <target>Administrasi dan Keamanan</target>
+        <note>Class = "UINavigationItem"; title = "Administrative and Security"; ObjectID = "qeU-hX-VEM";</note>
+      </trans-unit>
+      <trans-unit id="qvs-D4-f94.text" xml:space="preserve">
+        <source>Change password</source>
+        <target>Ubah kata sandi</target>
+        <note>Class = "UILabel"; text = "Change password"; ObjectID = "qvs-D4-f94";</note>
+      </trans-unit>
+      <trans-unit id="r8j-wT-BLF.text" xml:space="preserve">
+        <source>Manage Tags</source>
+        <target>Kelola Tag</target>
+        <note>Class = "UILabel"; text = "Manage Tags"; ObjectID = "r8j-wT-BLF";</note>
+      </trans-unit>
+      <trans-unit id="raq-d6-2nI.headerTitle" xml:space="preserve">
+        <source>Actions</source>
+        <target>Tindakan</target>
+        <note>Class = "UITableViewSection"; headerTitle = "Actions"; ObjectID = "raq-d6-2nI";</note>
+      </trans-unit>
+      <trans-unit id="rlG-v4-QUc.title" xml:space="preserve">
+        <source>Profile</source>
+        <target>Profil</target>
+        <note>Class = "UIBarButtonItem"; title = "Profile"; ObjectID = "rlG-v4-QUc";</note>
+      </trans-unit>
+      <trans-unit id="rlX-B4-4KE.text" xml:space="preserve">
+        <source>Leave Group</source>
+        <target>Keluar dari Grup</target>
+        <note>Class = "UILabel"; text = "Leave Group"; ObjectID = "rlX-B4-4KE";</note>
+      </trans-unit>
+      <trans-unit id="rqZ-eR-8TP.title" xml:space="preserve">
+        <source>Find</source>
+        <target>Cari</target>
+        <note>Class = "UITabBarItem"; title = "Find"; ObjectID = "rqZ-eR-8TP";</note>
+      </trans-unit>
+      <trans-unit id="s6S-ku-F63.text" xml:space="preserve">
+        <source>N</source>
+        <target>N</target>
+        <note>Class = "UILabel"; text = "N"; ObjectID = "s6S-ku-F63";</note>
+      </trans-unit>
+      <trans-unit id="s7j-0b-iei.text" xml:space="preserve">
+        <source>@aliassss</source>
+        <target>@aliassss</target>
+        <note>Class = "UILabel"; text = "@aliassss"; ObjectID = "s7j-0b-iei";</note>
+      </trans-unit>
+      <trans-unit id="sH2-lo-2DQ.text" xml:space="preserve">
+        <source>Alias</source>
+        <target>Alias</target>
+        <note>Class = "UILabel"; text = "Alias"; ObjectID = "sH2-lo-2DQ";</note>
+      </trans-unit>
+      <trans-unit id="skU-B7-Zed.text" xml:space="preserve">
+        <source>This is a channel</source>
+        <target>Ini adalah channel</target>
+        <note>Class = "UILabel"; text = "This is a channel"; ObjectID = "skU-B7-Zed"; Note = "Label for channel switch";</note>
+      </trans-unit>
+      <trans-unit id="syF-Vp-vRc.text" xml:space="preserve">
+        <source>John Doe</source>
+        <target>John Doe</target>
+        <note>Class = "UILabel"; text = "John Doe"; ObjectID = "syF-Vp-vRc";</note>
+      </trans-unit>
+      <trans-unit id="te7-Jx-ztq.accessibilityLabel" xml:space="preserve">
+        <source>Footer</source>
+        <target>Bagian bawah</target>
+        <note>Class = "UIView"; accessibilityLabel = "Footer"; ObjectID = "te7-Jx-ztq";</note>
+      </trans-unit>
+      <trans-unit id="w7y-oy-XLG.text" xml:space="preserve">
+        <source>My Code</source>
+        <target>Kode Saya</target>
+        <note>Class = "UILabel"; text = "My Code"; ObjectID = "w7y-oy-XLG";</note>
+      </trans-unit>
+      <trans-unit id="wPJ-94-8aV.text" xml:space="preserve">
+        <source>Yours</source>
+        <target>Milik Anda</target>
+        <note>Class = "UILabel"; text = "Yours"; ObjectID = "wPJ-94-8aV";</note>
+      </trans-unit>
+      <trans-unit id="wd7-ah-oJu.text" xml:space="preserve">
+        <source>Authenticated users</source>
+        <target>Pengguna terautentikasi</target>
+        <note>Class = "UILabel"; text = "Authenticated users"; ObjectID = "wd7-ah-oJu";</note>
+      </trans-unit>
+      <trans-unit id="wfA-TG-Chj.text" xml:space="preserve">
+        <source>128x365; 35KB</source>
+        <target>128x365; 35KB</target>
+        <note>Class = "UILabel"; text = "128x365; 35KB"; ObjectID = "wfA-TG-Chj";</note>
+      </trans-unit>
+      <trans-unit id="wnZ-ve-5xb.text" xml:space="preserve">
+        <source>Delete Messages</source>
+        <target>Hapus Pesan</target>
+        <note>Class = "UILabel"; text = "Delete Messages"; ObjectID = "wnZ-ve-5xb";</note>
+      </trans-unit>
+      <trans-unit id="x1J-Xq-2H1.text" xml:space="preserve">
+        <source>128x365; 35KB</source>
+        <target>128x365; 35KB</target>
+        <note>Class = "UILabel"; text = "128x365; 35KB"; ObjectID = "x1J-Xq-2H1";</note>
+      </trans-unit>
+      <trans-unit id="x8E-eZ-ZOa.text" xml:space="preserve">
+        <source>timestamp</source>
+        <target>timestamp</target>
+        <note>Class = "UILabel"; text = "timestamp"; ObjectID = "x8E-eZ-ZOa";</note>
+      </trans-unit>
+      <trans-unit id="xIw-r0-6Pv.accessibilityLabel" xml:space="preserve">
+        <source>Footer</source>
+        <target>Bagian bawah</target>
+        <note>Class = "UIView"; accessibilityLabel = "Footer"; ObjectID = "xIw-r0-6Pv";</note>
+      </trans-unit>
+      <trans-unit id="xmn-wq-Hpr.placeholder" xml:space="preserve">
+        <source>usr123aBcDef</source>
+        <target>usr123aBcDef</target>
+        <note>Class = "UITextField"; placeholder = "usr123aBcDef"; ObjectID = "xmn-wq-Hpr";</note>
+      </trans-unit>
+      <trans-unit id="xyg-ee-0pd.text" xml:space="preserve">
+        <source>Incognito mode</source>
+        <target>Mode samaran</target>
+        <note>Class = "UILabel"; text = "Incognito mode"; ObjectID = "xyg-ee-0pd"; Note = "Label for incognito mode switch";</note>
+      </trans-unit>
+      <trans-unit id="y4A-Jz-woo.placeholder" xml:space="preserve">
+        <source>Confirmation code</source>
+        <target>Kode konfirmasi</target>
+        <note>Class = "UITextField"; placeholder = "Confirmation code"; ObjectID = "y4A-Jz-woo";</note>
+      </trans-unit>
+      <trans-unit id="yFq-90-cu1.normalTitle" xml:space="preserve">
+        <source>Confirm</source>
+        <target>Konfirmasi</target>
+        <note>Class = "UIButton"; normalTitle = "Confirm"; ObjectID = "yFq-90-cu1";</note>
+      </trans-unit>
+      <trans-unit id="yKx-xt-rdn.placeholder" xml:space="preserve">
+        <source>First and last name</source>
+        <target>Nama depan dan belakang</target>
+        <note>Class = "UITextField"; placeholder = "First and last name"; ObjectID = "yKx-xt-rdn";</note>
+      </trans-unit>
+      <trans-unit id="z08-iK-CeG.text" xml:space="preserve">
+        <source>Account and Security</source>
+        <target>Akun dan Keamanan</target>
+        <note>Class = "UILabel"; text = "Account and Security"; ObjectID = "z08-iK-CeG";</note>
+      </trans-unit>
+      <trans-unit id="zCU-jx-lsJ.text" xml:space="preserve">
+        <source>Tinode</source>
+        <target>Tinode</target>
+        <note>Class = "UILabel"; text = "Tinode"; ObjectID = "zCU-jx-lsJ";</note>
+      </trans-unit>
+      <trans-unit id="zW8-KF-N8J.headerTitle" xml:space="preserve">
+        <source>Default Permissions</source>
+        <target>Izin Bawaan</target>
+        <note>Class = "UITableViewSection"; headerTitle = "Default Permissions"; ObjectID = "zW8-KF-N8J";</note>
+      </trans-unit>
+      <trans-unit id="zkl-8R-Tma.text" xml:space="preserve">
+        <source>Staff-managed</source>
+        <target>Dikelola staf</target>
+        <note>Class = "UILabel"; text = "Staff-managed"; ObjectID = "zkl-8R-Tma";</note>
+      </trans-unit>
+      <trans-unit id="zmL-3Y-R2r.placeholder" xml:space="preserve">
+        <source>Email</source>
+        <target>Email atau nomor telepon</target>
+        <note>Class = "UITextField"; placeholder = "Email"; ObjectID = "zmL-3Y-R2r";</note>
+      </trans-unit>
+      <trans-unit id="zr8-yN-F8L.text" xml:space="preserve">
+        <source>Leave Conversation</source>
+        <target>Keluar dari Percakapan</target>
+        <note>Class = "UILabel"; text = "Leave Conversation"; ObjectID = "zr8-yN-F8L";</note>
+      </trans-unit>
+      <trans-unit id="zww-h7-9s0.title" xml:space="preserve">
+        <source>Editing</source>
+        <target>Mengedit</target>
+        <note>Class = "UINavigationItem"; title = "Editing"; ObjectID = "zww-h7-9s0";</note>
+      </trans-unit>
+      <trans-unit id="zz2-fg-2IG.text" xml:space="preserve">
+        <source>Permissions, block or report chat</source>
+        <target>Izin, blokir, atau laporkan chat</target>
+        <note>Class = "UILabel"; text = "Permissions, block or report chat"; ObjectID = "zz2-fg-2IG";</note>
+      </trans-unit>
+    </body>
+  </file>
+  <file original="Tinodios/en.lproj/InfoPlist.strings" source-language="en" target-language="id" datatype="plaintext">
+    <header>
+      <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="16.4" build-num="16F6"/>
+    </header>
+    <body>
+      <trans-unit id="CFBundleDisplayName" xml:space="preserve">
+        <source>Tinode</source>
+        <target>Tinode</target>
+        <note>Bundle display name</note>
+      </trans-unit>
+      <trans-unit id="CFBundleName" xml:space="preserve">
+        <source>Tinodios</source>
+        <target>Tinodios</target>
+        <note>Bundle name</note>
+      </trans-unit>
+      <trans-unit id="NSCameraUsageDescription" xml:space="preserve">
+        <source>Tinode takes photos with the camera to use as avatar or to send them to your contacts</source>
+        <target>Tinode menggunakan kamera untuk mengambil foto sebagai avatar atau mengirimkannya ke kontak Anda</target>
+        <note>Privacy - Camera Usage Description</note>
+      </trans-unit>
+      <trans-unit id="NSContactsUsageDescription" xml:space="preserve">
+        <source>Tinode sends only emails and phone numbers to the Tinode server to help you connect with other users</source>
+        <target>Tinode hanya mengirim alamat email dan nomor telepon ke server Tinode untuk membantu Anda terhubung dengan pengguna lain</target>
+        <note>Privacy - Contacts Usage Description</note>
+      </trans-unit>
+      <trans-unit id="NSMicrophoneUsageDescription" xml:space="preserve">
+        <source>Tinode uses microphone to record audio messages you send to your contacts</source>
+        <target>Tinode menggunakan mikrofon untuk merekam pesan audio yang Anda kirim ke kontak Anda</target>
+        <note>Privacy - Microphone Usage Description</note>
+      </trans-unit>
+      <trans-unit id="NSPhotoLibraryAddUsageDescription" xml:space="preserve">
+        <source>Images and pictures from Tinode can be saved in the photo library</source>
+        <target>Gambar dan foto dari Tinode dapat disimpan ke perpustakaan foto</target>
+        <note>Privacy - Photo Library Additions Usage Description</note>
+      </trans-unit>
+      <trans-unit id="NSPhotoLibraryUsageDescription" xml:space="preserve">
+        <source>Tinode needs access to your photos to let you you send them to your contacts</source>
+        <target>Tinode memerlukan akses ke foto Anda agar Anda dapat mengirimkannya ke kontak Anda</target>
+        <note>Privacy - Photo Library Usage Description</note>
+      </trans-unit>
+    </body>
+  </file>
+  <file original="Tinodios/Settings.bundle/en.lproj/ConnectionSettings.strings" source-language="en" target-language="id" datatype="plaintext">
+    <header>
+      <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="16.4" build-num="16F6"/>
+    </header>
+    <body>
+      <trans-unit id="Host name" xml:space="preserve">
+        <source>Host name</source>
+        <target>Nama host</target>
+        <note>A single strings file, whose title is specified in your preferences schema. The strings files provide the localized content to display to the user for each of your preferences.</note>
+      </trans-unit>
+      <trans-unit id="Use TLS" xml:space="preserve">
+        <source>Use TLS</source>
+        <target>Gunakan TLS</target>
+        <note/>
+      </trans-unit>
+    </body>
+  </file>
+  <file original="Tinodios/Settings.bundle/en.lproj/GeneralSettings.strings" source-language="en" target-language="id" datatype="plaintext">
+    <header>
+      <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="16.4" build-num="16F6"/>
+    </header>
+    <body>
+      <trans-unit id="Choose interface style" xml:space="preserve">
+        <source>Choose interface style</source>
+        <target>Pilih gaya antarmuka</target>
+        <note>A single strings file, whose title is specified in your preferences schema. The strings files provide the localized content to display to the user for each of your preferences.</note>
+      </trans-unit>
+      <trans-unit id="Send on Enter" xml:space="preserve">
+        <source>Send on Enter</source>
+        <target>Kirim dengan Enter</target>
+        <note/>
+      </trans-unit>
+    </body>
+  </file>
+  <file original="Tinodios/Settings.bundle/en.lproj/Root.strings" source-language="en" target-language="id" datatype="plaintext">
+    <header>
+      <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="16.4" build-num="16F6"/>
+    </header>
+    <body>
+      <trans-unit id="Acknowledgements" xml:space="preserve">
+        <source>Acknowledgements</source>
+        <target>Ucapan terima kasih</target>
+        <note/>
+      </trans-unit>
+      <trans-unit id="Bundle version" xml:space="preserve">
+        <source>Bundle version</source>
+        <target>Versi bundle</target>
+        <note>A single strings file, whose title is specified in your preferences schema. The strings files provide the localized content to display to the user for each of your preferences.</note>
+      </trans-unit>
+      <trans-unit id="Connection settings" xml:space="preserve">
+        <source>Connection settings</source>
+        <target>Pengaturan koneksi</target>
+        <note/>
+      </trans-unit>
+      <trans-unit id="General settings" xml:space="preserve">
+        <source>General settings</source>
+        <target>Pengaturan umum</target>
+        <note/>
+      </trans-unit>
+    </body>
+  </file>
+  <file original="Tinodios/widgets/Base.lproj/MultilineAlertView.xib" source-language="en" target-language="id" datatype="plaintext">
+    <header>
+      <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="16.4" build-num="16F6"/>
+    </header>
+    <body>
+      <trans-unit id="A57-2v-ao9.normalTitle" xml:space="preserve">
+        <source>OK</source>
+        <target>OK</target>
+        <note>Class = "UIButton"; normalTitle = "OK"; ObjectID = "A57-2v-ao9";</note>
+      </trans-unit>
+      <trans-unit id="AMx-JQ-2f8.normalTitle" xml:space="preserve">
+        <source>Cancel</source>
+        <target>Batal</target>
+        <note>Class = "UIButton"; normalTitle = "Cancel"; ObjectID = "AMx-JQ-2f8";</note>
+      </trans-unit>
+      <trans-unit id="W0P-gB-P5h.text" xml:space="preserve">
+        <source>Title</source>
+        <target>Judul</target>
+        <note>Class = "UILabel"; text = "Title"; ObjectID = "W0P-gB-P5h";</note>
+      </trans-unit>
+    </body>
+  </file>
+  <file original="Tinodios/widgets/Base.lproj/TagsEditDialogView.xib" source-language="en" target-language="id" datatype="plaintext">
+    <header>
+      <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="16.4" build-num="16F6"/>
+    </header>
+    <body>
+      <trans-unit id="PJ7-dH-ATp.normalTitle" xml:space="preserve">
+        <source>OK</source>
+        <target>OK</target>
+        <note>Class = "UIButton"; normalTitle = "OK"; ObjectID = "PJ7-dH-ATp";</note>
+      </trans-unit>
+      <trans-unit id="eeW-SH-URg.text" xml:space="preserve">
+        <source>Tags (content discovery)</source>
+        <target>Tag (pencarian konten)</target>
+        <note>Class = "UILabel"; text = "Tags (content discovery)"; ObjectID = "eeW-SH-URg";</note>
+      </trans-unit>
+      <trans-unit id="vOv-C1-oEb.normalTitle" xml:space="preserve">
+        <source>Cancel</source>
+        <target>Batal</target>
+        <note>Class = "UIButton"; normalTitle = "Cancel"; ObjectID = "vOv-C1-oEb";</note>
+      </trans-unit>
+    </body>
+  </file>
+  <file original="TinodiosDB/en.lproj/InfoPlist.strings" source-language="en" target-language="id" datatype="plaintext">
+    <header>
+      <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="16.4" build-num="16F6"/>
+    </header>
+    <body>
+      <trans-unit id="CFBundleName" translate="no" xml:space="preserve">
+        <source>TinodiosDB</source>
+        <target>TinodiosDB</target>
+        <note>Bundle name</note>
+      </trans-unit>
+    </body>
+  </file>
+  <file original="TinodiosNSExtension/en.lproj/InfoPlist.strings" source-language="en" target-language="id" datatype="plaintext">
+    <header>
+      <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="16.4" build-num="16F6"/>
+    </header>
+    <body>
+      <trans-unit id="CFBundleDisplayName" xml:space="preserve">
+        <source>TinodiosNSExtension</source>
+        <target>TinodiosNSExtension</target>
+        <note>Bundle display name</note>
+      </trans-unit>
+      <trans-unit id="CFBundleName" xml:space="preserve">
+        <source>TinodiosNSExtension</source>
+        <target>TinodiosNSExtension</target>
+        <note>Bundle name</note>
+      </trans-unit>
+    </body>
+  </file>
+  <file original="TinodiosNSExtension/en.lproj/Localizable.strings" source-language="en" target-language="id" datatype="plaintext">
+    <header>
+      <tool tool-id="com.apple.dt.xcode" tool-name="Xcode" tool-version="16.4" build-num="16F6"/>
+    </header>
+    <body>
+      <trans-unit id="New chat" xml:space="preserve">
+        <source>New chat</source>
+        <target>Chat baru</target>
+        <note>Push notification title</note>
+      </trans-unit>
+      <trans-unit id="Unknown" xml:space="preserve">
+        <source>Unknown</source>
+        <target>Tidak diketahui</target>
+        <note>Placeholder for missing topic name
+Placeholder for missing user name</note>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

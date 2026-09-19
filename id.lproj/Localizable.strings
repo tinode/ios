@@ -1,0 +1,501 @@
+/* Invite reaction button */
+"Accept" = "Terima";
+
+/* Toast notification */
+"Action failed: %@" = "Tindakan gagal: %@";
+
+/* Alert title */
+"Add contact" = "Tambah kontak";
+
+/* Alert placeholder */
+"Additional info (private)" = "Info tambahan (pribadi)";
+
+/* Toast notification */
+"Address copied" = "Alamat disalin";
+
+/* Toast notification */
+"Alias copied" = "Alias disalin";
+
+/* Alert explanation */
+"Also block and remove all messages" = "Blokir juga dan hapus semua pesan";
+
+/* Swipe action */
+"Archive" = "Arsipkan";
+
+/* View title */
+"Archived Chats" = "Chat yang Diarsipkan";
+
+/* Button to open chat archive */
+"Archived Chats (%@)" = "Chat yang Diarsipkan (%@)";
+
+/* Warning in delete account alert */
+"Are you sure you want to delete your account? It cannot be undone." = "Yakin ingin menghapus akun Anda? Tindakan ini tidak dapat dibatalkan.";
+
+/* Warning in logout alert */
+"Are you sure you want to log out?" = "Yakin ingin keluar?";
+
+/* Label shown next to an attachment */
+"Attachment" = "Lampiran";
+
+/* Error message: attachment too large */
+"Attachment exceeds maximum size" = "Lampiran melebihi ukuran maksimum";
+
+/* Menu item: audio-only call */
+"Audio-only" = "Hanya audio";
+
+/* Alert action
+   Invite reaction button */
+"Block" = "Blokir";
+
+/* Alert action */
+"Block contact?" = "Blokir kontak?";
+
+/* Menu title for selecting type of call */
+"Call" = "Panggilan";
+
+/* Toast notification */
+"Can't change permissions for this user." = "Tidak dapat mengubah izin untuk pengguna ini.";
+
+/* Toast notification */
+"Can't make this user owner." = "Tidak dapat menjadikan pengguna ini sebagai pemilik.";
+
+/* Alert action */
+"Cancel" = "Batal";
+
+/* Error message */
+"Cannot send email: functionality not accessible." = "Tidak dapat mengirim email: fitur tidak tersedia.";
+
+/* Alert title */
+"Change Password" = "Ubah Kata Sandi";
+
+/* Alert action */
+"Change permissions" = "Ubah izin";
+
+/* Invitation subject */
+"Check out Tinode Messenger" = "Coba Tinode Messenger";
+
+/* Invitation body */
+"Check out Tinode Messenger: https://tinode.co/" = "Coba Tinode Messenger: https://tinode.co/";
+
+/* Alert title */
+"Clear all messages?" = "Hapus semua pesan?";
+
+/* Alert title */
+"Confirm contact" = "Konfirmasi kontak";
+
+/* Info message */
+"Confirmaition message sent to %@" = "Pesan konfirmasi dikirim ke %@";
+
+/* Confirmation code sent */
+"Confirmation code sent" = "Kode konfirmasi telah dikirim";
+
+/* Toast info message */
+"Confirmed successfully" = "Berhasil dikonfirmasi";
+
+/* Progress overlay */
+"Confirming..." = "Mengonfirmasi...";
+
+/* Toast notification */
+"Connection to server lost." = "Koneksi ke server terputus.";
+
+/* Replacement for chat message with no content */
+"Content deleted" = "Konten dihapus";
+
+/* Menu item */
+"Copy" = "Salin";
+
+/* Alert action */
+"Copy to clipboard" = "Salin ke papan klip";
+
+/* Error message */
+"Could not change password: %@" = "Tidak dapat mengubah kata sandi: %@";
+
+/* Error message */
+"Couldn't connect to server at %@: %@" = "Tidak dapat terhubung ke server di %@: %@";
+
+/* Label for email or phone number entering */
+"Current credential" = "Kredensial saat ini";
+
+/* Alert action
+   Menu item
+   Swipe action */
+"Delete" = "Hapus";
+
+/* Alert title */
+"Delete Saved messages?" = "Hapus pesan tersimpan?";
+
+/* Menu item */
+"Delete for all" = "Hapus untuk semua";
+
+/* Menu item */
+"Delete for me" = "Hapus untuk saya";
+
+/* Alert title */
+"Delete the group?" = "Hapus grup?";
+
+/* Section title */
+"Directory" = "Direktori";
+
+/* Menu item */
+"Edit" = "Edit";
+
+/* Alert title */
+"Edit Group" = "Edit Grup";
+
+/* Alert title */
+"Edit account name" = "Edit nama akun";
+
+/* Alert action */
+"Email" = "Email";
+
+/* Toast error message */
+"Enter a valid credential (phone or email)." = "Masukkan kredensial yang valid (nomor telepon atau email).";
+
+/* Alert prompt */
+"Enter confirmation code sent to you by %@" = "Masukkan kode konfirmasi yang dikirim kepada Anda melalui %@";
+
+/* Alert message */
+"Enter email or phone number" = "Masukkan email atau nomor telepon";
+
+/* Alert prompt */
+"Enter new password" = "Masukkan kata sandi baru";
+
+/* Error message */
+"Entered text is neither email nor phone number." = "Teks yang dimasukkan bukan email maupun nomor telepon.";
+
+/* Toast notification */
+"Error changing permissions: %@" = "Gagal mengubah izin: %@";
+
+/* Error message: malformed URL string */
+"Failed to create URL string for file: %@" = "Gagal membuat string URL untuk file: %@";
+
+/* Error message */
+"Failed to create account: %@" = "Gagal membuat akun: %@";
+
+/* Error message */
+"Failed to save group and contact info." = "Gagal menyimpan info grup dan kontak.";
+
+/* Error message */
+"Failed to send email: %@" = "Gagal mengirim email: %@";
+
+/* Error message */
+"Failed to subscribe to topic: %@" = "Gagal bergabung ke topik: %@";
+
+/* Alert action qualifier as in 'Delete for all' */
+"For all" = "Untuk semua";
+
+/* Alert action 'Delete for me' */
+"For me" = "Untuk saya";
+
+/* Label shown next to a form in preview */
+"Form" = "Formulir";
+
+/* Menu item */
+"Forward" = "Teruskan";
+
+/* User name prompt */
+"Full name, e.g. John Doe" = "Nama lengkap, mis. John Doe";
+
+/* Invite reaction button */
+"Ignore" = "Abaikan";
+
+/* Label for incoming video/audio calls */
+"Incoming call" = "Panggilan masuk";
+
+/* Error message */
+"Invalid group ID: %d (%@)" = "ID grup tidak valid: %1$d (%2$@)";
+
+/* Error message when the image cannot be processed */
+"Invalid image" = "Gambar tidak valid";
+
+/* Password reset error */
+"Invalid or unknown address" = "Alamat tidak valid atau tidak dikenal";
+
+/* Dialog title: call to action */
+"Invite" = "Undang";
+
+/* Label for join conference link */
+"Join" = "Gabung";
+
+/* Alert action */
+"Leave" = "Keluar";
+
+/* Alert title */
+"Leave the conversation?" = "Keluar dari percakapan?";
+
+/* Alert title */
+"Leave the group?" = "Keluar dari grup?";
+
+/* Section title */
+"Local Contacts" = "Kontak Lokal";
+
+/* Login progress text */
+"Logging in..." = "Sedang masuk...";
+
+/* Error message */
+"Login info missing..." = "Info login tidak tersedia...";
+
+/* Alert action */
+"Make owner" = "Jadikan pemilik";
+
+/* View title */
+"Manage members" = "Kelola anggota";
+
+/* Toast notification */
+"Message not sent." = "Pesan tidak terkirim.";
+
+/* Toast info */
+"Message with instructions sent to the provided address." = "Pesan berisi petunjuk telah dikirim ke alamat yang diberikan.";
+
+/* Alert action */
+"Messages" = "Pesan";
+
+/* Title for displaying a QR Code */
+"My Code" = "Kode Saya";
+
+/* Alert placeholder */
+"Name of the group" = "Nama grup";
+
+/* Invalid date */
+"Never ??:??" = "Tidak pernah ??:??";
+
+/* View title */
+"New Chat" = "Chat Baru";
+
+/* Error message */
+"No access to email" = "Tidak dapat mengakses email";
+
+/* No read access in chat
+   Toast error message */
+"No access to messages" = "Tidak dapat mengakses pesan";
+
+/* Placeholder when no members are selected */
+"No members selected" = "Tidak ada anggota yang dipilih";
+
+/* Placeholder in empty chat */
+"No messages in the conversation" = "Belum ada pesan dalam percakapan";
+
+/* Error message when call cannot be started due to missing camera permission */
+"No permission to access camera" = "Izin akses kamera tidak diberikan";
+
+/* Error message when call cannot be started due to missing microphone permission */
+"No permission to access microphone" = "Izin akses mikrofon tidak diberikan";
+
+/* Explanation for Saved messages topic */
+"Notes, messages, links, files saved for posterity" = "Catatan, pesan, tautan, dan file yang disimpan untuk nanti";
+
+/* Alert action */
+"OK" = "OK";
+
+/* Toast notification */
+"Only Owner can delete group" = "Hanya pemilik yang dapat menghapus grup";
+
+/* Placeholder for missing topic description
+Placeholder for missing user self-description */
+"Optional description" = "Deskripsi opsional";
+
+/* Label for outgoing video/audio calls */
+"Outgoing call" = "Panggilan keluar";
+
+/* Toast notification */
+"Owner cannot leave the group" = "Pemilik tidak dapat keluar dari grup";
+
+/* Error message */
+"Password too short" = "Kata sandi terlalu pendek";
+
+/* Success message */
+"Password updated" = "Kata sandi diperbarui";
+
+/* Toast notification */
+"Permissions not modified: %d (%s)" = "Izin gagal diubah: %1$d (%2$s)";
+
+/* Label shown next to an inline image */
+"Picture" = "Gambar";
+
+/* Menu item for pinning message */
+"Pin" = "Sematkan";
+
+/* Error message */
+"Playback failed" = "Pemutaran gagal";
+
+/* Progress overlay */
+"Please wait..." = "Harap tunggu...";
+
+/* Placeholder text in editor */
+"Private info: not set" = "Info pribadi: belum diisi";
+
+/* Error message when QR code scanner failed to init */
+"QRCode scanner failed to initialize" = "Pemindai kode QR gagal dimulai";
+
+/* Error message */
+"Recording failed" = "Perekaman gagal";
+
+/* Progress overlay */
+"Registering..." = "Mendaftar...";
+
+/* Alert action */
+"Remove" = "Keluarkan";
+
+/* Confirmation */
+"Remove %@ from %@?" = "Keluarkan %1$@ dari %2$@?";
+
+/* Confirmation */
+"Remove and ban %@ from %@?" = "Keluarkan dan blokir %1$@ dari %2$@?";
+
+/* Menu item */
+"Reply" = "Balas";
+
+/* Alert action */
+"Report" = "Laporkan";
+
+/* Alert title */
+"Report Group?" = "Laporkan grup?";
+
+/* Alert title */
+"Report contact?" = "Laporkan kontak?";
+
+/* Error message */
+"Request failed: %@" = "Permintaan gagal: %@";
+
+/* Progress overlay */
+"Requesting..." = "Mengirim permintaan...";
+
+/* Title for slf topic
+Title of slf topic
+Title of the slf topic */
+"Saved messages" = "Pesan tersimpan";
+
+/* Title for camera preview when scanning a QR code */
+"Scan Code" = "Pindai Kode";
+
+/* Placeholder prompt */
+"Search by tags" = "Cari berdasarkan tag";
+
+/* Error message when permissions are missing */
+"Search functionality limited. Grant Contacts permission." = "Pencarian terbatas. Izinkan akses ke Kontak.";
+
+/* Error message */
+"Select at least one group member" = "Pilih setidaknya satu anggota grup";
+
+/* Alert action */
+"Send message" = "Kirim pesan";
+
+/* Service unavailable */
+"Service unavailable at this time. Please try again later." = "Layanan tidak tersedia saat ini. Coba lagi nanti.";
+
+/* Toast notification */
+"Something went wrong: %d (%s)" = "Terjadi kesalahan: %1$d (%2$s)";
+
+/* Toast notification */
+"Something went wrong: (%d) %@" = "Terjadi kesalahan: (%1$d) %2$@";
+
+/* Toast notification */
+"Tags missing." = "Tag belum diisi.";
+
+/* Toast notification */
+"The avatar is too small." = "Avatar terlalu kecil.";
+
+/* Error message */
+"The file size exceeds the limit %@" = "Ukuran file melebihi batas %@";
+
+/* Toast notification */
+"Topic name missing" = "Nama topik belum diisi";
+
+/* Swipe action */
+"Unarchive" = "Keluarkan dari arsip";
+
+/* Swipe action */
+"Unblock" = "Buka blokir";
+
+/* Undefined chat name */
+"Undefined" = "Belum ditentukan";
+
+/* Placeholder for missing topic name
+   Placeholder for missing user name */
+"Unknown" = "Tidak diketahui";
+
+/* Sender with missing name */
+"Unknown %@" = "Tidak diketahui %@";
+
+/* Topic title when it has no name */
+"Unknown or unnamed" = "Tidak diketahui atau tanpa nama";
+
+/* Displayed when the type of attachment cannot be determined */
+"Unknown type" = "Jenis tidak diketahui";
+
+/* Menu item for un-pinning message */
+"Unpin" = "Lepas sematan";
+
+/* Label shown next to an unsupported Drafty format element
+Unsupported (unknown) Drafty tag */
+"Unsupported" = "Tidak didukung";
+
+/* Progress overlay */
+"Updating password..." = "Memperbarui kata sandi...";
+
+/* Error message */
+"Upload failed (%@). No server response." = "Unggahan gagal (%@). Tidak ada respons dari server.";
+
+/* Error message */
+"Upload failed (%@): empty response body." = "Unggahan gagal (%@): isi respons kosong.";
+
+/* Error message */
+"Upload failed (%@): response code %d." = "Unggahan gagal (%1$@): kode respons %2$d.";
+
+/* Error message */
+"Verification failure: %d %@" = "Verifikasi gagal: %1$d %2$@";
+
+/* Label shown next to an inline video
+Menu item: video call */
+"Video" = "Video";
+
+/* Telephone password reset prompt */
+"We will send a SMS with confirmation code to the number below" = "Kami akan mengirim SMS berisi kode konfirmasi ke nomor di bawah ini";
+
+/* Email password reset prompt */
+"We will send an email with confirmation code to the address below" = "Kami akan mengirim email berisi kode konfirmasi ke alamat di bawah ini";
+
+/* This is 'you' */
+"You" = "Anda";
+
+/* Call to action */
+"You are invited to start a new chat. What would you like?" = "Anda diundang untuk memulai chat baru. Apa yang ingin Anda lakukan?";
+
+/* Toast notification */
+"You are offline." = "Anda sedang offline.";
+
+/* Placeholder when no chats found */
+"You have no chats\n\n¯\_(ツ)_/¯" = "Anda belum memiliki chat\n\n¯\_(ツ)_/¯";
+
+/* Text written on button face when all else fails. */
+"button" = "tombol";
+
+/* Label for cancelled call */
+"cancelled" = "dibatalkan";
+
+/* Button text */
+"confirm" = "konfirmasi";
+
+/* Label for initiated call */
+"connecting" = "menghubungkan";
+
+/* `Edited` message marker */
+"edited" = "diedit";
+
+/* Label for call in progress */
+"in progress" = "berlangsung";
+
+/* Content of a pinned message when the message is deleted */
+"message deleted" = "pesan dihapus";
+
+/* Content of a pinned message when the message is missing */
+"message not found" = "pesan tidak ditemukan";
+
+/* The topic or user is currently online */
+"online now" = "sedang online";
+
+/* Button with missing text
+   Placeholder for missing file name
+   Placeholder for missing file type */
+"undefined" = "belum ditentukan";
+

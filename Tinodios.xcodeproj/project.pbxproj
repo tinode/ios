@@ -244,10 +244,14 @@
 		0AE7339B22C33FEF0089C8D8 /* ChatListViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ChatListViewCell.xib; sourceTree = "<group>"; };
 		0AEE3A32283E57230037BEC4 /* CallViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallViewController.swift; sourceTree = "<group>"; };
 		0AEE8BED226456080022EC3F /* UiUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UiUtils.swift; sourceTree = "<group>"; };
+		392509AB994C8C499DD94B2B /* id */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.strings; name = id; path = id.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		4511F72DCF8B084E0C8528BF /* id */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.strings; name = id; path = id.lproj/Localizable.strings; sourceTree = "<group>"; };
 		4F6E20F7F9A02F33DBC019E7 /* Pods-TinodiosUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TinodiosUITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-TinodiosUITests/Pods-TinodiosUITests.release.xcconfig"; sourceTree = "<group>"; };
 		5900B7863CDFB018A86DD3AC /* Pods-Tinodios.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Tinodios.release.xcconfig"; path = "Pods/Target Support Files/Pods-Tinodios/Pods-Tinodios.release.xcconfig"; sourceTree = "<group>"; };
+		5A830A256D8123B0F1518E03 /* id */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.strings; name = id; path = id.lproj/Localizable.strings; sourceTree = "<group>"; };
 		5E30BDE2C5D7E82671DD7DE4 /* libPods-Tinodios.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Tinodios.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		75BC852198885F22E865D563 /* Pods-Tinodios.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Tinodios.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Tinodios/Pods-Tinodios.debug.xcconfig"; sourceTree = "<group>"; };
+		77BBBD85DEA0FA74BEE42C36 /* id */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.strings; name = id; path = id.lproj/MultilineAlertView.strings; sourceTree = "<group>"; };
 		7DDADC5121D5C219009733B5 /* ValidatedCredential.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ValidatedCredential.swift; sourceTree = "<group>"; };
 		7DDADC5321D5C2E6009733B5 /* CredentialsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CredentialsViewController.swift; sourceTree = "<group>"; };
 		8941EC0EF6DEEA661A222467 /* libPods-TinodiosUITests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-TinodiosUITests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -373,7 +377,10 @@
 		B0F2F0C829DA295900100B24 /* MessageViewController+MessageDisplayLogic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MessageViewController+MessageDisplayLogic.swift"; sourceTree = "<group>"; };
 		B33FA5FDB8E984980BADDAB2 /* Pods-TinodiosUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TinodiosUITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-TinodiosUITests/Pods-TinodiosUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		B36DC000235D850000724348 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/LaunchScreen.strings"; sourceTree = "<group>"; };
+		B8BF4478A524B6D56CEF9CF6 /* id */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.strings; name = id; path = id.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		C1FCEC0FF1986F9D1B2BBE79 /* id */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.strings; name = id; path = id.lproj/TagsEditDialogView.strings; sourceTree = "<group>"; };
 		FA37AD23238B0D6F00301261 /* KeyboardInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardInfo.swift; sourceTree = "<group>"; };
+		FC2CAA3B5E28BBC2D7FA3A04 /* id */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.strings; name = id; path = id.lproj/Main.strings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -746,6 +753,7 @@
 				ru,
 				uk,
 				it,
+				id,
 			);
 			mainGroup = 0A0380CB21B3CC8100A3FA0E;
 			productRefGroup = 0A0380D521B3CC8100A3FA0E /* Products */;
@@ -1137,6 +1145,7 @@
 				B093F50426C5BD4200FAA4E8 /* en */,
 				B04D95592A8A79D900558612 /* uk */,
 				B013E9D92E538C60007519DA /* it */,
+				FC2CAA3B5E28BBC2D7FA3A04 /* id */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";
@@ -1164,6 +1173,7 @@
 				B02725FF283DB3DB0055D446 /* es */,
 				B04D95602A8A7D2000558612 /* uk */,
 				B013E9E52E5396A2007519DA /* it */,
+				5A830A256D8123B0F1518E03 /* id */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
@@ -1177,6 +1187,7 @@
 				B0BE301F27B3389100B04631 /* zh-Hant */,
 				B04D955F2A8A7D2000558612 /* uk */,
 				B013E9E32E5396A2007519DA /* it */,
+				392509AB994C8C499DD94B2B /* id */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
@@ -1191,6 +1202,7 @@
 				B0979FD227BD9A3B0045FC73 /* zh-Hant */,
 				B04D95582A8A79D900558612 /* uk */,
 				B013E9D82E538C5F007519DA /* it */,
+				C1FCEC0FF1986F9D1B2BBE79 /* id */,
 			);
 			name = TagsEditDialogView.xib;
 			sourceTree = "<group>";
@@ -1205,6 +1217,7 @@
 				B0979FD127BD9A3B0045FC73 /* zh-Hant */,
 				B04D95572A8A79D800558612 /* uk */,
 				B013E9D72E538C5E007519DA /* it */,
+				77BBBD85DEA0FA74BEE42C36 /* id */,
 			);
 			name = MultilineAlertView.xib;
 			sourceTree = "<group>";
@@ -1219,6 +1232,7 @@
 				B093F50526C5BD8800FAA4E8 /* en */,
 				B04D955B2A8A79D900558612 /* uk */,
 				B013E9DB2E538C63007519DA /* it */,
+				4511F72DCF8B084E0C8528BF /* id */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
@@ -1232,6 +1246,7 @@
 				B0E6F5F62DF44E4800A8B1FF /* zh-Hans */,
 				B0E6F5F82DF44E5700A8B1FF /* zh-Hant */,
 				B013E9E42E5396A2007519DA /* it */,
+				B8BF4478A524B6D56CEF9CF6 /* id */,
 			);
 			name = InfoPlist.strings;
 			path = TinodiosNSExtension;
