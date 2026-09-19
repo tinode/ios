@@ -466,13 +466,13 @@ Unsupported (unknown) Drafty tag */
 "Updating password..." = "更新密码...";
 
 /* Error message */
-"Upload failed (%@): empty response body." = "上传失败（％@）：响应正文为空。";
+"Upload failed (%@): empty response body." = "上传失败（%@）：响应正文为空。";
 
 /* Error message */
-"Upload failed (%@): response code %d." = "上传失败（％1$@）：响应代码％2$d。";
+"Upload failed (%@): response code %d." = "上传失败（%1$@）：响应代码%2$d。";
 
 /* Error message */
-"Upload failed (%@). No server response." = "上传失败（％@）。没有服务器响应。";
+"Upload failed (%@). No server response." = "上传失败（%@）。没有服务器响应。";
 
 /* Error message */
 "Verification failure: %d %@" = "验证失败：%1$d (%2$@)";
@@ -498,4 +498,3 @@ Menu item: video call */
 
 /* Placeholder when no chats found */
 "You have no chats\n\n¯\\_(ツ)_/¯" = "您没有聊天记录\n\n¯\\_(ツ)_/¯";
-
