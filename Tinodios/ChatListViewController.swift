@@ -202,9 +202,10 @@ extension ChatListViewController {
             let archive = UIAction(title: archiveTitle, image: UIImage(systemName: "archivebox")) { [weak self] _ in
                 self?.interactor?.changeArchivedStatus(forTopic: topic.name, archived: !topic.isArchived)
             }
-            let pinTitle = topic.pinnedRank == 0 ? NSLocalizedString("Pin", comment: "Popup menu item") : NSLocalizedString("Unpin", comment: "Popup menu item")
+            let isPinned = (topic.pinnedRank ?? 0) > 0
+            let pinTitle = isPinned ? NSLocalizedString("Unpin", comment: "Popup menu item") : NSLocalizedString("Pin", comment: "Popup menu item")
             let pin = UIAction(title: pinTitle, image: UIImage(systemName: "pin")) { [weak self] _ in
-                self?.interactor?.changePinnedStatus(forTopic: topic.name, pinned: topic.pinnedRank == 0)
+                self?.interactor?.changePinnedStatus(forTopic: topic.name, pinned: !isPinned)
             }
             return UIMenu(title: "", children: [archive, pin])
         }

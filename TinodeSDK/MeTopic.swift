@@ -411,7 +411,7 @@ open class MeTopic<DP: Codable & Mergeable>: Topic<DP, PrivateType, DP, PrivateT
                         }
                     } else {
                         if let t = topic as? DefaultTopic {
-                            t.pinnedRank = pinnedRank
+                            t.pinnedRank = pinnedTopicRank
                             t.update(sub: sub as! Subscription<TheCard, PrivateType>)
                         } else if let t = topic as? DefaultMeTopic {
                             t.update(sub: sub as! Subscription<TheCard, PrivateType>)
