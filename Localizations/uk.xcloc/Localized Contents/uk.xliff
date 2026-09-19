@@ -869,6 +869,7 @@ Menu item: video call</note>
       </trans-unit>
       <trans-unit id="PhoneNumberKit.CountryCodePickerEntryButton.AccessibilityHint" xml:space="preserve">
         <source>%@ selected</source>
+        <target>Вибрано: %@</target>
         <note>Accessiblity hint for currently selected country code</note>
       </trans-unit>
       <trans-unit id="PhoneNumberKit.CountryCodePickerEntryButton.AccessibilityLabel" xml:space="preserve">
